@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- Properties -->
+	<modelVersion>4.0.0</modelVersion>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- Organization -->
+	<organization>
+		<name>ASPR</name>
+		<url>https://www.phe.gov</url>
+	</organization>
+
+	<!-- Artifact -->
+	<groupId>gov.hhs.aspr</groupId>
+	<artifactId>gcm2</artifactId>
+	<name>General Compartmental Model</name>
+	<packaging>jar</packaging>
+	<version>4.0.0-SNAPSHOT</version>
+
+	<!-- Dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.11.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.jcip</groupId>
+			<artifactId>jcip-annotations</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- Developers -->
+	<developers>
+		<developer>
+			<name>Shawn Hatch</name>
+			<organization>Leidos</organization>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Chris Ludka</name>
+			<organization>Leidos</organization>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<!-- Configure Build -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+
+					<includes>
+						<include>*.java</include>
+					</includes>
+					<!-- <excludes> -->
+					<!-- <exclude>AT_EnvironmentImpl_01.java</exclude> -->
+					<!-- <exclude>AT_EnvironmentImpl_02.java</exclude> -->
+					<!-- </excludes> -->
+
+					<excludedGroups>manual</excludedGroups>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

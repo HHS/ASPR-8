@@ -1,0 +1,84 @@
+package nucleus.testsupport.actionplugin;
+
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import nucleus.ResolverContext;
+
+/**
+ * Test Support class that describes an action for a resolver as a scheduled plan with an
+ * optional key.
+ */
+public class ResolverActionPlan {
+
+	/*
+	 * Key value generator for plans
+	 */
+	private static int masterKey;
+
+	private synchronized int getNextKey() {
+		return masterKey++;
+	}
+
+	private final double scheduledTime;
+
+	private final Object key;
+
+	private boolean executed;
+
+	private final Consumer<ResolverContext> action;
+
+	public ResolverActionPlan(final double scheduledTime, Consumer<ResolverContext> action, boolean assignKey) {
+		if (scheduledTime < 0) {
+			throw new RuntimeException("negative scheduled time");
+		}
+
+		if (action == null) {
+			throw new RuntimeException("null action plan");
+		}
+		this.scheduledTime = scheduledTime;
+		if (assignKey) {
+			this.key = getNextKey();
+		} else {
+			this.key = null;
+		}
+		this.action = action;
+	}
+
+	public ResolverActionPlan(final double scheduledTime, Consumer<ResolverContext> action) {
+		this(scheduledTime, action, true);
+	}
+
+	public boolean executed() {
+		return executed;
+	}
+
+	/**
+	 * Package access. Executes the embedded action and marks this action plan
+	 * as executed.
+	 */
+	void executeAction(final ResolverContext agentContext) {
+		try {
+			action.accept(agentContext);
+		} finally {
+			executed = true;
+		}
+	}
+
+	/**
+	 * Returns the key, possibly null, associated with this action plan
+	 */
+	public Optional<Object> getKey() {
+		return Optional.ofNullable(key);
+	}
+
+	/**
+	 * Returns the scheduled time for action execution
+	 */
+	public double getScheduledTime() {
+		return scheduledTime;
+	}
+
+	
+
+}
