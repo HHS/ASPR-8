@@ -33,13 +33,18 @@ import plugins.globals.testsupport.TestGlobalPropertyId;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
-import plugins.groups.testsupport.XTestGroupTypeId;
+import plugins.groups.testsupport.TestGroupPropertyId;
+import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
+import plugins.materials.testsupport.TestBatchPropertyId;
+import plugins.materials.testsupport.TestMaterialId;
+import plugins.materials.testsupport.TestMaterialsProducerId;
+import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -51,11 +56,9 @@ import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.resources.testsupport.TestResourceId;
+import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.support.EnvironmentSupport;
-import plugins.support.XTestMaterialId;
-import plugins.support.XTestMaterialsProducerId;
-import plugins.support.XTestMaterialsProducerPropertyId;
-import plugins.support.XTestResourceId;
 import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -335,20 +338,20 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 		List<BatchId> batchIds = getScrambledBatchIds(100, 300, randomGenerator);
 
 		for (BatchId batchId : batchIds) {
-			MaterialId materialId = XTestMaterialId.getRandomMaterialId(randomGenerator);
+			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble() * 1000;
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addBatch(batchId, materialId, amount, xTestMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
 		}
 
 		/*
@@ -370,20 +373,20 @@ public class AT_GCMPlugin_SetScenario {
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 		List<BatchId> batchIds = getScrambledBatchIds(100, 300, randomGenerator);
 
 		for (BatchId batchId : batchIds) {
-			MaterialId materialId = XTestMaterialId.getRandomMaterialId(randomGenerator);
+			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble() * 1000;
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addBatch(batchId, materialId, amount, xTestMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
 		}
 
 		// Show that the batch ids in the scenario have a one to one
@@ -416,20 +419,20 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 		List<BatchId> batchIds = getScrambledBatchIds(100, 300, randomGenerator);
 
 		for (BatchId batchId : batchIds) {
-			MaterialId materialId = XTestMaterialId.getRandomMaterialId(randomGenerator);
+			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble() * 1000;
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addBatch(batchId, materialId, amount, xTestMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
 		}
 
 		/*
@@ -454,20 +457,20 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 		List<BatchId> batchIds = getScrambledBatchIds(100, 300, randomGenerator);
 
 		for (BatchId batchId : batchIds) {
-			MaterialId materialId = XTestMaterialId.getRandomMaterialId(randomGenerator);
+			MaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble() * 1000;
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addBatch(batchId, materialId, amount, xTestMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addBatch(batchId, materialId, amount, testMaterialsProducerId);
 		}
 
 		/*
@@ -534,11 +537,11 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
-			for (BatchPropertyId batchPropertyId : xTestMaterialId.getBatchPropertyIds()) {
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
+			for (TestBatchPropertyId batchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineBatchProperty(xTestMaterialId, batchPropertyId, propertyDefinition);
+				scenarioBuilder.defineBatchProperty(testMaterialId, batchPropertyId, propertyDefinition);
 			}
 		}
 
@@ -567,11 +570,11 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
-			for (BatchPropertyId batchPropertyId : xTestMaterialId.getBatchPropertyIds()) {
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
+			for (TestBatchPropertyId batchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineBatchProperty(xTestMaterialId, batchPropertyId, propertyDefinition);
+				scenarioBuilder.defineBatchProperty(testMaterialId, batchPropertyId, propertyDefinition);
 			}
 		}
 
@@ -597,37 +600,37 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
-			for (BatchPropertyId batchPropertyId : xTestMaterialId.getBatchPropertyIds()) {
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
+			for (TestBatchPropertyId batchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineBatchProperty(xTestMaterialId, batchPropertyId, propertyDefinition);
+				scenarioBuilder.defineBatchProperty(testMaterialId, batchPropertyId, propertyDefinition);
 			}
 		}
 		Scenario subScenario = scenarioBuilder.build();
 
 		scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
-			for (BatchPropertyId batchPropertyId : xTestMaterialId.getBatchPropertyIds()) {
-				PropertyDefinition propertyDefinition = subScenario.getBatchPropertyDefinition(xTestMaterialId, batchPropertyId);
-				scenarioBuilder.defineBatchProperty(xTestMaterialId, batchPropertyId, propertyDefinition);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
+			for (TestBatchPropertyId batchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+				PropertyDefinition propertyDefinition = subScenario.getBatchPropertyDefinition(testMaterialId, batchPropertyId);
+				scenarioBuilder.defineBatchProperty(testMaterialId, batchPropertyId, propertyDefinition);
 			}
 		}
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 
 		List<BatchId> batchIds = getScrambledBatchIds(100, 300, randomGenerator);
 
 		for (BatchId batchId : batchIds) {
-			XTestMaterialId xTestMaterialId = XTestMaterialId.getRandomMaterialId(randomGenerator);
+			TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 			double amount = randomGenerator.nextDouble() * 1000;
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addBatch(batchId, xTestMaterialId, amount, xTestMaterialsProducerId);
-			for (BatchPropertyId batchPropertyId : xTestMaterialId.getBatchPropertyIds()) {
-				PropertyDefinition propertyDefinition = subScenario.getBatchPropertyDefinition(xTestMaterialId, batchPropertyId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId);
+			for (TestBatchPropertyId batchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId )) {
+				PropertyDefinition propertyDefinition = subScenario.getBatchPropertyDefinition(testMaterialId, batchPropertyId);
 				Object propertyValue = generatePropertyValue(propertyDefinition, randomGenerator);
 				scenarioBuilder.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
 			}
@@ -865,15 +868,15 @@ public class AT_GCMPlugin_SetScenario {
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
 		List<GroupId> groupIds = getScrambledGroupIds(100, 300, randomGenerator);
 
 		for (GroupId groupId : groupIds) {
-			XTestGroupTypeId xTestGroupTypeId = XTestGroupTypeId.getRandomGroupTypeId(randomGenerator);
-			scenarioBuilder.addGroup(groupId, xTestGroupTypeId);
+			TestGroupTypeId testGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+			scenarioBuilder.addGroup(groupId, testGroupTypeId);
 		}
 
 		// Show that the group ids match those in the environment and have the
@@ -909,15 +912,15 @@ public class AT_GCMPlugin_SetScenario {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
 		// add some groups
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
 		List<GroupId> groupIds = getScrambledGroupIds(10, 30, randomGenerator);
 
 		for (GroupId groupId : groupIds) {
-			XTestGroupTypeId xTestGroupTypeId = XTestGroupTypeId.getRandomGroupTypeId(randomGenerator);
-			scenarioBuilder.addGroup(groupId, xTestGroupTypeId);
+			TestGroupTypeId testGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+			scenarioBuilder.addGroup(groupId, testGroupTypeId);
 		}
 		// add some people
 		List<PersonId> personIds = getScrambledPersonIds(1000, 3000, randomGenerator);
@@ -982,14 +985,14 @@ public class AT_GCMPlugin_SetScenario {
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			for (GroupPropertyId groupPropertyId : xTestGroupTypeId.getGroupPropertyIds()) {
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			for (GroupPropertyId groupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineGroupProperty(xTestGroupTypeId, groupPropertyId, propertyDefinition);
+				scenarioBuilder.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);
 			}
 		}
 
@@ -1017,39 +1020,39 @@ public class AT_GCMPlugin_SetScenario {
 		// build a scenario with just the group properties defined
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			for (GroupPropertyId groupPropertyId : xTestGroupTypeId.getGroupPropertyIds()) {
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			for (GroupPropertyId groupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineGroupProperty(xTestGroupTypeId, groupPropertyId, propertyDefinition);
+				scenarioBuilder.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);
 			}
 		}
 		Scenario subScenario = scenarioBuilder.build();
 
 		// build a scenario with assigned group property values
 		scenarioBuilder = getScenarioBuilder();
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
-			for (GroupPropertyId groupPropertyId : xTestGroupTypeId.getGroupPropertyIds()) {
-				PropertyDefinition propertyDefinition = subScenario.getGroupPropertyDefinition(xTestGroupTypeId, groupPropertyId);
-				scenarioBuilder.defineGroupProperty(xTestGroupTypeId, groupPropertyId, propertyDefinition);
+			for (GroupPropertyId groupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				PropertyDefinition propertyDefinition = subScenario.getGroupPropertyDefinition(testGroupTypeId, groupPropertyId);
+				scenarioBuilder.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);
 			}
 		}
 
 		List<GroupId> groupIds = getScrambledGroupIds(10, 30, randomGenerator);
 
 		for (GroupId groupId : groupIds) {
-			XTestGroupTypeId xTestGroupTypeId = XTestGroupTypeId.getRandomGroupTypeId(randomGenerator);
-			scenarioBuilder.addGroup(groupId, xTestGroupTypeId);
-			for (GroupPropertyId groupPropertyId : xTestGroupTypeId.getGroupPropertyIds()) {
-				PropertyDefinition propertyDefinition = subScenario.getGroupPropertyDefinition(xTestGroupTypeId, groupPropertyId);
+			TestGroupTypeId testGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+			scenarioBuilder.addGroup(groupId, testGroupTypeId);
+			for (GroupPropertyId groupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				PropertyDefinition propertyDefinition = subScenario.getGroupPropertyDefinition(testGroupTypeId, groupPropertyId);
 				Object propertyValue = generatePropertyValue(propertyDefinition, randomGenerator);
 				scenarioBuilder.setGroupPropertyValue(groupId, groupPropertyId, propertyValue);
 			}
@@ -1084,15 +1087,15 @@ public class AT_GCMPlugin_SetScenario {
 		// build a scenario with some groups
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
 		List<GroupId> groupIds = getScrambledGroupIds(100, 300, randomGenerator);
 
 		for (GroupId groupId : groupIds) {
-			XTestGroupTypeId xTestGroupTypeId = XTestGroupTypeId.getRandomGroupTypeId(randomGenerator);
-			scenarioBuilder.addGroup(groupId, xTestGroupTypeId);
+			TestGroupTypeId testGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+			scenarioBuilder.addGroup(groupId, testGroupTypeId);
 		}
 
 		/*
@@ -1116,8 +1119,8 @@ public class AT_GCMPlugin_SetScenario {
 		// build a scenario with some group types
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
 		/*
@@ -1142,14 +1145,14 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-			for (GroupPropertyId groupPropertyId : xTestGroupTypeId.getGroupPropertyIds()) {
-				scenarioBuilder.defineGroupProperty(xTestGroupTypeId, groupPropertyId, propertyDefinition);
+			for (GroupPropertyId groupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId)) {
+				scenarioBuilder.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);
 			}
 		}
 
@@ -1175,8 +1178,8 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
 		/*
@@ -1198,8 +1201,8 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 
 		/*
@@ -1223,9 +1226,9 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialsProducerPropertyId xTestMaterialsProducerPropertyId : XTestMaterialsProducerPropertyId.values()) {
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-			scenarioBuilder.defineMaterialsProducerProperty(xTestMaterialsProducerPropertyId, propertyDefinition);
+			scenarioBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition);
 		}
 
 		/*
@@ -1251,9 +1254,9 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialsProducerPropertyId xTestMaterialsProducerPropertyId : XTestMaterialsProducerPropertyId.values()) {
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-			scenarioBuilder.defineMaterialsProducerProperty(xTestMaterialsProducerPropertyId, propertyDefinition);
+			scenarioBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition);
 		}
 
 		/*
@@ -1279,24 +1282,24 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialsProducerPropertyId xTestMaterialsProducerPropertyId : XTestMaterialsProducerPropertyId.values()) {
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-			scenarioBuilder.defineMaterialsProducerProperty(xTestMaterialsProducerPropertyId, propertyDefinition);
+			scenarioBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition);
 		}
 		Scenario subScenario = scenarioBuilder.build();
 
 		scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialsProducerPropertyId xTestMaterialsProducerPropertyId : XTestMaterialsProducerPropertyId.values()) {
-			PropertyDefinition propertyDefinition = subScenario.getMaterialsProducerPropertyDefinition(xTestMaterialsProducerPropertyId);
-			scenarioBuilder.defineMaterialsProducerProperty(xTestMaterialsProducerPropertyId, propertyDefinition);
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			PropertyDefinition propertyDefinition = subScenario.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
+			scenarioBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition);
 		}
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
-			for (XTestMaterialsProducerPropertyId xTestMaterialsProducerPropertyId : XTestMaterialsProducerPropertyId.values()) {
-				PropertyDefinition propertyDefinition = subScenario.getMaterialsProducerPropertyDefinition(xTestMaterialsProducerPropertyId);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+				PropertyDefinition propertyDefinition = subScenario.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
 				Object propertyValue = generatePropertyValue(propertyDefinition, randomGenerator);
-				scenarioBuilder.setMaterialsProducerPropertyValue(xTestMaterialsProducerId, xTestMaterialsProducerPropertyId, propertyValue);
+				scenarioBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
 			}
 		}
 
@@ -1329,15 +1332,15 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
-			for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
+			for (TestResourceId testResourceId : TestResourceId.values()) {
 				long amount = randomGenerator.nextInt(1000) + 1;
-				scenarioBuilder.setMaterialsProducerResourceLevel(xTestMaterialsProducerId, xTestResourceId, amount);
+				scenarioBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, amount);
 			}
 		}
 
@@ -1640,8 +1643,8 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
 		}
 
 		List<PersonId> personIds = getScrambledPersonIds(1000, 5000, randomGenerator);
@@ -1660,9 +1663,9 @@ public class AT_GCMPlugin_SetScenario {
 		}
 
 		for (PersonId personId : personIds) {
-			for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
+			for (TestResourceId testResourceId : TestResourceId.values()) {
 				long amount = randomGenerator.nextInt(1000) + 1;
-				scenarioBuilder.setPersonResourceLevel(personId, xTestResourceId, amount);
+				scenarioBuilder.setPersonResourceLevel(personId, testResourceId, amount);
 			}
 		}
 
@@ -1697,13 +1700,13 @@ public class AT_GCMPlugin_SetScenario {
 		 * values set
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
+		for (TestResourceId testResourceId : TestResourceId.values()) {
 			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[randomGenerator.nextInt(TimeTrackingPolicy.values().length)];
-			scenarioBuilder.setResourceTimeTracking(xTestResourceId, timeTrackingPolicy);
+			scenarioBuilder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
 		}
 
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
 		}
 
 		/*
@@ -1828,15 +1831,15 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
 		}
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			scenarioBuilder.addRegionId(testRegionId, () -> new EmptyComponent()::init);
-			for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
+			for (TestResourceId testResourceId : TestResourceId.values()) {
 				long amount = randomGenerator.nextInt(1000) + 1;
-				scenarioBuilder.setRegionResourceLevel(testRegionId, xTestResourceId, amount);
+				scenarioBuilder.setRegionResourceLevel(testRegionId, testResourceId, amount);
 			}
 		}
 
@@ -1863,7 +1866,7 @@ public class AT_GCMPlugin_SetScenario {
 
 	private void testGetResourceIds() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
-		for (ResourceId resoureId : XTestResourceId.values()) {
+		for (ResourceId resoureId : TestResourceId.values()) {
 			scenarioBuilder.addResource(resoureId);
 		}
 		// Show that the resource ids from the scenario are found in the
@@ -1884,11 +1887,11 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
-			for (ResourcePropertyId resourcePropertyId : xTestResourceId.getResourcePropertyIds()) {
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
+			for (ResourcePropertyId resourcePropertyId : TestResourcePropertyId.getTestResourcePropertyIds(testResourceId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineResourceProperty(xTestResourceId, resourcePropertyId, propertyDefinition);
+				scenarioBuilder.defineResourceProperty(testResourceId, resourcePropertyId, propertyDefinition);
 			}
 		}
 		/*
@@ -1915,11 +1918,11 @@ public class AT_GCMPlugin_SetScenario {
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
-			for (ResourcePropertyId resourcePropertyId : xTestResourceId.getResourcePropertyIds()) {
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
+			for (ResourcePropertyId resourcePropertyId : TestResourcePropertyId.getTestResourcePropertyIds(testResourceId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineResourceProperty(xTestResourceId, resourcePropertyId, propertyDefinition);
+				scenarioBuilder.defineResourceProperty(testResourceId, resourcePropertyId, propertyDefinition);
 			}
 		}
 
@@ -1942,11 +1945,11 @@ public class AT_GCMPlugin_SetScenario {
 		 * Create a scenario with various resource property definitions
 		 */
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
-			for (ResourcePropertyId resourcePropertyId : xTestResourceId.getResourcePropertyIds()) {
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
+			for (ResourcePropertyId resourcePropertyId : TestResourcePropertyId.getTestResourcePropertyIds(testResourceId)) {
 				PropertyDefinition propertyDefinition = buildPropertyDefinition(randomGenerator, null);
-				scenarioBuilder.defineResourceProperty(xTestResourceId, resourcePropertyId, propertyDefinition);
+				scenarioBuilder.defineResourceProperty(testResourceId, resourcePropertyId, propertyDefinition);
 			}
 		}
 		Scenario subScenario = scenarioBuilder.build();
@@ -1993,16 +1996,16 @@ public class AT_GCMPlugin_SetScenario {
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 
 		int numStagesPerProducer = 5;
-		int numStages = numStagesPerProducer * XTestMaterialsProducerId.size();
+		int numStages = numStagesPerProducer * TestMaterialsProducerId.size();
 		int numBatchesPerStage = 12;
 		int numBatches = numBatchesPerStage * numStages;
 
@@ -2010,15 +2013,15 @@ public class AT_GCMPlugin_SetScenario {
 		List<BatchId> batchIds = getScrambledBatchIds(numBatches, 3 * numBatches, randomGenerator);
 		int stageIndex = 0;
 		int batchIndex = 0;
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (int i = 0; i < numStagesPerProducer; i++) {
 				StageId stageId = stageIds.get(stageIndex++);
-				scenarioBuilder.addStage(stageId, false, xTestMaterialsProducerId);
+				scenarioBuilder.addStage(stageId, false, testMaterialsProducerId);
 				for (int j = 0; j < numBatchesPerStage; j++) {
-					XTestMaterialId xTestMaterialId = XTestMaterialId.getRandomMaterialId(randomGenerator);
+					TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 					double amount = randomGenerator.nextDouble() * 1000;
 					BatchId batchId = batchIds.get(batchIndex++);
-					scenarioBuilder.addBatch(batchId, xTestMaterialId, amount, xTestMaterialsProducerId);
+					scenarioBuilder.addBatch(batchId, testMaterialId, amount, testMaterialsProducerId);
 					scenarioBuilder.addBatchToStage(stageId, batchId);
 				}
 			}
@@ -2057,18 +2060,18 @@ public class AT_GCMPlugin_SetScenario {
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 		List<StageId> stageIds = getScrambledStageIds(100, 300, randomGenerator);
 
 		for (StageId stageId : stageIds) {
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addStage(stageId, true, xTestMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addStage(stageId, true, testMaterialsProducerId);
 		}
 
 		// Show that the stage ids in the scenario have a one to one
@@ -2094,18 +2097,18 @@ public class AT_GCMPlugin_SetScenario {
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 		List<StageId> stageIds = getScrambledStageIds(100, 300, randomGenerator);
 
 		for (StageId stageId : stageIds) {
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addStage(stageId, true, xTestMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addStage(stageId, true, testMaterialsProducerId);
 		}
 
 		// Show that the stage materials producer in the scenario matches the
@@ -2129,18 +2132,18 @@ public class AT_GCMPlugin_SetScenario {
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
 
-		for (XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new EmptyComponent()::init);
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new EmptyComponent()::init);
 		}
 		List<StageId> stageIds = getScrambledStageIds(100, 300, randomGenerator);
 
 		for (StageId stageId : stageIds) {
-			XTestMaterialsProducerId xTestMaterialsProducerId = XTestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-			scenarioBuilder.addStage(stageId, randomGenerator.nextBoolean(), xTestMaterialsProducerId);
+			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+			scenarioBuilder.addStage(stageId, randomGenerator.nextBoolean(), testMaterialsProducerId);
 		}
 
 		// Show that the stage materials producer in the scenario matches the

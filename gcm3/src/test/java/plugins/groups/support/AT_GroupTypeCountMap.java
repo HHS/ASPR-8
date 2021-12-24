@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import plugins.groups.testsupport.XTestGroupTypeId;
+import plugins.groups.testsupport.TestGroupTypeId;
 import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -57,36 +57,36 @@ public class AT_GroupTypeCountMap {
 
 		// order should not matter
 		GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
 		GroupTypeCountMap groupTypeCountMap1 = builder.build();
 
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
 		GroupTypeCountMap groupTypeCountMap2 = builder.build();
 
 		assertEquals(groupTypeCountMap1, groupTypeCountMap2);
 
 		// implied zero values should not matter
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_3, 0);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_3, 0);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
 		groupTypeCountMap1 = builder.build();
 
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
 		groupTypeCountMap2 = builder.build();
 
 		assertEquals(groupTypeCountMap1, groupTypeCountMap2);
 
 		// differences in positive counts matter
 
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
 		groupTypeCountMap1 = builder.build();
 
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 3);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 3);
 		groupTypeCountMap2 = builder.build();
 
 		assertNotEquals(groupTypeCountMap1, groupTypeCountMap2);
@@ -104,24 +104,24 @@ public class AT_GroupTypeCountMap {
 
 		// order should not matter
 		GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
 		GroupTypeCountMap groupTypeCountMap1 = builder.build();
 
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
 		GroupTypeCountMap groupTypeCountMap2 = builder.build();
 
 		assertEquals(groupTypeCountMap1.hashCode(), groupTypeCountMap2.hashCode());
 
 		// implied zero values should not matter
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_3, 0);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_3, 0);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
 		groupTypeCountMap1 = builder.build();
 
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(XTestGroupTypeId.GROUP_TYPE_1, 5);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
+		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
 		groupTypeCountMap2 = builder.build();
 
 		assertEquals(groupTypeCountMap1.hashCode(), groupTypeCountMap2.hashCode());
@@ -147,14 +147,14 @@ public class AT_GroupTypeCountMap {
 		GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
 
 		int count = 1;
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			builder.setCount(xTestGroupTypeId, count++);
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			builder.setCount(testGroupTypeId, count++);
 		}
 		GroupTypeCountMap groupTypeCountMap = builder.build();
 
-		String expectedValue = "GroupTypeCountMap [GROUP_TYPE_1=1, GROUP_TYPE_2=2, GROUP_TYPE_3=3, GROUP_TYPE_4=4, GROUP_TYPE_5=5, GROUP_TYPE_6=6]";
+		String expectedValue = "GroupTypeCountMap [GROUP_TYPE_1=1, GROUP_TYPE_2=2, GROUP_TYPE_3=3]";
 		String actualValue = groupTypeCountMap.toString();
-
+		
 		assertEquals(expectedValue, actualValue);
 	}
 
@@ -168,29 +168,29 @@ public class AT_GroupTypeCountMap {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(seed);
 
 		for (int i = 0; i < 20; i++) {
-			Map<XTestGroupTypeId, Integer> expectedValues = new LinkedHashMap<>();
+			Map<TestGroupTypeId, Integer> expectedValues = new LinkedHashMap<>();
 			GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
 
-			for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-				expectedValues.put(xTestGroupTypeId, 0);
+			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				expectedValues.put(testGroupTypeId, 0);
 				if (randomGenerator.nextBoolean()) {
 					int count = randomGenerator.nextInt(3);
-					builder.setCount(xTestGroupTypeId, count);
-					expectedValues.put(xTestGroupTypeId, count);
+					builder.setCount(testGroupTypeId, count);
+					expectedValues.put(testGroupTypeId, count);
 				}
 			}
 			GroupTypeCountMap groupTypeCountMap = builder.build();
 
-			for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-				int expectedValue = expectedValues.get(xTestGroupTypeId);
-				int actualValue = groupTypeCountMap.getGroupCount(xTestGroupTypeId);
+			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				int expectedValue = expectedValues.get(testGroupTypeId);
+				int actualValue = groupTypeCountMap.getGroupCount(testGroupTypeId);
 				assertEquals(expectedValue, actualValue);
 			}
 		}
 
 		// precondition checks
 		assertThrows(IllegalArgumentException.class, () -> GroupTypeCountMap.builder().setCount(null, 10));
-		assertThrows(IllegalArgumentException.class, () -> GroupTypeCountMap.builder().setCount(XTestGroupTypeId.GROUP_TYPE_1, -1));
+		assertThrows(IllegalArgumentException.class, () -> GroupTypeCountMap.builder().setCount(TestGroupTypeId.GROUP_TYPE_1, -1));
 
 	}
 
@@ -208,11 +208,11 @@ public class AT_GroupTypeCountMap {
 			Set<GroupTypeId> expectedGroupTypeIds = new LinkedHashSet<>();
 			GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
 
-			for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
+			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
 				if (randomGenerator.nextBoolean()) {
-					expectedGroupTypeIds.add(xTestGroupTypeId);
-					builder.setCount(xTestGroupTypeId, 1);
+					expectedGroupTypeIds.add(testGroupTypeId);
+					builder.setCount(testGroupTypeId, 1);
 				}
 			}
 			GroupTypeCountMap groupTypeCountMap = builder.build();

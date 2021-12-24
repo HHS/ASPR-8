@@ -33,13 +33,18 @@ import plugins.globals.testsupport.TestGlobalPropertyId;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
-import plugins.groups.testsupport.XTestGroupTypeId;
+import plugins.groups.testsupport.TestGroupPropertyId;
+import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
+import plugins.materials.testsupport.TestBatchPropertyId;
+import plugins.materials.testsupport.TestMaterialId;
+import plugins.materials.testsupport.TestMaterialsProducerId;
+import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -51,12 +56,10 @@ import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.resources.testsupport.TestResourceId;
+import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import plugins.support.XTestMaterialId;
-import plugins.support.XTestMaterialsProducerId;
-import plugins.support.XTestMaterialsProducerPropertyId;
-import plugins.support.XTestResourceId;
 import plugins.support.experimentspace.ExperimentTestDimension.ExperimentTestDimensionBuilder;
 import plugins.support.experimentspace.ExperimentTestSpace;
 import plugins.support.experimentspace.ExperimentTestSpace.ExperimentTestSpaceBuilder;
@@ -233,9 +236,9 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
 		BatchId batchId = new BatchId(14);
-		MaterialId materialId = XTestMaterialId.MATERIAL_1;
+		MaterialId materialId = TestMaterialId.MATERIAL_1;
 		double amount = 10;
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
 		// precondition: if the batch id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -480,13 +483,13 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
 		BatchId batchId = new BatchId(645778);
-		BatchPropertyId batchPropertyId = XTestMaterialId.MATERIAL_3.getBatchPropertyIds()[0];
+		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_3_2_INTEGER_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
 		Object propertyValue = generatePropertyValue(propertyDefinition);
 		Object incompatiblePropertyValue = generateIncompatiblePropertyValue(propertyDefinition);
-		MaterialId materialId = XTestMaterialId.MATERIAL_3;
+		MaterialId materialId = TestMaterialId.MATERIAL_3;
 		double amount = 2341456;
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
 		// precondition: if the batch id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -520,7 +523,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the batch property id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addBatchPropertyValue(batchId, XTestMaterialId.getUnknownBatchPropertyId(), propertyValue);
+		experimentBuilder.addBatchPropertyValue(batchId, TestBatchPropertyId.getUnknownBatchPropertyId(), propertyValue);
 		experimentBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
 		experimentBuilder.addMaterial(materialId);
 		experimentBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
@@ -593,9 +596,9 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		StageId stageId = new StageId(37);
 		BatchId batchId = new BatchId(15);
-		MaterialId materialId = XTestMaterialId.MATERIAL_2;
+		MaterialId materialId = TestMaterialId.MATERIAL_2;
 		double amount = 13.5;
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_3;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
 		// precondition: if the stage id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -640,10 +643,10 @@ public class AT_ExperimentBuilder {
 		fillWithVariantGlobalProperties(experimentBuilder);
 		experimentBuilder.addBatchToStage(stageId, batchId);
 		experimentBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
-		experimentBuilder.addStage(stageId, false, XTestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		experimentBuilder.addStage(stageId, false, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		experimentBuilder.addMaterial(materialId);
 		experimentBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
-		experimentBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_2, () -> new PlaceholderComponent()::init);
+		experimentBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_2, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
 		assertEquals(ScenarioErrorType.BATCH_STAGED_TO_DIFFERENT_OWNER, scenarioException.getScenarioErrorType());
 
@@ -947,7 +950,7 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(6);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		GroupId groupId = new GroupId(15);
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 
 		// precondition : if the group id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -1001,13 +1004,13 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(14);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		GroupId groupId = new GroupId(64);
-		GroupPropertyId groupPropertyId = XTestGroupTypeId.GROUP_TYPE_5.getGroupPropertyIds()[0];
+		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 		Object propertyValue = 78;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(45)//
 																	.build();//
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 
 		// precondition: if the group id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -1037,7 +1040,7 @@ public class AT_ExperimentBuilder {
 		assertEquals(ScenarioErrorType.NULL_GROUP_PROPERTY_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the group property is unknown
-		experimentBuilder.addGroupPropertyValue(groupId, XTestGroupTypeId.getUnknownGroupPropertyId(), propertyValue);
+		experimentBuilder.addGroupPropertyValue(groupId, TestGroupPropertyId.getUnknownGroupPropertyId(), propertyValue);
 		experimentBuilder.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
 		experimentBuilder.addGroup(groupId, groupTypeId);
 		experimentBuilder.addGroupTypeId(groupTypeId);
@@ -1104,7 +1107,7 @@ public class AT_ExperimentBuilder {
 	public void testAddGroupTypeId() {
 		refreshRandomGenerator(7);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 
 		// precondition: if the group type id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -1138,7 +1141,7 @@ public class AT_ExperimentBuilder {
 	public void testAddMaterial() {
 		refreshRandomGenerator(8);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		MaterialId materialId = XTestMaterialId.MATERIAL_1;
+		MaterialId materialId = TestMaterialId.MATERIAL_1;
 
 		// precondition: if the material id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -1172,7 +1175,7 @@ public class AT_ExperimentBuilder {
 	public void testAddMaterialsProducerId() {
 		refreshRandomGenerator(9);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
 		// precondition: if the materials producer id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -1215,8 +1218,8 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(10);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 		Object propertyValue = 45;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
@@ -1233,7 +1236,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the materials producer property id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId, XTestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyValue);
+		experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId, TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyValue);
 		experimentBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
 		experimentBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
@@ -1310,8 +1313,8 @@ public class AT_ExperimentBuilder {
 	public void testAddMaterialsProducerResourceLevel() {
 		refreshRandomGenerator(11);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		ResourceId resourceId = XTestResourceId.RESOURCE3;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		ResourceId resourceId = TestResourceId.RESOURCE_3;
 		long amount = 234;
 
 		// precondition: if the materials producer id is null
@@ -1324,7 +1327,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the materials producer id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addMaterialsProducerResourceLevel(XTestMaterialsProducerId.getUnknownMaterialsProducerId(), resourceId, amount);
+		experimentBuilder.addMaterialsProducerResourceLevel(TestMaterialsProducerId.getUnknownMaterialsProducerId(), resourceId, amount);
 		experimentBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		experimentBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
@@ -1340,7 +1343,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the resource id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, XTestResourceId.getUnknownResourceId(), amount);
+		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, TestResourceId.getUnknownResourceId(), amount);
 		experimentBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		experimentBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
@@ -1587,7 +1590,7 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(16);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		PersonId personId = new PersonId(76);
-		ResourceId resourceId = XTestResourceId.RESOURCE2;
+		ResourceId resourceId = TestResourceId.RESOURCE_2;
 		long amount = 3453L;
 		RegionId regionId = TestRegionId.REGION_4;
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
@@ -1624,7 +1627,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the resource id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addPersonResourceLevel(personId, XTestResourceId.getUnknownResourceId(), amount);
+		experimentBuilder.addPersonResourceLevel(personId, TestResourceId.getUnknownResourceId(), amount);
 		experimentBuilder.addPerson(personId, regionId, compartmentId);
 		experimentBuilder.addRegionId(regionId, () -> new PlaceholderComponent()::init);
 		experimentBuilder.addCompartmentId(compartmentId, () -> new PlaceholderComponent()::init);
@@ -1686,7 +1689,7 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		GroupId groupId = new GroupId(45);
 		PersonId personId = new PersonId(37);
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_2;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_2;
 		RegionId regionId = TestRegionId.REGION_5;
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_3;
 
@@ -1907,7 +1910,7 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(20);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		RegionId regionId = TestRegionId.REGION_6;
-		ResourceId resourceId = XTestResourceId.RESOURCE4;
+		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long amount = 345;
 
 		// precondition: if the region id is null
@@ -1936,7 +1939,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the resource id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addRegionResourceLevel(regionId, XTestResourceId.getUnknownResourceId(), amount);
+		experimentBuilder.addRegionResourceLevel(regionId, TestResourceId.getUnknownResourceId(), amount);
 		experimentBuilder.addResource(resourceId);
 		experimentBuilder.addRegionId(regionId, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
@@ -1988,7 +1991,7 @@ public class AT_ExperimentBuilder {
 	public void testAddResource() {
 		refreshRandomGenerator(21);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE2;
+		ResourceId resourceId = TestResourceId.RESOURCE_2;
 
 		// precondition: if the resource id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -2023,8 +2026,8 @@ public class AT_ExperimentBuilder {
 	public void testAddResourcePropertyValue() {
 		refreshRandomGenerator(22);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE8;
-		ResourcePropertyId resourcePropertyId = XTestResourceId.RESOURCE8.getResourcePropertyIds()[0];
+		ResourceId resourceId = TestResourceId.RESOURCE_5;
+		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_5_1_DOUBLE_IMMUTABLE;
 		Object propertyValue = 534;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12).build();
 
@@ -2038,7 +2041,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the resource id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addResourcePropertyValue(XTestResourceId.getUnknownResourceId(), resourcePropertyId, propertyValue);
+		experimentBuilder.addResourcePropertyValue(TestResourceId.getUnknownResourceId(), resourcePropertyId, propertyValue);
 		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
 		experimentBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
@@ -2054,7 +2057,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the resource property id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addResourcePropertyValue(resourceId, XTestResourceId.getUnknownResourcePropertyId(), propertyValue);
+		experimentBuilder.addResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId(), propertyValue);
 		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
 		experimentBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
@@ -2117,7 +2120,7 @@ public class AT_ExperimentBuilder {
 
 		StageId stageId = new StageId(67);
 
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_3;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
 		// precondition: if the stage id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
@@ -2135,7 +2138,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the materials producer id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addStage(stageId, true, XTestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		experimentBuilder.addStage(stageId, true, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		experimentBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
 		assertEquals(ScenarioErrorType.UNKNOWN_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
@@ -2200,9 +2203,9 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
-		MaterialId materialId = XTestMaterialId.MATERIAL_1;
-		BatchPropertyId batchPropertyId = XTestMaterialId.MATERIAL_1.getBatchPropertyIds()[0];
-
+		MaterialId materialId = TestMaterialId.MATERIAL_1;
+		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
+		
 		// precondition: if the material id is null
 		fillWithVariantGlobalProperties(experimentBuilder);
 		experimentBuilder.defineBatchProperty(null, batchPropertyId, propertyDefinition);
@@ -2239,8 +2242,8 @@ public class AT_ExperimentBuilder {
 		assertEquals(ScenarioErrorType.PREVIOUSLY_ASSIGNED_VALUE, scenarioException.getScenarioErrorType());
 
 		// postcondition: the batch property is contained in all scenarios
-		for (XTestMaterialId material : XTestMaterialId.values()) {
-			for (BatchPropertyId property : material.getBatchPropertyIds()) {
+		for (TestMaterialId material : TestMaterialId.values()) {
+			for (BatchPropertyId property : TestBatchPropertyId.getTestBatchPropertyIds(material)) {
 				propertyDefinition = generateRandomPropertyDefinition();
 				fillWithVariantGlobalProperties(experimentBuilder);
 				experimentBuilder.defineBatchProperty(material, property, propertyDefinition);
@@ -2395,8 +2398,8 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(27);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
-		GroupPropertyId groupPropertyId = XTestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[0];
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(235)//
@@ -2440,7 +2443,7 @@ public class AT_ExperimentBuilder {
 		for (int i = 0; i < 1000; i++) {
 			GroupPropertyId property = new GroupPropertyId() {
 			};
-			groupTypeId = XTestGroupTypeId.getRandomGroupTypeId(RANDOM_GENERATOR);
+			groupTypeId = TestGroupTypeId.getRandomGroupTypeId(RANDOM_GENERATOR);
 			propertyDefinition = generateRandomPropertyDefinition();
 			fillWithVariantGlobalProperties(experimentBuilder);
 			experimentBuilder.defineGroupProperty(groupTypeId, property, propertyDefinition);
@@ -2466,7 +2469,7 @@ public class AT_ExperimentBuilder {
 	public void testDefineMaterialsProducerProperty() {
 		refreshRandomGenerator(28);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(6)//
@@ -2628,8 +2631,8 @@ public class AT_ExperimentBuilder {
 	public void testDefineResourceProperty() {
 		refreshRandomGenerator(31);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE4;
-		ResourcePropertyId resourcePropertyId = XTestResourceId.RESOURCE4.getResourcePropertyIds()[0];
+		ResourceId resourceId = TestResourceId.RESOURCE_4;
+		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Long.class)//
 																	.setDefaultValue(3454L)//
@@ -2645,7 +2648,7 @@ public class AT_ExperimentBuilder {
 		// precondition: if the property id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
 		experimentBuilder.addResource(resourceId);
-		experimentBuilder.defineResourceProperty(XTestResourceId.getUnknownResourceId(), resourcePropertyId, propertyDefinition);
+		experimentBuilder.defineResourceProperty(TestResourceId.getUnknownResourceId(), resourcePropertyId, propertyDefinition);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
 		assertEquals(ScenarioErrorType.UNKNOWN_RESOURCE_ID, scenarioException.getScenarioErrorType());
 
@@ -2773,7 +2776,7 @@ public class AT_ExperimentBuilder {
 	public void testSetResourceTimeTracking() {
 		refreshRandomGenerator(36);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE5;
+		ResourceId resourceId = TestResourceId.RESOURCE_5;
 		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
 
 		// precondition: if the resource id is null
@@ -2785,7 +2788,7 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the resource id is unknown
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.setResourceTimeTracking(XTestResourceId.getUnknownResourceId(), timeTrackingPolicy);
+		experimentBuilder.setResourceTimeTracking(TestResourceId.getUnknownResourceId(), timeTrackingPolicy);
 		experimentBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> getScenarios(experimentBuilder.build()));
 		assertEquals(ScenarioErrorType.UNKNOWN_RESOURCE_ID, scenarioException.getScenarioErrorType());
@@ -2982,13 +2985,13 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
 		Object dimensionId = "DimensionId";
-		BatchPropertyId batchPropertyId = XTestMaterialId.MATERIAL_1.getBatchPropertyIds()[0];
-		BatchPropertyId unknownPropertyId = XTestMaterialId.getUnknownBatchPropertyId();
+		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
+		BatchPropertyId unknownPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
 		BatchId batchId = new BatchId(763);
 		BatchId unknownBatchId = new BatchId(500);
-		MaterialId materialId = XTestMaterialId.MATERIAL_1;
+		MaterialId materialId = TestMaterialId.MATERIAL_1;
 		double amount = 1000;
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_2;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(100)//
@@ -3321,9 +3324,9 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(40);
 
 		GroupId groupId = new GroupId(15);
-		GroupPropertyId groupPropertyId = XTestGroupTypeId.GROUP_TYPE_2.getGroupPropertyIds()[0];
+		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK;
 		Object dimensionId = "DimensionId";
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_2;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_2;
 		PropertyDefinition groupPropertyDefinition = PropertyDefinition	.builder()//
 																		.setType(Integer.class)//
 																		.setDefaultValue(45)//
@@ -3677,8 +3680,8 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(42);
 
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK;
 		Object dimensionId = "DimensionId";
 		PropertyDefinition materialsProducerPropertyDefinition = PropertyDefinition	.builder()//
 																					.setType(Integer.class)//
@@ -3841,7 +3844,7 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
 		PersonId personId = new PersonId(36457);
-		ResourceId personResourceId = XTestResourceId.RESOURCE10;
+		ResourceId personResourceId = TestResourceId.RESOURCE_1;
 		Object dimensionId = "DimensionId";
 		RegionId regionId = TestRegionId.REGION_4;
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
@@ -4005,8 +4008,8 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(44);
 
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		ResourceId materialsProducerResourceId = XTestResourceId.RESOURCE2;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
+		ResourceId materialsProducerResourceId = TestResourceId.RESOURCE_2;
 		Object dimensionId = "DimensionId";
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_5;
 		PropertyDefinition compartmentPropertyDefinition = PropertyDefinition	.builder()//
@@ -4330,7 +4333,7 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
 		RegionId regionId = TestRegionId.REGION_3;
-		ResourceId regionResourceId = XTestResourceId.RESOURCE4;
+		ResourceId regionResourceId = TestResourceId.RESOURCE_4;
 		Object dimensionId = "DimensionId";
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_5;
 		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_5.getCompartmentPropertyId(0);
@@ -4482,8 +4485,8 @@ public class AT_ExperimentBuilder {
 	public void testCovaryResourceProperty() {
 		refreshRandomGenerator(47);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE4;
-		ResourcePropertyId resourcePropertyId = XTestResourceId.RESOURCE4.getResourcePropertyIds()[0];
+		ResourceId resourceId = TestResourceId.RESOURCE_4;
+		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE;
 		Object dimensionId = "DimensionId";
 		PropertyDefinition resourcePropertyDefinition = PropertyDefinition	.builder()//
 																			.setType(Integer.class)//
@@ -4703,13 +4706,13 @@ public class AT_ExperimentBuilder {
 
 		BatchId batchId = new BatchId(15);
 		BatchId badBatchId = new BatchId(20);
-		BatchPropertyId batchPropertyId = XTestMaterialId.MATERIAL_3.getBatchPropertyIds()[0];
-		BatchPropertyId badBatchPropertyId = XTestMaterialId.MATERIAL_3.getBatchPropertyIds()[1];
+		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK;
+		BatchPropertyId badBatchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_3_2_INTEGER_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
 		Object propertyValue = generatePropertyValue(propertyDefinition);
-		MaterialId materialId = XTestMaterialId.MATERIAL_3;
+		MaterialId materialId = TestMaterialId.MATERIAL_3;
 		double amount = 2341456;
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
 		// precondition: if the batch id is null
 
@@ -4761,8 +4764,9 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forceBatchPropertyExperimentColumn(batchId, batchPropertyId);
 		Experiment experiment = experimentBuilder.build();
 
-		String expected = "batch_property_value_assignment.15.TestBatchPropertyId [id=BProp_3_1]";
+		String expected = "batch_property_value_assignment.15.BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK";
 		String actual = experiment.getExperimentFieldName(0);
+		
 		assertEquals(expected, actual);
 
 	}
@@ -4949,9 +4953,9 @@ public class AT_ExperimentBuilder {
 
 		GroupId groupId = new GroupId(10);
 		GroupId badGroupId = new GroupId(11);
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
-		GroupPropertyId groupPropertyId = XTestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[0];
-		GroupPropertyId badGroupPropertyId = XTestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[1];
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+		GroupPropertyId badGroupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
 		Object propertyValue = generatePropertyValue(propertyDefinition);
 
@@ -4995,8 +4999,9 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forceGroupPropertyExperimentColumn(groupId, groupPropertyId);
 
 		Experiment experiment = experimentBuilder.build();
-		String expected = "group_property_value_assignment.10.TestGroupPropertyId [id=GTProp_1_1]";
+		String expected = "group_property_value_assignment.10.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK";
 		String actual = experiment.getExperimentFieldName(0);
+		
 		assertEquals(expected, actual);
 	}
 
@@ -5010,10 +5015,10 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(58);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
-		ResourceId resourceId = XTestResourceId.RESOURCE1;
-		ResourceId badResourceId = XTestResourceId.RESOURCE2;
-		ResourcePropertyId resourcePropertyId = XTestResourceId.RESOURCE8.getResourcePropertyIds()[0];
-		ResourcePropertyId badResourcePropertyId = XTestResourceId.RESOURCE8.getResourcePropertyIds()[1];
+		ResourceId resourceId = TestResourceId.RESOURCE_1;
+		ResourceId badResourceId = TestResourceId.RESOURCE_2;
+		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
+		ResourcePropertyId badResourcePropertyId = TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE;
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
 		Object propertyValue = generatePropertyValue(propertyDefinition);
 
@@ -5065,8 +5070,8 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forceResourcePropertyExperimentColumn(resourceId, resourcePropertyId);
 
 		Experiment experiment = experimentBuilder.build();
-		String expected = "resource_property.RESOURCE1.TestResourcePropertyId [id=ResourceProperty_8_1]";
-		String actual = experiment.getExperimentFieldName(0);
+		String expected = "resource_property.RESOURCE_1.ResourceProperty_1_2_INTEGER_MUTABLE";
+		String actual = experiment.getExperimentFieldName(0);		
 		assertEquals(expected, actual);
 	}
 
@@ -5082,8 +5087,8 @@ public class AT_ExperimentBuilder {
 
 		RegionId regionId = TestRegionId.REGION_1;
 		RegionId badRegionId = TestRegionId.REGION_2;
-		ResourceId resourceId = XTestResourceId.RESOURCE1;
-		ResourceId badResourceId = XTestResourceId.RESOURCE2;
+		ResourceId resourceId = TestResourceId.RESOURCE_1;
+		ResourceId badResourceId = TestResourceId.RESOURCE_2;
 
 		// precondition: if the region id is null
 		experimentBuilder.addRegionResourceLevel(regionId, resourceId, 100);
@@ -5132,8 +5137,8 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forceRegionResourceExperimentColumn(regionId, resourceId);
 
 		Experiment experiment = experimentBuilder.build();
-		String expected = "region_resource.REGION_1.RESOURCE1";
-		String actual = experiment.getExperimentFieldName(0);
+		String expected = "region_resource.REGION_1.RESOURCE_1";
+		String actual = experiment.getExperimentFieldName(0);		
 		assertEquals(expected, actual);
 	}
 
@@ -5226,8 +5231,8 @@ public class AT_ExperimentBuilder {
 		PersonId personId = new PersonId(100);
 		PersonId badPersonId = new PersonId(101);
 
-		ResourceId resourceId = XTestResourceId.RESOURCE1;
-		ResourceId badResourceId = XTestResourceId.RESOURCE2;
+		ResourceId resourceId = TestResourceId.RESOURCE_1;
+		ResourceId badResourceId = TestResourceId.RESOURCE_2;
 
 		RegionId regionId = TestRegionId.REGION_1;
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
@@ -5292,8 +5297,8 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forcePersonResourceExperimentColumn(personId, resourceId);
 
 		Experiment experiment = experimentBuilder.build();
-		String expected = "person_resource.100.RESOURCE1";
-		String actual = experiment.getExperimentFieldName(0);
+		String expected = "person_resource.100.RESOURCE_1";
+		String actual = experiment.getExperimentFieldName(0);		
 		assertEquals(expected, actual);
 	}
 
@@ -5390,11 +5395,11 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(63);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerId badMaterialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_2;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId badMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 
-		ResourceId resourceId = XTestResourceId.RESOURCE1;
-		ResourceId badResourceId = XTestResourceId.RESOURCE2;
+		ResourceId resourceId = TestResourceId.RESOURCE_1;
+		ResourceId badResourceId = TestResourceId.RESOURCE_2;
 
 		// precondition: if the materials producer id is null
 		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, resourceId, 1000);
@@ -5443,8 +5448,8 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forceMaterialsProducerResourceExperimentColumn(materialsProducerId, resourceId);
 
 		Experiment experiment = experimentBuilder.build();
-		String expected = "materials_producer_resource_assignment.MATERIALS_PRODUCER_1.RESOURCE1";
-		String actual = experiment.getExperimentFieldName(0);
+		String expected = "materials_producer_resource_assignment.MATERIALS_PRODUCER_1.RESOURCE_1";
+		String actual = experiment.getExperimentFieldName(0);		
 		assertEquals(expected, actual);
 	}
 
@@ -5458,10 +5463,10 @@ public class AT_ExperimentBuilder {
 		refreshRandomGenerator(64);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerId badMaterialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
-		MaterialsProducerPropertyId badMaterialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId badMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+		MaterialsProducerPropertyId badMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
 		Object propertyValue = generatePropertyValue(propertyDefinition);
 
@@ -5512,7 +5517,7 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forceMaterialsProducerPropertyExperimentColumn(materialsProducerId, materialsProducerPropertyId);
 
 		Experiment experiment = experimentBuilder.build();
-		String expected = "materials_producer_property_value_assignment.MATERIALS_PRODUCER_1.MATERIALS_PRODUCER_PROPERTY_1";
+		String expected = "materials_producer_property_value_assignment.MATERIALS_PRODUCER_1.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK";
 		String actual = experiment.getExperimentFieldName(0);
 		assertEquals(expected, actual);
 	}

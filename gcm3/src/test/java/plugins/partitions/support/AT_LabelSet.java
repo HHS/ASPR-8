@@ -17,7 +17,7 @@ import plugins.compartments.support.CompartmentId;
 import plugins.groups.support.GroupTypeId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.support.RegionId;
-import plugins.support.XTestResourceId;
+import plugins.resources.testsupport.TestResourceId;
 import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -77,7 +77,7 @@ public class AT_LabelSet {
 		labelSet = LabelSet.builder().setLabel(RegionId.class, "region label").build();
 		assertFalse(labelSet.isEmpty());
 
-		labelSet = LabelSet.builder().setLabel(XTestResourceId.RESOURCE1, "resource label").build();
+		labelSet = LabelSet.builder().setLabel(TestResourceId.RESOURCE_1, "resource label").build();
 		assertFalse(labelSet.isEmpty());
 
 		labelSet = LabelSet.builder().setLabel(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, "property label").build();

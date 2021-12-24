@@ -18,7 +18,6 @@ import plugins.groups.events.observation.GroupMembershipAdditionObservationEvent
 import plugins.groups.events.observation.GroupMembershipRemovalObservationEvent;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.groups.testsupport.XTestGroupTypeId;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -51,7 +50,7 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the equality operator is null
-			contractException = assertThrows(ContractException.class, () -> new GroupsForPersonAndGroupTypeFilter(XTestGroupTypeId.GROUP_TYPE_1, null, 5).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, null, 5).validate(c));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 		});

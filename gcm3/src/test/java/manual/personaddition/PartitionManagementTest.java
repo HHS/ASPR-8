@@ -30,6 +30,8 @@ import plugins.groups.initialdata.GroupInitialData;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.initialdata.MaterialsInitialData;
+import plugins.materials.testsupport.TestMaterialId;
+import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.datacontainers.PartitionDataView;
 import plugins.partitions.events.PartitionAdditionEvent;
@@ -64,12 +66,10 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.initialdata.ResourceInitialData;
+import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
 import plugins.stochastics.initialdata.StochasticsInitialData;
-import plugins.support.XTestMaterialId;
-import plugins.support.XTestMaterialsProducerId;
-import plugins.support.XTestResourceId;
 import util.SeedProvider;
 import util.TimeElapser;
 
@@ -382,21 +382,21 @@ public class PartitionManagementTest {
 		// add the materials plugin
 		MaterialsInitialData.Builder materialsBuilder = MaterialsInitialData.builder();
 
-		for (final XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			materialsBuilder.addMaterial(xTestMaterialId);
+		for (final TestMaterialId testMaterialId : TestMaterialId.values()) {
+			materialsBuilder.addMaterial(testMaterialId);
 		}
 
-		for (final XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			materialsBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new ActionAgent(xTestMaterialsProducerId)::init);
+		for (final TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new ActionAgent(testMaterialsProducerId)::init);
 		}
 		engineBuilder.addPlugin(MaterialsPlugin.PLUGIN_ID, new MaterialsPlugin(materialsBuilder.build())::init);
 
 		// add the resources plugin
 		ResourceInitialData.Builder resourceBuilder = ResourceInitialData.builder();
 
-		for (final XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			resourceBuilder.addResource(xTestResourceId);
-			resourceBuilder.setResourceTimeTracking(xTestResourceId, xTestResourceId.trackValueAssignmentTimes());
+		for (final TestResourceId testResourceId : TestResourceId.values()) {
+			resourceBuilder.addResource(testResourceId);
+			resourceBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
 		}
 		engineBuilder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourceBuilder.build())::init);
 

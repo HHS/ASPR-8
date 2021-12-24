@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -29,8 +30,11 @@ import plugins.globals.testsupport.TestGlobalPropertyId;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupWeightingFunction;
-import plugins.groups.testsupport.XTestGroupTypeId;
+import plugins.groups.testsupport.TestGroupPropertyId;
+import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.materials.support.BatchPropertyId;
+import plugins.materials.testsupport.TestBatchPropertyId;
+import plugins.materials.testsupport.TestMaterialId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.properties.support.PropertyDefinition;
@@ -38,6 +42,8 @@ import plugins.properties.support.TimeTrackingPolicy;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.resources.testsupport.TestResourceId;
+import plugins.resources.testsupport.TestResourcePropertyId;
 import util.SeedProvider;
 
 /**
@@ -182,15 +188,15 @@ public class EnvironmentSupport {
 		for (final XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
 			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new TaskComponent()::init);
 		}
-		for (final XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			scenarioBuilder.addResource(xTestResourceId);
-			scenarioBuilder.setResourceTimeTracking(xTestResourceId, xTestResourceId.trackValueAssignmentTimes());
+		for (final TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
+			scenarioBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
 		}
-		for (final XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			scenarioBuilder.addMaterial(xTestMaterialId);
+		for (final TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
 		}
-		for (final XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			scenarioBuilder.addGroupTypeId(xTestGroupTypeId);
+		for (final TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
 		}
 	}
 
@@ -231,14 +237,20 @@ public class EnvironmentSupport {
 	 */
 	public static void addStandardPropertyDefinitions(ScenarioBuilder scenarioBuilder, Map<Object, PropertyDefinition> forcedPropertyDefinitions, PropertyAssignmentPolicy propertyAssignmentPolicy, RandomGenerator randomGenerator) {
 		Map<Object, PropertyDefinition> propertyDefinitionMap;
-		for (XTestResourceId xTestResourceId : XTestResourceId.values()) {
-			propertyDefinitionMap = getPropertyDefinitionMap(xTestResourceId.getResourcePropertyIds(), propertyAssignmentPolicy, randomGenerator);
-			for (final ResourcePropertyId resourcePropertyId : xTestResourceId.getResourcePropertyIds()) {
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			TestResourcePropertyId[] values = new TestResourcePropertyId[testResourcePropertyIds.size()];
+			int index = 0;
+			for(TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
+				values[index++]=testResourcePropertyId;
+			}
+			propertyDefinitionMap = getPropertyDefinitionMap(values, propertyAssignmentPolicy, randomGenerator);
+			for (final ResourcePropertyId resourcePropertyId : TestResourcePropertyId.getTestResourcePropertyIds(testResourceId)) {
 				PropertyDefinition propertyDefinition = forcedPropertyDefinitions.get(resourcePropertyId);
 				if (propertyDefinition == null) {
 					propertyDefinition = propertyDefinitionMap.get(resourcePropertyId);
 				}
-				scenarioBuilder.defineResourceProperty(xTestResourceId, resourcePropertyId, propertyDefinition);
+				scenarioBuilder.defineResourceProperty(testResourceId, resourcePropertyId, propertyDefinition);
 			}
 		}
 
@@ -287,8 +299,13 @@ public class EnvironmentSupport {
 			scenarioBuilder.defineMaterialsProducerProperty(xTestMaterialsProducerPropertyId, propertyDefinition);
 		}
 
-		for (XTestMaterialId xTestMaterialId : XTestMaterialId.values()) {
-			BatchPropertyId[] batchPropertyIds = xTestMaterialId.getBatchPropertyIds();
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
+			BatchPropertyId[] batchPropertyIds = new BatchPropertyId[testBatchPropertyIds.size()];
+			int index = 0;
+			for(TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
+				batchPropertyIds[index++] = testBatchPropertyId;
+			}
 			propertyDefinitionMap = getPropertyDefinitionMap(batchPropertyIds, propertyAssignmentPolicy, randomGenerator);
 
 			for (final BatchPropertyId batchPropertyId : batchPropertyIds) {
@@ -296,19 +313,26 @@ public class EnvironmentSupport {
 				if (propertyDefinition == null) {
 					propertyDefinition = propertyDefinitionMap.get(batchPropertyId);
 				}
-				scenarioBuilder.defineBatchProperty(xTestMaterialId, batchPropertyId, propertyDefinition);
+				scenarioBuilder.defineBatchProperty(testMaterialId, batchPropertyId, propertyDefinition);
 			}
 		}
 
-		for (XTestGroupTypeId xTestGroupTypeId : XTestGroupTypeId.values()) {
-			GroupPropertyId[] groupPropertyIds = xTestGroupTypeId.getGroupPropertyIds();
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			Set<TestGroupPropertyId> testGroupPropertyIds = TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId);
+			
+			GroupPropertyId[] groupPropertyIds = new GroupPropertyId[testGroupPropertyIds.size()];
+			int index = 0;
+			for(TestGroupPropertyId testGroupPropertyId : testGroupPropertyIds) {
+				groupPropertyIds[index++] =testGroupPropertyId;
+					
+			}
 			propertyDefinitionMap = getPropertyDefinitionMap(groupPropertyIds, propertyAssignmentPolicy, randomGenerator);
 			for (final GroupPropertyId groupPropertyId : groupPropertyIds) {
 				PropertyDefinition propertyDefinition = forcedPropertyDefinitions.get(groupPropertyId);
 				if (propertyDefinition == null) {
 					propertyDefinition = propertyDefinitionMap.get(groupPropertyId);
 				}
-				scenarioBuilder.defineGroupProperty(xTestGroupTypeId, groupPropertyId, propertyDefinition);
+				scenarioBuilder.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);
 			}
 		}
 	}

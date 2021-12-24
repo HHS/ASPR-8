@@ -28,13 +28,16 @@ import plugins.globals.testsupport.TestGlobalPropertyId;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
-import plugins.groups.testsupport.XTestGroupTypeId;
+import plugins.groups.testsupport.TestGroupPropertyId;
+import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
+import plugins.materials.testsupport.TestBatchPropertyId;
+import plugins.materials.testsupport.TestMaterialId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -46,12 +49,12 @@ import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.resources.testsupport.TestResourceId;
+import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import plugins.support.XTestMaterialId;
 import plugins.support.XTestMaterialsProducerId;
 import plugins.support.XTestMaterialsProducerPropertyId;
-import plugins.support.XTestResourceId;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -103,7 +106,7 @@ public class AT_UnstructuredScenarioBuilder {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
 		BatchId batchId = new BatchId(14);
-		MaterialId materialId = XTestMaterialId.MATERIAL_1;
+		MaterialId materialId = TestMaterialId.MATERIAL_1;
 		double amount = 10;
 		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
@@ -190,7 +193,7 @@ public class AT_UnstructuredScenarioBuilder {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		StageId stageId = new StageId(37);
 		BatchId batchId = new BatchId(15);
-		MaterialId materialId = XTestMaterialId.MATERIAL_2;
+		MaterialId materialId = TestMaterialId.MATERIAL_2;
 		double amount = 13.5;
 		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
@@ -344,7 +347,7 @@ public class AT_UnstructuredScenarioBuilder {
 	public void testAddGroup() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GroupId groupId = new GroupId(15);
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 
 		// precondition : if the group id is null
 		scenarioBuilder.addGroup(null, groupTypeId);
@@ -386,7 +389,7 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "addGroupTypeId", args = { GroupTypeId.class })
 	public void testAddGroupTypeId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 
 		// precondition: if the group type id is null
 		scenarioBuilder.addGroupTypeId(null);
@@ -412,7 +415,7 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "addMaterial", args = { MaterialId.class })
 	public void testAddMaterial() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		MaterialId materialId = XTestMaterialId.MATERIAL_1;
+		MaterialId materialId = TestMaterialId.MATERIAL_1;
 
 		// precondition: if the material id is null
 		scenarioBuilder.addMaterial(null);
@@ -542,7 +545,7 @@ public class AT_UnstructuredScenarioBuilder {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GroupId groupId = new GroupId(45);
 		PersonId personId = new PersonId(37);
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_2;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_2;
 		RegionId regionId = TestRegionId.REGION_5;
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_3;
 
@@ -647,7 +650,7 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "addResource", args = { ResourceId.class })
 	public void testAddResource() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE2;
+		ResourceId resourceId = TestResourceId.RESOURCE_2;
 
 		// precondition: if the resource id is null
 		scenarioBuilder.addResource(null);
@@ -777,8 +780,8 @@ public class AT_UnstructuredScenarioBuilder {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		Random random = new Random(47348457892L);
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(random);
-		MaterialId materialId = XTestMaterialId.MATERIAL_1;
-		BatchPropertyId batchPropertyId = XTestMaterialId.MATERIAL_1.getBatchPropertyIds()[0];
+		MaterialId materialId = TestMaterialId.MATERIAL_1;
+		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 
 		// precondition: if the material id is null
 		scenarioBuilder.defineBatchProperty(null, batchPropertyId, propertyDefinition);
@@ -810,8 +813,8 @@ public class AT_UnstructuredScenarioBuilder {
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
 		assertEquals(ScenarioErrorType.DUPLICATE_BATCH_PROPERTY_DEFINITION, scenarioException.getScenarioErrorType());
 
-		for (XTestMaterialId material : XTestMaterialId.values()) {
-			for (BatchPropertyId property : material.getBatchPropertyIds()) {
+		for (TestMaterialId material : TestMaterialId.values()) {
+			for (BatchPropertyId property : TestBatchPropertyId.getTestBatchPropertyIds(material)) {
 				propertyDefinition = generateRandomPropertyDefinition(random);
 				scenarioBuilder.defineBatchProperty(material, property, propertyDefinition);
 				scenarioBuilder.addMaterial(material);
@@ -940,8 +943,8 @@ public class AT_UnstructuredScenarioBuilder {
 	public void testDefineGroupProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
-		GroupPropertyId groupPropertyId = XTestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[0];
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(235)//
@@ -981,7 +984,7 @@ public class AT_UnstructuredScenarioBuilder {
 		for (int i = 0; i < 1000; i++) {
 			GroupPropertyId property = new GroupPropertyId() {
 			};
-			groupTypeId = XTestGroupTypeId.values()[random.nextInt(XTestGroupTypeId.values().length)];
+			groupTypeId = TestGroupTypeId.values()[random.nextInt(TestGroupTypeId.values().length)];
 			propertyDefinition = generateRandomPropertyDefinition(random);
 			scenarioBuilder.defineGroupProperty(groupTypeId, property, propertyDefinition);
 			scenarioBuilder.addGroupTypeId(groupTypeId);
@@ -1140,8 +1143,8 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "defineResourceProperty", args = { ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class })
 	public void testDefineResourceProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE3;
-		ResourcePropertyId resourcePropertyId = XTestResourceId.RESOURCE3.getResourcePropertyIds()[0];
+		ResourceId resourceId = TestResourceId.RESOURCE_3;
+		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Long.class)//
 																	.setDefaultValue(3454L)//
@@ -1155,7 +1158,7 @@ public class AT_UnstructuredScenarioBuilder {
 
 		// precondition: if the resource id is unknown
 		scenarioBuilder.addResource(resourceId);
-		scenarioBuilder.defineResourceProperty(XTestResourceId.getUnknownResourceId(), resourcePropertyId, propertyDefinition);
+		scenarioBuilder.defineResourceProperty(TestResourceId.getUnknownResourceId(), resourcePropertyId, propertyDefinition);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
 		assertEquals(ScenarioErrorType.UNKNOWN_RESOURCE_ID, scenarioException.getScenarioErrorType());
 
@@ -1257,11 +1260,11 @@ public class AT_UnstructuredScenarioBuilder {
 		Random random = new Random(5745690788442345906L);
 
 		BatchId batchId = new BatchId(645778);
-		BatchPropertyId batchPropertyId = XTestMaterialId.MATERIAL_3.getBatchPropertyIds()[0];
+		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(random);
 		Object propertyValue = generatePropertyValue(propertyDefinition, random);
 		Object incompatiblePropertyValue = generateIncompatiblePropertyValue(propertyDefinition, random);
-		MaterialId materialId = XTestMaterialId.MATERIAL_3;
+		MaterialId materialId = TestMaterialId.MATERIAL_3;
 		double amount = 2341456;
 		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
@@ -1293,7 +1296,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_BATCH_PROPERTY_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the batch property id is unknown
-		scenarioBuilder.setBatchPropertyValue(batchId, XTestMaterialId.getUnknownBatchPropertyId(), propertyValue);
+		scenarioBuilder.setBatchPropertyValue(batchId, TestBatchPropertyId.getUnknownBatchPropertyId(), propertyValue);
 		scenarioBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
 		scenarioBuilder.addMaterial(materialId);
 		scenarioBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
@@ -1482,13 +1485,13 @@ public class AT_UnstructuredScenarioBuilder {
 	public void testSetGroupPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GroupId groupId = new GroupId(64);
-		GroupPropertyId groupPropertyId = XTestGroupTypeId.GROUP_TYPE_4.getGroupPropertyIds()[0];
+		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK;
 		Object propertyValue = 78;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(45)//
 																	.build();//
-		GroupTypeId groupTypeId = XTestGroupTypeId.GROUP_TYPE_1;
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 
 		// precondition: if the group id is null
 		scenarioBuilder.setGroupPropertyValue(null, groupPropertyId, propertyValue);
@@ -1515,7 +1518,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_GROUP_PROPERTY_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the group property is unknown
-		scenarioBuilder.setGroupPropertyValue(groupId, XTestGroupTypeId.getUnknownGroupPropertyId(), propertyValue);
+		scenarioBuilder.setGroupPropertyValue(groupId, TestGroupPropertyId.getUnknownGroupPropertyId(), propertyValue);
 		scenarioBuilder.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
 		scenarioBuilder.addGroup(groupId, groupTypeId);
 		scenarioBuilder.addGroupTypeId(groupTypeId);
@@ -1644,7 +1647,7 @@ public class AT_UnstructuredScenarioBuilder {
 	public void testSetMaterialsProducerResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		ResourceId resourceId = XTestResourceId.RESOURCE3;
+		ResourceId resourceId = TestResourceId.RESOURCE_3;
 		long amount = 234;
 
 		// precondition: if the materials producer id is null
@@ -1669,7 +1672,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_RESOURCE_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the resource id is unknown
-		scenarioBuilder.setMaterialsProducerResourceLevel(materialsProducerId, XTestResourceId.getUnknownResourceId(), amount);
+		scenarioBuilder.setMaterialsProducerResourceLevel(materialsProducerId, TestResourceId.getUnknownResourceId(), amount);
 		scenarioBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		scenarioBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
@@ -1862,7 +1865,7 @@ public class AT_UnstructuredScenarioBuilder {
 	public void testSetPersonResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		PersonId personId = new PersonId(76);
-		ResourceId resourceId = XTestResourceId.RESOURCE2;
+		ResourceId resourceId = TestResourceId.RESOURCE_2;
 		long amount = 3453L;
 		RegionId regionId = TestRegionId.REGION_4;
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
@@ -1895,7 +1898,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_RESOURCE_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the resource id is unknown
-		scenarioBuilder.setPersonResourceLevel(personId, XTestResourceId.getUnknownResourceId(), amount);
+		scenarioBuilder.setPersonResourceLevel(personId, TestResourceId.getUnknownResourceId(), amount);
 		scenarioBuilder.addPerson(personId, regionId, compartmentId);
 		scenarioBuilder.addRegionId(regionId, () -> new PlaceholderComponent()::init);
 		scenarioBuilder.addCompartmentId(compartmentId, () -> new PlaceholderComponent()::init);
@@ -2018,7 +2021,7 @@ public class AT_UnstructuredScenarioBuilder {
 	public void testSetRegionResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		RegionId regionId = TestRegionId.REGION_6;
-		ResourceId resourceId = XTestResourceId.RESOURCE4;
+		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long amount = 345;
 
 		// precondition: if the region id is null
@@ -2043,7 +2046,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_RESOURCE_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the resource id is unknown
-		scenarioBuilder.setRegionResourceLevel(regionId, XTestResourceId.getUnknownResourceId(), amount);
+		scenarioBuilder.setRegionResourceLevel(regionId, TestResourceId.getUnknownResourceId(), amount);
 		scenarioBuilder.addResource(resourceId);
 		scenarioBuilder.addRegionId(regionId, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
@@ -2081,8 +2084,8 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "setResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class, Object.class })
 	public void testSetResourcePropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE8;
-		ResourcePropertyId resourcePropertyId = XTestResourceId.RESOURCE8.getResourcePropertyIds()[0];
+		ResourceId resourceId = TestResourceId.RESOURCE_5;
+		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_5_1_DOUBLE_IMMUTABLE;
 		Object propertyValue = 534;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
@@ -2097,7 +2100,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_RESOURCE_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the resource id is unknown
-		scenarioBuilder.setResourcePropertyValue(XTestResourceId.getUnknownResourceId(), resourcePropertyId, propertyValue);
+		scenarioBuilder.setResourcePropertyValue(TestResourceId.getUnknownResourceId(), resourcePropertyId, propertyValue);
 		scenarioBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
 		scenarioBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
@@ -2111,7 +2114,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_RESOURCE_PROPERTY_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the resource property id is unknown
-		scenarioBuilder.setResourcePropertyValue(resourceId, XTestResourceId.getUnknownResourcePropertyId(), propertyValue);
+		scenarioBuilder.setResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId(), propertyValue);
 		scenarioBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
 		scenarioBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
@@ -2157,7 +2160,7 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "setResourceTimeTracking", args = { ResourceId.class, TimeTrackingPolicy.class })
 	public void testSetResourceTimeTracking() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		ResourceId resourceId = XTestResourceId.RESOURCE5;
+		ResourceId resourceId = TestResourceId.RESOURCE_5;
 		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
 
 		// precondition: if the resource id is null
@@ -2167,7 +2170,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_RESOURCE_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the resource id is unknown
-		scenarioBuilder.setResourceTimeTracking(XTestResourceId.getUnknownResourceId(), timeTrackingPolicy);
+		scenarioBuilder.setResourceTimeTracking(TestResourceId.getUnknownResourceId(), timeTrackingPolicy);
 		scenarioBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
 		assertEquals(ScenarioErrorType.UNKNOWN_RESOURCE_ID, scenarioException.getScenarioErrorType());
