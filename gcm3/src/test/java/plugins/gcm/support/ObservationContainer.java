@@ -1,4 +1,4 @@
-package plugins.support;
+package plugins.gcm.support;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

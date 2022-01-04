@@ -1,4 +1,4 @@
-package plugins.gcm.experiment.output;
+package nucleus.util.experiment.output;
 
 import net.jcip.annotations.Immutable;
 

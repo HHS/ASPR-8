@@ -1,4 +1,4 @@
-package plugins.gcm.experiment.progress;
+package nucleus.util.experiment.progress;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,9 +6,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
-import plugins.gcm.experiment.progress.ExperimentProgressLog.Builder;
+import nucleus.util.experiment.progress.ExperimentProgressLog.Builder;
+
 
 /**
  * A static utility for loading an {@link ExperimentProgressLog} from a file
@@ -52,13 +51,9 @@ public final class NIOExperimentProgressLogReader {
 		Builder builder = ExperimentProgressLog.builder();
 
 		for (String line : lines) {
-			try {
-				String[] ids = line.split("\t");
-				int scenario = Integer.parseInt(ids[0]);
-				int replication = Integer.parseInt(ids[1]);
-				ScenarioId scenarioId = new ScenarioId(scenario);
-				ReplicationId replicationId = new ReplicationId(replication);
-				builder.add(scenarioId, replicationId);
+			try {				
+				int scenarioId = Integer.parseInt(line);				
+				builder.add(scenarioId);
 			} catch (Exception e) {
 				break;
 			}

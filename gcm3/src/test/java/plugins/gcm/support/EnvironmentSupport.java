@@ -1,4 +1,4 @@
-package plugins.support;
+package plugins.gcm.support;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,6 +35,8 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
+import plugins.materials.testsupport.TestMaterialsProducerId;
+import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.properties.support.PropertyDefinition;
@@ -185,8 +187,8 @@ public class EnvironmentSupport {
 		for (final TestRegionId testRegionId : TestRegionId.values()) {
 			scenarioBuilder.addRegionId(testRegionId, () -> new TaskComponent()::init);
 		}
-		for (final XTestMaterialsProducerId xTestMaterialsProducerId : XTestMaterialsProducerId.values()) {
-			scenarioBuilder.addMaterialsProducerId(xTestMaterialsProducerId, () -> new TaskComponent()::init);
+		for (final TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new TaskComponent()::init);
 		}
 		for (final TestResourceId testResourceId : TestResourceId.values()) {
 			scenarioBuilder.addResource(testResourceId);
@@ -290,13 +292,13 @@ public class EnvironmentSupport {
 			scenarioBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
 		}
 
-		propertyDefinitionMap = getPropertyDefinitionMap(XTestMaterialsProducerPropertyId.values(), propertyAssignmentPolicy, randomGenerator);
-		for (final XTestMaterialsProducerPropertyId xTestMaterialsProducerPropertyId : XTestMaterialsProducerPropertyId.values()) {
-			PropertyDefinition propertyDefinition = forcedPropertyDefinitions.get(xTestMaterialsProducerPropertyId);
+		propertyDefinitionMap = getPropertyDefinitionMap(TestMaterialsProducerPropertyId.values(), propertyAssignmentPolicy, randomGenerator);
+		for (final TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			PropertyDefinition propertyDefinition = forcedPropertyDefinitions.get(testMaterialsProducerPropertyId);
 			if (propertyDefinition == null) {
-				propertyDefinition = propertyDefinitionMap.get(xTestMaterialsProducerPropertyId);
+				propertyDefinition = propertyDefinitionMap.get(testMaterialsProducerPropertyId);
 			}
-			scenarioBuilder.defineMaterialsProducerProperty(xTestMaterialsProducerPropertyId, propertyDefinition);
+			scenarioBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition);
 		}
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {

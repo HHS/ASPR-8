@@ -1,4 +1,4 @@
-package plugins.support.experimentspace;
+package plugins.gcm.support.experimentspace;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import plugins.gcm.input.Scenario;
-import plugins.support.experimentspace.ExperimentTestDimension.ExperimentTestDimensionBuilder;
+import plugins.gcm.support.experimentspace.ExperimentTestDimension.ExperimentTestDimensionBuilder;
 import util.MultiKey;
 
 /**

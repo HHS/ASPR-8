@@ -1,8 +1,6 @@
-package plugins.gcm.experiment.output;
+package nucleus.util.experiment.output;
 
 import net.jcip.annotations.Immutable;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
 
 /**
  * An output implementor used to pseudo-logging of GCM items.
@@ -25,7 +23,7 @@ public class LogItem  {
 		return message;
 	}
 
-	public LogItem(ScenarioId scenarioId, ReplicationId replicationId, LogStatus logStatus, String message) {
+	public LogItem(int scenarioId,  LogStatus logStatus, String message) {
 		super();
 		this.logStatus = logStatus;
 		this.message = message;

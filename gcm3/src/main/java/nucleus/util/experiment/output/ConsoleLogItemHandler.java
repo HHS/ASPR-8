@@ -1,18 +1,16 @@
-package plugins.gcm.experiment.output;
+package nucleus.util.experiment.output;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
-import plugins.gcm.experiment.progress.ExperimentProgressLog;
+import nucleus.util.experiment.progress.ExperimentProgressLog;
 
 @ThreadSafe
 public class ConsoleLogItemHandler implements OutputItemHandler {
 
 	@Override
-	public void openSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+	public void openSimulation(int scenarioId) {
 		// do nothing
 
 	}
@@ -24,7 +22,7 @@ public class ConsoleLogItemHandler implements OutputItemHandler {
 	}
 
 	@Override
-	public void closeSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+	public void closeSimulation(int scenarioId) {
 		// do nothing
 
 	}
@@ -36,14 +34,12 @@ public class ConsoleLogItemHandler implements OutputItemHandler {
 	}
 
 	@Override
-	public void handle(ScenarioId scenarioId, ReplicationId replicationId, Object output) {
+	public void handle(int scenarioId, Object output) {
 		LogItem logItem = (LogItem) output;
 		StringBuilder sb = new StringBuilder();
-		if (scenarioId.getValue() < 0 || replicationId.getValue() < 0) {
+		if (scenarioId < 0 ) {
 			sb.append("[scenario = ");
-			sb.append(scenarioId.getValue());
-			sb.append(", replication = ");
-			sb.append(replicationId.getValue());
+			sb.append(scenarioId);			
 			sb.append("] ");
 		}
 		sb.append(logItem.getLogStatus());

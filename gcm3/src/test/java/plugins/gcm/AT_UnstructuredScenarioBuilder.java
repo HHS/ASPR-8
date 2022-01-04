@@ -38,6 +38,8 @@ import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
+import plugins.materials.testsupport.TestMaterialsProducerId;
+import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -53,8 +55,6 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import plugins.support.XTestMaterialsProducerId;
-import plugins.support.XTestMaterialsProducerPropertyId;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -108,7 +108,7 @@ public class AT_UnstructuredScenarioBuilder {
 		BatchId batchId = new BatchId(14);
 		MaterialId materialId = TestMaterialId.MATERIAL_1;
 		double amount = 10;
-		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
 		// precondition: if the batch id is null
 		scenarioBuilder.addBatch(null, materialId, amount, materialsProducerId);
@@ -195,7 +195,7 @@ public class AT_UnstructuredScenarioBuilder {
 		BatchId batchId = new BatchId(15);
 		MaterialId materialId = TestMaterialId.MATERIAL_2;
 		double amount = 13.5;
-		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_3;
+		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
 		// precondition: if the stage id is null
 		scenarioBuilder.addBatchToStage(null, batchId);
@@ -235,10 +235,10 @@ public class AT_UnstructuredScenarioBuilder {
 		// materials producer
 		scenarioBuilder.addBatchToStage(stageId, batchId);
 		scenarioBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
-		scenarioBuilder.addStage(stageId, false, XTestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		scenarioBuilder.addStage(stageId, false, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		scenarioBuilder.addMaterial(materialId);
 		scenarioBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
-		scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_2, () -> new PlaceholderComponent()::init);
+		scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_2, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
 		assertEquals(ScenarioErrorType.BATCH_STAGED_TO_DIFFERENT_OWNER, scenarioException.getScenarioErrorType());
 
@@ -442,7 +442,7 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "addMaterialsProducerId", args = { MaterialsProducerId.class, Class.class })
 	public void testAddMaterialsProducerId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
 		// precondition: if the materials producer id is null
 		scenarioBuilder.addMaterialsProducerId(null, () -> new PlaceholderComponent()::init);
@@ -679,7 +679,7 @@ public class AT_UnstructuredScenarioBuilder {
 
 		StageId stageId = new StageId(67);
 
-		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_3;
+		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
 		// precondition: if the stage id is null
 		scenarioBuilder.addStage(null, true, materialsProducerId);
@@ -694,7 +694,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the materials producer id is unknown
-		scenarioBuilder.addStage(stageId, true, XTestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		scenarioBuilder.addStage(stageId, true, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		scenarioBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
 		assertEquals(ScenarioErrorType.UNKNOWN_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
@@ -1006,7 +1006,7 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "defineMaterialsProducerProperty", args = { MaterialsProducerPropertyId.class, PropertyDefinition.class })
 	public void testDefineMaterialsProducerProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(6)//
@@ -1266,7 +1266,7 @@ public class AT_UnstructuredScenarioBuilder {
 		Object incompatiblePropertyValue = generateIncompatiblePropertyValue(propertyDefinition, random);
 		MaterialId materialId = TestMaterialId.MATERIAL_3;
 		double amount = 2341456;
-		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
 		// precondition: if the batch id is null
 		scenarioBuilder.setBatchPropertyValue(null, batchPropertyId, propertyValue);
@@ -1570,8 +1570,8 @@ public class AT_UnstructuredScenarioBuilder {
 	public void testSetMaterialsProducerPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
-		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
+		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 		Object propertyValue = 45;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
@@ -1586,7 +1586,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_MATERIALS_PRODUCER_PROPERTY_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the materials producer property id is unknown
-		scenarioBuilder.setMaterialsProducerPropertyValue(materialsProducerId, XTestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyValue);
+		scenarioBuilder.setMaterialsProducerPropertyValue(materialsProducerId, TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyValue);
 		scenarioBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
 		scenarioBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());
@@ -1646,7 +1646,7 @@ public class AT_UnstructuredScenarioBuilder {
 	@UnitTestMethod(name = "setMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class, long.class })
 	public void testSetMaterialsProducerResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		XTestMaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		ResourceId resourceId = TestResourceId.RESOURCE_3;
 		long amount = 234;
 
@@ -1658,7 +1658,7 @@ public class AT_UnstructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the materials producer id is unknown
-		scenarioBuilder.setMaterialsProducerResourceLevel(XTestMaterialsProducerId.getUnknownMaterialsProducerId(), resourceId, amount);
+		scenarioBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.getUnknownMaterialsProducerId(), resourceId, amount);
 		scenarioBuilder.addMaterialsProducerId(materialsProducerId, () -> new PlaceholderComponent()::init);
 		scenarioBuilder.addResource(resourceId);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.build());

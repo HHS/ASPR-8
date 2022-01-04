@@ -1,4 +1,4 @@
-package plugins.gcm.experiment.progress;
+package nucleus.util.experiment.progress;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,10 +14,9 @@ import java.util.Set;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
-import plugins.gcm.experiment.output.OutputItemHandler;
-import plugins.gcm.experiment.output.SimulationStatusItem;
+import nucleus.util.experiment.output.OutputItemHandler;
+import nucleus.util.experiment.output.SimulationStatusItem;
+
 
 /**
  * An {@link OutputItemHandler} implementor that handles
@@ -64,7 +63,7 @@ public final class NIOExperimentProgressLogWriter implements OutputItemHandler {
 	}
 
 	@Override
-	public synchronized void closeSimulation(final ScenarioId scenarioId, final ReplicationId replicationId) {
+	public synchronized void closeSimulation(final int scenarioId) {
 		// do nothing
 	}
 
@@ -76,11 +75,12 @@ public final class NIOExperimentProgressLogWriter implements OutputItemHandler {
 	}
 
 	@Override
-	public synchronized void handle(ScenarioId scenarioId, ReplicationId replicationId, final Object output) {
+	public synchronized void handle(int scenarioId, final Object output) {
 		final SimulationStatusItem simulationStatusItem = (SimulationStatusItem) output;
 		if (simulationStatusItem.successful()) {
 			try {
-				writer.write(scenarioId + "\t" + replicationId + lineSeparator);
+				writer.write(scenarioId);
+				writer.write(lineSeparator);
 				writer.flush();
 			} catch (final IOException e) {
 				throw new RuntimeException(e);
@@ -104,10 +104,9 @@ public final class NIOExperimentProgressLogWriter implements OutputItemHandler {
 		writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
 
 		try {
-			for (final ScenarioId scenarioId : experimentProgressLog.getScenarioIds()) {
-				for (final ReplicationId replicationId : experimentProgressLog.getReplicationIds(scenarioId)) {
-					writer.write(scenarioId.getValue() + "\t" + replicationId.getValue() + lineSeparator);
-				}
+			for (final Integer scenarioId : experimentProgressLog.getScenarioIds()) {
+					writer.write(scenarioId);
+					writer.write(lineSeparator);
 			}
 			writer.flush();
 		} catch (final IOException e) {
@@ -116,8 +115,7 @@ public final class NIOExperimentProgressLogWriter implements OutputItemHandler {
 	}
 
 	@Override
-	public synchronized void openSimulation(final ScenarioId scenarioId, final ReplicationId replicationId) {
-		// do nothing
+	public synchronized void openSimulation(final int scenarioId) {
 
 	}
 }

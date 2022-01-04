@@ -37,6 +37,8 @@ import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
+import plugins.materials.testsupport.TestMaterialsProducerId;
+import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -52,8 +54,6 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import plugins.support.XTestMaterialsProducerId;
-import plugins.support.XTestMaterialsProducerPropertyId;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -101,28 +101,28 @@ public class AT_StructuredScenarioBuilder {
 
 		// precondition : ModelException thrown if the batch id is null
 		scenarioBuilder.addMaterial(TestMaterialId.MATERIAL_1);
-		scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
-		ScenarioException scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(null, TestMaterialId.MATERIAL_1, amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
+		ScenarioException scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(null, TestMaterialId.MATERIAL_1, amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.NULL_BATCH_ID, scenarioException.getScenarioErrorType());
 		// precondition : ModelException thrown if the material does not exist
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, null, amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, null, amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.NULL_MATERIAL_ID, scenarioException.getScenarioErrorType());
 
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.getUnknownMaterialId(), amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.getUnknownMaterialId(), amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.UNKNOWN_MATERIAL_ID, scenarioException.getScenarioErrorType());
 
 		// precondition : ModelException thrown if the amount is negative
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, -1.0, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, -1.0, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.NEGATIVE_MATERIAL_AMOUNT, scenarioException.getScenarioErrorType());
 
 		// precondition : ModelException thrown if the amount is not finite
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, Double.NEGATIVE_INFINITY, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, Double.NEGATIVE_INFINITY, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.NON_FINITE_MATERIAL_AMOUNT, scenarioException.getScenarioErrorType());
 
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, Double.POSITIVE_INFINITY, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, Double.POSITIVE_INFINITY, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.NON_FINITE_MATERIAL_AMOUNT, scenarioException.getScenarioErrorType());
 
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, Double.NaN, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, Double.NaN, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.NON_FINITE_MATERIAL_AMOUNT, scenarioException.getScenarioErrorType());
 
 		// precondition : ModelException thrown if the materials producer does
@@ -130,17 +130,17 @@ public class AT_StructuredScenarioBuilder {
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, null));
 		assertEquals(ScenarioErrorType.NULL_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
 
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, XTestMaterialsProducerId.getUnknownMaterialsProducerId()));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 		assertEquals(ScenarioErrorType.UNKNOWN_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
 
 		// precondition : ModelException thrown if the batch id was previously
 		// added
-		scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER, scenarioException.getScenarioErrorType());
 
 		// postcondition : the batch has the expected amount
-		scenarioBuilder.addBatch(batchId2, TestMaterialId.MATERIAL_1, amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioBuilder.addBatch(batchId2, TestMaterialId.MATERIAL_1, amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 		Scenario scenario = scenarioBuilder.build();
 		assertEquals(amount, scenario.getBatchAmount(batchId2));
 
@@ -148,7 +148,7 @@ public class AT_StructuredScenarioBuilder {
 		assertEquals(TestMaterialId.MATERIAL_1, scenario.getBatchMaterial(batchId2));
 
 		// postcondition : the batch is owned by the correct materials producer
-		assertEquals(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, scenario.getBatchMaterialsProducer(batchId2));
+		assertEquals(TestMaterialsProducerId.MATERIALS_PRODUCER_1, scenario.getBatchMaterialsProducer(batchId2));
 	}
 
 	/**
@@ -169,9 +169,9 @@ public class AT_StructuredScenarioBuilder {
 
 		// precondition : ModelException thrown if the stage does not exist
 		scenarioBuilder.addMaterial(TestMaterialId.MATERIAL_1);
-		scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
-		scenarioBuilder.addBatch(batchId, TestMaterialId.MATERIAL_1, amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		scenarioBuilder.addStage(stageId1, false, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
+		scenarioBuilder.addBatch(batchId, TestMaterialId.MATERIAL_1, amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioBuilder.addStage(stageId1, false, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 
 		ScenarioException scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatchToStage(null, batchId));
 		assertEquals(ScenarioErrorType.NULL_STAGE_ID, scenarioException.getScenarioErrorType());
@@ -186,14 +186,14 @@ public class AT_StructuredScenarioBuilder {
 		// precondition : ModelException thrown if the stage and batch are not
 		// associated with the same
 		// materials producer
-		scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_2, () -> new PlaceholderComponent()::init);
-		scenarioBuilder.addStage(stageId2, false, XTestMaterialsProducerId.MATERIALS_PRODUCER_2);
+		scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_2, () -> new PlaceholderComponent()::init);
+		scenarioBuilder.addStage(stageId2, false, TestMaterialsProducerId.MATERIALS_PRODUCER_2);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatchToStage(stageId2, batchId));
 		assertEquals(ScenarioErrorType.BATCH_STAGED_TO_DIFFERENT_OWNER, scenarioException.getScenarioErrorType());
 		// precondition : ModelException thrown if the batch is already
 		// associated with any stage
 		scenarioBuilder.addBatchToStage(stageId1, batchId);
-		scenarioBuilder.addStage(stageId3, false, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioBuilder.addStage(stageId3, false, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatchToStage(stageId3, batchId));
 		assertEquals(ScenarioErrorType.BATCH_ALREADY_STAGED, scenarioException.getScenarioErrorType());
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addBatchToStage(stageId1, batchId));
@@ -353,21 +353,21 @@ public class AT_StructuredScenarioBuilder {
 		ScenarioException scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addMaterialsProducerId(null, () -> new PlaceholderComponent()::init));
 		assertEquals(ScenarioErrorType.NULL_COMPONENT_IDENTIFIER, scenarioException.getScenarioErrorType());
 		// precondition : materialsProducerComponentClass cannot be null
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, null));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null));
 		assertEquals(ScenarioErrorType.NULL_AGENT_INITIAL_BEHAVIOR_SUPPLIER, scenarioException.getScenarioErrorType());
-		scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
+		scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
 
 		// precondition : materials producer id cannot duplicate previous
 		// materials producer id
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init));
 		assertEquals(ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER, scenarioException.getScenarioErrorType());
 		// postcondition : scenario contains only the materials producer id
 		// added
 		Scenario scenario = scenarioBuilder.build();
 		Set<MaterialsProducerId> materialsProducerIds = scenario.getMaterialsProducerIds();
 		assertTrue(materialsProducerIds.size() == 1);
-		assertTrue(materialsProducerIds.contains(XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
-		assertNotNull(scenario.getMaterialsProducerInitialBehaviorSupplier(XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		assertTrue(materialsProducerIds.contains(TestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		assertNotNull(scenario.getMaterialsProducerInitialBehaviorSupplier(TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 	}
 
 	/**
@@ -536,8 +536,8 @@ public class AT_StructuredScenarioBuilder {
 
 		// precondition : ModelException thrown if if the stage id is null
 		scenarioBuilder.addMaterial(TestMaterialId.MATERIAL_1);
-		scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
-		ScenarioException scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addStage(null, true, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
+		ScenarioException scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addStage(null, true, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.NULL_STAGE_ID, scenarioException.getScenarioErrorType());
 
 		// precondition : ModelException thrown if if the materials producer
@@ -545,23 +545,23 @@ public class AT_StructuredScenarioBuilder {
 		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addStage(stageId1, true, null));
 		assertEquals(ScenarioErrorType.NULL_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
 
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addStage(stageId1, true, XTestMaterialsProducerId.getUnknownMaterialsProducerId()));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addStage(stageId1, true, TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 		assertEquals(ScenarioErrorType.UNKNOWN_MATERIALS_PRODUCER_ID, scenarioException.getScenarioErrorType());
 
 		// precondition : ModelException thrown if if the stage id was
 		// previously added
-		scenarioBuilder.addStage(stageId2, false, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addStage(stageId2, true, XTestMaterialsProducerId.MATERIALS_PRODUCER_1));
+		scenarioBuilder.addStage(stageId2, false, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.addStage(stageId2, true, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
 		assertEquals(ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER, scenarioException.getScenarioErrorType());
 
 		// postcondition : the stage has the offered state
-		scenarioBuilder.addStage(stageId1, true, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioBuilder.addStage(stageId1, true, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 		Scenario scenario = scenarioBuilder.build();
 		assertEquals(true, scenario.isStageOffered(stageId1));
 		assertEquals(false, scenario.isStageOffered(stageId2));
 
 		// postcondition : the stage is owned by the correct materials producer
-		assertEquals(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, scenario.getStageMaterialsProducer(stageId1));
+		assertEquals(TestMaterialsProducerId.MATERIALS_PRODUCER_1, scenario.getStageMaterialsProducer(stageId1));
 	}
 
 	/**
@@ -753,7 +753,7 @@ public class AT_StructuredScenarioBuilder {
 	public void testDefineMaterialsProducerProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 
 		PropertyDefinition inputPropertyDefinition = PropertyDefinition	.builder()//
 																		.setType(Integer.class)//
@@ -906,8 +906,8 @@ public class AT_StructuredScenarioBuilder {
 																	.build();//
 		scenarioBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, batchPropertyId1, propertyDefinition);
 
-		scenarioBuilder.addMaterialsProducerId(XTestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
-		scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, XTestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		scenarioBuilder.addMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, () -> new PlaceholderComponent()::init);
+		scenarioBuilder.addBatch(batchId1, TestMaterialId.MATERIAL_1, amount, TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 
 		ScenarioException scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.setBatchPropertyValue(null, batchPropertyId1, propertyValue1));
 		assertEquals(ScenarioErrorType.NULL_BATCH_ID, scenarioException.getScenarioErrorType());
@@ -1104,13 +1104,13 @@ public class AT_StructuredScenarioBuilder {
 	public void testSetMaterialsProducerPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
-		MaterialsProducerPropertyId materialsProducerPropertyId = XTestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 		Object propertyValue = 5;
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(17)//
 																	.build();//
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		scenarioBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
 
 		// precondition : if the materials producer id is null
@@ -1127,7 +1127,7 @@ public class AT_StructuredScenarioBuilder {
 		assertEquals(ScenarioErrorType.NULL_MATERIALS_PRODUCER_PROPERTY_ID, scenarioException.getScenarioErrorType());
 
 		// precondition : if the materials property id is unknown
-		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.setMaterialsProducerPropertyValue(materialsProducerId, XTestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyValue));
+		scenarioException = assertThrows(ScenarioException.class, () -> scenarioBuilder.setMaterialsProducerPropertyValue(materialsProducerId, TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyValue));
 		assertEquals(ScenarioErrorType.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, scenarioException.getScenarioErrorType());
 
 		// precondition: if the value is null
@@ -1159,7 +1159,7 @@ public class AT_StructuredScenarioBuilder {
 	public void testSetMaterialsProducerResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
-		MaterialsProducerId materialsProducerId = XTestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		Long amount = 2578L;
 		ResourceId resourceId = TestResourceId.RESOURCE_1;
 

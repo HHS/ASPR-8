@@ -1,11 +1,10 @@
-package plugins.gcm.experiment.output;
+package nucleus.util.experiment.output;
 
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
-import plugins.gcm.experiment.progress.ExperimentProgressLog;
+import nucleus.util.experiment.progress.ExperimentProgressLog;
+
 
 /**
  * Defines the behavior of a thread-safe handler of {@link OutputItem}
@@ -19,7 +18,7 @@ public interface OutputItemHandler {
 	 * Invoked to indicate that the given simulation has started. This is a
 	 * blocking method.
 	 */
-	public void openSimulation(ScenarioId scenarioId, ReplicationId replicationId);
+	public void openSimulation(int scenarioId);
 
 	/**
 	 * Invoked to indicate that the experiment has started. All output from
@@ -34,7 +33,7 @@ public interface OutputItemHandler {
 	 * the given simulation. This is a blocking method and all retained
 	 * information about the specific simulation execution should be flushed.
 	 */
-	public void closeSimulation(ScenarioId scenarioId, ReplicationId replicationId);
+	public void closeSimulation(int scenarioId);
 
 	/**
 	 * Invoked to indicate that no more handle invocations will be called for
@@ -47,7 +46,7 @@ public interface OutputItemHandler {
 	 * Handles the OutputItem. This method is not required to block.
 	 *
 	 */
-	public void handle(ScenarioId scenarioId, ReplicationId replicationId, Object output);
+	public void handle(int scenarioId, Object output);
 
 	/**
 	 * Returns a set of class references indicating which sub-types of

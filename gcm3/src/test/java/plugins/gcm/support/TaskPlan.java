@@ -1,4 +1,4 @@
-package plugins.support;
+package plugins.gcm.support;
 
 import plugins.gcm.agents.Environment;
 import plugins.gcm.agents.Plan;

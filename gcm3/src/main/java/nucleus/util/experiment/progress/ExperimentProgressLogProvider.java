@@ -1,6 +1,6 @@
-package plugins.gcm.experiment.progress;
+package nucleus.util.experiment.progress;
 
-import plugins.gcm.experiment.output.OutputItemHandler;
+import nucleus.util.experiment.output.OutputItemHandler;
 
 public interface ExperimentProgressLogProvider {
 

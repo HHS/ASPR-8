@@ -1,4 +1,4 @@
-package plugins.gcm.experiment.output;
+package nucleus.util.experiment.output;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
-import plugins.gcm.experiment.progress.ExperimentProgressLog;
+import nucleus.util.experiment.progress.ExperimentProgressLog;
 import util.TimeElapser;
 
 /**
@@ -74,13 +72,13 @@ public final class SimulationStatusItemHandler implements OutputItemHandler {
 	 * @param replicationCount
 	 *            the number of replications in the experiment
 	 */
-	public SimulationStatusItemHandler(int scenarioCount, int replicationCount, OutputItemHandler logItemHandler) {
-		experimentCount = scenarioCount * replicationCount;
+	public SimulationStatusItemHandler(int scenarioCount, OutputItemHandler logItemHandler) {
+		experimentCount = scenarioCount;
 		this.logItemHandler = logItemHandler;
 	}
 
 	@Override
-	public synchronized void closeSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+	public synchronized void closeSimulation(int scenarioId) {
 		// do nothing
 	}
 
@@ -109,15 +107,15 @@ public final class SimulationStatusItemHandler implements OutputItemHandler {
 		return h + ":" + getBase60String(m) + ":" + getBase60String(s);
 	}
 
-	private final ScenarioId defaultScenarioId = new ScenarioId(-1);
-	private final ReplicationId defaultReplicationId = new ReplicationId(-1);
+	private final int defaultScenarioId = -1;
+	
 
-	private ScenarioId sourceScenarioId = defaultScenarioId;
-	private ReplicationId sourceReplicationId = defaultReplicationId;
+	private int sourceScenarioId = defaultScenarioId;
+	
 
 	private void log(LogStatus logStatus, String message) {
 
-		logItemHandler.handle(sourceScenarioId, sourceReplicationId, new LogItem(sourceScenarioId, sourceReplicationId, logStatus, message));
+		logItemHandler.handle(sourceScenarioId,  new LogItem(sourceScenarioId,  logStatus, message));
 	}
 
 	private void logInfo(String message) {
@@ -157,14 +155,12 @@ public final class SimulationStatusItemHandler implements OutputItemHandler {
 	}
 
 	@Override
-	public synchronized void handle(ScenarioId scenarioId, ReplicationId replicationId, Object output) {
-		sourceScenarioId = scenarioId;
-		sourceReplicationId = replicationId;
+	public synchronized void handle(int scenarioId, Object output) {
+		sourceScenarioId = scenarioId;		
 		try {
 			handleSimulationStatusItem((SimulationStatusItem) output);
 		} finally {
-			sourceScenarioId = defaultScenarioId;
-			sourceReplicationId = defaultReplicationId;
+			sourceScenarioId = defaultScenarioId;			
 		}
 	}
 
@@ -173,7 +169,7 @@ public final class SimulationStatusItemHandler implements OutputItemHandler {
 		if (simulationStatusItem.successful()) {
 			successCount++;
 		} else {
-			String errorMessage = "\t" + "Scenario " + sourceScenarioId + " Replication " + sourceReplicationId;
+			String errorMessage = "\t" + "Scenario " + sourceScenarioId;
 			failedSimulationStatusItems.add(errorMessage);
 		}
 		int completionCount = successCount + previousProgressCount + failedSimulationStatusItems.size();
@@ -200,7 +196,7 @@ public final class SimulationStatusItemHandler implements OutputItemHandler {
 	}
 
 	@Override
-	public synchronized void openSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+	public synchronized void openSimulation(int scenarioId) {
 		// do nothing
 	}
 

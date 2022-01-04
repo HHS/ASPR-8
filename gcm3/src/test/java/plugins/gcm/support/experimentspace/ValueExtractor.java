@@ -1,4 +1,4 @@
-package plugins.support.experimentspace;
+package plugins.gcm.support.experimentspace;
 
 import plugins.gcm.experiment.ExperimentBuilder;
 import plugins.gcm.input.Scenario;

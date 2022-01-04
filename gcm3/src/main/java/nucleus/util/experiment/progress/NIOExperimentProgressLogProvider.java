@@ -1,9 +1,10 @@
-package plugins.gcm.experiment.progress;
+package nucleus.util.experiment.progress;
 
 import java.nio.file.Path;
 
 import net.jcip.annotations.ThreadSafe;
-import plugins.gcm.experiment.output.OutputItemHandler;
+import nucleus.util.experiment.output.OutputItemHandler;
+
 
 @ThreadSafe
 public final class NIOExperimentProgressLogProvider implements ExperimentProgressLogProvider {

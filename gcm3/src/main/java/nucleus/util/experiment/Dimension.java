@@ -1,0 +1,54 @@
+package nucleus.util.experiment;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+import util.TypeMap;
+
+public class Dimension {
+
+	private static class Data {
+		String name;
+		List<Function<TypeMap<InitialDataBuilder>, String>> memberGenerators = new ArrayList<>();
+	}
+
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	public static class Builder {
+		private Data data = new Data();
+
+		private Builder() {
+		}
+
+		public Dimension build() {
+			try {
+				return new Dimension(data);
+			} finally {
+				data = new Data();
+			}
+		}
+		
+		public Builder addMemberGenerator(Function<TypeMap<InitialDataBuilder>, String> memberGenerator) {
+			data.memberGenerators.add(memberGenerator);
+			return this;
+		}
+	}
+
+	private Dimension(Data data) {
+		this.data = data;
+	}
+
+	private final Data data;
+
+	public String getName() {
+		return data.name;
+	}
+
+	public List<Function<TypeMap<InitialDataBuilder>, String>> getMemberGenerators() {
+		return new ArrayList<>(data.memberGenerators);
+	}
+
+}

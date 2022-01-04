@@ -1,4 +1,4 @@
-package plugins.gcm.experiment.output;
+package nucleus.util.experiment.output;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,15 +13,13 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportId;
-import plugins.gcm.experiment.Experiment;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
-import plugins.gcm.experiment.progress.ExperimentProgressLog;
+import nucleus.util.experiment.Experiment;
+import nucleus.util.experiment.progress.ExperimentProgressLog;
 import plugins.reports.support.ReportItem;
 
 
 /**
- * An implementor of ReportItemHandler that uses java.nio framework. Reports are
+ * An implementor of OutputItemHandler that uses the java.nio framework. Reports are
  * headered, tab-delimited files.
  * 
  * @author Shawn Hatch
@@ -29,82 +27,7 @@ import plugins.reports.support.ReportItem;
  */
 public final class NIOReportItemHandler implements OutputItemHandler {
 
-	private static class LineWriter extends NIOHeaderedOutputItemHandler {
-
-		private final String experimentHeader;
-		private final List<String> experimentFields = new ArrayList<>();
-		private final Experiment regularExperiment;
-		private final boolean displayExperimentColumnsInReports;
-
-		public LineWriter(final Path path, final Experiment regularExperiment, final boolean displayExperimentColumnsInReports, final ExperimentProgressLog experimentProgressLog) {
-			super(path);
-
-			this.displayExperimentColumnsInReports = displayExperimentColumnsInReports;
-
-			this.regularExperiment = regularExperiment;
-
-			if (displayExperimentColumnsInReports) {
-				for (int i = 0; i < regularExperiment.getExperimentFieldCount(); i++) {
-					experimentFields.add(regularExperiment.getExperimentFieldName(i));
-				}
-				final StringBuilder sb = new StringBuilder();
-				for (final String experimentField : experimentFields) {
-					sb.append("\t");
-					sb.append(experimentField);
-				}
-				experimentHeader = sb.toString();
-			} else {
-				experimentHeader = "";
-			}
-
-		}
-
-		@Override
-		public Set<Class<?>> getHandledClasses() {
-			final Set<Class<?>> result = new LinkedHashSet<>();
-			result.add(ReportItem.class);
-			return result;
-		}
-
-		@Override
-		protected String getHeader(final Object output) {
-			final ReportItem reportItem = (ReportItem) output;
-			final StringBuilder sb = new StringBuilder();
-			sb.append("Scenario");
-			sb.append("\t");
-			sb.append("Replication");
-			sb.append(experimentHeader);
-			final List<String> headerStrings = reportItem.getReportHeader().getHeaderStrings();
-			for (final String headerString : headerStrings) {
-				sb.append("\t");
-				sb.append(headerString);
-			}
-			return sb.toString();
-		}
-
-		@Override
-		protected String getOutputLine(ScenarioId scenarioId, ReplicationId replicationId, final Object output) {
-			final ReportItem reportItem = (ReportItem) output;
-			final StringBuilder sb = new StringBuilder();
-			sb.append(scenarioId);
-			sb.append("\t");
-			sb.append(replicationId);
-
-			if (displayExperimentColumnsInReports) {
-				for (int i = 0; i < regularExperiment.getExperimentFieldCount(); i++) {
-					sb.append("\t");
-					final Object experimentFieldValue = regularExperiment.getExperimentFieldValue(scenarioId, i);
-					sb.append(experimentFieldValue);
-				}
-			}
-
-			for (int i = 0; i < reportItem.size(); i++) {
-				sb.append("\t");
-				sb.append(reportItem.getValue(i));
-			}
-			return sb.toString();
-		}
-	}
+	
 
 	public static Builder builder() {
 		return new Builder();
@@ -160,6 +83,21 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 			scaffold.reportMap.put(reportId, path);
 			return this;
 		}
+		
+		private void validate() {
+			/*
+			 * Ensure that each path is associated with exactly one report id
+			 */
+			final Map<Path, ReportId> pathMap = new LinkedHashMap<>();
+			for (final ReportId reportId : scaffold.reportMap.keySet()) {				
+				final Path path = scaffold.reportMap.get(reportId);
+				if (pathMap.containsKey(path)) {
+					throw new RuntimeException(path + " is selected for mutiple report id values");
+				}
+				pathMap.put(path, reportId);
+			}
+
+		}
 
 		/**
 		 * Builds the NIOReportItemHandlerImpl from the information gathered and
@@ -167,6 +105,7 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 		 */
 		public NIOReportItemHandler build() {
 			try {
+				validate();				
 				return new NIOReportItemHandler(scaffold);
 			} finally {
 				scaffold = new Scaffold();
@@ -261,10 +200,10 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 	}
 
 	@Override
-	public void closeSimulation(final ScenarioId scenarioId, final ReplicationId replicationId) {
+	public void closeSimulation(final int scenarioId) {
 		synchronized (lineWriterMap) {
 			for (final LineWriter lineWriter : lineWriterMap.values()) {
-				lineWriter.closeSimulation(scenarioId, replicationId);
+				lineWriter.closeSimulation(scenarioId);
 			}
 		}
 	}
@@ -280,11 +219,11 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 
 	
 	@Override
-	public void handle(ScenarioId scenarioId, ReplicationId replicationId, final Object output) {
+	public void handle(int scenarioId, final Object output) {
 		final ReportItem reportItem = (ReportItem) output;
 		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportId());
 		if (lineWriter != null) {
-			lineWriter.handle(scenarioId, replicationId, reportItem);
+			lineWriter.handle(scenarioId, reportItem);
 		}
 	}
 
@@ -293,17 +232,6 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 		synchronized (lineWriterMap) {
 			if (experimentColumnReportPath != null) {
 				writeExperimentScenarioReport(experiment);
-			}
-			/*
-			 * Ensure that each path is associated with exactly one report id
-			 */
-			final Map<Path, ReportId> pathMap = new LinkedHashMap<>();
-			for (final ReportId reportId : reportMap.keySet()) {				
-				final Path path = reportMap.get(reportId);
-				if (pathMap.containsKey(path)) {
-					throw new RuntimeException(path + " is selected for mutiple report id values");
-				}
-				pathMap.put(path, reportId);
 			}
 
 			for (final ReportId reportId : reportMap.keySet()) {				
@@ -316,7 +244,7 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 	}
 
 	@Override
-	public void openSimulation(final ScenarioId scenarioId, final ReplicationId replicationId) {
+	public void openSimulation(final int scenarioId) {
 		// do nothing
 	}
 

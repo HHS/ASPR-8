@@ -1,4 +1,4 @@
-package plugins.support;
+package plugins.gcm.support;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import plugins.components.support.ComponentId;
-import plugins.support.TaskPlan.Task;
+import plugins.gcm.support.TaskPlan.Task;
 
 /**
  * A mutable container for holding TestPlans that are distributed to a test
