@@ -85,11 +85,12 @@ public final class Experiment {
 
 		int modulus = 1;
 		for (Dimension dimension : data.dimensions) {
-			List<Function<TypeMap<InitialDataBuilder>, String>> memberGenerators = dimension.getMemberGenerators();
+			List<Function<TypeMap<InitialDataBuilder>, List<String>>> memberGenerators = dimension.getMemberGenerators();
 			int index = (scenarioId / modulus) % memberGenerators.size();
-			Function<TypeMap<InitialDataBuilder>, String> memberGenerator = memberGenerators.get(index);
-			String label = memberGenerator.apply(initialDataBuilders);
-			dimensionValueMap.put(dimension.getName(), label);
+			Function<TypeMap<InitialDataBuilder>, List<String>> memberGenerator = memberGenerators.get(index);
+			List<String>  labels = memberGenerator.apply(initialDataBuilders);
+			dimension.getIds()
+			dimensionValueMap.put(dimension.getIds(), label);
 			modulus *= memberGenerators.size();
 		}
 
@@ -97,7 +98,7 @@ public final class Experiment {
 
 		Engine engine = data.engineFunction.apply(initialDataTypeMap);
 
-		return Scenario.builder().setEngine(engine).setId(scenarioId).setDimensionValueMap(null).build();
+		return Scenario.builder().setEngine(engine).setId(scenarioId).setDimensionValueMap(dimensionValueMap).build();
 	}
 
 }

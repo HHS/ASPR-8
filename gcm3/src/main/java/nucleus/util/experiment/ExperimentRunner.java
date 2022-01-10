@@ -23,29 +23,24 @@ import nucleus.util.experiment.output.SimulationStatusItemHandler;
 import nucleus.util.experiment.progress.ExperimentProgressLog;
 import nucleus.util.experiment.progress.NIOExperimentProgressLogReader;
 import nucleus.util.experiment.progress.NIOExperimentProgressLogWriter;
-import plugins.gcm.GCMMonolithicSupport;
-import plugins.gcm.experiment.Replication;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
 
 //import plugins.gcm.experiment.output.ConsoleLogItemHandler;
+
 //import plugins.gcm.experiment.output.LogItem;
 //import plugins.gcm.experiment.output.OutputItemHandler;
 //import plugins.gcm.experiment.output.SimulationStatusItem;
 //import plugins.gcm.experiment.output.SimulationStatusItemHandler;
 
-
 //import plugins.gcm.experiment.progress.ExperimentProgressLog;
+
 //import plugins.gcm.experiment.progress.NIOExperimentProgressLogReader;
 //import plugins.gcm.experiment.progress.NIOExperimentProgressLogWriter;
-
-
 
 import util.TimeElapser;
 
 /**
- * Multi-threaded executor of an experiment using replications, reports and
- * various settings that influence how the experiment is executed.
+ * Multi-threaded executor of an experiment using reports and various settings
+ * that influence how the experiment is executed.
  * 
  * @author Shawn Hatch
  *
@@ -58,36 +53,37 @@ public final class ExperimentRunner {
 	 */
 	private static class Scaffold {
 		private final List<OutputItemHandler> outputItemHandlers = new ArrayList<>();
-		
 		private OutputItemHandler logItemHandler;
-		
 		private Experiment experiment;
 		private int threadCount;
 		private boolean produceSimulationStatusOutput;
-		
 		private Path experimentProgressLogPath;
 		private ExperimentProgressLog experimentProgressLog = ExperimentProgressLog.builder().build();
-		
+
 	}
-	
+
 	private ExperimentRunner(Scaffold scaffold) {
 		this.scaffold = scaffold;
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
-	
+
 	public static class Builder {
 		private Scaffold scaffold = new Scaffold();
-		private Builder() {}
+
+		private Builder() {
+		}
+
 		public ExperimentRunner build() {
 			try {
 				return new ExperimentRunner(scaffold);
-			}finally {
+			} finally {
 				scaffold = new Scaffold();
 			}
 		}
+
 		/**
 		 * Add the output item handler to the experiment run.
 		 * 
@@ -103,7 +99,7 @@ public final class ExperimentRunner {
 			}
 			scaffold.outputItemHandlers.add(outputItemHandler);
 		}
-		
+
 		/**
 		 * Adds the given scenarios to the experiment
 		 *
@@ -116,9 +112,10 @@ public final class ExperimentRunner {
 			}
 			scaffold.experiment = experiment;
 		}
+
 		/**
-		 * Sets the path for experiment progress log. A null path turns off logging
-		 * and run resumption. Default value is null.
+		 * Sets the path for experiment progress log. A null path turns off
+		 * logging and run resumption. Default value is null.
 		 * 
 		 * @param path
 		 *            the {@link Path} where the report will be recorded
@@ -128,31 +125,31 @@ public final class ExperimentRunner {
 		}
 
 		/**
-		 * Sets the {@link LogItem} handler for the experiment. Defaulted to null --
-		 * no logging.
+		 * Sets the {@link LogItem} handler for the experiment. Defaulted to
+		 * null -- no logging.
 		 */
 		public void setLogItemHandler(OutputItemHandler logItemHandler) {
 			scaffold.logItemHandler = logItemHandler;
 		}
-		
-		
+
 		/**
 		 * Turns on or off the logging of experiment progress to standard out.
 		 * Default value is false.
 		 * 
 		 * @param produceConsoleOutput
-		 *            turns on/off production of the experiment progress reporting
+		 *            turns on/off production of the experiment progress
+		 *            reporting
 		 */
 		public void setProduceSimulationStatusOutput(boolean produceSimulationStatusOutput) {
 			scaffold.produceSimulationStatusOutput = produceSimulationStatusOutput;
 		}
 
 		/**
-		 * Sets the number of scenarios that may run concurrently. Generally this
-		 * should be set to one less than the number of virtual processors on the
-		 * machine that is running the experiment. Setting the thread count to zero
-		 * causes the simulations to execute in the calling thread that invokes
-		 * execute() on this ExperimentExecutor.
+		 * Sets the number of scenarios that may run concurrently. Generally
+		 * this should be set to one less than the number of virtual processors
+		 * on the machine that is running the experiment. Setting the thread
+		 * count to zero causes the simulations to execute in the calling thread
+		 * that invokes execute() on this ExperimentExecutor.
 		 *
 		 * @param threadCount
 		 *            -- The number of threads to use to run the experiment.
@@ -169,7 +166,6 @@ public final class ExperimentRunner {
 		}
 
 	}
-	
 
 	/*
 	 * Class representing the return type of SimulationCallable. This is largely
@@ -179,12 +175,10 @@ public final class ExperimentRunner {
 	@Immutable
 	private static class SimResult {
 		private final boolean success;
-		private final ScenarioId scenarioId;
-		private final ReplicationId replicationId;
+		private final int scenarioId;
 
-		public SimResult(final ScenarioId scenarioId, final ReplicationId replicationId, final boolean success) {
+		public SimResult(final int scenarioId, final boolean success) {
 			this.scenarioId = scenarioId;
-			this.replicationId = replicationId;
 			this.success = success;
 		}
 
@@ -194,8 +188,6 @@ public final class ExperimentRunner {
 			builder.append("Simulation Run for");
 			builder.append(" Scenario ");
 			builder.append(scenarioId);
-			builder.append(" Replication ");
-			builder.append(replicationId);
 			if (success) {
 				builder.append(" succeeded");
 			} else {
@@ -234,16 +226,14 @@ public final class ExperimentRunner {
 	 */
 	private static class SimulationCallable implements Callable<SimResult> {
 
-		private final int scenarioId;
+		private final Scenario scenario;
 
 		private final List<OutputItemHandler> outputItemHandlers;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Scenario scenario, int scenarioId, final List<OutputItemHandler> outputItemHandlers) {
-			this.scenarioId = scenarioId;
-			this.replication = replication;
+		private SimulationCallable(final Scenario scenario, final List<OutputItemHandler> outputItemHandlers) {
 			this.scenario = scenario;
 			this.outputItemHandlers = new ArrayList<>(outputItemHandlers);
 		}
@@ -258,7 +248,8 @@ public final class ExperimentRunner {
 		@Override
 		public SimResult call() throws Exception {
 
-			// Sim status handling here is sub-optimal and need to be abstracted away
+			// Sim status handling here is sub-optimal and need to be abstracted
+			// away
 			List<OutputItemHandler> simStatusHandlers = new ArrayList<>();
 			for (OutputItemHandler outputItemHandler : outputItemHandlers) {
 				if (outputItemHandler.getHandledClasses().contains(SimulationStatusItem.class)) {
@@ -266,16 +257,18 @@ public final class ExperimentRunner {
 				}
 			}
 
-
-			EngineBuilder engineBuilder =  GCMMonolithicSupport.getEngineBuilder(scenario, replication.getSeed());
-			OutputItemConsumerManager outputItemConsumerManager = new OutputItemConsumerManager(scenarioId, replication.getId(), outputItemHandlers);
-			engineBuilder.setOutputConsumer(outputItemConsumerManager::resolveEvent);
-			Engine engine = engineBuilder.build();			
+			// EngineBuilder engineBuilder =
+			// GCMMonolithicSupport.getEngineBuilder(scenario,
+			// replication.getSeed());
+			// OutputItemConsumerManager outputItemConsumerManager = new
+			// OutputItemConsumerManager(scenarioId, replication.getId(),
+			// outputItemHandlers);
+			// engineBuilder.setOutputConsumer(outputItemConsumerManager::resolveEvent);
+			Engine engine = scenario.getEngine();
 
 			// execute the simulation
 			boolean success = false;
 			try {
-
 				if (simStatusHandlers.isEmpty()) {
 					engine.execute();
 					success = true;
@@ -287,24 +280,21 @@ public final class ExperimentRunner {
 					} finally {
 						SimulationStatusItem simulationStatusItem = new SimulationStatusItem(timeElapser.getElapsedMilliSeconds(), success);
 						for (OutputItemHandler outputItemHandler : simStatusHandlers) {
-							outputItemHandler.handle(scenarioId, replication.getId(), simulationStatusItem);
+							outputItemHandler.handle(scenario.getId(), simulationStatusItem);
 						}
 					}
 				}
 
 			} catch (final Exception e) {
-
-				System.err.println("Simulation failure for scenario " + scenarioId + " and replication " + replication.getId());
+				System.err.println("Simulation failure for scenario " + scenario.getId());
 				e.printStackTrace();
 			}
-			return new SimResult(scenarioId, replication.getId(), success);
+			return new SimResult(scenario.getId(), success);
 		}
 
 	}
 
 	private final Scaffold scaffold;
-
-	
 
 	/**
 	 * Executes the experiment using the information supplied via the various
@@ -319,17 +309,17 @@ public final class ExperimentRunner {
 		if (scaffold.logItemHandler == null) {
 			scaffold.logItemHandler = new ConsoleLogItemHandler();
 		}
+		
 		addOutputItemHandler(scaffold.logItemHandler);
 
 		if (scaffold.produceSimulationStatusOutput) {
-			addOutputItemHandler(new SimulationStatusItemHandler(scaffold.experiment.getScenarioCount(), scaffold.replicationCount, scaffold.logItemHandler));
+			addOutputItemHandler(new SimulationStatusItemHandler(scaffold.experiment.getScenarioCount(),  scaffold.logItemHandler));
 		}
 
 		if (scaffold.experimentProgressLogPath != null) {
 			scaffold.experimentProgressLog = NIOExperimentProgressLogReader.read(scaffold.experimentProgressLogPath);
 			addOutputItemHandler(new NIOExperimentProgressLogWriter(scaffold.experimentProgressLogPath));
 		}
-		
 
 		if (scaffold.experiment == null) {
 			throw new RuntimeException("null experiment");
@@ -343,182 +333,104 @@ public final class ExperimentRunner {
 	}
 
 	/*
-	 * Utility class used for executing the experiment in a multi-threaded mode.
-	 * Represents the scenario/replication pair. Allows for sorting where
-	 * scenarios are executed with a random order so that long running scenarios
-	 * are less likely to occupy all threads at the same time.
-	 *
-	 */
-	private static class Job {// implements Comparable<Job> {
-		int scenarioIndex;
-		int replicationIndex;
-	}
-
-	private static class ScenarioCacheBlock {
-		private final Scenario scenario;
-		private int replicationCount;
-
-		public ScenarioCacheBlock(Scenario scenario) {
-			this.scenario = scenario;
-		}
-	}
-
-	/*
-	 * A cache for scenarios to cut down on scenario generation costs.
-	 */
-	private static class ScenarioCache {
-		private final int replicationCount;
-		private final Experiment experiment;
-		private Map<Integer, ScenarioCacheBlock> cache = new LinkedHashMap<>();
-
-		public ScenarioCache(int replicationCount, Experiment experiment) {
-			this.replicationCount = replicationCount;
-			this.experiment = experiment;
-		}
-
-		public Scenario getScenario(int scenarioIndex) {
-			ScenarioCacheBlock scenarioCacheBlock = cache.get(scenarioIndex);
-			if (scenarioCacheBlock == null) {
-				Scenario scenario = experiment.getScenario(scenarioIndex);
-				scenarioCacheBlock = new ScenarioCacheBlock(scenario);
-				cache.put(scenarioIndex, scenarioCacheBlock);
-			}
-			scenarioCacheBlock.replicationCount++;
-			if (scenarioCacheBlock.replicationCount >= replicationCount) {
-				cache.remove(scenarioIndex);
-			}
-			return scenarioCacheBlock.scenario;
-		}
-
-	}
-
-	/*
 	 * Executes the experiment utilizing multiple threads. If the simulation
 	 * throws an exception it is caught and handled by reporting to standard
 	 * error that the failure occured as well as printing a stack trace.
 	 */
 	private void executeMultiThreaded() {
-		try {
+
+		/*
+		 * Let all the output item handlers know that the experiment is starting
+		 */
+		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
+			outputItemHandler.openExperiment(scaffold.experimentProgressLog);
+		}
+
+		// Create the jobs and sort them to help avoid long running
+		// scenarios from bunching up in the queue. Execute only the
+		// scenario/replication pairs that are not contained in the
+		// experiment progress log.
+		List<Integer> jobs = new ArrayList<>();
+
+		for (int scenarioId = 0; scenarioId < scaffold.experiment.getScenarioCount(); scenarioId++) {
+			if (!scaffold.experimentProgressLog.contains(scenarioId)) {
+
+				jobs.add(scenarioId);
+			}
+		}
+
+		/*
+		 * If there is nothing to do, then do not engage.
+		 */
+		if (!jobs.isEmpty()) {
+
+			int jobIndex = 0;
+
+			// Create the Completion Service using the suggested thread
+			// count
+			final ExecutorService executorService = Executors.newFixedThreadPool(scaffold.threadCount);
+			final CompletionService<SimResult> completionService = new ExecutorCompletionService<>(executorService);
 
 			/*
-			 * Let all the output item handlers know that the experiment is
-			 * starting
+			 * Start the initial threads. Don't exceed the thread count or the
+			 * job count. Each time a thread is cleared, a new simulation will
+			 * be processed through the CompletionService until we run out of
+			 * simulations to run.
 			 */
-			for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-				outputItemHandler.openExperiment(scaffold.experimentProgressLog);
+			while (jobIndex < Math.min(scaffold.threadCount, jobs.size()) - 1) {
+				Integer scenarioId = jobs.get(jobIndex);
+				Scenario scenario = scaffold.experiment.getScenario(scenarioId);
+				completionService.submit(new SimulationCallable(scenario, scaffold.outputItemHandlers));
+				jobIndex++;
 			}
 
 			/*
-			 * Get the replications
+			 * While there are still jobs to be assigned to a thread, or jobs
+			 * that have not yet completed processing, we check to see if a new
+			 * job needs processing and see if a previous job has completed.
 			 */
-
-			ScenarioCache scenarioCache = new ScenarioCache(scaffold.replicationCount, scaffold.experiment);
-
-			final List<Replication> replications = Replication.getReplications(scaffold.replicationCount, scaffold.seed);
-
-			// Create the jobs and sort them to help avoid long running
-			// scenarios from bunching up in the queue. Execute only the
-			// scenario/replication pairs that are not contained in the
-			// experiment progress log.
-			List<Job> jobs = new ArrayList<>();
-
-			for (int i = 0; i < scaffold.experiment.getScenarioCount(); i++) {
-				for (int j = 0; j < replications.size(); j++) {
-					ScenarioId scenarioId = scaffold.experiment.getScenarioId(i);
-					ReplicationId replicationId = replications.get(j).getId();
-					if (!scaffold.experimentProgressLog.contains(scenarioId, replicationId)) {
-						Job job = new Job();
-						job.scenarioIndex = i;
-						job.replicationIndex = j;
-
-						jobs.add(job);
-					}
-				}
-			}
-
-			/*
-			 * If there is nothing to do, then do not engage.
-			 */
-			if (!jobs.isEmpty()) {
-
-				int jobIndex = 0;
-
-				// Create the Completion Service using the suggested thread
-				// count
-				final ExecutorService executorService = Executors.newFixedThreadPool(scaffold.threadCount);
-				final CompletionService<SimResult> completionService = new ExecutorCompletionService<>(executorService);
-
-				/*
-				 * Start the initial threads. Don't exceed the thread count or
-				 * the job count. Each time a thread is cleared, a new
-				 * simulation will be processed through the CompletionService
-				 * until we run out of simulations to run.
-				 */
-				while (jobIndex < Math.min(scaffold.threadCount, jobs.size()) - 1) {
-					Job job = jobs.get(jobIndex);
-					// Scenario scenario =
-					// scaffold.experiment.getScenario(job.scenarioIndex);
-					Scenario scenario = scenarioCache.getScenario(job.scenarioIndex);
-					ScenarioId scenarioId = scaffold.experiment.getScenarioId(job.scenarioIndex);
-					Replication replication = replications.get(job.replicationIndex);
-					completionService.submit(new SimulationCallable(scenario, scenarioId, replication, scaffold.outputItemHandlers));
+			int jobCompletionCount = 0;
+			while (jobCompletionCount < jobs.size()) {
+				if (jobIndex < jobs.size()) {
+					Integer scenarioId = jobs.get(jobIndex);
+					Scenario scenario = scaffold.experiment.getScenario(scenarioId);
+					completionService.submit(new SimulationCallable(scenario, scaffold.outputItemHandlers));
 					jobIndex++;
 				}
 
 				/*
-				 * While there are still jobs to be assigned to a thread, or
-				 * jobs that have not yet completed processing, we check to see
-				 * if a new job needs processing and see if a previous job has
-				 * completed.
+				 * This call is blocking and waits for a job to complete and a
+				 * thread to clear.
 				 */
-				int jobCompletionCount = 0;
-				while (jobCompletionCount < jobs.size()) {
-					if (jobIndex < jobs.size()) {
-						Job job = jobs.get(jobIndex);
-						// Scenario scenario =
-						// scaffold.experiment.getScenario(job.scenarioIndex);
-						Scenario scenario = scenarioCache.getScenario(job.scenarioIndex);
-						ScenarioId scenarioId = scaffold.experiment.getScenarioId(job.scenarioIndex);
-						Replication replication = replications.get(job.replicationIndex);
-						completionService.submit(new SimulationCallable(scenario, scenarioId, replication, scaffold.outputItemHandlers));
-						jobIndex++;
-					}
-
-					/*
-					 * This call is blocking and waits for a job to complete and
-					 * a thread to clear.
-					 */
-					try {
-						completionService.take().get();
-					} catch (final InterruptedException | ExecutionException e) {
-						// Note that this is the completion service failing and
-						// not the simulation
-						throw new RuntimeException(e);
-					}
-
-					/*
-					 * Once the blocking call returns, we increment the
-					 * jobCompletionCount
-					 */
-					jobCompletionCount++;
+				try {
+					completionService.take().get();
+				} catch (final InterruptedException | ExecutionException e) {
+					// Note that this is the completion service failing and
+					// not the simulation
+					throw new RuntimeException(e);
 				}
 
 				/*
-				 * Since all jobs are done, the CompletionService is no longer
-				 * needed so we shut down the executorService that backs it.
+				 * Once the blocking call returns, we increment the
+				 * jobCompletionCount
 				 */
-				executorService.shutdown();
+				jobCompletionCount++;
 			}
+
 			/*
-			 * We let the output items handlers know that the experiment is
-			 * finished.
+			 * Since all jobs are done, the CompletionService is no longer
+			 * needed so we shut down the executorService that backs it.
 			 */
-			for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-				outputItemHandler.closeExperiment();
-			}
-		} finally {
-			scaffold = new Scaffold();
+			executorService.shutdown();
 		}
+		/*
+		 * We let the output items handlers know that the experiment is
+		 * finished.
+		 */
+		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
+			outputItemHandler.closeExperiment();
+		}
+
 	}
 
 	/*
@@ -527,103 +439,71 @@ public final class ExperimentRunner {
 	 * the failure occurred as well as printing a stack trace.
 	 */
 	private void executeSingleThreaded() {
-		try {
 
-			// this is a temporary solution until we build an experiment
-			// level engine corresponding to the sim engine event management
-			// mechanisms
-			List<OutputItemHandler> simStatusHandlers = new ArrayList<>();
-			for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-				if (outputItemHandler.getHandledClasses().contains(SimulationStatusItem.class)) {
-					simStatusHandlers.add(outputItemHandler);
-				}
+		List<OutputItemHandler> simStatusHandlers = new ArrayList<>();
+		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
+			if (outputItemHandler.getHandledClasses().contains(SimulationStatusItem.class)) {
+				simStatusHandlers.add(outputItemHandler);
 			}
+		}
 
-			/*
-			 * Let all the output item handlers know that the experiment is
-			 * starting
-			 */
-			for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-				outputItemHandler.openExperiment(scaffold.experimentProgressLog);
-			}
+		/*
+		 * Let all the output item handlers know that the experiment is starting
+		 */
+		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
+			outputItemHandler.openExperiment(scaffold.experimentProgressLog);
+		}
 
-			/*
-			 * Retrieve the replications.
-			 */
-			final List<Replication> replications = Replication.getReplications(scaffold.replicationCount, scaffold.seed);
+		/*
+		 * The number of simulation runs is the product of the number of
+		 * scenarios and the number of replications
+		 */
+		final int jobCount = scaffold.experiment.getScenarioCount();
+		/*
+		 * If there is nothing to do, then do not engage.
+		 */
+		if (jobCount == 0) {
+			return;
+		}
 
-			/*
-			 * The number of simulation runs is the product of the number of
-			 * scenarios and the number of replications
-			 */
-			final int jobCount = replications.size() * scaffold.experiment.getScenarioCount();
-			/*
-			 * If there is nothing to do, then do not engage.
-			 */
-			if (jobCount == 0) {
-				return;
-			}
-
-			/*
-			 * Execute each scenario/replication pair that is not contained in
-			 * the experiment progress log.
-			 */
-
-			
-
-			for (int i = 0; i < scaffold.experiment.getScenarioCount(); i++) {
-				Scenario scenario = scaffold.experiment.getScenario(i);
-				ScenarioId scenarioId = scaffold.experiment.getScenarioId(i);
-				for (final Replication replication : replications) {
-					if (!scaffold.experimentProgressLog.contains(scenarioId, replication.getId())) {
-
-					
-						EngineBuilder engineBuilder =  GCMMonolithicSupport.getEngineBuilder(scenario, replication.getSeed());
-						OutputItemConsumerManager outputItemConsumerManager = new OutputItemConsumerManager(scenarioId, replication.getId(), scaffold.outputItemHandlers);
-						engineBuilder.setOutputConsumer(outputItemConsumerManager::resolveEvent);
-						Engine engine = engineBuilder.build();			
-
+		for (int scenarioId = 0; scenarioId < jobCount; scenarioId++) {
+			Scenario scenario = scaffold.experiment.getScenario(scenarioId);
+			if (!scaffold.experimentProgressLog.contains(scenarioId)) {
+				// EngineBuilder engineBuilder =
+				// GCMMonolithicSupport.getEngineBuilder(scenario,
+				// replication.getSeed());
+				// OutputItemConsumerManager outputItemConsumerManager = new
+				// OutputItemConsumerManager(scenarioId,
+				// replication.getId(), scaffold.outputItemHandlers);
+				// engineBuilder.setOutputConsumer(outputItemConsumerManager::resolveEvent);
+				// Engine engine = engineBuilder.build();
+				Engine engine = scenario.getEngine();
+				try {
+					boolean success = false;
+					if (simStatusHandlers.isEmpty()) {
+						engine.execute();
+						success = true;
+					} else {
+						TimeElapser timeElapser = new TimeElapser();
 						try {
-							boolean success = false;
-							if (simStatusHandlers.isEmpty()) {
-								engine.execute();
-								success = true;
-							} else {
-								TimeElapser timeElapser = new TimeElapser();
-								try {
-									engine.execute();
-									success = true;
-								} finally {
-									SimulationStatusItem simulationStatusItem = new SimulationStatusItem(timeElapser.getElapsedMilliSeconds(), success);
-									for (OutputItemHandler outputItemHandler : simStatusHandlers) {
-										outputItemHandler.handle(scenarioId, replication.getId(), simulationStatusItem);
-									}
-								}
+							engine.execute();
+							success = true;
+						} finally {
+							SimulationStatusItem simulationStatusItem = new SimulationStatusItem(timeElapser.getElapsedMilliSeconds(), success);
+							for (OutputItemHandler outputItemHandler : simStatusHandlers) {
+								outputItemHandler.handle(scenarioId, simulationStatusItem);
 							}
-						} catch (final Exception e) {
-							System.err.println("Simulation failure for scenario " + scenarioId + " and replication " + replication.getId());
-							e.printStackTrace();
 						}
 					}
+				} catch (final Exception e) {
+					System.err.println("Simulation failure for scenario " + scenarioId);
+					e.printStackTrace();
 				}
 			}
+		}
 
-			for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-				outputItemHandler.closeExperiment();
-			}
-		} finally {
-			scaffold = new Scaffold();
+		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
+			outputItemHandler.closeExperiment();
 		}
 	}
-
-	
-	
-	
-
-	
-	
-
-	
-	
-	
 }

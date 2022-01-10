@@ -18,8 +18,6 @@ import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.util.experiment.Experiment;
 import nucleus.util.experiment.progress.ExperimentProgressLog;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
 import plugins.reports.support.ReportItem;
 /**
  * An {@link OutputItemHandler} implementor that supports tab delimited text based files

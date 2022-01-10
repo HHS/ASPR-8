@@ -4,8 +4,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import plugins.gcm.experiment.ReplicationId;
-import plugins.gcm.experiment.ScenarioId;
 
 /**
  * A thread-safe, immutable container for (ScenarioId,ReplicationId) pairs

@@ -1,14 +1,9 @@
 package nucleus.util.experiment.output;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,14 +41,6 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 
 		private Scaffold scaffold = new Scaffold();
 
-		/**
-		 * Sets the path for the Experiment Column Report. Setting this path to
-		 * null turns off the report. Default value is null.
-		 */
-		public Builder setExperimentColumnReport(final Path path) {
-			scaffold.experimentColumnReportPath = path;
-			return this;
-		}
 
 		/**
 		 * Adds the experiment reference to the NIOReportItemHandler. Required
@@ -128,54 +115,17 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 		private final Map<ReportId, Path> reportMap = new LinkedHashMap<>();
 		private Experiment experiment;
 		private boolean displayExperimentColumnsInReports = DEFAULT_DISPLAY_EXPERIMENT_COLUMNS;
-		private Path experimentColumnReportPath;
+		
 
 	}
 
 	private final static boolean DEFAULT_DISPLAY_EXPERIMENT_COLUMNS = true;
 
-	private static List<String> getLines(final Experiment experiment) {
-		final List<String> result = new ArrayList<>();
-
-		if (experiment != null) {
-
-			/*
-			 * Build the header line
-			 */
-			// final List<String> experimentFields =
-			// experiment.getExperimentFields();
-			StringBuilder sb = new StringBuilder();
-			sb.append("Scenario");
-			for (int i = 0; i < experiment.getExperimentFieldCount(); i++) {
-				sb.append("\t");
-				sb.append(experiment.getExperimentFieldName(i));
-			}
-			result.add(sb.toString());
-
-			/*
-			 * Build the scenario lines
-			 */
-
-			int scenarioCount = experiment.getScenarioCount();
-			for (int i = 0; i < scenarioCount; i++) {
-				final ScenarioId scenarioId = experiment.getScenarioId(i);
-				sb = new StringBuilder();
-				sb.append(scenarioId);
-
-				for (int j = 0; j < experiment.getExperimentFieldCount(); j++) {
-					sb.append("\t");
-					final Object experimentFieldValue = experiment.getExperimentFieldValue(scenarioId, j);
-					sb.append(experimentFieldValue);
-				}
-				result.add(sb.toString());
-			}
-		}
-		return result;
-	}
+	
 
 	private final Map<Object, LineWriter> lineWriterMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
-	private final Path experimentColumnReportPath;
+	
 
 	private final Experiment experiment;
 
@@ -184,7 +134,6 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 	private final boolean displayExperimentColumnsInReports;
 
 	private NIOReportItemHandler(final Scaffold scaffold) {
-		experimentColumnReportPath = scaffold.experimentColumnReportPath;
 		experiment = scaffold.experiment;
 		reportMap = scaffold.reportMap;
 		displayExperimentColumnsInReports = scaffold.displayExperimentColumnsInReports;
@@ -230,10 +179,6 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 	@Override
 	public void openExperiment(final ExperimentProgressLog experimentProgressLog) {
 		synchronized (lineWriterMap) {
-			if (experimentColumnReportPath != null) {
-				writeExperimentScenarioReport(experiment);
-			}
-
 			for (final ReportId reportId : reportMap.keySet()) {				
 				final Path path = reportMap.get(reportId);
 				final LineWriter lineWriter = new LineWriter(path, experiment, displayExperimentColumnsInReports, experimentProgressLog);
@@ -247,18 +192,6 @@ public final class NIOReportItemHandler implements OutputItemHandler {
 	public void openSimulation(final int scenarioId) {
 		// do nothing
 	}
-
-	private void writeExperimentScenarioReport(final Experiment experiment) {
-		final List<String> lines = getLines(experiment);
-		writeLines(lines);
-	}
-
-	private void writeLines(final List<String> lines) {
-		try {
-			Files.write(experimentColumnReportPath, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	
 
 }

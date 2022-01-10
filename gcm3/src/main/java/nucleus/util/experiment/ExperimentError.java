@@ -13,7 +13,10 @@ import util.ContractException;
 public enum ExperimentError implements ContractError {
 
 	
-	NULL_OUTPUT_ITEM("Null output");
+	NULL_OUTPUT_ITEM("Null output"),
+	NULL_EXPERIMENT("Null experiment"),
+	NULL_EXPERIMENT_REPORT_PATH("Null experiment report path"),
+	;
 
 	private final String description;
 

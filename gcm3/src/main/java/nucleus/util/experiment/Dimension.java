@@ -9,8 +9,8 @@ import util.TypeMap;
 public class Dimension {
 
 	private static class Data {
-		String name;
-		List<Function<TypeMap<InitialDataBuilder>, String>> memberGenerators = new ArrayList<>();
+		List<String> ids = new ArrayList<>();
+		List<Function<TypeMap<InitialDataBuilder>, List<String>>> memberGenerators = new ArrayList<>();
 	}
 
 	public static Builder builder() {
@@ -31,8 +31,12 @@ public class Dimension {
 			}
 		}
 		
-		public Builder addMemberGenerator(Function<TypeMap<InitialDataBuilder>, String> memberGenerator) {
+		public Builder addMemberGenerator(Function<TypeMap<InitialDataBuilder>, List<String>> memberGenerator) {
 			data.memberGenerators.add(memberGenerator);
+			return this;
+		}
+		public Builder addIdValue(String idValue) {
+			data.ids.add(idValue);
 			return this;
 		}
 	}
@@ -43,11 +47,11 @@ public class Dimension {
 
 	private final Data data;
 
-	public String getName() {
-		return data.name;
+	public List<String> getIds() {
+		return new ArrayList<>(data.ids);
 	}
 
-	public List<Function<TypeMap<InitialDataBuilder>, String>> getMemberGenerators() {
+	public List<Function<TypeMap<InitialDataBuilder>, List<String>>> getMemberGenerators() {
 		return new ArrayList<>(data.memberGenerators);
 	}
 

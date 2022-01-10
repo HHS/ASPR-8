@@ -3,8 +3,11 @@ package nucleus.util.experiment;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import net.jcip.annotations.Immutable;
+import net.jcip.annotations.ThreadSafe;
 import nucleus.Engine;
 
+@Immutable
 public final class Scenario {
 
 	private static class Data {
