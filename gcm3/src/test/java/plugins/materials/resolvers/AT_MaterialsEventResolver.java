@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
 import nucleus.AgentId;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
@@ -149,7 +149,7 @@ public final class AT_MaterialsEventResolver {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5272599676969321594L);
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		/*
 		 * Add the materials plugin, utilizing all materials initial data
@@ -234,7 +234,7 @@ public final class AT_MaterialsEventResolver {
 		}
 		MaterialsInitialData materialsInitialData = materialsBuilder.build();
 
-		engineBuilder.addPlugin(MaterialsPlugin.PLUGIN_ID, new MaterialsPlugin(materialsInitialData)::init);
+		builder.addPlugin(MaterialsPlugin.PLUGIN_ID, new MaterialsPlugin(materialsInitialData)::init);
 
 		// add the resources plugin
 		ResourceInitialData.Builder resourcesBuilder = ResourceInitialData.builder();
@@ -252,18 +252,18 @@ public final class AT_MaterialsEventResolver {
 			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
 		}
 
-		engineBuilder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourcesBuilder.build())::init);
+		builder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourcesBuilder.build())::init);
 
 		// add the partitions plugin
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		// add the people plugin
 
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
 
 		// add the properties plugin
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 
 		// add the compartments plugin
 		CompartmentInitialData.Builder compartmentsBuilder = CompartmentInitialData.builder();
@@ -271,7 +271,7 @@ public final class AT_MaterialsEventResolver {
 			compartmentsBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
 		}
 
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentsBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentsBuilder.build())::init);
 
 		// add the regions plugin
 		RegionInitialData.Builder regionsBuilder = RegionInitialData.builder();
@@ -279,17 +279,17 @@ public final class AT_MaterialsEventResolver {
 			regionsBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
 		}
 
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionsBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionsBuilder.build())::init);
 
 		// add the report plugin
 
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 
 		// add the component plugin
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -432,10 +432,10 @@ public final class AT_MaterialsEventResolver {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// add the action plugin
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		if (!actionPlugin.allActionsExecuted()) {

@@ -1,11 +1,10 @@
 package util;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
-
-import util.ContractError;
-import util.ContractException;
+import java.util.Set;
 
 public final class TypeMap<K> {
 	public static enum TypeMapError implements ContractError {
@@ -81,6 +80,14 @@ public final class TypeMap<K> {
 			map.put(t.getClass(), t);
 			return this;
 		}
+	}
+	
+	public Set<K> getContents() {
+		Set<K> result = new LinkedHashSet<>();
+		for (K value : map.values()) {
+			result.add(value);
+		}
+		return result;
 	}
 
 }

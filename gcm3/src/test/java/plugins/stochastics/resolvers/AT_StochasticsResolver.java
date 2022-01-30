@@ -17,8 +17,8 @@ import org.apache.commons.math3.random.Well44497b;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataView;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.ResolverContext;
 import nucleus.testsupport.MockResolverContext;
 import nucleus.testsupport.actionplugin.ActionPlugin;
@@ -45,7 +45,7 @@ public class AT_StochasticsResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testStochasticsReseedEvent() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 		long masterSeed = 508143430508125725L;
 
 		StochasticsInitialData.Builder stochasticsBuilder = StochasticsInitialData.builder();
@@ -54,7 +54,7 @@ public class AT_StochasticsResolver {
 		}
 		stochasticsBuilder.setSeed(masterSeed);
 
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(stochasticsBuilder.build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(stochasticsBuilder.build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -101,10 +101,10 @@ public class AT_StochasticsResolver {
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		assertTrue(actionPlugin.allActionsExecuted());
 

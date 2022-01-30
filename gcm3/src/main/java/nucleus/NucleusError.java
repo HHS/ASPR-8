@@ -12,6 +12,7 @@ import util.ContractException;
  */
 public enum NucleusError implements ContractError {
 
+	
 	ACCESS_VIOLATION("A contributed behavior is accessing locked state during a state change"),
 	AGENT_ID_IN_USE("Agent id is currently in use by another agent"),
 	CIRCULAR_PLUGIN_DEPENDENCIES("Circular plugin dependencies were found"),
@@ -52,6 +53,7 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_EVENT_LABEL("An event label does not match a registered event label"),
 	UNKNOWN_EVENT_LABELER("The labeler id an event label does not match a registered event labeler"),
 	NULL_CONTEXT("Null context"),
+	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
 	;
 
 	private final String description;

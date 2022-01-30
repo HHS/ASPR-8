@@ -9,6 +9,5 @@ package nucleus;
  * @param <T>
  */
 public interface ResolverEventConsumer<T extends Event> {
-
 	public void handleEvent(ResolverContext context, T event);
 }

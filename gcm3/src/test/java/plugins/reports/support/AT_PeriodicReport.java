@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine;
+import nucleus.Simulation;
 import nucleus.ReportContext;
 import nucleus.ReportId;
 import nucleus.SimpleReportId;
@@ -218,7 +218,7 @@ public class AT_PeriodicReport {
 	public void testFillTimeFields_Daily() {
 		double simulationEndTime = 10.6;
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 
 		ReportId reportId = new SimpleReportId("report");
 		DailyTestReport dailyTestReport = new DailyTestReport(ReportPeriod.DAILY);
@@ -227,10 +227,10 @@ public class AT_PeriodicReport {
 		}).build();
 
 		// add the reports plugin
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 
 		// add the remaining plugins that are needed for dependencies
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -240,10 +240,10 @@ public class AT_PeriodicReport {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that the daily test report actually executed its tests
 		int expectedFlushExecutionCount = (int) FastMath.ceil(simulationEndTime);
@@ -256,7 +256,7 @@ public class AT_PeriodicReport {
 	public void testFillTimeFields_Hourly() {
 		double simulationEndTime = 3.6;
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 
 		ReportId reportId = new SimpleReportId("report");
 		HourlyTestReport hourlyTestReport = new HourlyTestReport(ReportPeriod.HOURLY);
@@ -265,10 +265,10 @@ public class AT_PeriodicReport {
 		}).build();
 
 		// add the reports plugin
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 
 		// add the remaining plugins that are needed for dependencies
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -278,10 +278,10 @@ public class AT_PeriodicReport {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that the hourly test report actually executed its tests
 		int expectedFlushExecutionCount = (int) FastMath.ceil(24 * simulationEndTime);
@@ -294,7 +294,7 @@ public class AT_PeriodicReport {
 	public void testFillTimeFields_EndOfSimulation() {
 		double simulationEndTime = 3.6;
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 
 		ReportId reportId = new SimpleReportId("report");
 		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(ReportPeriod.END_OF_SIMULATION);
@@ -303,10 +303,10 @@ public class AT_PeriodicReport {
 		}).build();
 
 		// add the reports plugin
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 
 		// add the remaining plugins that are needed for dependencies
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -316,10 +316,10 @@ public class AT_PeriodicReport {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		/*
 		 * Show that the end of simulation test report executed its test exactly
@@ -339,7 +339,7 @@ public class AT_PeriodicReport {
 
 			double simulationEndTime = 10.6;
 
-			Engine.EngineBuilder engineBuilder = Engine.builder();
+			Simulation.Builder builder = Simulation.builder();
 
 			ReportId reportId = new SimpleReportId("report");
 			InitTestReport initTestReport = new InitTestReport(reportPeriod);
@@ -348,10 +348,10 @@ public class AT_PeriodicReport {
 			}).build();
 
 			// add the reports plugin
-			engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+			builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 
 			// add the remaining plugins that are needed for dependencies
-			engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+			builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 			ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -361,10 +361,10 @@ public class AT_PeriodicReport {
 			}));
 
 			ActionPlugin actionPlugin = pluginBuilder.build();
-			engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+			builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 			// build and execute the engine
-			engineBuilder.build().execute();
+			builder.build().execute();
 
 			// show that the report is flushed at the end of the simulation
 			int lastIndex = initTestReport.flushTimes.size() - 1;

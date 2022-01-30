@@ -11,8 +11,8 @@ import javax.naming.Context;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.testsupport.actionplugin.ActionPlugin;
@@ -101,7 +101,7 @@ public class AT_PersonRegionChangeObservationEvent {
 	 */
 	private void testConsumer(Consumer<AgentContext> consumer) {
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the test regions
 		RegionInitialData.Builder regionBuilder = RegionInitialData.builder();
@@ -109,14 +109,14 @@ public class AT_PersonRegionChangeObservationEvent {
 			regionBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> (c) -> {
 			});
 		}
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(162474236345345L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(162474236345345L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -124,10 +124,10 @@ public class AT_PersonRegionChangeObservationEvent {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

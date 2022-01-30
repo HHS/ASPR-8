@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import util.ContractException;
@@ -25,7 +25,7 @@ import util.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Engine.class)
+@UnitTest(target = Simulation.class)
 public class AT_Engine {
 
 	@Test
@@ -33,11 +33,11 @@ public class AT_Engine {
 	public void testExecute() {
 
 		// run the simulation
-		Engine engine = Engine.builder().build();
-		engine.execute();
+		Simulation simulation = Simulation.builder().build();
+		simulation.execute();
 
 		// precondition test
-		ContractException contractException = assertThrows(ContractException.class, () -> engine.execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> simulation.execute());
 		assertEquals(NucleusError.REPEATED_EXECUTION, contractException.getErrorType());
 
 	}
@@ -45,7 +45,7 @@ public class AT_Engine {
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		EngineBuilder builder = Engine.builder();
+		Builder builder = Simulation.builder();
 		assertNotNull(builder);
 	}
 
@@ -117,7 +117,7 @@ public class AT_Engine {
 	};
 
 	@Test
-	@UnitTestMethod(target = Engine.EngineBuilder.class, name = "build", args = {})
+	@UnitTestMethod(target = Simulation.Builder.class, name = "build", args = {})
 	public void testbuild() {
 
 		// precondition : there can be no duplicate plugin ids
@@ -126,7 +126,7 @@ public class AT_Engine {
 			PluginA pluginA = new PluginA();
 			PluginB pluginB = new PluginB();
 
-			Engine	.builder()//
+			Simulation	.builder()//
 					.addPlugin(pluginA.getPluginId(), pluginA::init)//
 					.addPlugin(pluginA.getPluginId(), pluginB::init)//
 					.build(); //
@@ -139,7 +139,7 @@ public class AT_Engine {
 			PluginF pluginF = new PluginF();
 			PluginG pluginG = new PluginG();
 
-			Engine	.builder()//
+			Simulation	.builder()//
 					.addPlugin(pluginF.getPluginId(), pluginF::init)//
 					.addPlugin(pluginG.getPluginId(), pluginG::init)//
 					.build(); //
@@ -150,7 +150,7 @@ public class AT_Engine {
 		// precondition : all of plugin's dependencies must be present
 		contractException = assertThrows(ContractException.class, () -> {//
 			PluginB pluginB = new PluginB();
-			Engine	.builder()//
+			Simulation	.builder()//
 					.addPlugin(pluginB.getPluginId(), pluginB::init)//
 					.build(); //
 		});
@@ -165,7 +165,7 @@ public class AT_Engine {
 			PluginD pluginD = new PluginD();
 			PluginE pluginE = new PluginE();
 
-			Engine	.builder()//
+			Simulation	.builder()//
 					.addPlugin(pluginA.getPluginId(), pluginA::init)//
 					.addPlugin(pluginB.getPluginId(), pluginB::init)//
 					.addPlugin(pluginC.getPluginId(), pluginC::init)//
@@ -179,7 +179,7 @@ public class AT_Engine {
 	}
 
 	@Test
-	@UnitTestMethod(target = Engine.EngineBuilder.class, name = "addPlugin", args = { PluginId.class })
+	@UnitTestMethod(target = Simulation.Builder.class, name = "addPlugin", args = { PluginId.class })
 	public void testAddPlugin() {
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -194,17 +194,17 @@ public class AT_Engine {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
 
 		// precondition : the plugin id cannot be null
-		ContractException contractException = assertThrows(ContractException.class, () -> Engine.builder().addPlugin(null, actionPlugin::init));
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(null, actionPlugin::init));
 		assertEquals(NucleusError.NULL_PLUGIN_ID, contractException.getErrorType());
 
 		// precondition : the plugin context consumer cannot be null
-		contractException = assertThrows(ContractException.class, () -> Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, null));
+		contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, null));
 		assertEquals(NucleusError.NULL_PLUGIN_CONTEXT_CONSUMER, contractException.getErrorType());
 
 	}
@@ -221,7 +221,7 @@ public class AT_Engine {
 	}
 
 	@Test
-	@UnitTestMethod(target = Engine.EngineBuilder.class, name = "setOutputConsumer", args = { Consumer.class })
+	@UnitTestMethod(target = Simulation.Builder.class, name = "setOutputConsumer", args = { Consumer.class })
 	public void testSetOutputConsumer() {
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
@@ -256,7 +256,7 @@ public class AT_Engine {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(localOutputConsumer2).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(localOutputConsumer2).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -289,7 +289,7 @@ public class AT_Engine {
 
 		localOutputConsumer1 = new LocalOutputConsumer();
 
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(null).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(null).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());

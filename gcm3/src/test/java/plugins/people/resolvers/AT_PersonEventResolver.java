@@ -12,8 +12,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.ResolverContext;
@@ -51,7 +51,7 @@ public final class AT_PersonEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPersonDataViewInitialization() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 		/*
 		 * Create the people plugin initialized with a few people. Note that we
@@ -68,7 +68,7 @@ public final class AT_PersonEventResolver {
 			peopleBuilder.addPersonId(new PersonId(1000 - i * i));
 		}
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -88,10 +88,10 @@ public final class AT_PersonEventResolver {
 
 		// build the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -100,10 +100,10 @@ public final class AT_PersonEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPopulationGrowthProjectionEvent() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the people plugin
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -118,10 +118,10 @@ public final class AT_PersonEventResolver {
 
 		// build the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -130,10 +130,10 @@ public final class AT_PersonEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPersonRemovalRequestEvent() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the people plugin
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -181,10 +181,10 @@ public final class AT_PersonEventResolver {
 
 		// build the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -196,10 +196,10 @@ public final class AT_PersonEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPersonCreationEvent() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the people plugin
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -241,10 +241,10 @@ public final class AT_PersonEventResolver {
 
 		// build the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -256,10 +256,10 @@ public final class AT_PersonEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testBulkPersonCreationEvent() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the people plugin
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -271,12 +271,12 @@ public final class AT_PersonEventResolver {
 		// unique data
 		int uniqueId = 0;
 		for (int i = 0; i < 3; i++) {
-			BulkPersonContructionData.Builder builder = BulkPersonContructionData.builder();
+			BulkPersonContructionData.Builder bulkBuilder = BulkPersonContructionData.builder();
 			for (int j = 0; j < 10; j++) {
 				PersonContructionData personContructionData = PersonContructionData.builder().add(uniqueId++).build();
-				builder.add(personContructionData);
+				bulkBuilder.add(personContructionData);
 			}
-			expectedBulkPersonContructionData.add(builder.build());
+			expectedBulkPersonContructionData.add(bulkBuilder.build());
 		}
 		// add test agents
 		pluginBuilder.addAgent("agent");
@@ -310,10 +310,10 @@ public final class AT_PersonEventResolver {
 
 		// build the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -330,9 +330,9 @@ public final class AT_PersonEventResolver {
 	 */
 	private void testLabeler(EventLabeler<?> eventLabeler) {
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -344,10 +344,10 @@ public final class AT_PersonEventResolver {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

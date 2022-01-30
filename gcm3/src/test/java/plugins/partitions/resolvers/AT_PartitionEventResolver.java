@@ -21,8 +21,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.ReportId;
 import nucleus.ResolverContext;
 import nucleus.SimpleReportId;
@@ -239,23 +239,23 @@ public final class AT_PartitionEventResolver {
 	}
 
 	private void testConsumer(final int initialPopultionSize, long seed, final Consumer<AgentContext> consumer) {
-		final EngineBuilder engineBuilder = Engine.builder();
+		final Builder builder = Simulation.builder();
 		// define some person attributes
 		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
 		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
 			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
 		}
-		engineBuilder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
+		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
 
 		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 		for (int i = 0; i < initialPopultionSize; i++) {
 			peopleBuilder.addPersonId(new PersonId(i));
 		}
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		/*
 		 * Add an agent that executes the consumer.
@@ -276,10 +276,10 @@ public final class AT_PartitionEventResolver {
 
 		// build and add the action plugin to the engine
 		final ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -489,23 +489,23 @@ public final class AT_PartitionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPersonImminentRemovalObservationEvent() {
-		final EngineBuilder engineBuilder = Engine.builder();
+		final Builder builder = Simulation.builder();
 		// define some person attributes
 		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
 		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
 			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
 		}
-		engineBuilder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
+		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
 
 		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 		for (int i = 0; i < 100; i++) {
 			peopleBuilder.addPersonId(new PersonId(i));
 		}
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(6406306513403641718L).build())::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(6406306513403641718L).build())::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		final ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -632,10 +632,10 @@ public final class AT_PartitionEventResolver {
 
 		// build and add the action plugin to the engine
 		final ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

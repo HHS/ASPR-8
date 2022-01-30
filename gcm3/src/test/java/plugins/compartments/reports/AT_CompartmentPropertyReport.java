@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.ReportId;
 import nucleus.SimpleReportId;
 import nucleus.testsupport.actionplugin.ActionPlugin;
@@ -28,7 +28,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.initialdata.StochasticsInitialData;
@@ -52,7 +51,7 @@ public class AT_CompartmentPropertyReport {
 		 * The output consumers properly account for report item duplications.
 		 */
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the test compartments and their property definitions
 		CompartmentInitialData.Builder compartmentBuilder = CompartmentInitialData.builder();
@@ -91,18 +90,18 @@ public class AT_CompartmentPropertyReport {
 		propertyDefinition = PropertyDefinition.builder().setDefaultValue("start").setType(String.class).build();
 		compartmentBuilder.defineCompartmentProperty(compartmentC, prop_C_policy, propertyDefinition);
 
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
 
 		// add the report
 		ReportsInitialData reportsInitialData = ReportsInitialData.builder().addReport(REPORT_ID, () -> new CompartmentPropertyReport()::init).build();
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 
 		// add remaining plugins
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1120153212673715272L).build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1120153212673715272L).build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -142,12 +141,12 @@ public class AT_CompartmentPropertyReport {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
-		engineBuilder.setOutputConsumer(actualOutputConsumer);
-		engineBuilder.build().execute();
+		builder.setOutputConsumer(actualOutputConsumer);
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -177,7 +176,7 @@ public class AT_CompartmentPropertyReport {
 	}
 
 	private static ReportItem getReportItem(Object... values) {
-		Builder builder = ReportItem.builder();
+		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportId(REPORT_ID);
 		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {

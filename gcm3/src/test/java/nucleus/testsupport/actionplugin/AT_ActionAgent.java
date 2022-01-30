@@ -10,7 +10,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Engine;
+import nucleus.Simulation;
 import util.MultiKey;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -78,7 +78,7 @@ public class AT_ActionAgent {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine	.builder()//
+		Simulation	.builder()//
 				.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init)//
 				.build()//
 				.execute();//

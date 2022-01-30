@@ -1,176 +1,128 @@
-package nucleus.util.experiment;
+package nucleus;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
-import nucleus.util.experiment.output.ConsoleLogItemHandler;
-import nucleus.util.experiment.output.LogItem;
-import nucleus.util.experiment.output.OutputItemHandler;
-import nucleus.util.experiment.output.SimulationStatusItem;
-import nucleus.util.experiment.output.SimulationStatusItemHandler;
-import nucleus.util.experiment.progress.ExperimentProgressLog;
-import nucleus.util.experiment.progress.NIOExperimentProgressLogReader;
-import nucleus.util.experiment.progress.NIOExperimentProgressLogWriter;
-
-//import plugins.gcm.experiment.output.ConsoleLogItemHandler;
-
-//import plugins.gcm.experiment.output.LogItem;
-//import plugins.gcm.experiment.output.OutputItemHandler;
-//import plugins.gcm.experiment.output.SimulationStatusItem;
-//import plugins.gcm.experiment.output.SimulationStatusItemHandler;
-
-//import plugins.gcm.experiment.progress.ExperimentProgressLog;
-
-//import plugins.gcm.experiment.progress.NIOExperimentProgressLogReader;
-//import plugins.gcm.experiment.progress.NIOExperimentProgressLogWriter;
-
-import util.TimeElapser;
+import util.TypeMap;
 
 /**
- * Multi-threaded executor of an experiment using reports and various settings
- * that influence how the experiment is executed.
- * 
+ * Multi-threaded executor of an experiment
+ *
  * @author Shawn Hatch
  *
  */
 
-public final class ExperimentRunner {
-
-	/*
-	 * A data class for holding the inputs to this builder from its client.
-	 */
-	private static class Scaffold {
-		private final List<OutputItemHandler> outputItemHandlers = new ArrayList<>();
-		private OutputItemHandler logItemHandler;
-		private Experiment experiment;
-		private int threadCount;
-		private boolean produceSimulationStatusOutput;
-		private Path experimentProgressLogPath;
-		private ExperimentProgressLog experimentProgressLog = ExperimentProgressLog.builder().build();
-
-	}
-
-	private ExperimentRunner(Scaffold scaffold) {
-		this.scaffold = scaffold;
-	}
-
-	public static Builder builder() {
-		return new Builder();
-	}
+public final class Experiment {
 
 	public static class Builder {
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 		}
 
-		public ExperimentRunner build() {
-			try {
-				return new ExperimentRunner(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+		public Builder addDimension(final Dimension dimension) {
+			data.dimensions.add(dimension);
+			return this;
 		}
 
 		/**
 		 * Add the output item handler to the experiment run.
-		 * 
+		 *
 		 * @param outputItemHandler
 		 *            the {@link OutputItemHandler} to add
-		 * 
+		 *
 		 * @throws RuntimeException
 		 *             if the output item handler is null
 		 */
-		public void addOutputItemHandler(final OutputItemHandler outputItemHandler) {
-			if (outputItemHandler == null) {
+		public void addOutputHandler(final Consumer<ExperimentContext> experimentContextConsumer) {
+			if (experimentContextConsumer == null) {
 				throw new RuntimeException("null output item handler");
 			}
-			scaffold.outputItemHandlers.add(outputItemHandler);
+			data.experimentContextConsumers.add(experimentContextConsumer);
 		}
 
-		/**
-		 * Adds the given scenarios to the experiment
-		 *
-		 * @param experiment
-		 *            the experiment to be executed
-		 */
-		public void setExperiment(final Experiment experiment) {
-			if (experiment == null) {
-				throw new RuntimeException("null experiment");
+		public Builder addPlugin(final Plugin plugin) {
+			data.plugins.add(plugin);
+			return this;
+		}
+
+		public Experiment build() {
+			try {
+				return new Experiment(data);
+			} finally {
+				data = new Data();
 			}
-			scaffold.experiment = experiment;
-		}
-
-		/**
-		 * Sets the path for experiment progress log. A null path turns off
-		 * logging and run resumption. Default value is null.
-		 * 
-		 * @param path
-		 *            the {@link Path} where the report will be recorded
-		 */
-		public void setExperimentProgressLog(Path path) {
-			scaffold.experimentProgressLogPath = path;
-		}
-
-		/**
-		 * Sets the {@link LogItem} handler for the experiment. Defaulted to
-		 * null -- no logging.
-		 */
-		public void setLogItemHandler(OutputItemHandler logItemHandler) {
-			scaffold.logItemHandler = logItemHandler;
 		}
 
 		/**
 		 * Turns on or off the logging of experiment progress to standard out.
 		 * Default value is false.
-		 * 
+		 *
 		 * @param produceConsoleOutput
 		 *            turns on/off production of the experiment progress
 		 *            reporting
 		 */
-		public void setProduceSimulationStatusOutput(boolean produceSimulationStatusOutput) {
-			scaffold.produceSimulationStatusOutput = produceSimulationStatusOutput;
+		public void setExperimentProgressConsole(final boolean reportExperimentProgessToConsole) {
+			data.reportExperimentProgessToConsole = reportExperimentProgessToConsole;
+		}
+
+		/**
+		 * Sets the path for experiment progress log. A null path turns off
+		 * logging and run resumption. Default value is null.
+		 *
+		 * @param path
+		 *            the {@link Path} where the report will be recorded
+		 */
+		public void setExperimentProgressLog(final Path path) {
+			data.experimentProgressLogPath = path;
 		}
 
 		/**
 		 * Sets the number of scenarios that may run concurrently. Generally
 		 * this should be set to one less than the number of virtual processors
 		 * on the machine that is running the experiment. Setting the thread
-		 * count to zero causes the simulations to execute in the calling thread
-		 * that invokes execute() on this ExperimentExecutor.
+		 * count to zero causes the simulations to execute in the main thread.
 		 *
 		 * @param threadCount
 		 *            -- The number of threads to use to run the experiment.
-		 * 
+		 *
 		 * @throws RuntimeException
 		 *             if the thread count is negative
-		 * 
+		 *
 		 */
 		public void setThreadCount(final int threadCount) {
 			if (threadCount < 0) {
 				throw new RuntimeException("negative thread count");
 			}
-			scaffold.threadCount = threadCount;
+			data.threadCount = threadCount;
 		}
 
 	}
 
 	/*
-	 * Class representing the return type of SimulationCallable. This is largely
-	 * a placeholder since there has to be a return type for a callable.
-	 * SimResult is never utilized.
+	 * A data class for holding the inputs to this builder from its client.
+	 */
+	private static class Data {
+		private final List<Dimension> dimensions = new ArrayList<>();
+		private final List<Plugin> plugins = new ArrayList<>();
+		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
+		private int threadCount;
+		private boolean reportExperimentProgessToConsole;
+		private Path experimentProgressLogPath;
+	}
+
+	/*
+	 * The result of the execution of a SimulationCallable
 	 */
 	@Immutable
 	private static class SimResult {
@@ -181,155 +133,124 @@ public final class ExperimentRunner {
 			this.scenarioId = scenarioId;
 			this.success = success;
 		}
-
-		@Override
-		public String toString() {
-			final StringBuilder builder = new StringBuilder();
-			builder.append("Simulation Run for");
-			builder.append(" Scenario ");
-			builder.append(scenarioId);
-			if (success) {
-				builder.append(" succeeded");
-			} else {
-				builder.append(" failed");
-			}
-			return builder.toString();
-		}
 	}
 
 	/*
-	 * A Callable implementor that runs the simulation in a thread from the
-	 * completion service. The simulation instance, its Components and
-	 * StateChangeListeners are created in the child thread by this
-	 * SimulationCallable via the call() invocation. In this manner, they are
-	 * thread-contained and thus thread-safe. It is important to note that no
-	 * part of any of these objects should leak outside of the child thread.
-	 *
-	 * The parent and child thread share the following:
-	 *
-	 * <li>the Scenario <li>the Replication <li> the list of Output Item
-	 * Handlers
-	 *
-	 * Thread safety is maintained by adherence to the following policies:
-	 *
-	 * The Scenario is a thread safe immutable class.
-	 *
-	 * The Replication is a thread safe immutable class.
-	 * 
-	 * The List of OutputItemHandler is a thread safe, immutable list of
-	 * OutputItemHandler that are also thread safe.
-	 *
-	 * The SimResult is a thread safe, immutable class.
-	 *
-	 * The ReportItems are thread safe, immutable classes.
-	 * 
+	 * A Callable implementor that runs the simulation in a thread from a
+	 * completion service.
 	 */
 	private static class SimulationCallable implements Callable<SimResult> {
-
-		private final Scenario scenario;
-
-		private final List<OutputItemHandler> outputItemHandlers;
+		private final ExperimentStateManager experimentStateManager;
+		private final List<Plugin> plugins;
+		private final Integer scenarioId;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Scenario scenario, final List<OutputItemHandler> outputItemHandlers) {
-			this.scenario = scenario;
-			this.outputItemHandlers = new ArrayList<>(outputItemHandlers);
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins) {
+			this.scenarioId = scenarioId;
+			this.experimentStateManager = experimentStateManager;
+			this.plugins = new ArrayList<>(plugins);
 		}
 
 		/**
-		 * Executes the simulation using the scenario, replication and output
-		 * item handlers. Returns a SimResult which will indicated
-		 * success/failure. If the simulation throws an exception it is caught
-		 * and handled by reporting to standard error that the failure occured
-		 * as well as printing a stack trace.
+		 * Executes the simulation for a scenario. Returns a SimResult
+		 * indicating success/failure. If the simulation throws an exception it
+		 * is handled by printing a stack trace and reporting a failure for the
+		 * scenario.
 		 */
 		@Override
 		public SimResult call() throws Exception {
 
-			// Sim status handling here is sub-optimal and need to be abstracted
-			// away
-			List<OutputItemHandler> simStatusHandlers = new ArrayList<>();
-			for (OutputItemHandler outputItemHandler : outputItemHandlers) {
-				if (outputItemHandler.getHandledClasses().contains(SimulationStatusItem.class)) {
-					simStatusHandlers.add(outputItemHandler);
-				}
+			final Simulation.Builder simBuilder = Simulation.builder();
+
+			// Load the plugins into the simulation builder
+			for (final Plugin plugin : plugins) {
+				simBuilder.addPlugin(plugin.getPluginId(), plugin::init);
 			}
 
-			// EngineBuilder engineBuilder =
-			// GCMMonolithicSupport.getEngineBuilder(scenario,
-			// replication.getSeed());
-			// OutputItemConsumerManager outputItemConsumerManager = new
-			// OutputItemConsumerManager(scenarioId, replication.getId(),
-			// outputItemHandlers);
-			// engineBuilder.setOutputConsumer(outputItemConsumerManager::resolveEvent);
-			Engine engine = scenario.getEngine();
+			// direct output from the simulation to the subscribed consumers
+			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
 
-			// execute the simulation
+			// build the simulation
+			final Simulation simulation = simBuilder.build();
+
+			// run the simulation
 			boolean success = false;
 			try {
-				if (simStatusHandlers.isEmpty()) {
-					engine.execute();
-					success = true;
-				} else {
-					TimeElapser timeElapser = new TimeElapser();
-					try {
-						engine.execute();
-						success = true;
-					} finally {
-						SimulationStatusItem simulationStatusItem = new SimulationStatusItem(timeElapser.getElapsedMilliSeconds(), success);
-						for (OutputItemHandler outputItemHandler : simStatusHandlers) {
-							outputItemHandler.handle(scenario.getId(), simulationStatusItem);
-						}
-					}
-				}
-
+				simulation.execute();
+				success = true;
 			} catch (final Exception e) {
-				System.err.println("Simulation failure for scenario " + scenario.getId());
+				System.err.println("Simulation failure for scenario " + scenarioId);
 				e.printStackTrace();
 			}
-			return new SimResult(scenario.getId(), success);
+			return new SimResult(scenarioId, success);
 		}
 
 	}
 
-	private final Scaffold scaffold;
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	private final Data data;
+
+	private ExperimentStateManager experimentStateManager;
+
+	private Experiment(final Data data) {
+		this.data = data;
+	}
 
 	/**
 	 * Executes the experiment using the information supplied via the various
 	 * mutation methods. Clears all collected data upon completion. Thus this
 	 * ExperimentExecutor returns to an empty and idle state.
-	 * 
+	 *
 	 * @throws RuntimeException
 	 *             if the experiment was not set
 	 */
 	public void execute() {
 
-		if (scaffold.logItemHandler == null) {
-			scaffold.logItemHandler = new ConsoleLogItemHandler();
+		int scenarioCount = 1;
+		for (final Dimension dimension : data.dimensions) {
+			scenarioCount *= dimension.size();
 		}
 		
-		addOutputItemHandler(scaffold.logItemHandler);
+		ExperimentStateManager.Builder builder = ExperimentStateManager.builder();
+		builder.setScenarioCount(scenarioCount);
+		builder.setScenarioProgressLogFile(data.experimentProgressLogPath);
+		
 
-		if (scaffold.produceSimulationStatusOutput) {
-			addOutputItemHandler(new SimulationStatusItemHandler(scaffold.experiment.getScenarioCount(),  scaffold.logItemHandler));
+		final List<String> experimentMetaData = new ArrayList<>();
+		for (final Dimension dimension : data.dimensions) {
+			experimentMetaData.addAll(dimension.getIds());
+		}
+		
+		builder.setExperimentMetaData(experimentMetaData);
+
+		if (data.reportExperimentProgessToConsole) {
+			data.experimentContextConsumers.add(new ExperimentStatusConsole()::init);
 		}
 
-		if (scaffold.experimentProgressLogPath != null) {
-			scaffold.experimentProgressLog = NIOExperimentProgressLogReader.read(scaffold.experimentProgressLogPath);
-			addOutputItemHandler(new NIOExperimentProgressLogWriter(scaffold.experimentProgressLogPath));
+		// initialize the experiment context consumers so that they can
+		// subscribe to experiment level events
+		for (final Consumer<ExperimentContext> consumer : data.experimentContextConsumers) {
+			builder.addExperimentContextConsumer(consumer);
 		}
 
-		if (scaffold.experiment == null) {
-			throw new RuntimeException("null experiment");
-		}
+		experimentStateManager = builder.build();
+		// announce to consumers that the experiment is starting
+		experimentStateManager.openExperiment();
 
-		if (scaffold.threadCount > 0) {
+		if (data.threadCount > 0) {
 			executeMultiThreaded();
 		} else {
 			executeSingleThreaded();
 		}
+
+		// announce to consumers that the experiment has ended
+		experimentStateManager.closeExperiment();
+
 	}
 
 	/*
@@ -339,22 +260,14 @@ public final class ExperimentRunner {
 	 */
 	private void executeMultiThreaded() {
 
-		/*
-		 * Let all the output item handlers know that the experiment is starting
-		 */
-		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			outputItemHandler.openExperiment(scaffold.experimentProgressLog);
-		}
+		// Determine the scenarios
+		final List<Integer> jobs = new ArrayList<>();
 
-		// Create the jobs and sort them to help avoid long running
-		// scenarios from bunching up in the queue. Execute only the
-		// scenario/replication pairs that are not contained in the
-		// experiment progress log.
-		List<Integer> jobs = new ArrayList<>();
+		final int scenarioCount = experimentStateManager.getScenarioCount();
 
-		for (int scenarioId = 0; scenarioId < scaffold.experiment.getScenarioCount(); scenarioId++) {
-			if (!scaffold.experimentProgressLog.contains(scenarioId)) {
-
+		for (int scenarioId = 0; scenarioId < scenarioCount; scenarioId++) {
+			final ScenarioStatus scenarioStatus = experimentStateManager.getScenarioStatus(scenarioId).get();
+			if (scenarioStatus == ScenarioStatus.READY) {
 				jobs.add(scenarioId);
 			}
 		}
@@ -362,74 +275,69 @@ public final class ExperimentRunner {
 		/*
 		 * If there is nothing to do, then do not engage.
 		 */
-		if (!jobs.isEmpty()) {
+		if (jobs.isEmpty()) {
+			return;
+		}
 
-			int jobIndex = 0;
+		int jobIndex = 0;
 
-			// Create the Completion Service using the suggested thread
-			// count
-			final ExecutorService executorService = Executors.newFixedThreadPool(scaffold.threadCount);
-			final CompletionService<SimResult> completionService = new ExecutorCompletionService<>(executorService);
+		// Create the Completion Service using the suggested thread
+		// count
+		final ExecutorService executorService = Executors.newFixedThreadPool(data.threadCount);
+		final CompletionService<SimResult> completionService = new ExecutorCompletionService<>(executorService);
 
-			/*
-			 * Start the initial threads. Don't exceed the thread count or the
-			 * job count. Each time a thread is cleared, a new simulation will
-			 * be processed through the CompletionService until we run out of
-			 * simulations to run.
-			 */
-			while (jobIndex < Math.min(scaffold.threadCount, jobs.size()) - 1) {
-				Integer scenarioId = jobs.get(jobIndex);
-				Scenario scenario = scaffold.experiment.getScenario(scenarioId);
-				completionService.submit(new SimulationCallable(scenario, scaffold.outputItemHandlers));
+		/*
+		 * Start the initial threads. Don't exceed the thread count or the job
+		 * count. Each time a thread is cleared, a new simulation will be
+		 * processed through the CompletionService until we run out of
+		 * simulations to run.
+		 */
+		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
+			final Integer scenarioId = jobs.get(jobIndex);
+			preSimActions(scenarioId);
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.plugins));
+			jobIndex++;
+		}
+
+		/*
+		 * While there are still jobs to be assigned to a thread, or jobs that
+		 * have not yet completed processing, we check to see if a new job needs
+		 * processing and see if a previous job has completed.
+		 */
+		int jobCompletionCount = 0;
+		while (jobCompletionCount < jobs.size()) {
+			if (jobIndex < jobs.size()) {
+				final Integer scenarioId = jobs.get(jobIndex);
+				preSimActions(scenarioId);
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.plugins));
 				jobIndex++;
 			}
 
 			/*
-			 * While there are still jobs to be assigned to a thread, or jobs
-			 * that have not yet completed processing, we check to see if a new
-			 * job needs processing and see if a previous job has completed.
+			 * This call is blocking and waits for a job to complete and a
+			 * thread to clear.
 			 */
-			int jobCompletionCount = 0;
-			while (jobCompletionCount < jobs.size()) {
-				if (jobIndex < jobs.size()) {
-					Integer scenarioId = jobs.get(jobIndex);
-					Scenario scenario = scaffold.experiment.getScenario(scenarioId);
-					completionService.submit(new SimulationCallable(scenario, scaffold.outputItemHandlers));
-					jobIndex++;
-				}
-
-				/*
-				 * This call is blocking and waits for a job to complete and a
-				 * thread to clear.
-				 */
-				try {
-					completionService.take().get();
-				} catch (final InterruptedException | ExecutionException e) {
-					// Note that this is the completion service failing and
-					// not the simulation
-					throw new RuntimeException(e);
-				}
-
-				/*
-				 * Once the blocking call returns, we increment the
-				 * jobCompletionCount
-				 */
-				jobCompletionCount++;
+			try {
+				final SimResult simResult = completionService.take().get();
+				experimentStateManager.closeScenario(simResult.scenarioId, simResult.success);
+			} catch (final InterruptedException | ExecutionException e) {
+				// Note that this is the completion service failing and
+				// not the simulation
+				throw new RuntimeException(e);
 			}
 
 			/*
-			 * Since all jobs are done, the CompletionService is no longer
-			 * needed so we shut down the executorService that backs it.
+			 * Once the blocking call returns, we increment the
+			 * jobCompletionCount
 			 */
-			executorService.shutdown();
+			jobCompletionCount++;
 		}
+
 		/*
-		 * We let the output items handlers know that the experiment is
-		 * finished.
+		 * Since all jobs are done, the CompletionService is no longer needed so
+		 * we shut down the executorService that backs it.
 		 */
-		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			outputItemHandler.closeExperiment();
-		}
+		executorService.shutdown();
 
 	}
 
@@ -440,70 +348,93 @@ public final class ExperimentRunner {
 	 */
 	private void executeSingleThreaded() {
 
-		List<OutputItemHandler> simStatusHandlers = new ArrayList<>();
-		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			if (outputItemHandler.getHandledClasses().contains(SimulationStatusItem.class)) {
-				simStatusHandlers.add(outputItemHandler);
+		// Execute each scenario
+		final int scenarioCount = experimentStateManager.getScenarioCount();
+		final Simulation.Builder simBuilder = Simulation.builder();
+		for (int scenarioId = 0; scenarioId < scenarioCount; scenarioId++) {
+			final ScenarioStatus scenarioStatus = experimentStateManager.getScenarioStatus(scenarioId).get();
+			if (scenarioStatus != ScenarioStatus.READY) {
+				continue;
 			}
-		}
 
-		/*
-		 * Let all the output item handlers know that the experiment is starting
-		 */
-		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			outputItemHandler.openExperiment(scaffold.experimentProgressLog);
-		}
+			// generate the plugins that will form the simulation
+			final List<Plugin> plugins = preSimActions(scenarioId);
 
-		/*
-		 * The number of simulation runs is the product of the number of
-		 * scenarios and the number of replications
-		 */
-		final int jobCount = scaffold.experiment.getScenarioCount();
-		/*
-		 * If there is nothing to do, then do not engage.
-		 */
-		if (jobCount == 0) {
-			return;
-		}
-
-		for (int scenarioId = 0; scenarioId < jobCount; scenarioId++) {
-			Scenario scenario = scaffold.experiment.getScenario(scenarioId);
-			if (!scaffold.experimentProgressLog.contains(scenarioId)) {
-				// EngineBuilder engineBuilder =
-				// GCMMonolithicSupport.getEngineBuilder(scenario,
-				// replication.getSeed());
-				// OutputItemConsumerManager outputItemConsumerManager = new
-				// OutputItemConsumerManager(scenarioId,
-				// replication.getId(), scaffold.outputItemHandlers);
-				// engineBuilder.setOutputConsumer(outputItemConsumerManager::resolveEvent);
-				// Engine engine = engineBuilder.build();
-				Engine engine = scenario.getEngine();
-				try {
-					boolean success = false;
-					if (simStatusHandlers.isEmpty()) {
-						engine.execute();
-						success = true;
-					} else {
-						TimeElapser timeElapser = new TimeElapser();
-						try {
-							engine.execute();
-							success = true;
-						} finally {
-							SimulationStatusItem simulationStatusItem = new SimulationStatusItem(timeElapser.getElapsedMilliSeconds(), success);
-							for (OutputItemHandler outputItemHandler : simStatusHandlers) {
-								outputItemHandler.handle(scenarioId, simulationStatusItem);
-							}
-						}
-					}
-				} catch (final Exception e) {
-					System.err.println("Simulation failure for scenario " + scenarioId);
-					e.printStackTrace();
-				}
+			// Load the plugins into the simulation builder
+			for (final Plugin plugin : plugins) {
+				simBuilder.addPlugin(plugin.getPluginId(), plugin::init);
 			}
-		}
 
-		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			outputItemHandler.closeExperiment();
+			// direct output from the simulation to the subscribed consumers
+			simBuilder.setOutputConsumer(experimentStateManager.getOutputConsumer(scenarioId));
+
+			// build the simulation
+			final Simulation simulation = simBuilder.build();
+
+			// run the simulation
+			boolean success = false;
+			try {
+				simulation.execute();
+				success = true;
+			} catch (final Exception e) {
+				System.err.println("Simulation failure for scenario " + scenarioId);
+				e.printStackTrace();
+			}
+
+			experimentStateManager.closeScenario(scenarioId, success);
+
 		}
 	}
+
+	private List<Plugin> preSimActions(final int scenarioId) {
+		/*
+		 * Build the type map of the clone plugin builders from the plugins
+		 * supplied to the experiment builder
+		 */
+		final TypeMap.Builder<PluginBuilder> typeMapBuilder = TypeMap.builder(PluginBuilder.class);
+		for (final Plugin plugin : data.plugins) {
+			typeMapBuilder.add(plugin.getCloneBuilder());
+		}
+		final TypeMap<PluginBuilder> typeMap = typeMapBuilder.build();
+
+		// initialize the scenario meta data
+		final List<String> scenarioMetaData = new ArrayList<>();
+		scenarioMetaData.add(Integer.toString(scenarioId));
+
+		/*
+		 * From the scenario id select the functions from each dimension. Have
+		 * the functions mutate the plugin builders and return meta data.
+		 */
+		int modulus = 1;
+		for (final Dimension dimension : data.dimensions) {
+			/*
+			 * Determine for the dimension the index within the dimension that
+			 * corresponds to the scenario id
+			 */
+			final int index = (scenarioId / modulus) % dimension.size();
+			modulus *= dimension.size();
+
+			// get the function from the dimension
+			final Function<TypeMap<PluginBuilder>, List<String>> memberGenerator = dimension.getMemberGenerator(index);
+
+			// apply the function that will update the plugin builders and
+			// return the meta data for this function
+			scenarioMetaData.addAll(memberGenerator.apply(typeMap));
+
+		}
+		// update the experiment state manager
+		experimentStateManager.openScenario(scenarioId, scenarioMetaData);
+
+		final List<Plugin> result = new ArrayList<>();
+		
+		// Build the plugins
+		for (final PluginBuilder pluginBuilder : typeMap.getContents()) {
+			final Plugin plugin = pluginBuilder.build();
+			result.add(plugin);
+		}
+
+		return result;
+
+	}
+
 }

@@ -15,7 +15,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataView;
-import nucleus.Engine;
+import nucleus.Simulation;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -76,7 +76,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions executed
 		assertEquals(3, actionCounter.getValue());
@@ -100,7 +100,7 @@ public class AT_ActionPlugin {
 		actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions executed
 		assertEquals(2, actionCounter.getValue());
@@ -115,7 +115,7 @@ public class AT_ActionPlugin {
 		actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions executed
 		assertFalse(actionPlugin.allActionsExecuted());
@@ -188,7 +188,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the agents were created
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -231,7 +231,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -270,7 +270,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the agents were created
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -392,7 +392,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -444,7 +444,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the reports were created
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -491,7 +491,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the report actions were execute
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -533,7 +533,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the resolvers were created
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -575,7 +575,7 @@ public class AT_ActionPlugin {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the resolvers were created
 		assertTrue(actionPlugin.allActionsExecuted());

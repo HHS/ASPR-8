@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.AgentContext;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.ReportContext;
 import nucleus.SimpleReportId;
 import nucleus.testsupport.actionplugin.ActionAgent;
@@ -98,7 +98,7 @@ public class MaterialsActionSupport {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(seed);
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		MaterialsInitialData.Builder materialsBuilder = MaterialsInitialData.builder();
 
@@ -121,7 +121,7 @@ public class MaterialsActionSupport {
 			}
 		}
 
-		engineBuilder.addPlugin(MaterialsPlugin.PLUGIN_ID, new MaterialsPlugin(materialsBuilder.build())::init);
+		builder.addPlugin(MaterialsPlugin.PLUGIN_ID, new MaterialsPlugin(materialsBuilder.build())::init);
 
 		// add the resources plugin
 		ResourceInitialData.Builder resourcesBuilder = ResourceInitialData.builder();
@@ -139,18 +139,18 @@ public class MaterialsActionSupport {
 			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
 		}
 
-		engineBuilder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourcesBuilder.build())::init);
+		builder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourcesBuilder.build())::init);
 
 		// add the partitions plugin
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		// add the people plugin
 
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
 
 		// add the properties plugin
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 
 		// add the compartments plugin
 		CompartmentInitialData.Builder compartmentsBuilder = CompartmentInitialData.builder();
@@ -158,7 +158,7 @@ public class MaterialsActionSupport {
 			compartmentsBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
 		}
 
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentsBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentsBuilder.build())::init);
 
 		// add the regions plugin
 		RegionInitialData.Builder regionsBuilder = RegionInitialData.builder();
@@ -166,7 +166,7 @@ public class MaterialsActionSupport {
 			regionsBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
 		}
 
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionsBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionsBuilder.build())::init);
 
 		// add the report plugin
 
@@ -175,22 +175,22 @@ public class MaterialsActionSupport {
 			reportsBuilder.addReport(new SimpleReportId("report"), () -> report);
 		}
 
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsBuilder.build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsBuilder.build())::init);
 
 		// add the component plugin
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
 
 		// add the action plugin
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// set the output consumer
-		engineBuilder.setOutputConsumer(outputConsumer);
+		builder.setOutputConsumer(outputConsumer);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		if (!actionPlugin.allActionsExecuted()) {

@@ -14,8 +14,8 @@ import java.nio.file.StandardOpenOption;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.AgentContext;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.ReportContext;
 import nucleus.SimpleReportId;
 import plugins.compartments.CompartmentPlugin;
@@ -138,22 +138,22 @@ public class MicroSim {
 		OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// allowing people		
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID,new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID,new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
 		// getting random value generation		
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID,new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1345245724553456L).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID,new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1345245724553456L).build())::init);
 		
 		// add the component concept need for compartments to work correctly
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID,new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID,new ComponentPlugin()::init);
 
 		// adding reports
 		ReportsInitialData reportsInitialData = ReportsInitialData.builder().addReport(new SimpleReportId(PersonCompartmentTransferReport.class), () -> new PersonCompartmentTransferReport()::init).build();
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID,new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID,new ReportPlugin(reportsInitialData)::init);
 
-		engineBuilder.setOutputConsumer((obj) -> this.handleOutput(writer, obj));
+		builder.setOutputConsumer((obj) -> this.handleOutput(writer, obj));
 
 		// adding the compartments
 		CompartmentInitialData.Builder compartmentDataBuilder = CompartmentInitialData.builder();
@@ -161,10 +161,10 @@ public class MicroSim {
 		compartmentDataBuilder.setCompartmentInitialBehaviorSupplier(Compartment.B, () -> MicroSim::receivingCompartmentInitialization);
 		compartmentDataBuilder.setCompartmentInitialBehaviorSupplier(Compartment.C, () -> MicroSim::receivingCompartmentInitialization);
 		
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID,new CompartmentPlugin(compartmentDataBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID,new CompartmentPlugin(compartmentDataBuilder.build())::init);
 
 		// building and executing the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// close the output file
 		writer.close();

@@ -10,8 +10,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
 import nucleus.AgentContext;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -89,7 +89,7 @@ public class GroupsActionSupport {
 		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
 		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the group plugin
 		GroupInitialData.Builder groupBuilder = GroupInitialData.builder();
@@ -124,35 +124,35 @@ public class GroupsActionSupport {
 			groupBuilder.addPersonToGroup(groupId, personId);
 		}
 
-		engineBuilder.addPlugin(GroupPlugin.PLUGIN_ID, new GroupPlugin(groupBuilder.build())::init);
+		builder.addPlugin(GroupPlugin.PLUGIN_ID, new GroupPlugin(groupBuilder.build())::init);
 
 		// add the people plugin
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 
 		for (PersonId personId : people) {
 			peopleBuilder.addPersonId(personId);
 		}
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
 
 		// add the properties plugin
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 
 		// add the report plugin
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 
 		// add the component plugin
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
 
 		// add the action plugin
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		if (!actionPlugin.allActionsExecuted()) {

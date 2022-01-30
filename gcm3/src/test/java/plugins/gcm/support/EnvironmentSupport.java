@@ -10,8 +10,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.Context;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import plugins.compartments.support.CompartmentPropertyId;
 import plugins.compartments.testsupport.TestCompartmentId;
 import plugins.components.support.ComponentId;
@@ -545,20 +545,20 @@ public class EnvironmentSupport {
 	}
 	
 	public static void executeSimulation(Scenario scenario, Replication replication) {
-		EngineBuilder engineBuilder =  GCMMonolithicSupport.getEngineBuilder(scenario, replication.getSeed());
-		Engine engine = engineBuilder.build();
-		engine.execute();
+		Builder builder =  GCMMonolithicSupport.getEngineBuilder(scenario, replication.getSeed());
+		Simulation simulation = builder.build();
+		simulation.execute();
 	}
 	
 	public static void executeSimulationX(Scenario scenario, ScenarioId scenarioId, Replication replication, OutputItemHandler outputItemHandler) {
-		EngineBuilder engineBuilder =  GCMMonolithicSupport.getEngineBuilder(scenario, replication.getSeed());
+		Builder builder =  GCMMonolithicSupport.getEngineBuilder(scenario, replication.getSeed());
 		
 		
 		OutputManager outputManager = new OutputManager(scenarioId, replication.getId(), outputItemHandler);
-		engineBuilder.setOutputConsumer(outputManager::accept);
+		builder.setOutputConsumer(outputManager::accept);
 		
-		Engine engine = engineBuilder.build();
-		engine.execute();
+		Simulation simulation = builder.build();
+		simulation.execute();
 	}
 
 }

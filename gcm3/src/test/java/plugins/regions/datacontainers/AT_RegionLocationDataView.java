@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Context;
-import nucleus.Engine;
+import nucleus.Simulation;
 import nucleus.testsupport.MockContext;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -61,7 +61,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getRegionPopulationCount", args = { RegionId.class })
 	public void testGetRegionPopulationCount() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -69,14 +69,14 @@ public class AT_RegionLocationDataView {
 			});
 		}
 		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1525815460460902517L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1525815460460902517L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -124,10 +124,10 @@ public class AT_RegionLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -138,7 +138,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getRegionPopulationTime", args = { RegionId.class })
 	public void testGetRegionPopulationTime() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -146,14 +146,14 @@ public class AT_RegionLocationDataView {
 			});
 		}
 		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2430955549982485988L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2430955549982485988L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -222,10 +222,10 @@ public class AT_RegionLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -236,7 +236,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getPeopleInRegion", args = { RegionId.class })
 	public void testGetPeopleInRegion() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -244,14 +244,14 @@ public class AT_RegionLocationDataView {
 			});
 		}
 		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(-3347423560010833899L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(-3347423560010833899L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -311,10 +311,10 @@ public class AT_RegionLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -325,7 +325,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getPersonRegionArrivalTime", args = { PersonId.class })
 	public void testGetPersonRegionArrivalTime() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -333,14 +333,14 @@ public class AT_RegionLocationDataView {
 			});
 		}
 		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(-2278422620232176214L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(-2278422620232176214L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -429,10 +429,10 @@ public class AT_RegionLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -446,14 +446,14 @@ public class AT_RegionLocationDataView {
 			});
 		}
 		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.DO_NOT_TRACK_TIME);
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(4584106512728037850L).build())::init);		
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(4584106512728037850L).build())::init);		
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		
 
@@ -489,10 +489,10 @@ public class AT_RegionLocationDataView {
 
 		// build and add the action plugin
 		actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -503,7 +503,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getPersonRegion", args = { PersonId.class })
 	public void testGetPersonRegion() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -511,14 +511,14 @@ public class AT_RegionLocationDataView {
 			});
 		}
 		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(5151111920517015649L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(5151111920517015649L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -607,10 +607,10 @@ public class AT_RegionLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -622,7 +622,7 @@ public class AT_RegionLocationDataView {
 	public void testGetPersonRegionArrivalTrackingPolicy() {
 		// 2934280155665825436
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			Engine.EngineBuilder engineBuilder = Engine.builder();
+			Simulation.Builder builder = Simulation.builder();
 			RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -630,14 +630,14 @@ public class AT_RegionLocationDataView {
 				});
 			}
 			regionInitialDataBuilder.setPersonRegionArrivalTracking(timeTrackingPolicy);
-			engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
+			builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionInitialDataBuilder.build())::init);
 
-			engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-			engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(8833508541323194123L).build())::init);
-			engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-			engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-			engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-			engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+			builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+			builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(8833508541323194123L).build())::init);
+			builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+			builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+			builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+			builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 			ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -655,10 +655,10 @@ public class AT_RegionLocationDataView {
 
 			// build and add the action plugin
 			ActionPlugin actionPlugin = pluginBuilder.build();
-			engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+			builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 			// build and execute the engine
-			engineBuilder.build().execute();
+			builder.build().execute();
 
 			// show that all actions were executed
 			assertTrue(actionPlugin.allActionsExecuted());

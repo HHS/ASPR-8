@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
 import nucleus.Context;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
@@ -54,7 +54,7 @@ public final class AT_AttributeFilter {
 
 	private void testConsumer(int initialPopulationCount, long seed, Consumer<AgentContext> consumer) {
 		
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		AttributeInitialData.Builder attributeBuilder = AttributeInitialData.builder();
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -62,18 +62,18 @@ public final class AT_AttributeFilter {
 		}
 		attributeBuilder.defineAttribute(LocalAttributeId.DATA_ID, AttributeDefinition.builder().setType(Data.class).setDefaultValue(new Data(0)).build());
 
-		engineBuilder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeBuilder.build())::init);
+		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeBuilder.build())::init);
 
 		// add the remaining plugins
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 		for (int i = 0; i < initialPopulationCount; i++) {
 			peopleBuilder.addPersonId(new PersonId(i));
 		}
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -86,10 +86,10 @@ public final class AT_AttributeFilter {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

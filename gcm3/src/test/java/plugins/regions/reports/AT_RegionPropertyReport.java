@@ -5,12 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
 import nucleus.ReportId;
 import nucleus.SimpleReportId;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
+import plugins.components.ComponentPlugin;
+import plugins.partitions.PartitionsPlugin;
+import plugins.people.PeoplePlugin;
+import plugins.people.initialdata.PeopleInitialData;
+import plugins.properties.PropertiesPlugin;
+import plugins.properties.support.PropertyDefinition;
 import plugins.regions.RegionPlugin;
 import plugins.regions.events.mutation.RegionPropertyValueAssignmentEvent;
 import plugins.regions.initialdata.RegionInitialData;
@@ -18,17 +24,10 @@ import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
-import plugins.people.PeoplePlugin;
-import plugins.people.initialdata.PeopleInitialData;
-import plugins.properties.PropertiesPlugin;
-import plugins.properties.support.PropertyDefinition;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.initialdata.StochasticsInitialData;
@@ -52,7 +51,7 @@ public class AT_RegionPropertyReport {
 		 * The output consumers properly accounts for report item duplications.
 		 */
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		
 		RegionInitialData.Builder regionBuilder = RegionInitialData.builder();
@@ -90,18 +89,18 @@ public class AT_RegionPropertyReport {
 		propertyDefinition = PropertyDefinition.builder().setDefaultValue("start").setType(String.class).build();
 		regionBuilder.defineRegionProperty( prop_policy, propertyDefinition);
 
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
 
 		// add the report
 		ReportsInitialData reportsInitialData = ReportsInitialData.builder().addReport(REPORT_ID, () -> new RegionPropertyReport()::init).build();
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 
 		// add remaining plugins
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(8833508541323194123L).build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(8833508541323194123L).build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -141,12 +140,12 @@ public class AT_RegionPropertyReport {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
-		engineBuilder.setOutputConsumer(actualOutputConsumer);
-		engineBuilder.build().execute();
+		builder.setOutputConsumer(actualOutputConsumer);
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -186,7 +185,7 @@ public class AT_RegionPropertyReport {
 	}
 
 	private static ReportItem getReportItem(Object... values) {
-		Builder builder = ReportItem.builder();
+		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportId(REPORT_ID);
 		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {

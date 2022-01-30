@@ -85,7 +85,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -167,7 +167,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -209,7 +209,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -256,7 +256,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -305,7 +305,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -375,7 +375,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -426,7 +426,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -479,7 +479,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -545,7 +545,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -616,7 +616,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -659,7 +659,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -713,7 +713,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -767,7 +767,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -826,7 +826,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -875,7 +875,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the plans that were scheduled after the halt did not
 		// execute
@@ -966,7 +966,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that the resolver engaged in the three event resolution phases
 		// in the proper order
@@ -1062,7 +1062,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1171,7 +1171,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1204,7 +1204,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1273,7 +1273,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1317,7 +1317,7 @@ public class AT_ResolverContext {
 		actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1365,7 +1365,7 @@ public class AT_ResolverContext {
 		actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1418,7 +1418,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all the actions executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1452,7 +1452,7 @@ public class AT_ResolverContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

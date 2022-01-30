@@ -12,8 +12,8 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Context;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
@@ -80,25 +80,25 @@ public final class AT_AttributeLabeler {
 	@UnitTestMethod(name = "getLabel", args = { Context.class, PersonId.class })
 	public void testGetLabel() {
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		AttributeInitialData.Builder attributeBuilder = AttributeInitialData.builder();
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 			attributeBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
 		}
 
-		engineBuilder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeBuilder.build())::init);
+		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeBuilder.build())::init);
 
 		// add the remaining plugins
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 		for (int i = 0; i < 10; i++) {
 			peopleBuilder.addPersonId(new PersonId(i));
 		}
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(4676319446289433016L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(4676319446289433016L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		// build an attribute function
 		Function<Object, Object> function = (c) -> {
@@ -153,10 +153,10 @@ public final class AT_AttributeLabeler {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

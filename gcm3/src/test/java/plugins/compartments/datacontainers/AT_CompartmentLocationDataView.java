@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Context;
-import nucleus.Engine;
+import nucleus.Simulation;
 import nucleus.testsupport.MockContext;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -60,7 +60,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getCompartmentPopulationCount", args = { CompartmentId.class })
 	public void testGetCompartmentPopulationCount() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
 
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -68,14 +68,14 @@ public class AT_CompartmentLocationDataView {
 			});
 		}
 		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3607759084703047258L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3607759084703047258L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -123,10 +123,10 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -137,7 +137,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getCompartmentPopulationTime", args = { CompartmentId.class })
 	public void testGetCompartmentPopulationTime() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
 
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -145,14 +145,14 @@ public class AT_CompartmentLocationDataView {
 			});
 		}
 		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2430955549982485988L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2430955549982485988L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -221,10 +221,10 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -235,7 +235,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getPeopleInCompartment", args = { CompartmentId.class })
 	public void testGetPeopleInCompartment() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
 
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -243,14 +243,14 @@ public class AT_CompartmentLocationDataView {
 			});
 		}
 		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);		
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3347423560010833899L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);		
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3347423560010833899L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -310,10 +310,10 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -324,7 +324,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getPersonCompartmentArrivalTime", args = { PersonId.class })
 	public void testGetPersonCompartmentArrivalTime() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
 
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -332,14 +332,14 @@ public class AT_CompartmentLocationDataView {
 			});
 		}
 		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2278422620232176214L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2278422620232176214L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -430,10 +430,10 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -446,14 +446,14 @@ public class AT_CompartmentLocationDataView {
 			});
 		}
 		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.DO_NOT_TRACK_TIME);
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3338965305284292260L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3338965305284292260L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		pluginBuilder.addAgent("agent");
 
@@ -484,10 +484,10 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -498,7 +498,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getPersonCompartment", args = { PersonId.class })
 	public void testGetPersonCompartment() {
 
-		Engine.EngineBuilder engineBuilder = Engine.builder();
+		Simulation.Builder builder = Simulation.builder();
 		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
 
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -506,14 +506,14 @@ public class AT_CompartmentLocationDataView {
 			});
 		}
 		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(442744021729694111L).build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(442744021729694111L).build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -604,10 +604,10 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -619,7 +619,7 @@ public class AT_CompartmentLocationDataView {
 	public void testGetPersonCompartmentArrivalTrackingPolicy() {
 		// 2934280155665825436
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			Engine.EngineBuilder engineBuilder = Engine.builder();
+			Simulation.Builder builder = Simulation.builder();
 			CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
 
 			for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -627,14 +627,14 @@ public class AT_CompartmentLocationDataView {
 				});
 			}
 			compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(timeTrackingPolicy);
-			engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
+			builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
-			engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-			engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(6642493898588194197L).build())::init);
-			engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-			engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-			engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-			engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+			builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+			builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(6642493898588194197L).build())::init);
+			builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+			builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+			builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+			builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 			ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -652,10 +652,10 @@ public class AT_CompartmentLocationDataView {
 
 			// build and add the action plugin
 			ActionPlugin actionPlugin = pluginBuilder.build();
-			engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+			builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 			// build and execute the engine
-			engineBuilder.build().execute();
+			builder.build().execute();
 
 			// show that all actions were executed
 			assertTrue(actionPlugin.allActionsExecuted());

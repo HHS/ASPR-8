@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
 import nucleus.ReportId;
 import nucleus.SimpleReportId;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
@@ -23,7 +23,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -45,33 +44,33 @@ public class AT_GlobalPropertyReport {
 		 * report item duplications.
 		 */
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the global property definitions
-		GlobalInitialData.Builder builder = GlobalInitialData.builder();
+		GlobalInitialData.Builder initialDatabuilder = GlobalInitialData.builder();
 		
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		builder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
 		
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		builder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
 		
 		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		builder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
+		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
 
-		GlobalInitialData globalInitialData = builder.build();
-		engineBuilder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
+		GlobalInitialData globalInitialData = initialDatabuilder.build();
+		builder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
 
 		// add the report
 		ReportsInitialData reportsInitialData = ReportsInitialData.builder().addReport(REPORT_ID, () -> new GlobalPropertyReport()::init).build();
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 		
 		//add the remaining plugins
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 	
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
@@ -112,12 +111,12 @@ public class AT_GlobalPropertyReport {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
-		engineBuilder.setOutputConsumer(actualOutputConsumer);
-		engineBuilder.build().execute();
+		builder.setOutputConsumer(actualOutputConsumer);
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -146,7 +145,7 @@ public class AT_GlobalPropertyReport {
 	}
 
 	private static ReportItem getReportItem(Object... values) {
-		Builder builder = ReportItem.builder();
+		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportId(REPORT_ID);
 		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {

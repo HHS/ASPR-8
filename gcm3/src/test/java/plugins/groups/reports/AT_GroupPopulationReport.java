@@ -6,10 +6,10 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
 import nucleus.ReportId;
 import nucleus.SimpleReportId;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -33,7 +33,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
@@ -321,7 +320,7 @@ public class AT_GroupPopulationReport {
 
 		// create a list 100 of people
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the group plugin
 		GroupInitialData.Builder groupBuilder = GroupInitialData.builder();
@@ -348,39 +347,39 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(2));
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
 
-		engineBuilder.addPlugin(GroupPlugin.PLUGIN_ID, new GroupPlugin(groupBuilder.build())::init);
+		builder.addPlugin(GroupPlugin.PLUGIN_ID, new GroupPlugin(groupBuilder.build())::init);
 
 		// add the people plugin
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 
 		for (int i = 0; i < 10; i++) {
 			peopleBuilder.addPersonId(new PersonId(i));
 		}
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
 
 		// add the properties plugin
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 
 		// add the report plugin
 		ReportsInitialData reportsInitialData = ReportsInitialData.builder().addReport(REPORT_ID, () -> new GroupPopulationReport(reportPeriod)::init).build();
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(reportsInitialData)::init);
 
 		// add the component plugin
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(random.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(random.nextLong()).build())::init);
 
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// add the output consumer for the actual report items
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
-		engineBuilder.setOutputConsumer(actualOutputConsumer);
+		builder.setOutputConsumer(actualOutputConsumer);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		if (!actionPlugin.allActionsExecuted()) {
@@ -392,7 +391,7 @@ public class AT_GroupPopulationReport {
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
-		Builder builder = ReportItem.builder();
+		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportId(REPORT_ID);
 
 		switch (reportPeriod) {

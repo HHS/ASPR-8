@@ -15,8 +15,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentId;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
@@ -67,26 +67,26 @@ public final class AT_GlobalPropertyResolver {
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testGlobalDataViewInitialization() {
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the global property definitions
-		GlobalInitialData.Builder builder = GlobalInitialData.builder();
+		GlobalInitialData.Builder globalInitialDataBuilder = GlobalInitialData.builder();
 
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		builder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
+		globalInitialDataBuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
 
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		builder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
+		globalInitialDataBuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
 
 		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		builder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
+		globalInitialDataBuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
 
 		// set some of the properties to new values
-		builder.setGlobalPropertyValue(globalPropertyId_1, 17);
-		builder.setGlobalPropertyValue(globalPropertyId_2, 9.756);
+		globalInitialDataBuilder.setGlobalPropertyValue(globalPropertyId_1, 17);
+		globalInitialDataBuilder.setGlobalPropertyValue(globalPropertyId_2, 9.756);
 
 		/*
 		 * Add two global components. These components will use mutable booleans
@@ -96,21 +96,21 @@ public final class AT_GlobalPropertyResolver {
 		assertFalse(globalComponent_1_Exists.getValue());
 
 		GlobalComponentId globalComponentId_1 = new SimpleGlobalComponentId("component_1");
-		builder.setGlobalComponentInitialBehaviorSupplier(globalComponentId_1, () -> (c2) -> globalComponent_1_Exists.setValue(true));
+		globalInitialDataBuilder.setGlobalComponentInitialBehaviorSupplier(globalComponentId_1, () -> (c2) -> globalComponent_1_Exists.setValue(true));
 
 		MutableBoolean globalComponent_2_Exists = new MutableBoolean();
 		assertFalse(globalComponent_2_Exists.getValue());
 
 		GlobalComponentId globalComponentId_2 = new SimpleGlobalComponentId("component_2");
-		builder.setGlobalComponentInitialBehaviorSupplier(globalComponentId_2, () -> (c2) -> globalComponent_2_Exists.setValue(true));
+		globalInitialDataBuilder.setGlobalComponentInitialBehaviorSupplier(globalComponentId_2, () -> (c2) -> globalComponent_2_Exists.setValue(true));
 
-		GlobalInitialData globalInitialData = builder.build();
-		engineBuilder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
+		GlobalInitialData globalInitialData = globalInitialDataBuilder.build();
+		builder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
 
 		// add the remaining plugins
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -158,12 +158,12 @@ public final class AT_GlobalPropertyResolver {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
-		engineBuilder.setOutputConsumer(actualOutputConsumer);
-		engineBuilder.build().execute();
+		builder.setOutputConsumer(actualOutputConsumer);
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -177,13 +177,13 @@ public final class AT_GlobalPropertyResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testGlobalPropertyChangeObservationEventLabelers() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the required plugins
-		engineBuilder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(GlobalInitialData.builder().build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(GlobalInitialData.builder().build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -202,10 +202,10 @@ public final class AT_GlobalPropertyResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -214,13 +214,13 @@ public final class AT_GlobalPropertyResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testGlobalComponentConstructionEvent() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the required plugins
-		engineBuilder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(GlobalInitialData.builder().build())::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(GlobalInitialData.builder().build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -269,10 +269,10 @@ public final class AT_GlobalPropertyResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -285,27 +285,27 @@ public final class AT_GlobalPropertyResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testGlobalPropertyValueAssignmentEvent() {
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the required plugins
-		GlobalInitialData.Builder builder = GlobalInitialData.builder();
+		GlobalInitialData.Builder globalInitialDataBuilder = GlobalInitialData.builder();
 
 		// Add a mutable global property
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("mutable property");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(23).build();
-		builder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
+		globalInitialDataBuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition);
 
 		// Add an immutable global property
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("immutable property");
 		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(100).setPropertyValueMutability(false).build();
-		builder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
+		globalInitialDataBuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition);
 
-		GlobalInitialData globalInitialData = builder.build();
+		GlobalInitialData globalInitialData = globalInitialDataBuilder.build();
 
-		engineBuilder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -383,10 +383,10 @@ public final class AT_GlobalPropertyResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

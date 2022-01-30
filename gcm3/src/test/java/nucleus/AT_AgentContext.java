@@ -92,7 +92,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the plan that was added by the action plan was executed and
 		// thus the addPlan invocation functioned correctly
@@ -153,7 +153,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -190,7 +190,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -229,7 +229,7 @@ public class AT_AgentContext {
 		// build the plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -277,7 +277,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -318,7 +318,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -366,7 +366,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -432,7 +432,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -464,7 +464,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -511,7 +511,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the plans that were scheduled after the halt did not
 		// execute
@@ -775,7 +775,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -935,7 +935,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that all action plans were executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -994,7 +994,7 @@ public class AT_AgentContext {
 		 * Add an output consumer that will place the output into the
 		 * actualOutput set above and then execute the simulation
 		 */
-		Engine	.builder()//
+		Simulation	.builder()//
 				.addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init)//
 				.setOutputConsumer((o) -> actualOutput.add(o))//
 				.build()//
@@ -1053,7 +1053,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action was executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1095,7 +1095,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action was executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -1122,7 +1122,7 @@ public class AT_AgentContext {
 
 		// execute the engine and show that the expected contract exception was
 		// thrown
-		ContractException contractException = assertThrows(ContractException.class, () -> Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 
 		// show that the action was executed
@@ -1154,7 +1154,7 @@ public class AT_AgentContext {
 		 * Execute the engine. Show that the expected contract exception was
 		 * thrown and the exceptions message text contains the expected details
 		 */
-		ContractException contractException = assertThrows(ContractException.class, () -> Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 		contractException.getMessage().contains(details);
 
@@ -1271,7 +1271,7 @@ public class AT_AgentContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

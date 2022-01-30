@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Engine;
+import nucleus.Simulation;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -187,7 +187,7 @@ public final class PartitionBugTest {
 		ActionPlugin actionPlugin = actionPluginBuilder.build();
 
 		// build and execute the engine
-		Engine	.builder()//
+		Simulation	.builder()//
 				.addPlugin(RegionPlugin.PLUGIN_ID,regionPlugin::init)//
 				.addPlugin(ReportPlugin.PLUGIN_ID,new ReportPlugin(ReportsInitialData.builder().build())::init)//
 				.addPlugin(CompartmentPlugin.PLUGIN_ID,compartmentPlugin::init)//

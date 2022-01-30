@@ -77,7 +77,7 @@ public class AT_ReportContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the plan that was added by the action plan was executed and
 		// thus the addPlan invocation functioned correctly
@@ -130,7 +130,7 @@ public class AT_ReportContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -260,7 +260,7 @@ public class AT_ReportContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		assertEquals(plannedEvents, receivedEvents);
 
@@ -468,7 +468,7 @@ public class AT_ReportContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// run the simulation
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action plans got executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -510,7 +510,7 @@ public class AT_ReportContext {
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		assertTrue(mutableBoolean.getValue());
 	}
@@ -573,7 +573,7 @@ public class AT_ReportContext {
 		 * collects the output onto a set
 		 */
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		Engine	.builder()//
+		Simulation	.builder()//
 				.addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init)//
 				.setOutputConsumer((o) -> output.add(o))//
 				.build().execute();//
@@ -634,7 +634,7 @@ public class AT_ReportContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action was executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -682,7 +682,7 @@ public class AT_ReportContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that the action was executed
 		assertTrue(actionPlugin.allActionsExecuted());
@@ -717,7 +717,7 @@ public class AT_ReportContext {
 
 		// execute the engine and show that the expected contract exception was
 		// thrown
-		ContractException contractException = assertThrows(ContractException.class, () -> Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 
 		// Show that the report action plan was executed
@@ -756,7 +756,7 @@ public class AT_ReportContext {
 
 		// execute the engine and show that the expected contract exception was
 		// thrown with the details contained in the exception's message
-		ContractException contractException = assertThrows(ContractException.class, () -> Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 		assertTrue(contractException.getMessage().contains(details));
 
@@ -924,7 +924,7 @@ public class AT_ReportContext {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

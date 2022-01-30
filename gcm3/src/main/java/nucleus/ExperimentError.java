@@ -1,4 +1,4 @@
-package nucleus.util.experiment;
+package nucleus;
 
 import util.ContractError;
 import util.ContractException;

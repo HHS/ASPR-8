@@ -12,8 +12,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.Context;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -342,7 +342,7 @@ public class PartitionManagementTest {
 			boolean useFilter, //
 			boolean measureMemory) {//
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		Report report = new Report();
 		report.setPopulationSize(populationSize);
@@ -368,7 +368,7 @@ public class PartitionManagementTest {
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			compartmentBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
 		}
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
 
 		// add the global plugin
 
@@ -377,7 +377,7 @@ public class PartitionManagementTest {
 		for (final TestGlobalComponentId testGlobalComponentId : TestGlobalComponentId.values()) {
 			globalBuilder.setGlobalComponentInitialBehaviorSupplier(testGlobalComponentId, () -> new ActionAgent(testGlobalComponentId)::init);
 		}
-		engineBuilder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalBuilder.build())::init);
+		builder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalBuilder.build())::init);
 
 		// add the materials plugin
 		MaterialsInitialData.Builder materialsBuilder = MaterialsInitialData.builder();
@@ -389,7 +389,7 @@ public class PartitionManagementTest {
 		for (final TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId, () -> new ActionAgent(testMaterialsProducerId)::init);
 		}
-		engineBuilder.addPlugin(MaterialsPlugin.PLUGIN_ID, new MaterialsPlugin(materialsBuilder.build())::init);
+		builder.addPlugin(MaterialsPlugin.PLUGIN_ID, new MaterialsPlugin(materialsBuilder.build())::init);
 
 		// add the resources plugin
 		ResourceInitialData.Builder resourceBuilder = ResourceInitialData.builder();
@@ -398,14 +398,14 @@ public class PartitionManagementTest {
 			resourceBuilder.addResource(testResourceId);
 			resourceBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
 		}
-		engineBuilder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourceBuilder.build())::init);
+		builder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourceBuilder.build())::init);
 
 		// add the groups plugin
 		GroupInitialData.Builder groupsBuilder = GroupInitialData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			groupsBuilder.addGroupTypeId(testGroupTypeId);
 		}
-		engineBuilder.addPlugin(GroupPlugin.PLUGIN_ID, new GroupPlugin(groupsBuilder.build())::init);
+		builder.addPlugin(GroupPlugin.PLUGIN_ID, new GroupPlugin(groupsBuilder.build())::init);
 
 		// add the regions plugin
 		RegionInitialData.Builder regionsBuilder = RegionInitialData.builder();
@@ -418,7 +418,7 @@ public class PartitionManagementTest {
 			regionsBuilder.setRegionComponentInitialBehaviorSupplier(localRegionId, () -> new ActionAgent(localRegionId)::init);
 		}
 
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionsBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionsBuilder.build())::init);
 
 		// load the person properties plugin
 		PersonPropertyInitialData.Builder personPropertiesBuilder = PersonPropertyInitialData.builder();
@@ -426,25 +426,25 @@ public class PartitionManagementTest {
 			PropertyDefinition propertyDefinition = localPersonPropertyId.getPropertyDefinition(TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 			personPropertiesBuilder.definePersonProperty(localPersonPropertyId, propertyDefinition);
 		}
-		engineBuilder.addPlugin(PersonPropertiesPlugin.PLUGIN_ID, new PersonPropertiesPlugin(personPropertiesBuilder.build())::init);
+		builder.addPlugin(PersonPropertiesPlugin.PLUGIN_ID, new PersonPropertiesPlugin(personPropertiesBuilder.build())::init);
 
 		// load the stochastics plugin
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
 		
 		//load the partitions plugin
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 		
 		//load the people plugin
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 		
 		//load the properties plugin		
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		
 		//load the report plugin
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		
 		//load the component plugin
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		
 		Object partitionId = new Object();
 
@@ -456,17 +456,17 @@ public class PartitionManagementTest {
 			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
 
 			for (int i = 0; i < populationSize; i++) {
-				PersonContructionData.Builder builder = PersonContructionData.builder();
+				PersonContructionData.Builder constructionBuilder = PersonContructionData.builder();
 				RegionId regionId = regionIds.get(randomGenerator.nextInt(regionIds.size()));
 				CompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(randomGenerator);
 
-				builder.add(new PersonPropertyInitialization(LocalPersonPropertyId.AGE, randomGenerator.nextInt(60)));
-				builder.add(new PersonPropertyInitialization(LocalPersonPropertyId.IMMUNE, randomGenerator.nextBoolean()));
-				builder.add(new PersonPropertyInitialization(LocalPersonPropertyId.VACCINATED, randomGenerator.nextBoolean()));
-				builder.add(new PersonPropertyInitialization(LocalPersonPropertyId.SERUM_DENSITY, randomGenerator.nextDouble() * 0.9 + 0.1));
-				builder.add(regionId);
-				builder.add(compartmentId);
-				PersonContructionData personContructionData = builder.build();
+				constructionBuilder.add(new PersonPropertyInitialization(LocalPersonPropertyId.AGE, randomGenerator.nextInt(60)));
+				constructionBuilder.add(new PersonPropertyInitialization(LocalPersonPropertyId.IMMUNE, randomGenerator.nextBoolean()));
+				constructionBuilder.add(new PersonPropertyInitialization(LocalPersonPropertyId.VACCINATED, randomGenerator.nextBoolean()));
+				constructionBuilder.add(new PersonPropertyInitialization(LocalPersonPropertyId.SERUM_DENSITY, randomGenerator.nextDouble() * 0.9 + 0.1));
+				constructionBuilder.add(regionId);
+				constructionBuilder.add(compartmentId);
+				PersonContructionData personContructionData = constructionBuilder.build();
 
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
 			}
@@ -599,10 +599,10 @@ public class PartitionManagementTest {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 		assertTrue(actionPlugin.allActionsExecuted());
 
 		return report;

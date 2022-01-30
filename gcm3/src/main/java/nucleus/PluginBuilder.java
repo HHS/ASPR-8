@@ -1,5 +1,8 @@
-package nucleus.util.experiment;
+package nucleus;
 
-public interface InitialDataBuilder {
+public interface PluginBuilder {
 
+	
+	public Plugin build();
+	
 }

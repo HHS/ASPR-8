@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
 import nucleus.Context;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
@@ -116,7 +116,7 @@ public class AT_PersonPropertyLabeler {
 
 	private void testConsumers(int initialPopulation, long seed, ActionPlugin actionPlugin) {
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
 		// add the person property plugin
 		PersonPropertyInitialData.Builder personPropertyBuilder = PersonPropertyInitialData.builder();
@@ -124,10 +124,10 @@ public class AT_PersonPropertyLabeler {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 
-		engineBuilder.addPlugin(PersonPropertiesPlugin.PLUGIN_ID, new PersonPropertiesPlugin(personPropertyBuilder.build())::init);
+		builder.addPlugin(PersonPropertiesPlugin.PLUGIN_ID, new PersonPropertiesPlugin(personPropertyBuilder.build())::init);
 
 		// add the people plugin
-		engineBuilder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
@@ -138,10 +138,10 @@ public class AT_PersonPropertyLabeler {
 			peopleBuilder.addPersonId(personId);
 		}
 
-		engineBuilder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
 
 		// add the properties plugin
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 
 		// add the compartments plugin
 		CompartmentInitialData.Builder compartmentBuilder = CompartmentInitialData.builder();
@@ -158,7 +158,7 @@ public class AT_PersonPropertyLabeler {
 			compartmentBuilder.setPersonCompartment(personId, testCompartmentId.next());
 		}
 
-		engineBuilder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
 
 		// add the regions plugin
 		RegionInitialData.Builder regionBuilder = RegionInitialData.builder();
@@ -175,22 +175,22 @@ public class AT_PersonPropertyLabeler {
 			regionBuilder.setPersonRegion(personId, testRegionId.next());
 		}
 
-		engineBuilder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
+		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
 
 		// add the component plugin
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the report plugin
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 
 		// add the stochastics plugin
-		engineBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
 
 		// add the action plugin
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

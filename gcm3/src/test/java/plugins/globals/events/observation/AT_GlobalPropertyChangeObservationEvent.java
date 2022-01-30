@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
 import nucleus.Context;
-import nucleus.Engine;
-import nucleus.Engine.EngineBuilder;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.testsupport.actionplugin.ActionPlugin;
@@ -157,20 +157,20 @@ public class AT_GlobalPropertyChangeObservationEvent {
 	 */
 	private void testConsumer(Consumer<AgentContext> consumer) {
 
-		EngineBuilder engineBuilder = Engine.builder();
+		Builder builder = Simulation.builder();
 
-		GlobalInitialData.Builder builder = GlobalInitialData.builder();
+		GlobalInitialData.Builder initialDatabuilder = GlobalInitialData.builder();
 		int defaultValue = 0;
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(defaultValue++).setType(Integer.class).build();
-			builder.defineGlobalProperty(testGlobalPropertyId, propertyDefinition);
+			initialDatabuilder.defineGlobalProperty(testGlobalPropertyId, propertyDefinition);
 		}
-		GlobalInitialData globalInitialData = builder.build();
+		GlobalInitialData globalInitialData = initialDatabuilder.build();
 
-		engineBuilder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
-		engineBuilder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		engineBuilder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		engineBuilder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(GlobalPlugin.PLUGIN_ID, new GlobalPlugin(globalInitialData)::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -178,10 +178,10 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		engineBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
-		engineBuilder.build().execute();
+		builder.build().execute();
 
 		// show that all actions were executed
 		assertTrue(actionPlugin.allActionsExecuted());

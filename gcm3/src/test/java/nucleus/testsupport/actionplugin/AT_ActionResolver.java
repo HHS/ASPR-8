@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Engine;
+import nucleus.Simulation;
 import nucleus.ReportContext;
 import nucleus.ResolverId;
 import nucleus.SimpleResolverId;
@@ -75,7 +75,7 @@ public class AT_ActionResolver {
 		ActionPlugin actionPlugin = pluginBuilder.build();
 
 		// build and execute the engine
-		Engine	.builder()//
+		Simulation	.builder()//
 				.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init)//
 				.build()//
 				.execute();//

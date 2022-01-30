@@ -40,18 +40,18 @@ import util.graph.MutableGraph;
  *
  */
 @NotThreadSafe
-public class Engine {
+public class Simulation {
 
 	private class PluginContextImpl implements PluginContext {
 
 		@Override
 		public void addPluginDependency(PluginId pluginId) {
-			Engine.this.addPluginDependency(pluginId);
+			Simulation.this.addPluginDependency(pluginId);
 		}
 
 		@Override
 		public void defineResolver(ResolverId resolverId, Consumer<ResolverContext> init) {
-			Engine.this.defineResolver(resolverId, init);
+			Simulation.this.defineResolver(resolverId, init);
 		}
 
 	}
@@ -60,7 +60,7 @@ public class Engine {
 
 		@Override
 		public void releaseOutput(Object output) {
-			Engine.this.releaseOutput(output);
+			Simulation.this.releaseOutput(output);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -76,12 +76,12 @@ public class Engine {
 
 		@Override
 		public void throwContractException(ContractError recoverableError) {
-			Engine.this.throwContractException(recoverableError);
+			Simulation.this.throwContractException(recoverableError);
 		}
 
 		@Override
 		public void throwContractException(ContractError recoverableError, Object details) {
-			Engine.this.throwContractException(recoverableError, details);
+			Simulation.this.throwContractException(recoverableError, details);
 		}
 	}
 
@@ -89,17 +89,17 @@ public class Engine {
 
 		@Override
 		public void addPlan(final Consumer<AgentContext> plan, final double planTime) {
-			Engine.this.addAgentPlan(plan, planTime);
+			Simulation.this.addAgentPlan(plan, planTime);
 		}
 
 		@Override
 		public void addPlan(final Consumer<AgentContext> plan, final double planTime, final Object key) {
-			Engine.this.addAgentPlan(plan, planTime, key);
+			Simulation.this.addAgentPlan(plan, planTime, key);
 		}
 
 		@Override
 		public boolean agentExists(final AgentId agentId) {
-			return Engine.this.agentExists(agentId);
+			return Simulation.this.agentExists(agentId);
 		}
 
 		@Override
@@ -116,17 +116,17 @@ public class Engine {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends Consumer<AgentContext>> Optional<T> getPlan(final Object key) {
-			return (Optional<T>) Engine.this.getAgentPlan(key);
+			return (Optional<T>) Simulation.this.getAgentPlan(key);
 		}
 
 		@Override
 		public List<Object> getPlanKeys() {
-			return Engine.this.getAgentPlanKeys();
+			return Simulation.this.getAgentPlanKeys();
 		}
 
 		@Override
 		public Optional<Double> getPlanTime(final Object key) {
-			return Engine.this.getAgentPlanTime(key);
+			return Simulation.this.getAgentPlanTime(key);
 		}
 
 		@Override
@@ -136,51 +136,51 @@ public class Engine {
 
 		@Override
 		public void halt() {
-			Engine.this.halt();
+			Simulation.this.halt();
 		}
 
 		@Override
 		public <T> Optional<T> removePlan(final Object key) {
-			return Engine.this.removeAgentPlan(key);
+			return Simulation.this.removeAgentPlan(key);
 		}
 
 		@Override
 		public void resolveEvent(final Event event) {
-			Engine.this.resolveEventForAgent(event);
+			Simulation.this.resolveEventForAgent(event);
 		}
 
 		@Override
 		public void releaseOutput(Object output) {
-			Engine.this.releaseOutput(output);
+			Simulation.this.releaseOutput(output);
 
 		}
 
 		@Override
 		public void throwContractException(ContractError recoverableError) {
-			Engine.this.throwContractException(recoverableError);
+			Simulation.this.throwContractException(recoverableError);
 
 		}
 
 		@Override
 		public void throwContractException(ContractError recoverableError, Object details) {
-			Engine.this.throwContractException(recoverableError, details);
+			Simulation.this.throwContractException(recoverableError, details);
 
 		}
 
 		@Override
 		public <T extends Event> void subscribe(EventLabel<T> eventLabel, AgentEventConsumer<T> agentEventConsumer) {
-			Engine.this.subscribeAgentToEvent(eventLabel, agentEventConsumer);
+			Simulation.this.subscribeAgentToEvent(eventLabel, agentEventConsumer);
 		}
 
 		@Override
 		public <T extends Event> void unsubscribe(EventLabel<T> eventLabel) {
-			Engine.this.unsubscribeAgentFromEvent(eventLabel);
+			Simulation.this.unsubscribeAgentFromEvent(eventLabel);
 
 		}
 
 		@Override
 		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-			Engine.this.addEventLabeler(eventLabeler);
+			Simulation.this.addEventLabeler(eventLabeler);
 
 		}
 
@@ -283,18 +283,18 @@ public class Engine {
 
 	}
 
-	public static class EngineBuilder {
+	public static class Builder {
 
 		private Scaffold scaffold = new Scaffold();
 
-		private EngineBuilder() {
+		private Builder() {
 
 		}
 
 		/**
 		 * Sets the output consumer for the simulation. Tolerates null.
 		 */
-		public EngineBuilder setOutputConsumer(Consumer<Object> outputConsumer) {
+		public Builder setOutputConsumer(Consumer<Object> outputConsumer) {
 			scaffold.outputConsumer = outputConsumer;
 			return this;
 		}
@@ -310,7 +310,7 @@ public class Engine {
 		 *             <li>{@link NucleusError#NULL_PLUGIN_CONTEXT_CONSUMER} if
 		 *             the plugin context consumer is null
 		 */
-		public EngineBuilder addPlugin(PluginId pluginId, Consumer<PluginContext> init) {
+		public Builder addPlugin(PluginId pluginId, Consumer<PluginContext> init) {
 			if (pluginId == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
 			}
@@ -346,11 +346,11 @@ public class Engine {
 		 * 
 		 * 
 		 */
-		public Engine build() {
+		public Simulation build() {
 			try {
-				final Engine engine = new Engine();
-				engine.init(scaffold);
-				return engine;
+				final Simulation simulation = new Simulation();
+				simulation.init(scaffold);
+				return simulation;
 			} finally {
 				scaffold = new Scaffold();
 			}
@@ -369,7 +369,7 @@ public class Engine {
 
 		@Override
 		public void addPlan(final Consumer<ReportContext> plan, final double planTime) {
-			Engine.this.addReportPlan(plan, planTime);
+			Simulation.this.addReportPlan(plan, planTime);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -385,7 +385,7 @@ public class Engine {
 
 		@Override
 		public void releaseOutput(Object output) {
-			Engine.this.releaseOutput(output);
+			Simulation.this.releaseOutput(output);
 
 		}
 
@@ -393,29 +393,29 @@ public class Engine {
 		// public <T extends Event> void subscribe(Class<? extends Event>
 		// eventClass, ReportEventConsumer<T> reportConsumer) {
 		public <T extends Event> void subscribe(Class<T> eventClass, ReportEventConsumer<T> reportConsumer) {
-			Engine.this.subscribeReportToEvent(eventClass, reportConsumer);
+			Simulation.this.subscribeReportToEvent(eventClass, reportConsumer);
 		}
 
 		@Override
 		public void throwContractException(ContractError recoverableError) {
-			Engine.this.throwContractException(recoverableError);
+			Simulation.this.throwContractException(recoverableError);
 
 		}
 
 		@Override
 		public void throwContractException(ContractError recoverableError, Object details) {
-			Engine.this.throwContractException(recoverableError, details);
+			Simulation.this.throwContractException(recoverableError, details);
 
 		}
 
 		@Override
 		public void subscribeToSimulationClose(Consumer<ReportContext> closeHandler) {
-			Engine.this.subscribeReportToSimulationClose(closeHandler);
+			Simulation.this.subscribeReportToSimulationClose(closeHandler);
 		}
 
 		@Override
 		public <T extends Event> void subscribe(EventLabel<T> eventLabel, ReportEventConsumer<T> reportEventConsumer) {
-			Engine.this.subscribeReportToEvent(eventLabel, reportEventConsumer);
+			Simulation.this.subscribeReportToEvent(eventLabel, reportEventConsumer);
 		}
 
 		@Override
@@ -425,7 +425,7 @@ public class Engine {
 
 		@Override
 		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-			Engine.this.addEventLabeler(eventLabeler);
+			Simulation.this.addEventLabeler(eventLabeler);
 		}
 
 	}
@@ -472,18 +472,18 @@ public class Engine {
 
 		@Override
 		public void addPlan(final Consumer<ResolverContext> plan, final double planTime) {
-			Engine.this.addResolverPlan(plan, planTime);
+			Simulation.this.addResolverPlan(plan, planTime);
 		}
 
 		@Override
 		public void addPlan(final Consumer<ResolverContext> plan, final double planTime, final Object key) {
-			Engine.this.addResolverPlan(plan, planTime, key);
+			Simulation.this.addResolverPlan(plan, planTime, key);
 
 		}
 
 		@Override
 		public boolean agentExists(final AgentId agentId) {
-			return Engine.this.agentExists(agentId);
+			return Simulation.this.agentExists(agentId);
 		}
 
 		@Override
@@ -510,17 +510,17 @@ public class Engine {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends Consumer<ResolverContext>> T getPlan(final Object key) {
-			return (T) Engine.this.getResolverPlan(key);
+			return (T) Simulation.this.getResolverPlan(key);
 		}
 
 		@Override
 		public List<Object> getPlanKeys() {
-			return Engine.this.getResolverPlanKeys();
+			return Simulation.this.getResolverPlanKeys();
 		}
 
 		@Override
 		public double getPlanTime(final Object key) {
-			return Engine.this.getResolverPlanTime(key);
+			return Simulation.this.getResolverPlanTime(key);
 		}
 
 		@Override
@@ -530,12 +530,12 @@ public class Engine {
 
 		@Override
 		public void halt() {
-			Engine.this.halt();
+			Simulation.this.halt();
 		}
 
 		@Override
 		public void queueEventForResolution(final Event event) {
-			Engine.this.resolveEventForResolver(event);
+			Simulation.this.resolveEventForResolver(event);
 
 		}
 
@@ -565,43 +565,43 @@ public class Engine {
 
 		@Override
 		public <T> Optional<T> removePlan(final Object key) {
-			return Engine.this.removeResolverPlan(key);
+			return Simulation.this.removeResolverPlan(key);
 		}
 
 		@Override
 		public void releaseOutput(Object output) {
-			Engine.this.releaseOutput(output);
+			Simulation.this.releaseOutput(output);
 		}
 
 		@Override
 		public void throwContractException(ContractError recoverableError) {
-			Engine.this.throwContractException(recoverableError);
+			Simulation.this.throwContractException(recoverableError);
 		}
 
 		@Override
 		public void throwContractException(ContractError recoverableError, Object details) {
-			Engine.this.throwContractException(recoverableError, details);
+			Simulation.this.throwContractException(recoverableError, details);
 		}
 
 		@Override
 		public void unSubscribeToEvent(Class<? extends Event> eventClass) {
-			Engine.this.unSubscribeResolverToEvent(eventClass);
+			Simulation.this.unSubscribeResolverToEvent(eventClass);
 		}
 
 		@Override
 		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-			Engine.this.addEventLabeler(eventLabeler);
+			Simulation.this.addEventLabeler(eventLabeler);
 		}
 
 		@Override
 		public Context getSafeContext() {
-			return Engine.this.baseContext;
+			return Simulation.this.baseContext;
 
 		}
 
 		@Override
 		public boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-			return Engine.this.subscribersExistForEvent(eventClass);
+			return Simulation.this.subscribersExistForEvent(eventClass);
 		}
 
 		@Override
@@ -629,17 +629,17 @@ public class Engine {
 
 		@Override
 		public <T extends Event> void subscribeToEventValidationPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-			Engine.this.subscribeResolverToEventValidationPhase(eventClass, resolverConsumer);
+			Simulation.this.subscribeResolverToEventValidationPhase(eventClass, resolverConsumer);
 		}
 
 		@Override
 		public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-			Engine.this.subscribeResolverToEventPostPhase(eventClass, resolverConsumer);
+			Simulation.this.subscribeResolverToEventPostPhase(eventClass, resolverConsumer);
 		}
 
 		@Override
 		public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-			Engine.this.subscribeResolverToEventExecutionPhase(eventClass, resolverConsumer);
+			Simulation.this.subscribeResolverToEventExecutionPhase(eventClass, resolverConsumer);
 		}
 
 		@Override
@@ -666,8 +666,8 @@ public class Engine {
 	/**
 	 * Returns a reusable EngineBuilder instance
 	 */
-	public static EngineBuilder builder() {
-		return new EngineBuilder();
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	private final Comparator<PlanRec> futureComparable = new Comparator<PlanRec>() {
@@ -728,7 +728,7 @@ public class Engine {
 	private final PluginContext pluginContext = new PluginContextImpl();
 	private PluginId focalPluginId;
 
-	private Engine() {
+	private Simulation() {
 
 	}
 
@@ -1274,26 +1274,26 @@ public class Engine {
 		private final EventLabeler<T> eventLabeler;
 		private final Class<T> eventClass;
 		private final EventLabelerId id;
-		private final Engine engine;
+		private final Simulation simulation;
 
-		public MetaEventLabeler(Engine engine, EventLabeler<T> eventLabeler, EventLabelerId id, Class<T> eventClass) {
+		public MetaEventLabeler(Simulation simulation, EventLabeler<T> eventLabeler, EventLabelerId id, Class<T> eventClass) {
 			this.id = id;
 			this.eventClass = eventClass;
 			this.eventLabeler = eventLabeler;
-			this.engine = engine;
+			this.simulation = simulation;
 		}
 
 		@SuppressWarnings("unchecked")
 		public EventLabel<T> getEventLabel(Context context, Event event) {
 			EventLabel<T> eventLabel = eventLabeler.getEventLabel(context, (T) event);
 			if (!eventClass.equals(eventLabel.getEventClass())) {
-				engine.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS);
+				simulation.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS);
 			}
 			if (!id.equals(eventLabel.getLabelerId())) {
-				engine.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_ID);
+				simulation.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_ID);
 			}
 			if (!event.getPrimaryKeyValue().equals(eventLabel.getPrimaryKeyValue())) {
-				engine.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_PRIMARY_KEY);
+				simulation.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_PRIMARY_KEY);
 			}
 			return eventLabel;
 		}
