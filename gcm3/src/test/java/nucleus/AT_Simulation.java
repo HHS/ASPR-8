@@ -26,7 +26,7 @@ import util.annotations.UnitTestMethod;
  *
  */
 @UnitTest(target = Simulation.class)
-public class AT_Engine {
+public class AT_Simulation {
 
 	@Test
 	@UnitTestMethod(name = "execute", args = {})
