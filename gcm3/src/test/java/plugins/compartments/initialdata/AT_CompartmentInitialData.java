@@ -19,6 +19,7 @@ import plugins.compartments.support.CompartmentError;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.support.CompartmentPropertyId;
 import plugins.compartments.testsupport.TestCompartmentId;
+import plugins.compartments.testsupport.TestCompartmentPropertyId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.properties.support.PropertyDefinition;
@@ -51,7 +52,7 @@ public class AT_CompartmentInitialData {
 	@Test
 	@UnitTestMethod(name = "getCompartmentIds", args = {})
 	public void testGetCompartmentIds() {
-		//use the test compartment ids
+		// use the test compartment ids
 		Set<CompartmentId> expectedCompartmentIds = new LinkedHashSet<>();
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			expectedCompartmentIds.add(testCompartmentId);
@@ -127,9 +128,8 @@ public class AT_CompartmentInitialData {
 			});
 			Map<CompartmentPropertyId, PropertyDefinition> map = new LinkedHashMap<>();
 			expectedDefinitions.put(testCompartmentId, map);
-			int propertyCount = testCompartmentId.getCompartmentPropertyCount();
-			for (int i = 0; i < propertyCount; i++) {
-				CompartmentPropertyId compartmentPropertyId = testCompartmentId.getCompartmentPropertyId(i);
+
+			for (CompartmentPropertyId compartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue++).build();
 				map.put(compartmentPropertyId, propertyDefinition);
 				builder.defineCompartmentProperty(testCompartmentId, compartmentPropertyId, propertyDefinition);
@@ -161,7 +161,7 @@ public class AT_CompartmentInitialData {
 
 		// create some valid inputs to help with the precondition tests
 		CompartmentId validCompartmentId = TestCompartmentId.COMPARTMENT_1;
-		CompartmentPropertyId validCompartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyIds()[0];
+		CompartmentPropertyId validCompartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_1;
 
 		// if the compartment id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> compartmentInitialData.getCompartmentPropertyDefinition(null, validCompartmentPropertyId));
@@ -178,7 +178,7 @@ public class AT_CompartmentInitialData {
 
 		// if the compartment property id is unknown
 		contractException = assertThrows(ContractException.class,
-				() -> compartmentInitialData.getCompartmentPropertyDefinition(validCompartmentId, TestCompartmentId.getUnknownCompartmentPropertyId()));
+				() -> compartmentInitialData.getCompartmentPropertyDefinition(validCompartmentId, TestCompartmentPropertyId.getUnknownCompartmentPropertyId()));
 		assertEquals(CompartmentError.UNKNOWN_COMPARTMENT_PROPERTY_ID, contractException.getErrorType());
 
 	}
@@ -199,9 +199,9 @@ public class AT_CompartmentInitialData {
 			});
 			Set<CompartmentPropertyId> set = new LinkedHashSet<>();
 			expectedPropertyIds.put(testCompartmentId, set);
-			int propertyCount = testCompartmentId.getCompartmentPropertyCount();
-			for (int i = 0; i < propertyCount; i++) {
-				CompartmentPropertyId compartmentPropertyId = testCompartmentId.getCompartmentPropertyId(i);
+
+			for (CompartmentPropertyId compartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
+
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
 				set.add(compartmentPropertyId);
 				builder.defineCompartmentProperty(testCompartmentId, compartmentPropertyId, propertyDefinition);
@@ -252,9 +252,9 @@ public class AT_CompartmentInitialData {
 			});
 			Map<CompartmentPropertyId, Object> map = new LinkedHashMap<>();
 			expectedPropertyValues.put(testCompartmentId, map);
-			int propertyCount = testCompartmentId.getCompartmentPropertyCount();
-			for (int i = 0; i < propertyCount; i++) {
-				CompartmentPropertyId compartmentPropertyId = testCompartmentId.getCompartmentPropertyId(i);
+			
+			for (CompartmentPropertyId compartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
+
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
 				map.put(compartmentPropertyId, propertyValue);
 				builder.defineCompartmentProperty(testCompartmentId, compartmentPropertyId, propertyDefinition);
@@ -288,7 +288,7 @@ public class AT_CompartmentInitialData {
 
 		// create some valid inputs to help with the precondition tests
 		CompartmentId validCompartmentId = TestCompartmentId.COMPARTMENT_1;
-		CompartmentPropertyId validCompartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyIds()[0];
+		CompartmentPropertyId validCompartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_2;
 
 		// if the compartment id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> compartmentInitialData.getCompartmentPropertyValue(null, validCompartmentPropertyId));
@@ -303,7 +303,8 @@ public class AT_CompartmentInitialData {
 		assertEquals(CompartmentError.NULL_COMPARTMENT_PROPERTY_ID, contractException.getErrorType());
 
 		// if the compartment property id is unknown
-		contractException = assertThrows(ContractException.class, () -> compartmentInitialData.getCompartmentPropertyValue(validCompartmentId, TestCompartmentId.getUnknownCompartmentPropertyId()));
+		contractException = assertThrows(ContractException.class,
+				() -> compartmentInitialData.getCompartmentPropertyValue(validCompartmentId, TestCompartmentPropertyId.getUnknownCompartmentPropertyId()));
 		assertEquals(CompartmentError.UNKNOWN_COMPARTMENT_PROPERTY_ID, contractException.getErrorType());
 	}
 
@@ -414,7 +415,7 @@ public class AT_CompartmentInitialData {
 		 * compartment id that was not properly added with an initial agent
 		 * behavior.
 		 */
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_2;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
 		builder.defineCompartmentProperty(TestCompartmentId.COMPARTMENT_1, compartmentPropertyId, propertyDefinition);
 		contractException = assertThrows(ContractException.class, () -> builder.build());
@@ -469,8 +470,8 @@ public class AT_CompartmentInitialData {
 		Builder builder = CompartmentInitialData.builder();
 
 		TestCompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
-		CompartmentPropertyId compartmentPropertyId = compartmentId.getCompartmentPropertyId(0);
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(9).setType(Integer.class).build();
+		TestCompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_1;
+		PropertyDefinition propertyDefinition = compartmentPropertyId.getPropertyDefinition();
 
 		// if the compartment id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineCompartmentProperty(null, compartmentPropertyId, propertyDefinition));
@@ -525,7 +526,7 @@ public class AT_CompartmentInitialData {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
 		Supplier<Consumer<AgentContext>> supplier = () -> (c) -> {
 		};
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_1;
 		Object validValue = 5;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
 
@@ -548,7 +549,7 @@ public class AT_CompartmentInitialData {
 		CompartmentInitialData compartmentInitialData = builder.build();
 		Integer compartmentPropertyValue = compartmentInitialData.getCompartmentPropertyValue(compartmentId, compartmentPropertyId);
 		assertEquals(validValue, compartmentPropertyValue.intValue());
-		
+
 		// Note: Invalid values will not throw an exception and are caught
 		// during the build invocation.
 	}

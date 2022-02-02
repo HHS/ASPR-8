@@ -1,60 +1,47 @@
-package plugins.resources.testsupport;
+package plugins.compartments.testsupport;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.AgentContext;
 import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
-import plugins.compartments.testsupport.TestCompartmentId;
+import plugins.compartments.support.CompartmentId;
 import plugins.components.ComponentPlugin;
 import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonId;
 import plugins.properties.PropertiesPlugin;
-import plugins.properties.support.PropertyDefinition;
-import plugins.regions.RegionPlugin;
-import plugins.regions.initialdata.RegionInitialData;
-import plugins.regions.testsupport.TestRegionId;
+import plugins.properties.support.TimeTrackingPolicy;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.resources.ResourcesPlugin;
-import plugins.resources.initialdata.ResourceInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
+import util.MutableDouble;
 import util.SeedProvider;
 
-/**
- * A static test support class for the resources plugin. Provides convenience
- * methods for integrating an action plugin into a resource-based simulation
- * test harness.
- * 
- * 
- * @author Shawn Hatch
- *
- */
-public class ResourcesActionSupport {
-
+public class CompartmentsActionSupport {
 	/**
 	 * Creates an action plugin with an agent that will execute the given
 	 * consumer at time 0. The action plugin and the remaining arguments are
 	 * passed to an invocation of the testConsumers() method.
 	 */
-	public static void testConsumer(int initialPopulation, long seed, Consumer<AgentContext> consumer) {
+	public static void testConsumer(int initialPopulation, long seed,TimeTrackingPolicy timeTrackingPolicy, Consumer<AgentContext> consumer) {
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
-		testConsumers(initialPopulation, seed, pluginBuilder.build());
+		testConsumers(initialPopulation, seed,timeTrackingPolicy, pluginBuilder.build());
 	}
 
 	/**
@@ -77,88 +64,53 @@ public class ResourcesActionSupport {
 	 *             all action plans execute or if there are no action plans
 	 *             contained in the action plugin</li>
 	 */
-	public static void testConsumers(int initialPopulation, long seed, ActionPlugin actionPlugin) {
-		
+	public static void testConsumers(int initialPopulation, long seed,TimeTrackingPolicy timeTrackingPolicy, ActionPlugin actionPlugin) {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(seed);
-
 		// create a list of people
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
 			people.add(new PersonId(i));
 		}
 
-		Builder builder = Simulation.builder();
+		Simulation.Builder builder = Simulation.builder();
 
-		// add the resources plugin
-		ResourceInitialData.Builder resourcesBuilder = ResourceInitialData.builder(); 
-		
-		
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());			
-		}
-		
-		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
-			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-			Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
-		}
-		
-		builder.addPlugin(ResourcesPlugin.PLUGIN_ID, new ResourcesPlugin(resourcesBuilder.build())::init);
-		
+		// add the compartments plugin
+		CompartmentInitialData.Builder compartmentsBuilder = CompartmentInitialData.builder();
 
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
+			compartmentsBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
+		}
+
+		for (PersonId personId : people) {
+			compartmentsBuilder.setPersonCompartment(personId, TestCompartmentId.getRandomCompartmentId(randomGenerator));
+		}
+
+		for (TestCompartmentPropertyId testCompartmentPropertyId : TestCompartmentPropertyId.values()) {
+			compartmentsBuilder.defineCompartmentProperty(testCompartmentPropertyId.getTestCompartmentId(), testCompartmentPropertyId, testCompartmentPropertyId.getPropertyDefinition());
+		}
+		compartmentsBuilder.setPersonCompartmentArrivalTracking(timeTrackingPolicy);
+
+		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentsBuilder.build())::init);
 
 		// add the people plugin
-
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-
 		for (PersonId personId : people) {
 			peopleBuilder.addPersonId(personId);
 		}
 
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-
-		// add the properties plugin
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-
-		// add the compartments plugin
-		CompartmentInitialData.Builder compartmentsBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentsBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-		}
-		
-		for (PersonId personId : people) {
-			compartmentsBuilder.setPersonCompartment(personId, TestCompartmentId.getRandomCompartmentId(randomGenerator));
-		}
-		
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentsBuilder.build())::init);
-
-		// add the regions plugin
-		RegionInitialData.Builder regionsBuilder = RegionInitialData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionsBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
-		}
-		for (PersonId personId : people) {
-			regionsBuilder.setPersonRegion(personId, TestRegionId.getRandomRegionId(randomGenerator));
-		}
-
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionsBuilder.build())::init);
-
-		// add the report plugin
-		
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-
-		// add the component plugin
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-
-		// add the stochastics plugin
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		// add the action plugin
+		Map<CompartmentId, MutableDouble> expectedAssignmentTimes = new LinkedHashMap<>();
+		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
+			expectedAssignmentTimes.put(testCompartmentId, new MutableDouble());
+		}
+
+		// build and add the action plugin
 		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
@@ -168,6 +120,7 @@ public class ResourcesActionSupport {
 		if (!actionPlugin.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
+
 	}
 
 }

@@ -69,7 +69,6 @@ import plugins.resources.initialdata.ResourceInitialData;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.SeedProvider;
 import util.TimeElapser;
 
@@ -429,7 +428,7 @@ public class PartitionManagementTest {
 		builder.addPlugin(PersonPropertiesPlugin.PLUGIN_ID, new PersonPropertiesPlugin(personPropertiesBuilder.build())::init);
 
 		// load the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(seed).build()::init);
 		
 		//load the partitions plugin
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);

@@ -35,7 +35,6 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -349,7 +348,7 @@ public class AT_GroupPropertyReport {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(seed).build()::init);
 
 		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 

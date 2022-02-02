@@ -13,18 +13,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.AgentContext;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.ResolverContext;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
@@ -51,6 +49,7 @@ import plugins.personproperties.initialdata.PersonPropertyInitialData;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.properties.PropertiesPlugin;
 import plugins.properties.support.PropertyDefinition;
@@ -64,7 +63,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.MultiKey;
 import util.SeedProvider;
@@ -74,96 +72,6 @@ import util.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonPropertyEventResolver.class)
 public class AT_PersonPropertyEventResolver {
-
-	private void testConsumer(int initialPopulation, long seed, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
-		testConsumers(initialPopulation, seed, pluginBuilder.build());
-	}
-
-	private void testConsumers(int initialPopulation, long seed, ActionPlugin actionPlugin) {
-
-		Builder builder = Simulation.builder();
-
-		// add the person property plugin
-		PersonPropertyInitialData.Builder personPropertyBuilder = PersonPropertyInitialData.builder();
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-		}
-
-		builder.addPlugin(PersonPropertiesPlugin.PLUGIN_ID, new PersonPropertiesPlugin(personPropertyBuilder.build())::init);
-
-		// add the people plugin
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < initialPopulation; i++) {
-			people.add(new PersonId(i));
-		}
-
-		for (PersonId personId : people) {
-			peopleBuilder.addPersonId(personId);
-		}
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-
-		// add the properties plugin
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-
-		// add the compartments plugin
-		CompartmentInitialData.Builder compartmentBuilder = CompartmentInitialData.builder();
-
-		// add the compartments
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c2) -> {
-			});
-		}
-
-		// assign people to compartments
-		TestCompartmentId testCompartmentId = TestCompartmentId.COMPARTMENT_1;
-		for (PersonId personId : people) {
-			compartmentBuilder.setPersonCompartment(personId, testCompartmentId.next());
-		}
-
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
-
-		// add the regions plugin
-		RegionInitialData.Builder regionBuilder = RegionInitialData.builder();
-
-		// add the regions
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> (c2) -> {
-			});
-		}
-
-		// assign people to regions
-		TestRegionId testRegionId = TestRegionId.REGION_1;
-		for (PersonId personId : people) {
-			regionBuilder.setPersonRegion(personId, testRegionId.next());
-		}
-
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
-
-		// add the component plugin
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-
-		// add the report plugin
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-
-		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-
-		// add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
-	}
 
 	@Test
 	@UnitTestConstructor(args = { PersonPropertyInitialData.class })
@@ -181,7 +89,7 @@ public class AT_PersonPropertyEventResolver {
 		 * presumably by the resolver.
 		 */
 
-		testConsumer(100, 4585617051924828596L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(100, 4585617051924828596L, (c) -> {
 			CompartmentLocationDataView compartmentLocationDataView = c.getDataView(CompartmentLocationDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 			
@@ -330,7 +238,7 @@ public class AT_PersonPropertyEventResolver {
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
@@ -504,7 +412,7 @@ public class AT_PersonPropertyEventResolver {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
-		testConsumers(10, 2321272063791878719L, pluginBuilder.build());
+		PersonPropertiesActionSupport.testConsumers(10, 2321272063791878719L, pluginBuilder.build());
 
 	}
 
@@ -512,7 +420,7 @@ public class AT_PersonPropertyEventResolver {
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPersonCreationObservationEvent() {
 
-		testConsumer(100, 4771130331997762252L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(100, 4771130331997762252L, (c) -> {
 			// establish data views
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -614,7 +522,7 @@ public class AT_PersonPropertyEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testBulkPersonCreationObservationEvent() {
-		testConsumer(100, 2547218192811543040L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(100, 2547218192811543040L, (c) -> {
 			// establish data views
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -811,7 +719,7 @@ public class AT_PersonPropertyEventResolver {
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		}));
-		testConsumers(10, 2020442537537236753L, pluginBuilder.build());
+		PersonPropertiesActionSupport.testConsumers(10, 2020442537537236753L, pluginBuilder.build());
 
 	}
 }

@@ -8,39 +8,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.AgentContext;
 import nucleus.Context;
 import nucleus.DataView;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.NucleusError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
-import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
-import plugins.partitions.testsupport.attributes.AttributesPlugin;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.events.mutation.AttributeValueAssignmentEvent;
-import plugins.partitions.testsupport.attributes.initialdata.AttributeInitialData;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
+import plugins.stochastics.datacontainers.StochasticsDataView;
 import util.ContractException;
-import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -48,59 +33,11 @@ import util.annotations.UnitTestMethod;
 @UnitTest(target = AttributesDataView.class)
 public final class AT_AttributesDataView implements DataView {
 
-	private void testConsumer(final int initialPopultionSize, final Consumer<AgentContext> consumer) {
-		final Builder builder = Simulation.builder();
-		// define some person attributes
-		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
-		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
-
-		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < initialPopultionSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(5241628071704306523L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		/*
-		 * Add an agent that executes the consumer.
-		 *
-		 * Add a second agent to show that the initial population exists and the
-		 * attribute ids exist.
-		 *
-		 */
-		final ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		/*
-		 * Add an agent to show that the partition data view exists
-		 */
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			consumer.accept(c);
-		}));
-
-		// build and add the action plugin to the engine
-		final ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
-	}
-
 	@Test
 	@UnitTestMethod(name = "getAttributeDefinition", args = { AttributeId.class })
 	public void testGetAttributeDefinition() {
-		// 7056826773207732206L
-		testConsumer(100, (c) -> {
+
+		PartitionsActionSupport.testConsumer(100,7056826773207732206L, (c) -> {
 
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
@@ -126,7 +63,7 @@ public final class AT_AttributesDataView implements DataView {
 	@Test
 	@UnitTestMethod(name = "getAttributeIds", args = {})
 	public void testGetAttributeIds() {
-		testConsumer(100, (c) -> {
+		PartitionsActionSupport.testConsumer(100,3922883805893258744L ,(c) -> {
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 			assertEquals(EnumSet.allOf(TestAttributeId.class), attributesDataView.getAttributeIds());
 		});
@@ -137,9 +74,11 @@ public final class AT_AttributesDataView implements DataView {
 	@UnitTestMethod(name = "getAttributeValue", args = { PersonId.class, AttributeId.class })
 	public void testGetAttributeValue() {
 
-		testConsumer(100, (c) -> {
+		PartitionsActionSupport.testConsumer(100,3296963241519285254L, (c) -> {
 
-			RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3296963241519285254L);
+			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			
 
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -222,7 +161,7 @@ public final class AT_AttributesDataView implements DataView {
 	@Test
 	@UnitTestConstructor(args = { Context.class, AttributesDataManager.class })
 	public void testConstructor() {
-		testConsumer(100, (c) -> {
+		PartitionsActionSupport.testConsumer(100,741785051056288440L, (c) -> {
 			AttributesDataManager attributesDataManager = new AttributesDataManager(c);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> new AttributesDataView(null, attributesDataManager));
@@ -238,7 +177,7 @@ public final class AT_AttributesDataView implements DataView {
 	@Test
 	@UnitTestMethod(name = "attributeExists", args = { AttributeId.class })
 	public void testAttributeExists() {
-		testConsumer(100, (c) -> {
+		PartitionsActionSupport.testConsumer(100,6136319242032948471L ,(c) -> {
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {

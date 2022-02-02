@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.AgentContext;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.ReportContext;
 import nucleus.SimpleReportId;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
@@ -35,7 +35,6 @@ import plugins.resources.initialdata.ResourceInitialData;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.SeedProvider;
 
@@ -181,7 +180,7 @@ public class MaterialsActionSupport {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
 		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);

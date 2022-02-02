@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.support.CompartmentPropertyId;
 import plugins.compartments.testsupport.TestCompartmentId;
+import plugins.compartments.testsupport.TestCompartmentPropertyId;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -20,7 +21,7 @@ public class AT_CompartmentPropertyValueAssignmentEvent {
 	public void testConstructor() {
 		// show that the event can be constructed
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_5;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_5.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_5_3;
 		Object compartmentPropertyValue = 0;
 
 		CompartmentPropertyValueAssignmentEvent event = new CompartmentPropertyValueAssignmentEvent(compartmentId, compartmentPropertyId, compartmentPropertyValue);
@@ -33,7 +34,7 @@ public class AT_CompartmentPropertyValueAssignmentEvent {
 	@UnitTestMethod(name = "getCompartmentId", args = {})
 	public void testGetCompartmentId() {
 		CompartmentId expectedCompartmentId = TestCompartmentId.COMPARTMENT_5;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_5.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_5_3;
 		Object compartmentPropertyValue = 0;
 
 		CompartmentPropertyValueAssignmentEvent event = new CompartmentPropertyValueAssignmentEvent(expectedCompartmentId, compartmentPropertyId, compartmentPropertyValue);
@@ -48,7 +49,7 @@ public class AT_CompartmentPropertyValueAssignmentEvent {
 	@UnitTestMethod(name = "getCompartmentPropertyId", args = {})
 	public void testGetCompartmentPropertyId() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_5;
-		CompartmentPropertyId expectedCompartmentPropertyId = TestCompartmentId.COMPARTMENT_5.getCompartmentPropertyId(0);
+		CompartmentPropertyId expectedCompartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_5_2;
 		Object compartmentPropertyValue = 0;
 
 		CompartmentPropertyValueAssignmentEvent event = new CompartmentPropertyValueAssignmentEvent(compartmentId, expectedCompartmentPropertyId, compartmentPropertyValue);
@@ -63,7 +64,7 @@ public class AT_CompartmentPropertyValueAssignmentEvent {
 	@UnitTestMethod(name = "getCompartmentPropertyValue", args = {})
 	public void testGetCompartmentPropertyValue() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_5;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_5.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_5_1;
 		Object expectedCompartmentPropertyValue = 0;
 
 		CompartmentPropertyValueAssignmentEvent event = new CompartmentPropertyValueAssignmentEvent(compartmentId, compartmentPropertyId, expectedCompartmentPropertyValue);
@@ -77,7 +78,7 @@ public class AT_CompartmentPropertyValueAssignmentEvent {
 	@UnitTestMethod(name = "getPrimaryKeyValue",args = {})
 	public void testGetPrimaryKeyValue() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_5;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_5.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_5_2;
 		Object compartmentPropertyValue = 0;
 
 		CompartmentPropertyValueAssignmentEvent event = new CompartmentPropertyValueAssignmentEvent(compartmentId, compartmentPropertyId, compartmentPropertyValue);

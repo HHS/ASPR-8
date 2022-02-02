@@ -79,7 +79,6 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.MultiKey;
 import util.MutableInteger;
@@ -1432,7 +1431,7 @@ public final class AT_ResourceEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 

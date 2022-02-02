@@ -12,30 +12,19 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.events.observation.PersonCompartmentChangeObservationEvent;
-import plugins.compartments.initialdata.CompartmentInitialData;
+import plugins.compartments.testsupport.CompartmentsActionSupport;
 import plugins.compartments.testsupport.TestCompartmentId;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.support.LabelerSensitivity;
-import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.events.mutation.PersonCreationEvent;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonContructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.properties.PropertiesPlugin;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
+import plugins.properties.support.TimeTrackingPolicy;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -66,24 +55,6 @@ public class AT_CompartmentLabeler {
 		 * person. Get the label from the compartment labeler from the person id
 		 * alone. Compare the two labels for equality.
 		 */
-
-		Builder builder = Simulation.builder();
-
-		// add the test compartments
-		CompartmentInitialData.Builder compartmentBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-		}
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
-
-		// add the remaining plugins
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(7284994762664646917L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -150,13 +121,8 @@ public class AT_CompartmentLabeler {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		CompartmentsActionSupport.testConsumers(0, 7284994762664646917L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
 
 	}
 
@@ -169,7 +135,6 @@ public class AT_CompartmentLabeler {
 		 * their documented behaviors.
 		 */
 
-		
 		CompartmentLabeler compartmentLabeler = new CompartmentLabeler((c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = compartmentLabeler.getLabelerSensitivities();

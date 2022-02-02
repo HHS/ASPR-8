@@ -13,29 +13,19 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.ResolverContext;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
-import plugins.partitions.testsupport.attributes.AttributesPlugin;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
 import plugins.partitions.testsupport.attributes.events.mutation.AttributeValueAssignmentEvent;
 import plugins.partitions.testsupport.attributes.events.observation.AttributeChangeObservationEvent;
 import plugins.partitions.testsupport.attributes.initialdata.AttributeInitialData;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -53,28 +43,7 @@ public class AT_AttributesEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testAttributesDataViewInitialization() {
-		Builder builder = Simulation.builder();
-
-		// add the attributes plugin
-		AttributeInitialData.Builder attributeBuilder = AttributeInitialData.builder();
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributeBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		AttributeInitialData attributeInitialData = attributeBuilder.build();
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeInitialData)::init);
-
-		// add the people plugin
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(5241628071704306523L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		// add an agent that will show that the AttributesDataView is properly
-		// initialized
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
 			Optional<AttributesDataView> optional = c.getDataView(AttributesDataView.class);
 			assertTrue(optional.isPresent());
 
@@ -84,54 +53,25 @@ public class AT_AttributesEventResolver {
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 				assertEquals(testAttributeId.getAttributeDefinition(), attributesDataView.getAttributeDefinition(testAttributeId));
 			}
-
-		}));
-
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		});
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testAttributeValueAssignmentEvent() {
-		Builder builder = Simulation.builder();
-
-		// add the attributes plugin
-		AttributeInitialData.Builder attributeBuilder = AttributeInitialData.builder();
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributeBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		AttributeInitialData attributeInitialData = attributeBuilder.build();
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeInitialData)::init);
-
-		// add the people plugin
-		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < 10; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		PeopleInitialData peopleInitialData = peopleBuilder.build();
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleInitialData)::init);
-		
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(5241628071704306523L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		// add an agent that will observe attribute changes
 		Set<PersonId> peopleObserved = new LinkedHashSet<>();
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+		for (int i = 0; i < 10; i++) {
+			expectedPersonIds.add(new PersonId(i));
+		}
 
 		pluginBuilder.addAgent("observer");
 		pluginBuilder.addAgentActionPlan("observer", new AgentActionPlan(0, (c) -> {
 			c.subscribe(AttributeChangeObservationEvent.getEventLabel(c, TestAttributeId.BOOLEAN_0), (c2, e) -> {
-				
 				peopleObserved.add(e.getPersonId());
 			});
 
@@ -160,63 +100,22 @@ public class AT_AttributesEventResolver {
 		}));
 
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		PartitionsActionSupport.testConsumers(expectedPersonIds.size(), 5241628071704306523L, actionPlugin);
 
 		// show that the correct observations were made;
-		assertEquals(peopleInitialData.getPersonIds(), peopleObserved);
+		assertEquals(expectedPersonIds, peopleObserved);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testAttributeChangeObservationEventLabelers() {
-		Builder builder = Simulation.builder();
-
-		// add the attributes plugin
-		AttributeInitialData.Builder attributeBuilder = AttributeInitialData.builder();
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributeBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		AttributeInitialData attributeInitialData = attributeBuilder.build();
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeInitialData)::init);
-
-		// add the people plugin
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		
-		
-		
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(5241628071704306523L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-
-		// add an agent that will show that the AttributeChangeObservation event labelers were added by the resolver
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
 			EventLabeler<AttributeChangeObservationEvent> eventLabeler = AttributeChangeObservationEvent.getEventLabeler();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		}));
-
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
+		});
 	}
 
 }

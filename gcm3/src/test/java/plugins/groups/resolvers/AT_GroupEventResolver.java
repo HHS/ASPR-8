@@ -20,13 +20,13 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.Event;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.ResolverId;
 import nucleus.SimpleResolverId;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -73,7 +73,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.MultiKey;
 import util.SeedProvider;
@@ -791,7 +790,7 @@ public class AT_GroupEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();

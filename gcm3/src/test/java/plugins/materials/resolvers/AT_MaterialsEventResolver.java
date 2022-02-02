@@ -20,11 +20,11 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
 import nucleus.AgentId;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
@@ -100,7 +100,6 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.MultiKey;
 import util.SeedProvider;
@@ -289,7 +288,7 @@ public final class AT_MaterialsEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 

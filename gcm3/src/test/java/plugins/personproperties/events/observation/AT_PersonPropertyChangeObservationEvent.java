@@ -3,144 +3,33 @@ package plugins.personproperties.events.observation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.AgentContext;
 import nucleus.Context;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.testsupport.actionplugin.ActionPlugin;
-import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
-import plugins.compartments.initialdata.CompartmentInitialData;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.testsupport.TestCompartmentId;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
-import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesPlugin;
-import plugins.personproperties.initialdata.PersonPropertyInitialData;
 import plugins.personproperties.support.PersonPropertyId;
+import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.properties.PropertiesPlugin;
-import plugins.regions.RegionPlugin;
 import plugins.regions.datacontainers.RegionLocationDataView;
-import plugins.regions.initialdata.RegionInitialData;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonPropertyChangeObservationEvent.class)
 public class AT_PersonPropertyChangeObservationEvent implements Event {
-
-	private void testConsumer(int initialPopulation, long seed, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
-		testConsumers(initialPopulation, seed, pluginBuilder.build());
-	}
-
-	private void testConsumers(int initialPopulation, long seed, ActionPlugin actionPlugin) {
-
-		Builder builder = Simulation.builder();
-
-		// add the person property plugin
-		PersonPropertyInitialData.Builder personPropertyBuilder = PersonPropertyInitialData.builder();
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-		}
-
-		builder.addPlugin(PersonPropertiesPlugin.PLUGIN_ID, new PersonPropertiesPlugin(personPropertyBuilder.build())::init);
-
-		// add the people plugin
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < initialPopulation; i++) {
-			people.add(new PersonId(i));
-		}
-
-		for (PersonId personId : people) {
-			peopleBuilder.addPersonId(personId);
-		}
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-
-		// add the properties plugin
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-
-		// add the compartments plugin
-		CompartmentInitialData.Builder compartmentBuilder = CompartmentInitialData.builder();
-
-		// add the compartments
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c2) -> {
-			});
-		}
-
-		// assign people to compartments
-		TestCompartmentId testCompartmentId = TestCompartmentId.COMPARTMENT_1;
-		for (PersonId personId : people) {
-			compartmentBuilder.setPersonCompartment(personId, testCompartmentId.next());
-		}
-
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentBuilder.build())::init);
-
-		// add the regions plugin
-		RegionInitialData.Builder regionBuilder = RegionInitialData.builder();
-
-		// add the regions
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> (c2) -> {
-			});
-		}
-
-		// assign people to regions
-		TestRegionId testRegionId = TestRegionId.REGION_1;
-		for (PersonId personId : people) {
-			regionBuilder.setPersonRegion(personId, testRegionId.next());
-		}
-
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, new RegionPlugin(regionBuilder.build())::init);
-
-		// add the component plugin
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-
-		// add the report plugin
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-
-		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-
-		// add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
-	}
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, PersonPropertyId.class, Object.class, Object.class })
@@ -218,7 +107,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelByCompartmentAndProperty", args = { Context.class, CompartmentId.class, PersonPropertyId.class })
 	public void testGetEventLabelByCompartmentAndProperty() {
 
-		testConsumer(0, 7660943930243490312L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(0, 7660943930243490312L, (c) -> {
 			CompartmentLocationDataView compartmentLocationDataView = c.getDataView(CompartmentLocationDataView.class).get();
 			
 			Set<EventLabel<PersonPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
@@ -260,7 +149,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForCompartmentAndProperty", args = {})
 	public void testGetEventLabelerForCompartmentAndProperty() {
 		 
-		testConsumer(50, 1683420326422351068L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(50, 1683420326422351068L, (c) -> {
 			CompartmentLocationDataView compartmentLocationDataView = c.getDataView(CompartmentLocationDataView.class).get();
 
 			// create an event labeler
@@ -305,7 +194,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelByPersonAndProperty", args = { Context.class, PersonId.class, PersonPropertyId.class })
 	public void testGetEventLabelByPersonAndProperty() {
 
-		testConsumer(5, 4447674464104241765L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(5, 4447674464104241765L, (c) -> {
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -347,7 +236,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForPersonAndProperty", args = {})
 	public void testGetEventLabelerForPersonAndProperty() {
 
-		testConsumer(5, 1295505199200349679L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(5, 1295505199200349679L, (c) -> {
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -386,7 +275,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelByProperty", args = { Context.class, PersonPropertyId.class })
 	public void testGetEventLabelByProperty() {
 
-		testConsumer(0, 3639063830450063191L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(0, 3639063830450063191L, (c) -> {
 
 			Set<EventLabel<PersonPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -426,7 +315,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	public void testGetEventLabelerForProperty() {
 
  
-		testConsumer(0, 1006134798657400111L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(0, 1006134798657400111L, (c) -> {
 			
 
 			// create an event labeler
@@ -466,7 +355,8 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	@Test
 	@UnitTestMethod(name = "getEventLabelByRegionAndProperty", args = { Context.class, RegionId.class, PersonPropertyId.class })
 	public void testGetEventLabelByRegionAndProperty() {
-		testConsumer(0, 7020781813930698612L, (c) -> {
+		
+		PersonPropertiesActionSupport.testConsumer(0, 7020781813930698612L, (c) -> {
 
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 			
@@ -508,7 +398,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForRegionAndProperty", args = {})
 	public void testGetEventLabelerForRegionAndProperty() {
 	 
-		testConsumer(50, 7370040718450691849L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(50, 7370040718450691849L, (c) -> {
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 
 			// create an event labeler

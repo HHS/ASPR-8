@@ -2,33 +2,19 @@ package plugins.compartments.events.observation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.testsupport.actionplugin.ActionPlugin;
-import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.compartments.CompartmentPlugin;
-import plugins.compartments.initialdata.CompartmentInitialData;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.support.CompartmentPropertyId;
+import plugins.compartments.testsupport.CompartmentsActionSupport;
 import plugins.compartments.testsupport.TestCompartmentId;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
-import plugins.people.PeoplePlugin;
-import plugins.people.initialdata.PeopleInitialData;
-import plugins.properties.PropertiesPlugin;
-import plugins.properties.support.PropertyDefinition;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
+import plugins.compartments.testsupport.TestCompartmentPropertyId;
+import plugins.properties.support.TimeTrackingPolicy;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -40,7 +26,7 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestConstructor(args = { CompartmentId.class, CompartmentPropertyId.class, Object.class, Object.class })
 	public void testConstructor() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_2.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_2_1;
 		Object previousValue = 5;
 		Object currentValue = 6;
 		CompartmentPropertyChangeObservationEvent event = new CompartmentPropertyChangeObservationEvent(compartmentId, compartmentPropertyId, previousValue, currentValue);
@@ -51,7 +37,7 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestMethod(name = "getCompartmentId", args = {})
 	public void tetGetCompartmentId() {
 		CompartmentId expectedCompartmentId = TestCompartmentId.COMPARTMENT_2;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_2.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_2_1;
 		Object previousValue = 5;
 		Object currentValue = 6;
 		CompartmentPropertyChangeObservationEvent event = new CompartmentPropertyChangeObservationEvent(expectedCompartmentId, compartmentPropertyId, previousValue, currentValue);
@@ -63,7 +49,7 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestMethod(name = "getCompartmentPropertyId", args = {})
 	public void testGetCompartmentPropertyId() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
-		CompartmentPropertyId expectedCompartmentPropertyId = TestCompartmentId.COMPARTMENT_2.getCompartmentPropertyId(0);
+		CompartmentPropertyId expectedCompartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_2_2;
 		Object previousValue = 5;
 		Object currentValue = 6;
 		CompartmentPropertyChangeObservationEvent event = new CompartmentPropertyChangeObservationEvent(compartmentId, expectedCompartmentPropertyId, previousValue, currentValue);
@@ -75,7 +61,7 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestMethod(name = "getCurrentPropertyValue", args = {})
 	public void testGetCurrentPropertyValue() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_2.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_2_1;
 		Object previousValue = 5;
 		Object expectedCurrentValue = 6;
 		CompartmentPropertyChangeObservationEvent event = new CompartmentPropertyChangeObservationEvent(compartmentId, compartmentPropertyId, previousValue, expectedCurrentValue);
@@ -87,7 +73,7 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestMethod(name = "getPreviousPropertyValue", args = {})
 	public void testGetPreviousPropertyValue() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_2.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_2_1;
 		Object expectedPreviousValue = 5;
 		Object currentValue = 6;
 		CompartmentPropertyChangeObservationEvent event = new CompartmentPropertyChangeObservationEvent(compartmentId, compartmentPropertyId, expectedPreviousValue, currentValue);
@@ -99,7 +85,7 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
 	public void testGetPrimaryKeyValue() {
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			for (CompartmentPropertyId compartmentPropertyId : testCompartmentId.getCompartmentPropertyIds()) {
+			for (CompartmentPropertyId compartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 				Object previousValue = 5;
 				Object currentValue = 6;
 				CompartmentPropertyChangeObservationEvent event = new CompartmentPropertyChangeObservationEvent(testCompartmentId, compartmentPropertyId, previousValue, currentValue);
@@ -112,12 +98,12 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_2.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_2_1;
 		Object expectedPreviousValue = 5;
 		Object currentValue = 6;
 		CompartmentPropertyChangeObservationEvent event = new CompartmentPropertyChangeObservationEvent(compartmentId, compartmentPropertyId, expectedPreviousValue, currentValue);
 		String actualValue = event.toString();
-		String expectedValue = "CompartmentPropertyChangeObservationEvent [compartmentId=COMPARTMENT_2, compartmentPropertyId=TestCompartmentPropertyId [id=Compartment_Property_2_1], previousPropertyValue=5, currentPropertyValue=6]";
+		String expectedValue = "CompartmentPropertyChangeObservationEvent [compartmentId=COMPARTMENT_2, compartmentPropertyId=COMPARTMENT_PROPERTY_2_1, previousPropertyValue=5, currentPropertyValue=6]";
 		assertEquals(expectedValue, actualValue);
 	}
 
@@ -125,94 +111,31 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 	@UnitTestMethod(name = "getEventLabel", args = { Context.class, CompartmentId.class, CompartmentPropertyId.class })
 	public void testGetEventLabel() {
 
-		Builder builder = Simulation.builder();
-
-		// add the test compartments and their associated property definitions
-		int defaultValue = 0;
-		CompartmentInitialData.Builder initialDatabuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			initialDatabuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-
-			for (CompartmentPropertyId compartmentPropertyId : testCompartmentId.getCompartmentPropertyIds()) {
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(defaultValue++).setType(Integer.class).build();
-				initialDatabuilder.defineCompartmentProperty(testCompartmentId, compartmentPropertyId, propertyDefinition);
-			}
-
-		}
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(initialDatabuilder.build())::init);
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1925120766573695456L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-
+		CompartmentsActionSupport.testConsumer(0, 1925120766573695456L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-				for (CompartmentPropertyId compartmentPropertyId : testCompartmentId.getCompartmentPropertyIds()) {
+				for (CompartmentPropertyId compartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 					EventLabel<CompartmentPropertyChangeObservationEvent> eventLabel = CompartmentPropertyChangeObservationEvent.getEventLabel(c, testCompartmentId, compartmentPropertyId);
 					assertEquals(CompartmentPropertyChangeObservationEvent.class, eventLabel.getEventClass());
 					assertEquals(compartmentPropertyId, eventLabel.getPrimaryKeyValue());
 					assertEquals(CompartmentPropertyChangeObservationEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
 				}
 			}
-
-		}));
-
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "getEventLabeler", args = {})
 	public void testGetEventLabeler() {
-		Builder builder = Simulation.builder();
 
-		// add the test compartments and their associated property definitions
-		int defaultValue = 0;
-		CompartmentInitialData.Builder initialDatabuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			initialDatabuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-
-			for (CompartmentPropertyId compartmentPropertyId : testCompartmentId.getCompartmentPropertyIds()) {
-				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(defaultValue++).setType(Integer.class).build();
-				initialDatabuilder.defineCompartmentProperty(testCompartmentId, compartmentPropertyId, propertyDefinition);
-			}
-
-		}
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(initialDatabuilder.build())::init);
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(628042077827535235L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+		CompartmentsActionSupport.testConsumer(0, 628042077827535235L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
 			EventLabeler<CompartmentPropertyChangeObservationEvent> eventLabeler = CompartmentPropertyChangeObservationEvent.getEventLabeler();
 			assertEquals(CompartmentPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
 
 			for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-				for (CompartmentPropertyId compartmentPropertyId : testCompartmentId.getCompartmentPropertyIds()) {
+				for (CompartmentPropertyId compartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 					assertEquals(CompartmentPropertyChangeObservationEvent.getEventLabel(c, testCompartmentId, compartmentPropertyId).getLabelerId(), eventLabeler.getId());
 
 					// show that the event labeler produces the expected event
@@ -234,16 +157,8 @@ public class AT_CompartmentPropertyChangeObservationEvent {
 				}
 			}
 
-		}));
+		});
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
 	}
 
 }

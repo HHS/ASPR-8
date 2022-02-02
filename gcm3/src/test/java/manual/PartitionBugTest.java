@@ -52,7 +52,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.MutableInteger;
 @Tag("manual")
 public final class PartitionBugTest {
@@ -192,7 +191,7 @@ public final class PartitionBugTest {
 				.addPlugin(ReportPlugin.PLUGIN_ID,new ReportPlugin(ReportsInitialData.builder().build())::init)//
 				.addPlugin(CompartmentPlugin.PLUGIN_ID,compartmentPlugin::init)//
 				.addPlugin(PropertiesPlugin.PLUGIN_ID,new PropertiesPlugin()::init)//
-				.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(34234234234L).build())::init)
+				.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(34234234234L).build()::init)
 				.addPlugin(PeoplePlugin.PLUGIN_ID,new PeoplePlugin(PeopleInitialData.builder().build())::init)//
 				.addPlugin(ComponentPlugin.PLUGIN_ID,new ComponentPlugin()::init)//
 				.addPlugin(PartitionsPlugin.PLUGIN_ID,new PartitionsPlugin()::init)//

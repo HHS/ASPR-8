@@ -13,23 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.AgentContext;
 import nucleus.AgentId;
 import nucleus.Context;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.NucleusError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.events.PartitionAdditionEvent;
 import plugins.partitions.events.PartitionRemovalEvent;
 import plugins.partitions.support.Equality;
@@ -39,24 +33,16 @@ import plugins.partitions.support.LabelSetWeightingFunction;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionSampler;
-import plugins.partitions.testsupport.attributes.AttributesPlugin;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
 import plugins.partitions.testsupport.attributes.events.mutation.AttributeValueAssignmentEvent;
-import plugins.partitions.testsupport.attributes.initialdata.AttributeInitialData;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
-import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.ContractException;
@@ -69,107 +55,10 @@ import util.annotations.UnitTestMethod;
 @UnitTest(target = PartitionDataView.class)
 public final class AT_PartitionDataView {
 
-	/*
-	 * Executes the consumer at time = 0 under an agent.
-	 * 
-	 * Creates an engine with all the necessary plugins. The simulation is
-	 * initialized with:
-	 * 
-	 * 1) The initial population of people existing
-	 * 
-	 * 2) The TestAttribute Ids and all the TestAttributeId attribute
-	 * definitions in place
-	 * 
-	 * 3) The stochastics plugin initialized with the given seed value and the
-	 * random generator ids from TestRandomGeneratorId.
-	 * 
-	 * A second agent tests that the initial conditions are extant.
-	 */
-	private void testConsumer(int initialPopultionSize, long seed, Consumer<AgentContext> consumer) {
-		Builder builder = Simulation.builder();
-
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-
-		StochasticsInitialData.Builder stochasticsBuilder = StochasticsInitialData.builder();
-		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
-			stochasticsBuilder.addRandomGeneratorId(testRandomGeneratorId);
-		}
-		stochasticsBuilder.setSeed(seed);
-		
-
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(stochasticsBuilder.build())::init);
-
-		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < initialPopultionSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		// define some person attributes
-		AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
-
-		/*
-		 * Add an agent that executes the consumer.
-		 * 
-		 * Add a second agent to show that the initial population exists and the
-		 * attribute ids exist.
-		 * 
-		 */
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		/*
-		 * Add an agent to execute the consumer
-		 */
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
-
-		/*
-		 * Add an agent that will demonstrate the initialized state of the
-		 * simulation;
-		 */
-		pluginBuilder.addAgent("test validity agent");
-		pluginBuilder.addAgentActionPlan("test validity agent", new AgentActionPlan(0, (c) -> {
-			// show the people exist
-			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			assertEquals(initialPopultionSize, personDataView.getPopulationCount());
-
-			// show the attributes exist
-			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
-			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-				assertTrue(attributesDataView.attributeExists(testAttributeId));
-			}
-
-			// show the random number generator ids exist
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			Set<RandomNumberGeneratorId> expectedRandomNumberGeneratorIds = new LinkedHashSet<>();
-			for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
-				expectedRandomNumberGeneratorIds.add(testRandomGeneratorId);
-			}
-			Set<RandomNumberGeneratorId> actualRandomNumberGeneratorIds = stochasticsDataView.getRandomNumberGeneratorIds();
-			assertEquals(expectedRandomNumberGeneratorIds, actualRandomNumberGeneratorIds);
-		}));
-
-		// build and add the action plugin to the engine
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-	}
-
 	@Test
 	@UnitTestConstructor(args = { Context.class, PartitionDataManager.class })
 	public void testConstructor() {
-		testConsumer(0, 4959182295195625802L, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 4959182295195625802L, (c) -> {
 
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
 
@@ -190,7 +79,7 @@ public final class AT_PartitionDataView {
 	public void testGetPeople() {
 
 		// initialized with 100 people
-		testConsumer(100, 6033209037401060593L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 6033209037401060593L, (c) -> {
 
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -241,7 +130,7 @@ public final class AT_PartitionDataView {
 	@UnitTestMethod(name = "getPeople", args = { Object.class, LabelSet.class })
 	public void testGetPeople_LabelSet() {
 		// initialized with 100 people
-		testConsumer(100, 7761046492495930843L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 7761046492495930843L, (c) -> {
 
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -329,7 +218,7 @@ public final class AT_PartitionDataView {
 	public void getPersonCount() {
 
 		// initialized with 100 people
-		testConsumer(100, 1559429415782871174L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 1559429415782871174L, (c) -> {
 
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -379,7 +268,7 @@ public final class AT_PartitionDataView {
 	@UnitTestMethod(name = "getPersonCount", args = { Object.class, LabelSet.class })
 	public void testGetPersonCount_LabelSet() {
 		// initialized with 100 people
-		testConsumer(100, 3217787540697556531L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 3217787540697556531L, (c) -> {
 
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -460,7 +349,7 @@ public final class AT_PartitionDataView {
 	@UnitTestMethod(name = "getPeopleCountMap", args = { Object.class, LabelSet.class })
 	public void testGetPeopleCountMap() {
 		// initialized with 1000 people
-		testConsumer(1000, 3993911184725585603L, (c) -> {
+		PartitionsActionSupport.testConsumer(1000, 3993911184725585603L, (c) -> {
 
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
@@ -669,11 +558,11 @@ public final class AT_PartitionDataView {
 		 * 
 		 * The partition is formed from 4 labeling functions over the attributes
 		 * 
-		 * INT_0-> 0, 1, 2 
+		 * INT_0-> 0, 1, 2
 		 * 
-		 * INT_1 -> TRUE, FALSE 
+		 * INT_1 -> TRUE, FALSE
 		 * 
-		 * DOUBLE_0 -> A, B, C 
+		 * DOUBLE_0 -> A, B, C
 		 * 
 		 * DOUBLE_1 -> TRUE, FALSE
 		 * 
@@ -744,7 +633,7 @@ public final class AT_PartitionDataView {
 
 	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType, Boolean useWeightingFunction, Integer int_0_label_value, String double_0_label_value) {
 
-		testConsumer(1000, seed, (c) -> {
+		PartitionsActionSupport.testConsumer(1000, seed, (c) -> {
 
 			// remember to test with general and COMET to show they get
 			// different results?
@@ -974,7 +863,7 @@ public final class AT_PartitionDataView {
 	@Test
 	@UnitTestMethod(name = "samplePartition", args = { Object.class, PartitionSampler.class })
 	public void testSamplePartition_PreconditionChecks() {
-		testConsumer(100, 8368182028203057994L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 8368182028203057994L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 
 			Object key = new Object();
@@ -1029,7 +918,7 @@ public final class AT_PartitionDataView {
 	@UnitTestMethod(name = "contains", args = { PersonId.class, Object.class })
 	public void testContains() {
 		// 607630153604184177L
-		testConsumer(100, 607630153604184177L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 607630153604184177L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -1070,8 +959,8 @@ public final class AT_PartitionDataView {
 	@Test
 	@UnitTestMethod(name = "contains", args = { PersonId.class, LabelSet.class, Object.class })
 	public void testContains_LabelSet() {
-		
-		testConsumer(100, 7338572401998066291L, (c) -> {
+
+		PartitionsActionSupport.testConsumer(100, 7338572401998066291L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -1213,7 +1102,7 @@ public final class AT_PartitionDataView {
 	@UnitTestMethod(name = "partitionExists", args = { Object.class })
 	public void testPartitionExists() {
 
-		testConsumer(0, 3994373028296366190L, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 3994373028296366190L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 
 			// create a key
@@ -1244,22 +1133,6 @@ public final class AT_PartitionDataView {
 	@Test
 	@UnitTestMethod(name = "getOwningAgentId", args = { Object.class })
 	public void testGetOwningAgentId() {
-
-		Builder builder = Simulation.builder();
-
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1836218798187614083L).build())::init);
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		// define some person attributes
-		AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
-
 		Object key1 = new Object();
 		Object key2 = new Object();
 		Map<Object, AgentId> ownerMap = new LinkedHashMap<>();
@@ -1334,13 +1207,8 @@ public final class AT_PartitionDataView {
 
 		// build and add the action plugin to the engine
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		PartitionsActionSupport.testConsumers(0, 1836218798187614083L, actionPlugin);
 
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
 	}
 
 }

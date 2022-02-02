@@ -20,6 +20,7 @@ import plugins.compartments.support.CompartmentError;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.support.CompartmentPropertyId;
 import plugins.compartments.testsupport.TestCompartmentId;
+import plugins.compartments.testsupport.TestCompartmentPropertyId;
 import plugins.properties.support.PropertyDefinition;
 import util.ContractException;
 import util.MultiKey;
@@ -101,8 +102,8 @@ public class AT_CompartmentDataView {
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			compartmentDataManager.addCompartmentId(testCompartmentId);
-			CompartmentPropertyId[] compartmentPropertyIds = testCompartmentId.getCompartmentPropertyIds();
-			for (CompartmentPropertyId testCompartmentPropertyId : compartmentPropertyIds) {
+			
+			for (CompartmentPropertyId testCompartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue++).build();
 				compartmentDataManager.addCompartmentPropertyDefinition(testCompartmentId, testCompartmentPropertyId, propertyDefinition);
 				expectedPropertyDefinitions.add(new MultiKey(testCompartmentId, testCompartmentPropertyId, propertyDefinition));
@@ -122,7 +123,7 @@ public class AT_CompartmentDataView {
 
 		// precondition checks
 
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_1;
 
 		// if the compartment id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> compartmentDataView.getCompartmentPropertyDefinition(null, compartmentPropertyId));
@@ -138,7 +139,7 @@ public class AT_CompartmentDataView {
 
 		// if the compartment property id is unknown
 		contractException = assertThrows(ContractException.class,
-				() -> compartmentDataView.getCompartmentPropertyDefinition(TestCompartmentId.COMPARTMENT_1, TestCompartmentId.getUnknownCompartmentPropertyId()));
+				() -> compartmentDataView.getCompartmentPropertyDefinition(TestCompartmentId.COMPARTMENT_1, TestCompartmentPropertyId.getUnknownCompartmentPropertyId()));
 		assertEquals(CompartmentError.UNKNOWN_COMPARTMENT_PROPERTY_ID, contractException.getErrorType());
 	}
 
@@ -158,8 +159,8 @@ public class AT_CompartmentDataView {
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			compartmentDataManager.addCompartmentId(testCompartmentId);
-			CompartmentPropertyId[] compartmentPropertyIds = testCompartmentId.getCompartmentPropertyIds();
-			for (CompartmentPropertyId testCompartmentPropertyId : compartmentPropertyIds) {
+
+			for (CompartmentPropertyId testCompartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue++).build();
 				compartmentDataManager.addCompartmentPropertyDefinition(testCompartmentId, testCompartmentPropertyId, propertyDefinition);
 				expectedPropertyDefinitions.add(new MultiKey(testCompartmentId, testCompartmentPropertyId));
@@ -203,8 +204,8 @@ public class AT_CompartmentDataView {
 		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			cdm.addCompartmentId(testCompartmentId);
-			CompartmentPropertyId[] compartmentPropertyIds = testCompartmentId.getCompartmentPropertyIds();
-			for (CompartmentPropertyId testCompartmentPropertyId : compartmentPropertyIds) {
+			
+			for (CompartmentPropertyId testCompartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 				runningValue++;
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(runningValue).build();
 				cdm.addCompartmentPropertyDefinition(testCompartmentId, testCompartmentPropertyId, propertyDefinition);
@@ -244,8 +245,8 @@ public class AT_CompartmentDataView {
 
 		CompartmentId unknownCompartmentId = TestCompartmentId.getUnknownCompartmentId();
 		CompartmentId knownCompartmentId = TestCompartmentId.COMPARTMENT_1;
-		CompartmentPropertyId unknownCompartmentPropertyId = TestCompartmentId.getUnknownCompartmentPropertyId();
-		CompartmentPropertyId knownCompartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);
+		CompartmentPropertyId unknownCompartmentPropertyId = TestCompartmentPropertyId.getUnknownCompartmentPropertyId();
+		CompartmentPropertyId knownCompartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_1;
 
 		// if the compartment id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> compartmentDataView.getCompartmentPropertyValue(null, knownCompartmentPropertyId));
@@ -280,8 +281,8 @@ public class AT_CompartmentDataView {
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			cdm.addCompartmentId(testCompartmentId);
-			CompartmentPropertyId[] compartmentPropertyIds = testCompartmentId.getCompartmentPropertyIds();
-			for (CompartmentPropertyId testCompartmentPropertyId : compartmentPropertyIds) {
+			
+			for (CompartmentPropertyId testCompartmentPropertyId : TestCompartmentPropertyId.getTestCompartmentPropertyIds(testCompartmentId)) {
 				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue++).build();
 				cdm.addCompartmentPropertyDefinition(testCompartmentId, testCompartmentPropertyId, propertyDefinition);
 			}
@@ -323,8 +324,8 @@ public class AT_CompartmentDataView {
 		// inputs generate a runtime exception
 		CompartmentId unknownCompartmentId = TestCompartmentId.getUnknownCompartmentId();
 		CompartmentId knownCompartmentId = TestCompartmentId.COMPARTMENT_1;
-		CompartmentPropertyId unknownCompartmentPropertyId = TestCompartmentId.getUnknownCompartmentPropertyId();
-		CompartmentPropertyId knownCompartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);
+		CompartmentPropertyId unknownCompartmentPropertyId = TestCompartmentPropertyId.getUnknownCompartmentPropertyId();
+		CompartmentPropertyId knownCompartmentPropertyId = TestCompartmentPropertyId.COMPARTMENT_PROPERTY_1_1;
 
 		// if the compartment id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> compartmentDataView.getCompartmentPropertyTime(null, knownCompartmentPropertyId));

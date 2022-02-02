@@ -10,31 +10,18 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.AgentContext;
 import nucleus.AgentId;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
-import nucleus.testsupport.actionplugin.ActionPlugin;
-import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.components.ComponentPlugin;
 import plugins.components.support.ComponentError;
 import plugins.components.support.ComponentId;
 import plugins.components.testsupport.SimpleComponentId;
-import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.support.Partition;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PopulationPartition;
 import plugins.partitions.support.PopulationPartitionImpl;
-import plugins.people.PeoplePlugin;
-import plugins.people.initialdata.PeopleInitialData;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -49,40 +36,15 @@ public final class AT_PartitionDataManager {
 		// nothing to test
 	}
 
-	// Executes the consumer at time = 0 under an agent
-	private void testConsumer(long seed, Consumer<AgentContext> consumer) {
-		Builder builder = Simulation.builder();
-
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		// add an agent that executes the consumer
-		ActionPlugin actionPlugin = ActionPlugin.builder()//
-												.addAgent("agent")//
-												.addAgentActionPlan("agent", new AgentActionPlan(0, consumer))//
-												.build();//
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-	}
-
 	@Test
 	@UnitTestMethod(name = "addPartition", args = { Object.class, ComponentId.class, PopulationPartition.class })
 	public void testaddPartition() {
 
-
-		testConsumer(1137046131619466337L,(c) -> {
+		PartitionsActionSupport.testConsumer(0, 1137046131619466337L, (c) -> {
 			AgentId agentId = c.getCurrentAgentId();
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
 			Object key = new Object();
-			
+
 			Partition partition = Partition.builder().build();
 			PopulationPartition populationPartition = new PopulationPartitionImpl(c, partition);
 			partitionDataManager.addPartition(key, agentId, populationPartition);
@@ -115,10 +77,9 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "getKeys", args = {})
 	public void testGetKeys() {
 
-		testConsumer(3174291309585412438L,(c) -> {
+		PartitionsActionSupport.testConsumer(0,3174291309585412438L, (c) -> {
 			AgentId agentId = c.getCurrentAgentId();
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
-			
 
 			// create a container to hold the expected keys
 			Set<Object> expectedKeys = new LinkedHashSet<>();
@@ -143,9 +104,8 @@ public final class AT_PartitionDataManager {
 	@Test
 	@UnitTestMethod(name = "getOwningComponent", args = { Object.class })
 	public void testGetOwningComponent() {
-		
 
-		testConsumer(8952280372763678179L,(c) -> {
+		PartitionsActionSupport.testConsumer(0,8952280372763678179L, (c) -> {
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
 
 			// create a container to hold the expected keys
@@ -181,7 +141,7 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "getPopulationPartition", args = { Object.class })
 	public void testGetPopulationPartition() {
 
-		testConsumer(8598126216292150427L,(c) -> {
+		PartitionsActionSupport.testConsumer(0,8598126216292150427L, (c) -> {
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
 			AgentId agentId = c.getCurrentAgentId();
 
@@ -220,7 +180,7 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "partitionExists", args = { Object.class })
 	public void testPartitionExists() {
 
-		testConsumer(1968926333881399732L,(c) -> {
+		PartitionsActionSupport.testConsumer(0,1968926333881399732L, (c) -> {
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
 			AgentId agentId = c.getCurrentAgentId();
 
@@ -264,14 +224,14 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "isEmpty", args = {})
 	public void testIsEmpty() {
 
-		testConsumer(1194219972474251585L,(c) -> {
+		PartitionsActionSupport.testConsumer(0,1194219972474251585L, (c) -> {
 
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
-			
-			//show that the manager is initially empty
+
+			// show that the manager is initially empty
 			assertTrue(partitionDataManager.isEmpty());
-			
-			//show that the manager is not empty after adding a partition
+
+			// show that the manager is not empty after adding a partition
 			Object key = new Object();
 			AgentId agentId = c.getCurrentAgentId();
 			Partition partition = Partition.builder().build();
@@ -279,13 +239,11 @@ public final class AT_PartitionDataManager {
 			partitionDataManager.addPartition(key, agentId, populationPartition);
 
 			assertFalse(partitionDataManager.isEmpty());
-			
-			
-			//show that the manager is empty after the partition is removed
+
+			// show that the manager is empty after the partition is removed
 			partitionDataManager.removePartition(key);
 			assertTrue(partitionDataManager.isEmpty());
 
-			
 		});
 	}
 
@@ -293,11 +251,11 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "removePartition", args = { Object.class })
 	public void testRemovePartition() {
 
-		testConsumer(5767679585616452606L,(c) -> {
+		PartitionsActionSupport.testConsumer(0,5767679585616452606L, (c) -> {
 
 			PartitionDataManager partitionDataManager = new PartitionDataManager();
-			Object key = new Object();	
-			
+			Object key = new Object();
+
 			assertFalse(partitionDataManager.partitionExists(key));
 
 			AgentId agentId = c.getCurrentAgentId();
@@ -306,21 +264,20 @@ public final class AT_PartitionDataManager {
 			partitionDataManager.addPartition(key, agentId, populationPartition);
 
 			assertTrue(partitionDataManager.partitionExists(key));
-			
-			//show that removing an unknown partition has no effect
+
+			// show that removing an unknown partition has no effect
 			partitionDataManager.removePartition(new Object());
-			assertEquals(1,partitionDataManager.getKeys().size());
-			
-			//show that removing a null keyed partition has no effect
+			assertEquals(1, partitionDataManager.getKeys().size());
+
+			// show that removing a null keyed partition has no effect
 			partitionDataManager.removePartition(null);
-			assertEquals(1,partitionDataManager.getKeys().size());
-			
-			
-			//show that partition is removed
+			assertEquals(1, partitionDataManager.getKeys().size());
+
+			// show that partition is removed
 			partitionDataManager.removePartition(key);
 			assertFalse(partitionDataManager.partitionExists(key));
-			assertEquals(0,partitionDataManager.getKeys().size());
-			
+			assertEquals(0, partitionDataManager.getKeys().size());
+
 		});
 	}
 

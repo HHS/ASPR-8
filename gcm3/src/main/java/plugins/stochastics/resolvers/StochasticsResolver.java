@@ -5,10 +5,10 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.ResolverContext;
+import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataManager;
 import plugins.stochastics.datacontainers.StochasticsDataView;
 import plugins.stochastics.events.mutation.StochasticsReseedEvent;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import util.SeedProvider;
 
@@ -41,13 +41,13 @@ public class StochasticsResolver {
 	 * Creates this resolver from the the given {@link StochasticsInitialData}
 	 * 
 	 */
-	public StochasticsResolver(StochasticsInitialData stochasticsInitialData) {
+	public StochasticsResolver(StochasticsPlugin stochasticsPlugin) {
 		stochasticsDataManager = new StochasticsDataManager();
 
 		// create RandomGenerators for each of the ids using a hash built from
 		// the id and the replication seed
-		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsInitialData.getRandomNumberGeneratorIds();
-		long seed = stochasticsInitialData.getSeed();
+		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPlugin.getRandomNumberGeneratorIds();
+		long seed = stochasticsPlugin.getSeed();
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
 			String name = randomNumberGeneratorId.toString();
 			long seedForId = name.hashCode() + seed;

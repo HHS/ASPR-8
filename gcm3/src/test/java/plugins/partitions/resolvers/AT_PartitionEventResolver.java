@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -21,16 +20,12 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.ReportId;
 import nucleus.ResolverContext;
 import nucleus.SimpleReportId;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import nucleus.testsupport.actionplugin.ReportActionPlan;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.datacontainers.PartitionDataView;
 import plugins.partitions.events.PartitionAdditionEvent;
 import plugins.partitions.events.PartitionRemovalEvent;
@@ -38,28 +33,21 @@ import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.LabelSet;
 import plugins.partitions.support.Partition;
-import plugins.partitions.testsupport.attributes.AttributesPlugin;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
 import plugins.partitions.testsupport.attributes.events.mutation.AttributeValueAssignmentEvent;
-import plugins.partitions.testsupport.attributes.initialdata.AttributeInitialData;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.events.mutation.BulkPersonCreationEvent;
 import plugins.people.events.mutation.PersonCreationEvent;
 import plugins.people.events.mutation.PersonRemovalRequestEvent;
 import plugins.people.events.observation.PersonImminentRemovalObservationEvent;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.BulkPersonContructionData;
 import plugins.people.support.PersonContructionData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
@@ -238,55 +226,7 @@ public final class AT_PartitionEventResolver {
 		}
 	}
 
-	private void testConsumer(final int initialPopultionSize, long seed, final Consumer<AgentContext> consumer) {
-		final Builder builder = Simulation.builder();
-		// define some person attributes
-		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
-		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
-
-		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < initialPopultionSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		/*
-		 * Add an agent that executes the consumer.
-		 *
-		 * Add a second agent to show that the initial population exists and the
-		 * attribute ids exist.
-		 *
-		 */
-		final ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		/*
-		 * Add an agent to show that the partition data view exists
-		 */
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			consumer.accept(c);
-		}));
-
-		// build and add the action plugin to the engine
-		final ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
-	}
-	
-//	private void popReport(AgentContext c) {
+	//	private void popReport(AgentContext c) {
 //		PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 //		AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 //		System.out.println();
@@ -342,6 +282,7 @@ public final class AT_PartitionEventResolver {
 		// and their attributes to show that the partition resolver maintains
 		// the partition.
 
+		PartitionsActionSupport.
 		testConsumer(1000, 5127268948453841557L, (c) -> {
 			// get the partition data view
 			final PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
@@ -414,7 +355,7 @@ public final class AT_PartitionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPartitionDataViewInitialization() {
-		testConsumer(0, 2954766214498605129L, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 2954766214498605129L, (c) -> {
 			final Optional<PartitionDataView> optional = c.getDataView(PartitionDataView.class);
 			assertTrue(optional.isPresent());
 		});
@@ -423,7 +364,7 @@ public final class AT_PartitionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPartitionRemovalEvent() {
-		testConsumer(0, 3219096369262553225L, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 3219096369262553225L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 
 			// create a key for the population partition
@@ -450,7 +391,7 @@ public final class AT_PartitionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPersonCreationObservationEvent() {
-		testConsumer(100, 6964380012813498875L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 6964380012813498875L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 
 			/*
@@ -489,24 +430,9 @@ public final class AT_PartitionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testPersonImminentRemovalObservationEvent() {
-		final Builder builder = Simulation.builder();
-		// define some person attributes
-		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
-		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
-
-		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < 100; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(6406306513403641718L).build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
+		
+		
+		
 		final ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		/*
@@ -632,19 +558,13 @@ public final class AT_PartitionEventResolver {
 
 		// build and add the action plugin to the engine
 		final ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-	}
+		PartitionsActionSupport.testConsumers(100, 6406306513403641718L, actionPlugin);
+			}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { ResolverContext.class })
 	public void testBulkPersonCreationObservationEvent() {
-		testConsumer(100, 2561425586247460069L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 2561425586247460069L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			/*

@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well44497b;
 import org.junit.jupiter.api.Test;
 
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTest;
@@ -25,7 +24,7 @@ import util.annotations.UnitTestMethod;
 public final class AT_StochasticsDataManager {
 
 	@Test
-	@UnitTestConstructor(args = { StochasticsInitialData.class, long.class })
+	@UnitTestConstructor(args = {})
 	public void testConstructor() {
 		// test of constructor is covered by the method tests
 	}

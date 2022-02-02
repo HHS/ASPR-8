@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -23,32 +22,19 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
 import nucleus.Context;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
-import nucleus.testsupport.actionplugin.ActionPlugin;
-import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.components.ComponentPlugin;
-import plugins.partitions.PartitionsPlugin;
-import plugins.partitions.testsupport.attributes.AttributesPlugin;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
 import plugins.partitions.testsupport.attributes.events.mutation.AttributeValueAssignmentEvent;
 import plugins.partitions.testsupport.attributes.events.observation.AttributeChangeObservationEvent;
-import plugins.partitions.testsupport.attributes.initialdata.AttributeInitialData;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.events.mutation.PersonCreationEvent;
 import plugins.people.events.mutation.PersonRemovalRequestEvent;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonContructionData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -57,58 +43,10 @@ import util.annotations.UnitTestMethod;
 @UnitTest(target = PopulationPartitionImpl.class)
 public class AT_PopulationPartitionImpl {
 
-	private void testConsumer(final int initialPopultionSize, long seed, final Consumer<AgentContext> consumer) {
-		final Builder builder = Simulation.builder();
-		// define some person attributes
-		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
-		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
-
-		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < initialPopultionSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		/*
-		 * Add an agent that executes the consumer.
-		 *
-		 * Add a second agent to show that the initial population exists and the
-		 * attribute ids exist.
-		 *
-		 */
-		final ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		/*
-		 * Add an agent to show that the partition data view exists
-		 */
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			consumer.accept(c);
-		}));
-
-		// build and add the action plugin to the engine
-		final ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
-	}
-
 	@Test
 	@UnitTestConstructor(args = { Context.class, Partition.class })
 	public void testConstructor() {
-		testConsumer(100, 2997202170895856110L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 2997202170895856110L, (c) -> {
 			// establish data view
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -152,7 +90,7 @@ public class AT_PopulationPartitionImpl {
 	@UnitTestMethod(name = "attemptPersonAddition", args = { PersonId.class })
 	public void testAttemptPersonAddition() {
 
-		testConsumer(100, 3063819509780972206L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 3063819509780972206L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 
@@ -191,7 +129,7 @@ public class AT_PopulationPartitionImpl {
 	@UnitTestMethod(name = "attemptPersonRemoval", args = { PersonId.class })
 	public void testAttemptPersonRemoval() {
 
-		testConsumer(100, 4856457716960397685L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 4856457716960397685L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -240,7 +178,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "handleEvent", args = { Event.class })
 	public void testHandleEvent() {
-		testConsumer(100, 8982209428616460818L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 8982209428616460818L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -288,7 +226,7 @@ public class AT_PopulationPartitionImpl {
 	@UnitTestMethod(name = "validateLabelSetInfo", args = { LabelSet.class })
 	public void testValidateLabelSetInfo() {
 
-		testConsumer(100, 4662203440339012044L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 4662203440339012044L, (c) -> {
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0
 			 * = true
@@ -313,7 +251,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "getPeopleCount", args = {})
 	public void testGetPeopleCount() {
-		testConsumer(100, 9050139615348413060L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 9050139615348413060L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -469,7 +407,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "getPeopleCount", args = { LabelSet.class })
 	public void testGetPeopleCount_LabelSet() {
-		testConsumer(1000, 8522399796145249846L, (c) -> {
+		PartitionsActionSupport.testConsumer(1000, 8522399796145249846L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -513,7 +451,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "getPeopleCountMap", args = { LabelSet.class })
 	public void testGetPeopleCountMap() {
-		testConsumer(1000, 4793886153660135719L, (c) -> {
+		PartitionsActionSupport.testConsumer(1000, 4793886153660135719L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -603,7 +541,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "contains", args = { PersonId.class })
 	public void testContains() {
-		testConsumer(100, 2652052463264971998L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 2652052463264971998L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -647,7 +585,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "contains", args = { PersonId.class, LabelSet.class })
 	public void testContains_LabelSet() {
-		testConsumer(1000, 827063967966581841L, (c) -> {
+		PartitionsActionSupport.testConsumer(1000, 827063967966581841L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -696,7 +634,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "getPeople", args = { LabelSet.class })
 	public void testGetPeople_LabelSet() {
-		testConsumer(1000, 1040083420377037302L, (c) -> {
+		PartitionsActionSupport.testConsumer(1000, 1040083420377037302L, (c) -> {
 
 			// Randomize the attribute values for all people
 			assignRandomAttributes(c);
@@ -741,7 +679,7 @@ public class AT_PopulationPartitionImpl {
 	@Test
 	@UnitTestMethod(name = "getPeople", args = {})
 	public void testGetPeople() {
-		testConsumer(100, 4597503339659285165L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 4597503339659285165L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
@@ -864,7 +802,7 @@ public class AT_PopulationPartitionImpl {
 
 	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType, Boolean useWeightingFunction, Integer int_0_label_value, String double_0_label_value) {
 
-		testConsumer(1000, seed, (c) -> {
+		PartitionsActionSupport.testConsumer(1000, seed, (c) -> {
 
 			// remember to test with general and COMET to show they get
 			// different results?

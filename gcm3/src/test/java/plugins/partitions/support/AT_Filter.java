@@ -8,31 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.AgentContext;
 import nucleus.Context;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.Event;
-import nucleus.testsupport.actionplugin.ActionPlugin;
-import nucleus.testsupport.actionplugin.AgentActionPlan;
-import plugins.components.ComponentPlugin;
 import plugins.gcm.agents.Environment;
-import plugins.partitions.PartitionsPlugin;
-import plugins.partitions.testsupport.attributes.AttributesPlugin;
-import plugins.partitions.testsupport.attributes.initialdata.AttributeInitialData;
-import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PeoplePlugin;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.datacontainers.PersonDataView;
-import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportPlugin;
-import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -97,7 +81,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(name = "and", args = { Filter.class })
 	public void testAnd() {
-		testConsumer(100, 254308828477050611L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 254308828477050611L, (c) -> {
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			/*
 			 * Show that there are enough people in the simulation to make a
@@ -155,7 +139,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(name = "or", args = { Filter.class })
 	public void testOr() {
-		testConsumer(100, 921279696119043098L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 921279696119043098L, (c) -> {
 			
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			
@@ -217,7 +201,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(name = "negate", args = {})
 	public void testNegate() {
-		testConsumer(100, 4038710674336002107L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 4038710674336002107L, (c) -> {
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			/*
 			 * Show that there are enough people in the simulation to make a
@@ -240,53 +224,6 @@ public class AT_Filter {
 		});
 	}
 
-	private void testConsumer(final int initialPopultionSize, long seed, final Consumer<AgentContext> consumer) {
-		final Builder builder = Simulation.builder();
-		// define some person attributes
-		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
-		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
-
-		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < initialPopultionSize; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		/*
-		 * Add an agent that executes the consumer.
-		 *
-		 * Add a second agent to show that the initial population exists and the
-		 * attribute ids exist.
-		 *
-		 */
-		final ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		/*
-		 * Add an agent to show that the partition data view exists
-		 */
-		pluginBuilder.addAgent("agent");
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			consumer.accept(c);
-		}));
-
-		// build and add the action plugin to the engine
-		final ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
-	}
 
 	/**
 	 * Tests {@link Filter#allPeople()}
@@ -294,7 +231,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(name = "allPeople", args = {})
 	public void testAllPeople() {
-		testConsumer(30, 847391904888351863L, (c) -> {
+		PartitionsActionSupport.testConsumer(30, 847391904888351863L, (c) -> {
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			// show that the test is valid
 			assertTrue(personDataView.getPopulationCount() > 0);
@@ -315,7 +252,7 @@ public class AT_Filter {
 	@Test
 	@UnitTestMethod(name = "noPeople", args = {})
 	public void testNoPeople() {
-		testConsumer(100, 6400633994679307999L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 6400633994679307999L, (c) -> {
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			assertEquals(100,personDataView.getPopulationCount());
 

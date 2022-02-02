@@ -22,6 +22,7 @@ import plugins.compartments.events.mutation.PersonCompartmentAssignmentEvent;
 import plugins.compartments.initialdata.CompartmentInitialData;
 import plugins.compartments.support.CompartmentError;
 import plugins.compartments.support.CompartmentId;
+import plugins.compartments.testsupport.CompartmentsActionSupport;
 import plugins.compartments.testsupport.TestCompartmentId;
 import plugins.components.ComponentPlugin;
 import plugins.partitions.PartitionsPlugin;
@@ -38,7 +39,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.MutableDouble;
 import util.annotations.UnitTest;
@@ -71,7 +71,7 @@ public class AT_CompartmentLocationDataView {
 		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
 
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3607759084703047258L).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(3607759084703047258L).build()::init);
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
@@ -136,23 +136,6 @@ public class AT_CompartmentLocationDataView {
 	@Test
 	@UnitTestMethod(name = "getCompartmentPopulationTime", args = { CompartmentId.class })
 	public void testGetCompartmentPopulationTime() {
-
-		Simulation.Builder builder = Simulation.builder();
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2430955549982485988L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -221,36 +204,14 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		CompartmentsActionSupport.testConsumers(0, 2430955549982485988L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPeopleInCompartment", args = { CompartmentId.class })
 	public void testGetPeopleInCompartment() {
-
-		Simulation.Builder builder = Simulation.builder();
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);		
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3347423560010833899L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -310,36 +271,13 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		CompartmentsActionSupport.testConsumers(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPersonCompartmentArrivalTime", args = { PersonId.class })
 	public void testGetPersonCompartmentArrivalTime() {
-
-		Simulation.Builder builder = Simulation.builder();
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(2278422620232176214L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -430,30 +368,10 @@ public class AT_CompartmentLocationDataView {
 
 		// build and add the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
+		CompartmentsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 		/////////////////////////////////////////////////
 		// precondition test that requires rebuild of engine
 		/////////////////////////////////////////////////
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.DO_NOT_TRACK_TIME);
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(3338965305284292260L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		pluginBuilder.addAgent("agent");
 
@@ -471,49 +389,27 @@ public class AT_CompartmentLocationDataView {
 			}
 		}));
 
-
 		// precondition tests
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
 			CompartmentLocationDataView compartmentLocationDataView = c.getDataView(CompartmentLocationDataView.class).get();
-			
+
 			// if compartment arrival tracking times are not tracked
 			ContractException contractException = assertThrows(ContractException.class, () -> compartmentLocationDataView.getPersonCompartmentArrivalTime(new PersonId(0)));
 			assertEquals(CompartmentError.COMPARTMENT_ARRIVAL_TIMES_NOT_TRACKED, contractException.getErrorType());
 
 		}));
 
-		// build and add the action plugin
+		// build the action plugin
 		actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
-		// build and execute the engine
-		builder.build().execute();
+		// run the simulation
+		CompartmentsActionSupport.testConsumers(0, 3338965305284292260L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
 
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-		
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPersonCompartment", args = { PersonId.class })
 	public void testGetPersonCompartment() {
-
-		Simulation.Builder builder = Simulation.builder();
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-			});
-		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
-
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(442744021729694111L).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -602,63 +498,26 @@ public class AT_CompartmentLocationDataView {
 
 		}));
 
-		// build and add the action plugin
+		// build the action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		// run the simulation
+		CompartmentsActionSupport.testConsumers(0, 442744021729694111L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPersonCompartmentArrivalTrackingPolicy", args = {})
 	public void testGetPersonCompartmentArrivalTrackingPolicy() {
-		// 2934280155665825436
+		/*
+		 * Show that the correct time tracking policy is present
+		 */		
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			Simulation.Builder builder = Simulation.builder();
-			CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-
-			for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-				compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> (c) -> {
-				});
-			}
-			compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(timeTrackingPolicy);
-			builder.addPlugin(CompartmentPlugin.PLUGIN_ID, new CompartmentPlugin(compartmentInitialDataBuilder.build())::init);
-
-			builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-			builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(6642493898588194197L).build())::init);
-			builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-			builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-			builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-			builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-			ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-			pluginBuilder.addAgent("agent");
-			/*
-			 * Show that the correct time tracking policy is present
-			 */
-			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+			CompartmentsActionSupport.testConsumer(0, 2934280155665825436L, timeTrackingPolicy, (c)->{
 				CompartmentLocationDataView compartmentLocationDataView = c.getDataView(CompartmentLocationDataView.class).get();
 				assertEquals(timeTrackingPolicy, compartmentLocationDataView.getPersonCompartmentArrivalTrackingPolicy());
 
-			}));
-
-			// there are no precondition tests
-
-			// build and add the action plugin
-			ActionPlugin actionPlugin = pluginBuilder.build();
-			builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-			// build and execute the engine
-			builder.build().execute();
-
-			// show that all actions were executed
-			assertTrue(actionPlugin.allActionsExecuted());
+			});
 		}
 	}
 

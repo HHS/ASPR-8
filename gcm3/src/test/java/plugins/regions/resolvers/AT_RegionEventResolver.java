@@ -41,6 +41,7 @@ import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionPropertyId;
+import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.components.ComponentPlugin;
@@ -67,7 +68,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.MultiKey;
 import util.SeedProvider;
@@ -133,7 +133,7 @@ public class AT_RegionEventResolver {
 
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
@@ -207,6 +207,7 @@ public class AT_RegionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testRegionLocationDataViewInitialization() {
+
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4228466028646070532L);
 		Builder builder = Simulation.builder();
 
@@ -227,7 +228,7 @@ public class AT_RegionEventResolver {
 
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
@@ -292,7 +293,7 @@ public class AT_RegionEventResolver {
 
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
@@ -336,7 +337,6 @@ public class AT_RegionEventResolver {
 
 	}
 
-
 	/**
 	 * Shows that all event {@linkplain PersonRegionChangeObservationEvent}
 	 * labelers are created
@@ -344,37 +344,7 @@ public class AT_RegionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonRegionChangeObservationEventLabelers() {
-
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2734071676096451334L);
-		Builder builder = Simulation.builder();
-
-		// add the regions
-		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionInitialDataBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
-		}
-
-		// add the region plugin
-		RegionPlugin regionPlugin = new RegionPlugin(regionInitialDataBuilder.build());
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, regionPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		// create an agent to search for the regions
-		pluginBuilder.addAgent("agent");
-
-		// Have the agent attempt to add the event labeler and show that a
-		// contract exception is thrown, indicating that the labeler was
-		// previously added by the resolver.
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+		RegionsActionSupport.testConsumer(0, 2734071676096451334L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			EventLabeler<PersonRegionChangeObservationEvent> eventLabelerForArrivalRegion = PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion();
 			assertNotNull(eventLabelerForArrivalRegion);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForArrivalRegion));
@@ -390,17 +360,7 @@ public class AT_RegionEventResolver {
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForPerson));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-		}));
-
-		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		});
 	}
 
 	/**
@@ -424,47 +384,8 @@ public class AT_RegionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonRegionAssignmentEvent() {
-
-		// Create the standard pre-populated engine builder
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5655227215512656797L);
-		Builder builder = Simulation.builder();
-
-		// create some people for the plugins
 		int numberOfPeople = 30;
-		List<PersonId> initialPeople = new ArrayList<>();
-		for (int i = 0; i < numberOfPeople; i++) {
-			initialPeople.add(new PersonId(i));
-		}
-
-		// add the People plugin with the 30 people
-		PeopleInitialData.Builder peopleInitialDataBuilder = PeopleInitialData.builder();
-		for (PersonId personId : initialPeople) {
-			peopleInitialDataBuilder.addPersonId(personId);
-		}
-		PeoplePlugin peoplePlugin = new PeoplePlugin(peopleInitialDataBuilder.build());
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, peoplePlugin::init);
-
-		// add the Region plugin with a few regions and 30 people
-		// randomly assigned to regions
-		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
-		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionInitialDataBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
-		}
-		for (PersonId personId : initialPeople) {
-			TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
-			regionInitialDataBuilder.setPersonRegion(personId, regionId);
-		}
-		RegionPlugin regionPlugin = new RegionPlugin(regionInitialDataBuilder.build());
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, regionPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
+		
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		// create two agents to move and observe people being moved
@@ -532,7 +453,10 @@ public class AT_RegionEventResolver {
 		pluginBuilder.addAgentActionPlan(TestRegionId.REGION_3, new AgentActionPlan(0, (c) -> {
 			// Select a person at random from the simulation and create a person
 			// id outside of the simulation
-
+			
+			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
@@ -569,18 +493,12 @@ public class AT_RegionEventResolver {
 
 		// build the plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-
-		// build and execute the engine
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();//
-
-		// show that all the test actions were performed
-		assertTrue(actionPlugin.allActionsExecuted());
+		RegionsActionSupport.testConsumers(numberOfPeople, 5655227215512656797L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 		// show that the observations were correct
 		assertEquals(expectedObservations.size(), recievedObservations.size());
 		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(recievedObservations));
 	}
-
 
 	/**
 	 * Shows PersonCreationObservationEvent events are handled properly The
@@ -596,29 +514,7 @@ public class AT_RegionEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonCreationObservationEvent() {
-
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8294774271110836859L);
-		Builder builder = Simulation.builder();
-
-		// add the regions
-		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionInitialDataBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
-		}
-		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-
-		// add the region plugin
-		RegionPlugin regionPlugin = new RegionPlugin(regionInitialDataBuilder.build());
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, regionPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
+		
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		/*
@@ -631,10 +527,12 @@ public class AT_RegionEventResolver {
 		 * is in the correct region at the correct time
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
-					StochasticsDataView stochasticsDataView = c2.getDataView(StochasticsDataView.class).get();
+					StochasticsDataView stochasticsDataView2 = c2.getDataView(StochasticsDataView.class).get();
 					RegionLocationDataView regionLocationDataView = c2.getDataView(RegionLocationDataView.class).get();
 					PersonDataView personDataView = c2.getDataView(PersonDataView.class).get();
 
@@ -642,7 +540,7 @@ public class AT_RegionEventResolver {
 					 * Generate a random region to for the new person and add
 					 * the person
 					 */
-					TestRegionId randomRegionId = TestRegionId.getRandomRegionId(stochasticsDataView.getRandomGenerator());
+					TestRegionId randomRegionId = TestRegionId.getRandomRegionId(stochasticsDataView2.getRandomGenerator());
 					PersonContructionData personContructionData = PersonContructionData.builder().add(randomRegionId).build();
 					c2.resolveEvent(new PersonCreationEvent(personContructionData));
 					PersonId personId = personDataView.getLastIssuedPersonId().get();
@@ -679,14 +577,9 @@ public class AT_RegionEventResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
+		
+		RegionsActionSupport.testConsumers(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+				
 	}
 
 	/**
@@ -707,28 +600,7 @@ public class AT_RegionEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testBulkPersonCreationObservationEvent() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2654453328570666100L);
-		Builder builder = Simulation.builder();
-
-		// add the regions
-		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionInitialDataBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
-		}
-		regionInitialDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-
-		// add the region plugin
-		RegionPlugin regionPlugin = new RegionPlugin(regionInitialDataBuilder.build());
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, regionPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
+		
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		/*
@@ -741,14 +613,16 @@ public class AT_RegionEventResolver {
 		 * is in the correct region at the correct time
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
-					StochasticsDataView stochasticsDataView = c2.getDataView(StochasticsDataView.class).get();
+					StochasticsDataView stochasticsDataView2 = c2.getDataView(StochasticsDataView.class).get();
 					RegionLocationDataView regionLocationDataView = c2.getDataView(RegionLocationDataView.class).get();
 					PersonDataView personDataView = c2.getDataView(PersonDataView.class).get();
 
-					RandomGenerator rng = stochasticsDataView.getRandomGenerator();
+					RandomGenerator rng = stochasticsDataView2.getRandomGenerator();
 					/*
 					 * Generate a random region to for each new person and add
 					 * the person
@@ -811,13 +685,7 @@ public class AT_RegionEventResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		RegionsActionSupport.testConsumers(0, 2654453328570666100L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 	}
 
@@ -841,31 +709,11 @@ public class AT_RegionEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonImminentRemovalObservationEvent() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(163202760371564041L);
-		Builder builder = Simulation.builder();
+		
+		
 
-		/*
-		 * Add the regions
-		 */
-		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionInitialDataBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
-
-		}
-
-		// add the region plugin
-		RegionInitialData regionInitialData = regionInitialDataBuilder.build();
-		RegionPlugin regionPlugin = new RegionPlugin(regionInitialData);
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, regionPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
+		
+		
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		/*
@@ -907,7 +755,6 @@ public class AT_RegionEventResolver {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> c.resolveEvent(new CustomEvent(null)));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-			
 
 			contractException = assertThrows(ContractException.class, () -> c.resolveEvent(new CustomEvent(new PersonId(-1))));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
@@ -953,13 +800,8 @@ public class AT_RegionEventResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		RegionsActionSupport.testConsumers(0, 163202760371564041L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		
 
 	}
 
@@ -971,61 +813,21 @@ public class AT_RegionEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testRegionPropertyChangeObservationEventLabelers() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4228466028646070532L);
-		Builder builder = Simulation.builder();
-
-		// add the regions
-		RegionInitialData.Builder regionInitialDataBuilder = RegionInitialData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionInitialDataBuilder.setRegionComponentInitialBehaviorSupplier(testRegionId, () -> new ActionAgent(testRegionId)::init);
-		}
-
-		// add the region plugin
-		RegionPlugin regionPlugin = new RegionPlugin(regionInitialDataBuilder.build());
-		builder.addPlugin(RegionPlugin.PLUGIN_ID, regionPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		// create an agent to search for the regions
-		pluginBuilder.addAgent("agent");
-
-		// Have the agent attempt to add the event labeler and show that a
-		// contract exception is thrown, indicating that the labeler was
-		// previously added by the resolver.
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+		RegionsActionSupport.testConsumer(0, 4228466028646070532L, TimeTrackingPolicy.DO_NOT_TRACK_TIME,(c)->{
 			EventLabeler<RegionPropertyChangeObservationEvent> eventLabeler1 = RegionPropertyChangeObservationEvent.getEventLabelerForProperty();
 			assertNotNull(eventLabeler1);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-			
+
 			EventLabeler<RegionPropertyChangeObservationEvent> eventLabeler2 = RegionPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty();
 			assertNotNull(eventLabeler2);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-		}));
-
-		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+			
+		});
 
 	}
 
-	
 	/**
 	 * Shows RegionPropertyValueAssignmentEvent events are handled properly. The
 	 * resolver updates the region's property value and time in the
@@ -1068,7 +870,7 @@ public class AT_RegionEventResolver {
 
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);

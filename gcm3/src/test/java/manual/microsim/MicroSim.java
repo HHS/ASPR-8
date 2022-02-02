@@ -14,10 +14,10 @@ import java.nio.file.StandardOpenOption;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.AgentContext;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.ReportContext;
 import nucleus.SimpleReportId;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.events.mutation.PersonCompartmentAssignmentEvent;
 import plugins.compartments.events.observation.PersonCompartmentChangeObservationEvent;
@@ -37,7 +37,6 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 
 public class MicroSim {
 
@@ -144,7 +143,7 @@ public class MicroSim {
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID,new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
 		// getting random value generation		
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID,new StochasticsPlugin(StochasticsInitialData.builder().setSeed(1345245724553456L).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID,StochasticsPlugin.builder().setSeed(1345245724553456L).build()::init);
 		
 		// add the component concept need for compartments to work correctly
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID,new ComponentPlugin()::init);

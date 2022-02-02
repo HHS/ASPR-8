@@ -26,7 +26,6 @@ import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
 import plugins.stochastics.events.mutation.StochasticsReseedEvent;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTest;
@@ -37,7 +36,7 @@ import util.annotations.UnitTestMethod;
 public class AT_StochasticsResolver {
 
 	@Test
-	@UnitTestConstructor(args = { StochasticsInitialData.class, long.class })
+	@UnitTestConstructor(args = { StochasticsPlugin.class, long.class })
 	public void testConstructor() {
 		// test covered by the test of init()
 	}
@@ -48,13 +47,13 @@ public class AT_StochasticsResolver {
 		Builder builder = Simulation.builder();
 		long masterSeed = 508143430508125725L;
 
-		StochasticsInitialData.Builder stochasticsBuilder = StochasticsInitialData.builder();
+		StochasticsPlugin.Builder stochasticsBuilder = StochasticsPlugin.builder();
 		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
 			stochasticsBuilder.addRandomGeneratorId(testRandomGeneratorId);
 		}
 		stochasticsBuilder.setSeed(masterSeed);
 
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(stochasticsBuilder.build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, stochasticsBuilder.build()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -123,19 +122,19 @@ public class AT_StochasticsResolver {
 
 		// build the initial data
 		Set<TestRandomGeneratorId> expectedRandomGeneratorIds = new LinkedHashSet<>();
-		StochasticsInitialData.Builder builder = StochasticsInitialData.builder();
+		StochasticsPlugin.Builder builder = StochasticsPlugin.builder();
 		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
 			expectedRandomGeneratorIds.add(testRandomGeneratorId);
 			builder.addRandomGeneratorId(testRandomGeneratorId);
 		}
 		builder.setSeed(seed);
-		StochasticsInitialData stochasticsInitialData = builder.build();
+		StochasticsPlugin stochasticsPlugin = builder.build();
 
 		List<DataView> publishedDataViews = new ArrayList<>();
 
 		// build the manager
 		MockResolverContext mockResolverContext = MockResolverContext.builder().setPublishDataViewConsumer((d) -> publishedDataViews.add(d)).build();
-		StochasticsResolver stochasticsResolver = new StochasticsResolver(stochasticsInitialData);
+		StochasticsResolver stochasticsResolver = new StochasticsResolver(stochasticsPlugin);
 		stochasticsResolver.init(mockResolverContext);
 
 		// show that only one data view was published

@@ -7,15 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.AgentContext;
 import nucleus.Context;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
+import nucleus.testsupport.actionplugin.ActionError;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
@@ -24,6 +23,7 @@ import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
+import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
 import plugins.partitions.testsupport.attributes.events.mutation.AttributeValueAssignmentEvent;
@@ -37,7 +37,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -50,49 +49,6 @@ public final class AT_AttributeFilter {
 	@UnitTestConstructor(args = { AttributeId.class, Equality.class, Object.class })
 	public void testConstructor() {
 		// nothing to test
-	}
-
-	private void testConsumer(int initialPopulationCount, long seed, Consumer<AgentContext> consumer) {
-		
-		Builder builder = Simulation.builder();
-
-		AttributeInitialData.Builder attributeBuilder = AttributeInitialData.builder();
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			attributeBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
-		}
-		attributeBuilder.defineAttribute(LocalAttributeId.DATA_ID, AttributeDefinition.builder().setType(Data.class).setDefaultValue(new Data(0)).build());
-
-		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributeBuilder.build())::init);
-
-		// add the remaining plugins
-		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
-		for (int i = 0; i < initialPopulationCount; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));
-		}
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(seed).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		// add the test agent
-		pluginBuilder.addAgent("agent");
-
-		/*
-		 * Execute the consumer
-		 */
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
-
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
 	}
 
 	private static enum LocalAttributeId implements AttributeId {
@@ -133,9 +89,33 @@ public final class AT_AttributeFilter {
 	@Test
 	@UnitTestMethod(name = "validate", args = { Context.class })
 	public void testValidate() {
+		int initialPopulation = 100;
 
-		testConsumer(100, 3690002958793431202L, (c) -> {
+		final Builder builder = Simulation.builder();
+		// define some person attributes
+		final AttributeInitialData.Builder attributesBuilder = AttributeInitialData.builder();
+		for (final TestAttributeId testAttributeId : TestAttributeId.values()) {
+			attributesBuilder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
+		}
+		AttributeDefinition attributeDefinition = AttributeDefinition.builder().setDefaultValue(new Data(7)).setType(Data.class).build();
+		attributesBuilder.defineAttribute(LocalAttributeId.DATA_ID, attributeDefinition);
+		
+		builder.addPlugin(AttributesPlugin.PLUGIN_ID, new AttributesPlugin(attributesBuilder.build())::init);
 
+		final PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
+		for (int i = 0; i < initialPopulation; i++) {
+			peopleBuilder.addPersonId(new PersonId(i));
+		}
+		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
+		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(7698506335486677498L).build()::init);
+		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
+		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
+
+		// and add the action plugin to the engine
+		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		pluginBuilder.addAgent("agent");
+		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
 			// if the filter's attribute id is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new AttributeFilter(null, Equality.EQUAL, false).validate(c));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());
@@ -159,14 +139,25 @@ public final class AT_AttributeFilter {
 			contractException = assertThrows(ContractException.class, () -> new AttributeFilter(LocalAttributeId.DATA_ID, Equality.GREATER_THAN, new Data(12)).validate(c));
 			assertEquals(PartitionError.NON_COMPARABLE_ATTRIBUTE, contractException.getErrorType());
 
-		});
+		}));
+
+		ActionPlugin actionPlugin = pluginBuilder.build();
+		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+
+		// build and execute the engine
+		builder.build().execute();
+
+		// show that all actions were executed
+		if (!actionPlugin.allActionsExecuted()) {
+			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
+		}
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
 	public void testEvaluate() {
-		testConsumer(100, 2853953940626718331L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 2853953940626718331L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
@@ -197,7 +188,7 @@ public final class AT_AttributeFilter {
 	@UnitTestMethod(name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
-		testConsumer(100, 3455263917994200075L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 3455263917994200075L, (c) -> {
 
 			// create an attribute filter
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
@@ -223,27 +214,17 @@ public final class AT_AttributeFilter {
 			 * current values.
 			 */
 			PersonId personId = new PersonId(0);
-			
-			AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(
-					personId,
-					TestAttributeId.BOOLEAN_0,
-					false,true);
-			
+
+			AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
+
 			assertTrue(filterSensitivity.requiresRefresh(c, attributeChangeObservationEvent).isPresent());
 
-			attributeChangeObservationEvent = new AttributeChangeObservationEvent(
-					personId,
-					TestAttributeId.BOOLEAN_0,
-					false,false);
-			
+			attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, false, false);
+
 			assertFalse(filterSensitivity.requiresRefresh(c, attributeChangeObservationEvent).isPresent());
 
+			attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_1, false, true);
 
-			attributeChangeObservationEvent = new AttributeChangeObservationEvent(
-					personId,
-					TestAttributeId.BOOLEAN_1,
-					false,true);
-			
 			assertFalse(filterSensitivity.requiresRefresh(c, attributeChangeObservationEvent).isPresent());
 
 		});

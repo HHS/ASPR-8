@@ -17,14 +17,14 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentId;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.ResolverId;
 import nucleus.SimpleResolverId;
+import nucleus.Simulation;
+import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionPlugin;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
@@ -41,7 +41,9 @@ import plugins.compartments.support.CompartmentError;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.support.CompartmentPropertyId;
 import plugins.compartments.support.SimpleCompartmentPropertyId;
+import plugins.compartments.testsupport.CompartmentsActionSupport;
 import plugins.compartments.testsupport.TestCompartmentId;
+import plugins.compartments.testsupport.TestCompartmentPropertyId;
 import plugins.components.ComponentPlugin;
 import plugins.components.datacontainers.ComponentDataView;
 import plugins.partitions.PartitionsPlugin;
@@ -66,7 +68,6 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.datacontainers.StochasticsDataView;
-import plugins.stochastics.initialdata.StochasticsInitialData;
 import util.ContractException;
 import util.MultiKey;
 import util.SeedProvider;
@@ -133,7 +134,7 @@ public class AT_CompartmentEventResolver {
 
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
@@ -208,66 +209,20 @@ public class AT_CompartmentEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testCompartmentLocationDataViewInitialization() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4228466028646070532L);
-		Builder builder = Simulation.builder();
+		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
+			CompartmentsActionSupport.testConsumer(0, 4228466028646070532L, timeTrackingPolicy, (c) -> {
+				// show that the compartment location data view exists
+				Optional<CompartmentLocationDataView> optional = c.getDataView(CompartmentLocationDataView.class);
+				assertTrue(optional.isPresent());
 
-		/*
-		 * Add the compartments
-		 */
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
+				CompartmentLocationDataView compartmentLocationDataView = optional.get();
 
+				// show that the compartment arrival tracking policy is correct
+				TimeTrackingPolicy expectedPolicy = timeTrackingPolicy;
+				TimeTrackingPolicy actualPolicy = compartmentLocationDataView.getPersonCompartmentArrivalTrackingPolicy();
+				assertEquals(expectedPolicy, actualPolicy);
+			});
 		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-
-		// add the compartment plugin
-		CompartmentInitialData compartmentInitialData = compartmentInitialDataBuilder.build();
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialData);
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build() )::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		/*
-		 * Create an agents to create people
-		 */
-		pluginBuilder.addAgent("agent");
-
-		/*
-		 * Have the agent show that compartment tracking policy is correct.
-		 */
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-
-			// show that the compartment location data view exists
-			Optional<CompartmentLocationDataView> optional = c.getDataView(CompartmentLocationDataView.class);
-			assertTrue(optional.isPresent());
-
-			CompartmentLocationDataView compartmentLocationDataView = optional.get();
-
-			// show that the compartment arrival tracking policy is correct
-			TimeTrackingPolicy expectedPolicy = compartmentInitialData.getPersonCompartmentArrivalTrackingPolicy();
-			TimeTrackingPolicy actualPolicy = compartmentLocationDataView.getPersonCompartmentArrivalTrackingPolicy();
-			assertEquals(expectedPolicy, actualPolicy);
-
-		}));
-
-		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
 
 	}
 
@@ -278,36 +233,7 @@ public class AT_CompartmentEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testCompartmentInitialization() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4228466028646070532L);
-		Builder builder = Simulation.builder();
-
-		// add the compartments
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-		}
-
-		// add the compartment plugin
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialDataBuilder.build());
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		// create an agent to search for the compartments
-		pluginBuilder.addAgent("agent");
-
-		// Have the update agent make various compartment property updates over
-		// time
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-
+		CompartmentsActionSupport.testConsumer(0, 4228466028646070532L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 
 				// convert the compartment id into its corresponding agent id
@@ -322,18 +248,7 @@ public class AT_CompartmentEventResolver {
 				 */
 				assertTrue(c.agentExists(agentId));
 			}
-
-		}));
-
-		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		});
 
 	}
 
@@ -345,53 +260,12 @@ public class AT_CompartmentEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testCompartmentPropertyChangeObservationEventLabelers() {
-
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4228466028646070532L);
-		Builder builder = Simulation.builder();
-
-		// add the compartments
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-		}
-
-		// add the compartment plugin
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialDataBuilder.build());
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		// create an agent to search for the compartments
-		pluginBuilder.addAgent("agent");
-
-		// Have the agent attempt to add the event labeler and show that a
-		// contract exception is thrown, indicating that the labeler was
-		// previously added by the resolver.
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+		CompartmentsActionSupport.testConsumer(0, 4228466028646070532L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			EventLabeler<CompartmentPropertyChangeObservationEvent> eventLabeler = CompartmentPropertyChangeObservationEvent.getEventLabeler();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		}));
-
-		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
+		});
 	}
 
 	/**
@@ -401,37 +275,8 @@ public class AT_CompartmentEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonCompartmentChangeObservationEventLabelers() {
-		
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2734071676096451334L);
-		Builder builder = Simulation.builder();
 
-		// add the compartments
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-		}
-
-		// add the compartment plugin
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialDataBuilder.build());
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-
-		// create an agent to search for the compartments
-		pluginBuilder.addAgent("agent");
-
-		// Have the agent attempt to add the event labeler and show that a
-		// contract exception is thrown, indicating that the labeler was
-		// previously added by the resolver.
-		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
+		CompartmentsActionSupport.testConsumer(0, 2734071676096451334L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c)->{
 			EventLabeler<PersonCompartmentChangeObservationEvent> eventLabelerForArrivalCompartment = PersonCompartmentChangeObservationEvent.getEventLabelerForArrivalCompartment();
 			assertNotNull(eventLabelerForArrivalCompartment);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForArrivalCompartment));
@@ -447,17 +292,9 @@ public class AT_CompartmentEventResolver {
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForPerson));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-		}));
-
-		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		});
+		
+		
 	}
 
 	/**
@@ -484,44 +321,6 @@ public class AT_CompartmentEventResolver {
 
 		// Create the standard pre-populated engine builder
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5655227215512656797L);
-		Builder builder = Simulation.builder();
-
-		// create some people for the plugins
-		int numberOfPeople = 30;
-		List<PersonId> initialPeople = new ArrayList<>();
-		for (int i = 0; i < numberOfPeople; i++) {
-			initialPeople.add(new PersonId(i));
-		}
-
-		// add the People plugin with the 30 people
-		PeopleInitialData.Builder peopleInitialDataBuilder = PeopleInitialData.builder();
-		for (PersonId personId : initialPeople) {
-			peopleInitialDataBuilder.addPersonId(personId);
-		}
-		PeoplePlugin peoplePlugin = new PeoplePlugin(peopleInitialDataBuilder.build());
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, peoplePlugin::init);
-
-		// add the Compartment plugin with a few compartments and 30 people
-		// randomly assigned to compartments
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-		}
-		for (PersonId personId : initialPeople) {
-			TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(randomGenerator);
-			compartmentInitialDataBuilder.setPersonCompartment(personId, compartmentId);
-		}
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialDataBuilder.build());
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		// create two agents to move and observe people being moved
@@ -626,12 +425,7 @@ public class AT_CompartmentEventResolver {
 
 		// build the plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-
-		// build and execute the engine
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();//
-
-		// show that all the test actions were performed
-		assertTrue(actionPlugin.allActionsExecuted());
+		CompartmentsActionSupport.testConsumers(30, 5655227215512656797L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 		// show that the observations were correct
 		assertEquals(expectedObservations.size(), recievedObservations.size());
@@ -680,7 +474,7 @@ public class AT_CompartmentEventResolver {
 
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
+		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
@@ -770,7 +564,7 @@ public class AT_CompartmentEventResolver {
 			CompartmentId unknownCompartmentId = TestCompartmentId.getUnknownCompartmentId();
 			CompartmentPropertyId compartmentPropertyId = propertyId_1_1;
 			CompartmentPropertyId immutableCompartmentPropertyId = propertyId_1_immutable;
-			CompartmentPropertyId unknownCompartmentPropertyId = TestCompartmentId.getUnknownCompartmentPropertyId();
+			CompartmentPropertyId unknownCompartmentPropertyId = TestCompartmentPropertyId.getUnknownCompartmentPropertyId();
 			Object propertyValue = 67;
 			Object incompatiblePropertyValue = "incompatible value";
 
@@ -807,7 +601,8 @@ public class AT_CompartmentEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPlugin actionPlugin = pluginBuilder.build();				
+		
 		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
 
 		// build and execute the engine
@@ -839,26 +634,6 @@ public class AT_CompartmentEventResolver {
 	public void testPersonCreationObservationEvent() {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8294774271110836859L);
-		Builder builder = Simulation.builder();
-
-		// add the compartments
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-
-		// add the compartment plugin
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialDataBuilder.build());
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -920,13 +695,7 @@ public class AT_CompartmentEventResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		CompartmentsActionSupport.testConsumers(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 	}
 
@@ -950,26 +719,8 @@ public class AT_CompartmentEventResolver {
 	public void testBulkPersonCreationObservationEvent() {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2654453328570666100L);
-		Builder builder = Simulation.builder();
+		
 
-		// add the compartments
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-		}
-		compartmentInitialDataBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-
-		// add the compartment plugin
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialDataBuilder.build());
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
@@ -995,7 +746,7 @@ public class AT_CompartmentEventResolver {
 					 * Generate a random compartment to for each new person and
 					 * add the person
 					 */
-					Map<Integer,CompartmentId> expectedCompartments = new LinkedHashMap<>();
+					Map<Integer, CompartmentId> expectedCompartments = new LinkedHashMap<>();
 					BulkPersonContructionData.Builder bulkBuilder = BulkPersonContructionData.builder();
 					PersonContructionData.Builder personBuilder = PersonContructionData.builder();
 					int personCount = rng.nextInt(5) + 1;
@@ -1003,8 +754,8 @@ public class AT_CompartmentEventResolver {
 					for (int j = 0; j < personCount; j++) {
 						CompartmentId randomCompartmentId = TestCompartmentId.getRandomCompartmentId(rng);
 						personBuilder.add(randomCompartmentId);
-						expectedCompartments.put(j,randomCompartmentId);
-						bulkBuilder.add(personBuilder.build());						
+						expectedCompartments.put(j, randomCompartmentId);
+						bulkBuilder.add(personBuilder.build());
 					}
 					BulkPersonContructionData bulkPersonContructionData = bulkBuilder.build();
 					c2.resolveEvent(new BulkPersonCreationEvent(bulkPersonContructionData));
@@ -1035,15 +786,15 @@ public class AT_CompartmentEventResolver {
 			PersonId personId = new PersonId(100000);
 
 			// if no compartment data was included in the event
-			PersonContructionData personContructionData = PersonContructionData.builder().build();			
+			PersonContructionData personContructionData = PersonContructionData.builder().build();
 			BulkPersonContructionData bulkPersonContructionData = BulkPersonContructionData.builder().add(personContructionData).build();
 			BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent1 = new BulkPersonCreationObservationEvent(personId, bulkPersonContructionData);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.resolveEvent(bulkPersonCreationObservationEvent1));
 			assertEquals(CompartmentError.NULL_COMPARTMENT_ID, contractException.getErrorType());
 
 			// if the compartment in the event is unknown
-			
-			personContructionData = PersonContructionData.builder().add(TestCompartmentId.getUnknownCompartmentId()).build();			
+
+			personContructionData = PersonContructionData.builder().add(TestCompartmentId.getUnknownCompartmentId()).build();
 			bulkPersonContructionData = BulkPersonContructionData.builder().add(personContructionData).build();
 			BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent2 = new BulkPersonCreationObservationEvent(personId, bulkPersonContructionData);
 			contractException = assertThrows(ContractException.class, () -> c.resolveEvent(bulkPersonCreationObservationEvent2));
@@ -1053,13 +804,7 @@ public class AT_CompartmentEventResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		CompartmentsActionSupport.testConsumers(0, 2654453328570666100L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
 
 	}
 
@@ -1083,31 +828,7 @@ public class AT_CompartmentEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonImminentRemovalObservationEvent() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(163202760371564041L);
-		Builder builder = Simulation.builder();
-
-		/*
-		 * Add the compartments
-		 */
-		CompartmentInitialData.Builder compartmentInitialDataBuilder = CompartmentInitialData.builder();
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			compartmentInitialDataBuilder.setCompartmentInitialBehaviorSupplier(testCompartmentId, () -> new ActionAgent(testCompartmentId)::init);
-
-		}
-
-		// add the compartment plugin
-		CompartmentInitialData compartmentInitialData = compartmentInitialDataBuilder.build();
-		CompartmentPlugin compartmentPlugin = new CompartmentPlugin(compartmentInitialData);
-		builder.addPlugin(CompartmentPlugin.PLUGIN_ID, compartmentPlugin::init);
-
-		// add the remaining plugins that are needed for dependencies
-		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
-		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, new StochasticsPlugin(StochasticsInitialData.builder().setSeed(randomGenerator.nextLong()).build())::init);
-		builder.addPlugin(ReportPlugin.PLUGIN_ID, new ReportPlugin(ReportsInitialData.builder().build())::init);
-		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
-		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
-		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
-
+		
 		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
 
 		/*
@@ -1149,7 +870,6 @@ public class AT_CompartmentEventResolver {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> c.resolveEvent(new CustomEvent(null)));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-			
 
 			contractException = assertThrows(ContractException.class, () -> c.resolveEvent(new CustomEvent(new PersonId(-1))));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
@@ -1195,14 +915,7 @@ public class AT_CompartmentEventResolver {
 
 		// build action plugin
 		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
-
+		CompartmentsActionSupport.testConsumers(0, 163202760371564041L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
 	}
 
 }

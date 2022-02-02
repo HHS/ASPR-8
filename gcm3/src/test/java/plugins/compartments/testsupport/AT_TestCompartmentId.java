@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.compartments.support.CompartmentId;
-import plugins.compartments.support.CompartmentPropertyId;
 import util.MutableInteger;
 import util.SeedProvider;
 import util.annotations.UnitTest;
@@ -70,26 +69,7 @@ public class AT_TestCompartmentId {
 		}
 	}
 
-	/**
-	 * Shows that a generated unknown compartment property id is not null and
-	 * not a property id of any member of the enum
-	 */
-	@Test
-	@UnitTestMethod(name = "getUnknownCompartmentPropertyId", args = {})
-	public void testGetUnknownCompartmentPropertyId() {
-		Set<CompartmentPropertyId> unknownCompartmentPropertyIds = new LinkedHashSet<>();
-		for (int i = 0; i < 30; i++) {
-			CompartmentPropertyId unknownCompartmentPropertyId = TestCompartmentId.getUnknownCompartmentPropertyId();
-			assertNotNull(unknownCompartmentPropertyId);
-			boolean unique = unknownCompartmentPropertyIds.add(unknownCompartmentPropertyId);
-			assertTrue(unique);
-			for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-				for (CompartmentPropertyId compartmentPropertyId : testCompartmentId.getCompartmentPropertyIds()) {
-					assertNotEquals(compartmentPropertyId, unknownCompartmentPropertyId);
-				}
-			}
-		}
-	}
+	
 
 	/**
 	 * Shows that size() returns the number of members in the TestCompartmentId
@@ -101,67 +81,18 @@ public class AT_TestCompartmentId {
 		assertEquals(TestCompartmentId.values().length, TestCompartmentId.size());
 	}
 
-	/**
-	 * Shows that the property count for each member is equal to the number of
-	 * properties contained for that member.
-	 */
-	@Test
-	@UnitTestMethod(name = "getCompartmentPropertyCount", args = {})
-	public void testGetCompartmentPropertyCount() {
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			assertEquals(testCompartmentId.getCompartmentPropertyIds().length, testCompartmentId.getCompartmentPropertyCount());
-		}
-	}
+	
 
-	/**
-	 * Shows that the compartment property id returned is equal to the
-	 * corresponding property id in the array version.
-	 */
-	@Test
-	@UnitTestMethod(name = "getCompartmentPropertyId", args = { int.class })
-	public void testGetCompartmentPropertyId() {
+	
 
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			CompartmentPropertyId[] compartmentPropertyIds = testCompartmentId.getCompartmentPropertyIds();
-			for (int i = 0; i < testCompartmentId.getCompartmentPropertyCount(); i++) {
-				assertEquals(compartmentPropertyIds[i], testCompartmentId.getCompartmentPropertyId(i));
-			}
-		}
-
-	}
-
-	/**
-	 * Shows that each compartment property id is unique and that the number of
-	 * such ids matches the construction arguments of the enum
-	 */
-	@Test
-	@UnitTestMethod(name = "getCompartmentPropertyIds", args = {})
-	public void testGetCompartmentPropertyIds() {
-		Set<CompartmentPropertyId> allCompartmentPropertyIds = new LinkedHashSet<>();
-		Map<TestCompartmentId, Integer> expectedCounts = new LinkedHashMap<>();
-		expectedCounts.put(TestCompartmentId.COMPARTMENT_1, 3);
-		expectedCounts.put(TestCompartmentId.COMPARTMENT_2, 2);
-		expectedCounts.put(TestCompartmentId.COMPARTMENT_3, 4);
-		expectedCounts.put(TestCompartmentId.COMPARTMENT_4, 1);
-		expectedCounts.put(TestCompartmentId.COMPARTMENT_5, 3);
-		
-		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-			int count = testCompartmentId.getCompartmentPropertyCount();
-			assertEquals(expectedCounts.get(testCompartmentId).intValue(), count);
-			for(int i = 0; i<count;i++) {
-				boolean unique = allCompartmentPropertyIds.add(testCompartmentId.getCompartmentPropertyId(i));
-				assertTrue(unique);
-			}
-		}
-
-	}
+	
 
 	/**
 	 * Shows the next value of each member matches expectations
 	 */
 	@Test
 	@UnitTestMethod(name = "next", args = {})
-	public void test() {
+	public void testNext() {
 		assertEquals(5, TestCompartmentId.values().length);
 		
 		assertEquals(TestCompartmentId.COMPARTMENT_2, TestCompartmentId.COMPARTMENT_1.next());
