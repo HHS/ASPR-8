@@ -38,7 +38,7 @@ import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
 import plugins.properties.support.PropertyDefinition;
 import plugins.properties.support.TimeTrackingPolicy;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import util.ContractException;
 import util.MultiKey;
 import util.MutableDouble;

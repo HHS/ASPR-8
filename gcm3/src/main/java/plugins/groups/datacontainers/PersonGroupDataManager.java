@@ -29,7 +29,7 @@ import plugins.properties.support.IndexedPropertyManager;
 import plugins.properties.support.IntPropertyManager;
 import plugins.properties.support.ObjectPropertyManager;
 import plugins.properties.support.PropertyDefinition;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import util.ContractException;
 import util.arraycontainers.IntValueContainer;

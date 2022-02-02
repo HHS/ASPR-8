@@ -20,7 +20,7 @@ import nucleus.Context;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 
 /*
  * Static support class for testing PopulationContainer implementer classes

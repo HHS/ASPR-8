@@ -47,7 +47,7 @@ import plugins.people.events.observation.PersonImminentRemovalObservationEvent;
 import plugins.people.support.BulkPersonContructionData;
 import plugins.people.support.PersonContructionData;
 import plugins.people.support.PersonId;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 

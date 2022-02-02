@@ -25,7 +25,7 @@ import plugins.resources.events.mutation.ResourceTransferToPersonEvent;
 import plugins.resources.events.observation.PersonResourceChangeObservationEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;

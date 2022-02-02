@@ -10,7 +10,6 @@ import nucleus.PluginContext;
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
 import nucleus.SimpleResolverId;
-import plugins.stochastics.resolvers.StochasticsResolver;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import util.ContractError;
@@ -98,7 +97,7 @@ public final class StochasticsPlugin implements Plugin {
 
 	@Override
 	public void init(PluginContext pluginContext) {
-		pluginContext.defineResolver(new SimpleResolverId(StochasticsResolver.class), new StochasticsResolver(this)::init);
+		pluginContext.defineResolver(new SimpleResolverId(StochasticsDataView.class), new StochasticsDataView(this)::init);
 	}
 
 	@Override

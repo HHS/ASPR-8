@@ -246,7 +246,7 @@ import plugins.resources.events.observation.RegionResourceChangeObservationEvent
 import plugins.resources.events.observation.ResourcePropertyChangeObservationEvent;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import util.ContractException;
 import util.objectrepository.ObjectRepository;

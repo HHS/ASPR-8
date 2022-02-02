@@ -50,8 +50,8 @@ import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
+import plugins.stochastics.StochasticsDataView;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datacontainers.StochasticsDataView;
 import util.MutableInteger;
 @Tag("manual")
 public final class PartitionBugTest {

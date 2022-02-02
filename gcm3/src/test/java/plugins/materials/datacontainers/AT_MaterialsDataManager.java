@@ -45,7 +45,7 @@ import plugins.resources.datacontainers.ResourceDataView;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import util.ContractException;
 import util.MultiKey;
 import util.MutableDouble;

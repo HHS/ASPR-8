@@ -35,8 +35,8 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
+import plugins.stochastics.StochasticsDataView;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datacontainers.StochasticsDataView;
 
 public class MicroSim {
 

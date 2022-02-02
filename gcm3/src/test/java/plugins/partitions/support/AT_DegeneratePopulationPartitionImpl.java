@@ -31,7 +31,7 @@ import plugins.people.events.mutation.PersonCreationEvent;
 import plugins.people.events.mutation.PersonRemovalRequestEvent;
 import plugins.people.support.PersonContructionData;
 import plugins.people.support.PersonId;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import util.ContractException;
 import util.SeedProvider;
 import util.annotations.UnitTest;

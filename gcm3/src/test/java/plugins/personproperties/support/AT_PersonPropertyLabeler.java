@@ -23,7 +23,7 @@ import plugins.personproperties.events.mutation.PersonPropertyValueAssignmentEve
 import plugins.personproperties.events.observation.PersonPropertyChangeObservationEvent;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.stochastics.datacontainers.StochasticsDataView;
+import plugins.stochastics.StochasticsDataView;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;

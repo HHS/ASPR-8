@@ -67,8 +67,8 @@ import plugins.reports.initialdata.ReportsInitialData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.initialdata.ResourceInitialData;
 import plugins.resources.testsupport.TestResourceId;
+import plugins.stochastics.StochasticsDataView;
 import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datacontainers.StochasticsDataView;
 import util.SeedProvider;
 import util.TimeElapser;
 
