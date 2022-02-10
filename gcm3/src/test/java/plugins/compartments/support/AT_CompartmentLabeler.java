@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.events.observation.PersonCompartmentChangeObservationEvent;
@@ -56,7 +56,7 @@ public class AT_CompartmentLabeler {
 		 * alone. Compare the two labels for equality.
 		 */
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// build a compartment labeler with a function that can be tested
 		Function<CompartmentId, Object> function = (c) -> {
@@ -120,9 +120,9 @@ public class AT_CompartmentLabeler {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		CompartmentsActionSupport.testConsumers(0, 7284994762664646917L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		CompartmentsActionSupport.testConsumers(0, 7284994762664646917L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPluginInitializer);
 
 	}
 

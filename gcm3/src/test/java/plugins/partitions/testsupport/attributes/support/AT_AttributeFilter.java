@@ -11,11 +11,11 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.partitions.PartitionsPlugin;
@@ -35,7 +35,7 @@ import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
 import util.annotations.UnitTest;
@@ -87,7 +87,7 @@ public final class AT_AttributeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { Context.class })
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		int initialPopulation = 100;
 
@@ -113,7 +113,7 @@ public final class AT_AttributeFilter {
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		// and add the action plugin to the engine
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
 			// if the filter's attribute id is null
@@ -141,28 +141,28 @@ public final class AT_AttributeFilter {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		PartitionsActionSupport.testConsumer(100, 2853953940626718331L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (PersonId personId : personDataView.getPeople()) {
 				boolean value = randomGenerator.nextBoolean();

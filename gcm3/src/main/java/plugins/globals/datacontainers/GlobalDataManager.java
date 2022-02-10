@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.compartments.CompartmentPlugin;
 import plugins.globals.support.GlobalComponentId;
 import plugins.globals.support.GlobalError;
@@ -27,7 +27,7 @@ import util.ContractException;
  */
 
 public final class GlobalDataManager {
-	private final Context context;
+	private final SimulationContext simulationContext;
 	private Map<GlobalPropertyId, PropertyValueRecord> globalPropertyMap = new LinkedHashMap<>();
 	private Set<GlobalComponentId> globalComponentIds = new LinkedHashSet<>();
 	private Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
@@ -65,7 +65,7 @@ public final class GlobalDataManager {
 	public void addGlobalPropertyDefinition(GlobalPropertyId globalPropertyId, PropertyDefinition propertyDefinition) {
 		validateGlobalPropertyAddition(globalPropertyId, propertyDefinition);
 
-		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(context);
+		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(simulationContext);
 		propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
 		globalPropertyMap.put(globalPropertyId, propertyValueRecord);
 		globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
@@ -100,8 +100,8 @@ public final class GlobalDataManager {
 	 * Constructs the data manager
 	 * 
 	 */
-	public GlobalDataManager(Context context) {
-		this.context = context;
+	public GlobalDataManager(SimulationContext simulationContext) {
+		this.simulationContext = simulationContext;
 	}
 
 	/**

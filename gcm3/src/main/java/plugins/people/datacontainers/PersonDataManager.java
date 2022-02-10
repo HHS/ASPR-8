@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.people.PeoplePlugin;
 import plugins.people.support.PersonError;
@@ -67,7 +67,7 @@ public final class PersonDataManager {
 		}
 
 		if (result == null) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID, personId);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID, personId);
 		}
 		return result;
 	}
@@ -85,7 +85,7 @@ public final class PersonDataManager {
 			globalPopulationRecord.projectedPopulationCount = personIds.size();
 		}
 		globalPopulationRecord.populationCount++;
-		globalPopulationRecord.assignmentTime = context.getTime();
+		globalPopulationRecord.assignmentTime = simulationContext.getTime();
 		return personId;
 	}
 
@@ -136,17 +136,17 @@ public final class PersonDataManager {
 	 */
 	public void removePerson(PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 		globalPopulationRecord.populationCount--;
-		globalPopulationRecord.assignmentTime = context.getTime();
+		globalPopulationRecord.assignmentTime = simulationContext.getTime();
 		personIds.set(personId.getValue(), null);
 	}
 
-	private Context context;
+	private SimulationContext simulationContext;
 
 	/**
 	 * Constructs this data manager from the given context and initial capacity
@@ -158,11 +158,11 @@ public final class PersonDataManager {
 	 *             <li>{@linkplain NucleusError#NULL_CONTEXT} if the context is
 	 *             null</li>
 	 */
-	public PersonDataManager(Context context, int initialCapacity) {
-		if (context == null) {
+	public PersonDataManager(SimulationContext simulationContext, int initialCapacity) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 		personIds = new ArrayList<>(initialCapacity);
 	}
 
@@ -222,7 +222,7 @@ public final class PersonDataManager {
 			this.simToScenarioPeopleMap.put(simPersonId, scenarionPersonId);
 		}
 		if (this.scenarioToSimPeopleMap.size() != simToScenarioPeopleMap.size()) {
-			context.throwContractException(PersonError.NON_ONE_TO_ONE_MAPPING);
+			simulationContext.throwContractException(PersonError.NON_ONE_TO_ONE_MAPPING);
 		}
 	}
 

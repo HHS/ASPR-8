@@ -1,7 +1,7 @@
 package plugins.personproperties.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -118,9 +118,9 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 *             if the person property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByCompartmentAndProperty(Context context, CompartmentId compartmentId, PersonPropertyId personPropertyId) {
-		validateCompartmentId(context, compartmentId);
-		validatePersonPropertyId(context, personPropertyId);
+	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByCompartmentAndProperty(SimulationContext simulationContext, CompartmentId compartmentId, PersonPropertyId personPropertyId) {
+		validateCompartmentId(simulationContext, compartmentId);
+		validatePersonPropertyId(simulationContext, personPropertyId);
 
 		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.COMPARTMENT_PROPERTY, PersonPropertyChangeObservationEvent.class, compartmentId, personPropertyId);
 	}
@@ -157,9 +157,9 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 *             if the person property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByPersonAndProperty(Context context, PersonId personId, PersonPropertyId personPropertyId) {
-		validatePersonPropertyId(context, personPropertyId);
-		validatePersonId(context, personId);
+	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByPersonAndProperty(SimulationContext simulationContext, PersonId personId, PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(simulationContext, personPropertyId);
+		validatePersonId(simulationContext, personId);
 		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PERSON_PROPERTY, PersonPropertyChangeObservationEvent.class, personId, personPropertyId);
 	}
 
@@ -187,8 +187,8 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 *             if the person property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByProperty(Context context, PersonPropertyId personPropertyId) {
-		validatePersonPropertyId(context, personPropertyId);
+	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByProperty(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(simulationContext, personPropertyId);
 		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PROPERTY, PersonPropertyChangeObservationEvent.class, personPropertyId);
 	}
 
@@ -220,9 +220,9 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 *             if the person property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByRegionAndProperty(Context context, RegionId regionId, PersonPropertyId personPropertyId) {
-		validatePersonPropertyId(context, personPropertyId);
-		validateRegionId(context, regionId);
+	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(simulationContext, personPropertyId);
+		validateRegionId(simulationContext, regionId);
 		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.REGION_PROPERTY, PersonPropertyChangeObservationEvent.class, regionId, personPropertyId);
 	}
 
@@ -238,43 +238,43 @@ public class PersonPropertyChangeObservationEvent implements Event {
 		});
 	}
 
-	private static void validatePersonPropertyId(Context context, PersonPropertyId personPropertyId) {
+	private static void validatePersonPropertyId(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
 		if (personPropertyId == null) {
-			context.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			simulationContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
 		}
 
-		if (!context.getDataView(PersonPropertyDataView.class).get().personPropertyIdExists(personPropertyId)) {
-			context.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID);
+		if (!simulationContext.getDataView(PersonPropertyDataView.class).get().personPropertyIdExists(personPropertyId)) {
+			simulationContext.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID);
 		}
 	}
 
-	private static void validateCompartmentId(Context context, CompartmentId compartmentId) {
+	private static void validateCompartmentId(SimulationContext simulationContext, CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			context.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			simulationContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
 
-		if (!context.getDataView(CompartmentDataView.class).get().compartmentIdExists(compartmentId)) {
-			context.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID);
+		if (!simulationContext.getDataView(CompartmentDataView.class).get().compartmentIdExists(compartmentId)) {
+			simulationContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID);
 		}
 	}
 
-	private static void validateRegionId(Context context, RegionId regionId) {
+	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
-		if (!context.getDataView(RegionDataView.class).get().regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID);
+		if (!simulationContext.getDataView(RegionDataView.class).get().regionIdExists(regionId)) {
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
 
-	private static void validatePersonId(Context context, PersonId personId) {
+	private static void validatePersonId(SimulationContext simulationContext, PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 
-		if (!context.getDataView(PersonDataView.class).get().personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+		if (!simulationContext.getDataView(PersonDataView.class).get().personExists(personId)) {
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 

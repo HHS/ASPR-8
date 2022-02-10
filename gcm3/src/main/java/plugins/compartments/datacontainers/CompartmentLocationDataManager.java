@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
 import plugins.compartments.support.CompartmentId;
@@ -66,7 +66,7 @@ public final class CompartmentLocationDataManager {
 	 */
 	private TimeTrackingPolicy compartmentArrivalTrackingPolicy;
 
-	private Context context;
+	private SimulationContext simulationContext;
 
 	/**
 	 * Returns the number of people currently in the given compartment. Requires
@@ -161,7 +161,7 @@ public final class CompartmentLocationDataManager {
 	}
 
 	/**
-	 * Creates this data manager from the given {@link Context} and
+	 * Creates this data manager from the given {@link SimulationContext} and
 	 * {@link CompartmentInitialData}. Not null tolerant.
 	 * 
 	 * @throw {@link RuntimeException}
@@ -169,13 +169,13 @@ public final class CompartmentLocationDataManager {
 	 *        <li>if the compartment initial data is null</li>
 	 * 
 	 */
-	public CompartmentLocationDataManager(final Context context, CompartmentInitialData compartmentInitialData) {
+	public CompartmentLocationDataManager(final SimulationContext simulationContext, CompartmentInitialData compartmentInitialData) {
 
-		if (context == null) {
+		if (simulationContext == null) {
 			throw new RuntimeException("null context supplied");
 		}
 
-		this.context = context;
+		this.simulationContext = simulationContext;
 
 		/*
 		 * By setting the default value to 0, we are allowing the container to
@@ -226,7 +226,7 @@ public final class CompartmentLocationDataManager {
 		final CompartmentId oldCompartmentId = indexToCompartmentMap[compartmentIndex];
 		final PopulationRecord populationRecord = compartmentPopulationRecordMap.get(oldCompartmentId);
 		populationRecord.populationCount--;
-		populationRecord.assignmentTime = context.getTime();
+		populationRecord.assignmentTime = simulationContext.getTime();
 		compartmentValues.setIntValue(personId.getValue(), 0);
 	}
 
@@ -258,7 +258,7 @@ public final class CompartmentLocationDataManager {
 			 * Update the population count associated with the old compartment
 			 */
 			populationRecord.populationCount--;
-			populationRecord.assignmentTime = context.getTime();
+			populationRecord.assignmentTime = simulationContext.getTime();
 
 		} else {
 			/*
@@ -273,7 +273,7 @@ public final class CompartmentLocationDataManager {
 		 */
 		final PopulationRecord populationRecord = compartmentPopulationRecordMap.get(compartmentId);
 		populationRecord.populationCount++;
-		populationRecord.assignmentTime = context.getTime();
+		populationRecord.assignmentTime = simulationContext.getTime();
 
 		/*
 		 * Convert the new compartment id into an int
@@ -288,7 +288,7 @@ public final class CompartmentLocationDataManager {
 		 * If compartment arrival times are being tracked, do so.
 		 */
 		if (compartmentArrivalTimes != null) {
-			compartmentArrivalTimes.setValue(personId.getValue(), context.getTime());
+			compartmentArrivalTimes.setValue(personId.getValue(), simulationContext.getTime());
 		}
 
 	}

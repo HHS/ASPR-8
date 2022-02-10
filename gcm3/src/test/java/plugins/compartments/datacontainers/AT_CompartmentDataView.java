@@ -15,7 +15,7 @@ import javax.naming.Context;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.compartments.support.CompartmentError;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.support.CompartmentPropertyId;
@@ -37,22 +37,22 @@ public class AT_CompartmentDataView {
 	@UnitTestConstructor(args = { Context.class, CompartmentDataManager.class })
 	public void testConstructor() {
 		// precondition tests
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockSimulationContext);
 		
 		ContractException contractException = assertThrows(ContractException.class, ()->new CompartmentDataView(null, compartmentDataManager));
 		assertEquals(NucleusError.NULL_CONTEXT, contractException.getErrorType());
 		
-		contractException = assertThrows(ContractException.class, ()->new CompartmentDataView(mockContext, null));
+		contractException = assertThrows(ContractException.class, ()->new CompartmentDataView(mockSimulationContext, null));
 		assertEquals(CompartmentError.NULL_COMPARTMENT_DATA_MANAGER, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(name = "compartmentIdExists", args = { CompartmentId.class })
 	public void testCompartmentIdExists() {
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockContext);
-		CompartmentDataView compartmentDataView = new CompartmentDataView(mockContext, compartmentDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockSimulationContext);
+		CompartmentDataView compartmentDataView = new CompartmentDataView(mockSimulationContext, compartmentDataManager);
 
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			compartmentDataManager.addCompartmentId(testCompartmentId);
@@ -72,9 +72,9 @@ public class AT_CompartmentDataView {
 	@Test
 	@UnitTestMethod(name = "getCompartmentIds", args = {})
 	public void testGetCompartmentIds() {
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockContext);
-		CompartmentDataView compartmentDataView = new CompartmentDataView(mockContext, compartmentDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockSimulationContext);
+		CompartmentDataView compartmentDataView = new CompartmentDataView(mockSimulationContext, compartmentDataManager);
 
 		// show that the compartment ids that are added can be retrieved
 		Set<CompartmentId> expectedCompartmentIds = new LinkedHashSet<>();
@@ -92,12 +92,12 @@ public class AT_CompartmentDataView {
 		// manager
 		Set<MultiKey> expectedPropertyDefinitions = new LinkedHashSet<>();
 
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.setContractErrorConsumer((c)->{throw new ContractException(c);})
 				.setDetailedContractErrorConsumer((c,d)->{throw new ContractException(c);})
 				.build();
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockContext);
-		CompartmentDataView compartmentDataView = new CompartmentDataView(mockContext, compartmentDataManager);
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockSimulationContext);
+		CompartmentDataView compartmentDataView = new CompartmentDataView(mockSimulationContext, compartmentDataManager);
 
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -149,12 +149,12 @@ public class AT_CompartmentDataView {
 		// collect the property definitions that we expect to find in the data
 		// manager
 		Set<MultiKey> expectedPropertyDefinitions = new LinkedHashSet<>();
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.setContractErrorConsumer((c)->{throw new ContractException(c);})
 				.setDetailedContractErrorConsumer((c,d)->{throw new ContractException(c);})
 				.build();
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockContext);
-		CompartmentDataView compartmentDataView = new CompartmentDataView(mockContext, compartmentDataManager);
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockSimulationContext);
+		CompartmentDataView compartmentDataView = new CompartmentDataView(mockSimulationContext, compartmentDataManager);
 
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -193,12 +193,12 @@ public class AT_CompartmentDataView {
 	@UnitTestMethod(name = "getCompartmentPropertyValue", args = { CompartmentId.class, CompartmentPropertyId.class })
 	public void testGetCompartmentPropertyValue() {
 		MutableDouble time = new MutableDouble(0);	
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.setContractErrorConsumer((c)->{throw new ContractException(c);})
 				.setDetailedContractErrorConsumer((c,d)->{throw new ContractException(c);})
 				.setTimeSupplier(()->time.getValue()).build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
-		CompartmentDataView compartmentDataView = new CompartmentDataView(mockContext, cdm);
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
+		CompartmentDataView compartmentDataView = new CompartmentDataView(mockSimulationContext, cdm);
 
 		int runningValue = 0;
 		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
@@ -271,12 +271,12 @@ public class AT_CompartmentDataView {
 	public void testGetCompartmentPropertyTime() {
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.setContractErrorConsumer((c)->{throw new ContractException(c);})
 				.setDetailedContractErrorConsumer((c,d)->{throw new ContractException(c);})
 				.setTimeSupplier(()->time.getValue()).build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
-		CompartmentDataView compartmentDataView = new CompartmentDataView(mockContext, cdm);
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
+		CompartmentDataView compartmentDataView = new CompartmentDataView(mockSimulationContext, cdm);
 
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -316,7 +316,7 @@ public class AT_CompartmentDataView {
 				// correct
 				cdm.setCompartmentPropertyValue(compartmentId, compartmentPropertyId, newPropertyValue++);
 				currentCompartmentPropertyTime = compartmentDataView.getCompartmentPropertyTime(compartmentId, compartmentPropertyId);
-				assertEquals(mockContext.getTime(), currentCompartmentPropertyTime, 0);
+				assertEquals(mockSimulationContext.getTime(), currentCompartmentPropertyTime, 0);
 			}
 		}
 

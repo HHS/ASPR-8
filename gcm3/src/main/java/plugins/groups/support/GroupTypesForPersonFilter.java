@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.observation.GroupMembershipAdditionObservationEvent;
@@ -22,9 +22,9 @@ public final class GroupTypesForPersonFilter extends Filter {
 	private final int groupTypeCount;
 	private PersonGroupDataView personGroupDataView;
 
-	private void validateEquality(final Context context, final Equality equality) {
+	private void validateEquality(final SimulationContext simulationContext, final Equality equality) {
 		if (equality == null) {
-			context.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
+			simulationContext.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
 
@@ -34,27 +34,27 @@ public final class GroupTypesForPersonFilter extends Filter {
 	}
 
 	@Override
-	public void validate(Context context) {
-		validateEquality(context, equality);
+	public void validate(SimulationContext simulationContext) {
+		validateEquality(simulationContext, equality);
 	}
 
 	@Override
-	public boolean evaluate(Context context, PersonId personId) {
-		if(context == null) {
+	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 		final int count = personGroupDataView.getGroupTypeCountForPersonId(personId);
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupTypeCount));
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(Context context, GroupMembershipAdditionObservationEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionObservationEvent event) {
 		return Optional.of(event.getPersonId());
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(Context context, GroupMembershipRemovalObservationEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalObservationEvent event) {
 		return Optional.of(event.getPersonId());
 	}
 

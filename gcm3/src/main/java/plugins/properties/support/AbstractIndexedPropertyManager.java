@@ -1,6 +1,6 @@
 package plugins.properties.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import util.ContractException;
 import util.arraycontainers.DoubleValueContainer;
 
@@ -32,7 +32,7 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 	 */
 	private final boolean trackTime;
 
-	private Context context;
+	private SimulationContext simulationContext;
 
 	/**
 	 * Constructs an AbstractPropertyManger. Establishes the time tracking and
@@ -47,8 +47,8 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
 	 */
-	public AbstractIndexedPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
-		this.context = context;
+	public AbstractIndexedPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
+		this.simulationContext = simulationContext;
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
@@ -68,7 +68,7 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		if (trackTime) {
-			timeTrackingContainer.setValue(id, context.getTime());
+			timeTrackingContainer.setValue(id, simulationContext.getTime());
 		}
 	}
 

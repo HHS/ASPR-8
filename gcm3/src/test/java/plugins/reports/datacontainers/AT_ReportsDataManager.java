@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
+import plugins.reports.ReportId;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;

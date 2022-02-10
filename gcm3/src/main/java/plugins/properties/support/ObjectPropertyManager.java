@@ -1,6 +1,6 @@
 package plugins.properties.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import util.ContractException;
 import util.arraycontainers.ObjectValueContainer;
 
@@ -26,8 +26,8 @@ public final class ObjectPropertyManager extends AbstractIndexedPropertyManager 
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 	 *             if the property definition does not have a default value</li>
 	 */
-	public ObjectPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
-		super(context, propertyDefinition, initialSize);
+	public ObjectPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
+		super(simulationContext, propertyDefinition, initialSize);
 
 		if (!propertyDefinition.getDefaultValue().isPresent()) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);			

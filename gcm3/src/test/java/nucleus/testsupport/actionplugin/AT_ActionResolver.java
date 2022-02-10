@@ -53,7 +53,7 @@ public class AT_ActionResolver {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		// add the resolvers to the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addResolver(resolverId1);
 		pluginBuilder.addResolver(resolverId2);
 
@@ -64,7 +64,7 @@ public class AT_ActionResolver {
 		for (MultiKey multiKey : expectedObservations) {
 			ResolverId expectedResolverId = multiKey.getKey(0);
 			Double expectedTime = multiKey.getKey(1);
-			pluginBuilder.addResolverActionPlan(expectedResolverId, new ResolverActionPlan(expectedTime, (c) -> {
+			pluginBuilder.addResolverActionPlan(expectedResolverId, new DataManagerActionPlan(expectedTime, (c) -> {
 				ResolverId actaulResolverId = c.getCurrentResolverId();
 				Double actualTime = c.getTime();
 				actualObservations.add(new MultiKey(actaulResolverId, actualTime));
@@ -72,16 +72,16 @@ public class AT_ActionResolver {
 		}
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
 		Simulation	.builder()//
-				.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init)//
+				.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init)//
 				.build()//
 				.execute();//
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the agents executed the expected actions
 		assertEquals(expectedObservations, actualObservations);

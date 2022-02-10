@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
@@ -25,7 +25,7 @@ import util.ContractException;
 
 public final class AttributesDataManager {
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	private final Map<AttributeId, AttributeDefinition> attributeDefinitions = new LinkedHashMap<>();
 
@@ -88,11 +88,11 @@ public final class AttributesDataManager {
 	 * @throws ContractException
 	 *             <li>if the context is null</li>
 	 */
-	public AttributesDataManager(final Context context) {
-		if (context == null) {
+	public AttributesDataManager(final SimulationContext simulationContext) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 	}
 
 	/**
@@ -129,15 +129,15 @@ public final class AttributesDataManager {
 	 */
 	public void addAttribute(AttributeId attributeId, AttributeDefinition attributeDefinition) {
 		if (attributeId == null) {
-			context.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
+			simulationContext.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
 
 		if (attributeDefinition == null) {
-			context.throwContractException(AttributeError.NULL_ATTRIBUTE_DEFINITION);
+			simulationContext.throwContractException(AttributeError.NULL_ATTRIBUTE_DEFINITION);
 		}
 
 		if (attributeDefinitions.containsKey(attributeId)) {
-			context.throwContractException(AttributeError.DUPLICATE_ATTRIBUTE_DEFINITION);
+			simulationContext.throwContractException(AttributeError.DUPLICATE_ATTRIBUTE_DEFINITION);
 		}
 
 		attributeDefinitions.put(attributeId, attributeDefinition);

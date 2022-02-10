@@ -2,7 +2,8 @@ package nucleus.testsupport.actionplugin;
 
 import java.util.Set;
 
-import nucleus.ResolverContext;
+import nucleus.DataManager;
+import nucleus.DataManagerContext;
 import nucleus.ResolverId;
 
 /**
@@ -14,17 +15,17 @@ import nucleus.ResolverId;
  * @author Shawn Hatch
  *
  */
-public final class ActionResolver {
+public final class ActionResolver extends DataManager{
 
-	public void init(ResolverContext resolverContext) {
-		ActionDataView actionDataView = resolverContext.getDataView(ActionDataView.class).get();
+	public void init(DataManagerContext dataManagerContext) {
+		ActionDataView actionDataView = dataManagerContext.getDataView(ActionDataView.class).get();
 
 		// retrieve the action plans from the action data view and schedule them
 		// with the context
-		ResolverId resolverId = resolverContext.getCurrentResolverId();
-		Set<ResolverActionPlan> resolverActionPlans = actionDataView.getResolverActionPlans(resolverId);
-		for (final ResolverActionPlan resolverActionPlan : resolverActionPlans) {
-			resolverContext.addPlan(resolverActionPlan::executeAction, resolverActionPlan.getScheduledTime());
+		ResolverId resolverId = dataManagerContext.getCurrentResolverId();
+		Set<DataManagerActionPlan> dataManagerActionPlans = actionDataView.getResolverActionPlans(resolverId);
+		for (final DataManagerActionPlan dataManagerActionPlan : dataManagerActionPlans) {
+			dataManagerContext.addPlan(dataManagerActionPlan::executeAction, dataManagerActionPlan.getScheduledTime());
 		}
 	}
 

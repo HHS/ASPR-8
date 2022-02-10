@@ -1,7 +1,7 @@
 package plugins.components.datacontainers;
 
 import nucleus.AgentId;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import plugins.components.support.ComponentError;
 import plugins.components.support.ComponentId;
@@ -15,11 +15,11 @@ import util.ContractException;
  */
 public final class ComponentDataView implements DataView {
 	private final ComponentDataManager componentDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 
-	public ComponentDataView(Context context, ComponentDataManager componentDataManager) {
+	public ComponentDataView(SimulationContext simulationContext, ComponentDataManager componentDataManager) {
 		this.componentDataManager = componentDataManager;
-		this.context = context;
+		this.simulationContext = simulationContext;
 	}
 
 	/**
@@ -48,11 +48,11 @@ public final class ComponentDataView implements DataView {
 	private void validateComponentId(ComponentId componentId) {
 
 		if (componentId == null) {
-			context.throwContractException(ComponentError.NULL_AGENT_ID);
+			simulationContext.throwContractException(ComponentError.NULL_AGENT_ID);
 		}
 
 		if (!componentDataManager.containsComponentId(componentId)) {
-			context.throwContractException(ComponentError.UNKNOWN_COMPONENT_ID);
+			simulationContext.throwContractException(ComponentError.UNKNOWN_COMPONENT_ID);
 		}
 	}
 

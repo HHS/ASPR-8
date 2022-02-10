@@ -1,7 +1,7 @@
 package plugins.globals.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -81,8 +81,8 @@ public class GlobalPropertyChangeObservationEvent implements Event {
 	 *             <li>{@linkplain GlobalError#UNKNOWN_GLOBAL_PROPERTY_ID} if
 	 *             the global property id is unknown</li>
 	 */
-	public static EventLabel<GlobalPropertyChangeObservationEvent> getEventLabel(Context context, GlobalPropertyId globalPropertyId) {
-		validateGlobalProperty(context, globalPropertyId);
+	public static EventLabel<GlobalPropertyChangeObservationEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
+		validateGlobalProperty(simulationContext, globalPropertyId);
 		return new MultiKeyEventLabel<>(globalPropertyId, LabelerId.PROPERTY, GlobalPropertyChangeObservationEvent.class, globalPropertyId);
 	}
 
@@ -95,8 +95,8 @@ public class GlobalPropertyChangeObservationEvent implements Event {
 				(context, event) -> new MultiKeyEventLabel<>(event.getGlobalPropertyId(), LabelerId.PROPERTY, GlobalPropertyChangeObservationEvent.class, event.getGlobalPropertyId()));
 	}
 
-	private static void validateGlobalProperty(Context context, GlobalPropertyId globalPropertyId) {
-		context.getDataView(GlobalDataView.class).get().getGlobalPropertyDefinition(globalPropertyId);
+	private static void validateGlobalProperty(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
+		simulationContext.getDataView(GlobalDataView.class).get().getGlobalPropertyDefinition(globalPropertyId);
 	}
 
 	/**

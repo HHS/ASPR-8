@@ -16,7 +16,7 @@ public interface EventLabeler<T extends Event> {
 	 * the same labeler id as this labeler 2) have the same primary key as the
 	 * event and 3) have the same event class as this labeler.
 	 */
-	public EventLabel<T> getEventLabel(Context context, T event);
+	public EventLabel<T> getEventLabel(SimulationContext simulationContext, T event);
 
 	/**
 	 * Returns the event class of T

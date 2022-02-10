@@ -1,6 +1,6 @@
 package plugins.properties.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 
 /**
  * A utility class for holding the value and assignment time for a property. On
@@ -11,10 +11,10 @@ public class PropertyValueRecord {
 
 	private Object propertyValue;
 	private double assignmentTime;
-	private final Context context;
+	private final SimulationContext simulationContext;
 
-	public PropertyValueRecord(Context context) {
-		this.context = context;
+	public PropertyValueRecord(SimulationContext simulationContext) {
+		this.simulationContext = simulationContext;
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class PropertyValueRecord {
 	 */
 	public void setPropertyValue(Object propertyValue) {
 		this.propertyValue = propertyValue;
-		assignmentTime = context.getTime();
+		assignmentTime = simulationContext.getTime();
 	}
 
 	/**

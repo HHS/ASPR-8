@@ -12,10 +12,11 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import nucleus.testsupport.actionplugin.ReportActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
+import plugins.reports.ReportId;
 import util.ContractError;
 import util.ContractException;
 import util.MultiKey;
@@ -37,7 +38,7 @@ public class AT_ReportContext {
 	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class })
 	public void testAddPlan() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent with a plan that will ensure all report plans are
 		// executed
@@ -74,24 +75,24 @@ public class AT_ReportContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the plan that was added by the action plan was executed and
 		// thus the addPlan invocation functioned correctly
 		assertTrue(planExecution.getValue());
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "getCurrentReportId", args = {})
 	public void testGetCurrentReportId() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent with a plan that will ensure all report plans are
 		// executed
@@ -127,13 +128,13 @@ public class AT_ReportContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	private static class StringEvent implements Event {
@@ -205,7 +206,7 @@ public class AT_ReportContext {
 		Set<MultiKey> receivedEvents = new LinkedHashSet<>();
 
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent that will guarantee the execution of report planning
 		pluginBuilder.addAgent("Agent");
@@ -245,22 +246,22 @@ public class AT_ReportContext {
 		// report to receive
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			for (MultiKey multiKey : plannedEvents) {
 				Double time = multiKey.getKey(0);
 				String value = multiKey.getKey(1);
 				StringEvent stringEvent = new StringEvent(value);
 				c.addPlan((c2) -> {
-					c2.queueEventForResolution(stringEvent);
+					c2.resolveEvent(stringEvent);
 				}, time);
 			}
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		assertEquals(plannedEvents, receivedEvents);
 
@@ -385,7 +386,7 @@ public class AT_ReportContext {
 	@UnitTestMethod(name = "subscribe", args = { EventLabel.class, ReportEventConsumer.class })
 
 	public void testSubscribe_ByEventLabel() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent with a plan that will ensure all report plans are
 		// executed
@@ -423,15 +424,15 @@ public class AT_ReportContext {
 		pluginBuilder.addResolver(resolverId);
 
 		// Have the resolver produce a few DataChangeObservations
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(1, (c) -> {
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(1, (c) -> {
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
 		}));
 
 		double testTime = 1;
@@ -465,13 +466,13 @@ public class AT_ReportContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the Alpha agent
@@ -491,7 +492,7 @@ public class AT_ReportContext {
 	public void testSubscribeToSimulationClose() {
 		MutableBoolean mutableBoolean = new MutableBoolean();
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent with a plan that will ensure all report plans are
 		// executed
@@ -508,9 +509,9 @@ public class AT_ReportContext {
 			});
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		assertTrue(mutableBoolean.getValue());
 	}
@@ -528,7 +529,7 @@ public class AT_ReportContext {
 		expectedPlanTimes.add(12.8);
 		expectedPlanTimes.add(20.9);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent with a plan that will ensure all report plans are
 		// executed
@@ -556,11 +557,11 @@ public class AT_ReportContext {
 		 */
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c1) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c1) -> {
 			// have the resolver produce events at the expected times
 			for (Double planTime : expectedPlanTimes) {
 				c1.addPlan((c2) -> {
-					c2.queueEventForResolution(new Event1());
+					c2.resolveEvent(new Event1());
 				}, planTime);
 			}
 		}));
@@ -572,9 +573,9 @@ public class AT_ReportContext {
 		 * Build and execute the engine. Add an output consumer that puts
 		 * collects the output onto a set
 		 */
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 		Simulation	.builder()//
-				.addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init)//
+				.addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init)//
 				.setOutputConsumer((o) -> output.add(o))//
 				.build().execute();//
 
@@ -599,7 +600,7 @@ public class AT_ReportContext {
 	@UnitTestMethod(name = "getDataView", args = { Class.class })
 	public void testGetDataView() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent with a plan that will ensure all report plans are
 		// executed
@@ -631,13 +632,13 @@ public class AT_ReportContext {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action was executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -645,7 +646,7 @@ public class AT_ReportContext {
 	@UnitTestMethod(name = "getTime", args = {})
 	public void testGetTime() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent with a plan that will ensure all report plans are
 		// executed
@@ -679,20 +680,20 @@ public class AT_ReportContext {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action was executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
 	@UnitTestMethod(name = "throwContractException", args = { ContractError.class })
 	public void testThrowContractException() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent that will guarantee the execution of report planning
 		pluginBuilder.addAgent("Agent");
@@ -713,11 +714,11 @@ public class AT_ReportContext {
 		pluginBuilder.addReportActionPlan(reportId, reportActionPlan);
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// execute the engine and show that the expected contract exception was
 		// thrown
-		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 
 		// Show that the report action plan was executed
@@ -728,7 +729,7 @@ public class AT_ReportContext {
 	@UnitTestMethod(name = "throwContractException", args = { ContractError.class, Object.class })
 	public void testThrowContractExceptionWithDetails() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent that will guarantee the execution of report planning
 		pluginBuilder.addAgent("Agent");
@@ -752,11 +753,11 @@ public class AT_ReportContext {
 		pluginBuilder.addReportActionPlan(reportId, reportActionPlan);
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// execute the engine and show that the expected contract exception was
 		// thrown with the details contained in the exception's message
-		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 		assertTrue(contractException.getMessage().contains(details));
 
@@ -848,7 +849,7 @@ public class AT_ReportContext {
 	@UnitTestMethod(name = "addEventLabeler", args = { EventLabeler.class })
 	public void testAddEventLabeler() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		//add a report
 		ReportId reportId = new SimpleReportId("report");
@@ -916,18 +917,18 @@ public class AT_ReportContext {
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver create a test event for the agent to observe
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(3, (c) -> {
-			c.queueEventForResolution(new TestEvent());
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(3, (c) -> {
+			c.resolveEvent(new TestEvent());
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Show that the event labeler must have been added to the simulation
@@ -951,7 +952,7 @@ public class AT_ReportContext {
 		}
 
 		@Override
-		public EventLabel<TestEvent> getEventLabel(Context context, TestEvent event) {
+		public EventLabel<TestEvent> getEventLabel(SimulationContext simulationContext, TestEvent event) {
 			return new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
 		}
 

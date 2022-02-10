@@ -12,7 +12,7 @@ import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
@@ -55,7 +55,7 @@ public class MaterialsActionSupport {
 	 * passed to an invocation of the testConsumers() method.
 	 */
 	public static void testConsumer(long seed, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 		testConsumers(seed, pluginBuilder.build());
@@ -85,15 +85,15 @@ public class MaterialsActionSupport {
 	 *             all action plans execute or if there are no action plans
 	 *             contained in the action plugin</li>
 	 */
-	public static void testConsumers(long seed, ActionPlugin actionPlugin, Consumer<Object> outputConsumer, Consumer<ReportContext> report) {
-		_testConsumers(seed, actionPlugin, outputConsumer, report);
+	public static void testConsumers(long seed, ActionPluginInitializer actionPluginInitializer, Consumer<Object> outputConsumer, Consumer<ReportContext> report) {
+		_testConsumers(seed, actionPluginInitializer, outputConsumer, report);
 	}
 
-	public static void testConsumers(long seed, ActionPlugin actionPlugin) {
-		_testConsumers(seed, actionPlugin, null, null);
+	public static void testConsumers(long seed, ActionPluginInitializer actionPluginInitializer) {
+		_testConsumers(seed, actionPluginInitializer, null, null);
 	}
 
-	private static void _testConsumers(long seed, ActionPlugin actionPlugin, Consumer<Object> outputConsumer, Consumer<ReportContext> report) {
+	private static void _testConsumers(long seed, ActionPluginInitializer actionPluginInitializer, Consumer<Object> outputConsumer, Consumer<ReportContext> report) {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(seed);
 
@@ -183,7 +183,7 @@ public class MaterialsActionSupport {
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// set the output consumer
 		builder.setOutputConsumer(outputConsumer);
@@ -192,7 +192,7 @@ public class MaterialsActionSupport {
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 	}

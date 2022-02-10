@@ -5,11 +5,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import nucleus.AgentId;
 import nucleus.Event;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.datacontainers.PartitionDataManager;
 import plugins.partitions.datacontainers.PartitionDataView;
@@ -110,7 +111,7 @@ public final class PartitionEventResolver {
 
 	private final Map<Class<? extends Event>, Set<Object>> eventClassToKeyMap = new LinkedHashMap<>();
 
-	private void handleBulkPersonCreationObservationEvent(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEvent(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		if (partitionDataManager.isEmpty()) {
 			return;
 		}
@@ -134,7 +135,7 @@ public final class PartitionEventResolver {
 
 	}
 
-	private void handleEvent(final ResolverContext resolverContext, final Event event) {
+	private void handleEvent(final DataManagerContext dataManagerContext, final Event event) {
 		final Set<Object> keys = eventClassToKeyMap.get(event.getClass());
 		if (keys != null) {
 			for (final Object key : keys) {
@@ -147,19 +148,19 @@ public final class PartitionEventResolver {
 
 	}
 
-	private void handlePartitionAdditionEventExecution(final ResolverContext resolverContext, final PartitionAdditionEvent partitionAdditionEvent) {
+	private void handlePartitionAdditionEventExecution(final DataManagerContext dataManagerContext, final PartitionAdditionEvent partitionAdditionEvent) {
 
 		final Partition partition = partitionAdditionEvent.getPartition();
 		final Object key = partitionAdditionEvent.getKey();
 
-		final AgentId agentId = resolverContext.getCurrentAgentId();
+		//final AgentId agentId = dataManagerContext.getCurrentAgentId().get();
 
 		// determine the event classes that will trigger refreshes on the
 		// partition
 		final Set<Class<? extends Event>> eventClasses = new LinkedHashSet<>();
 
 		final Filter filter = partition.getFilter().orElse(Filter.allPeople());
-		filter.validate(resolverContext.getSafeContext());
+		filter.validate(dataManagerContext.getSafeContext());
 		for (final FilterSensitivity<?> filterSensitivity : filter.getFilterSensitivities()) {
 			eventClasses.add(filterSensitivity.getEventClass());
 		}
@@ -175,7 +176,7 @@ public final class PartitionEventResolver {
 		// processes
 		for (final Class<? extends Event> reservedEventClass : reservedEventClasses) {
 			if (eventClasses.contains(reservedEventClass)) {
-				resolverContext.throwContractException(PartitionError.RESERVED_PARTITION_TRIGGER, reservedEventClass);
+				throw new ContractException(PartitionError.RESERVED_PARTITION_TRIGGER, reservedEventClass);
 			}
 		}
 
@@ -190,7 +191,7 @@ public final class PartitionEventResolver {
 			if (keys == null) {
 				keys = new LinkedHashSet<>();
 				eventClassToKeyMap.put(eventClass, keys);
-				resolverContext.subscribeToEventPostPhase(eventClass, this::handleEvent);
+				dataManagerContext.subscribeToEventPostPhase(eventClass, this::handleEvent);
 			}
 			keys.add(key);
 		}
@@ -199,25 +200,25 @@ public final class PartitionEventResolver {
 
 		PopulationPartition populationPartition;
 		if (partition.isDegenerate()) {
-			populationPartition = new DegeneratePopulationPartitionImpl(resolverContext.getSafeContext(), partition);
+			populationPartition = new DegeneratePopulationPartitionImpl(dataManagerContext.getSafeContext(), partition);
 		} else {
-			populationPartition = new PopulationPartitionImpl(resolverContext.getSafeContext(), partition);
+			populationPartition = new PopulationPartitionImpl(dataManagerContext.getSafeContext(), partition);
 		}
 
 		partitionDataManager.addPartition(key, agentId, populationPartition);
 	}
 
-	private void handlePartitionAdditionEventValidation(final ResolverContext resolverContext, final PartitionAdditionEvent partitionAdditionEvent) {
+	private void handlePartitionAdditionEventValidation(final DataManagerContext dataManagerContext, final PartitionAdditionEvent partitionAdditionEvent) {
 
 		final Partition partition = partitionAdditionEvent.getPartition();
 		final Object key = partitionAdditionEvent.getKey();
 
-		validatePopulationPartitionNotNull(resolverContext, partition);
-		validatePopulationPartitionKeyNotNull(resolverContext, key);
-		validatePopulationPartitionDoesNotExist(resolverContext, key);
+		validatePopulationPartitionNotNull(dataManagerContext, partition);
+		validatePopulationPartitionKeyNotNull(dataManagerContext, key);
+		validatePopulationPartitionDoesNotExist(dataManagerContext, key);
 	}
 
-	private void handlePartitionRemovalEventExecution(final ResolverContext resolverContext, final PartitionRemovalEvent partitionRemovalEvent) {
+	private void handlePartitionRemovalEventExecution(final DataManagerContext dataManagerContext, final PartitionRemovalEvent partitionRemovalEvent) {
 		final Object key = partitionRemovalEvent.getKey();
 
 		partitionDataManager.removePartition(key);
@@ -228,19 +229,19 @@ public final class PartitionEventResolver {
 			keys.remove(key);
 			if (keys.isEmpty()) {
 				eventClassToKeyMap.remove(eventClass);
-				resolverContext.unSubscribeToEvent(eventClass);
+				dataManagerContext.unSubscribeToEvent(eventClass);
 			}
 		}
 	}
 
-	private void handlePartitionRemovalEventValidation(final ResolverContext resolverContext, final PartitionRemovalEvent partitionRemovalEvent) {
+	private void handlePartitionRemovalEventValidation(final DataManagerContext dataManagerContext, final PartitionRemovalEvent partitionRemovalEvent) {
 		final Object key = partitionRemovalEvent.getKey();
-		validatePopulationPartitionKeyNotNull(resolverContext, key);
-		validatePopulationPartitionExists(resolverContext, key);
-		validatePopulationPartitionIsOwnedByFocalAgent(resolverContext, key);
+		validatePopulationPartitionKeyNotNull(dataManagerContext, key);
+		validatePopulationPartitionExists(dataManagerContext, key);
+		validatePopulationPartitionIsOwnedByFocalAgent(dataManagerContext, key);
 	}
 
-	private void handlePersonCreationObservationEvent(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEvent(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		final PersonId personId = personCreationObservationEvent.getPersonId();
 		for (final Object key : partitionDataManager.getKeys()) {
 			final PopulationPartition populationPartition = partitionDataManager.getPopulationPartition(key);
@@ -248,70 +249,74 @@ public final class PartitionEventResolver {
 		}
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		resolverContext.addPlan((context) -> {
+	private void handlePersonImminentRemovalObservationEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		dataManagerContext.addPlan((context) -> {
 			for (final Object key : partitionDataManager.getKeys()) {
 				final PopulationPartition populationPartition = partitionDataManager.getPopulationPartition(key);
 				populationPartition.attemptPersonRemoval(personImminentRemovalObservationEvent.getPersonId());
 			}
-		}, resolverContext.getTime());
+		}, dataManagerContext.getTime());
 	}
 
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
 		partitionDataManager = new PartitionDataManager();
 
-		resolverContext.subscribeToEventExecutionPhase(PartitionAdditionEvent.class, this::handlePartitionAdditionEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PartitionAdditionEvent.class, this::handlePartitionAdditionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PartitionAdditionEvent.class, this::handlePartitionAdditionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PartitionAdditionEvent.class, this::handlePartitionAdditionEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(PartitionRemovalEvent.class, this::handlePartitionRemovalEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PartitionRemovalEvent.class, this::handlePartitionRemovalEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PartitionRemovalEvent.class, this::handlePartitionRemovalEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PartitionRemovalEvent.class, this::handlePartitionRemovalEventValidation);
 
-		resolverContext.subscribeToEventPostPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
+		dataManagerContext.subscribeToEventPostPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
 
-		resolverContext.subscribeToEventPostPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
+		dataManagerContext.subscribeToEventPostPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
 
-		resolverContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
 
-		resolverContext.publishDataView(new PartitionDataView(resolverContext, partitionDataManager));
+		dataManagerContext.publishDataView(new PartitionDataView(dataManagerContext, partitionDataManager));
 
 	}
 
-	private void validatePopulationPartitionDoesNotExist(final ResolverContext resolverContext, final Object key) {
+	private void validatePopulationPartitionDoesNotExist(final DataManagerContext dataManagerContext, final Object key) {
 		if (partitionDataManager.partitionExists(key)) {
-			resolverContext.throwContractException(PartitionError.DUPLICATE_PARTITION, key);
+			dataManagerContext.throwContractException(PartitionError.DUPLICATE_PARTITION, key);
 		}
 	}
 
 	/*
 	 * Precondition : the key is not null
 	 */
-	private void validatePopulationPartitionExists(final ResolverContext resolverContext, final Object key) {
+	private void validatePopulationPartitionExists(final DataManagerContext dataManagerContext, final Object key) {
 		if (!partitionDataManager.partitionExists(key)) {
-			resolverContext.throwContractException(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, key);
+			dataManagerContext.throwContractException(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, key);
 		}
 	}
 
 	/*
 	 * Precondition: the key must correspond to an existing partition
 	 */
-	private void validatePopulationPartitionIsOwnedByFocalAgent(final ResolverContext resolverContext, final Object key) {
-
-		if (!partitionDataManager.getOwningAgentId(key).equals(resolverContext.getCurrentAgentId())) {
-			resolverContext.throwContractException(PartitionError.PARTITION_DELETION_BY_NON_OWNER, key);
+	private void validatePopulationPartitionIsOwnedByFocalAgent(final DataManagerContext dataManagerContext, final Object key) {
+		Optional<AgentId> optional = dataManagerContext.getCurrentAgentId();
+		if (optional.isPresent()) {
+			if (!partitionDataManager.getOwningAgentId(key).equals(optional.get())) {
+				throw new ContractException(PartitionError.PARTITION_DELETION_BY_NON_OWNER, key);
+			}
+		}else {
+			throw new ContractException(PartitionError.PARTITION_DELETION_BY_NON_OWNER, key);
 		}
 	}
 
-	private void validatePopulationPartitionKeyNotNull(final ResolverContext resolverContext, final Object key) {
+	private void validatePopulationPartitionKeyNotNull(final DataManagerContext dataManagerContext, final Object key) {
 		if (key == null) {
-			resolverContext.throwContractException(PartitionError.NULL_PARTITION_KEY);
+			dataManagerContext.throwContractException(PartitionError.NULL_PARTITION_KEY);
 		}
 	}
 
-	private void validatePopulationPartitionNotNull(final ResolverContext resolverContext, final Partition partition) {
+	private void validatePopulationPartitionNotNull(final DataManagerContext dataManagerContext, final Partition partition) {
 		if (partition == null) {
-			resolverContext.throwContractException(PartitionError.NULL_PARTITION);
+			dataManagerContext.throwContractException(PartitionError.NULL_PARTITION);
 		}
 	}
 

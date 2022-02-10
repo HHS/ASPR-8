@@ -10,9 +10,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.materials.datacontainers.MaterialsDataView;
 import plugins.materials.events.mutation.ProducedResourceTransferToRegionEvent;
@@ -23,13 +22,14 @@ import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.regions.testsupport.TestRegionId;
+import plugins.reports.ReportId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -58,7 +58,7 @@ public final class AT_MaterialsProducerResourceReport {
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		
 		
 		RandomGenerator rg = SeedProvider.getRandomGenerator(8635270533185454765L);
@@ -84,8 +84,8 @@ public final class AT_MaterialsProducerResourceReport {
 			// set a resource value
 			pluginBuilder.addAgentActionPlan(testMaterialsProducerId, new AgentActionPlan(actionTime++, (c) -> {
 				MaterialsDataView materialsDataView = c.getDataView(MaterialsDataView.class).get();
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 				
@@ -107,8 +107,8 @@ public final class AT_MaterialsProducerResourceReport {
 			}));
 		}
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(8759226038479000135L, actionPlugin, actualOutputConsumer, new MaterialsProducerResourceReport()::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(8759226038479000135L, actionPluginInitializer, actualOutputConsumer, new MaterialsProducerResourceReport()::init);
 
 		assertEquals(expectedOutputConsumer, actualOutputConsumer);
 	}

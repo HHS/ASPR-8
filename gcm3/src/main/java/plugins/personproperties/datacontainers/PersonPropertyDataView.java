@@ -3,7 +3,7 @@ package plugins.personproperties.datacontainers;
 import java.util.List;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.people.datacontainers.PersonDataView;
@@ -28,10 +28,10 @@ public final class PersonPropertyDataView implements DataView {
 
 	private void validatePersonExists(final PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
@@ -41,22 +41,22 @@ public final class PersonPropertyDataView implements DataView {
 	private void validatePersonPropertyAssignmentTimesTracked(final PersonPropertyId personPropertyId) {
 		final PropertyDefinition personPropertyDefinition = personPropertyDataManager.getPersonPropertyDefinition(personPropertyId);
 		if (personPropertyDefinition.getTimeTrackingPolicy() != TimeTrackingPolicy.TRACK_TIME) {
-			context.throwContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED);
+			simulationContext.throwContractException(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED);
 		}
 	}
 
 	private void validatePersonPropertyId(final PersonPropertyId personPropertyId) {
 		if (personPropertyId == null) {
-			context.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			simulationContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
 		}
 		if (!personPropertyDataManager.personPropertyIdExists(personPropertyId)) {
-			context.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+			simulationContext.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
 		}
 	}
 
 	private void validatePersonPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			context.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
+			simulationContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
 		}
 	}
 
@@ -65,14 +65,14 @@ public final class PersonPropertyDataView implements DataView {
 	 */
 	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			context.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			simulationContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
 	private final PersonPropertyDataManager personPropertyDataManager;
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
 	 * Constructs this person property data view from the given context and
@@ -85,16 +85,16 @@ public final class PersonPropertyDataView implements DataView {
 	 *             if the person property data manager is null</li>
 	 * 
 	 */
-	public PersonPropertyDataView(Context context, PersonPropertyDataManager personDataManager) {
-		if (context == null) {
+	public PersonPropertyDataView(SimulationContext simulationContext, PersonPropertyDataManager personDataManager) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (personDataManager == null) {
 			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_DATA_MANAGER);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.personPropertyDataManager = personDataManager;
-		personDataView = context.getDataView(PersonDataView.class).get();
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
 	}
 
 	/**

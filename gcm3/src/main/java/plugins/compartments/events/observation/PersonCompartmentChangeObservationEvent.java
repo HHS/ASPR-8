@@ -1,7 +1,7 @@
 package plugins.compartments.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -43,8 +43,8 @@ public class PersonCompartmentChangeObservationEvent implements Event {
 	 *             <li>{@linkplain CompartmentError#UNKNOWN_COMPARTMENT_ID} if
 	 *             the compartment id is not known</li>
 	 */
-	public static EventLabel<PersonCompartmentChangeObservationEvent> getEventLabelByArrivalCompartment(final Context context, final CompartmentId compartmentId) {
-		validateCompartmentId(context, compartmentId);
+	public static EventLabel<PersonCompartmentChangeObservationEvent> getEventLabelByArrivalCompartment(final SimulationContext simulationContext, final CompartmentId compartmentId) {
+		validateCompartmentId(simulationContext, compartmentId);
 		return new MultiKeyEventLabel<>(PersonCompartmentChangeObservationEvent.class, LabelerId.ARRIVAL, PersonCompartmentChangeObservationEvent.class, compartmentId);
 	}
 
@@ -61,8 +61,8 @@ public class PersonCompartmentChangeObservationEvent implements Event {
 	 *             <li>{@linkplain CompartmentError#UNKNOWN_COMPARTMENT_ID} if
 	 *             the compartment id is not known</li>
 	 */
-	public static EventLabel<PersonCompartmentChangeObservationEvent> getEventLabelByDepartureCompartment(final Context context, final CompartmentId compartmentId) {
-		validateCompartmentId(context, compartmentId);
+	public static EventLabel<PersonCompartmentChangeObservationEvent> getEventLabelByDepartureCompartment(final SimulationContext simulationContext, final CompartmentId compartmentId) {
+		validateCompartmentId(simulationContext, compartmentId);
 		return new MultiKeyEventLabel<>(PersonCompartmentChangeObservationEvent.class, LabelerId.DEPARTURE, PersonCompartmentChangeObservationEvent.class, compartmentId);
 	}
 
@@ -79,8 +79,8 @@ public class PersonCompartmentChangeObservationEvent implements Event {
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is not known</li>
 	 */
-	public static EventLabel<PersonCompartmentChangeObservationEvent> getEventLabelByPerson(final Context context, final PersonId personId) {
-		validatePersonId(context, personId);
+	public static EventLabel<PersonCompartmentChangeObservationEvent> getEventLabelByPerson(final SimulationContext simulationContext, final PersonId personId) {
+		validatePersonId(simulationContext, personId);
 		return new MultiKeyEventLabel<>(PersonCompartmentChangeObservationEvent.class, LabelerId.PERSON, PersonCompartmentChangeObservationEvent.class, personId);
 	}
 
@@ -114,24 +114,24 @@ public class PersonCompartmentChangeObservationEvent implements Event {
 				(context, event) -> new MultiKeyEventLabel<>(PersonCompartmentChangeObservationEvent.class, LabelerId.PERSON, PersonCompartmentChangeObservationEvent.class, event.getPersonId()));
 	}
 
-	private static void validateCompartmentId(final Context context, final CompartmentId compartmentId) {
+	private static void validateCompartmentId(final SimulationContext simulationContext, final CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			context.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			simulationContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
-		final CompartmentDataView compartmentDataView = context.getDataView(CompartmentDataView.class).get();
+		final CompartmentDataView compartmentDataView = simulationContext.getDataView(CompartmentDataView.class).get();
 		if (!compartmentDataView.compartmentIdExists(compartmentId)) {
-			context.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID);
+			simulationContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID);
 		}
 
 	}
 
-	private static void validatePersonId(final Context context, final PersonId personId) {
+	private static void validatePersonId(final SimulationContext simulationContext, final PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
-		final PersonDataView personDataView = context.getDataView(PersonDataView.class).get();
+		final PersonDataView personDataView = simulationContext.getDataView(PersonDataView.class).get();
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 

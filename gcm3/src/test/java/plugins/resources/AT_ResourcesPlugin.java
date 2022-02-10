@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.PluginContext;
 import nucleus.PluginId;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import nucleus.ResolverId;
 import nucleus.testsupport.MockPluginContext;
 import plugins.compartments.CompartmentPlugin;
@@ -65,7 +65,7 @@ public class AT_ResourcesPlugin {
 		 * no good way to prove it is the correct one, but if it were wrong,
 		 * then the tests of event resolution in this plugin would fail.
 		 */
-		Map<ResolverId, Consumer<ResolverContext>> resolverMap = mockPluginContext.getResolverMap();
+		Map<ResolverId, Consumer<DataManagerContext>> resolverMap = mockPluginContext.getResolverMap();
 		assertEquals(1, resolverMap.size());
 
 	}

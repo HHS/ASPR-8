@@ -17,26 +17,26 @@ import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
-@UnitTest(target = ResolverActionPlan.class)
+@UnitTest(target = DataManagerActionPlan.class)
 public class AT_ResolverActionPlan {
 	@Test
 	@UnitTestConstructor(args = { double.class, Consumer.class })
 	public void testConstructor() {
-		ResolverActionPlan resolverActionPlan = new ResolverActionPlan(0.0, (c) -> {
+		DataManagerActionPlan dataManagerActionPlan = new DataManagerActionPlan(0.0, (c) -> {
 		});
-		assertTrue(resolverActionPlan.getKey().isPresent());
+		assertTrue(dataManagerActionPlan.getKey().isPresent());
 	}
 
 	@Test
 	@UnitTestConstructor(args = { double.class, Consumer.class, boolean.class })
 	public void testConstructor_OptionalKey() {
-		ResolverActionPlan resolverActionPlan = new ResolverActionPlan(0.0, (c) -> {
+		DataManagerActionPlan dataManagerActionPlan = new DataManagerActionPlan(0.0, (c) -> {
 		}, false);
-		assertFalse(resolverActionPlan.getKey().isPresent());
+		assertFalse(dataManagerActionPlan.getKey().isPresent());
 
-		resolverActionPlan = new ResolverActionPlan(0.0, (c) -> {
+		dataManagerActionPlan = new DataManagerActionPlan(0.0, (c) -> {
 		}, true);
-		assertTrue(resolverActionPlan.getKey().isPresent());
+		assertTrue(dataManagerActionPlan.getKey().isPresent());
 	}
 
 	/**
@@ -47,13 +47,13 @@ public class AT_ResolverActionPlan {
 	@UnitTestMethod(name = "executed", args = {})
 	public void testExecuted() {
 
-		ResolverActionPlan resolverActionPlan = new ResolverActionPlan(0.0, (c) -> {
+		DataManagerActionPlan dataManagerActionPlan = new DataManagerActionPlan(0.0, (c) -> {
 		}, false);
-		assertFalse(resolverActionPlan.executed());
-		resolverActionPlan.executeAction(null);
-		assertTrue(resolverActionPlan.executed());
+		assertFalse(dataManagerActionPlan.executed());
+		dataManagerActionPlan.executeAction(null);
+		assertTrue(dataManagerActionPlan.executed());
 
-		ResolverActionPlan agentActionPlanWithException = new ResolverActionPlan(0.0, (c) -> {
+		DataManagerActionPlan agentActionPlanWithException = new DataManagerActionPlan(0.0, (c) -> {
 			throw new RuntimeException();
 		}, false);
 		assertFalse(agentActionPlanWithException.executed());
@@ -73,9 +73,9 @@ public class AT_ResolverActionPlan {
 		 * Show that an agent action plan created to not have a key in fact does
 		 * not have one
 		 */
-		ResolverActionPlan resolverActionPlan = new ResolverActionPlan(0.0, (c) -> {
+		DataManagerActionPlan dataManagerActionPlan = new DataManagerActionPlan(0.0, (c) -> {
 		}, false);
-		assertFalse(resolverActionPlan.getKey().isPresent());
+		assertFalse(dataManagerActionPlan.getKey().isPresent());
 
 		/*
 		 * Create a container to record the keys for the agent actions plans
@@ -85,19 +85,19 @@ public class AT_ResolverActionPlan {
 
 		// use the constructor with explicit inclusion of a key
 		for (int i = 0; i < 30; i++) {
-			resolverActionPlan = new ResolverActionPlan(0.0, (c) -> {
+			dataManagerActionPlan = new DataManagerActionPlan(0.0, (c) -> {
 			}, true);
-			assertTrue(resolverActionPlan.getKey().isPresent());
-			boolean unique = keys.add(resolverActionPlan.getKey().get());
+			assertTrue(dataManagerActionPlan.getKey().isPresent());
+			boolean unique = keys.add(dataManagerActionPlan.getKey().get());
 			assertTrue(unique);
 		}
 
 		// use the constructor with implicit inclusion of a key
 		for (int i = 0; i < 30; i++) {
-			resolverActionPlan = new ResolverActionPlan(0.0, (c) -> {
+			dataManagerActionPlan = new DataManagerActionPlan(0.0, (c) -> {
 			});
-			assertTrue(resolverActionPlan.getKey().isPresent());
-			boolean unique = keys.add(resolverActionPlan.getKey().get());
+			assertTrue(dataManagerActionPlan.getKey().isPresent());
+			boolean unique = keys.add(dataManagerActionPlan.getKey().get());
 			assertTrue(unique);
 		}
 
@@ -112,17 +112,17 @@ public class AT_ResolverActionPlan {
 		// use the various constructors
 		for (int i = 0; i < 300; i++) {
 			double planTime = randomGenerator.nextDouble() * 1000;
-			ResolverActionPlan resolverActionPlan = new ResolverActionPlan(planTime, (c) -> {
+			DataManagerActionPlan dataManagerActionPlan = new DataManagerActionPlan(planTime, (c) -> {
 			}, true);
-			assertEquals(planTime, resolverActionPlan.getScheduledTime());
+			assertEquals(planTime, dataManagerActionPlan.getScheduledTime());
 
-			resolverActionPlan = new ResolverActionPlan(planTime, (c) -> {
+			dataManagerActionPlan = new DataManagerActionPlan(planTime, (c) -> {
 			}, false);
-			assertEquals(planTime, resolverActionPlan.getScheduledTime());
+			assertEquals(planTime, dataManagerActionPlan.getScheduledTime());
 
-			resolverActionPlan = new ResolverActionPlan(planTime, (c) -> {
+			dataManagerActionPlan = new DataManagerActionPlan(planTime, (c) -> {
 			});
-			assertEquals(planTime, resolverActionPlan.getScheduledTime());
+			assertEquals(planTime, dataManagerActionPlan.getScheduledTime());
 		}
 
 	}

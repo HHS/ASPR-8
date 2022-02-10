@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.properties.support.PropertyDefinition;
 import plugins.properties.support.PropertyValueRecord;
 import plugins.regions.RegionPlugin;
@@ -28,14 +28,14 @@ import plugins.regions.support.RegionPropertyId;
  */
 public final class RegionDataManager {
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
 	 * Creates a Region Data Manager from the given resolver context.
 	 * Preconditions: The context must be a valid and non-null.
 	 */
-	public RegionDataManager(Context context) {
-		this.context = context;
+	public RegionDataManager(SimulationContext simulationContext) {
+		this.simulationContext = simulationContext;
 	}
 
 	private Map<RegionId, Map<RegionPropertyId, PropertyValueRecord>> regionPropertyMap = new LinkedHashMap<>();
@@ -189,7 +189,7 @@ public final class RegionDataManager {
 		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 		for (RegionId regionId : regionPropertyMap.keySet()) {
 			Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
-			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(context);
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(simulationContext);
 			if (propertyDefinition.getDefaultValue().isPresent()) {
 				propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
 			}

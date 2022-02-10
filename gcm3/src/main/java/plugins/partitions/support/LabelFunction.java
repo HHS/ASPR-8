@@ -1,8 +1,8 @@
 package plugins.partitions.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
 
 public interface LabelFunction {
-	public Object getLabel(Context context, PersonId personId);
+	public Object getLabel(SimulationContext simulationContext, PersonId personId);
 }

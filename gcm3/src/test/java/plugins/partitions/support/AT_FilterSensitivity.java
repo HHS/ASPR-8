@@ -11,7 +11,7 @@ import javax.naming.Context;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.partitions.events.PartitionAdditionEvent;
 import plugins.partitions.events.PartitionRemovalEvent;
 import plugins.people.support.PersonId;
@@ -51,16 +51,16 @@ public class AT_FilterSensitivity {
 	@Test
 	@UnitTestMethod(name = "requiresRefresh", args = { Context.class, Event.class })
 	public void testRequiresRefresh() {
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		FilterSensitivity<Event> filterSensitivity = new FilterSensitivity<>(Event.class, (c, e) -> Optional.empty());
-		Optional<PersonId> optional = filterSensitivity.requiresRefresh(mockContext, new Event() {
+		Optional<PersonId> optional = filterSensitivity.requiresRefresh(mockSimulationContext, new Event() {
 		});
 		assertFalse(optional.isPresent());
 
 		PersonId personId = new PersonId(0);
 		filterSensitivity = new FilterSensitivity<>(Event.class, (c, e) -> Optional.of(personId));
-		optional = filterSensitivity.requiresRefresh(mockContext, new Event() {
+		optional = filterSensitivity.requiresRefresh(mockSimulationContext, new Event() {
 		});
 		assertTrue(optional.isPresent());
 		assertEquals(personId, optional.get());

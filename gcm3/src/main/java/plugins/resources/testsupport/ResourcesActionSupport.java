@@ -11,7 +11,7 @@ import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
@@ -51,7 +51,7 @@ public class ResourcesActionSupport {
 	 * passed to an invocation of the testConsumers() method.
 	 */
 	public static void testConsumer(int initialPopulation, long seed, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 		testConsumers(initialPopulation, seed, pluginBuilder.build());
@@ -77,7 +77,7 @@ public class ResourcesActionSupport {
 	 *             all action plans execute or if there are no action plans
 	 *             contained in the action plugin</li>
 	 */
-	public static void testConsumers(int initialPopulation, long seed, ActionPlugin actionPlugin) {
+	public static void testConsumers(int initialPopulation, long seed, ActionPluginInitializer actionPluginInitializer) {
 		
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(seed);
 
@@ -159,13 +159,13 @@ public class ResourcesActionSupport {
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 	}

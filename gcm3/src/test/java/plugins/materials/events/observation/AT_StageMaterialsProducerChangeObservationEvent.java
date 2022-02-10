@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.materials.datacontainers.MaterialsDataView;
 import plugins.materials.events.mutation.StageCreationEvent;
@@ -86,7 +86,7 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByDestination", args = { Context.class, MaterialsProducerId.class })
+	@UnitTestMethod(name = "getEventLabelByDestination", args = { SimulationContext.class, MaterialsProducerId.class })
 	public void testGetEventLabelByDestination() {
 
 		MaterialsActionSupport.testConsumer(5070867343126122585L, (c) -> {
@@ -139,7 +139,7 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelBySource", args = { Context.class, MaterialsProducerId.class })
+	@UnitTestMethod(name = "getEventLabelBySource", args = { SimulationContext.class, MaterialsProducerId.class })
 	public void testGetEventLabelBySource() {
 
 		MaterialsActionSupport.testConsumer(1144625150509891316L, (c) -> {
@@ -193,10 +193,10 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByStage", args = { Context.class, StageId.class })
+	@UnitTestMethod(name = "getEventLabelByStage", args = { SimulationContext.class, StageId.class })
 	public void testGetEventLabelByStage() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgentActionPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, new AgentActionPlan(0, (c) -> {
 			MaterialsDataView materialsDataView = c.getDataView(MaterialsDataView.class).get();
@@ -210,14 +210,14 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 			}
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(2260703021186632066L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(2260703021186632066L, actionPluginInitializer);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getEventLabelerForStage", args = {})
 	public void testGetEventLabelerForStage() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgentActionPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, new AgentActionPlan(0, (c) -> {
 			MaterialsDataView materialsDataView = c.getDataView(MaterialsDataView.class).get();
@@ -254,12 +254,12 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 			}
 
 		}));
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(6880728031897161656L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(6880728031897161656L, actionPluginInitializer);
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByAll", args = { Context.class })
+	@UnitTestMethod(name = "getEventLabelByAll", args = { SimulationContext.class })
 	public void testGetEventLabelByAll() {
 
 		MaterialsActionSupport.testConsumer(147633233074528056L, (c) -> {

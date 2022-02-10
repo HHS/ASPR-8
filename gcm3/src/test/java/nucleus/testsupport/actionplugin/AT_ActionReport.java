@@ -9,8 +9,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Simulation;
+import plugins.reports.ReportId;
 import nucleus.ReportContext;
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
 import util.MultiKey;
 import util.annotations.UnitTest;
@@ -54,7 +54,7 @@ public class AT_ActionReport {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		// add the reports to the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addReport(reportId1);
 		pluginBuilder.addReport(reportId2);
 		pluginBuilder.addAgent("agent");
@@ -75,16 +75,16 @@ public class AT_ActionReport {
 		}
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
 		Simulation	.builder()//
-				.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init)//
+				.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init)//
 				.build()//
 				.execute();//
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the agents executed the expected actions
 		assertEquals(expectedObservations, actualObservations);

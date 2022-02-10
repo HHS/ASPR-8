@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
-import nucleus.testsupport.MockContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.SimulationContext;
+import nucleus.testsupport.MockSimulationContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.events.mutation.PersonCreationEvent;
@@ -27,7 +27,7 @@ import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.MutableDouble;
 import util.annotations.UnitTest;
@@ -38,11 +38,11 @@ import util.annotations.UnitTestMethod;
 public class AT_RegionLocationDataView {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, RegionLocationDataManager.class })
+	@UnitTestConstructor(args = { SimulationContext.class, RegionLocationDataManager.class })
 	public void testConstructor() {
-		Context context  = MockContext.builder().build();
-		RegionLocationDataManager regionLocationDataManager = new RegionLocationDataManager(context,RegionInitialData.builder().build());
-		assertThrows(RuntimeException.class,()-> new RegionLocationDataView(context, null));
+		SimulationContext simulationContext  = MockSimulationContext.builder().build();
+		RegionLocationDataManager regionLocationDataManager = new RegionLocationDataManager(simulationContext,RegionInitialData.builder().build());
+		assertThrows(RuntimeException.class,()-> new RegionLocationDataView(simulationContext, null));
 		assertThrows(RuntimeException.class,()-> new RegionLocationDataView(null, regionLocationDataManager));
 	}
 
@@ -50,7 +50,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getRegionPopulationCount", args = { RegionId.class })
 	public void testGetRegionPopulationCount() {
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -95,9 +95,9 @@ public class AT_RegionLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 		
-		RegionsActionSupport.testConsumers(0, 1525815460460902517L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		RegionsActionSupport.testConsumers(0, 1525815460460902517L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 		
 		
 	}
@@ -106,7 +106,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getRegionPopulationTime", args = { RegionId.class })
 	public void testGetRegionPopulationTime() {
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -133,8 +133,8 @@ public class AT_RegionLocationDataView {
 				double planTime = i;
 				c.addPlan((c2) -> {
 					RegionLocationDataView regionLocationDataView = c2.getDataView(RegionLocationDataView.class).get();
-					StochasticsDataView stochasticsDataView = c2.getDataView(StochasticsDataView.class).get();
-					TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataView.getRandomGenerator());
+					StochasticsDataManager stochasticsDataManager = c2.getDataView(StochasticsDataManager.class).get();
+					TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 					PersonContructionData personContructionData = PersonContructionData.builder().add(regionId).build();
 					c2.resolveEvent(new PersonCreationEvent(personContructionData));
 					assertEquals(c2.getTime(), regionLocationDataView.getRegionPopulationTime(regionId), 0);
@@ -172,15 +172,15 @@ public class AT_RegionLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(numberOfPeople, 2430955549982485988L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(numberOfPeople, 2430955549982485988L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPeopleInRegion", args = { RegionId.class })
 	public void testGetPeopleInRegion() {
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -200,10 +200,10 @@ public class AT_RegionLocationDataView {
 
 		// add some people
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			for (int i = 0; i < 100; i++) {
-				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataView.getRandomGenerator());
+				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				PersonContructionData personContructionData = PersonContructionData.builder().add(regionId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
 				PersonId personId = personDataView.getLastIssuedPersonId().get();
@@ -237,8 +237,8 @@ public class AT_RegionLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 
@@ -246,7 +246,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getPersonRegionArrivalTime", args = { PersonId.class })
 	public void testGetPersonRegionArrivalTime() {
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -259,12 +259,12 @@ public class AT_RegionLocationDataView {
 		 * Add some people and show that their region arrival times are zero.
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a region at random
-				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataView.getRandomGenerator());
+				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonContructionData personContructionData = PersonContructionData.builder().add(regionId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
@@ -332,8 +332,8 @@ public class AT_RegionLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 		
 		/////////////////////////////////////////////////
 		// precondition test that requires rebuild of engine
@@ -345,10 +345,10 @@ public class AT_RegionLocationDataView {
 		 * Add some people
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a region at random
-				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataView.getRandomGenerator());
+				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonContructionData personContructionData = PersonContructionData.builder().add(regionId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
@@ -365,8 +365,8 @@ public class AT_RegionLocationDataView {
 		}));
 
 		// build and add the action plugin
-		actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPluginInitializer);
 		
 	}
 
@@ -374,7 +374,7 @@ public class AT_RegionLocationDataView {
 	@UnitTestMethod(name = "getPersonRegion", args = { PersonId.class })
 	public void testGetPersonRegion() {
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -387,12 +387,12 @@ public class AT_RegionLocationDataView {
 		 * Add some people and show that their regions are correctly assigned.
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a region at random
-				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataView.getRandomGenerator());
+				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonContructionData personContructionData = PersonContructionData.builder().add(regionId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
@@ -460,8 +460,8 @@ public class AT_RegionLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(0, 5151111920517015649L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(0, 5151111920517015649L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 

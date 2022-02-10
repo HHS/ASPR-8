@@ -10,34 +10,28 @@ import java.util.function.Supplier;
 
 import nucleus.AgentContext;
 import nucleus.AgentId;
-import nucleus.Context;
-import nucleus.DataView;
+import nucleus.DataManager;
+import nucleus.DataManagerContext;
+import nucleus.DataManagerEventConsumer;
 import nucleus.Event;
 import nucleus.EventLabeler;
-import nucleus.ReportContext;
-import nucleus.ReportId;
-import nucleus.ResolverContext;
-import nucleus.ResolverEventConsumer;
-import nucleus.ResolverId;
-import util.ContractError;
-import util.ContractException;
 import util.TriConsumer;
 
 /**
- * A mock implementation of the {@link ResolverContext} interface that allows
+ * A mock implementation of the {@link DataManagerContext} interface that allows
  * for client overrides to behaviors through a builder pattern.
  * 
  * @author Shawn Hatch
  *
  */
 
-public final class MockResolverContext implements ResolverContext {
+public final class MockDataManagerContext implements DataManagerContext {
 
 	private static class Scaffold {
 		public Consumer<Object>	releaseOutputConsumer = (o) -> {
 		};
 
-		public Function<Class<?>, ?> dataViewFunction = (c) -> {
+		public Function<Class<?>, ?> dataManagerFunction = (c) -> {
 			return null;
 		};
 
@@ -45,23 +39,23 @@ public final class MockResolverContext implements ResolverContext {
 			return 0.0;
 		};
 
-		public Consumer<ContractError> contractErrorConsumer = (c) -> {
-			throw new ContractException(c);
+		
+
+		public BiConsumer<Consumer<DataManagerContext>, Double> addPlanConsumer = (c, d) -> {
 		};
 
-		public BiConsumer<ContractError, Object> detailedContractErrorConsumer = (c, d) -> {
-			throw new ContractException(c, d);
-		};
-
-		public BiConsumer<Consumer<ResolverContext>, Double> addPlanConsumer = (c, d) -> {
-		};
-
-
-		public TriConsumer<Consumer<ResolverContext>, Double, Object> addKeyedPlanConsumer = (c, d, k) -> {
+		
+		public BiConsumer<Consumer<DataManagerContext>, Double> addPassivePlanConsumer = (c, d) -> {
 		};
 
 
-		public Function<Object, Consumer<? extends ResolverContext>> getPlanFunction = (k) -> {
+		public TriConsumer<Consumer<DataManagerContext>, Double, Object> addKeyedPlanConsumer = (c, d, k) -> {
+		};
+
+		public TriConsumer<Consumer<DataManagerContext>, Double, Object> addPassiveKeyedPlanConsumer = (c, d, k) -> {
+		};
+
+		public Function<Object, Consumer<? extends DataManagerContext>> getPlanFunction = (k) -> {
 			return null;
 		};
 
@@ -74,25 +68,17 @@ public final class MockResolverContext implements ResolverContext {
 			return new ArrayList<>();
 		};
 
-		public Supplier<Boolean> currentAgentIsEventSourceSupplier = () -> {
-			return false;
-		};
+		
 
 		public Consumer<Event> queueEventForResolutionConsumer = (e) -> {
 
-		};
-
-		public Supplier<AgentId> getAvailableAgentIdSupplier = () -> {
-			return null;
 		};
 
 		public Supplier<AgentId> getCurrentAgentIdSupplier = () -> {
 			return null;
 		};
 
-		public Supplier<ResolverId> getCurrentResolverIdSupplier = () -> {
-			return null;
-		};
+		
 
 		public Function<AgentId, Boolean> agentExistsFunction = (a) -> {
 			return false;
@@ -106,20 +92,18 @@ public final class MockResolverContext implements ResolverContext {
 		};
 
 
-		public BiConsumer<ReportId, Consumer<ReportContext>> addReportConsumer = (r, c) -> {
-		};
+		
 
 		public Runnable haltRunable = () -> {
 		};
 
-		public BiConsumer<Class<?>, ResolverEventConsumer<?>> subscribeToEventValidationPhaseConsumer = (c, r) -> {
+		
+
+		public BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventExecutionPhaseConsumer = (c, r) -> {
 		};
 
-		public BiConsumer<Class<?>, ResolverEventConsumer<?>> subscribeToEventExecutionPhaseConsumer = (c, r) -> {
-		};
 
-
-		public BiConsumer<Class<?>, ResolverEventConsumer<?>> subscribeToEventPostPhaseConsumer = (c, r) -> {
+		public BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventPostPhaseConsumer = (c, r) -> {
 		};
 
 		public Consumer<Class<? extends Event>> unSubscribeToEventConsumer = (c) -> {
@@ -129,50 +113,16 @@ public final class MockResolverContext implements ResolverContext {
 		public Consumer<EventLabeler<?>> addEventLabelerConsumer = (e) -> {
 		};
 
-		public Supplier<Context> getSafeContextSupplier = () -> {
-			return new Context() {
-
-				@Override
-				public void releaseOutput(Object output) {
-
-				}
-
-				@Override
-				public <T extends DataView> Optional<T> getDataView(Class<T> dataViewClass) {
-					return Optional.empty();
-				}
-
-				@Override
-				public double getTime() {
-					return 0;
-				}
-
-				@Override
-				public void throwContractException(ContractError recoverableError) {
-					throw new ContractException(recoverableError);
-				}
-
-				@Override
-				public void throwContractException(ContractError recoverableError, Object details) {
-					throw new ContractException(recoverableError, details);
-
-				}
-			};
-		};
-
 		public Function<Class<? extends Event>, Boolean> subscribersExistForEventFunction = (c) -> {
 			return false;
 		};
 
-		public Consumer<DataView> publishDataViewConsumer = (d) -> {
-
-		};
-
+		
 	}
 
 	private final Scaffold scaffold;
 
-	private MockResolverContext(Scaffold scaffold) {
+	private MockDataManagerContext(Scaffold scaffold) {
 		this.scaffold = scaffold;
 	}
 
@@ -191,9 +141,9 @@ public final class MockResolverContext implements ResolverContext {
 	public final static class Builder {
 		private Scaffold scaffold = new Scaffold();
 
-		public MockResolverContext build() {
+		public MockDataManagerContext build() {
 			try {
-				return new MockResolverContext(scaffold);
+				return new MockDataManagerContext(scaffold);
 			} finally {
 				scaffold = new Scaffold();
 			}
@@ -205,7 +155,7 @@ public final class MockResolverContext implements ResolverContext {
 		}
 
 		public Builder setDataViewFunction(Function<Class<?>, ?> dataViewFunction) {
-			scaffold.dataViewFunction = dataViewFunction;
+			scaffold.dataManagerFunction = dataViewFunction;
 			return this;
 		};
 
@@ -214,27 +164,27 @@ public final class MockResolverContext implements ResolverContext {
 			return this;
 		};
 
-		public Builder setContractErrorConsumer(Consumer<ContractError> contractErrorConsumer) {
-			scaffold.contractErrorConsumer = contractErrorConsumer;
-			return this;
-		};
-
-		public Builder setDetailedContractErrorConsumer(BiConsumer<ContractError, Object> detailedContractErrorConsumer) {
-			scaffold.detailedContractErrorConsumer = detailedContractErrorConsumer;
-			return this;
-		}
-
-		public Builder setAddPlanConsumer(BiConsumer<Consumer<ResolverContext>, Double> addPlanConsumer) {
+		public Builder setAddPlanConsumer(BiConsumer<Consumer<DataManagerContext>, Double> addPlanConsumer) {
 			scaffold.addPlanConsumer = addPlanConsumer;
 			return this;
 		}
 
-		public Builder setAddKeyedPlanConsumer(TriConsumer<Consumer<ResolverContext>, Double, Object> addKeyedPlanConsumer) {
+		public Builder setAddKeyedPlanConsumer(TriConsumer<Consumer<DataManagerContext>, Double, Object> addKeyedPlanConsumer) {
 			scaffold.addKeyedPlanConsumer = addKeyedPlanConsumer;
 			return this;
 		}
 
-		public Builder setGetPlanFunction(Function<Object, Consumer<? extends ResolverContext>> getPlanFunction) {
+		public Builder setAddPassivePlanConsumer(BiConsumer<Consumer<DataManagerContext>, Double> addPlanConsumer) {
+			scaffold.addPassivePlanConsumer = addPlanConsumer;
+			return this;
+		}
+
+		public Builder setAddPassiveKeyedPlanConsumer(TriConsumer<Consumer<DataManagerContext>, Double, Object> addKeyedPlanConsumer) {
+			scaffold.addPassiveKeyedPlanConsumer = addKeyedPlanConsumer;
+			return this;
+		}
+		
+		public Builder setGetPlanFunction(Function<Object, Consumer<? extends DataManagerContext>> getPlanFunction) {
 			scaffold.getPlanFunction = getPlanFunction;
 			return this;
 		}
@@ -254,30 +204,20 @@ public final class MockResolverContext implements ResolverContext {
 			return this;
 		}
 
-		public Builder setCurrentAgentIsEventSourceSupplier(Supplier<Boolean> currentAgentIsEventSourceSupplier) {
-			scaffold.currentAgentIsEventSourceSupplier = currentAgentIsEventSourceSupplier;
-			return this;
-		}
+		
 
 		public Builder setQueueEventForResolutionConsumer(Consumer<Event> queueEventForResolutionConsumer) {
 			scaffold.queueEventForResolutionConsumer = queueEventForResolutionConsumer;
 			return this;
 		}
 
-		public Builder setGetAvailableAgentIdSupplier(Supplier<AgentId> getAvailableAgentIdSupplier) {
-			scaffold.getAvailableAgentIdSupplier = getAvailableAgentIdSupplier;
-			return this;
-		}
+		
 
 		public Builder setGetCurrentAgentIdSupplier(Supplier<AgentId> getCurrentAgentIdSupplier) {
 			scaffold.getCurrentAgentIdSupplier = getCurrentAgentIdSupplier;
 			return this;
 		}
-
-		public Builder setGetCurrentResolverIdSupplier(Supplier<ResolverId> getCurrentResolverIdSupplier) {
-			scaffold.getCurrentResolverIdSupplier = getCurrentResolverIdSupplier;
-			return this;
-		}
+		
 
 		public Builder setAgentExistsFunction(Function<AgentId, Boolean> agentExistsFunction) {
 			scaffold.agentExistsFunction = agentExistsFunction;
@@ -294,27 +234,17 @@ public final class MockResolverContext implements ResolverContext {
 			return this;
 		}
 
-		public Builder setAddReportConsumer(BiConsumer<ReportId, Consumer<ReportContext>> addReportConsumer) {
-			scaffold.addReportConsumer = addReportConsumer;
-			return this;
-		}
-
 		public Builder setHaltRunable(Runnable haltRunable) {
 			scaffold.haltRunable = haltRunable;
 			return this;
 		}
 
-		public Builder setSubscribeToEventValidationPhaseConsumer(BiConsumer<Class<?>, ResolverEventConsumer<?>> subscribeToEventValidationPhaseConsumer) {
-			scaffold.subscribeToEventValidationPhaseConsumer = subscribeToEventValidationPhaseConsumer;
-			return this;
-		}
-
-		public Builder setSubscribeToEventExecutionPhaseConsumer(BiConsumer<Class<?>, ResolverEventConsumer<?>> subscribeToEventExecutionPhaseConsumer) {
+		public Builder setSubscribeToEventExecutionPhaseConsumer(BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventExecutionPhaseConsumer) {
 			scaffold.subscribeToEventExecutionPhaseConsumer = subscribeToEventExecutionPhaseConsumer;
 			return this;
 		}
 
-		public Builder setSubscribeToEventPostPhaseConsumer(BiConsumer<Class<?>, ResolverEventConsumer<?>> subscribeToEventPostPhaseConsumer) {
+		public Builder setSubscribeToEventPostPhaseConsumer(BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventPostPhaseConsumer) {
 			scaffold.subscribeToEventPostPhaseConsumer = subscribeToEventPostPhaseConsumer;
 			return this;
 		}
@@ -329,18 +259,9 @@ public final class MockResolverContext implements ResolverContext {
 			return this;
 		}
 
-		public Builder setGetSafeContextSupplier(Supplier<Context> getSafeContextSupplier) {
-			scaffold.getSafeContextSupplier = getSafeContextSupplier;
-			return this;
-		}
 
 		public Builder setSubscribersExistForEventFunction(Function<Class<? extends Event>, Boolean> subscribersExistForEventFunction) {
 			scaffold.subscribersExistForEventFunction = subscribersExistForEventFunction;
-			return this;
-		}
-
-		public Builder setPublishDataViewConsumer(Consumer<DataView> publishDataViewConsumer) {
-			scaffold.publishDataViewConsumer = publishDataViewConsumer;
 			return this;
 		}
 
@@ -353,9 +274,10 @@ public final class MockResolverContext implements ResolverContext {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends DataView> Optional<T> getDataView(Class<T> dataViewClass) {
-		return Optional.ofNullable((T) scaffold.dataViewFunction.apply(dataViewClass));
+	public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+		return Optional.ofNullable((T) scaffold.dataManagerFunction.apply(dataManagerClass));
 	}
+
 
 	@Override
 	public double getTime() {
@@ -363,28 +285,28 @@ public final class MockResolverContext implements ResolverContext {
 	}
 
 	@Override
-	public void throwContractException(ContractError recoverableError) {
-		scaffold.contractErrorConsumer.accept(recoverableError);
-	}
-
-	@Override
-	public void throwContractException(ContractError recoverableError, Object details) {
-		scaffold.detailedContractErrorConsumer.accept(recoverableError, details);
-	}
-
-	@Override
-	public void addPlan(Consumer<ResolverContext> plan, double planTime) {
+	public void addPlan(Consumer<DataManagerContext> plan, double planTime) {
 		scaffold.addPlanConsumer.accept(plan, planTime);
 	}
+	
+	@Override
+	public void addPassivePlan(Consumer<DataManagerContext> plan, double planTime) {
+		scaffold.addPassivePlanConsumer.accept(plan, planTime);
+	}
 
 	@Override
-	public void addPlan(Consumer<ResolverContext> plan, double planTime, Object key) {
+	public void addKeyedPlan(Consumer<DataManagerContext> plan, double planTime, Object key) {
 		scaffold.addKeyedPlanConsumer.accept(plan, planTime, key);
+	}
+
+	@Override
+	public void addKeyedPassivePlan(Consumer<DataManagerContext> plan, double planTime, Object key) {
+		scaffold.addPassiveKeyedPlanConsumer.accept(plan, planTime, key);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Consumer<ResolverContext>> T getPlan(Object key) {
+	public <T extends Consumer<DataManagerContext>> T getPlan(Object key) {
 		return (T) scaffold.getPlanFunction.apply(key);
 	}
 
@@ -404,29 +326,17 @@ public final class MockResolverContext implements ResolverContext {
 		return scaffold.getPlanKeysSupplier.get();
 	}
 
-	@Override
-	public boolean currentAgentIsEventSource() {
-		return scaffold.currentAgentIsEventSourceSupplier.get();
-	}
 
 	@Override
-	public void queueEventForResolution(Event event) {
+	public void resolveEvent(Event event) {
 		scaffold.queueEventForResolutionConsumer.accept(event);
 	}
 
-	@Override
-	public AgentId getAvailableAgentId() {
-		return scaffold.getAvailableAgentIdSupplier.get();
-	}
+	
 
 	@Override
-	public AgentId getCurrentAgentId() {
-		return scaffold.getCurrentAgentIdSupplier.get();
-	}
-
-	@Override
-	public ResolverId getCurrentResolverId() {
-		return scaffold.getCurrentResolverIdSupplier.get();
+	public Optional<AgentId> getCurrentAgentId() {
+		return Optional.ofNullable(scaffold.getCurrentAgentIdSupplier.get());
 	}
 
 	@Override
@@ -445,27 +355,17 @@ public final class MockResolverContext implements ResolverContext {
 	}
 
 	@Override
-	public void addReport(ReportId reportId, Consumer<ReportContext> init) {
-		scaffold.addReportConsumer.accept(reportId, init);
-	}
-
-	@Override
 	public void halt() {
 		scaffold.haltRunable.run();
 	}
 
 	@Override
-	public <T extends Event> void subscribeToEventValidationPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-		scaffold.subscribeToEventValidationPhaseConsumer.accept(eventClass, resolverConsumer);
-	}
-
-	@Override
-	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
+	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
 		scaffold.subscribeToEventExecutionPhaseConsumer.accept(eventClass, resolverConsumer);
 	}
 
 	@Override
-	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
+	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
 		scaffold.subscribeToEventPostPhaseConsumer.accept(eventClass, resolverConsumer);
 	}
 
@@ -480,18 +380,11 @@ public final class MockResolverContext implements ResolverContext {
 	}
 
 	@Override
-	public Context getSafeContext() {
-		return scaffold.getSafeContextSupplier.get();
-	}
-
-	@Override
 	public boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
 		return scaffold.subscribersExistForEventFunction.apply(eventClass);
 	}
 
-	@Override
-	public void publishDataView(DataView dataView) {
-		scaffold.publishDataViewConsumer.accept(dataView);
-	}
+
+	
 
 }

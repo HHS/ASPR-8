@@ -1,7 +1,7 @@
 package plugins.resources.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -75,43 +75,43 @@ public class PersonResourceChangeObservationEvent implements Event {
 		return previousResourceLevel;
 	}
 
-	private static void validateCompartmentId(Context context, CompartmentId compartmentId) {
+	private static void validateCompartmentId(SimulationContext simulationContext, CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			context.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			simulationContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
-		CompartmentDataView compartmentDataView = context.getDataView(CompartmentDataView.class).get();
+		CompartmentDataView compartmentDataView = simulationContext.getDataView(CompartmentDataView.class).get();
 		if (!compartmentDataView.compartmentIdExists(compartmentId)) {
-			context.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
+			simulationContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
 		}
 	}
 
-	private static void validatePersonId(Context context, PersonId personId) {
+	private static void validatePersonId(SimulationContext simulationContext, PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataView personDataView = context.getDataView(PersonDataView.class).get();
+		PersonDataView personDataView = simulationContext.getDataView(PersonDataView.class).get();
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID, personId);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID, personId);
 		}
 	}
 
-	private static void validateRegionId(Context context, RegionId regionId) {
+	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataView regionDataView = context.getDataView(RegionDataView.class).get();
+		RegionDataView regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 		if (!regionDataView.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 
-	private static void validateResourceId(Context context, ResourceId resourceId) {
+	private static void validateResourceId(SimulationContext simulationContext, ResourceId resourceId) {
 		if (resourceId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataView resourceDataView = context.getDataView(ResourceDataView.class).get();
+		ResourceDataView resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 		if (!resourceDataView.resourceIdExists(resourceId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
 
@@ -138,9 +138,9 @@ public class PersonResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByCompartmentAndResource(Context context, CompartmentId compartmentId, ResourceId resourceId) {
-		validateCompartmentId(context, compartmentId);
-		validateResourceId(context, resourceId);
+	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByCompartmentAndResource(SimulationContext simulationContext, CompartmentId compartmentId, ResourceId resourceId) {
+		validateCompartmentId(simulationContext, compartmentId);
+		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.COMPARTMENT_RESOURCE, PersonResourceChangeObservationEvent.class, compartmentId, resourceId);
 	}
 
@@ -175,9 +175,9 @@ public class PersonResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByRegionAndResource(Context context, RegionId regionId, ResourceId resourceId) {
-		validateRegionId(context, regionId);
-		validateResourceId(context, resourceId);
+	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
+		validateRegionId(simulationContext, regionId);
+		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.REGION_RESOURCE, PersonResourceChangeObservationEvent.class, regionId, resourceId);
 	}
 
@@ -212,9 +212,9 @@ public class PersonResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByPersonAndResource(Context context, PersonId personId, ResourceId resourceId) {
-		validatePersonId(context, personId);
-		validateResourceId(context, resourceId);
+	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByPersonAndResource(SimulationContext simulationContext, PersonId personId, ResourceId resourceId) {
+		validatePersonId(simulationContext, personId);
+		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.PERSON_RESOURCE, PersonResourceChangeObservationEvent.class, personId, resourceId);
 	}
 
@@ -243,8 +243,8 @@ public class PersonResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByResource(Context context, ResourceId resourceId) {
-		validateResourceId(context, resourceId);
+	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
+		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, PersonResourceChangeObservationEvent.class, resourceId);
 	}
 	/**

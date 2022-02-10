@@ -1,7 +1,7 @@
 package plugins.resources.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -69,23 +69,23 @@ public class ResourcePropertyChangeObservationEvent implements Event {
 		RESOURCE_AND_PROPERTY
 	}
 
-	private static void validateResourceId(Context context, ResourceId resourceId) {
+	private static void validateResourceId(SimulationContext simulationContext, ResourceId resourceId) {
 		if (resourceId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataView resourceDataView = context.getDataView(ResourceDataView.class).get();
+		ResourceDataView resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 		if (!resourceDataView.resourceIdExists(resourceId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}
 	}
 
-	private static void validateResourcePropertyId(Context context, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
+	private static void validateResourcePropertyId(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
 		}
-		ResourceDataView resourceDataView = context.getDataView(ResourceDataView.class).get();
+		ResourceDataView resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 		if (!resourceDataView.resourcePropertyIdExists(resourceId, resourcePropertyId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID);
 		}
 	}
 
@@ -109,9 +109,9 @@ public class ResourcePropertyChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID} if
 	 *             the resource property id is unknown</li>	 *             
 	 */
-	public static EventLabel<ResourcePropertyChangeObservationEvent> getEventLabel(Context context, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
-		validateResourceId(context, resourceId);
-		validateResourcePropertyId(context, resourceId, resourcePropertyId);
+	public static EventLabel<ResourcePropertyChangeObservationEvent> getEventLabel(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
+		validateResourceId(simulationContext, resourceId);
+		validateResourcePropertyId(simulationContext, resourceId, resourcePropertyId);
 		return new MultiKeyEventLabel<>(resourcePropertyId, LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyChangeObservationEvent.class, resourceId, resourcePropertyId);
 	}
 

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.AgentContext;
 import nucleus.Simulation;
 import nucleus.testsupport.actionplugin.ActionAgent;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
@@ -50,7 +50,7 @@ import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.MutableInteger;
 @Tag("manual")
@@ -89,7 +89,7 @@ public final class PartitionBugTest {
 																		.build())//
 											.build());//
 
-		ActionPlugin.Builder actionPluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder actionPluginBuilder = ActionPluginInitializer.builder();
 
 		// create key2 for the partitions
 		Object key_1 = new Object();
@@ -125,7 +125,7 @@ public final class PartitionBugTest {
 
 		// cycle people in and out based on the property being changed
 		actionPluginBuilder.addAgentActionPlan(compartmentId, new AgentActionPlan(1, (c) -> {
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			List<PersonId> people = c.getDataView(PersonDataView.class).get().getPeople();
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
@@ -183,7 +183,7 @@ public final class PartitionBugTest {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = actionPluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = actionPluginBuilder.build();
 
 		// build and execute the engine
 		Simulation	.builder()//
@@ -195,12 +195,12 @@ public final class PartitionBugTest {
 				.addPlugin(PeoplePlugin.PLUGIN_ID,new PeoplePlugin(PeopleInitialData.builder().build())::init)//
 				.addPlugin(ComponentPlugin.PLUGIN_ID,new ComponentPlugin()::init)//
 				.addPlugin(PartitionsPlugin.PLUGIN_ID,new PartitionsPlugin()::init)//
-				.addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init)//
+				.addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init)//
 				.addPlugin(PersonPropertiesPlugin.PLUGIN_ID,personPropertiesPlugin::init)//
 				.build().execute();//
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the sampling test was not encountering too many empty
 		// partitions

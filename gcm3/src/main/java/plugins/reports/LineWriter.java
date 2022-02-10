@@ -1,4 +1,4 @@
-package nucleus;
+package plugins.reports;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,6 +15,8 @@ import java.util.Optional;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
+import nucleus.ExperimentContext;
+import nucleus.ScenarioStatus;
 import plugins.reports.support.ReportItem;
 
 /**

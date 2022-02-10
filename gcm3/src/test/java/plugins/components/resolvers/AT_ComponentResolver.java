@@ -16,12 +16,12 @@ import nucleus.AgentId;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.Event;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import nucleus.ResolverId;
 import nucleus.SimpleResolverId;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.components.datacontainers.ComponentDataView;
 import plugins.components.events.ComponentConstructionEvent;
@@ -40,7 +40,7 @@ public final class AT_ComponentResolver {
 	 * state. Other tests will demonstrate that the data view is maintained.
 	 */
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testComponentDataViewInitialization() {
 
 		Builder builder = Simulation.builder();
@@ -48,7 +48,7 @@ public final class AT_ComponentResolver {
 		// add the component plugin
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agent to show that the component data view exists and is
@@ -71,14 +71,14 @@ public final class AT_ComponentResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/*
@@ -119,7 +119,7 @@ public final class AT_ComponentResolver {
 	 * associated with the component id.
 	 */
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testComponentConstructionEvent() {
 
 		Builder builder = Simulation.builder();
@@ -127,7 +127,7 @@ public final class AT_ComponentResolver {
 		// add the component plugin
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create a resolver to generate and test a ComponentConstructionEvent
@@ -151,15 +151,15 @@ public final class AT_ComponentResolver {
 		 * Have the resolver resolve a ComponentConstructionEvent.
 		 * 
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
-			c.queueEventForResolution(new ComponentConstructionEvent(expectedComponentId, consumer));
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
+			c.resolveEvent(new ComponentConstructionEvent(expectedComponentId, consumer));
 
 		}));
 
 		// Have the resolver show that the agent was 1)created, 2) is properly
 		// associated and 3) executed the proper initial behavior
 
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(1, (c) -> {
 
 			// show that the agent's initial behavior was executed
 			AgentId agentId = expectedAgentId.get();
@@ -198,10 +198,10 @@ public final class AT_ComponentResolver {
 		 */
 		ResolverId customResolverId = new SimpleResolverId("custom resolver");
 		pluginBuilder.addResolver(customResolverId);
-		pluginBuilder.addResolverActionPlan(customResolverId, new ResolverActionPlan(0, (c2) -> {
+		pluginBuilder.addResolverActionPlan(customResolverId, new DataManagerActionPlan(0, (c2) -> {
 			c2.subscribeToEventExecutionPhase(CustomEvent.class, (c3, customEvent) -> {
 				ComponentConstructionEvent componentConstructionEvent = new ComponentConstructionEvent(customEvent.getComponentId(), customEvent.getConsumer());
-				c3.queueEventForResolution(componentConstructionEvent);
+				c3.resolveEvent(componentConstructionEvent);
 			});
 		}));
 
@@ -234,14 +234,14 @@ public final class AT_ComponentResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 }

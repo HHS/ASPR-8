@@ -12,7 +12,7 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import util.ContractException;
 import util.MutableDouble;
 import util.SeedProvider;
@@ -37,12 +37,12 @@ public class AT_EnumPropertyManager {
 	public void testGetPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5102684240650614254L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		Color defaultValue = Color.YELLOW;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -92,16 +92,16 @@ public class AT_EnumPropertyManager {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2965406559079298427L);
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.RED).build();
 
-		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		assertThrows(RuntimeException.class, () -> enumPropertyManager.getPropertyTime(0));
 
 		propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.YELLOW).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		EnumPropertyManager enumPropertyManager2 = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		EnumPropertyManager enumPropertyManager2 = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		for (int i = 0; i < 1000; i++) {
 			int id = randomGenerator.nextInt(300);
 			time.setValue(randomGenerator.nextDouble() * 1000);
@@ -112,7 +112,7 @@ public class AT_EnumPropertyManager {
 
 		// precondition tests:
 		propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
-		EnumPropertyManager epm = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		EnumPropertyManager epm = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		ContractException contractException = assertThrows(ContractException.class, () -> epm.getPropertyTime(0));
 		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
 
@@ -127,12 +127,12 @@ public class AT_EnumPropertyManager {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6716984272666831621L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		Color defaultValue = Color.YELLOW;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -174,13 +174,13 @@ public class AT_EnumPropertyManager {
 		 * efficiency.
 		 */
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		// we will first test the manager with an initial value of false
 		Color defaultValue = Color.RED;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, (Color) enumPropertyManager.getPropertyValue(5));
@@ -199,7 +199,7 @@ public class AT_EnumPropertyManager {
 		// we will next test the manager with an initial value of true
 		propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		enumPropertyManager = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		enumPropertyManager = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, (Color) enumPropertyManager.getPropertyValue(5));
@@ -217,7 +217,7 @@ public class AT_EnumPropertyManager {
 		// precondition tests
 		// precondition tests
 		PropertyDefinition def = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.YELLOW).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-		EnumPropertyManager epm = new EnumPropertyManager(mockContext, def, 0);
+		EnumPropertyManager epm = new EnumPropertyManager(mockSimulationContext, def, 0);
 
 		ContractException contractException = assertThrows(ContractException.class, () -> epm.removeId(-1));
 
@@ -233,29 +233,29 @@ public class AT_EnumPropertyManager {
 	@Test
 	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
 		PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 		PropertyDefinition badDoublePropertyDefinition = PropertyDefinition.builder().setType(Double.class).build();
 
 		// if the property definition is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockContext, null, 0));
+		ContractException contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockSimulationContext, null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if the property definition does not have a type of Enum.class
-		contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockContext, badPropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockSimulationContext, badPropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
 		// if the property definition does not contain a default value
-		contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockContext, badDoublePropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockSimulationContext, badDoublePropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 		// if the initial size is negative
-		contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockContext, goodPropertyDefinition, -1));
+		contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(mockSimulationContext, goodPropertyDefinition, -1));
 		assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockContext, goodPropertyDefinition, 0);
+		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockSimulationContext, goodPropertyDefinition, 0);
 		assertNotNull(enumPropertyManager);
 
 	}
@@ -264,11 +264,11 @@ public class AT_EnumPropertyManager {
 	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.RED).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockContext, propertyDefinition, 0);
+		EnumPropertyManager enumPropertyManager = new EnumPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// precondition tests
 		ContractException contractException = assertThrows(ContractException.class, () -> enumPropertyManager.incrementCapacity(-1));

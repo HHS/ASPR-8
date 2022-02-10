@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Simulation;
-import nucleus.testsupport.MockContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.MockSimulationContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.events.mutation.PersonCompartmentAssignmentEvent;
@@ -37,7 +37,7 @@ import plugins.properties.PropertiesPlugin;
 import plugins.properties.support.TimeTrackingPolicy;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
 import util.MutableDouble;
@@ -48,11 +48,11 @@ import util.annotations.UnitTestMethod;
 @UnitTest(target = CompartmentLocationDataView.class)
 public class AT_CompartmentLocationDataView {
 	@Test
-	@UnitTestConstructor(args = { Context.class, CompartmentLocationDataManager.class })
+	@UnitTestConstructor(args = { SimulationContext.class, CompartmentLocationDataManager.class })
 	public void testConstructor() {
-		Context context = MockContext.builder().build();
-		CompartmentLocationDataManager compartmentLocationDataManager = new CompartmentLocationDataManager(context, CompartmentInitialData.builder().build());
-		assertThrows(RuntimeException.class, () -> new CompartmentLocationDataView(context, null));
+		SimulationContext simulationContext = MockSimulationContext.builder().build();
+		CompartmentLocationDataManager compartmentLocationDataManager = new CompartmentLocationDataManager(simulationContext, CompartmentInitialData.builder().build());
+		assertThrows(RuntimeException.class, () -> new CompartmentLocationDataView(simulationContext, null));
 		assertThrows(RuntimeException.class, () -> new CompartmentLocationDataView(null, compartmentLocationDataManager));
 	}
 
@@ -77,7 +77,7 @@ public class AT_CompartmentLocationDataView {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -122,14 +122,14 @@ public class AT_CompartmentLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -137,7 +137,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getCompartmentPopulationTime", args = { CompartmentId.class })
 	public void testGetCompartmentPopulationTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -164,8 +164,8 @@ public class AT_CompartmentLocationDataView {
 				double planTime = i;
 				c.addPlan((c2) -> {
 					CompartmentLocationDataView compartmentLocationDataView = c2.getDataView(CompartmentLocationDataView.class).get();
-					StochasticsDataView stochasticsDataView = c2.getDataView(StochasticsDataView.class).get();
-					TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataView.getRandomGenerator());
+					StochasticsDataManager stochasticsDataManager = c2.getDataView(StochasticsDataManager.class).get();
+					TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataManager.getRandomGenerator());
 					PersonContructionData personContructionData = PersonContructionData.builder().add(compartmentId).build();
 					c2.resolveEvent(new PersonCreationEvent(personContructionData));
 					assertEquals(c2.getTime(), compartmentLocationDataView.getCompartmentPopulationTime(compartmentId), 0);
@@ -203,9 +203,9 @@ public class AT_CompartmentLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		CompartmentsActionSupport.testConsumers(0, 2430955549982485988L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		CompartmentsActionSupport.testConsumers(0, 2430955549982485988L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 
@@ -213,7 +213,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getPeopleInCompartment", args = { CompartmentId.class })
 	public void testGetPeopleInCompartment() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -233,10 +233,10 @@ public class AT_CompartmentLocationDataView {
 
 		// add some people
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			for (int i = 0; i < 100; i++) {
-				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataView.getRandomGenerator());
+				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataManager.getRandomGenerator());
 				PersonContructionData personContructionData = PersonContructionData.builder().add(compartmentId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
 				PersonId personId = personDataView.getLastIssuedPersonId().get();
@@ -270,8 +270,8 @@ public class AT_CompartmentLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		CompartmentsActionSupport.testConsumers(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		CompartmentsActionSupport.testConsumers(0, 3347423560010833899L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 
@@ -279,7 +279,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getPersonCompartmentArrivalTime", args = { PersonId.class })
 	public void testGetPersonCompartmentArrivalTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -293,12 +293,12 @@ public class AT_CompartmentLocationDataView {
 		 * zero.
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			CompartmentLocationDataView compartmentLocationDataView = c.getDataView(CompartmentLocationDataView.class).get();
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a compartment at random
-				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataView.getRandomGenerator());
+				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonContructionData personContructionData = PersonContructionData.builder().add(compartmentId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
@@ -367,8 +367,8 @@ public class AT_CompartmentLocationDataView {
 		}));
 
 		// build and add the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		CompartmentsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		CompartmentsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 		/////////////////////////////////////////////////
 		// precondition test that requires rebuild of engine
 		/////////////////////////////////////////////////
@@ -379,10 +379,10 @@ public class AT_CompartmentLocationDataView {
 		 * Add some people
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a compartment at random
-				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataView.getRandomGenerator());
+				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonContructionData personContructionData = PersonContructionData.builder().add(compartmentId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
@@ -400,10 +400,10 @@ public class AT_CompartmentLocationDataView {
 		}));
 
 		// build the action plugin
-		actionPlugin = pluginBuilder.build();
+		actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		CompartmentsActionSupport.testConsumers(0, 3338965305284292260L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		CompartmentsActionSupport.testConsumers(0, 3338965305284292260L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPluginInitializer);
 
 	}
 
@@ -411,7 +411,7 @@ public class AT_CompartmentLocationDataView {
 	@UnitTestMethod(name = "getPersonCompartment", args = { PersonId.class })
 	public void testGetPersonCompartment() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -425,12 +425,12 @@ public class AT_CompartmentLocationDataView {
 		 * assigned.
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			CompartmentLocationDataView compartmentLocationDataView = c.getDataView(CompartmentLocationDataView.class).get();
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a compartment at random
-				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataView.getRandomGenerator());
+				TestCompartmentId compartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonContructionData personContructionData = PersonContructionData.builder().add(compartmentId).build();
 				c.resolveEvent(new PersonCreationEvent(personContructionData));
@@ -499,10 +499,10 @@ public class AT_CompartmentLocationDataView {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		CompartmentsActionSupport.testConsumers(0, 442744021729694111L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		CompartmentsActionSupport.testConsumers(0, 442744021729694111L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 

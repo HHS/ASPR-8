@@ -11,8 +11,8 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.SimulationContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.testsupport.PartitionsActionSupport;
@@ -66,7 +66,7 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 		// build an attribute function
 		Function<Object, Object> function = (c) -> {
@@ -79,7 +79,7 @@ public final class AT_AttributeLabeler {
 
 		AttributeLabeler attributeLabeler = new AttributeLabeler(TestAttributeId.BOOLEAN_0, function);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add the test agent
 		pluginBuilder.addAgent("agent");
@@ -120,8 +120,8 @@ public final class AT_AttributeLabeler {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		PartitionsActionSupport.testConsumers(10, 4676319446289433016L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		PartitionsActionSupport.testConsumers(10, 4676319446289433016L, actionPluginInitializer);
 
 	}
 

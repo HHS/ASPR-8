@@ -6,9 +6,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.materials.datacontainers.MaterialsDataView;
 import plugins.materials.events.mutation.MaterialsProducerPropertyValueAssignmentEvent;
@@ -17,11 +16,12 @@ import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
+import plugins.reports.ReportId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
@@ -49,7 +49,7 @@ public final class AT_MaterialsProducerPropertyReport {
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		double actionTime = 0;
 		pluginBuilder.addAgent("agent");
@@ -66,8 +66,8 @@ public final class AT_MaterialsProducerPropertyReport {
 
 			// set a property value
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(actionTime++, (c) -> {
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
 				TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.getRandomMutableMaterialsProducerPropertyId(randomGenerator);
 				Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
@@ -78,8 +78,8 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		}
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(8759226038479000135L, actionPlugin, actualOutputConsumer, new MaterialsProducerPropertyReport()::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(8759226038479000135L, actionPluginInitializer, actualOutputConsumer, new MaterialsProducerPropertyReport()::init);
 
 		assertEquals(expectedOutputConsumer, actualOutputConsumer);
 	}

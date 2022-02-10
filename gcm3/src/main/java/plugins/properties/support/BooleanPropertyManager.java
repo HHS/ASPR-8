@@ -1,6 +1,6 @@
 package plugins.properties.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import util.ContractException;
 import util.arraycontainers.BooleanContainer;
 
@@ -32,8 +32,8 @@ public final class BooleanPropertyManager extends AbstractIndexedPropertyManager
 	 *             if the property definition does not have a default value</li>
 	 * 
 	 */
-	public BooleanPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
-		super(context, propertyDefinition, initialSize);
+	public BooleanPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
+		super(simulationContext, propertyDefinition, initialSize);
 		if (propertyDefinition.getType() != Boolean.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition with Boolean type ");
 		}

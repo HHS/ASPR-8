@@ -2,7 +2,7 @@ package plugins.globals.datacontainers;
 
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.globals.support.GlobalComponentId;
@@ -19,10 +19,10 @@ import util.ContractException;
  */
 public final class GlobalDataView implements DataView {
 	private final GlobalDataManager globalDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
-	 * Creates the Global Data View from the given {@link Context} and
+	 * Creates the Global Data View from the given {@link SimulationContext} and
 	 * {@link GlobalDataManager}.
 	 * 
 	 * @throws ContractException
@@ -32,11 +32,11 @@ public final class GlobalDataView implements DataView {
 	 *             global data manager is null</li>
 	 * 
 	 */
-	public GlobalDataView(Context context, GlobalDataManager globalDataManager) {
-		if (context == null) {
+	public GlobalDataView(SimulationContext simulationContext, GlobalDataManager globalDataManager) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 
 		if (globalDataManager == null) {
 			throw new ContractException(GlobalError.NULL_GLOBAL_DATA_MANGER);
@@ -105,11 +105,11 @@ public final class GlobalDataView implements DataView {
 
 	private void validateGlobalPropertyId(final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
-			context.throwContractException(GlobalError.NULL_GLOBAL_PROPERTY_ID);
+			simulationContext.throwContractException(GlobalError.NULL_GLOBAL_PROPERTY_ID);
 		}
 
 		if (!globalDataManager.globalPropertyIdExists(globalPropertyId)) {
-			context.throwContractException(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+			simulationContext.throwContractException(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
 		}
 	}
 }

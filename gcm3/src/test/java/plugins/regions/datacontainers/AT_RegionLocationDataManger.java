@@ -11,8 +11,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
-import nucleus.testsupport.MockContext;
+import nucleus.SimulationContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.people.support.PersonId;
 import plugins.properties.support.TimeTrackingPolicy;
 import plugins.regions.initialdata.RegionInitialData;
@@ -29,14 +29,14 @@ public class AT_RegionLocationDataManger {
 	
 	
 	@Test
-	@UnitTestConstructor(args = { Context.class, RegionInitialData.class })
+	@UnitTestConstructor(args = { SimulationContext.class, RegionInitialData.class })
 	public void testConstructor() {
 
 		// precondition: the context cannot be null
 		assertThrows(RuntimeException.class, () -> new RegionLocationDataManager(null, RegionInitialData.builder().build()));
 
 		// precondition: the region initial data cannot be null
-		assertThrows(RuntimeException.class, () -> new RegionLocationDataManager(MockContext.builder().build(), null));
+		assertThrows(RuntimeException.class, () -> new RegionLocationDataManager(MockSimulationContext.builder().build(), null));
 
 	}
 	
@@ -45,7 +45,7 @@ public class AT_RegionLocationDataManger {
 	 * Returns a RegionLocationDataManger with the full set of test
 	 * regions, no people, obeying the given time tracking policy.
 	 */
-	private RegionLocationDataManager getRegionLocationDataManger(Context context, TimeTrackingPolicy timeTrackingPolicy) {
+	private RegionLocationDataManager getRegionLocationDataManger(SimulationContext simulationContext, TimeTrackingPolicy timeTrackingPolicy) {
 
 		RegionInitialData.Builder builder = RegionInitialData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -55,7 +55,7 @@ public class AT_RegionLocationDataManger {
 		builder.setPersonRegionArrivalTracking(timeTrackingPolicy);
 		RegionInitialData regionInitialData = builder.build();
 
-		RegionLocationDataManager regionLocationDataManager = new RegionLocationDataManager(context, regionInitialData);
+		RegionLocationDataManager regionLocationDataManager = new RegionLocationDataManager(simulationContext, regionInitialData);
 		return regionLocationDataManager;
 	}
 
@@ -65,9 +65,9 @@ public class AT_RegionLocationDataManger {
 	@UnitTestMethod(name = "getRegionPopulationCount", args = { RegionId.class })
 	public void testGetRegionPopulationCount() {
 		
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 		
-		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 		
 		// show that each region has no people
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -102,8 +102,8 @@ public class AT_RegionLocationDataManger {
 	@UnitTestMethod(name = "getRegionPopulationTime", args = { RegionId.class })
 	public void testGetRegionPopulationTime() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 		
 		// show that each region starts with zero population time
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -121,7 +121,7 @@ public class AT_RegionLocationDataManger {
 			time.setValue(i * 100);
 			TestRegionId regionId = TestRegionId.values()[i % n];
 			regionLocationDataManager.setPersonRegion(new PersonId(i), regionId);
-			expectedAssignmentTimes.get(regionId).setValue(mockContext.getTime());
+			expectedAssignmentTimes.get(regionId).setValue(mockSimulationContext.getTime());
 		}
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -142,8 +142,8 @@ public class AT_RegionLocationDataManger {
 	@UnitTestMethod(name = "getPeopleInRegion", args = { RegionId.class })
 	public void testGetPeopleInRegion() {
 		
-		MockContext mockContext = MockContext.builder().build();
-		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 
 
 		// show that each region has no people
@@ -197,8 +197,8 @@ public class AT_RegionLocationDataManger {
 	@UnitTestMethod(name = "getPersonRegion", args = { PersonId.class })
 	public void testGetPersonRegion() {
 		
-		MockContext mockContext = MockContext.builder().build();
-		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 
 		// show that adding people results in the correct population times
 		int n = TestRegionId.values().length;
@@ -238,8 +238,8 @@ public class AT_RegionLocationDataManger {
 	@UnitTestMethod(name = "getPersonRegionArrivalTime", args = { PersonId.class })
 	public void testGetPersonRegionArrivalTime() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockContext, TimeTrackingPolicy.TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockSimulationContext, TimeTrackingPolicy.TRACK_TIME);
 
 		Random random = new Random(3930357586634914723L);
 
@@ -261,9 +261,9 @@ public class AT_RegionLocationDataManger {
 			PersonId personId = new PersonId(random.nextInt(populationSize));
 			TestRegionId regionId = TestRegionId.values()[random.nextInt(TestRegionId.values().length)];
 			regionLocationDataManager.setPersonRegion(personId, regionId);
-			assertEquals(mockContext.getTime(), regionLocationDataManager.getPersonRegionArrivalTime(personId));
+			assertEquals(mockSimulationContext.getTime(), regionLocationDataManager.getPersonRegionArrivalTime(personId));
 			// show that the arrival time in the region is correct
-			expectedArrivalTimes.get(personId).setValue(mockContext.getTime());
+			expectedArrivalTimes.get(personId).setValue(mockSimulationContext.getTime());
 		}
 
 		// show that the region arrival times remain stable over time
@@ -290,7 +290,7 @@ public class AT_RegionLocationDataManger {
 	@UnitTestMethod(name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(MockContext.builder().build(), timeTrackingPolicy);
+			RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(MockSimulationContext.builder().build(), timeTrackingPolicy);
 			assertEquals(timeTrackingPolicy, regionLocationDataManager.getPersonRegionArrivalTrackingPolicy());
 		}
 	}
@@ -298,8 +298,8 @@ public class AT_RegionLocationDataManger {
 	@Test
 	@UnitTestMethod(name = "removePerson", args = { PersonId.class })
 	public void testRemovePerson() {
-		MockContext mockContext = MockContext.builder().build();
-		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockContext, TimeTrackingPolicy.TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockSimulationContext, TimeTrackingPolicy.TRACK_TIME);
 
 		int populationSize = 50;
 
@@ -332,8 +332,8 @@ public class AT_RegionLocationDataManger {
 	@Test
 	@UnitTestMethod(name = "setPersonRegion", args = { PersonId.class, RegionId.class })
 	public void testSetPersonRegion() {		
-		MockContext mockContext = MockContext.builder().build();
-		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockContext, TimeTrackingPolicy.TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		RegionLocationDataManager regionLocationDataManager = getRegionLocationDataManger(mockSimulationContext, TimeTrackingPolicy.TRACK_TIME);
 
 		int populationSize = 50;
 

@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.events.observation.PersonCompartmentChangeObservationEvent;
@@ -61,9 +61,9 @@ public final class CompartmentLabeler implements Labeler {
 	 *                          if the compartment id is unknown
 	 */
 	@Override
-	public Object getLabel(Context context, PersonId personId) {
+	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
 		if (compartmentLocationDataView == null) {
-			compartmentLocationDataView = context.getDataView(CompartmentLocationDataView.class).get();
+			compartmentLocationDataView = simulationContext.getDataView(CompartmentLocationDataView.class).get();
 		}
 		CompartmentId compartmentId = compartmentLocationDataView.getPersonCompartment(personId);
 		return compartmentLabelingFunction.apply(compartmentId);
@@ -78,7 +78,7 @@ public final class CompartmentLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getPastLabel(Context context, Event event) {
+	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonCompartmentChangeObservationEvent personCompartmentChangeObservationEvent = (PersonCompartmentChangeObservationEvent)event;
 		return compartmentLabelingFunction.apply(personCompartmentChangeObservationEvent.getPreviousCompartmentId());
 	}

@@ -15,8 +15,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentId;
-import nucleus.ResolverContext;
-import nucleus.testsupport.MockResolverContext;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.MockDataManagerContext;
 import plugins.components.support.ComponentId;
 import plugins.components.testsupport.SimpleComponentId;
 import plugins.components.testsupport.TestComponentId;
@@ -36,7 +36,7 @@ public final class AT_ComponentDataManager {
 
 		Holder<AgentId> currentAgentId = new Holder<>();
 
-		MockResolverContext mockResolverContext = MockResolverContext//
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext//
 																		.builder()//
 																		.setGetCurrentAgentIdSupplier(() -> currentAgentId.get())//
 																		.build();//
@@ -45,7 +45,7 @@ public final class AT_ComponentDataManager {
 		 * Create a component manager and load it with agent/components
 		 * associations
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
 		for (int i = 0; i < 10; i++) {
 			componentDataManager.addComponentData(new AgentId(i), new SimpleComponentId(i));
 		}
@@ -71,13 +71,13 @@ public final class AT_ComponentDataManager {
 	@UnitTestMethod(name = "getComponentIds", args = {})
 	public void testGetComponentIds() {
 
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
 
 		/*
 		 * Create a component manager
 		 */
 		Set<ComponentId> expectedComponentIds = new LinkedHashSet<>();
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
 
 		// show that the component manager initially has no component ids
 		assertTrue(componentDataManager.getComponentIds().isEmpty());
@@ -100,7 +100,7 @@ public final class AT_ComponentDataManager {
 	@Test
 	@UnitTestMethod(name = "getComponentIds", args = { Class.class })
 	public void testGetComponentIds_ByComponentClass() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
 
 		// create some containers for expected results
 		Set<ComponentId> expectedSimpleComponentIds = new LinkedHashSet<>();
@@ -110,7 +110,7 @@ public final class AT_ComponentDataManager {
 		/*
 		 * Create a component manager
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
 
 		// show that the component manager initially has not component ids
 		assertTrue(componentDataManager.getComponentIds().isEmpty());
@@ -153,7 +153,7 @@ public final class AT_ComponentDataManager {
 	@Test
 	@UnitTestMethod(name = "addComponentData", args = { AgentId.class, ComponentId.class })
 	public void testAddComponentData() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
 
 		// create a container for expected results
 		Map<ComponentId, AgentId> expectedAssociations = new LinkedHashMap<>();
@@ -161,7 +161,7 @@ public final class AT_ComponentDataManager {
 		/*
 		 * Create a component manager
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
 		/*
 		 * Add several agent/component id associations
 		 */
@@ -203,17 +203,17 @@ public final class AT_ComponentDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { ResolverContext.class })
+	@UnitTestConstructor(args = { DataManagerContext.class })
 	public void testConstructor() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
 		assertNotNull(componentDataManager);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getAgentId", args = { ComponentId.class })
 	public void testGetAgentId() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
 
 		// create a container for expected results
 		Map<ComponentId, AgentId> expectedAssociations = new LinkedHashMap<>();
@@ -221,7 +221,7 @@ public final class AT_ComponentDataManager {
 		/*
 		 * Create a component manager
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
 		/*
 		 * Add several agent/component id associations
 		 */
@@ -257,7 +257,7 @@ public final class AT_ComponentDataManager {
 	@Test
 	@UnitTestMethod(name = "containsComponentId", args = { ComponentId.class })
 	public void testContainsComponentId() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
 
 		// create a container for expected results
 		Map<ComponentId, AgentId> expectedAssociations = new LinkedHashMap<>();
@@ -265,7 +265,7 @@ public final class AT_ComponentDataManager {
 		/*
 		 * Create a component manager
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
 		/*
 		 * Add several agent/component id associations
 		 */

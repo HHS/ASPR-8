@@ -9,7 +9,7 @@ import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.partitions.PartitionsPlugin;
@@ -27,13 +27,13 @@ import util.ContractException;
 
 public final class RegionsActionSupport {
 	public static void testConsumer(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 		testConsumers(initialPopulation, seed, timeTrackingPolicy, pluginBuilder.build());
 	}
 
-	public static void testConsumers(int initialPopulation, long seed,TimeTrackingPolicy timeTrackingPolicy, ActionPlugin actionPlugin) {
+	public static void testConsumers(int initialPopulation, long seed,TimeTrackingPolicy timeTrackingPolicy, ActionPluginInitializer actionPluginInitializer) {
 		List<PersonId> people = new ArrayList<>();
 
 		for (int i = 0; i < initialPopulation; i++) {
@@ -84,13 +84,13 @@ public final class RegionsActionSupport {
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
 		// add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 

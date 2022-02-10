@@ -10,7 +10,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -20,7 +20,7 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -81,7 +81,7 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabel", args = { Context.class, ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(name = "getEventLabel", args = { SimulationContext.class, ResourceId.class, ResourcePropertyId.class })
 	public void testGetEventLabel() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
@@ -144,8 +144,8 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getEventLabeler", args = {})
 	public void testGetEventLabeler() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler
 			EventLabeler<ResourcePropertyChangeObservationEvent> eventLabeler = ResourcePropertyChangeObservationEvent.getEventLabeler();

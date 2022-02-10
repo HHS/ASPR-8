@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
 
@@ -32,8 +32,8 @@ public class BasePeopleContainer implements PeopleContainer {
 
 	private PeopleContainer internalPeopleContainer;
 
-	public BasePeopleContainer(Context context) {
-		this.personDataView = context.getDataView(PersonDataView.class).get();
+	public BasePeopleContainer(SimulationContext simulationContext) {
+		this.personDataView = simulationContext.getDataView(PersonDataView.class).get();
 		mode = PeopleContainerMode.INTSET;
 		internalPeopleContainer = new IntSetPeopleContainer();
 

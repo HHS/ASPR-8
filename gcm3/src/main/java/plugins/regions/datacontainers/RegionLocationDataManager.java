@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
 import plugins.properties.support.TimeTrackingPolicy;
 import plugins.regions.RegionPlugin;
@@ -67,9 +67,9 @@ public final class RegionLocationDataManager {
 	 * PersonIds.
 	 */
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 	/**
-	 * Creates this data manager from the given {@link Context} and
+	 * Creates this data manager from the given {@link SimulationContext} and
 	 * {@link RegionInitialData}. Not null tolerant.
 	 * 
 	 * @throw {@link RuntimeException}
@@ -77,12 +77,12 @@ public final class RegionLocationDataManager {
 	 *        <li>if the region initial data is null</li>
 	 * 
 	 */
-	public RegionLocationDataManager(final Context context, final RegionInitialData regionInitialData) {
-		if (context == null) {
+	public RegionLocationDataManager(final SimulationContext simulationContext, final RegionInitialData regionInitialData) {
+		if (simulationContext == null) {
 			throw new RuntimeException("null context supplied");
 		}
 
-		this.context = context;
+		this.simulationContext = simulationContext;
 
 
 		/*
@@ -244,7 +244,7 @@ public final class RegionLocationDataManager {
 		final RegionId oldRegionId = indexToRegionMap[regionIndex];
 		final PopulationRecord populationRecord = regionPopulationRecordMap.get(oldRegionId);
 		populationRecord.populationCount--;
-		populationRecord.assignmentTime = context.getTime();
+		populationRecord.assignmentTime = simulationContext.getTime();
 		regionValues.setIntValue(personId.getValue(), 0);
 	}
 
@@ -278,7 +278,7 @@ public final class RegionLocationDataManager {
 			 * Update the population count associated with the old region
 			 */
 			populationRecord.populationCount--;
-			populationRecord.assignmentTime = context.getTime();
+			populationRecord.assignmentTime = simulationContext.getTime();
 		} else {
 			/*
 			 * The person was not known to this manager, but we only update the
@@ -292,7 +292,7 @@ public final class RegionLocationDataManager {
 		 */
 		final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
 		populationRecord.populationCount++;
-		populationRecord.assignmentTime = context.getTime();
+		populationRecord.assignmentTime = simulationContext.getTime();
 		/*
 		 * Convert the new region id into an int
 		 */
@@ -308,7 +308,7 @@ public final class RegionLocationDataManager {
 		 */
 		if (regionArrivalTimes != null) {
 			// pop
-			regionArrivalTimes.setValue(personId.getValue(), context.getTime());
+			regionArrivalTimes.setValue(personId.getValue(), simulationContext.getTime());
 		}
 
 	}

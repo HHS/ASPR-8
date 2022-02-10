@@ -3,13 +3,13 @@ package nucleus.testsupport.actionplugin;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 
 /**
  * Test Support class that describes an action for a resolver as a scheduled plan with an
  * optional key.
  */
-public class ResolverActionPlan {
+public class DataManagerActionPlan {
 
 	/*
 	 * Key value generator for plans
@@ -26,9 +26,9 @@ public class ResolverActionPlan {
 
 	private boolean executed;
 
-	private final Consumer<ResolverContext> action;
+	private final Consumer<DataManagerContext> action;
 
-	public ResolverActionPlan(final double scheduledTime, Consumer<ResolverContext> action, boolean assignKey) {
+	public DataManagerActionPlan(final double scheduledTime, Consumer<DataManagerContext> action, boolean assignKey) {
 		if (scheduledTime < 0) {
 			throw new RuntimeException("negative scheduled time");
 		}
@@ -45,7 +45,7 @@ public class ResolverActionPlan {
 		this.action = action;
 	}
 
-	public ResolverActionPlan(final double scheduledTime, Consumer<ResolverContext> action) {
+	public DataManagerActionPlan(final double scheduledTime, Consumer<DataManagerContext> action) {
 		this(scheduledTime, action, true);
 	}
 
@@ -57,7 +57,7 @@ public class ResolverActionPlan {
 	 * Package access. Executes the embedded action and marks this action plan
 	 * as executed.
 	 */
-	void executeAction(final ResolverContext agentContext) {
+	void executeAction(final DataManagerContext agentContext) {
 		try {
 			action.accept(agentContext);
 		} finally {

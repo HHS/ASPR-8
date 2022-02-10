@@ -20,10 +20,11 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import nucleus.testsupport.actionplugin.ActionDataView;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import nucleus.testsupport.actionplugin.ReportActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
+import plugins.reports.ReportId;
 import util.ContractException;
 import util.MultiKey;
 import util.MutableBoolean;
@@ -31,21 +32,21 @@ import util.MutableInteger;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
-@UnitTest(target = ResolverContext.class)
+@UnitTest(target = DataManagerContext.class)
 
 public class AT_ResolverContext {
 
 	@Test
 	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class })
 	public void testAddPlan() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver test preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(5, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(5, (c) -> {
 			// if the plan is null
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				c.addPlan(null, 12.0);
@@ -71,7 +72,7 @@ public class AT_ResolverContext {
 
 		// have the resolver add some plans and have each plan execution record
 		// data
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(5, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(5, (c) -> {
 			double planTime = c.getTime();
 			for (Integer value : expectedPlanningValues) {
 				planTime += 1;
@@ -82,13 +83,13 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that all the plans added by the resolver were executed
 		assertEquals(expectedPlanningValues, observedPlanningValues);
@@ -99,14 +100,14 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddPlan_WithKey() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver test preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(5, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(5, (c) -> {
 			// if the plan is null
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				c.addPlan(null, 12.0, new Object());
@@ -143,19 +144,19 @@ public class AT_ResolverContext {
 
 		// Have the resolver add some plans and have each plan record data. Show
 		// that each added plan is retrievable by its key.
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(5, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(5, (c) -> {
 			double planTime = c.getTime();
 			for (Integer value : expectedPlanningValues) {
 				planTime += 1;
 				// create a plan
-				Consumer<ResolverContext> plan = (c2) -> {
+				Consumer<DataManagerContext> plan = (c2) -> {
 					observedPlanningValues.add(value);
 				};
 				// schedule the plan with the context
 				c.addPlan(plan, planTime, value);
 
 				// retrieve the plan by its key
-				Consumer<ResolverContext> plan2 = c.getPlan(value);
+				Consumer<DataManagerContext> plan2 = c.getPlan(value);
 
 				// show that the retrieved plan is the plan that was added
 				assertEquals(plan, plan2);
@@ -164,13 +165,13 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that all the plans added by the resolver were executed
 		assertEquals(expectedPlanningValues, observedPlanningValues);
@@ -181,24 +182,24 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "getPlan", args = { Object.class })
 	public void testGetPlan() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver test preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.getPlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 		}));
 
 		// have the resolver add and retrieve some plans
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				Object key = i;
 				double planTime = i + 10;
-				Consumer<ResolverContext> plan = (c2) -> {
+				Consumer<DataManagerContext> plan = (c2) -> {
 				};
 				c.addPlan(plan, planTime, key);
 				assertEquals(plan, c.getPlan(key));
@@ -206,27 +207,27 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPlanTime", args = { Object.class })
 	public void testGetPlanTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver check preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.getPlanTime(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 		}));
@@ -242,7 +243,7 @@ public class AT_ResolverContext {
 		 * Have the resolver schedule plans and retrieve the plan times
 		 * associated with the plan's key
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(1, (c) -> {
 			for (Object key : planTimes.keySet()) {
 				Double planTime = planTimes.get(key);
 				c.addPlan((c2) -> {
@@ -253,27 +254,27 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
 	@UnitTestMethod(name = "removePlan", args = { Object.class })
 	public void testRemovePlan() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver test preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.removePlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 		}));
@@ -289,7 +290,7 @@ public class AT_ResolverContext {
 		 * plans are removed and have each plan increment a counter. We expect
 		 * the counter to be zero at the end of the simulation.
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(1, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				double planTime = i + 5;
 				Object key = i;
@@ -302,13 +303,13 @@ public class AT_ResolverContext {
 			}
 		}));
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that non of the removed plans executed
 		assertEquals(0, planExecutionCounter.getValue());
@@ -318,7 +319,7 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "getPlanKeys", args = {})
 	public void testGetPlanKeys() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add two resolvers just to show that plan keys are specific to the
 		// resolver
@@ -344,14 +345,14 @@ public class AT_ResolverContext {
 		planKeys_1.add("G");
 
 		// have the two resolvers add the plans for some far future action
-		pluginBuilder.addResolverActionPlan(resolverId_1, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_1, new DataManagerActionPlan(1, (c) -> {
 			for (Object key : planKeys_1) {
 				c.addPlan((c2) -> {
 				}, 1000, key);
 			}
 		}));
 
-		pluginBuilder.addResolverActionPlan(resolverId_2, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_2, new DataManagerActionPlan(1, (c) -> {
 			for (Object key : planKeys_2) {
 				c.addPlan((c2) -> {
 				}, 1000, key);
@@ -363,29 +364,29 @@ public class AT_ResolverContext {
 		 * our expectations
 		 */
 
-		pluginBuilder.addResolverActionPlan(resolverId_1, new ResolverActionPlan(2, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_1, new DataManagerActionPlan(2, (c) -> {
 			assertEquals(planKeys_1, c.getPlanKeys().stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		}));
 
-		pluginBuilder.addResolverActionPlan(resolverId_2, new ResolverActionPlan(2, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_2, new DataManagerActionPlan(2, (c) -> {
 			assertEquals(planKeys_2, c.getPlanKeys().stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
 	@UnitTestMethod(name = "currentAgentIsEventSource", args = {})
 	public void testCurrentAgentIsEventSource() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create a container for the test resolver to record observed values
 		Set<MultiKey> observedData = new LinkedHashSet<>();
@@ -402,7 +403,7 @@ public class AT_ResolverContext {
 		ResolverId resolverId_1 = new SimpleResolverId("event handling resolver");
 		pluginBuilder.addResolver(resolverId_1);
 
-		pluginBuilder.addResolverActionPlan(resolverId_1, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_1, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
 				observedData.add(new MultiKey(c2.currentAgentIsEventSource(), c2.getTime()));
 			});
@@ -412,8 +413,8 @@ public class AT_ResolverContext {
 		ResolverId resolverId_2 = new SimpleResolverId("sending resolver");
 		pluginBuilder.addResolver(resolverId_2);
 
-		pluginBuilder.addResolverActionPlan(resolverId_2, new ResolverActionPlan(10, (c) -> {
-			c.queueEventForResolution(new TestEvent());
+		pluginBuilder.addResolverActionPlan(resolverId_2, new DataManagerActionPlan(10, (c) -> {
+			c.resolveEvent(new TestEvent());
 		}));
 
 		// add an agent that will send a test event at time 20
@@ -423,13 +424,13 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the observed data matches the expected data
 		assertEquals(expectedData, observedData);
@@ -439,7 +440,7 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "queueEventForResolution", args = { Event.class })
 	public void testQueueEventForResolution() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add two resolvers
 		ResolverId resolverId_1 = new SimpleResolverId("resolver 1");
@@ -449,8 +450,8 @@ public class AT_ResolverContext {
 		pluginBuilder.addResolver(resolverId_2);
 
 		// have the first resolver test preconditions
-		pluginBuilder.addResolverActionPlan(resolverId_1, new ResolverActionPlan(0, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.queueEventForResolution(null));
+		pluginBuilder.addResolverActionPlan(resolverId_1, new DataManagerActionPlan(0, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> c.resolveEvent(null));
 			assertEquals(NucleusError.NULL_EVENT, contractException.getErrorType());
 		}));
 
@@ -464,25 +465,25 @@ public class AT_ResolverContext {
 		 * Have the second resolver subscribe to test events and record when a
 		 * test event is received
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId_2, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_2, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
 				testEventReceived.setValue(true);
 			});
 		}));
 
 		// have the first resolver queue a test event for resolution
-		pluginBuilder.addResolverActionPlan(resolverId_2, new ResolverActionPlan(5, (c) -> {
-			c.queueEventForResolution(new TestEvent());
+		pluginBuilder.addResolverActionPlan(resolverId_2, new DataManagerActionPlan(5, (c) -> {
+			c.resolveEvent(new TestEvent());
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the test event was received and thus the queue works
 		assertTrue(testEventReceived.getValue());
@@ -493,7 +494,7 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "getAvailableAgentId", args = {})
 	public void testGetAvailableAgentId() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add two resolvers to show that agent ids are apportioned globally
 		ResolverId resolverId_1 = new SimpleResolverId("resolver 1");
@@ -515,9 +516,9 @@ public class AT_ResolverContext {
 		 * Have the resolvers plan the addition of agents using the available
 		 * agent ids over six times. Record the agent ids into a container.
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId_1, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_1, new DataManagerActionPlan(0, (c) -> {
 			for (int i = 0; i < 3; i++) {
-				Consumer<ResolverContext> plan = (c2) -> {
+				Consumer<DataManagerContext> plan = (c2) -> {
 					AgentId agentId = c.getAvailableAgentId();
 					observedAgentIds.add(agentId);
 					c.addAgent((c3) -> {
@@ -528,9 +529,9 @@ public class AT_ResolverContext {
 			}
 		}));
 
-		pluginBuilder.addResolverActionPlan(resolverId_2, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId_2, new DataManagerActionPlan(0, (c) -> {
 			for (int i = 0; i < 3; i++) {
-				Consumer<ResolverContext> plan = (c2) -> {
+				Consumer<DataManagerContext> plan = (c2) -> {
 					AgentId agentId = c.getAvailableAgentId();
 					observedAgentIds.add(agentId);
 					c.addAgent((c3) -> {
@@ -542,13 +543,13 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the available agent ids matched our expectations
 		assertEquals(expectedAgentIds, observedAgentIds);
@@ -563,7 +564,7 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "getCurrentAgentId", args = {})
 	public void testGetCurrentAgentId() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// build a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
@@ -574,7 +575,7 @@ public class AT_ResolverContext {
 		Set<MultiKey> observedEvents = new LinkedHashSet<>();
 
 		// have the resolver subscribe to Test Event
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
 				ActionDataView actionDataView = c2.getDataView(ActionDataView.class).get();
 				Object alias = actionDataView.getAgentAliasId(c2.getCurrentAgentId()).get();
@@ -613,13 +614,13 @@ public class AT_ResolverContext {
 		expectedEvents.add(new MultiKey("Beta", 10.0));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show the the data collected by the resolver reflects the proper agent
 		// identification
@@ -630,7 +631,7 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "agentExists", args = { AgentId.class })
 	public void testAgentExists() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
@@ -639,7 +640,7 @@ public class AT_ResolverContext {
 		// have the resolver create a few agents and test the existence of
 		// various agent id values
 
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				assertFalse(c.agentExists(new AgentId(i)));
 				c.addAgent((c2) -> {
@@ -656,13 +657,13 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -671,14 +672,14 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "addAgent", args = { Consumer.class, AgentId.class })
 	public void testAddAgent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver create a few agents
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				assertFalse(c.agentExists(new AgentId(i)));
 
@@ -691,7 +692,7 @@ public class AT_ResolverContext {
 		}));
 
 		// precondition tests
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 
 			AgentId availableAgentId = c.getAvailableAgentId();
 
@@ -710,27 +711,27 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "removeAgent", args = { AgentId.class })
 	public void testRemoveAgent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a test resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver execute the precondition tests
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> c.removeAgent(new AgentId(-1)));
 			assertEquals(NucleusError.NEGATIVE_AGENT_ID, contractException.getErrorType());
@@ -744,7 +745,7 @@ public class AT_ResolverContext {
 		}));
 
 		// have the add a few agents
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(1, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				AgentId agentId = new AgentId(i);
 				c.addAgent((c2) -> {
@@ -754,7 +755,7 @@ public class AT_ResolverContext {
 		}));
 
 		// have the resolver remove a the recently added agents
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(2, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(2, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				AgentId agentId = new AgentId(i);
 				assertTrue(c.agentExists(agentId));
@@ -764,26 +765,26 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
 	@UnitTestMethod(name = "addReport", args = { ReportId.class, Consumer.class })
 	public void testAddReport() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a test resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver test preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			// if the report id is null
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addReport(null, (c2) -> {
 			}));
@@ -814,7 +815,7 @@ public class AT_ResolverContext {
 		Set<ReportId> observedReportIds = new LinkedHashSet<>();
 
 		// have the resolver add the reports, with each report recording its id
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			for (ReportId reportId : exepectedReportIds) {
 				c.addReport(reportId, (c2) -> {
 					observedReportIds.add(c2.getCurrentReportId());
@@ -823,13 +824,13 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show the added reports matched our expectations
 		assertEquals(exepectedReportIds, observedReportIds);
@@ -840,7 +841,7 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "halt", args = {})
 	public void testHalt() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a test resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
@@ -850,32 +851,32 @@ public class AT_ResolverContext {
 
 		// have the test resolver execute several tasks, with one of the tasks
 		// halting the simulation
-		ResolverActionPlan actionPlan1 = new ResolverActionPlan(1, (context) -> {
+		DataManagerActionPlan actionPlan1 = new DataManagerActionPlan(1, (context) -> {
 		});
 		pluginBuilder.addResolverActionPlan(resolverId, actionPlan1);
 
-		ResolverActionPlan actionPlan2 = new ResolverActionPlan(2, (context) -> {
+		DataManagerActionPlan actionPlan2 = new DataManagerActionPlan(2, (context) -> {
 		});
 		pluginBuilder.addResolverActionPlan(resolverId, actionPlan2);
 
-		ResolverActionPlan actionPlan3 = new ResolverActionPlan(3, (context) -> {
+		DataManagerActionPlan actionPlan3 = new DataManagerActionPlan(3, (context) -> {
 			context.halt();
 		});
 		pluginBuilder.addResolverActionPlan(resolverId, actionPlan3);
 
-		ResolverActionPlan actionPlan4 = new ResolverActionPlan(4, (context) -> {
+		DataManagerActionPlan actionPlan4 = new DataManagerActionPlan(4, (context) -> {
 		});
 		pluginBuilder.addResolverActionPlan(resolverId, actionPlan4);
 
-		ResolverActionPlan actionPlan5 = new ResolverActionPlan(5, (context) -> {
+		DataManagerActionPlan actionPlan5 = new DataManagerActionPlan(5, (context) -> {
 		});
 		pluginBuilder.addResolverActionPlan(resolverId, actionPlan5);
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the plans that were scheduled after the halt did not
 		// execute
@@ -888,14 +889,14 @@ public class AT_ResolverContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToEventValidationPhase", args = { Class.class, ResolverEventConsumer.class })
+	@UnitTestMethod(name = "subscribeToEventValidationPhase", args = { Class.class, DataManagerEventConsumer.class })
 	public void testSubscribeToEventValidationPhase() {
 		combinedSubscriptionTest();
 	}
 
 	private void combinedSubscriptionTest() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
@@ -917,7 +918,7 @@ public class AT_ResolverContext {
 		expectedPhases.add("post-action");
 
 		// have the resolver test preconditions for all the phases
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribeToEventValidationPhase(null, (c2, e) -> {
 			}));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
@@ -942,7 +943,7 @@ public class AT_ResolverContext {
 		}));
 
 		// have the resolver subscribe to the three phases for test events.
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventValidationPhase(TestEvent.class, (c2, e) -> {
 				observedPhases.add("validation");
 			});
@@ -963,10 +964,10 @@ public class AT_ResolverContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the resolver engaged in the three event resolution phases
 		// in the proper order
@@ -975,13 +976,13 @@ public class AT_ResolverContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToEventExecutionPhase", args = { Class.class, ResolverEventConsumer.class })
+	@UnitTestMethod(name = "subscribeToEventExecutionPhase", args = { Class.class, DataManagerEventConsumer.class })
 	public void testSubscribeToEventExecutionPhase() {
 		combinedSubscriptionTest();
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToEventPostPhase", args = { Class.class, ResolverEventConsumer.class })
+	@UnitTestMethod(name = "subscribeToEventPostPhase", args = { Class.class, DataManagerEventConsumer.class })
 	public void testSubscribeToEventPostPhase() {
 		combinedSubscriptionTest();
 	}
@@ -990,14 +991,14 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "unSubscribeToEvent", args = { Class.class })
 	public void testUnSubscribeToEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver test preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.unSubscribeToEvent(null));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
 		}));
@@ -1010,7 +1011,7 @@ public class AT_ResolverContext {
 
 		// have the resolver subscribe to the test event and have it handle each
 		// type of event handling by incrementing a counter
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 
 			c.subscribeToEventValidationPhase(TestEvent.class, (c2, e) -> {
 				phaseExecutionCount.increment();
@@ -1036,12 +1037,12 @@ public class AT_ResolverContext {
 		 * Show that the phaseExecutionCount is three after the the agent is
 		 * done
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(2, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(2, (c) -> {
 			assertEquals(3, phaseExecutionCount.getValue());
 		}));
 
 		// have the resolver unsubscribe
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(3, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(3, (c) -> {
 			c.unSubscribeToEvent(TestEvent.class);
 		}));
 
@@ -1054,18 +1055,18 @@ public class AT_ResolverContext {
 		 * Show that the phaseExecutionCount is still three after the the agent
 		 * is done and thus the resolver is no longer subscribed
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(5, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(5, (c) -> {
 			assertEquals(3, phaseExecutionCount.getValue());
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/*
@@ -1082,7 +1083,7 @@ public class AT_ResolverContext {
 		}
 
 		@Override
-		public EventLabel<TestEvent> getEventLabel(Context context, TestEvent event) {
+		public EventLabel<TestEvent> getEventLabel(SimulationContext simulationContext, TestEvent event) {
 			return new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
 		}
 
@@ -1102,14 +1103,14 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "addEventLabeler", args = { EventLabeler.class })
 	public void testAddEventLabeler() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver test the preconditions
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			EventLabelerId eventLabelerId = new EventLabelerId() {
 			};
 
@@ -1143,7 +1144,7 @@ public class AT_ResolverContext {
 		EventLabeler<TestEvent> eventLabeler = new TestEventLabeler(TestEvent.class, id);
 
 		// have the resolver add the event labeler
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(1, (c) -> {
 			c.addEventLabeler(eventLabeler);
 		}));
 
@@ -1163,18 +1164,18 @@ public class AT_ResolverContext {
 		}));
 
 		// have the resolver create a test event for the agent to observe
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(3, (c) -> {
-			c.queueEventForResolution(new TestEvent());
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(3, (c) -> {
+			c.resolveEvent(new TestEvent());
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Show that the event labeler must have been added to the simulation
@@ -1188,26 +1189,26 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "getSafeContext", args = {})
 	public void testGetSafeContext() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver get a safe context
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
-			Context safeContext = c.getSafeContext();
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
+			SimulationContext safeContext = c.getSafeContext();
 			assertNotNull(safeContext);
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
@@ -1227,7 +1228,7 @@ public class AT_ResolverContext {
 			return eventLabel;
 		});
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/////////////////////////////////////////////////////////
 		// Case 1 : an agent subscriber
@@ -1241,7 +1242,7 @@ public class AT_ResolverContext {
 		 * Have the test resolver show that there are initially no subscribers
 		 * to test events.
 		 */
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(0, (c) -> {
 			assertFalse(c.subscribersExistForEvent(TestEvent.class));
 		}));
 
@@ -1257,7 +1258,7 @@ public class AT_ResolverContext {
 		}));
 
 		// show that the resolver now sees that there are subscribers
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(2, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(2, (c) -> {
 			assertTrue(c.subscribersExistForEvent(TestEvent.class));
 		}));
 		// have the agent unsubscribe
@@ -1265,18 +1266,18 @@ public class AT_ResolverContext {
 			c.unsubscribe(eventLabel);
 		}));
 		// show that the resolver see no subscribers
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(4, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(4, (c) -> {
 			assertFalse(c.subscribersExistForEvent(TestEvent.class));
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/////////////////////////////////////////////////////////
 		// Case 2 : a report subscriber
@@ -1290,7 +1291,7 @@ public class AT_ResolverContext {
 		 * Have the test resolver show that there are initially no subscribers
 		 * to test events.
 		 */
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(0, (c) -> {
 			assertFalse(c.subscribersExistForEvent(TestEvent.class));
 		}));
 
@@ -1309,18 +1310,18 @@ public class AT_ResolverContext {
 		}));
 
 		// show that the resolver now sees that there are subscribers
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(2, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(2, (c) -> {
 			assertTrue(c.subscribersExistForEvent(TestEvent.class));
 		}));
 
 		// build the plugin
-		actionPlugin = pluginBuilder.build();
+		actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 		/////////////////////////////////////////////////////////
 		// Case 3 : a resolver subscriber
 		/////////////////////////////////////////////////////////
@@ -1333,7 +1334,7 @@ public class AT_ResolverContext {
 		 * Have the test resolver show that there are initially no subscribers
 		 * to test events.
 		 */
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(0, (c) -> {
 			assertFalse(c.subscribersExistForEvent(TestEvent.class));
 		}));
 
@@ -1341,34 +1342,34 @@ public class AT_ResolverContext {
 		ResolverId subscriberResolverId = new SimpleResolverId("subscriber resolver");
 		pluginBuilder.addResolver(subscriberResolverId);
 
-		pluginBuilder.addResolverActionPlan(subscriberResolverId, new ResolverActionPlan(1, (c) -> {
+		pluginBuilder.addResolverActionPlan(subscriberResolverId, new DataManagerActionPlan(1, (c) -> {
 			c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
 			});
 		}));
 
 		// show that the test resolver now sees that there are subscribers
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(2, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(2, (c) -> {
 			assertTrue(c.subscribersExistForEvent(TestEvent.class));
 		}));
 
 		// have the second resolver unsubscribe
-		pluginBuilder.addResolverActionPlan(subscriberResolverId, new ResolverActionPlan(3, (c) -> {
+		pluginBuilder.addResolverActionPlan(subscriberResolverId, new DataManagerActionPlan(3, (c) -> {
 			c.unSubscribeToEvent(TestEvent.class);
 		}));
 
 		// show that the test resolver now sees that there are no subscribers
-		pluginBuilder.addResolverActionPlan(testResolverId, new ResolverActionPlan(4, (c) -> {
+		pluginBuilder.addResolverActionPlan(testResolverId, new DataManagerActionPlan(4, (c) -> {
 			assertFalse(c.subscribersExistForEvent(TestEvent.class));
 		}));
 
 		// build the plugin
-		actionPlugin = pluginBuilder.build();
+		actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	private static class TestDataView implements DataView {
@@ -1378,14 +1379,14 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "publishDataView", args = { DataView.class })
 	public void testPublishDataView() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a resolver
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver add a data view
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 
 			// show that there is currently no TestDataView available
 			Optional<TestDataView> optional = c.getDataView(TestDataView.class);
@@ -1409,19 +1410,19 @@ public class AT_ResolverContext {
 		}));
 
 		//precondition tests
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.publishDataView(null));
 			assertEquals(NucleusError.NULL_DATA_VIEW, contractException.getErrorType());
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all the actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -1429,7 +1430,7 @@ public class AT_ResolverContext {
 	@UnitTestMethod(name = "getCurrentResolverId", args = {})
 	public void testGetCurrentResolverId() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a few resolvers
 		List<ResolverId> resolverIds = new ArrayList<>();
@@ -1443,19 +1444,19 @@ public class AT_ResolverContext {
 		// have the resolvers get their current ids and show they are equal to
 		// the expected values
 		for (ResolverId resolverId : resolverIds) {
-			pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(1, (c) -> {
+			pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(1, (c) -> {
 				assertEquals(resolverId, c.getCurrentResolverId());
 			}));
 		}
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 }

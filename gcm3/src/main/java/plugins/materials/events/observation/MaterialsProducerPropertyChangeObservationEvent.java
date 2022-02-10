@@ -1,7 +1,7 @@
 package plugins.materials.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -53,29 +53,29 @@ public class MaterialsProducerPropertyChangeObservationEvent implements Event {
 		PRODUCER_PROPERTY
 	}
 
-	private static void validateMaterialsProducerId(Context context, MaterialsProducerId materialsProducerId) {
+	private static void validateMaterialsProducerId(SimulationContext simulationContext, MaterialsProducerId materialsProducerId) {
 		if (materialsProducerId == null) {
-			context.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
-		MaterialsDataView materialsDataView = context.getDataView(MaterialsDataView.class).get();
+		MaterialsDataView materialsDataView = simulationContext.getDataView(MaterialsDataView.class).get();
 		if (!materialsDataView.materialsProducerIdExists(materialsProducerId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
 		}
 	}
 
-	private static void validateMaterialsProducerPropertyId(Context context, MaterialsProducerPropertyId materialsProducerPropertyId) {
+	private static void validateMaterialsProducerPropertyId(SimulationContext simulationContext, MaterialsProducerPropertyId materialsProducerPropertyId) {
 		if (materialsProducerPropertyId == null) {
-			context.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
 		}
-		MaterialsDataView materialsDataView = context.getDataView(MaterialsDataView.class).get();
+		MaterialsDataView materialsDataView = simulationContext.getDataView(MaterialsDataView.class).get();
 		if (!materialsDataView.materialsProducerPropertyIdExists(materialsProducerPropertyId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID);
 		}
 	}
 
-	public static EventLabel<MaterialsProducerPropertyChangeObservationEvent> getEventLabelByMaterialsProducerAndProperty(Context context, MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
-		validateMaterialsProducerId(context, materialsProducerId);
-		validateMaterialsProducerPropertyId(context, materialsProducerPropertyId);
+	public static EventLabel<MaterialsProducerPropertyChangeObservationEvent> getEventLabelByMaterialsProducerAndProperty(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
+		validateMaterialsProducerId(simulationContext, materialsProducerId);
+		validateMaterialsProducerPropertyId(simulationContext, materialsProducerPropertyId);
 
 		return new MultiKeyEventLabel<>(materialsProducerPropertyId, LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyChangeObservationEvent.class, materialsProducerId, materialsProducerPropertyId);
 	}

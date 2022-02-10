@@ -3,7 +3,7 @@ package plugins.personproperties.resolvers;
 import java.util.List;
 import java.util.Map;
 
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.events.observation.BulkPersonCreationObservationEvent;
@@ -128,22 +128,22 @@ public final class PersonPropertyEventResolver {
 
 	private PersonPropertyDataManager personPropertyDataManager;
 
-	private void handlePersonCreationObservationEventValidation(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
 
 		List<PersonPropertyInitialization> personPropertyAssignments = personContructionData.getValues(PersonPropertyInitialization.class);
 		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
 			PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 			final Object personPropertyValue = personPropertyAssignment.getValue();
-			validatePersonPropertyId(resolverContext, personPropertyId);
-			validatePersonPropertyValueNotNull(resolverContext, personPropertyValue);
+			validatePersonPropertyId(dataManagerContext, personPropertyId);
+			validatePersonPropertyValueNotNull(dataManagerContext, personPropertyValue);
 			final PropertyDefinition propertyDefinition = personPropertyDataManager.getPersonPropertyDefinition(personPropertyId);
-			validateValueCompatibility(resolverContext, personPropertyId, propertyDefinition, personPropertyValue);
+			validateValueCompatibility(dataManagerContext, personPropertyId, propertyDefinition, personPropertyValue);
 		}
 
 	}
 
-	private void handlePersonCreationObservationEventExecution(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonId personId = personCreationObservationEvent.getPersonId();
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
 
@@ -154,7 +154,7 @@ public final class PersonPropertyEventResolver {
 
 	}
 
-	private void handleBulkPersonCreationObservationEventValidation(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
 		List<PersonContructionData> personContructionDatas = bulkPersonContructionData.getPersonContructionDatas();
 		for (PersonContructionData personContructionData : personContructionDatas) {
@@ -163,15 +163,15 @@ public final class PersonPropertyEventResolver {
 				PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
 				final Object personPropertyValue = personPropertyAssignment.getValue();
 
-				validatePersonPropertyId(resolverContext, personPropertyId);
-				validatePersonPropertyValueNotNull(resolverContext, personPropertyValue);
+				validatePersonPropertyId(dataManagerContext, personPropertyId);
+				validatePersonPropertyValueNotNull(dataManagerContext, personPropertyValue);
 				final PropertyDefinition propertyDefinition = personPropertyDataManager.getPersonPropertyDefinition(personPropertyId);
-				validateValueCompatibility(resolverContext, personPropertyId, propertyDefinition, personPropertyValue);
+				validateValueCompatibility(dataManagerContext, personPropertyId, propertyDefinition, personPropertyValue);
 			}
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEventExecution(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
 		int pId = personId.getValue();
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
@@ -186,40 +186,40 @@ public final class PersonPropertyEventResolver {
 		}
 	}
 
-	private void handlePersonImminentRemovalObservationEventValidation(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(resolverContext, personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalObservationEventValidation(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		validatePersonExists(dataManagerContext, personImminentRemovalObservationEvent.getPersonId());
 	}
 
-	private void handlePersonImminentRemovalObservationEventExecution(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		resolverContext.addPlan((context) -> personPropertyDataManager.handlePersonRemoval(personImminentRemovalObservationEvent.getPersonId()), resolverContext.getTime());
+	private void handlePersonImminentRemovalObservationEventExecution(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		dataManagerContext.addPlan((context) -> personPropertyDataManager.handlePersonRemoval(personImminentRemovalObservationEvent.getPersonId()), dataManagerContext.getTime());
 	}
 
 	private PersonDataView personDataView;
 
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
-		CompartmentLocationDataView compartmentLocationDataView = resolverContext.getDataView(CompartmentLocationDataView.class).get();
-		RegionLocationDataView regionLocationDataView = resolverContext.getDataView(RegionLocationDataView.class).get();
+		CompartmentLocationDataView compartmentLocationDataView = dataManagerContext.getDataView(CompartmentLocationDataView.class).get();
+		RegionLocationDataView regionLocationDataView = dataManagerContext.getDataView(RegionLocationDataView.class).get();
 		
-		resolverContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForCompartmentAndProperty(compartmentLocationDataView));
-		resolverContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty(regionLocationDataView));
-		resolverContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForPersonAndProperty());
-		resolverContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForProperty());
+		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForCompartmentAndProperty(compartmentLocationDataView));
+		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty(regionLocationDataView));
+		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForPersonAndProperty());
+		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForProperty());
 
-		personPropertyDataManager = new PersonPropertyDataManager(resolverContext.getSafeContext());
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
+		personPropertyDataManager = new PersonPropertyDataManager(dataManagerContext.getSafeContext());
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
 
-		resolverContext.subscribeToEventValidationPhase(PersonPropertyValueAssignmentEvent.class, this::handlePersonPropertyValueAssignmentEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonPropertyValueAssignmentEvent.class, this::handlePersonPropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonPropertyValueAssignmentEvent.class, this::handlePersonPropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonPropertyValueAssignmentEvent.class, this::handlePersonPropertyValueAssignmentEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
 
 		for (final PersonPropertyId personPropertyId : personPropertyInitialData.getPersonPropertyIds()) {
 			PropertyDefinition personPropertyDefinition = personPropertyInitialData.getPersonPropertyDefinition(personPropertyId);
@@ -240,66 +240,66 @@ public final class PersonPropertyEventResolver {
 			}
 		}
 
-		resolverContext.publishDataView(new PersonPropertyDataView(resolverContext.getSafeContext(), personPropertyDataManager));
+		dataManagerContext.publishDataView(new PersonPropertyDataView(dataManagerContext.getSafeContext(), personPropertyDataManager));
 		personPropertyInitialData = null;
 	}
 
-	private void handlePersonPropertyValueAssignmentEventValidation(final ResolverContext resolverContext, final PersonPropertyValueAssignmentEvent personPropertyValueAssignmentEvent) {
+	private void handlePersonPropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final PersonPropertyValueAssignmentEvent personPropertyValueAssignmentEvent) {
 		final PersonId personId = personPropertyValueAssignmentEvent.getPersonId();
 		final PersonPropertyId personPropertyId = personPropertyValueAssignmentEvent.getPersonPropertyId();
 		final Object personPropertyValue = personPropertyValueAssignmentEvent.getPersonPropertyValue();
-		validatePersonExists(resolverContext, personId);
-		validatePersonPropertyId(resolverContext, personPropertyId);
-		validatePersonPropertyValueNotNull(resolverContext, personPropertyValue);
+		validatePersonExists(dataManagerContext, personId);
+		validatePersonPropertyId(dataManagerContext, personPropertyId);
+		validatePersonPropertyValueNotNull(dataManagerContext, personPropertyValue);
 		final PropertyDefinition propertyDefinition = personPropertyDataManager.getPersonPropertyDefinition(personPropertyId);
-		validateValueCompatibility(resolverContext, personPropertyId, propertyDefinition, personPropertyValue);
-		validatePropertyMutability(resolverContext, propertyDefinition);
+		validateValueCompatibility(dataManagerContext, personPropertyId, propertyDefinition, personPropertyValue);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
 	}
 
-	private void handlePersonPropertyValueAssignmentEventExecution(final ResolverContext resolverContext, final PersonPropertyValueAssignmentEvent personPropertyValueAssignmentEvent) {
+	private void handlePersonPropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final PersonPropertyValueAssignmentEvent personPropertyValueAssignmentEvent) {
 		final PersonId personId = personPropertyValueAssignmentEvent.getPersonId();
 		final PersonPropertyId personPropertyId = personPropertyValueAssignmentEvent.getPersonPropertyId();
 		final Object personPropertyValue = personPropertyValueAssignmentEvent.getPersonPropertyValue();
 
 		Object oldValue = personPropertyDataManager.getPersonPropertyValue(personId, personPropertyId);
 		personPropertyDataManager.setPersonPropertyValue(personId, personPropertyId, personPropertyValue);
-		resolverContext.queueEventForResolution(new PersonPropertyChangeObservationEvent(personId, personPropertyId, oldValue, personPropertyValue));
+		dataManagerContext.resolveEvent(new PersonPropertyChangeObservationEvent(personId, personPropertyId, oldValue, personPropertyValue));
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private static void validatePersonPropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private static void validatePersonPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
 		}
 	}
 
-	private static void validatePropertyMutability(final ResolverContext resolverContext, final PropertyDefinition propertyDefinition) {
+	private static void validatePropertyMutability(final DataManagerContext dataManagerContext, final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
-			resolverContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
+			dataManagerContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
 		}
 	}
 
-	private static void validateValueCompatibility(final ResolverContext resolverContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private static void validateValueCompatibility(final DataManagerContext dataManagerContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			resolverContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
-	private void validatePersonPropertyId(ResolverContext resolverContext, final PersonPropertyId personPropertyId) {
+	private void validatePersonPropertyId(DataManagerContext dataManagerContext, final PersonPropertyId personPropertyId) {
 		if (personPropertyId == null) {
-			resolverContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			dataManagerContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
 		}
 		if (!personPropertyDataManager.personPropertyIdExists(personPropertyId)) {
-			resolverContext.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+			dataManagerContext.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
 		}
 	}
 

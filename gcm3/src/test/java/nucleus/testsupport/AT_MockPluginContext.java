@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginId;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import nucleus.ResolverId;
 import nucleus.SimplePluginId;
 import nucleus.SimpleResolverId;
@@ -58,7 +58,7 @@ public class AT_MockPluginContext {
 	@UnitTestMethod(name = "defineResolver", args = { ResolverId.class, Consumer.class })
 	public void testDefineResolver() {
 
-		Map<ResolverId, Consumer<ResolverContext>> expectedResolvers = new LinkedHashMap<>();
+		Map<ResolverId, Consumer<DataManagerContext>> expectedResolvers = new LinkedHashMap<>();
 
 		expectedResolvers.put(new SimpleResolverId("A"), (c) -> {
 		});

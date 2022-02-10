@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.compartments.datacontainers.CompartmentDataView;
 import plugins.groups.GroupPlugin;
 import plugins.groups.datacontainers.PersonGroupDataManager;
@@ -245,23 +245,23 @@ public final class GroupEventResolver {
 
 	private PersonGroupDataManager personGroupDataManager;
 
-	private void handleGroupConstructionEventValidation(final ResolverContext resolverContext, final GroupConstructionEvent groupConstructionEvent) {
+	private void handleGroupConstructionEventValidation(final DataManagerContext dataManagerContext, final GroupConstructionEvent groupConstructionEvent) {
 		final GroupConstructionInfo groupConstructionInfo = groupConstructionEvent.getGroupConstructionInfo();
-		validateGroupConstructionInfoNotNull(resolverContext, groupConstructionInfo);
+		validateGroupConstructionInfoNotNull(dataManagerContext, groupConstructionInfo);
 		final GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
-		validateGroupTypeId(resolverContext, groupConstructionInfo.getGroupTypeId());
+		validateGroupTypeId(dataManagerContext, groupConstructionInfo.getGroupTypeId());
 
 		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
 		for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
-			validateGroupPropertyId(resolverContext, groupTypeId, groupPropertyId);
+			validateGroupPropertyId(dataManagerContext, groupTypeId, groupPropertyId);
 			final PropertyDefinition propertyDefinition = personGroupDataManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
-			validateGroupPropertyValueNotNull(resolverContext, groupPropertyValue);
-			validateValueCompatibility(resolverContext, groupPropertyId, propertyDefinition, groupPropertyValue);
+			validateGroupPropertyValueNotNull(dataManagerContext, groupPropertyValue);
+			validateValueCompatibility(dataManagerContext, groupPropertyId, propertyDefinition, groupPropertyValue);
 		}
 	}
 
-	private void handleGroupConstructionEventExecution(final ResolverContext resolverContext, final GroupConstructionEvent groupConstructionEvent) {
+	private void handleGroupConstructionEventExecution(final DataManagerContext dataManagerContext, final GroupConstructionEvent groupConstructionEvent) {
 		final GroupConstructionInfo groupConstructionInfo = groupConstructionEvent.getGroupConstructionInfo();
 		final GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
 		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
@@ -270,21 +270,21 @@ public final class GroupEventResolver {
 			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
 			personGroupDataManager.setGroupPropertyValue(groupId, groupPropertyId, groupPropertyValue);
 		}
-		resolverContext.queueEventForResolution(new GroupCreationObservationEvent(groupId));
+		dataManagerContext.resolveEvent(new GroupCreationObservationEvent(groupId));
 	}
 
-	private void handleGroupCreationEventValidation(final ResolverContext resolverContext, final GroupCreationEvent groupCreationEvent) {
+	private void handleGroupCreationEventValidation(final DataManagerContext dataManagerContext, final GroupCreationEvent groupCreationEvent) {
 		final GroupTypeId groupTypeId = groupCreationEvent.getGroupTypeId();
-		validateGroupTypeId(resolverContext, groupTypeId);
+		validateGroupTypeId(dataManagerContext, groupTypeId);
 	}
 
-	private void handleGroupCreationEventExecution(final ResolverContext resolverContext, final GroupCreationEvent groupCreationEvent) {
+	private void handleGroupCreationEventExecution(final DataManagerContext dataManagerContext, final GroupCreationEvent groupCreationEvent) {
 		final GroupTypeId groupTypeId = groupCreationEvent.getGroupTypeId();
 		GroupId groupId = personGroupDataManager.addGroup(groupTypeId);
-		resolverContext.queueEventForResolution(new GroupCreationObservationEvent(groupId));
+		dataManagerContext.resolveEvent(new GroupCreationObservationEvent(groupId));
 	}
 
-	private void handleBulkPersonCreationObservationEventValidation(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonContructionData.getValue(BulkGroupMembershipData.class);
 		if (optional.isPresent()) {
@@ -292,16 +292,16 @@ public final class GroupEventResolver {
 			PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
 			int basePersonIndex = personId.getValue();
 			for (int i = 0; i < personCount; i++) {
-				validatePersonIndexExists(resolverContext, i + basePersonIndex);
+				validatePersonIndexExists(dataManagerContext, i + basePersonIndex);
 			}
 			BulkGroupMembershipData bulkGroupMembershipData = optional.get();
 			int groupCount = bulkGroupMembershipData.getGroupCount();
 			for (int i = 0; i < groupCount; i++) {
 				GroupTypeId groupTypeId = bulkGroupMembershipData.getGroupTypeId(i);
-				validateGroupTypeId(resolverContext, groupTypeId);
+				validateGroupTypeId(dataManagerContext, groupTypeId);
 			}
 			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
-				validatePersonIndexExists(resolverContext, personIndex + basePersonIndex);
+				validatePersonIndexExists(dataManagerContext, personIndex + basePersonIndex);
 			}
 			
 			
@@ -309,7 +309,7 @@ public final class GroupEventResolver {
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEventExecution(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonContructionData.getValue(BulkGroupMembershipData.class);
@@ -320,7 +320,7 @@ public final class GroupEventResolver {
 			int groupCount = bulkGroupMembershipData.getGroupCount();
 
 			
-			boolean groupCreationSubscribersExist = resolverContext.subscribersExistForEvent(GroupCreationObservationEvent.class);
+			boolean groupCreationSubscribersExist = dataManagerContext.subscribersExistForEvent(GroupCreationObservationEvent.class);
 
 			List<GroupId> groupIds = new ArrayList<>();
 
@@ -330,7 +330,7 @@ public final class GroupEventResolver {
 				groupIds.add(groupId);
 
 				if (groupCreationSubscribersExist) {
-					resolverContext.queueEventForResolution(new GroupCreationObservationEvent(groupId));
+					dataManagerContext.resolveEvent(new GroupCreationObservationEvent(groupId));
 				}
 			}
 
@@ -339,7 +339,7 @@ public final class GroupEventResolver {
 				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
 				for (Integer groupIndex : groupIndices) {
 					GroupId groupId = groupIds.get(groupIndex);
-					validatePersonNotInGroup(resolverContext, boxedPersonId, groupId);
+					validatePersonNotInGroup(dataManagerContext, boxedPersonId, groupId);
 					personGroupDataManager.addPersonToGroup(groupId, boxedPersonId);					
 				}
 			}
@@ -347,27 +347,27 @@ public final class GroupEventResolver {
 		}
 	}
 
-	private void handleGroupMembershipAdditionEventValidation(final ResolverContext resolverContext, final GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
+	private void handleGroupMembershipAdditionEventValidation(final DataManagerContext dataManagerContext, final GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
 		final PersonId personId = groupMembershipAdditionEvent.getPersonId();
 		final GroupId groupId = groupMembershipAdditionEvent.getGroupId();
-		validatePersonExists(resolverContext, personId);
-		validateGroupExists(resolverContext, groupId);
-		validatePersonNotInGroup(resolverContext, personId, groupId);
+		validatePersonExists(dataManagerContext, personId);
+		validateGroupExists(dataManagerContext, groupId);
+		validatePersonNotInGroup(dataManagerContext, personId, groupId);
 	}
 
-	private void handleGroupMembershipAdditionEventExecution(final ResolverContext resolverContext, final GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
+	private void handleGroupMembershipAdditionEventExecution(final DataManagerContext dataManagerContext, final GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
 		final PersonId personId = groupMembershipAdditionEvent.getPersonId();
 		final GroupId groupId = groupMembershipAdditionEvent.getGroupId();
 		personGroupDataManager.addPersonToGroup(groupId, personId);
-		resolverContext.queueEventForResolution(new GroupMembershipAdditionObservationEvent(personId, groupId));
+		dataManagerContext.resolveEvent(new GroupMembershipAdditionObservationEvent(personId, groupId));
 	}
 
-	private void handlePersonImminentRemovalObservationEventValidation(final ResolverContext resolverContext, PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(resolverContext, personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalObservationEventValidation(final DataManagerContext dataManagerContext, PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		validatePersonExists(dataManagerContext, personImminentRemovalObservationEvent.getPersonId());
 	}
 
-	private void handlePersonImminentRemovalObservationEventExecution(final ResolverContext resolverContext, PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		resolverContext.addPlan((context) -> personGroupDataManager.removePerson(personImminentRemovalObservationEvent.getPersonId()), resolverContext.getTime());
+	private void handlePersonImminentRemovalObservationEventExecution(final DataManagerContext dataManagerContext, PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		dataManagerContext.addPlan((context) -> personGroupDataManager.removePerson(personImminentRemovalObservationEvent.getPersonId()), dataManagerContext.getTime());
 	}
 
 	/**
@@ -391,42 +391,42 @@ public final class GroupEventResolver {
 	 * 
 	 * <li>Publishes the {@linkplain PersonGroupDataView}</li>
 	 */
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
 		/*
 		 * Subscribe to all the various events that can update group data --
 		 * i.e. the mutation events in the groups plugin as well as person
 		 * creation and removal events.
 		 */
-		resolverContext.subscribeToEventValidationPhase(GroupConstructionEvent.class, this::handleGroupConstructionEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(GroupConstructionEvent.class, this::handleGroupConstructionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GroupConstructionEvent.class, this::handleGroupConstructionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GroupConstructionEvent.class, this::handleGroupConstructionEventExecution);
 
-		resolverContext.subscribeToEventExecutionPhase(GroupCreationEvent.class, this::handleGroupCreationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(GroupCreationEvent.class, this::handleGroupCreationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GroupCreationEvent.class, this::handleGroupCreationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GroupCreationEvent.class, this::handleGroupCreationEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(GroupMembershipAdditionEvent.class, this::handleGroupMembershipAdditionEventExecution);
-		resolverContext.subscribeToEventValidationPhase(GroupMembershipAdditionEvent.class, this::handleGroupMembershipAdditionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GroupMembershipAdditionEvent.class, this::handleGroupMembershipAdditionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GroupMembershipAdditionEvent.class, this::handleGroupMembershipAdditionEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(GroupMembershipRemovalEvent.class, this::handleGroupMembershipRemovalEventExecution);
-		resolverContext.subscribeToEventValidationPhase(GroupMembershipRemovalEvent.class, this::handleGroupMembershipRemovalEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GroupMembershipRemovalEvent.class, this::handleGroupMembershipRemovalEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GroupMembershipRemovalEvent.class, this::handleGroupMembershipRemovalEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(GroupPropertyValueAssignmentEvent.class, this::handleGroupPropertyValueAssignmentEventExecution);
-		resolverContext.subscribeToEventValidationPhase(GroupPropertyValueAssignmentEvent.class, this::handleGroupPropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GroupPropertyValueAssignmentEvent.class, this::handleGroupPropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GroupPropertyValueAssignmentEvent.class, this::handleGroupPropertyValueAssignmentEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(GroupRemovalRequestEvent.class, this::handleGroupRemovalRequestEventExecution);
-		resolverContext.subscribeToEventValidationPhase(GroupRemovalRequestEvent.class, this::handleGroupRemovalRequestEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GroupRemovalRequestEvent.class, this::handleGroupRemovalRequestEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GroupRemovalRequestEvent.class, this::handleGroupRemovalRequestEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
 
 		
 		/*
 		 * Establish the person data view
 		 */
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
 
 		/*
 		 * Establish mappings from the ids used to create people and groups in
@@ -443,18 +443,18 @@ public final class GroupEventResolver {
 		 * initial data, utilizing the id mappings established above. The order
 		 * of these load method invocations is sensitive but fairly obvious.
 		 */
-		personGroupDataManager = new PersonGroupDataManager(resolverContext.getSafeContext());
-		loadGroupTypes(resolverContext, groupInitialData);
-		loadGroupPropertyDefinitions(resolverContext, groupInitialData);
-		loadGroups(resolverContext, groupInitialData, scenarioToSimGroupMap);
-		loadGroupMembership(resolverContext, groupInitialData, scenarioToSimPeopleMap, scenarioToSimGroupMap);
-		loadGroupPropertyValues(resolverContext, groupInitialData, scenarioToSimGroupMap);
+		personGroupDataManager = new PersonGroupDataManager(dataManagerContext.getSafeContext());
+		loadGroupTypes(dataManagerContext, groupInitialData);
+		loadGroupPropertyDefinitions(dataManagerContext, groupInitialData);
+		loadGroups(dataManagerContext, groupInitialData, scenarioToSimGroupMap);
+		loadGroupMembership(dataManagerContext, groupInitialData, scenarioToSimPeopleMap, scenarioToSimGroupMap);
+		loadGroupPropertyValues(dataManagerContext, groupInitialData, scenarioToSimGroupMap);
 
 		/*
 		 * Publish the person group data view
 		 */
-		PersonGroupDataView personGroupDataView = new PersonGroupDataView(resolverContext.getSafeContext(), personGroupDataManager);
-		resolverContext.publishDataView(personGroupDataView);
+		PersonGroupDataView personGroupDataView = new PersonGroupDataView(dataManagerContext.getSafeContext(), personGroupDataManager);
+		dataManagerContext.publishDataView(personGroupDataView);
 
 		
 		/*
@@ -463,32 +463,32 @@ public final class GroupEventResolver {
 		 */
 		
 		
-		resolverContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForAll());
-		resolverContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroup());
-		resolverContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupAndPerson());
-		resolverContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupType(personGroupDataView));
-		resolverContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupTypeAndPerson(personGroupDataView));
-		resolverContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupAndPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupType(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupTypeAndPerson(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForPerson());
 
-		resolverContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForAll());
-		resolverContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroup());
-		resolverContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupAndPerson());
-		resolverContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupType(personGroupDataView));
-		resolverContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupTypeAndPerson(personGroupDataView));
-		resolverContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupAndPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupType(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupTypeAndPerson(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForPerson());
 
-		resolverContext.addEventLabeler(GroupCreationObservationEvent.getEventLabelerForAll());
-		resolverContext.addEventLabeler(GroupCreationObservationEvent.getEventLabelerForGroupType(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupCreationObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupCreationObservationEvent.getEventLabelerForGroupType(personGroupDataView));
 
-		resolverContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForAll());
-		resolverContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForGroup());
-		resolverContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForGroupType(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForGroupType(personGroupDataView));
 
-		resolverContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForAll());
-		resolverContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroup());
-		resolverContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupAndProperty());
-		resolverContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupType(personGroupDataView));
-		resolverContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupTypeAndProperty(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupAndProperty());
+		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupType(personGroupDataView));
+		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupTypeAndProperty(personGroupDataView));
 
 		
 		/*
@@ -498,7 +498,7 @@ public final class GroupEventResolver {
 		groupInitialData = null;
 	}
 
-	private void loadGroupPropertyDefinitions(ResolverContext resolverContext, GroupInitialData groupInitialData) {
+	private void loadGroupPropertyDefinitions(DataManagerContext dataManagerContext, GroupInitialData groupInitialData) {
 		for (final GroupTypeId groupTypeId : groupInitialData.getGroupTypeIds()) {
 			final Set<GroupPropertyId> propertyIds = groupInitialData.getGroupPropertyIds(groupTypeId);
 			for (final GroupPropertyId groupPropertyId : propertyIds) {
@@ -509,7 +509,7 @@ public final class GroupEventResolver {
 
 	}
 
-	private void loadGroupTypes(ResolverContext resolverContext, GroupInitialData groupInitialData) {
+	private void loadGroupTypes(DataManagerContext dataManagerContext, GroupInitialData groupInitialData) {
 		final Set<GroupTypeId> groupTypeIds = groupInitialData.getGroupTypeIds();
 
 		for (final GroupTypeId groupTypeId : groupTypeIds) {
@@ -529,7 +529,7 @@ public final class GroupEventResolver {
 		return result;
 	}
 
-	private void loadGroupMembership(final ResolverContext resolverContext, final GroupInitialData groupInitialData, final Map<PersonId, PersonId> scenarioToSimPeopleMap,
+	private void loadGroupMembership(final DataManagerContext dataManagerContext, final GroupInitialData groupInitialData, final Map<PersonId, PersonId> scenarioToSimPeopleMap,
 			final Map<GroupId, GroupId> scenarioToSimGroupMap) {
 		for (final GroupId scenarioGroupId : groupInitialData.getGroupIds()) {
 			final Set<PersonId> scenarioGroupMembers = groupInitialData.getGroupMembers(scenarioGroupId);
@@ -541,7 +541,7 @@ public final class GroupEventResolver {
 		}
 	}
 
-	private void loadGroupPropertyValues(final ResolverContext resolverContext, final GroupInitialData groupInitialData, final Map<GroupId, GroupId> scenarioToSimGroupMap) {
+	private void loadGroupPropertyValues(final DataManagerContext dataManagerContext, final GroupInitialData groupInitialData, final Map<GroupId, GroupId> scenarioToSimGroupMap) {
 		for (final GroupId scenarioGroupId : groupInitialData.getGroupIds()) {
 			final GroupTypeId groupTypeId = groupInitialData.getGroupTypeId(scenarioGroupId);
 			for (final GroupPropertyId groupPropertyId : groupInitialData.getGroupPropertyIds(groupTypeId)) {
@@ -556,7 +556,7 @@ public final class GroupEventResolver {
 		}
 	}
 
-	private void loadGroups(final ResolverContext resolverContext, final GroupInitialData groupInitialData, Map<GroupId, GroupId> scenarioToSimGroupMap) {
+	private void loadGroups(final DataManagerContext dataManagerContext, final GroupInitialData groupInitialData, Map<GroupId, GroupId> scenarioToSimGroupMap) {
 		/*
 		 * Build the map that will translate the group ids recorded in the
 		 * scenario into a contiguous set of integers starting with zero.
@@ -567,7 +567,7 @@ public final class GroupEventResolver {
 
 		for (final GroupId scenarioGroupId : scenarioGroupIds) {
 			final GroupTypeId groupTypeId = groupInitialData.getGroupTypeId(scenarioGroupId);
-			validateGroupTypeId(resolverContext, groupTypeId);
+			validateGroupTypeId(dataManagerContext, groupTypeId);
 			final GroupId simulationGroupId = personGroupDataManager.addGroup(groupTypeId);
 			GroupId expectedSimulationGroupId = scenarioToSimGroupMap.get(scenarioGroupId);
 			if (expectedSimulationGroupId == null) {
@@ -579,54 +579,54 @@ public final class GroupEventResolver {
 		}
 	}
 
-	private void handleGroupRemovalRequestEventValidation(final ResolverContext resolverContext, final GroupRemovalRequestEvent groupRemovalRequestEvent) {
+	private void handleGroupRemovalRequestEventValidation(final DataManagerContext dataManagerContext, final GroupRemovalRequestEvent groupRemovalRequestEvent) {
 		final GroupId groupId = groupRemovalRequestEvent.getGroupId();
-		validateGroupExists(resolverContext, groupId);
+		validateGroupExists(dataManagerContext, groupId);
 	}
 
-	private void handleGroupRemovalRequestEventExecution(final ResolverContext resolverContext, final GroupRemovalRequestEvent groupRemovalRequestEvent) {
+	private void handleGroupRemovalRequestEventExecution(final DataManagerContext dataManagerContext, final GroupRemovalRequestEvent groupRemovalRequestEvent) {
 		final GroupId groupId = groupRemovalRequestEvent.getGroupId();
-		resolverContext.queueEventForResolution(new GroupImminentRemovalObservationEvent(groupId));
-		resolverContext.addPlan((context) -> personGroupDataManager.removeGroup(groupRemovalRequestEvent.getGroupId()), resolverContext.getTime());
+		dataManagerContext.resolveEvent(new GroupImminentRemovalObservationEvent(groupId));
+		dataManagerContext.addPlan((context) -> personGroupDataManager.removeGroup(groupRemovalRequestEvent.getGroupId()), dataManagerContext.getTime());
 	}
 
-	private void handleGroupMembershipRemovalEventExecution(final ResolverContext resolverContext, final GroupMembershipRemovalEvent groupMembershipRemovalEvent) {
+	private void handleGroupMembershipRemovalEventExecution(final DataManagerContext dataManagerContext, final GroupMembershipRemovalEvent groupMembershipRemovalEvent) {
 		final GroupId groupId = groupMembershipRemovalEvent.getGroupId();
 		final PersonId personId = groupMembershipRemovalEvent.getPersonId();
 		personGroupDataManager.removePersonFromGroup(groupId, personId);
-		resolverContext.queueEventForResolution(new GroupMembershipRemovalObservationEvent(personId, groupId));
+		dataManagerContext.resolveEvent(new GroupMembershipRemovalObservationEvent(personId, groupId));
 	}
 
-	private void handleGroupMembershipRemovalEventValidation(final ResolverContext resolverContext, final GroupMembershipRemovalEvent groupMembershipRemovalEvent) {
+	private void handleGroupMembershipRemovalEventValidation(final DataManagerContext dataManagerContext, final GroupMembershipRemovalEvent groupMembershipRemovalEvent) {
 		final GroupId groupId = groupMembershipRemovalEvent.getGroupId();
 		final PersonId personId = groupMembershipRemovalEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
-		validateGroupExists(resolverContext, groupId);
-		validatePersonInGroup(resolverContext, personId, groupId);
+		validatePersonExists(dataManagerContext, personId);
+		validateGroupExists(dataManagerContext, groupId);
+		validatePersonInGroup(dataManagerContext, personId, groupId);
 	}
 
-	private void handleGroupPropertyValueAssignmentEventExecution(final ResolverContext resolverContext, final GroupPropertyValueAssignmentEvent groupPropertyValueAssignmentEvent) {
+	private void handleGroupPropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final GroupPropertyValueAssignmentEvent groupPropertyValueAssignmentEvent) {
 		final GroupId groupId = groupPropertyValueAssignmentEvent.getGroupId();
 		final GroupPropertyId groupPropertyId = groupPropertyValueAssignmentEvent.getGroupPropertyId();
 		final Object groupPropertyValue = groupPropertyValueAssignmentEvent.getGroupPropertyValue();
 
 		Object oldValue = personGroupDataManager.getGroupPropertyValue(groupId, groupPropertyId);
 		personGroupDataManager.setGroupPropertyValue(groupId, groupPropertyId, groupPropertyValue);
-		resolverContext.queueEventForResolution(new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
+		dataManagerContext.resolveEvent(new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 	}
 
-	private void handleGroupPropertyValueAssignmentEventValidation(final ResolverContext resolverContext, final GroupPropertyValueAssignmentEvent groupPropertyValueAssignmentEvent) {
+	private void handleGroupPropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final GroupPropertyValueAssignmentEvent groupPropertyValueAssignmentEvent) {
 		final GroupId groupId = groupPropertyValueAssignmentEvent.getGroupId();
 		final GroupPropertyId groupPropertyId = groupPropertyValueAssignmentEvent.getGroupPropertyId();
 		final Object groupPropertyValue = groupPropertyValueAssignmentEvent.getGroupPropertyValue();
 
-		validateGroupExists(resolverContext, groupId);
+		validateGroupExists(dataManagerContext, groupId);
 		final GroupTypeId groupTypeId = personGroupDataManager.getGroupType(groupId);
-		validateGroupPropertyId(resolverContext, groupTypeId, groupPropertyId);
+		validateGroupPropertyId(dataManagerContext, groupTypeId, groupPropertyId);
 		final PropertyDefinition propertyDefinition = personGroupDataManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
-		validatePropertyMutability(resolverContext, propertyDefinition);
-		validateGroupPropertyValueNotNull(resolverContext, groupPropertyValue);
-		validateValueCompatibility(resolverContext, groupPropertyId, propertyDefinition, groupPropertyValue);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
+		validateGroupPropertyValueNotNull(dataManagerContext, groupPropertyValue);
+		validateValueCompatibility(dataManagerContext, groupPropertyId, propertyDefinition, groupPropertyValue);
 	}
 
 	/**
@@ -640,9 +640,9 @@ public final class GroupEventResolver {
 	 *             <li>{@link NucleusError#UNKNOWN_GROUP_TYPE_ID} if the group
 	 *             type id is unknown
 	 */
-	private void validateGroupConstructionInfoNotNull(final ResolverContext resolverContext, final GroupConstructionInfo groupConstructionInfo) {
+	private void validateGroupConstructionInfoNotNull(final DataManagerContext dataManagerContext, final GroupConstructionInfo groupConstructionInfo) {
 		if (groupConstructionInfo == null) {
-			resolverContext.throwContractException(GroupError.NULL_GROUP_CONSTRUCTION_INFO);
+			dataManagerContext.throwContractException(GroupError.NULL_GROUP_CONSTRUCTION_INFO);
 		}
 
 	}
@@ -658,27 +658,27 @@ public final class GroupEventResolver {
 	 *
 	 *
 	 */
-	private void validateGroupExists(final ResolverContext resolverContext, final GroupId groupId) {
+	private void validateGroupExists(final DataManagerContext dataManagerContext, final GroupId groupId) {
 		if (groupId == null) {
-			resolverContext.throwContractException(GroupError.NULL_GROUP_ID);
+			dataManagerContext.throwContractException(GroupError.NULL_GROUP_ID);
 		}
 		if (!personGroupDataManager.groupExists(groupId)) {
-			resolverContext.throwContractException(GroupError.UNKNOWN_GROUP_ID);
+			dataManagerContext.throwContractException(GroupError.UNKNOWN_GROUP_ID);
 		}
 	}
 
-	private void validateGroupPropertyId(final ResolverContext resolverContext, final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
+	private void validateGroupPropertyId(final DataManagerContext dataManagerContext, final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			resolverContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			dataManagerContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
 		if (!personGroupDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
-			resolverContext.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID);
+			dataManagerContext.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID);
 		}
 	}
 
-	private void validateGroupPropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private void validateGroupPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
 		}
 	}
 
@@ -693,60 +693,60 @@ public final class GroupEventResolver {
 	 *             <li>{@link NucleusError#UNKNOWN_GROUP_TYPE_ID} if the group
 	 *             type id is unknown
 	 */
-	private void validateGroupTypeId(final ResolverContext resolverContext, final GroupTypeId groupTypeId) {
+	private void validateGroupTypeId(final DataManagerContext dataManagerContext, final GroupTypeId groupTypeId) {
 
 		if (groupTypeId == null) {
-			resolverContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			dataManagerContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
 
 		if (!this.personGroupDataManager.groupTypeIdExists(groupTypeId)) {
-			resolverContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
+			dataManagerContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private void validatePersonIndexExists(final ResolverContext resolverContext, final int personIndex) {
+	private void validatePersonIndexExists(final DataManagerContext dataManagerContext, final int personIndex) {
 		if (!personDataView.personIndexExists(personIndex)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
 	/*
 	 * Preconditions : the person and group exist
 	 */
-	private void validatePersonInGroup(final ResolverContext resolverContext, final PersonId personId, final GroupId groupId) {
+	private void validatePersonInGroup(final DataManagerContext dataManagerContext, final PersonId personId, final GroupId groupId) {
 		if (!personGroupDataManager.isGroupMember(groupId, personId)) {
-			resolverContext.throwContractException(GroupError.NON_GROUP_MEMBERSHIP, "Person " + personId + " is not a member of group " + groupId);
+			dataManagerContext.throwContractException(GroupError.NON_GROUP_MEMBERSHIP, "Person " + personId + " is not a member of group " + groupId);
 		}
 	}
 
 	/*
 	 * Preconditions : the person and group exist
 	 */
-	private void validatePersonNotInGroup(final ResolverContext resolverContext, final PersonId personId, final GroupId groupId) {
+	private void validatePersonNotInGroup(final DataManagerContext dataManagerContext, final PersonId personId, final GroupId groupId) {
 		if (personGroupDataManager.isGroupMember(groupId, personId)) {
-			resolverContext.throwContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP, "Person " + personId + " is already a member of group " + groupId);
+			dataManagerContext.throwContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP, "Person " + personId + " is already a member of group " + groupId);
 		}
 	}
 
-	private void validatePropertyMutability(final ResolverContext resolverContext, final PropertyDefinition propertyDefinition) {
+	private void validatePropertyMutability(final DataManagerContext dataManagerContext, final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
-			resolverContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
+			dataManagerContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(final ResolverContext resolverContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final DataManagerContext dataManagerContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			resolverContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}

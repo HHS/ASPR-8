@@ -21,7 +21,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
 import plugins.partitions.testsupport.attributes.events.mutation.AttributeValueAssignmentEvent;
@@ -34,7 +34,7 @@ import plugins.people.events.mutation.PersonCreationEvent;
 import plugins.people.events.mutation.PersonRemovalRequestEvent;
 import plugins.people.support.PersonContructionData;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -44,13 +44,13 @@ import util.annotations.UnitTestMethod;
 public class AT_PopulationPartitionImpl {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, Partition.class })
+	@UnitTestConstructor(args = { SimulationContext.class, Partition.class })
 	public void testConstructor() {
 		PartitionsActionSupport.testConsumer(100, 2997202170895856110L, (c) -> {
 			// establish data view
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select about half of the people
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
@@ -132,8 +132,8 @@ public class AT_PopulationPartitionImpl {
 		PartitionsActionSupport.testConsumer(100, 4856457716960397685L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Create a container for the people we expect to be contained in
@@ -181,8 +181,8 @@ public class AT_PopulationPartitionImpl {
 		PartitionsActionSupport.testConsumer(100, 8982209428616460818L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			for (PersonId personId : personDataView.getPeople()) {
@@ -254,8 +254,8 @@ public class AT_PopulationPartitionImpl {
 		PartitionsActionSupport.testConsumer(100, 9050139615348413060L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Create a container for the people we expect to be contained in
@@ -332,8 +332,8 @@ public class AT_PopulationPartitionImpl {
 	 */
 	private static void assignRandomAttributes(final AgentContext c) {
 		final PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-		final StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-		final RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+		final StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+		final RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 		for (final PersonId personId : personDataView.getPeople()) {
 			boolean b = randomGenerator.nextBoolean();
@@ -544,8 +544,8 @@ public class AT_PopulationPartitionImpl {
 		PartitionsActionSupport.testConsumer(100, 2652052463264971998L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Create a container for the people we expect to be contained in
@@ -682,8 +682,8 @@ public class AT_PopulationPartitionImpl {
 		PartitionsActionSupport.testConsumer(100, 4597503339659285165L, (c) -> {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Create a container for the people we expect to be contained in
@@ -809,7 +809,7 @@ public class AT_PopulationPartitionImpl {
 
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			/*
@@ -850,7 +850,7 @@ public class AT_PopulationPartitionImpl {
 			List<PersonId> peopleInTheWorld = personDataView.getPeople();
 
 			// alter people's attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : peopleInTheWorld) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));

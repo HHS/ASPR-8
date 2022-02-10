@@ -11,7 +11,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import net.jcip.annotations.GuardedBy;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.compartments.CompartmentPlugin;
 import plugins.groups.support.GroupError;
@@ -29,7 +29,7 @@ import plugins.properties.support.IndexedPropertyManager;
 import plugins.properties.support.IntPropertyManager;
 import plugins.properties.support.ObjectPropertyManager;
 import plugins.properties.support.PropertyDefinition;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import util.ContractException;
 import util.arraycontainers.IntValueContainer;
@@ -108,9 +108,9 @@ public final class PersonGroupDataManager {
 
 	private GroupId lastIssuedGroupId;
 
-	private final StochasticsDataView stochasticsDataView;
+	private final StochasticsDataManager stochasticsDataManager;
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
 	 * Add the group type to this manager. Group types must be added prior to
@@ -124,10 +124,10 @@ public final class PersonGroupDataManager {
 	 */
 	public void addGroupType(GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
 		if (typesToIndexesMap.keySet().contains(groupTypeId)) {
-			context.throwContractException(GroupError.DUPLICATE_GROUP_TYPE);
+			simulationContext.throwContractException(GroupError.DUPLICATE_GROUP_TYPE);
 		}
 		final int index = typesToIndexesMap.size();
 		typesToIndexesMap.put(groupTypeId, index);
@@ -155,28 +155,28 @@ public final class PersonGroupDataManager {
 	public void defineGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId, PropertyDefinition propertyDefinition) {
 
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
 		if (!groupTypeIdExists(groupTypeId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}
 
 		if (groupPropertyId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
 
 		if (getGroupPropertyExists(groupTypeId, groupPropertyId)) {
-			context.throwContractException(GroupError.DUPLICATE_GROUP_PROPERTY_DEFINITION);
+			simulationContext.throwContractException(GroupError.DUPLICATE_GROUP_PROPERTY_DEFINITION);
 		}
 
 		if (propertyDefinition == null) {
-			context.throwContractException(GroupError.NULL_PROPERTY_DEFINITION);
+			simulationContext.throwContractException(GroupError.NULL_PROPERTY_DEFINITION);
 		}
 
 		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 
-		final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(context, propertyDefinition, 0);
+		final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(simulationContext, propertyDefinition, 0);
 		managerMap.put(groupPropertyId, indexedPropertyManager);
 		map.put(groupPropertyId, propertyDefinition);
 
@@ -188,13 +188,13 @@ public final class PersonGroupDataManager {
 	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#NULL_CONTEXT}</li>
 	 */
-	public PersonGroupDataManager(final Context context) {
-		if (context == null) {
+	public PersonGroupDataManager(final SimulationContext simulationContext) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 
-		stochasticsDataView = context.getDataView(StochasticsDataView.class).get();
+		stochasticsDataManager = simulationContext.getDataView(StochasticsDataManager.class).get();
 	}
 
 	/**
@@ -265,7 +265,7 @@ public final class PersonGroupDataManager {
 	 */
 	private void aquireSamplingLock() {
 		if (samplingIsLocked) {
-			context.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot access weighted sampling during the execution of a previous weighted sampling");
+			simulationContext.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot access weighted sampling during the execution of a previous weighted sampling");
 		}
 		samplingIsLocked = true;
 	}
@@ -528,27 +528,27 @@ public final class PersonGroupDataManager {
 		return new ArrayList<>(types);
 	}
 
-	private IndexedPropertyManager getIndexedPropertyManager(final Context context, final PropertyDefinition propertyDefinition, final int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			indexedPropertyManager = new EnumPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new EnumPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(simulationContext, propertyDefinition, intialSize);
 		}
 		return indexedPropertyManager;
 	}
@@ -758,9 +758,9 @@ public final class PersonGroupDataManager {
 		RandomGenerator randomGenerator;
 		if (groupSampler.getRandomNumberGeneratorId().isPresent()) {
 			final RandomNumberGeneratorId randomNumberGeneratorId = groupSampler.getRandomNumberGeneratorId().get();
-			randomGenerator = stochasticsDataView.getRandomGeneratorFromId(randomNumberGeneratorId);
+			randomGenerator = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		} else {
-			randomGenerator = stochasticsDataView.getRandomGenerator();
+			randomGenerator = stochasticsDataManager.getRandomGenerator();
 		}
 		final GroupWeightingFunction groupWeightingFunction = groupSampler.getWeightingFunction().orElse(null);
 		final PersonId excludedPersonId = groupSampler.getExcludedPerson().orElse(null);
@@ -799,9 +799,9 @@ public final class PersonGroupDataManager {
 						 * immediately since no person may be legitimately
 						 * selected.
 						 */
-						final double weight = groupWeightingFunction.getWeight(context, personId, groupId);
+						final double weight = groupWeightingFunction.getWeight(simulationContext, personId, groupId);
 						if (!Double.isFinite(weight) || (weight < 0)) {
-							context.throwContractException(GroupError.MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION);
+							simulationContext.throwContractException(GroupError.MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION);
 
 						}
 						/*
@@ -827,7 +827,7 @@ public final class PersonGroupDataManager {
 						 * legitimate selection can be made
 						 */
 						if (!Double.isFinite(sum)) {
-							context.throwContractException(GroupError.MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION);
+							simulationContext.throwContractException(GroupError.MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION);
 						}
 
 						final double targetValue = randomGenerator.nextDouble() * sum;

@@ -12,7 +12,7 @@ import nucleus.AgentContext;
 import nucleus.Simulation;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
@@ -38,7 +38,7 @@ public class CompartmentsActionSupport {
 	 * passed to an invocation of the testConsumers() method.
 	 */
 	public static void testConsumer(int initialPopulation, long seed,TimeTrackingPolicy timeTrackingPolicy, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 		testConsumers(initialPopulation, seed,timeTrackingPolicy, pluginBuilder.build());
@@ -64,7 +64,7 @@ public class CompartmentsActionSupport {
 	 *             all action plans execute or if there are no action plans
 	 *             contained in the action plugin</li>
 	 */
-	public static void testConsumers(int initialPopulation, long seed,TimeTrackingPolicy timeTrackingPolicy, ActionPlugin actionPlugin) {
+	public static void testConsumers(int initialPopulation, long seed,TimeTrackingPolicy timeTrackingPolicy, ActionPluginInitializer actionPluginInitializer) {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(seed);
 		// create a list of people
 		List<PersonId> people = new ArrayList<>();
@@ -111,13 +111,13 @@ public class CompartmentsActionSupport {
 		}
 
 		// build and add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 

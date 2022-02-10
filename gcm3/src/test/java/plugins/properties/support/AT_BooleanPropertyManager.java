@@ -14,7 +14,7 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import util.ContractException;
 import util.MutableDouble;
 import util.SeedProvider;
@@ -40,11 +40,11 @@ public class AT_BooleanPropertyManager {
 	public void testGetPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4879223247393954289L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockContext, propertyDefinition, 0);
+		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -84,11 +84,11 @@ public class AT_BooleanPropertyManager {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6779797760333524552L);
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		BooleanPropertyManager booleanPropertyManager2 = new BooleanPropertyManager(mockContext, propertyDefinition, 0);
+		BooleanPropertyManager booleanPropertyManager2 = new BooleanPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		for (int i = 0; i < 1000; i++) {
 			int id = randomGenerator.nextInt(300);
 			time.setValue(randomGenerator.nextDouble() * 1000);
@@ -100,7 +100,7 @@ public class AT_BooleanPropertyManager {
 
 		// precondition tests:
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockContext, propertyDefinition, 0);
+		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.getPropertyTime(0));
 		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
 
@@ -114,11 +114,11 @@ public class AT_BooleanPropertyManager {
 	public void testSetPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4827517950755837724L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockContext, propertyDefinition, 0);
+		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -155,12 +155,12 @@ public class AT_BooleanPropertyManager {
 	@UnitTestMethod(name = "removeId", args = { int.class })
 	public void testRemoveId() {
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		// we will first test the manager with an initial value of false
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockContext, propertyDefinition, 0);
+		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertFalse((Boolean) booleanPropertyManager.getPropertyValue(5));
@@ -178,7 +178,7 @@ public class AT_BooleanPropertyManager {
 		// we will next test the manager with an initial value of true
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		booleanPropertyManager = new BooleanPropertyManager(mockContext, propertyDefinition, 0);
+		booleanPropertyManager = new BooleanPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertTrue((Boolean) booleanPropertyManager.getPropertyValue(5));
@@ -195,7 +195,7 @@ public class AT_BooleanPropertyManager {
 
 		// precondition tests
 		PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-		BooleanPropertyManager bpm = new BooleanPropertyManager(mockContext, def, 0);
+		BooleanPropertyManager bpm = new BooleanPropertyManager(mockSimulationContext, def, 0);
 		
 		ContractException contractException = assertThrows(ContractException.class, () ->bpm.removeId(-1));
 		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -205,7 +205,7 @@ public class AT_BooleanPropertyManager {
 	@Test
 	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 		PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.3).build();
@@ -214,22 +214,22 @@ public class AT_BooleanPropertyManager {
 		//precondition tests
 		
 		// if the property definition is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockContext, null, 0));
+		ContractException contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockSimulationContext, null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if the property definition does not have a type of Boolean.class
-		contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockContext, badPropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockSimulationContext, badPropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
 		// if the property definition does not contain a default value
-		contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockContext, badBooleanPropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockSimulationContext, badBooleanPropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 		// if the initial size is negative
-		contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockContext, goodPropertyDefinition, -1));
+		contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(mockSimulationContext, goodPropertyDefinition, -1));
 		assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockContext, goodPropertyDefinition, 0);
+		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockSimulationContext, goodPropertyDefinition, 0);
 		assertNotNull(booleanPropertyManager);
 
 	}
@@ -238,11 +238,11 @@ public class AT_BooleanPropertyManager {
 	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockContext, propertyDefinition, 0);
+		BooleanPropertyManager booleanPropertyManager = new BooleanPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// precondition tests
 		ContractException contractException = assertThrows(ContractException.class, () -> booleanPropertyManager.incrementCapacity(-1));

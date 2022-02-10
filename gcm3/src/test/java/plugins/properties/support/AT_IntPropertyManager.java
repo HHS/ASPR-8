@@ -12,7 +12,7 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import util.ContractException;
 import util.MutableDouble;
 import util.SeedProvider;
@@ -36,12 +36,12 @@ public class AT_IntPropertyManager {
 	public void testGetPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5297426971018191882L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		int defaultValue = 423;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		IntPropertyManager intPropertyManager = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -81,16 +81,16 @@ public class AT_IntPropertyManager {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7115872240650739867L);
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).build();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		IntPropertyManager intPropertyManager = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		assertThrows(RuntimeException.class, () -> intPropertyManager.getPropertyTime(0));
 
 		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		IntPropertyManager intPropertyManager2 = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		IntPropertyManager intPropertyManager2 = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		for (int i = 0; i < 1000; i++) {
 			int id = randomGenerator.nextInt(300);
 			time.setValue(randomGenerator.nextDouble() * 1000);
@@ -101,7 +101,7 @@ public class AT_IntPropertyManager {
 
 		// precondition tests:
 		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
-		IntPropertyManager ipm = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		IntPropertyManager ipm = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		ContractException contractException = assertThrows(ContractException.class, () -> ipm.getPropertyTime(0));
 		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
 
@@ -116,12 +116,12 @@ public class AT_IntPropertyManager {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5297426971018191882L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		int defaultValue = 423;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		IntPropertyManager intPropertyManager = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -162,13 +162,13 @@ public class AT_IntPropertyManager {
 		 * efficiency.
 		 */
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		// we will first test the manager with an initial value of 6
 		int defaultValue = 6;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		IntPropertyManager intPropertyManager = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
@@ -187,7 +187,7 @@ public class AT_IntPropertyManager {
 		// we will next test the manager with an initial value of true
 		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		intPropertyManager = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
@@ -204,7 +204,7 @@ public class AT_IntPropertyManager {
 
 		// precondition tests
 		PropertyDefinition def = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-		IntPropertyManager ipm = new IntPropertyManager(mockContext, def, 0);
+		IntPropertyManager ipm = new IntPropertyManager(mockSimulationContext, def, 0);
 
 		ContractException contractException = assertThrows(ContractException.class, () -> ipm.removeId(-1));
 		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -213,29 +213,29 @@ public class AT_IntPropertyManager {
 	@Test
 	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
 		PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 		PropertyDefinition badIntPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
 		// if the property definition is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, null, 0));
+		ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockSimulationContext, null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if the property definition does not have a type of Double.class
-		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, badPropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockSimulationContext, badPropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
 		// if the property definition does not contain a default value
-		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, badIntPropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockSimulationContext, badIntPropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 		// if the initial size is negative
-		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, goodPropertyDefinition, -1));
+		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockSimulationContext, goodPropertyDefinition, -1));
 		assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-		IntPropertyManager doublePropertyManager = new IntPropertyManager(mockContext, goodPropertyDefinition, 0);
+		IntPropertyManager doublePropertyManager = new IntPropertyManager(mockSimulationContext, goodPropertyDefinition, 0);
 		assertNotNull(doublePropertyManager);
 
 	}
@@ -244,11 +244,11 @@ public class AT_IntPropertyManager {
 	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+		IntPropertyManager intPropertyManager = new IntPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// precondition tests
 		ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.incrementCapacity(-1));

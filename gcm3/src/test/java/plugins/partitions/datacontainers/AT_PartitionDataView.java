@@ -20,9 +20,9 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentId;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.partitions.events.PartitionAdditionEvent;
 import plugins.partitions.events.PartitionRemovalEvent;
@@ -42,7 +42,7 @@ import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.ContractException;
@@ -56,7 +56,7 @@ import util.annotations.UnitTestMethod;
 public final class AT_PartitionDataView {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, PartitionDataManager.class })
+	@UnitTestConstructor(args = { SimulationContext.class, PartitionDataManager.class })
 	public void testConstructor() {
 		PartitionsActionSupport.testConsumer(0, 4959182295195625802L, (c) -> {
 
@@ -84,14 +84,14 @@ public final class AT_PartitionDataView {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 
 			// create a container to hold the people we expect to find in the
 			// partition
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
 			// alter people's attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));
@@ -135,7 +135,7 @@ public final class AT_PartitionDataView {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			// define a function that will convert an integer into another
@@ -147,7 +147,7 @@ public final class AT_PartitionDataView {
 			};
 
 			// alter people's INT_0 and BOOLEAN_0 attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));
@@ -223,7 +223,7 @@ public final class AT_PartitionDataView {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 
 			// create a couter to hold the number people we expect to find in
 			// the
@@ -231,7 +231,7 @@ public final class AT_PartitionDataView {
 			int expectedPeopleCount = 0;
 
 			// alter people's attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));
@@ -273,7 +273,7 @@ public final class AT_PartitionDataView {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			// define a function that will convert an integer into another
@@ -285,7 +285,7 @@ public final class AT_PartitionDataView {
 			};
 
 			// alter people's INT_0 and BOOLEAN_0 attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));
@@ -354,7 +354,7 @@ public final class AT_PartitionDataView {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			/*
@@ -392,7 +392,7 @@ public final class AT_PartitionDataView {
 			};
 
 			// alter people's attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));
@@ -641,7 +641,7 @@ public final class AT_PartitionDataView {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			/*
@@ -682,7 +682,7 @@ public final class AT_PartitionDataView {
 			List<PersonId> peopleInTheWorld = personDataView.getPeople();
 
 			// alter people's attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : peopleInTheWorld) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));
@@ -921,7 +921,7 @@ public final class AT_PartitionDataView {
 		PartitionsActionSupport.testConsumer(100, 607630153604184177L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			// create a partition where half the population is in the partition
@@ -933,7 +933,7 @@ public final class AT_PartitionDataView {
 			c.resolveEvent(new PartitionAdditionEvent(partition, key));
 
 			// change the BOOLEAN_0 randomly for every person
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				boolean newValue = randomGenerator.nextBoolean();
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.BOOLEAN_0, newValue));
@@ -963,7 +963,7 @@ public final class AT_PartitionDataView {
 		PartitionsActionSupport.testConsumer(100, 7338572401998066291L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
 
 			/*
@@ -1012,7 +1012,7 @@ public final class AT_PartitionDataView {
 			c.resolveEvent(new PartitionAdditionEvent(partition, key));
 
 			// alter people's attributes randomly
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				c.resolveEvent(new AttributeValueAssignmentEvent(personId, TestAttributeId.INT_0, intValue));
@@ -1144,7 +1144,7 @@ public final class AT_PartitionDataView {
 		 * attribute ids exist.
 		 * 
 		 */
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Add an agent that will add the first partition
@@ -1206,8 +1206,8 @@ public final class AT_PartitionDataView {
 		}));
 
 		// build and add the action plugin to the engine
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		PartitionsActionSupport.testConsumers(0, 1836218798187614083L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		PartitionsActionSupport.testConsumers(0, 1836218798187614083L, actionPluginInitializer);
 
 	}
 

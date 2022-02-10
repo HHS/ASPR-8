@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
-import nucleus.testsupport.MockContext;
+import nucleus.SimulationContext;
+import nucleus.testsupport.MockSimulationContext;
 import util.MutableDouble;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -26,9 +26,9 @@ public class AT_PropertyValueRecord {
 	@UnitTestMethod(name = "getValue", args = {})
 	public void testGetValue() {
 		MutableDouble time = new MutableDouble(345.6);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
 		
-		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockContext);
+		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockSimulationContext);
 		propertyValueRecord.setPropertyValue("cat");
 		assertEquals("cat", propertyValueRecord.getValue());
 
@@ -44,9 +44,9 @@ public class AT_PropertyValueRecord {
 	@UnitTestMethod(name = "setPropertyValue", args = { Object.class })
 	public void testSetPropertyValue() {
 		MutableDouble time = new MutableDouble(345.6);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
 		
-		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockContext);
+		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockSimulationContext);
 		propertyValueRecord.setPropertyValue("cat");
 		assertEquals("cat", propertyValueRecord.getValue());
 
@@ -62,9 +62,9 @@ public class AT_PropertyValueRecord {
 	@UnitTestMethod(name = "getAssignmentTime", args = {})
 	public void testGetAssignmentTime() {
 		MutableDouble time = new MutableDouble(345.6);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
 		
-		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockContext);
+		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockSimulationContext);
 		propertyValueRecord.setPropertyValue("cat");
 		assertEquals(time.getValue(), propertyValueRecord.getAssignmentTime(), 0);
 
@@ -74,10 +74,10 @@ public class AT_PropertyValueRecord {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Context.class })
+	@UnitTestConstructor(args = { SimulationContext.class })
 	public void testConstructor() {
-		MockContext mockContext = MockContext.builder().build();
-		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(mockSimulationContext);
 		assertNotNull(propertyValueRecord);
 		assertEquals(0, propertyValueRecord.getAssignmentTime());		
 	}

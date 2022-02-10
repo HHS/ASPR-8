@@ -1,7 +1,7 @@
 package plugins.regions.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -49,28 +49,28 @@ public class PersonRegionChangeObservationEvent implements Event {
 		ARRIVAL, DEPARTURE, PERSON
 	}
 
-	private static void validateRegionId(Context context, RegionId regionId) {
+	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataView regionDataView = context.getDataView(RegionDataView.class).get();
+		RegionDataView regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 		if (!regionDataView.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
 
-	private static void validatePersonId(Context context, PersonId personId) {
+	private static void validatePersonId(SimulationContext simulationContext, PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataView personDataView = context.getDataView(PersonDataView.class).get();
+		PersonDataView personDataView = simulationContext.getDataView(PersonDataView.class).get();
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByArrivalRegion(Context context, RegionId regionId) {
-		validateRegionId(context, regionId);
+	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByArrivalRegion(SimulationContext simulationContext, RegionId regionId) {
+		validateRegionId(simulationContext, regionId);
 		return new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.ARRIVAL, PersonRegionChangeObservationEvent.class, regionId);
 	}
 
@@ -78,8 +78,8 @@ public class PersonRegionChangeObservationEvent implements Event {
 		return new SimpleEventLabeler<>(LabelerId.ARRIVAL, PersonRegionChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.ARRIVAL, PersonRegionChangeObservationEvent.class, event.getCurrentRegionId()));
 	}
 
-	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByDepartureRegion(Context context, RegionId regionId) {
-		validateRegionId(context, regionId);
+	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByDepartureRegion(SimulationContext simulationContext, RegionId regionId) {
+		validateRegionId(simulationContext, regionId);
 		return new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.DEPARTURE, PersonRegionChangeObservationEvent.class, regionId);
 	}
 
@@ -87,8 +87,8 @@ public class PersonRegionChangeObservationEvent implements Event {
 		return new SimpleEventLabeler<>(LabelerId.DEPARTURE, PersonRegionChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.DEPARTURE, PersonRegionChangeObservationEvent.class, event.getPreviousRegionId()));
 	}
 
-	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByPerson(Context context, PersonId personId) {
-		validatePersonId(context, personId);
+	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
+		validatePersonId(simulationContext, personId);
 		return new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.PERSON, PersonRegionChangeObservationEvent.class, personId);
 	}
 

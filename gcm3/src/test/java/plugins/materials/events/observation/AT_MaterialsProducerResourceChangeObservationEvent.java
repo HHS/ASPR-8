@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import plugins.materials.support.MaterialsProducerId;
@@ -100,7 +100,7 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByMaterialsProducerAndResource", args = { Context.class, MaterialsProducerId.class, ResourceId.class })
+	@UnitTestMethod(name = "getEventLabelByMaterialsProducerAndResource", args = { SimulationContext.class, MaterialsProducerId.class, ResourceId.class })
 	public void testGetEventLabelByMaterialsProducerAndResource() {
 		MaterialsActionSupport.testConsumer(7613656660266127922L, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
@@ -149,7 +149,7 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByResource", args = { Context.class, ResourceId.class })
+	@UnitTestMethod(name = "getEventLabelByResource", args = { SimulationContext.class, ResourceId.class })
 	public void testGetEventLabelByResource() {
 		MaterialsActionSupport.testConsumer(6642554036399629036L, (c) -> {
 			for (TestResourceId testResourceId : TestResourceId.values()) {

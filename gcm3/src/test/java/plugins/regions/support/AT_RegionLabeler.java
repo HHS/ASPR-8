@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datacontainers.PersonDataView;
@@ -55,7 +55,7 @@ public class AT_RegionLabeler {
 		 * alone. Compare the two labels for equality.
 		 */
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// build a region labeler with a function that can be tested
 		Function<RegionId, Object> function = (c) -> {
@@ -123,8 +123,8 @@ public class AT_RegionLabeler {
 		}));
 		
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(0, 343017070904588574L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(0, 343017070904588574L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPluginInitializer);
 		
 	}
 

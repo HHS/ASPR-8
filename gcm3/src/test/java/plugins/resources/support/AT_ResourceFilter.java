@@ -9,7 +9,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
@@ -25,7 +25,7 @@ import plugins.resources.events.mutation.ResourceTransferToPersonEvent;
 import plugins.resources.events.observation.PersonResourceChangeObservationEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -58,7 +58,7 @@ public class AT_ResourceFilter {
 	}
 	
 	@Test
-	@UnitTestMethod(name = "validate", args = { Context.class })
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
 		ResourcesActionSupport.testConsumer(12, 6989281647149803633L, (c) -> {
@@ -82,15 +82,15 @@ public class AT_ResourceFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		ResourcesActionSupport.testConsumer(100, 5313696152098995059L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			Filter filter = new ResourceFilter(TestResourceId.RESOURCE_1, Equality.GREATER_THAN, 12L);
 

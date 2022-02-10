@@ -15,8 +15,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ResolverContext;
-import nucleus.testsupport.MockContext;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.globals.initialdata.GlobalInitialData;
 import plugins.globals.support.GlobalComponentId;
 import plugins.globals.support.GlobalError;
@@ -37,16 +37,16 @@ import util.annotations.UnitTestMethod;
 public final class AT_GlobalDataManager {
 
 	@Test
-	@UnitTestConstructor(args = { ResolverContext.class, GlobalInitialData.class })
+	@UnitTestConstructor(args = { DataManagerContext.class, GlobalInitialData.class })
 	public void testConstructor() {
 		// show that we can create a global data manager
-		assertNotNull(new GlobalDataManager(MockContext.builder().build()));
+		assertNotNull(new GlobalDataManager(MockSimulationContext.builder().build()));
 	}
 
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {
-		GlobalDataManager globalDataManager = new GlobalDataManager(MockContext.builder().build());
+		GlobalDataManager globalDataManager = new GlobalDataManager(MockSimulationContext.builder().build());
 
 		// create a container for the expected property definitions
 		Map<GlobalPropertyId, PropertyDefinition> expectedPropertyDefintions = new LinkedHashMap<>();
@@ -75,7 +75,7 @@ public final class AT_GlobalDataManager {
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyIds", args = {})
 	public void testGetGlobalPropertyIds() {
-		GlobalDataManager globalDataManager = new GlobalDataManager(MockContext.builder().build());
+		GlobalDataManager globalDataManager = new GlobalDataManager(MockSimulationContext.builder().build());
 
 		// create a container for the expected property ids
 		Set<GlobalPropertyId> expectedGlobalPropertyIds = new LinkedHashSet<>();
@@ -98,7 +98,7 @@ public final class AT_GlobalDataManager {
 	public void testGetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8148367750247612326L);
 
-		GlobalDataManager globalDataManager = new GlobalDataManager(MockContext.builder().build());
+		GlobalDataManager globalDataManager = new GlobalDataManager(MockSimulationContext.builder().build());
 		Map<GlobalPropertyId, MutableInteger> expectedGlobalPropertyValues = new LinkedHashMap<>();
 		for (int i = 0; i < 10; i++) {
 			GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("property id " + i);
@@ -133,14 +133,14 @@ public final class AT_GlobalDataManager {
 	public void testGetGlobalPropertyTime() {
 		MutableDouble time = new MutableDouble();
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8148367750247612326L);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
 		Map<GlobalPropertyId, MutableDouble> expectedGlobalPropertyTimes = new LinkedHashMap<>();
 		for (int i = 0; i < 10; i++) {
 			GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("property id " + i);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(i).build();
 			globalDataManager.addGlobalPropertyDefinition(globalPropertyId, propertyDefinition);
-			expectedGlobalPropertyTimes.put(globalPropertyId, new MutableDouble(mockContext.getTime()));
+			expectedGlobalPropertyTimes.put(globalPropertyId, new MutableDouble(mockSimulationContext.getTime()));
 		}
 
 		// Set the global property values a few times and record the values.
@@ -150,7 +150,7 @@ public final class AT_GlobalDataManager {
 			GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("property id " + index);
 			int value = randomGenerator.nextInt();
 			globalDataManager.setGlobalPropertyValue(globalPropertyId, value);
-			expectedGlobalPropertyTimes.get(globalPropertyId).setValue(mockContext.getTime());
+			expectedGlobalPropertyTimes.get(globalPropertyId).setValue(mockSimulationContext.getTime());
 		}
 
 		// show that the time associated with each value is correct
@@ -174,8 +174,8 @@ public final class AT_GlobalDataManager {
 	public void testSetGlobalPropertyValue() {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8148367750247612326L);
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
 
 		for (int i = 0; i < 10; i++) {
 			GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("property id " + i);
@@ -203,8 +203,8 @@ public final class AT_GlobalDataManager {
 	@Test
 	@UnitTestMethod(name = "globalPropertyIdExists", args = { GlobalPropertyId.class })
 	public void testGlobalPropertyIdExists() {
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
 
 		for (int i = 0; i < 10; i++) {
 			GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("property id " + i);
@@ -229,8 +229,8 @@ public final class AT_GlobalDataManager {
 	@Test
 	@UnitTestMethod(name = "getGlobalComponentIds", args = {})
 	public void testGetGlobalComponentIds() {
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
 
 		Set<GlobalComponentId> expectedGlobalComponentIds = new LinkedHashSet<>();
 		for (int i = 0; i < 10; i++) {
@@ -246,8 +246,8 @@ public final class AT_GlobalDataManager {
 	@Test
 	@UnitTestMethod(name = "addGlobalComponentId", args = { GlobalComponentId.class })
 	public void testAddGlobalComponentId() {
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
 
 		Set<GlobalComponentId> expectedGlobalComponentIds = new LinkedHashSet<>();
 		for (int i = 0; i < 10; i++) {
@@ -270,7 +270,7 @@ public final class AT_GlobalDataManager {
 	@Test
 	@UnitTestMethod(name = "addGlobalPropertyDefinition", args = { GlobalPropertyId.class, PropertyDefinition.class })
 	public void testAddGlobalPropertyDefinition() {
-		GlobalDataManager globalDataManager = new GlobalDataManager(MockContext.builder().build());
+		GlobalDataManager globalDataManager = new GlobalDataManager(MockSimulationContext.builder().build());
 
 		// create a container for the expected property definitions
 		Map<GlobalPropertyId, PropertyDefinition> expectedPropertyDefintions = new LinkedHashMap<>();

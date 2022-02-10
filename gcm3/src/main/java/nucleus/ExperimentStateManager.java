@@ -479,7 +479,7 @@ public final class ExperimentStateManager {
 
 		public void handleOutput(Object output) {
 			if (output == null) {
-				throw new ContractException(ExperimentError.NULL_OUTPUT_ITEM);
+				throw new ContractException(NucleusError.NULL_OUTPUT_ITEM);
 			}
 
 			Set<TriConsumer<ExperimentContext, Integer, Object>> set = map.get(output.getClass());

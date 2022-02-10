@@ -3,7 +3,7 @@ package plugins.partitions.support;
 import java.util.Optional;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import plugins.people.support.PersonId;
 
@@ -32,8 +32,8 @@ public final class FilterSensitivity<T extends Event> {
 		}
 
 		@SuppressWarnings("unchecked")
-		public Optional<PersonId> requiresRefresh(Context context, Event event) {
-			return eventPredicate.requiresRefresh(context, (K) event);
+		public Optional<PersonId> requiresRefresh(SimulationContext simulationContext, Event event) {
+			return eventPredicate.requiresRefresh(simulationContext, (K) event);
 		}
 	}
 
@@ -66,8 +66,8 @@ public final class FilterSensitivity<T extends Event> {
 	 * will trigger the refresh and is thus the person id associated with the
 	 * event.
 	 */
-	public Optional<PersonId> requiresRefresh(Context context, Event event) {
-		return metaPredicate.requiresRefresh(context, event);
+	public Optional<PersonId> requiresRefresh(SimulationContext simulationContext, Event event) {
+		return metaPredicate.requiresRefresh(simulationContext, event);
 	}
 
 }

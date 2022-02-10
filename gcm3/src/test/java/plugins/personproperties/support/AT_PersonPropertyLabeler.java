@@ -13,7 +13,7 @@ import java.util.function.Function;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
@@ -23,7 +23,7 @@ import plugins.personproperties.events.mutation.PersonPropertyValueAssignmentEve
 import plugins.personproperties.events.observation.PersonPropertyChangeObservationEvent;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -87,7 +87,7 @@ public class AT_PersonPropertyLabeler {
 	
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 		/*
 		 * Have the agent show that the person property labeler produces a label
@@ -98,8 +98,8 @@ public class AT_PersonPropertyLabeler {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select a property to work with
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;

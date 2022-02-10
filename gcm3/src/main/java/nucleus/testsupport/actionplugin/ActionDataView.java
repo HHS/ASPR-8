@@ -4,9 +4,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.AgentId;
-import nucleus.DataView;
-import nucleus.ReportId;
-import nucleus.ResolverId;
+
+import plugins.reports.ReportId;
 
 /**
  * Test Support unit that provides a mutable, shared data source that is
@@ -63,7 +62,7 @@ public final class ActionDataView implements DataView {
 	 * @throw {@link RuntimeException}
 	 *        <li>if the resolver id is null</li>
 	 */
-	public Set<ResolverActionPlan> getResolverActionPlans(final ResolverId resolverId) {
+	public Set<DataManagerActionPlan> getResolverActionPlans(final ResolverId resolverId) {
 		return actionDataContainer.getResolverActionPlans(resolverId);
 	}
 	/**

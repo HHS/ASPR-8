@@ -140,7 +140,6 @@ import net.jcip.annotations.NotThreadSafe;
 import nucleus.AgentContext;
 import nucleus.EventLabel;
 import nucleus.NucleusError;
-import nucleus.ReportId;
 import plugins.compartments.datacontainers.CompartmentDataView;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.events.mutation.CompartmentPropertyValueAssignmentEvent;
@@ -232,6 +231,7 @@ import plugins.regions.events.observation.PersonRegionChangeObservationEvent;
 import plugins.regions.events.observation.RegionPropertyChangeObservationEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
+import plugins.reports.ReportId;
 import plugins.reports.datacontainers.ReportsDataView;
 import plugins.resources.datacontainers.ResourceDataView;
 import plugins.resources.events.mutation.InterRegionalResourceTransferEvent;
@@ -246,7 +246,7 @@ import plugins.resources.events.observation.RegionResourceChangeObservationEvent
 import plugins.resources.events.observation.ResourcePropertyChangeObservationEvent;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import util.ContractException;
 import util.objectrepository.ObjectRepository;
@@ -259,7 +259,7 @@ public final class Environment {
 
 	private PartitionDataView partitionDataView;
 
-	private StochasticsDataView stochasticsDataView;
+	private StochasticsDataManager stochasticsDataManager;
 
 	private MaterialsDataView materialsDataView;
 
@@ -2080,7 +2080,7 @@ public final class Environment {
 	 */
 
 	public RandomGenerator getRandomGenerator() {
-		return stochasticsDataView.getRandomGenerator();
+		return stochasticsDataManager.getRandomGenerator();
 	}
 
 	/**
@@ -2098,7 +2098,7 @@ public final class Environment {
 	 */
 
 	public RandomGenerator getRandomGeneratorFromId(final RandomNumberGeneratorId randomNumberGeneratorId) {
-		return stochasticsDataView.getRandomGeneratorFromId(randomNumberGeneratorId);
+		return stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 	}
 
 	/**
@@ -2108,7 +2108,7 @@ public final class Environment {
 	 */
 
 	public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds() {
-		return stochasticsDataView.getRandomNumberGeneratorIds();
+		return stochasticsDataManager.getRandomNumberGeneratorIds();
 	}
 
 	/**
@@ -2476,7 +2476,7 @@ public final class Environment {
 		compartmentDataView = context.getDataView(CompartmentDataView.class).get();
 		regionDataView = context.getDataView(RegionDataView.class).get();
 		resourceDataView = context.getDataView(ResourceDataView.class).get();
-		stochasticsDataView = context.getDataView(StochasticsDataView.class).get();
+		stochasticsDataManager = context.getDataView(StochasticsDataManager.class).get();
 		reportsDataView = context.getDataView(ReportsDataView.class).get();
 		componentManager = context.getDataView(ComponentDataView.class).get();
 	}

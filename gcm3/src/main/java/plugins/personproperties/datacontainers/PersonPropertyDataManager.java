@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
@@ -47,27 +47,27 @@ public final class PersonPropertyDataManager {
 
 	private PersonDataView personDataView;
 
-	private IndexedPropertyManager getIndexedPropertyManager(final Context context, final PropertyDefinition propertyDefinition, final int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
-			indexedPropertyManager = new BooleanPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new BooleanPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Float.class) {
-			indexedPropertyManager = new FloatPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new FloatPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Double.class) {
-			indexedPropertyManager = new DoublePropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new DoublePropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Byte.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Short.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Integer.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (propertyDefinition.getType() == Long.class) {
-			indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new IntPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			indexedPropertyManager = new EnumPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new EnumPropertyManager(simulationContext, propertyDefinition, intialSize);
 		} else {
-			indexedPropertyManager = new ObjectPropertyManager(context, propertyDefinition, intialSize);
+			indexedPropertyManager = new ObjectPropertyManager(simulationContext, propertyDefinition, intialSize);
 		}
 		return indexedPropertyManager;
 	}
@@ -235,7 +235,7 @@ public final class PersonPropertyDataManager {
 		}
 	}
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
 	 * Constructs the person property data manager from the given context
@@ -243,12 +243,12 @@ public final class PersonPropertyDataManager {
 	 * @throws ContractException
 	 * <li>{@linkplain NucleusError#NULL_CONTEXT} if the context is null</li>
 	 */
-	public PersonPropertyDataManager(final Context context) {
-		if(context == null) {
+	public PersonPropertyDataManager(final SimulationContext simulationContext) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
-		this.context = context;
-		personDataView = context.getDataView(PersonDataView.class).get();
+		this.simulationContext = simulationContext;
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
 	}
 
 	/**
@@ -264,16 +264,16 @@ public final class PersonPropertyDataManager {
 	 */
 	public void definePersonProperty(PersonPropertyId personPropertyId, PropertyDefinition propertyDefinition) {
 		if (personPropertyId == null) {
-			context.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			simulationContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
 		}
 		if (propertyDefinition == null) {
-			context.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_DEFINITION);
+			simulationContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_DEFINITION);
 		}
 		if (personPropertyDefinitions.containsKey(personPropertyId)) {
-			context.throwContractException(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION);
+			simulationContext.throwContractException(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION);
 		}
 		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
-		final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(context, propertyDefinition, 0);
+		final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(simulationContext, propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 	}
 

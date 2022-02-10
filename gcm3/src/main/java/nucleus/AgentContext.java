@@ -16,7 +16,7 @@ import util.ContractException;
  *
  */
 
-public interface AgentContext extends Context {
+public interface AgentContext extends SimulationContext {
 
 	/**
 	 * Schedules a plan that will be executed at the given time. If the plan
@@ -46,20 +46,62 @@ public interface AgentContext extends Context {
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is null
+	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
+	 *             null
 	 *             <li>{@link NucleusError#DUPLICATE_PLAN_KEY} if the key is
 	 *             already in use by an existing plan
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
-	 *             scheduled for a time in the past             
+	 *             scheduled for a time in the past
 	 * 
 	 */
-	public void addPlan(Consumer<AgentContext> plan, double planTime, Object key);
+	public void addKeyedPlan(Consumer<AgentContext> plan, double planTime, Object key);
+
+	/**
+	 * Schedules a plan that will be executed at the given time. If the plan
+	 * time is less than the current time the plan is scheduled for immediate
+	 * execution. Passive plans are not required to execute and the simulation
+	 * will terminate if only passive plans remain on the planning schedule.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
+	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
+	 *             scheduled for a time in the past
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	public void addPassivePlan(Consumer<AgentContext> plan, double planTime);
+
+	/**
+	 * Schedules a plan that will be executed at the given time. If the plan
+	 * time is less than the current time the plan is scheduled for immediate
+	 * execution. The plan is associated with the given key and can be canceled
+	 * or retrieved via this key. Keys must be unique to the agent doing the
+	 * planning, but can be repeated across agents and other planning entities.
+	 * Use of keys with plans should be avoided unless retrieval or cancellation
+	 * is needed. Passive plans are not required to execute and the simulation
+	 * will terminate if only passive plans remain on the planning schedule.
+	 * 
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
+	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
+	 *             null
+	 *             <li>{@link NucleusError#DUPLICATE_PLAN_KEY} if the key is
+	 *             already in use by an existing plan
+	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
+	 *             scheduled for a time in the past
+	 * 
+	 */
+	public void addPassiveKeyedPlan(Consumer<AgentContext> plan, double planTime, Object key);
 
 	/**
 	 * Retrieves a plan for the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is null
+	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
+	 *             null
 	 */
 	public <T extends Consumer<AgentContext>> Optional<T> getPlan(final Object key);
 
@@ -68,7 +110,8 @@ public interface AgentContext extends Context {
 	 * given key
 	 *
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is null
+	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
+	 *             null
 	 */
 	public Optional<Double> getPlanTime(final Object key);
 
@@ -76,7 +119,8 @@ public interface AgentContext extends Context {
 	 * Removes and returns the plan associated with the given key.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is null
+	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
+	 *             null
 	 */
 	public <T> Optional<T> removePlan(final Object key);
 
@@ -85,15 +129,6 @@ public interface AgentContext extends Context {
 	 * 
 	 */
 	public List<Object> getPlanKeys();
-
-	/**
-	 * Resolves an event
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
-	 * 
-	 */
-	public void resolveEvent(Event event);
 
 	/**
 	 * Returns the AgentId of the current agent
@@ -129,13 +164,25 @@ public interface AgentContext extends Context {
 	 *             the event labeler id in the event label is null
 	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
 	 *             labeler id in the event label cannot be resolved to a
-	 *             registered event labeler	 *             
+	 *             registered event labeler *
 	 *             <li>{@link NucleusError#NULL_PRIMARY_KEY_VALUE} if the event
 	 *             label has a null primary key
 	 * 
 	 */
 	public <T extends Event> void subscribe(EventLabel<T> eventLabel, AgentEventConsumer<T> agentEventConsumer);
-
+	
+	/**
+	 * Subscribes the current agent to the given event. 
+	 * 
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
+	 *             is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
+	 *             ReportEventConsumer is null
+	 * 
+	 */
+	public <T extends Event> void subscribe(Class<T> eventClass, AgentEventConsumer<T> reportConsumer);
 	/**
 	 * Unsubscribes the current agent from the given event label.
 	 * 
@@ -153,7 +200,7 @@ public interface AgentContext extends Context {
 	 *             label has a null primary key
 	 */
 	public <T extends Event> void unsubscribe(EventLabel<T> eventLabel);
-	
+
 	/**
 	 * Adds an event labeler to nucleus.
 	 * 
@@ -169,5 +216,11 @@ public interface AgentContext extends Context {
 	 *             a previously added event labeler
 	 */
 	public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler);
+	
+	/**
+	 * Subscribes the current report to have the given ReportContext consumer
+	 * invoked at the end of the simulation.
+	 */
+	public void subscribeToSimulationClose(Consumer<AgentContext> closeHandler);
 
 }

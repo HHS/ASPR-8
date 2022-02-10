@@ -9,9 +9,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.materials.datacontainers.MaterialsDataView;
 import plugins.materials.events.mutation.OfferedStageTransferToMaterialsProducerEvent;
@@ -22,10 +21,11 @@ import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
+import plugins.reports.ReportId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -73,7 +73,7 @@ public final class AT_StageReport {
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Generate 500 stage-based actions and record the expected report items
 		RandomGenerator rg = SeedProvider.getRandomGenerator(8635270533185454765L);
@@ -99,8 +99,8 @@ public final class AT_StageReport {
 			 */
 			pluginBuilder.addAgentActionPlan(testMaterialsProducerId, new AgentActionPlan(actionTime++, (c) -> {
 				MaterialsDataView materialsDataView = c.getDataView(MaterialsDataView.class).get();
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				List<StageId> stages = materialsDataView.getStages(testMaterialsProducerId);
 				List<StageId> offeredStages = materialsDataView.getOfferedStages(testMaterialsProducerId);
@@ -176,8 +176,8 @@ public final class AT_StageReport {
 			}));
 		}
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(542686524159732447L, actionPlugin, actualOutputConsumer, new StageReport()::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(542686524159732447L, actionPluginInitializer, actualOutputConsumer, new StageReport()::init);
 
 		assertEquals(expectedOutputConsumer, actualOutputConsumer);
 	}

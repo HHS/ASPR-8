@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -81,7 +81,7 @@ public class AT_RegionResourceChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByRegionAndResource", args = { Context.class, RegionId.class, ResourceId.class })
+	@UnitTestMethod(name = "getEventLabelByRegionAndResource", args = { SimulationContext.class, RegionId.class, ResourceId.class })
 	public void testGetEventLabelByRegionAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 

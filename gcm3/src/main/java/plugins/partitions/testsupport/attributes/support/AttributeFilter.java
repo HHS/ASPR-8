@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
@@ -22,39 +22,39 @@ public final class AttributeFilter extends Filter {
 	private final Equality equality;
 	private AttributesDataView attributesDataView;
 
-	private void validateAttributeId(Context context, final AttributeId attributeId) {
+	private void validateAttributeId(SimulationContext simulationContext, final AttributeId attributeId) {
 		if (attributeId == null) {
-			context.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
+			simulationContext.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
 		if (attributesDataView == null) {
-			attributesDataView = context.getDataView(AttributesDataView.class).get();
+			attributesDataView = simulationContext.getDataView(AttributesDataView.class).get();
 		}
 
 		if (!attributesDataView.attributeExists(attributeId)) {
-			context.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID, attributeId);
+			simulationContext.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID, attributeId);
 		}
 	}
 
-	private void validateEquality(Context context, final Equality equality) {
+	private void validateEquality(SimulationContext simulationContext, final Equality equality) {
 		if (equality == null) {
-			context.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
+			simulationContext.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
 
-	private void validateValueNotNull(Context context, final Object value) {
+	private void validateValueNotNull(SimulationContext simulationContext, final Object value) {
 		if (value == null) {
-			context.throwContractException(AttributeError.NULL_ATTRIBUTE_VALUE);
+			simulationContext.throwContractException(AttributeError.NULL_ATTRIBUTE_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(Context context, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
+	private void validateValueCompatibility(SimulationContext simulationContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
 		if (!attributeDefinition.getType().isAssignableFrom(value.getClass())) {
-			context.throwContractException(AttributeError.INCOMPATIBLE_VALUE,
+			simulationContext.throwContractException(AttributeError.INCOMPATIBLE_VALUE,
 					"Attribute value " + value + " is not of type " + attributeDefinition.getType().getName() + " and does not match definition of " + attributeId);
 		}
 	}
 
-	private void validateEqualityCompatibility(Context context, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Equality equality) {
+	private void validateEqualityCompatibility(SimulationContext simulationContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Equality equality) {
 
 		if (equality == Equality.EQUAL) {
 			return;
@@ -64,7 +64,7 @@ public final class AttributeFilter extends Filter {
 		}
 
 		if (!Comparable.class.isAssignableFrom(attributeDefinition.getType())) {
-			context.throwContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE, "Values for " + attributeId + " are not comparable via " + equality);
+			simulationContext.throwContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE, "Values for " + attributeId + " are not comparable via " + equality);
 		}
 	}
 
@@ -100,26 +100,26 @@ public final class AttributeFilter extends Filter {
 	 * 
 	 */
 	@Override
-	public void validate(Context context) {
-		validateAttributeId(context, attributeId);
-		validateEquality(context, equality);
-		validateValueNotNull(context, value);
+	public void validate(SimulationContext simulationContext) {
+		validateAttributeId(simulationContext, attributeId);
+		validateEquality(simulationContext, equality);
+		validateValueNotNull(simulationContext, value);
 		if (attributesDataView == null) {
-			attributesDataView = context.getDataView(AttributesDataView.class).get();
+			attributesDataView = simulationContext.getDataView(AttributesDataView.class).get();
 		}
 		final AttributeDefinition attributeDefinition = attributesDataView.getAttributeDefinition(attributeId);
-		validateValueCompatibility(context, attributeId, attributeDefinition, value);
-		validateEqualityCompatibility(context, attributeId, attributeDefinition, equality);
+		validateValueCompatibility(simulationContext, attributeId, attributeDefinition, value);
+		validateEqualityCompatibility(simulationContext, attributeId, attributeDefinition, equality);
 	}
 
 	@Override
-	public boolean evaluate(Context context, PersonId personId) {
-		if(context == null) {
+	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		
 		if (attributesDataView == null) {
-			attributesDataView = context.getDataView(AttributesDataView.class).get();
+			attributesDataView = simulationContext.getDataView(AttributesDataView.class).get();
 		}
 		
 		// we do not assume that the returned attribute value is
@@ -143,7 +143,7 @@ public final class AttributeFilter extends Filter {
 		}
 	}
 
-	private Optional<PersonId> requiresRefresh(Context context, AttributeChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, AttributeChangeObservationEvent event) {
 		if (event.getAttributeId().equals(attributeId)) {
 			if (evaluate(event.getPreviousValue()) != evaluate(event.getCurrentValue())) {
 				return Optional.of(event.getPersonId());

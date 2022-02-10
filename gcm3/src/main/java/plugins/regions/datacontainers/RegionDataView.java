@@ -2,7 +2,7 @@ package plugins.regions.datacontainers;
 
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import plugins.properties.support.PropertyDefinition;
 import plugins.regions.initialdata.RegionInitialData;
@@ -19,15 +19,15 @@ import util.ContractException;
  */
 public final class RegionDataView implements DataView {
 	private final RegionDataManager regionDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
-	 * Creates the Region Data View from the given {@link Context} and
+	 * Creates the Region Data View from the given {@link SimulationContext} and
 	 * {@link RegionDataManager}. Not null tolerant.
 	 * 
 	 */
-	public RegionDataView(Context context, RegionDataManager regionDataManager) {
-		this.context = context;
+	public RegionDataView(SimulationContext simulationContext, RegionDataManager regionDataManager) {
+		this.simulationContext = simulationContext;
 		this.regionDataManager = regionDataManager;
 	}
 
@@ -112,20 +112,20 @@ public final class RegionDataView implements DataView {
 	private void validateRegionId(final RegionId regionId) {
 
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionDataManager.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 
 	private void validateRegionPropertyId(final RegionPropertyId regionPropertyId) {
 		if (regionPropertyId == null) {
-			context.throwContractException(RegionError.NULL_REGION_PROPERTY_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_PROPERTY_ID);
 		}
 		if (!regionDataManager.regionPropertyIdExists(regionPropertyId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId);
 		}
 	}
 

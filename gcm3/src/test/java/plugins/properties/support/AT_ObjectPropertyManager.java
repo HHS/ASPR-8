@@ -12,7 +12,7 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import util.ContractException;
 import util.MutableDouble;
 import util.SeedProvider;
@@ -37,12 +37,12 @@ public class AT_ObjectPropertyManager {
 	public void testGetPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6268125375257441705L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		String defaultValue = "YELLOW";
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -82,16 +82,16 @@ public class AT_ObjectPropertyManager {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3180659211825142278L);
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("RED").build();
 
-		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		assertThrows(RuntimeException.class, () -> objectPropertyManager.getPropertyTime(0));
 
 		propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("YELLOW").setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		ObjectPropertyManager objectPropertyManager2 = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		ObjectPropertyManager objectPropertyManager2 = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		for (int i = 0; i < 1000; i++) {
 			int id = randomGenerator.nextInt(300);
 			time.setValue(randomGenerator.nextDouble() * 1000);
@@ -102,7 +102,7 @@ public class AT_ObjectPropertyManager {
 
 		// precondition tests:
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-		ObjectPropertyManager opm = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		ObjectPropertyManager opm = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 		ContractException contractException = assertThrows(ContractException.class, () -> opm.getPropertyTime(0));
 		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
 
@@ -128,12 +128,12 @@ public class AT_ObjectPropertyManager {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6268125375257441705L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		String defaultValue = "YELLOW";
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -175,13 +175,13 @@ public class AT_ObjectPropertyManager {
 		 * efficiency.
 		 */
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		// we will first test the manager with an initial value of false
 		String defaultValue = "RED";
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
@@ -200,7 +200,7 @@ public class AT_ObjectPropertyManager {
 		// we will next test the manager with an initial value of true
 		propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		objectPropertyManager = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		objectPropertyManager = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, (String) objectPropertyManager.getPropertyValue(5));
@@ -217,7 +217,7 @@ public class AT_ObjectPropertyManager {
 
 		// precondition tests
 		PropertyDefinition def = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-		ObjectPropertyManager opm = new ObjectPropertyManager(mockContext, def, 0);
+		ObjectPropertyManager opm = new ObjectPropertyManager(mockSimulationContext, def, 0);
 
 		ContractException contractException = assertThrows(ContractException.class, () -> opm.removeId(-1));
 		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -226,25 +226,25 @@ public class AT_ObjectPropertyManager {
 	@Test
 	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Object.class).setDefaultValue("BLUE").build();
 
 		PropertyDefinition badDoublePropertyDefinition = PropertyDefinition.builder().setType(Object.class).build();
 
 		// if the property definition is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(mockContext, null, 0));
+		ContractException contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(mockSimulationContext, null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if the property definition does not contain a default value
-		contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(mockContext, badDoublePropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(mockSimulationContext, badDoublePropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 		// if the initial size is negative
-		contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(mockContext, goodPropertyDefinition, -1));
+		contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(mockSimulationContext, goodPropertyDefinition, -1));
 		assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockContext, goodPropertyDefinition, 0);
+		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockSimulationContext, goodPropertyDefinition, 0);
 		assertNotNull(objectPropertyManager);
 
 	}
@@ -253,11 +253,11 @@ public class AT_ObjectPropertyManager {
 	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockContext, propertyDefinition, 0);
+		ObjectPropertyManager objectPropertyManager = new ObjectPropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// precondition tests
 		ContractException contractException = assertThrows(ContractException.class, () -> objectPropertyManager.incrementCapacity(-1));

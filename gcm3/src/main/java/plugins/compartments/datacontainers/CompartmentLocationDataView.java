@@ -3,7 +3,7 @@ package plugins.compartments.datacontainers;
 import java.util.ArrayList;
 import java.util.List;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import plugins.compartments.support.CompartmentError;
 import plugins.compartments.support.CompartmentId;
@@ -23,7 +23,7 @@ import util.ContractException;
  */
 public final class CompartmentLocationDataView implements DataView {
 	private final CompartmentLocationDataManager compartmentLocationDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 	private PersonDataView personDataView;
 	private CompartmentDataView compartmentDataView;
 
@@ -35,15 +35,15 @@ public final class CompartmentLocationDataView implements DataView {
 	 *             <li>if the compartment location data manager is null</li>
 	 * 
 	 */
-	public CompartmentLocationDataView(Context context, CompartmentLocationDataManager compartmentLocationDataManager) {
+	public CompartmentLocationDataView(SimulationContext simulationContext, CompartmentLocationDataManager compartmentLocationDataManager) {
 		if (compartmentLocationDataManager == null) {
 			throw new RuntimeException("null compartment location data manager");
 		}
 
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.compartmentLocationDataManager = compartmentLocationDataManager;
-		personDataView = context.getDataView(PersonDataView.class).get();
-		compartmentDataView = context.getDataView(CompartmentDataView.class).get();
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
+		compartmentDataView = simulationContext.getDataView(CompartmentDataView.class).get();
 	}
 
 	/**
@@ -140,26 +140,26 @@ public final class CompartmentLocationDataView implements DataView {
 
 	private void validateCompartmentId(final CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			context.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			simulationContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
 
 		if (!compartmentDataView.compartmentIdExists(compartmentId)) {
-			context.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
+			simulationContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
 		}
 	}
 
 	private void validatePersonCompartmentArrivalsTimesTracked() {
 		if (compartmentLocationDataManager.getPersonCompartmentArrivalTrackingPolicy() != TimeTrackingPolicy.TRACK_TIME) {
-			context.throwContractException(CompartmentError.COMPARTMENT_ARRIVAL_TIMES_NOT_TRACKED);
+			simulationContext.throwContractException(CompartmentError.COMPARTMENT_ARRIVAL_TIMES_NOT_TRACKED);
 		}
 	}
 
 	private void validatePersonExists(final PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 

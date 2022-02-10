@@ -12,19 +12,18 @@ import util.ContractException;
  */
 public enum NucleusError implements ContractError {
 
-	
+	NULL_OUTPUT_ITEM("Null output"),
+	NULL_EXPERIMENT("Null experiment"),
+	NULL_EXPERIMENT_REPORT_PATH("Null experiment report path"),
 	ACCESS_VIOLATION("A contributed behavior is accessing locked state during a state change"),
 	AGENT_ID_IN_USE("Agent id is currently in use by another agent"),
 	CIRCULAR_PLUGIN_DEPENDENCIES("Circular plugin dependencies were found"),
 	DUPLICATE_LABELER_ID_IN_EVENT_LABELER("Duplicate labeler id in labeler"),
 	DUPLICATE_PLAN_KEY("There is an existing plan currently scheduled with the same key"),
-	DUPLICATE_PLUGIN_ID("Duplicate plugin id"),
-	DUPLICATE_RESOLVER_ID("Duplicate resolver id"),
+	DUPLICATE_PLUGIN_ID("Duplicate plugin id"),	
 	LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS("Event labler generated a label with an incorrect event class"),
 	LABLER_GENERATED_LABEL_WITH_INCORRECT_ID("Event labler generated a label with an incorrect event labeler id"),
 	LABLER_GENERATED_LABEL_WITH_INCORRECT_PRIMARY_KEY("Event labler generated a label with an incorrect primary key"),
-	MISSING_PLUGIN("A required plugin is missing"),
-	NEGATIVE_AGENT_ID("Negative agent id"),
 	NULL_AGENT_CONTEXT_CONSUMER("Null agent context consumer"),
 	NULL_AGENT_ID("Null agent id"),
 	NULL_DATA_VIEW("Null data view"),
@@ -39,6 +38,8 @@ public enum NucleusError implements ContractError {
 	NULL_LABELER_ID_IN_EVENT_LABELER("Event labeler returns a null id"),
 	NULL_PLAN("Null plan"),
 	NULL_PLAN_KEY("Null planning key"),
+	NULL_PLUGIN_INITIALIZER("Null plugin initializer"),
+	NULL_PLUGIN_DATA("Null plugin data"),
 	NULL_PLUGIN_ID("Null plugin id"),
 	NULL_PLUGIN_CONTEXT_CONSUMER("Null plugin context consumer"),
 	NULL_PRIMARY_KEY_VALUE("Null primary key value"),

@@ -12,7 +12,7 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import util.ContractException;
 import util.MutableDouble;
 import util.SeedProvider;
@@ -37,12 +37,12 @@ public class AT_DoublePropertyManager {
 	public void testGetPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1599837792379294459L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		double defaultValue = 423.645;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -92,16 +92,16 @@ public class AT_DoublePropertyManager {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2349682401845769564L);
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(234.432).build();
 
-		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 		assertThrows(RuntimeException.class, () -> doublePropertyManager.getPropertyTime(0));
 
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(342.4234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		DoublePropertyManager doublePropertyManager2 = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		DoublePropertyManager doublePropertyManager2 = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 		for (int i = 0; i < 1000; i++) {
 			int id = randomGenerator.nextInt(300);
 			time.setValue(randomGenerator.nextDouble() * 1000);
@@ -112,7 +112,7 @@ public class AT_DoublePropertyManager {
 
 		// precondition tests:
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(4.5).build();
-		DoublePropertyManager dpm = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		DoublePropertyManager dpm = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		ContractException contractException = assertThrows(ContractException.class, () -> dpm.getPropertyTime(0));
 		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
@@ -128,12 +128,12 @@ public class AT_DoublePropertyManager {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1599837792379294459L);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		double defaultValue = 423.645;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		/*
 		 * We will set the first 300 values multiple times at random
@@ -176,13 +176,13 @@ public class AT_DoublePropertyManager {
 		 * efficiency.
 		 */
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		// we will first test the manager with an initial value of false
 		double defaultValue = 6.2345345;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, (Double) doublePropertyManager.getPropertyValue(5), 0);
@@ -201,7 +201,7 @@ public class AT_DoublePropertyManager {
 		// we will next test the manager with an initial value of true
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		doublePropertyManager = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		doublePropertyManager = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// initially, the value should be the default value for the manager
 		assertEquals(defaultValue, (Double) doublePropertyManager.getPropertyValue(5), 0);
@@ -219,7 +219,7 @@ public class AT_DoublePropertyManager {
 		// precondition tests
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			PropertyDefinition def = PropertyDefinition.builder().setType(Double.class).setDefaultValue(4534.4).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-			DoublePropertyManager dpm = new DoublePropertyManager(mockContext, def, 0);
+			DoublePropertyManager dpm = new DoublePropertyManager(mockSimulationContext, def, 0);
 			dpm.removeId(-1);
 		});
 		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
@@ -229,7 +229,7 @@ public class AT_DoublePropertyManager {
 	@Test
 	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 
 		PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.3).build();
 		PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
@@ -238,22 +238,22 @@ public class AT_DoublePropertyManager {
 		// precondition tests
 
 		// if the property definition is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockContext, null, 0));
+		ContractException contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockSimulationContext, null, 0));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if the property definition does not have a type of Double.class
-		contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockContext, badPropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockSimulationContext, badPropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
 		// if the property definition does not contain a default value
-		contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockContext, badDoublePropertyDefinition, 0));
+		contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockSimulationContext, badDoublePropertyDefinition, 0));
 		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 		// if the initial size is negative
-		contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockContext, goodPropertyDefinition, -1));
+		contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(mockSimulationContext, goodPropertyDefinition, -1));
 		assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockContext, goodPropertyDefinition, 0);
+		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockSimulationContext, goodPropertyDefinition, 0);
 		assertNotNull(doublePropertyManager);
 
 	}
@@ -262,11 +262,11 @@ public class AT_DoublePropertyManager {
 	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
 
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.42).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockContext, propertyDefinition, 0);
+		DoublePropertyManager doublePropertyManager = new DoublePropertyManager(mockSimulationContext, propertyDefinition, 0);
 
 		// precondition tests
 		ContractException contractException = assertThrows(ContractException.class, () -> doublePropertyManager.incrementCapacity(-1));

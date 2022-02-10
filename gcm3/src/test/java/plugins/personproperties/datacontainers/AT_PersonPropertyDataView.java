@@ -15,10 +15,10 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
@@ -29,7 +29,7 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.properties.support.PropertyDefinition;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.MutableInteger;
 import util.annotations.UnitTest;
@@ -42,7 +42,7 @@ public class AT_PersonPropertyDataView implements DataView {
 	
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, PersonPropertyDataManager.class })
+	@UnitTestConstructor(args = { SimulationContext.class, PersonPropertyDataManager.class })
 	public void testConstructor() {
 		PersonPropertiesActionSupport.testConsumer(0, 9132573852302490924L, (c) -> {
 			PersonPropertyDataManager personPropertyDataManager = new PersonPropertyDataManager(c);
@@ -117,8 +117,8 @@ public class AT_PersonPropertyDataView implements DataView {
 		PersonPropertiesActionSupport.testConsumer(10, 816143115345188642L, (c) -> {
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a container to hold expectations
 			Map<PersonId, Integer> expectedValues = new LinkedHashMap<>();
@@ -167,7 +167,7 @@ public class AT_PersonPropertyDataView implements DataView {
 	@UnitTestMethod(name = "getPersonPropertyTime", args = { PersonId.class, PersonPropertyId.class })
 	public void testGetPersonPropertyTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 
 		// show that all person property times are 0 for the time-tracked
@@ -193,7 +193,7 @@ public class AT_PersonPropertyDataView implements DataView {
 
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			for (PersonId personId : people) {
 				c.resolveEvent(new PersonPropertyValueAssignmentEvent(personId, TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK, randomGenerator.nextInt()));
 			}
@@ -204,7 +204,7 @@ public class AT_PersonPropertyDataView implements DataView {
 
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			for (PersonId personId : people) {
 				c.resolveEvent(new PersonPropertyValueAssignmentEvent(personId, TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK, randomGenerator.nextDouble()));
 			}
@@ -271,8 +271,8 @@ public class AT_PersonPropertyDataView implements DataView {
 			// establish data views
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Assign random values of 1, 2 or 3 for property 2 to all people.
@@ -317,8 +317,8 @@ public class AT_PersonPropertyDataView implements DataView {
 			// establish data views
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Assign random values of 1, 2 or 3 for property 2 to all people.

@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.ReportId;
+import plugins.reports.ReportId;
 import util.ContractException;
 
 /**

@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import nucleus.AgentContext;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.components.events.ComponentConstructionEvent;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.events.mutation.PopulationGrowthProjectionEvent;
@@ -178,12 +178,12 @@ public final class RegionEventResolver {
 
 	private Set<RegionPropertyId> regionPropertyIds;
 
-	private void handlePersonImminentRemovalObservationEventValidation(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(resolverContext, personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalObservationEventValidation(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		validatePersonExists(dataManagerContext, personImminentRemovalObservationEvent.getPersonId());
 	}
 
-	private void handlePersonImminentRemovalObservationEventExecution(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		resolverContext.addPlan((context) -> regionLocationDataManager.removePerson(personImminentRemovalObservationEvent.getPersonId()), resolverContext.getTime());
+	private void handlePersonImminentRemovalObservationEventExecution(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		dataManagerContext.addPlan((context) -> regionLocationDataManager.removePerson(personImminentRemovalObservationEvent.getPersonId()), dataManagerContext.getTime());
 	}
 
 	private PersonDataView personDataView;
@@ -207,33 +207,33 @@ public final class RegionEventResolver {
 	 * 
 	 * <li>Publishes the {@linkplain RegionLocationDataView}</li>
 	 */
-	public void init(final ResolverContext resolverContext) {
-		resolverContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
+	public void init(final DataManagerContext dataManagerContext) {
+		dataManagerContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonRegionAssignmentEvent.class, this::handlePersonRegionAssignmentEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonRegionAssignmentEvent.class, this::handlePersonRegionAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonRegionAssignmentEvent.class, this::handlePersonRegionAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonRegionAssignmentEvent.class, this::handlePersonRegionAssignmentEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(RegionPropertyValueAssignmentEvent.class, this::handleRegionPropertyValueAssignmentEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(RegionPropertyValueAssignmentEvent.class, this::handleRegionPropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(RegionPropertyValueAssignmentEvent.class, this::handleRegionPropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(RegionPropertyValueAssignmentEvent.class, this::handleRegionPropertyValueAssignmentEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
 
-		resolverContext.addEventLabeler(RegionPropertyChangeObservationEvent.getEventLabelerForProperty());
-		resolverContext.addEventLabeler(RegionPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty());
-		resolverContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion());
-		resolverContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForDepartureRegion());
-		resolverContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForPerson());
+		dataManagerContext.addEventLabeler(RegionPropertyChangeObservationEvent.getEventLabelerForProperty());
+		dataManagerContext.addEventLabeler(RegionPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty());
+		dataManagerContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion());
+		dataManagerContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForDepartureRegion());
+		dataManagerContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForPerson());
 
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
 
-		regionDataManager = new RegionDataManager(resolverContext.getSafeContext());
+		regionDataManager = new RegionDataManager(dataManagerContext.getSafeContext());
 		regionIds = regionInitialData.getRegionIds();
 		regionPropertyIds = regionInitialData.getRegionPropertyIds();
 		for(RegionId regionId : regionIds) {
@@ -252,20 +252,20 @@ public final class RegionEventResolver {
 			}
 		}
 
-		regionLocationDataManager = new RegionLocationDataManager(resolverContext.getSafeContext(), regionInitialData);
+		regionLocationDataManager = new RegionLocationDataManager(dataManagerContext.getSafeContext(), regionInitialData);
 
 		
-		loadRegionPropertyValues(resolverContext);
+		loadRegionPropertyValues(dataManagerContext);
 
 		for (RegionId regionId : regionIds) {
 			Consumer<AgentContext> consumer = regionInitialData.getRegionComponentInitialBehavior(regionId);
-			resolverContext.queueEventForResolution(new ComponentConstructionEvent(regionId, consumer));
+			dataManagerContext.resolveEvent(new ComponentConstructionEvent(regionId, consumer));
 		}
 
 		loadPeople();
 
-		resolverContext.publishDataView(new RegionDataView(resolverContext.getSafeContext(), regionDataManager));
-		resolverContext.publishDataView(new RegionLocationDataView(resolverContext, regionLocationDataManager));
+		dataManagerContext.publishDataView(new RegionDataView(dataManagerContext.getSafeContext(), regionDataManager));
+		dataManagerContext.publishDataView(new RegionLocationDataView(dataManagerContext, regionLocationDataManager));
 		regionInitialData = null;
 	}
 
@@ -303,29 +303,29 @@ public final class RegionEventResolver {
 		}
 	}
 
-	private void handlePersonCreationObservationEventValidation(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
 		RegionId regionId = personContructionData.getValue(RegionId.class).orElse(null);
-		validateRegionId(resolverContext, regionId);
+		validateRegionId(dataManagerContext, regionId);
 	}
 
-	private void handlePersonCreationObservationEventExecution(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonId personId = personCreationObservationEvent.getPersonId();
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
 		RegionId regionId = personContructionData.getValue(RegionId.class).orElse(null);
 		regionLocationDataManager.setPersonRegion(personId, regionId);
 	}
 
-	private void handleBulkPersonCreationObservationEventValidation(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
 		List<PersonContructionData> personContructionDatas = bulkPersonContructionData.getPersonContructionDatas();
 		for (PersonContructionData personContructionData : personContructionDatas) {
 			RegionId regionId = personContructionData.getValue(RegionId.class).orElse(null);
-			validateRegionId(resolverContext, regionId);
+			validateRegionId(dataManagerContext, regionId);
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEventExecution(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
 		int pId = personId.getValue();
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
@@ -338,118 +338,118 @@ public final class RegionEventResolver {
 		}
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
 	/*
 	 * Precondition : person and region exist
 	 */
-	private void validatePersonNotInRegion(final ResolverContext resolverContext, final PersonId personId, final RegionId regionId) {
+	private void validatePersonNotInRegion(final DataManagerContext dataManagerContext, final PersonId personId, final RegionId regionId) {
 		final RegionId currentRegionId = regionLocationDataManager.getPersonRegion(personId);
 		if (currentRegionId.equals(regionId)) {
-			resolverContext.throwContractException(RegionError.SAME_REGION, regionId);
+			dataManagerContext.throwContractException(RegionError.SAME_REGION, regionId);
 		}
 	}
 
-	private void handlePopulationGrowthProjectiontEventExecution(final ResolverContext resolverContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
+	private void handlePopulationGrowthProjectiontEventExecution(final DataManagerContext dataManagerContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
 		regionLocationDataManager.expandCapacity(populationGrowthProjectionEvent.getCount());
 	}
 
-	private void handlePersonRegionAssignmentEventValidation(final ResolverContext resolverContext, final PersonRegionAssignmentEvent personRegionAssignmentEvent) {
+	private void handlePersonRegionAssignmentEventValidation(final DataManagerContext dataManagerContext, final PersonRegionAssignmentEvent personRegionAssignmentEvent) {
 		final PersonId personId = personRegionAssignmentEvent.getPersonId();
 		final RegionId regionId = personRegionAssignmentEvent.getRegionId();
 
-		validatePersonExists(resolverContext, personId);
-		validateRegionId(resolverContext, regionId);
-		validatePersonNotInRegion(resolverContext, personId, regionId);
+		validatePersonExists(dataManagerContext, personId);
+		validateRegionId(dataManagerContext, regionId);
+		validatePersonNotInRegion(dataManagerContext, personId, regionId);
 	}
 
-	private void handlePersonRegionAssignmentEventExecution(final ResolverContext resolverContext, final PersonRegionAssignmentEvent personRegionAssignmentEvent) {
+	private void handlePersonRegionAssignmentEventExecution(final DataManagerContext dataManagerContext, final PersonRegionAssignmentEvent personRegionAssignmentEvent) {
 		final PersonId personId = personRegionAssignmentEvent.getPersonId();
 		final RegionId regionId = personRegionAssignmentEvent.getRegionId();
 
 		final RegionId oldRegionId = regionLocationDataManager.getPersonRegion(personId);
 		regionLocationDataManager.setPersonRegion(personId, regionId);
-		resolverContext.queueEventForResolution(new PersonRegionChangeObservationEvent(personId, oldRegionId, regionId));
+		dataManagerContext.resolveEvent(new PersonRegionChangeObservationEvent(personId, oldRegionId, regionId));
 	}
 
-	private void loadRegionPropertyValues(final ResolverContext resolverContext) {
+	private void loadRegionPropertyValues(final DataManagerContext dataManagerContext) {
 		for (final RegionId regionId : regionInitialData.getRegionIds()) {
 			for (final RegionPropertyId regionPropertyId : regionInitialData.getRegionPropertyIds()) {
 				final Object regionPropertyValue = regionInitialData.getRegionPropertyValue(regionId, regionPropertyId);
 				if (regionPropertyValue != null) {
 					final PropertyDefinition propertyDefinition = regionDataManager.getRegionPropertyDefinition(regionPropertyId);
-					validateValueCompatibility(resolverContext, regionPropertyId, propertyDefinition, regionPropertyValue);
+					validateValueCompatibility(dataManagerContext, regionPropertyId, propertyDefinition, regionPropertyValue);
 					regionDataManager.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
 				}
 			}
 		}
 	}
 
-	private void handleRegionPropertyValueAssignmentEventValidation(final ResolverContext resolverContext, final RegionPropertyValueAssignmentEvent regionPropertyValueAssignmentEvent) {
+	private void handleRegionPropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final RegionPropertyValueAssignmentEvent regionPropertyValueAssignmentEvent) {
 		final RegionId regionId = regionPropertyValueAssignmentEvent.getRegionId();
 		final RegionPropertyId regionPropertyId = regionPropertyValueAssignmentEvent.getRegionPropertyId();
 		final Object regionPropertyValue = regionPropertyValueAssignmentEvent.getRegionPropertyValue();
 
-		validateRegionId(resolverContext, regionId);
-		validateRegionPropertyId(resolverContext, regionPropertyId);
-		validateRegionPropertyValueNotNull(resolverContext, regionPropertyValue);
+		validateRegionId(dataManagerContext, regionId);
+		validateRegionPropertyId(dataManagerContext, regionPropertyId);
+		validateRegionPropertyValueNotNull(dataManagerContext, regionPropertyValue);
 		final PropertyDefinition propertyDefinition = regionDataManager.getRegionPropertyDefinition(regionPropertyId);
-		validateValueCompatibility(resolverContext, regionPropertyId, propertyDefinition, regionPropertyValue);
-		validatePropertyMutability(resolverContext, propertyDefinition);
+		validateValueCompatibility(dataManagerContext, regionPropertyId, propertyDefinition, regionPropertyValue);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
 	}
 
-	private void handleRegionPropertyValueAssignmentEventExecution(final ResolverContext resolverContext, final RegionPropertyValueAssignmentEvent regionPropertyValueAssignmentEvent) {
+	private void handleRegionPropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final RegionPropertyValueAssignmentEvent regionPropertyValueAssignmentEvent) {
 		final RegionId regionId = regionPropertyValueAssignmentEvent.getRegionId();
 		final RegionPropertyId regionPropertyId = regionPropertyValueAssignmentEvent.getRegionPropertyId();
 		final Object regionPropertyValue = regionPropertyValueAssignmentEvent.getRegionPropertyValue();
 
 		final Object previousPropertyValue = regionDataManager.getRegionPropertyValue(regionId, regionPropertyId);
 		regionDataManager.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
-		resolverContext.queueEventForResolution(new RegionPropertyChangeObservationEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
+		dataManagerContext.resolveEvent(new RegionPropertyChangeObservationEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
 	}
 
-	private void validatePropertyMutability(final ResolverContext resolverContext, final PropertyDefinition propertyDefinition) {
+	private void validatePropertyMutability(final DataManagerContext dataManagerContext, final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
-			resolverContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
+			dataManagerContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
 		}
 	}
 
-	private void validateRegionId(final ResolverContext resolverContext, final RegionId regionId) {
+	private void validateRegionId(final DataManagerContext dataManagerContext, final RegionId regionId) {
 
 		if (regionId == null) {
-			resolverContext.throwContractException(RegionError.NULL_REGION_ID);
+			dataManagerContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionIds.contains(regionId)) {
-			resolverContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			dataManagerContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 
-	private void validateRegionPropertyId(final ResolverContext resolverContext, final RegionPropertyId regionPropertyId) {
+	private void validateRegionPropertyId(final DataManagerContext dataManagerContext, final RegionPropertyId regionPropertyId) {
 		if (regionPropertyId == null) {
-			resolverContext.throwContractException(RegionError.NULL_REGION_PROPERTY_ID);
+			dataManagerContext.throwContractException(RegionError.NULL_REGION_PROPERTY_ID);
 		}
 		if (!regionPropertyIds.contains(regionPropertyId)) {
-			resolverContext.throwContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId);
+			dataManagerContext.throwContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId);
 		}
 	}
 
-	private void validateRegionPropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private void validateRegionPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(RegionError.NULL_REGION_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(RegionError.NULL_REGION_PROPERTY_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(final ResolverContext resolverContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final DataManagerContext dataManagerContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			resolverContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}

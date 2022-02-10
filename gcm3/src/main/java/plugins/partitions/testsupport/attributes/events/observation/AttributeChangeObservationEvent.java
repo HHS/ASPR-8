@@ -1,7 +1,7 @@
 package plugins.partitions.testsupport.attributes.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -66,8 +66,8 @@ public class AttributeChangeObservationEvent implements Event {
 	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the attribute
 	 *             id is not known</li>
 	 */
-	public static EventLabel<AttributeChangeObservationEvent> getEventLabel(final Context context, final AttributeId attributeId) {
-		validateAttributed(context, attributeId);
+	public static EventLabel<AttributeChangeObservationEvent> getEventLabel(final SimulationContext simulationContext, final AttributeId attributeId) {
+		validateAttributed(simulationContext, attributeId);
 		return new MultiKeyEventLabel<>(attributeId, LabelerId.ATTRIBUTE, AttributeChangeObservationEvent.class, attributeId);
 	}
 	
@@ -82,13 +82,13 @@ public class AttributeChangeObservationEvent implements Event {
 	}
 
 	
-	private static void validateAttributed(final Context context, final AttributeId attributeId) {
+	private static void validateAttributed(final SimulationContext simulationContext, final AttributeId attributeId) {
 		if (attributeId == null) {
-			context.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
+			simulationContext.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
-		final AttributesDataView attributesDataView = context.getDataView(AttributesDataView.class).get();
+		final AttributesDataView attributesDataView = simulationContext.getDataView(AttributesDataView.class).get();
 		if (!attributesDataView.attributeExists(attributeId)) {
-			context.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID);
+			simulationContext.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID);
 		}
 	}
 }

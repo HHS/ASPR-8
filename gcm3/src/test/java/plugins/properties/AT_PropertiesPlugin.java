@@ -1,5 +1,6 @@
 package plugins.properties;
 
+
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginContext;
@@ -20,6 +21,8 @@ public class AT_PropertiesPlugin {
 	@UnitTestMethod(name = "init", args = { PluginContext.class })
 	public void testInit() {
 		// nothing to test
+		
+		
 	}
 
 }

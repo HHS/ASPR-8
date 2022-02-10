@@ -11,7 +11,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.mutation.GroupCreationEvent;
 import plugins.groups.events.observation.GroupMembershipAdditionObservationEvent;
@@ -25,7 +25,7 @@ import plugins.partitions.support.PartitionError;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -35,7 +35,7 @@ import util.annotations.UnitTestMethod;
 public class AT_GroupsForPersonAndGroupTypeFilter {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, GroupTypeId.class, Equality.class, int.class })
+	@UnitTestConstructor(args = { SimulationContext.class, GroupTypeId.class, Equality.class, int.class })
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 5854778167265102928L, (c) -> {
@@ -85,11 +85,11 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		
 		GroupsActionSupport.testConsumer(100, 0, 10, 4592268926831796100L, (c) -> {
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();

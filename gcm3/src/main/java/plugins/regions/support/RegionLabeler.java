@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.NucleusError;
 import plugins.partitions.support.Labeler;
@@ -51,12 +51,12 @@ public final class RegionLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getLabel(Context context, PersonId personId) {
-		if (context == null) {
+	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (regionLocationDataView == null) {
-			regionLocationDataView = context.getDataView(RegionLocationDataView.class).get();
+			regionLocationDataView = simulationContext.getDataView(RegionLocationDataView.class).get();
 		}
 		RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 		return regionLabelingFunction.apply(regionId);
@@ -68,7 +68,7 @@ public final class RegionLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getPastLabel(Context context, Event event) {
+	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonRegionChangeObservationEvent personRegionChangeObservationEvent = (PersonRegionChangeObservationEvent)event;
 		return regionLabelingFunction.apply(personRegionChangeObservationEvent.getPreviousRegionId());		
 	}

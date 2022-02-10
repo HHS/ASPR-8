@@ -20,8 +20,8 @@ import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.components.datacontainers.ComponentDataView;
@@ -64,7 +64,7 @@ public final class AT_GlobalPropertyResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testGlobalDataViewInitialization() {
 
 		Builder builder = Simulation.builder();
@@ -112,7 +112,7 @@ public final class AT_GlobalPropertyResolver {
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent and have it assign various global properties at
 		// various times
@@ -157,8 +157,8 @@ public final class AT_GlobalPropertyResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
@@ -166,7 +166,7 @@ public final class AT_GlobalPropertyResolver {
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the two global components were created
 		assertTrue(globalComponent_1_Exists.getValue());
@@ -175,7 +175,7 @@ public final class AT_GlobalPropertyResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testGlobalPropertyChangeObservationEventLabelers() {
 		Builder builder = Simulation.builder();
 
@@ -185,7 +185,7 @@ public final class AT_GlobalPropertyResolver {
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent to execute the test
 		pluginBuilder.addAgent("agent");
@@ -201,18 +201,18 @@ public final class AT_GlobalPropertyResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testGlobalComponentConstructionEvent() {
 		Builder builder = Simulation.builder();
 
@@ -222,7 +222,7 @@ public final class AT_GlobalPropertyResolver {
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent to execute the test
 		pluginBuilder.addAgent("agent");
@@ -268,14 +268,14 @@ public final class AT_GlobalPropertyResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the added global component executed its initialization
 		assertTrue(globalComponentExecutedInit.getValue());
@@ -283,7 +283,7 @@ public final class AT_GlobalPropertyResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testGlobalPropertyValueAssignmentEvent() {
 		Builder builder = Simulation.builder();
 
@@ -307,7 +307,7 @@ public final class AT_GlobalPropertyResolver {
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent to execute the test
 		pluginBuilder.addAgent("agent");
@@ -382,14 +382,14 @@ public final class AT_GlobalPropertyResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the observations were correct		
 		assertTrue(expectedObservations.size()>0);

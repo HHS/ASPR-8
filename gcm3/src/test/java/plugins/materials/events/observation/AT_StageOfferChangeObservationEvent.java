@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.materials.datacontainers.MaterialsDataView;
 import plugins.materials.events.mutation.StageCreationEvent;
@@ -74,9 +74,9 @@ public class AT_StageOfferChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByStage", args = { Context.class, StageId.class })
+	@UnitTestMethod(name = "getEventLabelByStage", args = { SimulationContext.class, StageId.class })
 	public void testGetEventLabelByStage() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgentActionPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, new AgentActionPlan(0, (c) -> {
 			MaterialsDataView materialsDataView = c.getDataView(MaterialsDataView.class).get();
@@ -90,15 +90,15 @@ public class AT_StageOfferChangeObservationEvent {
 			}
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(1144625150509891316L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(1144625150509891316L, actionPluginInitializer);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getEventLabelerForStage", args = {})
 	public void testGetEventLabelerForStage() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgentActionPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, new AgentActionPlan(0, (c) -> {
 			MaterialsDataView materialsDataView = c.getDataView(MaterialsDataView.class).get();
@@ -132,16 +132,16 @@ public class AT_StageOfferChangeObservationEvent {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(305963642755178739L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(305963642755178739L, actionPluginInitializer);
 
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByAll", args = { Context.class })
+	@UnitTestMethod(name = "getEventLabelByAll", args = { SimulationContext.class })
 	public void testGetEventLabelByAll() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgentActionPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, new AgentActionPlan(0, (c) -> {
 			EventLabel<StageOfferChangeObservationEvent> eventLabel = StageOfferChangeObservationEvent.getEventLabelByAll(c);
@@ -150,15 +150,15 @@ public class AT_StageOfferChangeObservationEvent {
 			assertEquals(StageOfferChangeObservationEvent.getEventLabelByAll(c).getLabelerId(), eventLabel.getLabelerId());
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(7385651282696514403L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(7385651282696514403L, actionPluginInitializer);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getEventLabelerForAll", args = {})
 	public void testGetEventLabelerForAll() {
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgentActionPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, new AgentActionPlan(0, (c) -> {
 			MaterialsDataView materialsDataView = c.getDataView(MaterialsDataView.class).get();
@@ -192,8 +192,8 @@ public class AT_StageOfferChangeObservationEvent {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(7765621733196161981L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(7765621733196161981L, actionPluginInitializer);
 	}
 
 }

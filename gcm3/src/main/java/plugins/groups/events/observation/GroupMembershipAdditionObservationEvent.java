@@ -1,7 +1,7 @@
 package plugins.groups.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -57,34 +57,34 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 		GROUP_PERSON, GROUP, PERSON, TYPE_PERSON, TYPE, ALL
 	}
 
-	private static void validateGroupId(Context context, GroupId groupId) {
+	private static void validateGroupId(SimulationContext simulationContext, GroupId groupId) {
 		if (groupId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 
 		if (!personGroupDataView.groupExists(groupId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 	}
 
-	private static void validatePersonId(Context context, PersonId personId) {
+	private static void validatePersonId(SimulationContext simulationContext, PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataView personDataView = context.getDataView(PersonDataView.class).get();
+		PersonDataView personDataView = simulationContext.getDataView(PersonDataView.class).get();
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private static void validateGroupTypeId(Context context, GroupTypeId groupTypeId) {
+	private static void validateGroupTypeId(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		if (!personGroupDataView.groupTypeIdExists(groupTypeId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}
 	}
 
@@ -107,9 +107,9 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupAndPerson(Context context, GroupId groupId, PersonId personId) {
-		validateGroupId(context, groupId);
-		validatePersonId(context, personId);
+	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
+		validateGroupId(simulationContext, groupId);
+		validatePersonId(simulationContext, personId);
 		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.GROUP_PERSON, GroupMembershipAdditionObservationEvent.class, groupId, personId);
 	}
 
@@ -139,8 +139,8 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroup(Context context, GroupId groupId) {
-		validateGroupId(context, groupId);
+	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
+		validateGroupId(simulationContext, groupId);
 		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.GROUP, GroupMembershipAdditionObservationEvent.class, groupId);
 	}
 
@@ -169,8 +169,8 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByPerson(Context context, PersonId personId) {
-		validatePersonId(context, personId);
+	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
+		validatePersonId(simulationContext, personId);
 		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.PERSON, GroupMembershipAdditionObservationEvent.class, personId);
 	}
 
@@ -202,9 +202,9 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is not known</li>
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupTypeAndPerson(Context context, GroupTypeId groupTypeId, PersonId personId) {
-		validateGroupTypeId(context, groupTypeId);
-		validatePersonId(context, personId);
+	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
+		validateGroupTypeId(simulationContext, groupTypeId);
+		validatePersonId(simulationContext, personId);
 		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.TYPE_PERSON, GroupMembershipAdditionObservationEvent.class, groupTypeId, personId);
 	}
 
@@ -236,8 +236,8 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is not known</li>
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupType(Context context, GroupTypeId groupTypeId) {
-		validateGroupTypeId(context, groupTypeId);
+	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+		validateGroupTypeId(simulationContext, groupTypeId);
 		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.TYPE, GroupMembershipAdditionObservationEvent.class, groupTypeId);
 	}
 	/**

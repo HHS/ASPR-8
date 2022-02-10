@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.observation.GroupMembershipAdditionObservationEvent;
@@ -69,9 +69,9 @@ public final class GroupLabeler implements Labeler {
 	 *                          if the compartment id is unknown
 	 */
 	@Override
-	public Object getLabel(Context context, PersonId personId) {
+	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 
 		GroupTypeCountMap.Builder groupTypeCountMapBuilder = GroupTypeCountMap.builder();
@@ -92,9 +92,9 @@ public final class GroupLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getPastLabel(Context context, Event event) {
+	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 
 		PersonId personId;

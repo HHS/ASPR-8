@@ -1,5 +1,6 @@
 package nucleus;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import util.ContractException;
@@ -59,5 +60,10 @@ public interface PluginContext {
 	 *             <li>{@link NucleusError#NULL_RESOLVER_ID} if the resolver id
 	 *             is null
 	 */
-	public void defineResolver(ResolverId resolverId, Consumer<ResolverContext> init);
+
+	public void addDataManager(DataManager dataManager);
+
+	public void addAgent(AgentId agentId, Consumer<AgentContext> init);
+
+	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass);
 }

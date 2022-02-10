@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import net.jcip.annotations.Immutable;
 import nucleus.DataView;
 import nucleus.ReportContext;
-import nucleus.ReportId;
+import plugins.reports.ReportId;
 import plugins.reports.support.ReportError;
 import util.ContractException;
 

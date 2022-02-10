@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
@@ -27,13 +27,13 @@ import util.ContractException;
  */
 public final class MaterialsDataView implements DataView {
 	private final MaterialsDataManager materialsDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 	private final ResourceDataView resourceDataView;
 
-	public MaterialsDataView(Context context, MaterialsDataManager materialsDataManager) {
-		this.context = context;
+	public MaterialsDataView(SimulationContext simulationContext, MaterialsDataManager materialsDataManager) {
+		this.simulationContext = simulationContext;
 		this.materialsDataManager = materialsDataManager;
-		resourceDataView = context.getDataView(ResourceDataView.class).get();
+		resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 
 	}
 
@@ -482,72 +482,72 @@ public final class MaterialsDataView implements DataView {
 	private void validateBatchId(final BatchId batchId) {
 
 		if (batchId == null) {
-			context.throwContractException(MaterialsError.NULL_BATCH_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_BATCH_ID);
 		}
 
 		if (!batchExists(batchId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId);
 		}
 	}
 
 	private void validateBatchPropertyId(final MaterialId materialId, final BatchPropertyId batchPropertyId) {
 		if (batchPropertyId == null) {
-			context.throwContractException(MaterialsError.NULL_BATCH_PROPERTY_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_BATCH_PROPERTY_ID);
 		}
 
 		if (!materialsDataManager.batchPropertyIdExists(materialId, batchPropertyId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID);
 		}
 
 	}
 
 	private void validateMaterialId(final MaterialId materialId) {
 		if (materialId == null) {
-			context.throwContractException(MaterialsError.NULL_MATERIAL_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_MATERIAL_ID);
 		}
 
 		if (!materialsDataManager.materialIdExists(materialId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_MATERIAL_ID, materialId);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_MATERIAL_ID, materialId);
 		}
 	}
 
 	private void validateMaterialsProducerId(final MaterialsProducerId materialsProducerId) {
 		if (materialsProducerId == null) {
-			context.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
 
 		if (!materialsDataManager.materialsProducerIdExists(materialsProducerId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, materialsProducerId);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, materialsProducerId);
 		}
 	}
 
 	private void validateMaterialsProducerPropertyId(final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		if (materialsProducerPropertyId == null) {
-			context.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
 		}
 
 		if (!materialsDataManager.materialsProducerPropertyIdExists(materialsProducerPropertyId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, materialsProducerPropertyId);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, materialsProducerPropertyId);
 		}
 	}
 
 	private void validateResourceId(final ResourceId resourceId) {
 		if (resourceId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
 
 		if (!resourceDataView.resourceIdExists(resourceId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
 
 	private void validateStageId(final StageId stageId) {
 		if (stageId == null) {
-			context.throwContractException(MaterialsError.NULL_STAGE_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_STAGE_ID);
 		}
 
 		if (!stageExists(stageId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
 		}
 	}
 

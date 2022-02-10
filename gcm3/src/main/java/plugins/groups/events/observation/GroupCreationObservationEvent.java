@@ -1,7 +1,7 @@
 package plugins.groups.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -58,13 +58,13 @@ public class GroupCreationObservationEvent implements Event {
 	 *             group type id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupCreationObservationEvent> getEventLabelByGroupType(Context context, GroupTypeId groupTypeId) {
+	public static EventLabel<GroupCreationObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		if (!personGroupDataView.groupTypeIdExists(groupTypeId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}
 		return new MultiKeyEventLabel<>(GroupCreationObservationEvent.class, LabelerId.TYPE, GroupCreationObservationEvent.class, groupTypeId);
 	}

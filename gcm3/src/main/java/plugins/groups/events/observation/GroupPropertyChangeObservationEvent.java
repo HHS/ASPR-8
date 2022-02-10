@@ -1,7 +1,7 @@
 package plugins.groups.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -73,45 +73,45 @@ public class GroupPropertyChangeObservationEvent implements Event {
 		GROUP_PROPERTY, GROUP, TYPE_PROPERTY, TYPE, ALL
 	}
 
-	private static void validateGroupId(Context context, GroupId groupId) {
+	private static void validateGroupId(SimulationContext simulationContext, GroupId groupId) {
 		if (groupId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		if (!personGroupDataView.groupExists(groupId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 	}
 
-	private static void validateGroupTypeId(Context context, GroupTypeId groupTypeId) {
+	private static void validateGroupTypeId(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		if (!personGroupDataView.groupTypeIdExists(groupTypeId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
 
-	private static void validateGroupPropertyId(Context context, GroupId groupId, GroupPropertyId groupPropertyId) {
+	private static void validateGroupPropertyId(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		GroupTypeId groupTypeId = personGroupDataView.getGroupType(groupId);
 		if (!personGroupDataView.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
 		}
 	}
 
-	private static void validateGroupPropertyId(Context context, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+	private static void validateGroupPropertyId(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 
 		if (!personGroupDataView.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
 		}
 	}
 
@@ -134,9 +134,9 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             group property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupAndProperty(Context context, GroupId groupId, GroupPropertyId groupPropertyId) {
-		validateGroupId(context, groupId);
-		validateGroupPropertyId(context, groupId, groupPropertyId);
+	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupAndProperty(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
+		validateGroupId(simulationContext, groupId);
+		validateGroupPropertyId(simulationContext, groupId, groupPropertyId);
 		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.GROUP_PROPERTY, GroupPropertyChangeObservationEvent.class, groupId, groupPropertyId);
 	}
 
@@ -164,8 +164,8 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroup(Context context, GroupId groupId) {
-		validateGroupId(context, groupId);
+	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
+		validateGroupId(simulationContext, groupId);
 		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.GROUP, GroupPropertyChangeObservationEvent.class, groupId);
 	}
 
@@ -197,9 +197,9 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             group type id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupTypeAndProperty(Context context, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
-		validateGroupTypeId(context, groupTypeId);
-		validateGroupPropertyId(context, groupTypeId, groupPropertyId);
+	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupTypeAndProperty(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+		validateGroupTypeId(simulationContext, groupTypeId);
+		validateGroupPropertyId(simulationContext, groupTypeId, groupPropertyId);
 		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyChangeObservationEvent.class, groupTypeId, groupPropertyId);
 	}
 
@@ -230,8 +230,8 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             group type id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupType(Context context, GroupTypeId groupTypeId) {
-		validateGroupTypeId(context, groupTypeId);
+	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+		validateGroupTypeId(simulationContext, groupTypeId);
 		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.TYPE, GroupPropertyChangeObservationEvent.class, groupTypeId);
 	}
 

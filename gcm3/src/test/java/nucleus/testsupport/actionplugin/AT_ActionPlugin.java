@@ -16,13 +16,13 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataView;
 import nucleus.Simulation;
+import plugins.reports.ReportId;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
 import nucleus.PluginContext;
-import nucleus.ReportId;
 import nucleus.ResolverId;
 import nucleus.SimpleEventLabeler;
 import nucleus.SimpleReportId;
@@ -32,7 +32,7 @@ import util.SeedProvider;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
-@UnitTest(target = ActionPlugin.class)
+@UnitTest(target = ActionPluginInitializer.class)
 public class AT_ActionPlugin {
 
 	/**
@@ -40,7 +40,7 @@ public class AT_ActionPlugin {
 	 */
 	@Test
 	public void testPluginId() {
-		assertNotNull(ActionPlugin.PLUGIN_ID);
+		assertNotNull(ActionPluginInitializer.PLUGIN_ID);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class AT_ActionPlugin {
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		assertNotNull(ActionPlugin.builder());
+		assertNotNull(ActionPluginInitializer.builder());
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class AT_ActionPlugin {
 		 * First we test that allActionsExecuted() is true when all actions are
 		 * executed.
 		 */
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 		MutableInteger actionCounter = new MutableInteger();
@@ -73,14 +73,14 @@ public class AT_ActionPlugin {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> actionCounter.increment()));
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> actionCounter.increment()));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions executed
 		assertEquals(3, actionCounter.getValue());
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Next show that allActionsExecuted() is false when some actions were
@@ -97,14 +97,14 @@ public class AT_ActionPlugin {
 		}));
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> actionCounter.increment()));
 
-		actionPlugin = pluginBuilder.build();
+		actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions executed
 		assertEquals(2, actionCounter.getValue());
-		assertFalse(actionPlugin.allActionsExecuted());
+		assertFalse(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Finally, show that allActionsExecuted() is false when there are no
@@ -112,13 +112,13 @@ public class AT_ActionPlugin {
 		 */
 		pluginBuilder.addAgent("agent");
 
-		actionPlugin = pluginBuilder.build();
+		actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions executed
-		assertFalse(actionPlugin.allActionsExecuted());
+		assertFalse(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -159,9 +159,9 @@ public class AT_ActionPlugin {
 	 * Shows that client agents can be added to the plugin
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addAgent", args = { Object.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addAgent", args = { Object.class })
 	public void testAddAgent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Add a few agents
 		List<Object> aliases = new ArrayList<>();
@@ -185,16 +185,16 @@ public class AT_ActionPlugin {
 		}
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the agents were created
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition tests
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addAgent(null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addAgent(null));
 
 	}
 
@@ -202,9 +202,9 @@ public class AT_ActionPlugin {
 	 * Show that agent action plans can be added
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addAgentActionPlan", args = { Object.class, AgentActionPlan.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addAgentActionPlan", args = { Object.class, AgentActionPlan.class })
 	public void testAddAgentActionPlan() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Add a few agents
 		List<Object> aliases = new ArrayList<>();
@@ -228,22 +228,22 @@ public class AT_ActionPlugin {
 		}
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition tests
 
 		// if the alias is null
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addAgentActionPlan(null, new AgentActionPlan(0, (c) -> {
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addAgentActionPlan(null, new AgentActionPlan(0, (c) -> {
 		})));
 
 		// if the agent action plan is null
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addAgentActionPlan("alias", null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addAgentActionPlan("alias", null));
 
 	}
 
@@ -251,9 +251,9 @@ public class AT_ActionPlugin {
 	 * Shows that data views can be added
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addDataView", args = { DataView.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addDataView", args = { DataView.class })
 	public void testAddDataView() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 
@@ -267,16 +267,16 @@ public class AT_ActionPlugin {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the agents were created
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition tests
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addDataView(null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addDataView(null));
 
 	}
 
@@ -334,9 +334,9 @@ public class AT_ActionPlugin {
 	 * simulation.
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addEventLabeler", args = { EventLabeler.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addEventLabeler", args = { EventLabeler.class })
 	public void testAddEventLabeler() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Create two agents
 		pluginBuilder.addAgent("observer agent");
@@ -382,20 +382,20 @@ public class AT_ActionPlugin {
 		 */
 		ResolverId resolverId = new SimpleResolverId("resolver");
 		pluginBuilder.addResolver(resolverId);
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(TestWrapperEvent.class, (c2, e) -> {
-				c2.queueEventForResolution(e.getTestEvent());
+				c2.resolveEvent(e.getTestEvent());
 			});
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that there were a few test events with value 5 created
 		assertFalse(expectedIds.isEmpty());
@@ -404,16 +404,16 @@ public class AT_ActionPlugin {
 		assertEquals(expectedIds, actualIds);
 
 		// precondition tests
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addEventLabeler(null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addEventLabeler(null));
 	}
 
 	/**
 	 * Shows that client reports can be added to the plugin
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addReport", args = { ReportId.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addReport", args = { ReportId.class })
 	public void testAddReport() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Add a few agents
 		List<ReportId> reportIds = new ArrayList<>();
@@ -441,16 +441,16 @@ public class AT_ActionPlugin {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the reports were created
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition tests
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addReport(null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addReport(null));
 
 	}
 
@@ -458,9 +458,9 @@ public class AT_ActionPlugin {
 	 * Show that report action plans can be added
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addReportActionPlan", args = { ReportId.class, ReportActionPlan.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addReportActionPlan", args = { ReportId.class, ReportActionPlan.class })
 	public void testAddReportActionPlan() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Add a few agents
 		List<ReportId> reportIds = new ArrayList<>();
@@ -488,16 +488,16 @@ public class AT_ActionPlugin {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the report actions were execute
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition tests
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addReportActionPlan(new SimpleReportId("failing report"), null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addReportActionPlan(new SimpleReportId("failing report"), null));
 
 	}
 
@@ -505,9 +505,9 @@ public class AT_ActionPlugin {
 	 * Shows that client resolvers can be added to the plugin
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addResolver", args = { ResolverId.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addResolver", args = { ResolverId.class })
 	public void testAddResolver() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Add a few resolvers
 		List<ResolverId> resolverIds = new ArrayList<>();
@@ -522,7 +522,7 @@ public class AT_ActionPlugin {
 
 		// Give actions to the agents
 		for (ResolverId resolverId : resolverIds) {
-			pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+			pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 				// show that this is the resolver
 				ResolverId currentResolverId = c.getCurrentResolverId();
 				assertEquals(resolverId, currentResolverId);
@@ -530,16 +530,16 @@ public class AT_ActionPlugin {
 		}
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the resolvers were created
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition tests
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addResolver(null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addResolver(null));
 
 	}
 
@@ -547,9 +547,9 @@ public class AT_ActionPlugin {
 	 * Show that resolver action plans can be added
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "addResolverActionPlan", args = { ResolverId.class, ResolverActionPlan.class })
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "addResolverActionPlan", args = { ResolverId.class, DataManagerActionPlan.class })
 	public void testAddResolverActionPlan() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Add a few resolvers
 		List<ResolverId> resolverIds = new ArrayList<>();
@@ -564,7 +564,7 @@ public class AT_ActionPlugin {
 
 		// Give actions to the agents
 		for (ResolverId resolverId : resolverIds) {
-			pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+			pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 				// show that this is the resolver
 				ResolverId currentResolverId = c.getCurrentResolverId();
 				assertEquals(resolverId, currentResolverId);
@@ -572,22 +572,22 @@ public class AT_ActionPlugin {
 		}
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the resolvers were created
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition tests
 
 		// if the consumer is null
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addResolverActionPlan(null, new ResolverActionPlan(0, (c) -> {
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addResolverActionPlan(null, new DataManagerActionPlan(0, (c) -> {
 		})));
 
 		// if the consumer is null
-		assertThrows(RuntimeException.class, () -> ActionPlugin.builder().addResolverActionPlan(new SimpleResolverId("failing resolver"), null));
+		assertThrows(RuntimeException.class, () -> ActionPluginInitializer.builder().addResolverActionPlan(new SimpleResolverId("failing resolver"), null));
 
 	}
 
@@ -595,10 +595,10 @@ public class AT_ActionPlugin {
 	 * Show that the build() method generates a non-null ActionPlugin
 	 */
 	@Test
-	@UnitTestMethod(target = ActionPlugin.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = ActionPluginInitializer.Builder.class, name = "build", args = {})
 	public void testBuild() {
 
-		assertNotNull(ActionPlugin.builder().build());
+		assertNotNull(ActionPluginInitializer.builder().build());
 
 	}
 

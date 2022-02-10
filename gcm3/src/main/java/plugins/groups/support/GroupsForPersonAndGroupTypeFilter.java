@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.observation.GroupMembershipAdditionObservationEvent;
 import plugins.groups.events.observation.GroupMembershipRemovalObservationEvent;
@@ -20,23 +20,23 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	private final int groupCount;
 	private PersonGroupDataView personGroupDataView;
 
-	private void validateEquality(final Context context, final Equality equality) {
+	private void validateEquality(final SimulationContext simulationContext, final Equality equality) {
 		if (equality == null) {
-			context.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
+			simulationContext.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
 
-	private void validateGroupTypeId(final Context context, final GroupTypeId groupTypeId) {
+	private void validateGroupTypeId(final SimulationContext simulationContext, final GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
 		
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 
 		if (!personGroupDataView.groupTypeIdExists(groupTypeId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
 
@@ -47,15 +47,15 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	}
 
 	@Override
-	public void validate(Context context) {
-		validateEquality(context, equality);
-		validateGroupTypeId(context, groupTypeId);
+	public void validate(SimulationContext simulationContext) {
+		validateEquality(simulationContext, equality);
+		validateGroupTypeId(simulationContext, groupTypeId);
 	}
 
 	@Override
-	public boolean evaluate(Context context, PersonId personId) {
+	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 		final int count = personGroupDataView.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
 		return evaluate(count);
@@ -65,9 +65,9 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupCount));
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(Context context, GroupMembershipAdditionObservationEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionObservationEvent event) {
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 		if (personGroupDataView.getGroupType(event.getGroupId()).equals(groupTypeId)) {
 			return Optional.of(event.getPersonId());
@@ -75,9 +75,9 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return Optional.empty();
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(Context context, GroupMembershipRemovalObservationEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalObservationEvent event) {
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 		if (personGroupDataView.getGroupType(event.getGroupId()).equals(groupTypeId)) {
 			return Optional.of(event.getPersonId());

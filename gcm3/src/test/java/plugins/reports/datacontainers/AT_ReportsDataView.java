@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataView;
 import nucleus.NucleusError;
-import nucleus.ReportId;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import nucleus.ResolverId;
 import nucleus.SimpleReportId;
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
+import plugins.reports.ReportId;
 import plugins.reports.support.ReportError;
 import util.ContractException;
 import util.annotations.UnitTest;
@@ -24,16 +24,16 @@ import util.annotations.UnitTestMethod;
 public class AT_ReportsDataView implements DataView {
 
 	@Test
-	@UnitTestConstructor(args = { ResolverContext.class, ReportsDataManager.class })
+	@UnitTestConstructor(args = { DataManagerContext.class, ReportsDataManager.class })
 	public void testConstructor() {
 		
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 		ReportsDataManager reportsDataManager = new ReportsDataManager();
 		
 		ContractException contractException = assertThrows(ContractException.class, ()->new ReportsDataView(null, reportsDataManager));
 		assertEquals(NucleusError.NULL_CONTEXT, contractException.getErrorType());
 		
-		contractException = assertThrows(ContractException.class, ()->new ReportsDataView(mockContext, null));
+		contractException = assertThrows(ContractException.class, ()->new ReportsDataView(mockSimulationContext, null));
 		assertEquals(ReportError.NULL_REPORT_DATA_MANAGER, contractException.getErrorType());
 
 		
@@ -42,10 +42,10 @@ public class AT_ReportsDataView implements DataView {
 	@Test
 	@UnitTestMethod(name = "isActiveReport", args = { ResolverId.class })
 	public void testIsActiveReport() {
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 		ReportsDataManager reportsDataManager = new ReportsDataManager();
 		
-		ReportsDataView reportsDataView = new ReportsDataView(mockContext, reportsDataManager);
+		ReportsDataView reportsDataView = new ReportsDataView(mockSimulationContext, reportsDataManager);
 		
 		ReportId reportId = new SimpleReportId("report");
 		

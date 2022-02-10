@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.groups.support.GroupError;
@@ -18,7 +18,7 @@ import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.properties.support.PropertyDefinition;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import util.ContractException;
@@ -30,10 +30,10 @@ import util.ContractException;
  *
  */
 public final class PersonGroupDataView implements DataView {
-	private StochasticsDataView stochasticsDataView;
+	private StochasticsDataManager stochasticsDataManager;
 	private PersonDataView personDataView;
 	private final PersonGroupDataManager personGroupDataManager;
-	private Context context;
+	private SimulationContext simulationContext;
 
 	/**
 	 * Constructs the data view from the given context and data manager.
@@ -45,17 +45,17 @@ public final class PersonGroupDataView implements DataView {
 	 *             group data manager is null</li>
 	 * 
 	 */
-	public PersonGroupDataView(Context context, PersonGroupDataManager personGroupDataManager) {
-		if (context == null) {
+	public PersonGroupDataView(SimulationContext simulationContext, PersonGroupDataManager personGroupDataManager) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (personGroupDataManager == null) {
 			throw new ContractException(GroupError.NULL_GROUP_DATA_MANAGER);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.personGroupDataManager = personGroupDataManager;
-		personDataView = context.getDataView(PersonDataView.class).get();
-		stochasticsDataView = context.getDataView(StochasticsDataView.class).get();
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
+		stochasticsDataManager = simulationContext.getDataView(StochasticsDataManager.class).get();
 	}
 
 	/**
@@ -428,20 +428,20 @@ public final class PersonGroupDataView implements DataView {
 
 	private void validateGroupExists(final GroupId groupId) {
 		if (groupId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_ID);
 		}
 		if (!personGroupDataManager.groupExists(groupId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_ID);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_ID);
 		}
 	}
 
 	private void validateGroupPropertyId(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
 
 		if (!personGroupDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID);
 		}
 	}
 
@@ -450,7 +450,7 @@ public final class PersonGroupDataView implements DataView {
 	 */
 	private void validateGroupSampler(final GroupSampler groupSampler) {
 		if (groupSampler == null) {
-			context.throwContractException(GroupError.NULL_GROUP_SAMPLER);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_SAMPLER);
 		}
 		if (groupSampler.getExcludedPerson().isPresent()) {
 			final PersonId excludedPersonId = groupSampler.getExcludedPerson().get();
@@ -465,31 +465,31 @@ public final class PersonGroupDataView implements DataView {
 	private void validateGroupTypeId(final GroupTypeId groupTypeId) {
 
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
 
 		if (!personGroupDataManager.groupTypeIdExists(groupTypeId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 
 	}
 
 	private void validatePersonExists(final PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
 	private void validateRandomNumberGeneratorId(final RandomNumberGeneratorId randomNumberGeneratorId) {
 		if (randomNumberGeneratorId == null) {
-			context.throwContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			simulationContext.throwContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
 		}
-		final RandomGenerator randomGenerator = stochasticsDataView.getRandomGeneratorFromId(randomNumberGeneratorId);
+		final RandomGenerator randomGenerator = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		if (randomGenerator == null) {
-			context.throwContractException(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
+			simulationContext.throwContractException(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
 		}
 	}
 

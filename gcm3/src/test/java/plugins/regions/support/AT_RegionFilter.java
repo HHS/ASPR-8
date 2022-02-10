@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.compartments.support.CompartmentFilter;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -29,7 +29,7 @@ public class AT_RegionFilter {
 
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, Set.class })
+	@UnitTestConstructor(args = { SimulationContext.class, Set.class })
 	public void testConstructor() {
 		RegionsActionSupport.testConsumer(100, 7513298944605144297L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
@@ -68,7 +68,7 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		RegionsActionSupport.testConsumer(100, 8908124836418429909L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 

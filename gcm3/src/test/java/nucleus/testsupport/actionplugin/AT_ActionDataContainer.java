@@ -14,10 +14,10 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentId;
-import nucleus.ReportId;
 import nucleus.ResolverId;
 import nucleus.SimpleReportId;
 import nucleus.SimpleResolverId;
+import plugins.reports.ReportId;
 import util.MultiKey;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -180,7 +180,7 @@ public class AT_ActionDataContainer {
 	 * Shows that resolver action plans can be added
 	 */
 	@Test
-	@UnitTestMethod(name = "addResolverActionPlan", args = { ResolverId.class, ResolverActionPlan.class })
+	@UnitTestMethod(name = "addResolverActionPlan", args = { ResolverId.class, DataManagerActionPlan.class })
 	public void testAddResolverActionPlan() {
 		ActionDataContainer actionDataContainer = new ActionDataContainer();
 
@@ -190,46 +190,46 @@ public class AT_ActionDataContainer {
 		ResolverId resolverId2 = new SimpleResolverId("resolver id 2");
 		ResolverId resolverId3 = new SimpleResolverId("resolver id 3");
 
-		Map<ResolverId, Set<ResolverActionPlan>> expectedActionPlans = new LinkedHashMap<>();
+		Map<ResolverId, Set<DataManagerActionPlan>> expectedActionPlans = new LinkedHashMap<>();
 		expectedActionPlans.put(resolverId1, new LinkedHashSet<>());
 		expectedActionPlans.put(resolverId2, new LinkedHashSet<>());
 		expectedActionPlans.put(resolverId3, new LinkedHashSet<>());
 
 		// add a duplicated action plan
-		ResolverActionPlan duplicateResolverActionPlan = new ResolverActionPlan(0, (c) -> {
+		DataManagerActionPlan duplicateResolverActionPlan = new DataManagerActionPlan(0, (c) -> {
 		});
 		expectedActionPlans.get(resolverId1).add(duplicateResolverActionPlan);
 		expectedActionPlans.get(resolverId1).add(duplicateResolverActionPlan);
-		expectedActionPlans.get(resolverId1).add(new ResolverActionPlan(1, (c) -> {
+		expectedActionPlans.get(resolverId1).add(new DataManagerActionPlan(1, (c) -> {
 		}));
-		expectedActionPlans.get(resolverId1).add(new ResolverActionPlan(2, (c) -> {
-		}));
-
-		expectedActionPlans.get(resolverId2).add(new ResolverActionPlan(3, (c) -> {
-		}));
-		expectedActionPlans.get(resolverId2).add(new ResolverActionPlan(4, (c) -> {
-		}));
-		expectedActionPlans.get(resolverId2).add(new ResolverActionPlan(5, (c) -> {
+		expectedActionPlans.get(resolverId1).add(new DataManagerActionPlan(2, (c) -> {
 		}));
 
-		expectedActionPlans.get(resolverId3).add(new ResolverActionPlan(1, (c) -> {
+		expectedActionPlans.get(resolverId2).add(new DataManagerActionPlan(3, (c) -> {
 		}));
-		expectedActionPlans.get(resolverId3).add(new ResolverActionPlan(6, (c) -> {
+		expectedActionPlans.get(resolverId2).add(new DataManagerActionPlan(4, (c) -> {
 		}));
-		expectedActionPlans.get(resolverId3).add(new ResolverActionPlan(9, (c) -> {
+		expectedActionPlans.get(resolverId2).add(new DataManagerActionPlan(5, (c) -> {
+		}));
+
+		expectedActionPlans.get(resolverId3).add(new DataManagerActionPlan(1, (c) -> {
+		}));
+		expectedActionPlans.get(resolverId3).add(new DataManagerActionPlan(6, (c) -> {
+		}));
+		expectedActionPlans.get(resolverId3).add(new DataManagerActionPlan(9, (c) -> {
 		}));
 
 		for (ResolverId resolverId : expectedActionPlans.keySet()) {
-			for (ResolverActionPlan resolverActionPlan : expectedActionPlans.get(resolverId)) {
-				actionDataContainer.addResolverActionPlan(resolverId, resolverActionPlan);
+			for (DataManagerActionPlan dataManagerActionPlan : expectedActionPlans.get(resolverId)) {
+				actionDataContainer.addResolverActionPlan(resolverId, dataManagerActionPlan);
 			}
 		}
 
 		// retrieve the report action plans and show that they are the same as
 		// the ones we added
 		for (ResolverId resolverId : expectedActionPlans.keySet()) {
-			Set<ResolverActionPlan> actualPlans = actionDataContainer.getResolverActionPlans(resolverId);
-			Set<ResolverActionPlan> expectedPlans = expectedActionPlans.get(resolverId);
+			Set<DataManagerActionPlan> actualPlans = actionDataContainer.getResolverActionPlans(resolverId);
+			Set<DataManagerActionPlan> expectedPlans = expectedActionPlans.get(resolverId);
 			assertEquals(expectedPlans, actualPlans);
 
 			// the order of the plans should be the same as well
@@ -240,7 +240,7 @@ public class AT_ActionDataContainer {
 		// precondition tests
 
 		// if the report id is null
-		assertThrows(RuntimeException.class, () -> actionDataContainer.addResolverActionPlan(null, new ResolverActionPlan(0, (c) -> {
+		assertThrows(RuntimeException.class, () -> actionDataContainer.addResolverActionPlan(null, new DataManagerActionPlan(0, (c) -> {
 		})));
 
 		// if the report action plan is null
@@ -484,46 +484,46 @@ public class AT_ActionDataContainer {
 		ResolverId resolverId2 = new SimpleResolverId("resolver id 2");
 		ResolverId resolverId3 = new SimpleResolverId("resolver id 3");
 
-		Map<ResolverId, Set<ResolverActionPlan>> expectedActionPlans = new LinkedHashMap<>();
+		Map<ResolverId, Set<DataManagerActionPlan>> expectedActionPlans = new LinkedHashMap<>();
 		expectedActionPlans.put(resolverId1, new LinkedHashSet<>());
 		expectedActionPlans.put(resolverId2, new LinkedHashSet<>());
 		expectedActionPlans.put(resolverId3, new LinkedHashSet<>());
 
 		// add a duplicated action plan
-		ResolverActionPlan duplicateResolverActionPlan = new ResolverActionPlan(0, (c) -> {
+		DataManagerActionPlan duplicateResolverActionPlan = new DataManagerActionPlan(0, (c) -> {
 		});
 		expectedActionPlans.get(resolverId1).add(duplicateResolverActionPlan);
 		expectedActionPlans.get(resolverId1).add(duplicateResolverActionPlan);
-		expectedActionPlans.get(resolverId1).add(new ResolverActionPlan(1, (c) -> {
+		expectedActionPlans.get(resolverId1).add(new DataManagerActionPlan(1, (c) -> {
 		}));
-		expectedActionPlans.get(resolverId1).add(new ResolverActionPlan(2, (c) -> {
-		}));
-
-		expectedActionPlans.get(resolverId2).add(new ResolverActionPlan(3, (c) -> {
-		}));
-		expectedActionPlans.get(resolverId2).add(new ResolverActionPlan(4, (c) -> {
-		}));
-		expectedActionPlans.get(resolverId2).add(new ResolverActionPlan(5, (c) -> {
+		expectedActionPlans.get(resolverId1).add(new DataManagerActionPlan(2, (c) -> {
 		}));
 
-		expectedActionPlans.get(resolverId3).add(new ResolverActionPlan(1, (c) -> {
+		expectedActionPlans.get(resolverId2).add(new DataManagerActionPlan(3, (c) -> {
 		}));
-		expectedActionPlans.get(resolverId3).add(new ResolverActionPlan(6, (c) -> {
+		expectedActionPlans.get(resolverId2).add(new DataManagerActionPlan(4, (c) -> {
 		}));
-		expectedActionPlans.get(resolverId3).add(new ResolverActionPlan(9, (c) -> {
+		expectedActionPlans.get(resolverId2).add(new DataManagerActionPlan(5, (c) -> {
+		}));
+
+		expectedActionPlans.get(resolverId3).add(new DataManagerActionPlan(1, (c) -> {
+		}));
+		expectedActionPlans.get(resolverId3).add(new DataManagerActionPlan(6, (c) -> {
+		}));
+		expectedActionPlans.get(resolverId3).add(new DataManagerActionPlan(9, (c) -> {
 		}));
 
 		for (ResolverId resolverId : expectedActionPlans.keySet()) {
-			for (ResolverActionPlan resolverActionPlan : expectedActionPlans.get(resolverId)) {
-				actionDataContainer.addResolverActionPlan(resolverId, resolverActionPlan);
+			for (DataManagerActionPlan dataManagerActionPlan : expectedActionPlans.get(resolverId)) {
+				actionDataContainer.addResolverActionPlan(resolverId, dataManagerActionPlan);
 			}
 		}
 
 		// retrieve the resolver action plans and show that they are the same as
 		// the ones we added
 		for (ResolverId resolverId : expectedActionPlans.keySet()) {
-			Set<ResolverActionPlan> actualPlans = actionDataContainer.getResolverActionPlans(resolverId);
-			Set<ResolverActionPlan> expectedPlans = expectedActionPlans.get(resolverId);
+			Set<DataManagerActionPlan> actualPlans = actionDataContainer.getResolverActionPlans(resolverId);
+			Set<DataManagerActionPlan> expectedPlans = expectedActionPlans.get(resolverId);
 			assertEquals(expectedPlans, actualPlans);
 
 			// the order of the plans should be the same as well

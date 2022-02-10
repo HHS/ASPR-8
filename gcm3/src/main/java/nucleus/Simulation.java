@@ -2,7 +2,6 @@ package nucleus;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.NotThreadSafe;
-import util.ContractError;
+
 import util.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -46,55 +45,80 @@ public class Simulation {
 
 		@Override
 		public void addPluginDependency(PluginId pluginId) {
-			Simulation.this.addPluginDependency(pluginId);
+			if (focalPluginId == null) {
+				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
+			}
+			pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
 		}
 
 		@Override
-		public void defineResolver(ResolverId resolverId, Consumer<ResolverContext> init) {
-			Simulation.this.defineResolver(resolverId, init);
+		public void addDataManager(DataManager dataManager) {
+
+			if (focalPluginId == null) {
+				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
+			}
+
+			Set<DataManager> set = dataMangagersMap.get(focalPluginId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				dataMangagersMap.put(focalPluginId, set);
+			}
+			set.add(dataManager);
+
 		}
 
-	}
-
-	private class BaseContextImpl implements Context {
-
 		@Override
-		public void releaseOutput(Object output) {
-			Simulation.this.releaseOutput(output);
+		public void addAgent(AgentId agentId, Consumer<AgentContext> consumer) {
+			if (agentId == null) {
+				throw new ContractException(NucleusError.NULL_AGENT_ID);
+			}
+
+			if (consumer == null) {
+				throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
+			}
+
+			if (focalPluginId == null) {
+				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
+			}
+			Map<AgentId, Consumer<AgentContext>> map = agentsMap.get(focalPluginId);
+
+			map.put(agentId, consumer);
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends DataView> Optional<T> getDataView(Class<T> c) {
-			return Optional.ofNullable((T) dataViewMap.get(c));
+		public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
+			return Optional.ofNullable((T) pluginDataMap.get(pluginDataClass));
 		}
 
-		@Override
-		public double getTime() {
-			return time;
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError) {
-			Simulation.this.throwContractException(recoverableError);
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError, Object details) {
-			Simulation.this.throwContractException(recoverableError, details);
-		}
 	}
+
+	
 
 	private class AgentContextImpl implements AgentContext {
 
 		@Override
 		public void addPlan(final Consumer<AgentContext> plan, final double planTime) {
-			Simulation.this.addAgentPlan(plan, planTime);
+			addAgentPlan(plan, planTime, true, null);
 		}
 
 		@Override
-		public void addPlan(final Consumer<AgentContext> plan, final double planTime, final Object key) {
-			Simulation.this.addAgentPlan(plan, planTime, key);
+		public void addKeyedPlan(final Consumer<AgentContext> plan, final double planTime, final Object key) {
+			validatePlanKeyNotNull(key);
+			validateAgentPlanKeyNotDuplicate(key);
+			addAgentPlan(plan, planTime, true, key);
+		}
+
+		@Override
+		public void addPassivePlan(final Consumer<AgentContext> plan, final double planTime) {
+			addAgentPlan(plan, planTime, false, null);
+		}
+
+		@Override
+		public void addPassiveKeyedPlan(final Consumer<AgentContext> plan, final double planTime, final Object key) {
+			validatePlanKeyNotNull(key);
+			validateAgentPlanKeyNotDuplicate(key);
+			addAgentPlan(plan, planTime, false, key);
 		}
 
 		@Override
@@ -109,8 +133,8 @@ public class Simulation {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends DataView> Optional<T> getDataView(final Class<T> c) {
-			return Optional.ofNullable((T) dataViewMap.get(c));
+		public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+			return Optional.ofNullable((T) dataManagerMap.get(dataManagerClass));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -145,25 +169,8 @@ public class Simulation {
 		}
 
 		@Override
-		public void resolveEvent(final Event event) {
-			Simulation.this.resolveEventForAgent(event);
-		}
-
-		@Override
 		public void releaseOutput(Object output) {
 			Simulation.this.releaseOutput(output);
-
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError) {
-			Simulation.this.throwContractException(recoverableError);
-
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError, Object details) {
-			Simulation.this.throwContractException(recoverableError, details);
 
 		}
 
@@ -173,14 +180,23 @@ public class Simulation {
 		}
 
 		@Override
+		public <T extends Event> void subscribe(Class<T> eventClass, AgentEventConsumer<T> agentConsumer) {
+			Simulation.this.subscribeAgentToEvent(eventClass, agentConsumer);
+		}
+
+		@Override
 		public <T extends Event> void unsubscribe(EventLabel<T> eventLabel) {
 			Simulation.this.unsubscribeAgentFromEvent(eventLabel);
-
 		}
 
 		@Override
 		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
 			Simulation.this.addEventLabeler(eventLabeler);
+		}
+
+		@Override
+		public void subscribeToSimulationClose(Consumer<AgentContext> closeHandler) {
+			Simulation.this.subscribeAgentToSimulationClose(closeHandler);
 
 		}
 
@@ -193,15 +209,13 @@ public class Simulation {
 		private Planner planner;
 		private double time;
 		private long arrivalId;
+		private boolean isActive;
 
 		private Consumer<AgentContext> agentPlan;
 		private AgentId agentId;
 
-		private Consumer<ResolverContext> resolverPlan;
-		private ResolverId resolverId;
-
-		private Consumer<ReportContext> reportPlan;
-		private ReportId reportId;
+		private Consumer<DataManagerContext> resolverPlan;
+		private DataManagerId dataManagerId;
 
 		private Object key;
 
@@ -227,11 +241,8 @@ public class Simulation {
 			case AGENT:
 				builder.append(agentId);
 				break;
-			case REPORT:
-				builder.append(reportId);
-				break;
-			case RESOLVER:
-				builder.append(resolverId);
+			case DATA_MANAGER:
+				builder.append(dataManagerId);
 				break;
 			default:
 				throw new RuntimeException("unhandled case");
@@ -256,36 +267,9 @@ public class Simulation {
 
 	}
 
-	private static class ResolverContentRec {
-
-		private Event event;
-
-		private MetaResolverEventConsumer<?> metaResolverEventConsumer;
-
-		private boolean agentIsEventSource;
-
-		private Consumer<ResolverContext> plan;
-
-		private ResolverId resolverId;
-	}
-
-	private static class ReportContentRec {
-
-		private Event event;
-
-		private Consumer<ReportContext> plan;
-
-		private MetaReportEventConsumer<?> metaReportEventConsumer;
-
-		private ReportId reportId;
-
-		private boolean agentIsEventSource;
-
-	}
-
 	public static class Builder {
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private Builder() {
 
@@ -295,7 +279,25 @@ public class Simulation {
 		 * Sets the output consumer for the simulation. Tolerates null.
 		 */
 		public Builder setOutputConsumer(Consumer<Object> outputConsumer) {
-			scaffold.outputConsumer = outputConsumer;
+			data.outputConsumer = outputConsumer;
+			return this;
+		}
+
+		/**
+		 * Adds a plugin initializer to this builder for inclusion in the
+		 * simulation
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#NULL_PLUGIN_INITIALIZER} if the
+		 *             plugin intializer is null
+		 * 
+		 */
+
+		public Builder addPluginInitializer(PluginInitializer pluginInitializer) {
+			if (pluginInitializer == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN_INITIALIZER);
+			}
+			data.pluginInitializers.add(pluginInitializer);
 			return this;
 		}
 
@@ -303,56 +305,26 @@ public class Simulation {
 		 * Adds a plugin to this builder for inclusion in the simulation
 		 * 
 		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_PLUGIN_ID} if the plugin id
-		 *             is null
-		 * 
-		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_PLUGIN_CONTEXT_CONSUMER} if
-		 *             the plugin context consumer is null
+		 *             <li>{@link NucleusError#NULL_PLUGIN_DATA} if the plugin
+		 *             data is null
 		 */
-		public Builder addPlugin(PluginId pluginId, Consumer<PluginContext> init) {
-			if (pluginId == null) {
-				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
+		public Builder addPluginData(PluginData pluginData) {
+			if (pluginData == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 			}
-
-			if (init == null) {
-				throw new ContractException(NucleusError.NULL_PLUGIN_CONTEXT_CONSUMER);
-			}
-
-			if (scaffold.plugins.containsKey(pluginId)) {
-				throw new ContractException(NucleusError.DUPLICATE_PLUGIN_ID);
-			}
-
-			scaffold.plugins.put(pluginId, init);
+			data.pluginDatas.add(pluginData);
 			return this;
 		}
 
 		/**
 		 * Returns an Engine instance that is initialized with the plugins and
 		 * output consumer collected by this builder.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@link NucleusError#DUPLICATE_RESOLVER_ID} if two
-		 *             plugins define the same resolver id
-		 * 
-		 * 
-		 *             <li>{@link NucleusError#MISSING_PLUGIN} if a plugin is
-		 *             required by another plugin, but no instance of the needed
-		 *             plugin was contributed to this builder
-		 * 
-		 *             <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES} if
-		 *             the contributed plugins form a circular chain of
-		 *             dependencies
-		 * 
-		 * 
 		 */
 		public Simulation build() {
 			try {
-				final Simulation simulation = new Simulation();
-				simulation.init(scaffold);
-				return simulation;
+				return new Simulation(data);
 			} finally {
-				scaffold = new Scaffold();
+				data = new Data();
 			}
 		}
 	}
@@ -362,305 +334,171 @@ public class Simulation {
 	 * IS CRITICAL TO THE FUNCTION OF THE SIMULATION!
 	 */
 	private static enum Planner {
-		RESOLVER, AGENT, REPORT
+		DATA_MANAGER, AGENT
 	}
 
-	private class ReportContextImpl implements ReportContext {
+	private static class DataManagerContextImpl implements DataManagerContext {
+		private final DataManagerId dataManagerId;
+		private final Simulation simulation;
 
-		@Override
-		public void addPlan(final Consumer<ReportContext> plan, final double planTime) {
-			Simulation.this.addReportPlan(plan, planTime);
+		private DataManagerContextImpl(Simulation simulation, DataManagerId dataManagerId) {
+			this.simulation = simulation;
+			this.dataManagerId = dataManagerId;
 		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends DataView> Optional<T> getDataView(final Class<T> c) {
-			return Optional.ofNullable((T) dataViewMap.get(c));
-		}
-
-		@Override
-		public double getTime() {
-			return time;
-		}
-
-		@Override
-		public void releaseOutput(Object output) {
-			Simulation.this.releaseOutput(output);
-
-		}
-
-		@Override
-		// public <T extends Event> void subscribe(Class<? extends Event>
-		// eventClass, ReportEventConsumer<T> reportConsumer) {
-		public <T extends Event> void subscribe(Class<T> eventClass, ReportEventConsumer<T> reportConsumer) {
-			Simulation.this.subscribeReportToEvent(eventClass, reportConsumer);
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError) {
-			Simulation.this.throwContractException(recoverableError);
-
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError, Object details) {
-			Simulation.this.throwContractException(recoverableError, details);
-
-		}
-
-		@Override
-		public void subscribeToSimulationClose(Consumer<ReportContext> closeHandler) {
-			Simulation.this.subscribeReportToSimulationClose(closeHandler);
-		}
-
-		@Override
-		public <T extends Event> void subscribe(EventLabel<T> eventLabel, ReportEventConsumer<T> reportEventConsumer) {
-			Simulation.this.subscribeReportToEvent(eventLabel, reportEventConsumer);
-		}
-
-		@Override
-		public ReportId getCurrentReportId() {
-			return focalReport;
-		}
-
-		@Override
-		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-			Simulation.this.addEventLabeler(eventLabeler);
-		}
-
-	}
-
-	private class ResolverContextImpl implements ResolverContext {
 
 		@Override
 		public void addAgent(Consumer<AgentContext> init, AgentId agentId) {
 			if (agentId == null) {
-				throwContractException(NucleusError.NULL_AGENT_ID);
+				throw new ContractException(NucleusError.NULL_AGENT_ID);
 			}
 
 			if (init == null) {
-				throwContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
+				throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
 			}
 
-			int index = agentId.getValue();
-
-			if (index < 0) {
-				throwContractException(NucleusError.NEGATIVE_AGENT_ID);
+			if (simulation.agentIds.contains(agentId)) {
+				throw new ContractException(NucleusError.AGENT_ID_IN_USE, agentId);
 			}
 
-			int size = agentIds.size();
-
-			if (index < size) {
-				if (agentIds.get(index) != null) {
-					throwContractException(NucleusError.AGENT_ID_IN_USE, agentId);
-				}
-				agentIds.set(index, agentId);
-			} else {
-
-				for (int i = size; i < index; i++) {
-					agentIds.add(null);
-				}
-				agentIds.add(agentId);
-			}
+			simulation.agentIds.add(agentId);
 
 			final AgentContentRec agentContentRec = new AgentContentRec();
 			agentContentRec.agentId = agentId;
 			agentContentRec.plan = init;
-			agentQueue.add(agentContentRec);
+			simulation.agentQueue.add(agentContentRec);
 
 		}
 
 		@Override
-		public void addPlan(final Consumer<ResolverContext> plan, final double planTime) {
-			Simulation.this.addResolverPlan(plan, planTime);
+		public void addPlan(final Consumer<DataManagerContext> plan, final double planTime) {
+			simulation.addResolverPlan(dataManagerId, plan, planTime, true, null);
 		}
 
 		@Override
-		public void addPlan(final Consumer<ResolverContext> plan, final double planTime, final Object key) {
-			Simulation.this.addResolverPlan(plan, planTime, key);
+		public void addKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+			simulation.validatePlanKeyNotNull(key);
+			simulation.validateResolverPlanKeyNotDuplicate(dataManagerId, key);
+			simulation.addResolverPlan(dataManagerId, plan, planTime, true, key);
+		}
 
+		@Override
+		public void addPassivePlan(final Consumer<DataManagerContext> plan, final double planTime) {
+			simulation.addResolverPlan(dataManagerId, plan, planTime, false, null);
+		}
+
+		@Override
+		public void addKeyedPassivePlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+			simulation.validatePlanKeyNotNull(key);
+			simulation.validateResolverPlanKeyNotDuplicate(dataManagerId, key);
+			simulation.addResolverPlan(dataManagerId, plan, planTime, false, key);
 		}
 
 		@Override
 		public boolean agentExists(final AgentId agentId) {
-			return Simulation.this.agentExists(agentId);
+			return simulation.agentExists(agentId);
 		}
 
 		@Override
-		public boolean currentAgentIsEventSource() {
-			return agentIsEventSource;
-		}
-
-		@Override
-		public AgentId getAvailableAgentId() {
-			return new AgentId(masterAgentId++);
-		}
-
-		@Override
-		public AgentId getCurrentAgentId() {
-			return focalAgentId;
+		public Optional<AgentId> getCurrentAgentId() {
+			return Optional.ofNullable(simulation.focalAgentId);
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends DataView> Optional<T> getDataView(final Class<T> c) {
-			return Optional.ofNullable((T) dataViewMap.get(c));
+		public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+			return Optional.ofNullable((T) simulation.dataManagerMap.get(dataManagerClass));
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends Consumer<ResolverContext>> T getPlan(final Object key) {
-			return (T) Simulation.this.getResolverPlan(key);
+		public <T extends Consumer<DataManagerContext>> T getPlan(final Object key) {
+			return (T) simulation.getResolverPlan(dataManagerId, key);
 		}
 
 		@Override
 		public List<Object> getPlanKeys() {
-			return Simulation.this.getResolverPlanKeys();
+			return simulation.getResolverPlanKeys(dataManagerId);
 		}
 
 		@Override
 		public double getPlanTime(final Object key) {
-			return Simulation.this.getResolverPlanTime(key);
+			return simulation.getResolverPlanTime(dataManagerId, key);
 		}
 
 		@Override
 		public double getTime() {
-			return time;
+			return simulation.time;
 		}
 
 		@Override
 		public void halt() {
-			Simulation.this.halt();
+			simulation.halt();
 		}
 
 		@Override
-		public void queueEventForResolution(final Event event) {
-			Simulation.this.resolveEventForResolver(event);
+		public void resolveEvent(final Event event) {
+			simulation.resolveEventForDataManager(event);
 
 		}
 
 		@Override
 		public void removeAgent(final AgentId agentId) {
 			if (agentId == null) {
-				throwContractException(NucleusError.NULL_AGENT_ID);
+				throw new ContractException(NucleusError.NULL_AGENT_ID);
 			}
 
-			int index = agentId.getValue();
+			boolean removed = simulation.agentIds.remove(agentId);
 
-			if (index < 0) {
-				throwContractException(NucleusError.NEGATIVE_AGENT_ID);
+			if (!removed) {
+				throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
 			}
 
-			int size = agentIds.size();
-
-			if (index >= size) {
-				throwContractException(NucleusError.UNKNOWN_AGENT_ID);
-			}
-			if (agentIds.get(index) == null) {
-				throwContractException(NucleusError.UNKNOWN_AGENT_ID);
-			}
-			agentIds.set(index, null);
-			agentMapContainsNulls = true;
+			simulation.containsDeletedAgents = true;
 		}
 
 		@Override
 		public <T> Optional<T> removePlan(final Object key) {
-			return Simulation.this.removeResolverPlan(key);
+			return simulation.removeResolverPlan(dataManagerId, key);
 		}
 
 		@Override
 		public void releaseOutput(Object output) {
-			Simulation.this.releaseOutput(output);
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError) {
-			Simulation.this.throwContractException(recoverableError);
-		}
-
-		@Override
-		public void throwContractException(ContractError recoverableError, Object details) {
-			Simulation.this.throwContractException(recoverableError, details);
+			simulation.releaseOutput(output);
 		}
 
 		@Override
 		public void unSubscribeToEvent(Class<? extends Event> eventClass) {
-			Simulation.this.unSubscribeResolverToEvent(eventClass);
+			simulation.unSubscribeResolverToEvent(dataManagerId, eventClass);
 		}
 
 		@Override
 		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-			Simulation.this.addEventLabeler(eventLabeler);
+			simulation.addEventLabeler(eventLabeler);
 		}
 
-		@Override
-		public Context getSafeContext() {
-			return Simulation.this.baseContext;
-
-		}
 
 		@Override
 		public boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-			return Simulation.this.subscribersExistForEvent(eventClass);
+			return simulation.subscribersExistForEvent(eventClass);
+		}
+
+
+		@Override
+		public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
+			simulation.subscribeResolverToEventPostPhase(dataManagerId, eventClass, resolverConsumer);
 		}
 
 		@Override
-		public void addReport(ReportId reportId, Consumer<ReportContext> init) {
-
-			if (reportId == null) {
-				throwContractException(NucleusError.NULL_REPORT_ID);
-			}
-
-			if (init == null) {
-				throwContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
-			}
-
-			if (reportIds.contains(reportId)) {
-				throwContractException(NucleusError.REPORT_ID_IN_USE, reportId);
-			}
-			reportIds.add(reportId);
-
-			final ReportContentRec contentRec = new ReportContentRec();
-			contentRec.plan = init;
-			contentRec.reportId = reportId;
-			reportQueue.add(contentRec);
-
-		}
-
-		@Override
-		public <T extends Event> void subscribeToEventValidationPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-			Simulation.this.subscribeResolverToEventValidationPhase(eventClass, resolverConsumer);
-		}
-
-		@Override
-		public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-			Simulation.this.subscribeResolverToEventPostPhase(eventClass, resolverConsumer);
-		}
-
-		@Override
-		public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-			Simulation.this.subscribeResolverToEventExecutionPhase(eventClass, resolverConsumer);
-		}
-
-		@Override
-		public void publishDataView(DataView dataView) {
-			if (dataView == null) {
-				throwContractException(NucleusError.NULL_DATA_VIEW);
-			}
-			dataViewMap.put(dataView.getClass(), dataView);
-		}
-
-		@Override
-		public ResolverId getCurrentResolverId() {
-			return focalResolver;
+		public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
+			simulation.subscribeResolverToEventExecutionPhase(dataManagerId, eventClass, resolverConsumer);
 		}
 
 	}
 
-	private static class Scaffold {
-		private Map<PluginId, Consumer<PluginContext>> plugins = new LinkedHashMap<>();
+	private static class Data {
+		private List<PluginInitializer> pluginInitializers = new ArrayList<>();
+		private List<PluginData> pluginDatas = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
-
 	}
 
 	/**
@@ -685,6 +523,8 @@ public class Simulation {
 		}
 	};
 
+	private Map<PluginId, Map<AgentId, Consumer<AgentContext>>> agentsMap = new LinkedHashMap<>();
+
 	// planning
 	private long masterPlanningArrivalId;
 	private double time;
@@ -692,70 +532,58 @@ public class Simulation {
 	private int activePlanCount;
 	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
 
-	// resolvers and reports
-	private final Map<Class<? extends Event>, List<MetaResolverEventConsumer<?>>> resolverEventMap = new LinkedHashMap<>();
-	private final ResolverContext resolverContext = new ResolverContextImpl();
-	private final Map<ResolverId, Map<Object, PlanRec>> resolverPlanMap = new LinkedHashMap<>();
-	private final Deque<ResolverContentRec> resolverQueue = new ArrayDeque<>();
-	private ResolverId focalResolver;
-
-	private final Map<Class<? extends Event>, Map<ReportId, MetaReportEventConsumer<?>>> reportEventMap = new LinkedHashMap<>();
-	private final Set<ReportId> reportIds = new LinkedHashSet<>();
-	private ReportId focalReport;
-
-	private boolean resolverQueueActive;
-	private ReportContext reportContext = new ReportContextImpl();
-
-	// private final List<ReportId> reports = new ArrayList<>();
-	private final Deque<ReportContentRec> reportQueue = new ArrayDeque<>();
-	private final Map<ReportId, Consumer<ReportContext>> simulationCloseCallbacks = new LinkedHashMap<>();
-
 	// agents
+
+	private final Map<Class<? extends Event>, Map<AgentId, MetaAgentEventConsumer<?>>> agentEventMap = new LinkedHashMap<>();
+
+	private final Map<AgentId, Consumer<AgentContext>> simulationCloseCallbacks = new LinkedHashMap<>();
+
+	
 	private final AgentContext agentContext = new AgentContextImpl();
-	private final List<AgentId> agentIds = new ArrayList<>();
-	private boolean agentMapContainsNulls;
+	
+	private final Set<AgentId> agentIds = new LinkedHashSet<>();
+	
+	private boolean containsDeletedAgents;
 
-	private int masterAgentId;
 	private final Map<AgentId, Map<Object, PlanRec>> agentPlanMap = new LinkedHashMap<>();
+	
 	private final Deque<AgentContentRec> agentQueue = new ArrayDeque<>();
+	
 	private AgentId focalAgentId;
-	private boolean agentIsEventSource;
 
-	Context baseContext = new BaseContextImpl();
-	private Map<Class<?>, DataView> dataViewMap = new LinkedHashMap<>();
 	private boolean started;
 
 	private final PluginContext pluginContext = new PluginContextImpl();
+	
 	private PluginId focalPluginId;
 
-	private Simulation() {
+	private final Map<Class<?>, PluginData> pluginDataMap = new LinkedHashMap<>();
 
+	private final Data data;
+
+	private Simulation(Data data) {
+		this.data = data;
 	}
 
 	private void validateAgentPlan(final Consumer<AgentContext> plan) {
 		if (plan == null) {
-			throwContractException(NucleusError.NULL_PLAN);
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 	}
 
-	private void validateReportPlan(final Consumer<ReportContext> plan) {
+	private void validateResolverPlan(final Consumer<DataManagerContext> plan) {
 		if (plan == null) {
-			throwContractException(NucleusError.NULL_PLAN);
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 	}
 
-	private void validateResolverPlan(final Consumer<ResolverContext> plan) {
-		if (plan == null) {
-			throwContractException(NucleusError.NULL_PLAN);
-		}
-	}
-
-	private void _addAgentPlan(final Consumer<AgentContext> plan, final double time, final Object key) {
+	private void addAgentPlan(final Consumer<AgentContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validatePlanTime(time);
 		validateAgentPlan(plan);
 
 		final PlanRec planRec = new PlanRec();
+		planRec.isActive = isActivePlan;
 		planRec.arrivalId = masterPlanningArrivalId++;
 		planRec.planner = Planner.AGENT;
 		planRec.time = FastMath.max(time, this.time);
@@ -775,80 +603,46 @@ public class Simulation {
 			map.put(key, planRec);
 		}
 
-		activePlanCount++;
-
+		if (isActivePlan) {
+			activePlanCount++;
+		}
 		planningQueue.add(planRec);
 
 	}
 
-	private void addReportPlan(final Consumer<ReportContext> plan, final double time) {
-		validateReportPlan(plan);
-		validatePlanTime(time);
-
-		final PlanRec planRec = new PlanRec();
-		planRec.arrivalId = masterPlanningArrivalId++;
-		planRec.planner = Planner.REPORT;
-		planRec.time = FastMath.max(time, this.time);
-		planRec.reportPlan = plan;
-
-		planRec.reportId = focalReport;
-
-		// DO NOT INCREMENT THE activePlanCount
-
-		planningQueue.add(planRec);
-
-	}
-
-	private void _addResolverPlan(final Consumer<ResolverContext> plan, final double time, final Object key) {
+	private void addResolverPlan(final DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validateResolverPlan(plan);
 		validatePlanTime(time);
 
 		final PlanRec planRec = new PlanRec();
+		planRec.isActive = isActivePlan;
 		planRec.arrivalId = masterPlanningArrivalId++;
-		planRec.planner = Planner.RESOLVER;
+		planRec.planner = Planner.DATA_MANAGER;
 		planRec.time = FastMath.max(time, this.time);
 		planRec.resolverPlan = plan;
 		planRec.key = key;
 
 		Map<Object, PlanRec> map;
 
-		planRec.resolverId = focalResolver;
+		planRec.dataManagerId = dataManagerId;
 		if (key != null) {
-			map = resolverPlanMap.get(focalResolver);
+			map = resolverPlanMap.get(dataManagerId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
-				resolverPlanMap.put(focalResolver, map);
+				resolverPlanMap.put(dataManagerId, map);
 			}
 			map.put(key, planRec);
 		}
 
-		activePlanCount++;
+		if (isActivePlan) {
+			activePlanCount++;
+		}
 		planningQueue.add(planRec);
 	}
 
-	private void addAgentPlan(final Consumer<AgentContext> plan, final double time) {
-		_addAgentPlan(plan, time, null);
-	}
-
-	private void addAgentPlan(final Consumer<AgentContext> plan, final double time, final Object key) {
-		validatePlanKeyNotNull(key);
-		validateAgentPlanKeyNotDuplicate(key);
-		_addAgentPlan(plan, time, key);
-	}
-
-	private void addResolverPlan(final Consumer<ResolverContext> plan, final double time) {
-		_addResolverPlan(plan, time, null);
-	}
-
-	private void addResolverPlan(final Consumer<ResolverContext> plan, final double time, final Object key) {
-		validatePlanKeyNotNull(key);
-		validateResolverPlanKeyNotDuplicate(key);
-		_addResolverPlan(plan, time, key);
-	}
-
-	private void validateResolverPlanKeyNotDuplicate(final Object key) {
-		if (getResolverPlan(key) != null) {
+	private void validateResolverPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
+		if (getResolverPlan(dataManagerId, key) != null) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
@@ -877,36 +671,135 @@ public class Simulation {
 
 	}
 
+	private List<PluginId> getOrderedPluginIds() {
+		/*
+		 * Determine whether the graph is acyclic and generate a graph depth
+		 * evaluator for the graph so that we can determine the order of
+		 * initialization.
+		 */
+		Optional<GraphDepthEvaluator<PluginId>> optional = GraphDepthEvaluator.getGraphDepthEvaluator(pluginDependencyGraph.toGraph());
+
+		if (!optional.isPresent()) {
+			/*
+			 * Explain in detail why there is a circular dependency
+			 */
+
+			Graph<PluginId, Object> g = pluginDependencyGraph.toGraph();
+			g = Graphs.getSourceSinkReducedGraph(g);
+			List<Graph<PluginId, Object>> cutGraphs = Graphs.cutGraph(g);
+			StringBuilder sb = new StringBuilder();
+			String lineSeparator = System.getProperty("line.separator");
+			sb.append(lineSeparator);
+			boolean firstCutGraph = true;
+
+			for (Graph<PluginId, Object> cutGraph : cutGraphs) {
+				if (firstCutGraph) {
+					firstCutGraph = false;
+				} else {
+					sb.append(lineSeparator);
+				}
+				sb.append("Dependency group: ");
+				sb.append(lineSeparator);
+				Set<PluginId> nodes = cutGraph.getNodes().stream().collect(Collectors.toCollection(LinkedHashSet::new));
+
+				for (PluginId node : nodes) {
+					sb.append("\t");
+					sb.append(node);
+					sb.append(" requires:");
+					sb.append(lineSeparator);
+					for (Object edge : cutGraph.getInboundEdges(node)) {
+						PluginId dependencyNode = cutGraph.getOriginNode(edge);
+						if (nodes.contains(dependencyNode)) {
+							sb.append("\t");
+							sb.append("\t");
+							sb.append(dependencyNode);
+							sb.append(lineSeparator);
+						}
+					}
+				}
+			}
+			throw new ContractException(NucleusError.CIRCULAR_PLUGIN_DEPENDENCIES, sb.toString());
+		}
+
+		// the graph is acyclic, so the depth evaluator is present
+		GraphDepthEvaluator<PluginId> graphDepthEvaluator = optional.get();
+
+		return graphDepthEvaluator.getNodesInRankOrder();
+	}
+
 	/**
-	 * Executes this Engine instance. Contributed plugins are accessed and
-	 * organized based on their dependency ordering. Time starts at zero and
-	 * each contributed resolver is initialized. Time flows based on planning
-	 * and when all plans are executed, time stops and reports are finalized.
+	 * Executes this Simulation instance. Contributed plugin initializers are
+	 * accessed in the order of their addition to the builder. Agents and data
+	 * managers are organized based on their plugin dependency ordering. Time
+	 * starts at zero and flows based on planning. When all plans are executed,
+	 * time stops and the simulation halts.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#REPEATED_EXECUTION} if execute is
 	 *             invoked more than once
 	 * 
+	 *             <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES} if the
+	 *             contributed plugin initializers form a circular chain of
+	 *             dependencies
 	 * 
 	 */
 	public void execute() {
-
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
 		}
 		started = true;
 
-		executeResolverQueue();
+		// set the output consumer
+		outputConsumer = data.outputConsumer;
+
+		// Make the plugin data available to the plugin initializers
+		for (PluginData pluginData : data.pluginDatas) {
+			pluginDataMap.put(pluginData.getClass(), pluginData);
+		}
+
+		for (PluginInitializer pluginInitializer : data.pluginInitializers) {
+			focalPluginId = pluginInitializer.getPluginId();
+			pluginDependencyGraph.addNode(focalPluginId);
+			pluginInitializer.init(pluginContext);
+			focalPluginId = null;
+		}
+
+		/*
+		 * Initialize the data managers and queue the initializations of the
+		 * agents
+		 */
+		for (PluginId pluginId : getOrderedPluginIds()) {
+			Set<DataManager> dataManagerSet = dataMangagersMap.get(pluginId);
+			if (dataManagerSet != null) {
+				for (DataManager dataManager : dataManagerSet) {
+					DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
+					DataManagerContext dataManagerContext = new DataManagerContextImpl(this, dataManagerId);
+					dataManagerContextMap.put(dataManagerId, dataManagerContext);
+					dataManager.init(dataManagerContext);
+				}
+			}
+			Map<AgentId, Consumer<AgentContext>> map = agentsMap.get(pluginId);
+			for (AgentId agentId : map.keySet()) {
+				agentIds.add(agentId);
+				final AgentContentRec agentContentRec = new AgentContentRec();
+				agentContentRec.agentId = agentId;
+				agentContentRec.plan = map.get(agentId);
+				agentQueue.add(agentContentRec);
+			}
+		}
+
+		// flush the agent queue
 		executeAgentQueue();
-		executeReportQueue();
 
 		while (processEvents && (activePlanCount > 0)) {
 			final PlanRec planRec = planningQueue.poll();
 			time = planRec.time;
-
+			if (planRec.isActive) {
+				activePlanCount--;
+			}
 			switch (planRec.planner) {
 			case AGENT:
-				activePlanCount--;
+				
 				if (planRec.agentPlan != null) {
 					if (planRec.key != null) {
 						agentPlanMap.get(planRec.agentId).remove(planRec.key);
@@ -915,60 +808,43 @@ public class Simulation {
 					agentContentRec.agentId = planRec.agentId;
 					agentContentRec.plan = planRec.agentPlan;
 					agentQueue.add(agentContentRec);
-					executeAgentQueue();
-					executeReportQueue();
+					executeAgentQueue();					
 				}
-				break;
-			case REPORT:
-				if (planRec.reportPlan != null) {
-					ReportContentRec reportContentRec = new ReportContentRec();
-					reportContentRec.plan = planRec.reportPlan;
-					reportContentRec.reportId = planRec.reportId;
-					reportQueue.add(reportContentRec);
-					executeReportQueue();
-				}
-				break;
-			case RESOLVER:
-				activePlanCount--;
-
+				break;			
+			case DATA_MANAGER:				
 				if (planRec.resolverPlan != null) {
 					if (planRec.key != null) {
-						resolverPlanMap.get(planRec.resolverId).remove(planRec.key);
+						resolverPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
-					ResolverContentRec resolverContentRec = new ResolverContentRec();
-					resolverContentRec.plan = planRec.resolverPlan;
-					resolverContentRec.resolverId = planRec.resolverId;
-					resolverQueue.add(resolverContentRec);
-					executeResolverQueue();
-					executeAgentQueue();
-					executeReportQueue();
+					DataManagerContext dataManagerContext = dataManagerContextMap.get(planRec.dataManagerId);
+					planRec.resolverPlan.accept(dataManagerContext);
+					executeAgentQueue();					
 				}
 				break;
 			default:
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
-
 		}
 
-		for (ReportId reportId : simulationCloseCallbacks.keySet()) {
-			Consumer<ReportContext> simulationCloseCallback = simulationCloseCallbacks.get(reportId);
-			focalReport = reportId;
-			simulationCloseCallback.accept(reportContext);
+		for (AgentId agentId : simulationCloseCallbacks.keySet()) {
+			Consumer<AgentContext> simulationCloseCallback = simulationCloseCallbacks.get(agentId);
+			focalAgentId = agentId;
+			simulationCloseCallback.accept(agentContext);
 		}
-		focalReport = null;
+		focalAgentId = null;
 	}
 
 	private void executeAgentQueue() {
 		while (!agentQueue.isEmpty()) {
 			final AgentContentRec agentContentRec = agentQueue.pollFirst();
 
-			if (agentMapContainsNulls) {
+			if (containsDeletedAgents) {
 				/*
 				 * we know that the agent id was valid at some point and that
 				 * the agentMap never shrinks, so we do not have to range check
 				 * the agent id
 				 */
-				if (agentIds.get(agentContentRec.agentId.getValue()) == null) {
+				if (!agentIds.contains(agentContentRec.agentId)) {
 					continue;
 				}
 			}
@@ -980,23 +856,6 @@ public class Simulation {
 				agentContentRec.plan.accept(agentContext);
 			}
 			focalAgentId = null;
-
-		}
-
-	}
-
-	private void executeReportQueue() {
-
-		while (!reportQueue.isEmpty()) {
-			final ReportContentRec contentRec = reportQueue.pollFirst();
-			focalReport = contentRec.reportId;
-			if (contentRec.plan != null) {
-				contentRec.plan.accept(reportContext);
-			} else if (contentRec.event != null) {
-				agentIsEventSource = contentRec.agentIsEventSource;
-				contentRec.metaReportEventConsumer.handleEvent(contentRec.event);
-			}
-			focalReport = null;
 		}
 
 	}
@@ -1014,10 +873,10 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private Consumer<ResolverContext> getResolverPlan(final Object key) {
+	private Consumer<DataManagerContext> getResolverPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = resolverPlanMap.get(focalResolver);
-		Consumer<ResolverContext> result = null;
+		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
+		Consumer<DataManagerContext> result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
 			if (planRecord != null) {
@@ -1035,8 +894,8 @@ public class Simulation {
 		return new ArrayList<>();
 	}
 
-	private List<Object> getResolverPlanKeys() {
-		Map<Object, PlanRec> map = resolverPlanMap.get(focalResolver);
+	private List<Object> getResolverPlanKeys(DataManagerId dataManagerId) {
+		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
 		}
@@ -1056,9 +915,9 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private double getResolverPlanTime(final Object key) {
+	private double getResolverPlanTime(final DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = resolverPlanMap.get(focalResolver);
+		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
 		double result = -1;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
@@ -1092,10 +951,10 @@ public class Simulation {
 	 */
 
 	@SuppressWarnings("unchecked")
-	private <T> Optional<T> removeResolverPlan(final Object key) {
+	private <T> Optional<T> removeResolverPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 
-		Map<Object, PlanRec> map = resolverPlanMap.get(focalResolver);
+		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
 		T result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.remove(key);
@@ -1119,83 +978,22 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeReportToEvent(Class<? extends Event> eventClass, ReportEventConsumer<T> reportConsumer) {
+	private <T extends Event> void subscribeAgentToEvent(Class<? extends Event> eventClass, AgentEventConsumer<T> reportConsumer) {
 		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS);
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 
 		if (reportConsumer == null) {
-			throwContractException(NucleusError.NULL_EVENT_CONSUMER);
+			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
-		Map<ReportId, MetaReportEventConsumer<?>> map = reportEventMap.get(eventClass);
+		Map<AgentId, MetaAgentEventConsumer<?>> map = agentEventMap.get(eventClass);
 		if (map == null) {
 			map = new LinkedHashMap<>();
-			reportEventMap.put(eventClass, map);
+			agentEventMap.put(eventClass, map);
 		}
-		MetaReportEventConsumer<T> metaReportEventConsumer = new MetaReportEventConsumer<>(reportContext, reportConsumer);
-		map.put(focalReport, metaReportEventConsumer);
-	}
-
-	private <T extends Event> void subscribeReportToEvent(EventLabel<T> eventLabel, ReportEventConsumer<T> reportEventConsumer) {
-
-		if (eventLabel == null) {
-			throwContractException(NucleusError.NULL_EVENT_LABEL);
-		}
-
-		if (reportEventConsumer == null) {
-			throwContractException(NucleusError.NULL_EVENT_CONSUMER);
-		}
-		Class<T> eventClass = eventLabel.getEventClass();
-		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABEL);
-		}
-
-		EventLabelerId eventLabelerId = eventLabel.getLabelerId();
-
-		if (eventLabelerId == null) {
-			throwContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
-		}
-
-		MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
-
-		if (metaEventLabeler == null) {
-			throwContractException(NucleusError.UNKNOWN_EVENT_LABELER);
-		}
-
-		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
-		if (primaryKeyValue == null) {
-			throwContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
-		}
-
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ReportId, MetaReportEventConsumer<?>>>>> map1 = reportPubSub.get(eventLabel.getEventClass());
-		if (map1 == null) {
-			map1 = new LinkedHashMap<>();
-			reportPubSub.put(eventClass, map1);
-			incrementSubscriberCount(eventClass);
-		}
-
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ReportId, MetaReportEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
-		if (map2 == null) {
-			map2 = new LinkedHashMap<>();
-			map1.put(primaryKeyValue, map2);
-		}
-
-		Map<EventLabel<?>, Map<ReportId, MetaReportEventConsumer<?>>> map3 = map2.get(eventLabelerId);
-		if (map3 == null) {
-			map3 = new LinkedHashMap<>();
-			map2.put(eventLabelerId, map3);
-		}
-
-		Map<ReportId, MetaReportEventConsumer<?>> map4 = map3.get(eventLabel);
-		if (map4 == null) {
-			map4 = new LinkedHashMap<>();
-			map3.put(eventLabel, map4);
-		}
-
-		MetaReportEventConsumer<T> metaEventConsumer = new MetaReportEventConsumer<>(reportContext, reportEventConsumer);
-		map4.put(focalReport, metaEventConsumer);
-
+		MetaAgentEventConsumer<T> metaAgentEventConsumer = new MetaAgentEventConsumer<>(agentContext, reportConsumer);
+		map.put(focalAgentId, metaAgentEventConsumer);
 	}
 
 	private void releaseOutput(Object output) {
@@ -1204,96 +1002,30 @@ public class Simulation {
 		}
 	}
 
-	private void throwContractException(ContractError recoverableError) {
-		throwContractException(recoverableError, null);
-	}
-
-	private void throwContractException(ContractError contractError, Object details) {
-		final StringBuilder sb = new StringBuilder();
-
-		sb.append("time = ");
-		sb.append(time);
-		sb.append(": ");
-		if (focalAgentId != null) {
-			sb.append(focalAgentId);
-			sb.append(": ");
-		}
-		if (focalResolver != null) {
-			sb.append("Resolver[");
-			sb.append(focalResolver);
-			sb.append("]: ");
-		}
-		if (focalReport != null) {
-			sb.append("Report[");
-			sb.append(focalReport);
-			sb.append("]: ");
-		}
-
-		sb.append(contractError.getDescription());
-
-		if (details != null) {
-			sb.append(": ");
-			sb.append(details);
-		}
-
-		final String errorDescription = sb.toString();
-
-		throw new ContractException(contractError, errorDescription);
-
-	}
-
-	private void executeResolverQueue() {
-		if (resolverQueueActive) {
-			return;
-		}
-		resolverQueueActive = true;
-		try {
-			try {
-				while (!resolverQueue.isEmpty()) {
-					final ResolverContentRec contentRec = resolverQueue.pollFirst();
-					focalResolver = contentRec.resolverId;
-					if (contentRec.plan != null) {
-						contentRec.plan.accept(resolverContext);
-					} else {
-						agentIsEventSource = contentRec.agentIsEventSource;
-						contentRec.metaResolverEventConsumer.handleEvent(contentRec.event);
-					}
-					focalResolver = null;
-				}
-			} catch (Exception e) {
-				resolverQueue.clear();
-				throw (e);
-			}
-		} finally {
-			resolverQueueActive = false;
-		}
-	}
-
 	private static class MetaEventLabeler<T extends Event> {
 
 		private final EventLabeler<T> eventLabeler;
 		private final Class<T> eventClass;
 		private final EventLabelerId id;
-		private final Simulation simulation;
 
-		public MetaEventLabeler(Simulation simulation, EventLabeler<T> eventLabeler, EventLabelerId id, Class<T> eventClass) {
+		public MetaEventLabeler(EventLabeler<T> eventLabeler, EventLabelerId id, Class<T> eventClass) {
 			this.id = id;
 			this.eventClass = eventClass;
 			this.eventLabeler = eventLabeler;
-			this.simulation = simulation;
+
 		}
 
 		@SuppressWarnings("unchecked")
-		public EventLabel<T> getEventLabel(Context context, Event event) {
-			EventLabel<T> eventLabel = eventLabeler.getEventLabel(context, (T) event);
+		public EventLabel<T> getEventLabel(SimulationContext simulationContext, Event event) {
+			EventLabel<T> eventLabel = eventLabeler.getEventLabel(simulationContext, (T) event);
 			if (!eventClass.equals(eventLabel.getEventClass())) {
-				simulation.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS);
+				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS);
 			}
 			if (!id.equals(eventLabel.getLabelerId())) {
-				simulation.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_ID);
+				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_ID);
 			}
 			if (!event.getPrimaryKeyValue().equals(eventLabel.getPrimaryKeyValue())) {
-				simulation.throwContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_PRIMARY_KEY);
+				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_PRIMARY_KEY);
 			}
 			return eventLabel;
 		}
@@ -1359,69 +1091,7 @@ public class Simulation {
 	}
 
 	private boolean agentExists(final AgentId agentId) {
-		if (agentId == null) {
-			throwContractException(NucleusError.NULL_AGENT_ID);
-		}
-		int index = agentId.getValue();
-		if (index < 0) {
-			return false;
-		}
-		if (index >= agentIds.size()) {
-			return false;
-		}
-		return agentIds.get(index) != null;
-	}
-
-	private static class MetaResolverEventConsumer<T extends Event> {
-
-		private final ResolverEventConsumer<T> resolverEventConsumer;
-
-		private final ResolverContext context;
-
-		private final ResolverId resolverId;
-
-		private final EventPhase eventPhase;
-
-		public MetaResolverEventConsumer(ResolverContext context, ResolverId resolverId, ResolverEventConsumer<T> eventConsumer, EventPhase eventPhase) {
-			this.resolverEventConsumer = eventConsumer;
-			this.context = context;
-			this.resolverId = resolverId;
-			this.eventPhase = eventPhase;
-		}
-
-		@SuppressWarnings("unchecked")
-		public void handleEvent(Event event) {
-
-			try {
-				resolverEventConsumer.handleEvent(context, (T) event);
-			} catch (ClassCastException e) {
-				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
-			}
-
-		}
-	}
-
-	private static class MetaReportEventConsumer<T extends Event> {
-
-		private final ReportEventConsumer<T> reportEventConsumer;
-
-		private final ReportContext context;
-
-		public MetaReportEventConsumer(ReportContext context, ReportEventConsumer<T> eventConsumer) {
-			this.reportEventConsumer = eventConsumer;
-			this.context = context;
-		}
-
-		@SuppressWarnings("unchecked")
-		public void handleEvent(Event event) {
-
-			try {
-				reportEventConsumer.handleEvent(context, (T) event);
-			} catch (ClassCastException e) {
-				throw new RuntimeException("Class cast exception due to improperly mapped event for report", e);
-			}
-
-		}
+		return agentIds.contains(agentId);
 	}
 
 	private void broadcastEventToAgentSubscribers(final Event event) {
@@ -1437,7 +1107,7 @@ public class Simulation {
 
 		for (EventLabelerId eventLabelerId : map2.keySet()) {
 			MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
-			EventLabel<?> eventLabel = metaEventLabeler.getEventLabel(baseContext, event);
+			EventLabel<?> eventLabel = metaEventLabeler.getEventLabel(agentContext, event);
 			Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>> map3 = map2.get(eventLabelerId);
 			Map<AgentId, MetaAgentEventConsumer<?>> map4 = map3.get(eventLabel);
 			if (map4 != null) {
@@ -1454,55 +1124,27 @@ public class Simulation {
 		}
 	}
 
-	private void broadcastEventToReportSubscribers(final Event event) {
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ReportId, MetaReportEventConsumer<?>>>>> map1 = reportPubSub.get(event.getClass());
-		if (map1 == null) {
-			return;
-		}
-		Object primaryKeyValue = event.getPrimaryKeyValue();
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ReportId, MetaReportEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
-		if (map2 == null) {
-			return;
-		}
-
-		for (EventLabelerId eventLabelerId : map2.keySet()) {
-			MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
-			EventLabel<?> eventLabel = metaEventLabeler.getEventLabel(baseContext, event);
-			Map<EventLabel<?>, Map<ReportId, MetaReportEventConsumer<?>>> map3 = map2.get(eventLabelerId);
-			Map<ReportId, MetaReportEventConsumer<?>> map4 = map3.get(eventLabel);
-			if (map4 != null) {
-				for (ReportId reportId : map4.keySet()) {
-					MetaReportEventConsumer<?> metaReportEventConsumer = map4.get(reportId);
-					final ReportContentRec contentRec = new ReportContentRec();
-					contentRec.agentIsEventSource = false;
-					contentRec.reportId = reportId;
-					contentRec.event = event;
-					contentRec.metaReportEventConsumer = metaReportEventConsumer;
-					reportQueue.add(contentRec);
-				}
-			}
-		}
-	}
+	
 
 	private <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
 		if (eventLabeler == null) {
-			throwContractException(NucleusError.NULL_EVENT_LABELER);
+			throw new ContractException(NucleusError.NULL_EVENT_LABELER);
 		}
 
 		Class<T> eventClass = eventLabeler.getEventClass();
 		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER);
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER);
 		}
 		EventLabelerId id = eventLabeler.getId();
 		if (id == null) {
-			throwContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABELER);
+			throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABELER);
 		}
 
 		if (id_Labeler_Map.containsKey(id)) {
-			throwContractException(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER);
+			throw new ContractException(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER);
 		}
 
-		MetaEventLabeler<T> metaEventLabeler = new MetaEventLabeler<>(this, eventLabeler, id, eventClass);
+		MetaEventLabeler<T> metaEventLabeler = new MetaEventLabeler<>(eventLabeler, id, eventClass);
 
 		id_Labeler_Map.put(metaEventLabeler.getId(), metaEventLabeler);
 	}
@@ -1510,32 +1152,32 @@ public class Simulation {
 	private <T extends Event> void subscribeAgentToEvent(EventLabel<T> eventLabel, AgentEventConsumer<T> agentEventConsumer) {
 
 		if (eventLabel == null) {
-			throwContractException(NucleusError.NULL_EVENT_LABEL);
+			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
 		}
 
 		if (agentEventConsumer == null) {
-			throwContractException(NucleusError.NULL_EVENT_CONSUMER);
+			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 		Class<T> eventClass = eventLabel.getEventClass();
 		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABEL);
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABEL);
 		}
 
 		EventLabelerId eventLabelerId = eventLabel.getLabelerId();
 
 		if (eventLabelerId == null) {
-			throwContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
+			throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
 		}
 
 		MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
 
 		if (metaEventLabeler == null) {
-			throwContractException(NucleusError.UNKNOWN_EVENT_LABELER);
+			throw new ContractException(NucleusError.UNKNOWN_EVENT_LABELER);
 		}
 
 		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
 		if (primaryKeyValue == null) {
-			throwContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
+			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
 		}
 
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>> map1 = agentPubSub.get(eventLabel.getEventClass());
@@ -1571,27 +1213,27 @@ public class Simulation {
 	private <T extends Event> void unsubscribeAgentFromEvent(EventLabel<T> eventLabel) {
 
 		if (eventLabel == null) {
-			throwContractException(NucleusError.NULL_EVENT_LABEL);
+			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
 		}
 
 		Class<T> eventClass = eventLabel.getEventClass();
 		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER);
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER);
 		}
 
 		EventLabelerId eventLabelerId = eventLabel.getLabelerId();
 		if (eventLabelerId == null) {
-			throwContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
+			throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
 		}
 
 		MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
 		if (metaEventLabeler == null) {
-			throwContractException(NucleusError.UNKNOWN_EVENT_LABELER, eventLabelerId);
+			throw new ContractException(NucleusError.UNKNOWN_EVENT_LABELER, eventLabelerId);
 		}
 
 		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
 		if (primaryKeyValue == null) {
-			throwContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
+			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
 		}
 
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>> map1 = agentPubSub.get(eventClass);
@@ -1638,76 +1280,42 @@ public class Simulation {
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
 
 	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>>> agentPubSub = new LinkedHashMap<>();
-	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ReportId, MetaReportEventConsumer<?>>>>>> reportPubSub = new LinkedHashMap<>();
 
-	private void subscribeReportToSimulationClose(Consumer<ReportContext> closeHandler) {
+	private void subscribeAgentToSimulationClose(Consumer<AgentContext> closeHandler) {
 		if (closeHandler == null) {
 			throw new RuntimeException("null close handler");
 		}
-		simulationCloseCallbacks.put(focalReport, closeHandler);
-
+		simulationCloseCallbacks.put(focalAgentId, closeHandler);
 	}
 
 	private static enum EventPhase {
-		VALIDATION, EXECUTION, POST_EXECUTION
+		EXECUTION, POST_EXECUTION
 	}
 
-	private <T extends Event> void subscribeResolverToEventValidationPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
+	
 
+	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataMangerId, Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
 		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS);
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 		if (resolverConsumer == null) {
-			throwContractException(NucleusError.NULL_EVENT_CONSUMER);
+			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
-		List<MetaResolverEventConsumer<?>> list = resolverEventMap.get(eventClass);
+
+		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
 			list = new ArrayList<>();
-			resolverEventMap.put(eventClass, list);
+			dataManagerEventMap.put(eventClass, list);
 			// invoke the increment only when adding to the map
 			incrementSubscriberCount(eventClass);
 		}
-		MetaResolverEventConsumer<T> metaResolverEventConsumer = new MetaResolverEventConsumer<>(resolverContext, focalResolver, resolverConsumer, EventPhase.VALIDATION);
+		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataMangerId);
+		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataMangerId, resolverConsumer, EventPhase.EXECUTION);
 
 		int insertionIndex = -1;
 
 		for (int i = 0; i < list.size(); i++) {
-			MetaResolverEventConsumer<?> m = list.get(i);
-			if (m.eventPhase != EventPhase.VALIDATION) {
-				insertionIndex = i;
-				break;
-			}
-		}
-
-		if (insertionIndex < 0) {
-			list.add(metaResolverEventConsumer);
-		} else {
-			list.add(insertionIndex, metaResolverEventConsumer);
-		}
-
-	}
-
-	private <T extends Event> void subscribeResolverToEventExecutionPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
-		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS);
-		}
-		if (resolverConsumer == null) {
-			throwContractException(NucleusError.NULL_EVENT_CONSUMER);
-		}
-
-		List<MetaResolverEventConsumer<?>> list = resolverEventMap.get(eventClass);
-		if (list == null) {
-			list = new ArrayList<>();
-			resolverEventMap.put(eventClass, list);
-			// invoke the increment only when adding to the map
-			incrementSubscriberCount(eventClass);
-		}
-		MetaResolverEventConsumer<T> metaResolverEventConsumer = new MetaResolverEventConsumer<>(resolverContext, focalResolver, resolverConsumer, EventPhase.EXECUTION);
-
-		int insertionIndex = -1;
-
-		for (int i = 0; i < list.size(); i++) {
-			MetaResolverEventConsumer<?> m = list.get(i);
+			MetaDataManagerEventConsumer<?> m = list.get(i);
 			if (m.eventPhase == EventPhase.POST_EXECUTION) {
 				insertionIndex = i;
 				break;
@@ -1721,336 +1329,168 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeResolverToEventPostPhase(Class<T> eventClass, ResolverEventConsumer<T> resolverConsumer) {
+	private <T extends Event> void subscribeResolverToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
 		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS);
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 		if (resolverConsumer == null) {
-			throwContractException(NucleusError.NULL_EVENT_CONSUMER);
+			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
-		List<MetaResolverEventConsumer<?>> list = resolverEventMap.get(eventClass);
+		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
 			list = new ArrayList<>();
-			resolverEventMap.put(eventClass, list);
+			dataManagerEventMap.put(eventClass, list);
 			// invoke the increment only when adding to the map
 			incrementSubscriberCount(eventClass);
 		}
-		MetaResolverEventConsumer<T> metaResolverEventConsumer = new MetaResolverEventConsumer<>(resolverContext, focalResolver, resolverConsumer, EventPhase.POST_EXECUTION);
+		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
+		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, resolverConsumer, EventPhase.POST_EXECUTION);
 
 		list.add(metaResolverEventConsumer);
 
 	}
 
-	private void unSubscribeResolverToEvent(Class<? extends Event> eventClass) {
+	private void unSubscribeResolverToEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
 		if (eventClass == null) {
-			throwContractException(NucleusError.NULL_EVENT_CLASS);
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 
-		List<MetaResolverEventConsumer<?>> list = resolverEventMap.get(eventClass);
+		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(eventClass);
 
 		if (list != null) {
-			Iterator<MetaResolverEventConsumer<?>> iterator = list.iterator();
+			Iterator<MetaDataManagerEventConsumer<?>> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				MetaResolverEventConsumer<?> metaResolverEventConsumer = iterator.next();
-				if (metaResolverEventConsumer.resolverId.equals(focalResolver)) {
+				MetaDataManagerEventConsumer<?> metaResolverEventConsumer = iterator.next();
+				if (metaResolverEventConsumer.dataManagerId.equals(dataManagerId)) {
 					iterator.remove();
 					decrementSubscriberCount(eventClass);
 				}
 			}
 
 			if (list.isEmpty()) {
-				resolverEventMap.remove(eventClass);
+				dataManagerEventMap.remove(eventClass);
 			}
 		}
 	}
 
-	private void resolveEventForAgent(final Event event) {
-		if (event == null) {
-			throwContractException(NucleusError.NULL_EVENT);
-		}
-		List<MetaResolverEventConsumer<?>> list = resolverEventMap.get(event.getClass());
-		if (list != null) {
-			for (MetaResolverEventConsumer<?> metaResolverEventConsumer : list) {
-				final ResolverContentRec contentRec = new ResolverContentRec();
-				contentRec.agentIsEventSource = true;
-				contentRec.resolverId = metaResolverEventConsumer.resolverId;
-				contentRec.event = event;
-				contentRec.metaResolverEventConsumer = metaResolverEventConsumer;
-				resolverQueue.add(contentRec);
-			}
-		}
-		executeResolverQueue();
-	}
-
-	private void resolveEventForResolver(final Event event) {
+	private void resolveEventForDataManager(final Event event) {
 
 		if (event == null) {
-			throwContractException(NucleusError.NULL_EVENT);
+			throw new ContractException(NucleusError.NULL_EVENT);
 		}
 
-		Map<ReportId, MetaReportEventConsumer<?>> reportMap = reportEventMap.get(event.getClass());
+		Map<AgentId, MetaAgentEventConsumer<?>> reportMap = agentEventMap.get(event.getClass());
 		if (reportMap != null) {
-			for (final ReportId reportId : reportMap.keySet()) {
-				MetaReportEventConsumer<?> metaReportEventConsumer = reportMap.get(reportId);
-				final ReportContentRec contentRec = new ReportContentRec();
-				contentRec.agentIsEventSource = false;
-				contentRec.reportId = reportId;
+			for (final AgentId agentId : reportMap.keySet()) {
+				MetaAgentEventConsumer<?> metaAgentEventConsumer = reportMap.get(agentId);
+				final AgentContentRec contentRec = new AgentContentRec();
+				contentRec.agentId = agentId;
 				contentRec.event = event;
-				contentRec.metaReportEventConsumer = metaReportEventConsumer;
-				reportQueue.add(contentRec);
+				contentRec.metaAgentEventConsumer = metaAgentEventConsumer;
+				agentQueue.add(contentRec);
 			}
 		}
-
-		broadcastEventToReportSubscribers(event);
-
-		List<MetaResolverEventConsumer<?>> list = resolverEventMap.get(event.getClass());
-		if (list != null) {
-			for (MetaResolverEventConsumer<?> metaResolverEventConsumer : list) {
-				final ResolverContentRec contentRec = new ResolverContentRec();
-				contentRec.agentIsEventSource = false;
-				contentRec.resolverId = metaResolverEventConsumer.resolverId;
-				contentRec.event = event;
-				contentRec.metaResolverEventConsumer = metaResolverEventConsumer;
-				resolverQueue.add(contentRec);
-			}
-		}
-
+		
 		broadcastEventToAgentSubscribers(event);
 
-		// executeResolverQueue();
+		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(event.getClass());
+		if (list != null) {
+			for (MetaDataManagerEventConsumer<?> metaResolverEventConsumer : list) {
+				metaResolverEventConsumer.handleEvent(event);
+			}
+		}
 	}
 
-	/*
-	 * A utility class to aid in the ordering of plugins
-	 */
-	private static class PluginRecord implements Comparable<PluginRecord> {
-		private final int loadedOrder;
-		private int dependencyOrder;
-		private final PluginId pluginId;
+	/////////////////////////////////
+	// data manager support
+	/////////////////////////////////
+	private MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
 
-		public PluginRecord(PluginId pluginId, int loadedOrder) {
-			this.pluginId = pluginId;
-			this.loadedOrder = loadedOrder;
+	private int masterDataManagerIndex;
+
+	/*
+	 * id class for data mangers with overridden equals contract to improve
+	 * performance as a key
+	 */
+	private static class DataManagerId {
+		private final int id;
+
+		public DataManagerId(int id) {
+			this.id = id;
 		}
 
 		@Override
-		public int compareTo(PluginRecord pluginRecord) {
-			int result = Integer.compare(dependencyOrder, pluginRecord.dependencyOrder);
-			if (result == 0) {
-				result = Integer.compare(loadedOrder, pluginRecord.loadedOrder);
-			}
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + id;
 			return result;
 		}
 
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof DataManagerId)) {
+				return false;
+			}
+			DataManagerId other = (DataManagerId) obj;
+			if (id != other.id) {
+				return false;
+			}
+			return true;
+		}
+
 	}
 
-	private void init(final Scaffold scaffold) {
-		
-		// set the output consumer
-		outputConsumer = scaffold.outputConsumer;
+	private static class MetaDataManagerEventConsumer<T extends Event> {
 
-		/*
-		 * Create a map of plugin records to hold plugin data that will be used
-		 * to order resolver initialization
-		 */
-		Map<PluginId, PluginRecord> pluginRecordMap = new LinkedHashMap<>();
+		private final DataManagerEventConsumer<T> dataManagerEventConsumer;
 
-		// Build the plugin records and stimulate each plugin
-		int loadedOrder = 0;
-		for (PluginId pluginId : scaffold.plugins.keySet()) {
-			focalPluginId = pluginId;
-			scaffold.plugins.get(pluginId).accept(pluginContext);
-			PluginRecord pluginRecord = new PluginRecord(pluginId, loadedOrder++);
-			pluginRecordMap.put(pluginId, pluginRecord);
-			focalPluginId = null;
+		private final DataManagerContext context;
+
+		private final DataManagerId dataManagerId;
+
+		private final EventPhase eventPhase;
+
+		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, DataManagerEventConsumer<T> eventConsumer, EventPhase eventPhase) {
+			this.dataManagerEventConsumer = eventConsumer;
+			this.context = context;
+			this.dataManagerId = dataManagerId;
+			this.eventPhase = eventPhase;
 		}
 
-		/*
-		 * Check for missing plugins from the plugin dependencies that were
-		 * collected from the known plugins.
-		 */
-		for (PluginId pluginId : pluginDependencyGraph.getNodes()) {
-			if (!pluginRecordMap.containsKey(pluginId)) {
-				List<Object> inboundEdges = pluginDependencyGraph.getInboundEdges(pluginId);
-				StringBuilder sb = new StringBuilder();
-				sb.append("cannot locate instance of ");
-				sb.append(pluginId);
-				sb.append(" needed for ");
-				boolean first = true;
-				for (Object edge : inboundEdges) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(", ");
-					}
-					PluginId dependentPluginId = pluginDependencyGraph.getOriginNode(edge);
-					sb.append(dependentPluginId);
-				}
-				throw new ContractException(NucleusError.MISSING_PLUGIN, sb.toString());
+		@SuppressWarnings("unchecked")
+		public void handleEvent(Event event) {
+
+			try {
+				dataManagerEventConsumer.handleEvent(context, (T) event);
+			} catch (ClassCastException e) {
+				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}
-		}
 
-		// Create a graph from the plugin records
-		MutableGraph<PluginRecord, Object> m = new MutableGraph<>();
-
-		// Build the record dependency graph nodes since the edges may not
-		// contain all the nodes
-		for (PluginId pluginId : pluginRecordMap.keySet()) {
-			PluginRecord pluginRecord = pluginRecordMap.get(pluginId);
-			m.addNode(pluginRecord);
-		}
-
-		// Build the record dependency graph edges
-		for (Object edge : pluginDependencyGraph.getEdges()) {
-			PluginId originPluginId = pluginDependencyGraph.getOriginNode(edge);
-			PluginId destinationPluginId = pluginDependencyGraph.getDestinationNode(edge);
-			PluginRecord originPluginRecord = pluginRecordMap.get(originPluginId);
-			PluginRecord destinationPluginRecord = pluginRecordMap.get(destinationPluginId);
-			m.addEdge(new Object(), originPluginRecord, destinationPluginRecord);
-		}
-
-		/*
-		 * Determine whether the graph is acyclic and generate a graph depth
-		 * evaluator for the graph so that we can determine the order of
-		 * initialization.
-		 */
-		Optional<GraphDepthEvaluator<PluginRecord>> optional = GraphDepthEvaluator.getGraphDepthEvaluator(m.toGraph());
-
-		if (!optional.isPresent()) {
-			/*
-			 * Explain in detail why there is a circular dependency
-			 */
-
-			Graph<PluginRecord, Object> g = m.toGraph();
-			g = Graphs.getSourceSinkReducedGraph(g);
-			List<Graph<PluginRecord, Object>> cutGraphs = Graphs.cutGraph(g);
-			StringBuilder sb = new StringBuilder();
-			String lineSeparator = System.getProperty("line.separator");
-			sb.append(lineSeparator);
-			boolean firstCutGraph = true;
-
-			for (Graph<PluginRecord, Object> cutGraph : cutGraphs) {
-				if (firstCutGraph) {
-					firstCutGraph = false;
-				} else {
-					sb.append(lineSeparator);
-				}
-				sb.append("Dependency group: ");
-				sb.append(lineSeparator);
-				Set<PluginRecord> nodes = cutGraph.getNodes().stream().collect(Collectors.toCollection(LinkedHashSet::new));
-
-				for (PluginRecord node : nodes) {
-					sb.append("\t");
-					sb.append(node.pluginId);
-					sb.append(" requires:");
-					sb.append(lineSeparator);
-					for (Object edge : cutGraph.getInboundEdges(node)) {
-						PluginRecord dependencyNode = cutGraph.getOriginNode(edge);
-
-						if (nodes.contains(dependencyNode)) {
-							sb.append("\t");
-							sb.append("\t");
-							sb.append(dependencyNode.pluginId);
-							sb.append(lineSeparator);
-						}
-					}
-				}
-			}
-			throw new ContractException(NucleusError.CIRCULAR_PLUGIN_DEPENDENCIES, sb.toString());
-		}
-
-		// the graph is acyclic, so the depth evaluator is present
-		GraphDepthEvaluator<PluginRecord> graphDepthEvaluator = optional.get();
-
-		// assign the dependency order to the plugin records
-		for (PluginRecord pluginRecord : pluginRecordMap.values()) {
-			pluginRecord.dependencyOrder = graphDepthEvaluator.getDepth(pluginRecord);
-		}
-
-		// create the list of plugin records and sort them
-		List<PluginRecord> pluginRecords = new ArrayList<>();
-		pluginRecords.addAll(pluginRecordMap.values());
-		Collections.sort(pluginRecords);
-
-		// create a reverse mapping from plugins to resolvers
-		Map<ResolverId, List<PluginId>> resolverIdToPluginIdMap = new LinkedHashMap<>();
-		for (PluginId pluginId : pluginResolvers.keySet()) {
-			Map<ResolverId, Consumer<ResolverContext>> map = pluginResolvers.get(pluginId);
-			for (ResolverId resolverId : map.keySet()) {
-				List<PluginId> list = resolverIdToPluginIdMap.get(resolverId);
-				if (list == null) {
-					list = new ArrayList<>();
-					resolverIdToPluginIdMap.put(resolverId, list);
-				}
-				list.add(pluginId);
-			}
-		}
-
-		// show that each resolver id has a single associated plugin id
-		for (ResolverId resolverId : resolverIdToPluginIdMap.keySet()) {
-			List<PluginId> pluginIds = resolverIdToPluginIdMap.get(resolverId);
-			if (pluginIds.size() > 1) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("The resolver id ");
-				sb.append(resolverId);
-				sb.append("is defined by multiple plugins: ");
-				boolean first = true;
-				for (PluginId pluginId : pluginIds) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(", ");
-					}
-					sb.append(pluginId);
-				}
-				throw new ContractException(NucleusError.DUPLICATE_RESOLVER_ID, sb.toString());
-			}
-		}
-
-		/*
-		 * Put the resolvers into the resolver queue in the order determined by
-		 * the plugin dependencies
-		 */
-		for (PluginRecord pluginRecord : pluginRecords) {
-			Map<ResolverId, Consumer<ResolverContext>> map = pluginResolvers.get(pluginRecord.pluginId);
-			if (map != null) {
-				for (final ResolverId resolverId : map.keySet()) {
-					final ResolverContentRec contentRec = new ResolverContentRec();
-					contentRec.plan = map.get(resolverId);
-					contentRec.resolverId = resolverId;
-					resolverQueue.add(contentRec);
-				}
-			}
 		}
 	}
 
-	private void addPluginDependency(PluginId pluginId) {
-		if (focalPluginId == null) {
-			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
-		}
-		pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
-	}
+	// used to contain the data managers while the plugins are getting organized
+	private Map<PluginId, Set<DataManager>> dataMangagersMap = new LinkedHashMap<>();
 
-	private Map<PluginId, Map<ResolverId, Consumer<ResolverContext>>> pluginResolvers = new LinkedHashMap<>();
+	// used for subscriptions
+	private final Map<Class<? extends Event>, List<MetaDataManagerEventConsumer<?>>> dataManagerEventMap = new LinkedHashMap<>();
 
-	private MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
+	// used for retrieving and canceling plans owned by data managers
+	private final Map<DataManagerId, Map<Object, PlanRec>> resolverPlanMap = new LinkedHashMap<>();
 
-	private void defineResolver(ResolverId resolverId, Consumer<ResolverContext> init) {
-		if (focalPluginId == null) {
-			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
-		}
+	// used to locate data managers by class type
+	private Map<Class<?>, DataManager> dataManagerMap = new LinkedHashMap<>();
 
-		if (resolverId == null) {
-			throw new ContractException(NucleusError.NULL_RESOLVER_ID);
-		}
+	// map of contexts for each data manager
+	private Map<DataManagerId, DataManagerContext> dataManagerContextMap = new LinkedHashMap<>();
 
-		Map<ResolverId, Consumer<ResolverContext>> map = pluginResolvers.get(focalPluginId);
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			pluginResolvers.put(focalPluginId, map);
-		}
-		map.put(resolverId, init);
-	}
+	//////////////////////////////
+	// agent support
+	//////////////////////////////
 
 }

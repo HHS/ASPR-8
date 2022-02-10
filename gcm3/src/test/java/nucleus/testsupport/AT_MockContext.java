@@ -19,7 +19,7 @@ import util.MutableDouble;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
-@UnitTest(target = MockContext.class)
+@UnitTest(target = MockSimulationContext.class)
 public class AT_MockContext {
 
 	private static class DataViewA implements DataView {
@@ -48,20 +48,20 @@ public class AT_MockContext {
 		dataViewMap.put(dataView2.getClass(),dataView2);
 		dataViewMap.put(dataView3.getClass(),dataView3);
 		
-		MockContext mockContext = MockContext.builder().setDataViewFunction((c)->{
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setDataViewFunction((c)->{
 			return dataViewMap.get(c);
 		}).build();
 		
 
-		Optional<DataViewA> optionalA = mockContext.getDataView(DataViewA.class);
+		Optional<DataViewA> optionalA = mockSimulationContext.getDataView(DataViewA.class);
 		assertTrue(optionalA.isPresent());
 		assertEquals(dataView3, optionalA.get());
 
-		Optional<DataViewB> optionalB = mockContext.getDataView(DataViewB.class);
+		Optional<DataViewB> optionalB = mockSimulationContext.getDataView(DataViewB.class);
 		assertTrue(optionalB.isPresent());
 		assertEquals(dataView2, optionalB.get());
 
-		Optional<DataViewC> optionalC = mockContext.getDataView(DataViewC.class);
+		Optional<DataViewC> optionalC = mockSimulationContext.getDataView(DataViewC.class);
 		assertFalse(optionalC.isPresent());
 
 	}
@@ -77,17 +77,17 @@ public class AT_MockContext {
 	@UnitTestMethod(name = "getTime", args = {})
 	public void testGetTime() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		assertEquals(0.0, mockContext.getTime());
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		assertEquals(0.0, mockSimulationContext.getTime());
 		
 		time.setValue(77.3);
-		assertEquals(time.getValue(), mockContext.getTime());
+		assertEquals(time.getValue(), mockSimulationContext.getTime());
 
 		time.setValue(-600.234);		
-		assertEquals(time.getValue(), mockContext.getTime());
+		assertEquals(time.getValue(), mockSimulationContext.getTime());
 
 		time.setValue(2.3423);		
-		assertEquals(time.getValue(), mockContext.getTime());
+		assertEquals(time.getValue(), mockSimulationContext.getTime());
 
 	}
 
@@ -99,7 +99,7 @@ public class AT_MockContext {
 	@UnitTestMethod(name = "releaseOutput", args = { Object.class })
 	public void testReleaseOutput() {
 		List<Object> releasedOutput = new ArrayList<>();
-		MockContext mockContext = MockContext.builder().setReleaseOutputConsumer((o)->releasedOutput.add(o)).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setReleaseOutputConsumer((o)->releasedOutput.add(o)).build();
 		List<Object>expectedOutput = new ArrayList<>();
 		
 		expectedOutput.add(null);
@@ -110,7 +110,7 @@ public class AT_MockContext {
 		expectedOutput.add(10);
 		
 		for(Object obj : expectedOutput) {
-			mockContext.releaseOutput(obj);
+			mockSimulationContext.releaseOutput(obj);
 		}
 		
 		assertEquals(expectedOutput, releasedOutput);
@@ -129,11 +129,11 @@ public class AT_MockContext {
 		List<ContractError> expectedContractorErrors = new ArrayList<>();
 		List<ContractError> observedContractorErrors = new ArrayList<>();
 		
-		MockContext mockContext = MockContext.builder().setContractErrorConsumer((c)->observedContractorErrors.add(c)).build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setContractErrorConsumer((c)->observedContractorErrors.add(c)).build();
 
 		for (ContractError contractError : NucleusError.values()) {
 			expectedContractorErrors.add(contractError);
-			mockContext.throwContractException(contractError);			
+			mockSimulationContext.throwContractException(contractError);			
 		}
 		
 		assertEquals(expectedContractorErrors, observedContractorErrors);
@@ -152,7 +152,7 @@ public class AT_MockContext {
 		List<ContractError> observedContractorErrors = new ArrayList<>();
 		List<Object> observedDetails = new ArrayList<>();
 		
-		MockContext mockContext = MockContext.builder().setDetailedContractErrorConsumer((c,d)->{
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setDetailedContractErrorConsumer((c,d)->{
 			observedContractorErrors.add(c);
 			observedDetails.add(d);
 			}).build();
@@ -161,7 +161,7 @@ public class AT_MockContext {
 			Object details = contractError.toString();
 			expectedContractorErrors.add(contractError);
 			expectedDetails.add(details);
-			mockContext.throwContractException(contractError,details);			
+			mockSimulationContext.throwContractException(contractError,details);			
 		}
 		
 		assertEquals(expectedContractorErrors, observedContractorErrors);

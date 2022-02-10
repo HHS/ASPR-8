@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
 import plugins.compartments.support.CompartmentId;
@@ -27,7 +27,7 @@ import plugins.properties.support.PropertyValueRecord;
  *
  */
 public final class CompartmentDataManager {
-	private final Context context;
+	private final SimulationContext simulationContext;
 	private Map<CompartmentId, Map<CompartmentPropertyId, PropertyDefinition>> compartmentPropertyDefinitions = new LinkedHashMap<>();
 	private Map<CompartmentId, Map<CompartmentPropertyId, PropertyValueRecord>> compartmentPropertyMap = new LinkedHashMap<>();
 
@@ -76,7 +76,7 @@ public final class CompartmentDataManager {
 		Map<CompartmentPropertyId, PropertyDefinition> propMap = compartmentPropertyDefinitions.get(compartmentId);
 		propMap.put(compartmentPropertyId, propertyDefinition);
 		Map<CompartmentPropertyId, PropertyValueRecord> valueMap = compartmentPropertyMap.get(compartmentId);
-		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(context);
+		PropertyValueRecord propertyValueRecord = new PropertyValueRecord(simulationContext);
 		propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
 		valueMap.put(compartmentPropertyId, propertyValueRecord);
 	}
@@ -119,8 +119,8 @@ public final class CompartmentDataManager {
 	 * Creates a Compartment Data Manager from the given resolver context.
 	 * Preconditions: The context must be a valid and non-null.
 	 */
-	public CompartmentDataManager(Context context) {
-		this.context = context;
+	public CompartmentDataManager(SimulationContext simulationContext) {
+		this.simulationContext = simulationContext;
 	}
 
 	/**

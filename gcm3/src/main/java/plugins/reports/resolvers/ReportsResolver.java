@@ -3,8 +3,8 @@ package plugins.reports.resolvers;
 import java.util.function.Consumer;
 
 import nucleus.ReportContext;
-import nucleus.ReportId;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
+import plugins.reports.ReportId;
 import plugins.reports.datacontainers.ReportsDataManager;
 import plugins.reports.datacontainers.ReportsDataView;
 import plugins.reports.initialdata.ReportsInitialData;
@@ -60,19 +60,19 @@ public final class ReportsResolver {
 	 *             report context is null</li>
 	 * 
 	 */
-	public void init(ResolverContext resolverContext) {
+	public void init(DataManagerContext dataManagerContext) {
 
-		if (resolverContext == null) {
+		if (dataManagerContext == null) {
 			throw new ContractException(ReportError.NULL_REPORT_CONTEXT);
 		}
 
 		reportsDataManager = new ReportsDataManager();
-		resolverContext.publishDataView(new ReportsDataView(resolverContext.getSafeContext(), reportsDataManager));
+		dataManagerContext.publishDataView(new ReportsDataView(dataManagerContext.getSafeContext(), reportsDataManager));
 
 		for (ReportId reportId : reportsInitialData.getReportIds()) {
 			reportsDataManager.addReport(reportId);
 			Consumer<ReportContext> reportInitialBehavior = reportsInitialData.getReportInitialBehavior(reportId);
-			resolverContext.addReport(reportId, reportInitialBehavior);
+			dataManagerContext.addReport(reportId, reportInitialBehavior);
 		}
 		reportsInitialData = null;
 	}

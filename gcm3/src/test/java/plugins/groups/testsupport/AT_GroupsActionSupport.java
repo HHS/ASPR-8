@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.support.GroupId;
 import plugins.people.datacontainers.PersonDataView;
@@ -57,7 +57,7 @@ public class AT_GroupsActionSupport {
 	@UnitTestMethod(name = "testConsumers", args = { int.class, double.class, double.class, long.class, Consumer.class })
 	public void testConsumers() {
 		ContractException contractException = assertThrows(ContractException.class,()->
-		GroupsActionSupport.testConsumers(100, 3, 5, 234L,  ActionPlugin.builder().build()));
+		GroupsActionSupport.testConsumers(100, 3, 5, 234L,  ActionPluginInitializer.builder().build()));
 		assertEquals(ActionError.ACTION_EXECUTION_FAILURE, contractException.getErrorType());
 	}
 

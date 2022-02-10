@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -20,14 +20,14 @@ public final class RegionFilter extends Filter {
 
 	private RegionLocationDataView regionLocationDataView;
 
-	private void validateRegionId(Context context, RegionDataView regionDataView, final RegionId regionId) {
+	private void validateRegionId(SimulationContext simulationContext, RegionDataView regionDataView, final RegionId regionId) {
 
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionDataView.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 
@@ -38,11 +38,11 @@ public final class RegionFilter extends Filter {
 	}
 
 	@Override
-	public void validate(Context context) {
-		RegionDataView regionDataView = context.getDataView(RegionDataView.class).get();
+	public void validate(SimulationContext simulationContext) {
+		RegionDataView regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 
 		for (RegionId regionId : regionIds) {
-			validateRegionId(context, regionDataView, regionId);
+			validateRegionId(simulationContext, regionDataView, regionId);
 		}
 
 	}
@@ -52,13 +52,13 @@ public final class RegionFilter extends Filter {
 	}
 
 	@Override
-	public boolean evaluate(Context context, PersonId personId) {
-		if (context == null) {
+	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 
 		if (regionLocationDataView == null) {
-			regionLocationDataView = context.getDataView(RegionLocationDataView.class).get();
+			regionLocationDataView = simulationContext.getDataView(RegionLocationDataView.class).get();
 		}
 		return regionIds.contains(regionLocationDataView.getPersonRegion(personId));
 	}
@@ -72,7 +72,7 @@ public final class RegionFilter extends Filter {
 		return builder.toString();
 	}
 
-	private Optional<PersonId> requiresRefresh(Context context, PersonRegionChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonRegionChangeObservationEvent event) {
 		boolean previousRegionIdContained = regionIds.contains(event.getPreviousRegionId());
 		boolean currentRegionIdContained = regionIds.contains(event.getCurrentRegionId());
 		if (previousRegionIdContained != currentRegionIdContained) {

@@ -13,8 +13,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
-import nucleus.testsupport.MockContext;
+import nucleus.SimulationContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.support.CompartmentPropertyId;
 import plugins.compartments.testsupport.TestCompartmentId;
@@ -31,7 +31,7 @@ import util.annotations.UnitTestMethod;
 public class AT_CompartmentDataManager {
 	
 	@Test
-	@UnitTestConstructor(args = { Context.class })
+	@UnitTestConstructor(args = { SimulationContext.class })
 	public void testConstructor() {
 		// this test is covered by the remaining tests
 	}
@@ -40,7 +40,7 @@ public class AT_CompartmentDataManager {
 	@UnitTestMethod(name = "addCompartmentId", args = { CompartmentId.class })
 	public void testAddCompartmentId() {
 
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(MockContext.builder().build());
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(MockSimulationContext.builder().build());
 
 		// precondition check: if the compartment id is null
 		assertThrows(RuntimeException.class, () -> compartmentDataManager.addCompartmentId(null));
@@ -50,7 +50,7 @@ public class AT_CompartmentDataManager {
 		assertThrows(RuntimeException.class, () -> compartmentDataManager.addCompartmentId(TestCompartmentId.COMPARTMENT_1));
 
 		// show that the compartment ids that are added can be retrieved
-		CompartmentDataManager compartmentDataManager2 = new CompartmentDataManager(MockContext.builder().build());
+		CompartmentDataManager compartmentDataManager2 = new CompartmentDataManager(MockSimulationContext.builder().build());
 		Set<CompartmentId> expectedCompartmentIds = new LinkedHashSet<>();
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			compartmentDataManager2.addCompartmentId(testCompartmentId);
@@ -63,9 +63,9 @@ public class AT_CompartmentDataManager {
 	@Test
 	@UnitTestMethod(name = "addCompartmentPropertyDefinition", args = { CompartmentId.class, CompartmentPropertyId.class, PropertyDefinition.class })
 	public void testAddCompartmentPropertyDefinition() {
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.build();
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockContext);
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(mockSimulationContext);
 
 		// create some objects to support the precondition checks
 		CompartmentId cId = TestCompartmentId.COMPARTMENT_1;
@@ -97,8 +97,8 @@ public class AT_CompartmentDataManager {
 		// manager
 		Set<MultiKey> expectedPropertyDefinitions = new LinkedHashSet<>();
 
-		mockContext = MockContext.builder().build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
+		mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			cdm.addCompartmentId(testCompartmentId);
@@ -125,7 +125,7 @@ public class AT_CompartmentDataManager {
 	@Test
 	@UnitTestMethod(name = "compartmentIdExists", args = { CompartmentId.class })
 	public void testCompartmentIdExists() {
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(MockContext.builder().build());
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(MockSimulationContext.builder().build());
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			compartmentDataManager.addCompartmentId(testCompartmentId);
 		}
@@ -146,8 +146,8 @@ public class AT_CompartmentDataManager {
 	public void testCompartmentPropertyIdExists() {
 
 		// add a set of compartment properties
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			cdm.addCompartmentId(testCompartmentId);
@@ -185,7 +185,7 @@ public class AT_CompartmentDataManager {
 	@Test
 	@UnitTestMethod(name = "getCompartmentIds", args = {})
 	public void testGetCompartmentIds() {
-		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(MockContext.builder().build());
+		CompartmentDataManager compartmentDataManager = new CompartmentDataManager(MockSimulationContext.builder().build());
 
 		// show that the compartment ids that are added can be retrieved
 		Set<CompartmentId> expectedCompartmentIds = new LinkedHashSet<>();
@@ -203,8 +203,8 @@ public class AT_CompartmentDataManager {
 		// collect the property definitions that we expect to find in the data
 		// manager
 		Set<MultiKey> expectedPropertyDefinitions = new LinkedHashSet<>();
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			cdm.addCompartmentId(testCompartmentId);
@@ -244,9 +244,9 @@ public class AT_CompartmentDataManager {
 		// collect the property definitions that we expect to find in the data
 		// manager
 		Set<MultiKey> expectedPropertyDefinitions = new LinkedHashSet<>();
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			cdm.addCompartmentId(testCompartmentId);
@@ -278,8 +278,8 @@ public class AT_CompartmentDataManager {
 	public void testGetCompartmentPropertyTime() {
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
 		int defaultValue = 0;
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			cdm.addCompartmentId(testCompartmentId);			
@@ -318,7 +318,7 @@ public class AT_CompartmentDataManager {
 				// correct
 				cdm.setCompartmentPropertyValue(compartmentId, compartmentPropertyId, newPropertyValue++);
 				currentCompartmentPropertyTime = cdm.getCompartmentPropertyTime(compartmentId, compartmentPropertyId);
-				assertEquals(mockContext.getTime(), currentCompartmentPropertyTime, 0);
+				assertEquals(mockSimulationContext.getTime(), currentCompartmentPropertyTime, 0);
 			}
 		}
 
@@ -344,8 +344,8 @@ public class AT_CompartmentDataManager {
 	@UnitTestMethod(name = "getCompartmentPropertyValue", args = { CompartmentId.class, CompartmentPropertyId.class })
 	public void testGetCompartmentPropertyValue() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
 		int runningValue = 0;
 		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -410,8 +410,8 @@ public class AT_CompartmentDataManager {
 	@UnitTestMethod(name = "setCompartmentPropertyValue", args = { CompartmentId.class, CompartmentPropertyId.class, Object.class })
 	public void testSetCompartmentPropertyValue() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		CompartmentDataManager cdm = new CompartmentDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		CompartmentDataManager cdm = new CompartmentDataManager(mockSimulationContext);
 		int runningValue = 0;
 		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {

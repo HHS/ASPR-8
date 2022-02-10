@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.AgentId;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.partitions.support.LabelSet;
@@ -17,7 +17,7 @@ import plugins.partitions.support.PopulationPartition;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import util.ContractException;
@@ -32,9 +32,9 @@ import util.ContractException;
 public final class PartitionDataView implements DataView {
 
 	private final PartitionDataManager partitionDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 	private PersonDataView personDataView;
-	private StochasticsDataView stochasticsDataView;
+	private StochasticsDataManager stochasticsDataManager;
 
 	/**
 	 * Constructs this partition data view from the given context and partition
@@ -48,17 +48,17 @@ public final class PartitionDataView implements DataView {
 	 *             <li>{@linkplain PartitionError#NULL_PARTITION_DATA_MANAGER}
 	 *             if the partition data manager is null</li>
 	 */
-	public PartitionDataView(final Context context, PartitionDataManager partitionDataManager) {
-		if (context == null) {
+	public PartitionDataView(final SimulationContext simulationContext, PartitionDataManager partitionDataManager) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (partitionDataManager == null) {
 			throw new ContractException(PartitionError.NULL_PARTITION_DATA_MANAGER);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.partitionDataManager = partitionDataManager;
-		personDataView = context.getDataView(PersonDataView.class).get();
-		stochasticsDataView = context.getDataView(StochasticsDataView.class).get();
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
+		stochasticsDataManager = simulationContext.getDataView(StochasticsDataManager.class).get();
 	}
 
 	/**
@@ -302,23 +302,23 @@ public final class PartitionDataView implements DataView {
 
 	private void validateLabelSet(final PopulationPartition populationPartition, final LabelSet labelSet) {
 		if (labelSet == null) {
-			context.throwContractException(PartitionError.NULL_LABEL_SET);
+			simulationContext.throwContractException(PartitionError.NULL_LABEL_SET);
 		}
 
 		if (!populationPartition.validateLabelSetInfo(labelSet)) {
-			context.throwContractException(PartitionError.INCOMPATIBLE_LABEL_SET);
+			simulationContext.throwContractException(PartitionError.INCOMPATIBLE_LABEL_SET);
 		}
 	}
 
 	private void validatePartitionSampler(PopulationPartition populationPartition, final PartitionSampler partitionSampler) {
 		if (partitionSampler == null) {
-			context.throwContractException(PartitionError.NULL_PARTITION_SAMPLER);
+			simulationContext.throwContractException(PartitionError.NULL_PARTITION_SAMPLER);
 		}
 
 		if (partitionSampler.getLabelSet().isPresent()) {
 			final LabelSet labelSet = partitionSampler.getLabelSet().get();
 			if (!populationPartition.validateLabelSetInfo(labelSet)) {
-				context.throwContractException(PartitionError.INCOMPATIBLE_LABEL_SET);
+				simulationContext.throwContractException(PartitionError.INCOMPATIBLE_LABEL_SET);
 			}
 		}
 
@@ -339,32 +339,32 @@ public final class PartitionDataView implements DataView {
 	 */
 	private void validatePersonExists(final PersonId personId) {
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
 	private void validatePersonNotNull(final PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 	}
 
 	private void validateKeyExists(final Object key) {
 		if (key == null) {
-			context.throwContractException(PartitionError.NULL_PARTITION_KEY);
+			simulationContext.throwContractException(PartitionError.NULL_PARTITION_KEY);
 		}
 		if (!partitionDataManager.partitionExists(key)) {
-			context.throwContractException(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, key);
+			simulationContext.throwContractException(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, key);
 		}
 	}
 
 	private void validateRandomNumberGeneratorId(final RandomNumberGeneratorId randomNumberGeneratorId) {
 		if (randomNumberGeneratorId == null) {
-			context.throwContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			simulationContext.throwContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
 		}
-		final RandomGenerator randomGenerator = stochasticsDataView.getRandomGeneratorFromId(randomNumberGeneratorId);
+		final RandomGenerator randomGenerator = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		if (randomGenerator == null) {
-			context.throwContractException(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
+			simulationContext.throwContractException(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
 		}
 	}
 

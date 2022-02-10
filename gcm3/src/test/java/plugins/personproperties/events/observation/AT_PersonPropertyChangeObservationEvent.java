@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -104,7 +104,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByCompartmentAndProperty", args = { Context.class, CompartmentId.class, PersonPropertyId.class })
+	@UnitTestMethod(name = "getEventLabelByCompartmentAndProperty", args = { SimulationContext.class, CompartmentId.class, PersonPropertyId.class })
 	public void testGetEventLabelByCompartmentAndProperty() {
 
 		PersonPropertiesActionSupport.testConsumer(0, 7660943930243490312L, (c) -> {
@@ -191,7 +191,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByPersonAndProperty", args = { Context.class, PersonId.class, PersonPropertyId.class })
+	@UnitTestMethod(name = "getEventLabelByPersonAndProperty", args = { SimulationContext.class, PersonId.class, PersonPropertyId.class })
 	public void testGetEventLabelByPersonAndProperty() {
 
 		PersonPropertiesActionSupport.testConsumer(5, 4447674464104241765L, (c) -> {
@@ -272,7 +272,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByProperty", args = { Context.class, PersonPropertyId.class })
+	@UnitTestMethod(name = "getEventLabelByProperty", args = { SimulationContext.class, PersonPropertyId.class })
 	public void testGetEventLabelByProperty() {
 
 		PersonPropertiesActionSupport.testConsumer(0, 3639063830450063191L, (c) -> {
@@ -353,7 +353,7 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByRegionAndProperty", args = { Context.class, RegionId.class, PersonPropertyId.class })
+	@UnitTestMethod(name = "getEventLabelByRegionAndProperty", args = { SimulationContext.class, RegionId.class, PersonPropertyId.class })
 	public void testGetEventLabelByRegionAndProperty() {
 		
 		PersonPropertiesActionSupport.testConsumer(0, 7020781813930698612L, (c) -> {

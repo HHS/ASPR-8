@@ -3,10 +3,11 @@ package plugins.components.datacontainers;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import nucleus.AgentId;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.components.ComponentPlugin;
 import plugins.components.support.ComponentId;
 
@@ -40,8 +41,13 @@ public final class ComponentDataManager {
 	private Map<ComponentId, ComponentRecord> componentMap = new LinkedHashMap<>();
 
 	private ComponentRecord getFocalComponentRecord() {
-		AgentId currentAgentId = context.getCurrentAgentId();
-		return this.agentMap.get(currentAgentId);
+		Optional<AgentId> optional = context.getCurrentAgentId();
+		if (optional.isPresent()) {
+			AgentId currentAgentId = optional.get();
+			return this.agentMap.get(currentAgentId);
+		}else {
+			return null;
+		}
 	}
 
 	/**
@@ -124,13 +130,13 @@ public final class ComponentDataManager {
 		componentMap.put(componentId, componentRecord);
 	}
 
-	private ResolverContext context;
+	private DataManagerContext context;
 
 	/**
 	 * Creates a ComponentDataManager from the given ResolverContext
 	 * 
 	 */
-	public ComponentDataManager(ResolverContext context) {
+	public ComponentDataManager(DataManagerContext context) {
 		this.context = context;
 	}
 

@@ -13,8 +13,8 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataView;
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
+import plugins.reports.ReportId;
 import plugins.reports.support.ReportError;
 import util.ContractException;
 import util.MutableInteger;

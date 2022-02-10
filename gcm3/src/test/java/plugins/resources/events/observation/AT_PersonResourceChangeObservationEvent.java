@@ -11,7 +11,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -33,7 +33,7 @@ import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -93,7 +93,7 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByCompartmentAndResource", args = { Context.class, CompartmentId.class, ResourceId.class })
+	@UnitTestMethod(name = "getEventLabelByCompartmentAndResource", args = { SimulationContext.class, CompartmentId.class, ResourceId.class })
 	public void testGetEventLabelByCompartmentAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
@@ -167,8 +167,8 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			Set<CompartmentId> compartmentIds = compartmentDataView.getCompartmentIds();
 			Set<ResourceId> resourceIds = resourceDataView.getResourceIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler
 			EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForCompartmentAndResource(compartmentLocationDataView);
@@ -210,7 +210,7 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByRegionAndResource", args = { Context.class, RegionId.class, ResourceId.class })
+	@UnitTestMethod(name = "getEventLabelByRegionAndResource", args = { SimulationContext.class, RegionId.class, ResourceId.class })
 	public void testGetEventLabelByRegionAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
@@ -284,8 +284,8 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			Set<RegionId> regionIds = regionDataView.getRegionIds();
 			Set<ResourceId> resourceIds = resourceDataView.getResourceIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler
 			EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForRegionAndResource(regionLocationDataView);
@@ -328,7 +328,7 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByPersonAndResource", args = { Context.class, PersonId.class, ResourceId.class })
+	@UnitTestMethod(name = "getEventLabelByPersonAndResource", args = { SimulationContext.class, PersonId.class, ResourceId.class })
 	public void testGetEventLabelByPersonAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
@@ -438,7 +438,7 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByResource", args = { Context.class, ResourceId.class })
+	@UnitTestMethod(name = "getEventLabelByResource", args = { SimulationContext.class, ResourceId.class })
 	public void testGetEventLabelByResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 

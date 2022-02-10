@@ -1,7 +1,7 @@
 package plugins.compartments.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -83,8 +83,8 @@ public class CompartmentPropertyChangeObservationEvent implements Event {
 		COMPARTMENT_PROPERTY
 	}
 
-	private static void validateCompartmentProperty(Context context, final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
-		CompartmentDataView compartmentDataView = context.getDataView(CompartmentDataView.class).get();
+	private static void validateCompartmentProperty(SimulationContext simulationContext, final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+		CompartmentDataView compartmentDataView = simulationContext.getDataView(CompartmentDataView.class).get();
 		compartmentDataView.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
 	}
 
@@ -106,8 +106,8 @@ public class CompartmentPropertyChangeObservationEvent implements Event {
 	 *             if the compartment property id is not associated with the
 	 *             compartment</li>
 	 */
-	public static EventLabel<CompartmentPropertyChangeObservationEvent> getEventLabel(Context context, CompartmentId compartmentId, CompartmentPropertyId compartmentPropertyId) {
-		validateCompartmentProperty(context, compartmentId, compartmentPropertyId);
+	public static EventLabel<CompartmentPropertyChangeObservationEvent> getEventLabel(SimulationContext simulationContext, CompartmentId compartmentId, CompartmentPropertyId compartmentPropertyId) {
+		validateCompartmentProperty(simulationContext, compartmentId, compartmentPropertyId);
 		return new MultiKeyEventLabel<>(compartmentPropertyId, LabelerId.COMPARTMENT_PROPERTY, CompartmentPropertyChangeObservationEvent.class, compartmentId, compartmentPropertyId);
 
 	}

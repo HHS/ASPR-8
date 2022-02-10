@@ -2,7 +2,7 @@ package plugins.partitions.support;
 
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import plugins.people.support.PersonId;
 
@@ -25,12 +25,12 @@ public interface Labeler {
 	/**
 	 * Returns the label for the person
 	 */
-	public Object getLabel(Context context, PersonId personId);
+	public Object getLabel(SimulationContext simulationContext, PersonId personId);
 	
 	/**
 	 * Returns the label for the person based on the previous value recored in the event
 	 */
-	public Object getPastLabel(Context context, Event event);
+	public Object getPastLabel(SimulationContext simulationContext, Event event);
 
 	/**
 	 * Returns the dimension for this labeler.

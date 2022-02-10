@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.events.mutation.CompartmentPropertyValueAssignmentEvent;
@@ -24,6 +23,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.initialdata.PeopleInitialData;
 import plugins.properties.PropertiesPlugin;
 import plugins.properties.support.PropertyDefinition;
+import plugins.reports.ReportId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
@@ -102,7 +102,7 @@ public class AT_CompartmentPropertyReport {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent and have it assign various compartment properties at
 		// various times
@@ -139,8 +139,8 @@ public class AT_CompartmentPropertyReport {
 			c.resolveEvent(new CompartmentPropertyValueAssignmentEvent(compartmentB, prop_B_length, 60.0));
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
@@ -148,7 +148,7 @@ public class AT_CompartmentPropertyReport {
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Collect the expected report items. Note that order does not matter.		 * 

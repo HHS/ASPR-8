@@ -1,6 +1,6 @@
 package plugins.properties.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import util.ContractException;
 import util.arraycontainers.FloatValueContainer;
 
@@ -27,8 +27,8 @@ public final class FloatPropertyManager extends AbstractIndexedPropertyManager {
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 	 *             if the property definition does not have a default value</li>
 	 */
-	public FloatPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
-		super(context, propertyDefinition, initialSize);
+	public FloatPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
+		super(simulationContext, propertyDefinition, initialSize);
 		if (propertyDefinition.getType() != Float.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE,"Requires a property definition with float type");
 		}

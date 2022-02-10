@@ -1,7 +1,7 @@
 package plugins.materials.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -55,29 +55,29 @@ public class MaterialsProducerResourceChangeObservationEvent implements Event {
 		PRODUCER_RESOURCE, RESOURCE
 	}
 
-	private static void validateMaterialProducerId(Context context, MaterialsProducerId materialsProducerId) {
+	private static void validateMaterialProducerId(SimulationContext simulationContext, MaterialsProducerId materialsProducerId) {
 		if (materialsProducerId == null) {
-			context.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
-		MaterialsDataView materialsDataView = context.getDataView(MaterialsDataView.class).get();
+		MaterialsDataView materialsDataView = simulationContext.getDataView(MaterialsDataView.class).get();
 		if (!materialsDataView.materialsProducerIdExists(materialsProducerId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
 		}
 	}
 
-	private static void validateResourceId(Context context, ResourceId resourceId) {
+	private static void validateResourceId(SimulationContext simulationContext, ResourceId resourceId) {
 		if (resourceId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataView resourceDataView = context.getDataView(ResourceDataView.class).get();
+		ResourceDataView resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 		if (!resourceDataView.resourceIdExists(resourceId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}
 	}
 
-	public static EventLabel<MaterialsProducerResourceChangeObservationEvent> getEventLabelByMaterialsProducerAndResource(Context context, MaterialsProducerId materialsProducerId, ResourceId resourceId) {
-		validateMaterialProducerId(context, materialsProducerId);
-		validateResourceId(context, resourceId);
+	public static EventLabel<MaterialsProducerResourceChangeObservationEvent> getEventLabelByMaterialsProducerAndResource(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, ResourceId resourceId) {
+		validateMaterialProducerId(simulationContext, materialsProducerId);
+		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, materialsProducerId, resourceId);
 	}
 
@@ -85,8 +85,8 @@ public class MaterialsProducerResourceChangeObservationEvent implements Event {
 		return new SimpleEventLabeler<>(LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, event.getMaterialsProducerId(), event.getResourceId()));
 	}
 
-	public static EventLabel<MaterialsProducerResourceChangeObservationEvent> getEventLabelByResource(Context context, ResourceId resourceId) {
-		validateResourceId(context, resourceId);
+	public static EventLabel<MaterialsProducerResourceChangeObservationEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
+		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, resourceId);
 	}
 

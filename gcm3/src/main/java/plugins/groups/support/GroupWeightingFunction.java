@@ -1,6 +1,6 @@
 package plugins.groups.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
 
 /**
@@ -17,5 +17,5 @@ public interface GroupWeightingFunction {
 	 * while no mutations to simulation state have taken place. The person will
 	 * be a member of the group.
 	 */
-	public double getWeight(Context context, PersonId personId, GroupId groupId);
+	public double getWeight(SimulationContext simulationContext, PersonId personId, GroupId groupId);
 }

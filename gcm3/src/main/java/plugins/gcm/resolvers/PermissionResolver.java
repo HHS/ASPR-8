@@ -1,6 +1,6 @@
 package plugins.gcm.resolvers;
 
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.compartments.datacontainers.CompartmentDataView;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.events.mutation.CompartmentPropertyValueAssignmentEvent;
@@ -60,128 +60,128 @@ public class PermissionResolver {
 
 	private MaterialsDataView materialsDataView;
 
-	private void handleCompartmentPropertyValueAssignmentEvent(final ResolverContext resolverContext, final CompartmentPropertyValueAssignmentEvent compartmentPropertyValueAssignmentEvent) {
+	private void handleCompartmentPropertyValueAssignmentEvent(final DataManagerContext dataManagerContext, final CompartmentPropertyValueAssignmentEvent compartmentPropertyValueAssignmentEvent) {
 		final CompartmentId compartmentId = compartmentPropertyValueAssignmentEvent.getCompartmentId();
-		validateCompartmentId(resolverContext, compartmentId);
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		validateCompartmentId(dataManagerContext, compartmentId);
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(compartmentId)//
 							.check();//
 	}
 
-	private void handleGlobalPropertyValueAssignmentEvent(final ResolverContext resolverContext, final GlobalPropertyValueAssignmentEvent globalPropertyValueAssignmentEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+	private void handleGlobalPropertyValueAssignmentEvent(final DataManagerContext dataManagerContext, final GlobalPropertyValueAssignmentEvent globalPropertyValueAssignmentEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.check();//
 	}
 
-	private void handleGroupConstructionEvent(final ResolverContext resolverContext, final GroupConstructionEvent groupConstructionEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
-							.addPermissionByType(GlobalComponentId.class)//
-							.addPermissionByType(RegionId.class)//
-							.addPermissionByType(CompartmentId.class)//
-							.check();//
-
-	}
-
-	private void handleGroupCreationEvent(final ResolverContext resolverContext, final GroupCreationEvent groupCreationEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+	private void handleGroupConstructionEvent(final DataManagerContext dataManagerContext, final GroupConstructionEvent groupConstructionEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionByType(RegionId.class)//
 							.addPermissionByType(CompartmentId.class)//
 							.check();//
-	}
-
-	private void handleGroupMembershipAdditionEvent(final ResolverContext resolverContext, final GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
-							.addPermissionByType(GlobalComponentId.class)//
-							.addPermissionByType(CompartmentId.class)//
-							.addPermissionByType(RegionId.class)//
-							.check();//
 
 	}
 
-	private void handleGroupMembershipRemovalEvent(final ResolverContext resolverContext, final GroupMembershipRemovalEvent groupMembershipRemovalEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
-							.addPermissionByType(GlobalComponentId.class)//
-							.addPermissionByType(CompartmentId.class)//
-							.addPermissionByType(RegionId.class)//
-							.check();//
-	}
-
-	private void handleGroupPropertyValueAssignmentEvent(final ResolverContext resolverContext, final GroupPropertyValueAssignmentEvent groupPropertyValueAssignmentEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+	private void handleGroupCreationEvent(final DataManagerContext dataManagerContext, final GroupCreationEvent groupCreationEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionByType(RegionId.class)//
 							.addPermissionByType(CompartmentId.class)//
 							.check();//
 	}
 
-	private void handleGroupRemovalEvent(final ResolverContext resolverContext, final GroupRemovalRequestEvent groupRemovalRequestEvent) {
+	private void handleGroupMembershipAdditionEvent(final DataManagerContext dataManagerContext, final GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
+							.addPermissionByType(GlobalComponentId.class)//
+							.addPermissionByType(CompartmentId.class)//
+							.addPermissionByType(RegionId.class)//
+							.check();//
 
-		PermissionChecker	.newChecker(resolverContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
+	}
+
+	private void handleGroupMembershipRemovalEvent(final DataManagerContext dataManagerContext, final GroupMembershipRemovalEvent groupMembershipRemovalEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
+							.addPermissionByType(GlobalComponentId.class)//
+							.addPermissionByType(CompartmentId.class)//
+							.addPermissionByType(RegionId.class)//
+							.check();//
+	}
+
+	private void handleGroupPropertyValueAssignmentEvent(final DataManagerContext dataManagerContext, final GroupPropertyValueAssignmentEvent groupPropertyValueAssignmentEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
+							.addPermissionByType(GlobalComponentId.class)//
+							.addPermissionByType(RegionId.class)//
+							.addPermissionByType(CompartmentId.class)//
+							.check();//
+	}
+
+	private void handleGroupRemovalEvent(final DataManagerContext dataManagerContext, final GroupRemovalRequestEvent groupRemovalRequestEvent) {
+
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
 							.addPermissionByType(RegionId.class)//
 							.addPermissionByType(CompartmentId.class)//
 							.check();//
 
 	}
 
-	private void handleInterRegionalResourceTransferEvent(final ResolverContext resolverContext, final InterRegionalResourceTransferEvent interRegionalResourceTransferEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+	private void handleInterRegionalResourceTransferEvent(final DataManagerContext dataManagerContext, final InterRegionalResourceTransferEvent interRegionalResourceTransferEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.check();//
 
 	}
 
-	private void handleMaterialsProducerPropertyValueAssignmentEvent(final ResolverContext resolverContext,
+	private void handleMaterialsProducerPropertyValueAssignmentEvent(final DataManagerContext dataManagerContext,
 			final MaterialsProducerPropertyValueAssignmentEvent materialsProducerPropertyValueAssignmentEvent) {
 		final MaterialsProducerId materialsProducerId = materialsProducerPropertyValueAssignmentEvent.getMaterialsProducerId();
 
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(materialsProducerId)//
 							.check();//
 
 	}
 
-	private void handleOfferedStageTransferToMaterialsProducerEvent(final ResolverContext resolverContext,
+	private void handleOfferedStageTransferToMaterialsProducerEvent(final DataManagerContext dataManagerContext,
 			final OfferedStageTransferToMaterialsProducerEvent offeredStageTransferToMaterialsProducerEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionByType(MaterialsProducerId.class)//
 							.check();//
 	}
 
-	private void handlePersonCompartmentAssignmentEvent(final ResolverContext resolverContext, final PersonCompartmentAssignmentEvent personCompartmentAssignmentEvent) {
+	private void handlePersonCompartmentAssignmentEvent(final DataManagerContext dataManagerContext, final PersonCompartmentAssignmentEvent personCompartmentAssignmentEvent) {
 
 		final PersonId personId = personCompartmentAssignmentEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 		final CompartmentId oldCompartmentId = compartmentLocationDataView.getPersonCompartment(personId);
 
-		PermissionChecker	.newChecker(resolverContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(oldCompartmentId)//
 							.check();//
 	}
 
-	private void handlePersonCreationEvent(final ResolverContext resolverContext, final PersonCreationEvent personCreationEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+	private void handlePersonCreationEvent(final DataManagerContext dataManagerContext, final PersonCreationEvent personCreationEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.check();//
 	}
 
-	private void handleBulkPersonCreationEvent(final ResolverContext resolverContext, final BulkPersonCreationEvent bulkPersonCreationEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+	private void handleBulkPersonCreationEvent(final DataManagerContext dataManagerContext, final BulkPersonCreationEvent bulkPersonCreationEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.check();//
 	}
 
-	private void handlePersonPropertyValueAssignmentEvent(final ResolverContext resolverContext, final PersonPropertyValueAssignmentEvent personPropertyValueAssignmentEvent) {
+	private void handlePersonPropertyValueAssignmentEvent(final DataManagerContext dataManagerContext, final PersonPropertyValueAssignmentEvent personPropertyValueAssignmentEvent) {
 
 		final PersonId personId = personPropertyValueAssignmentEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 		final CompartmentId compartmentId = compartmentLocationDataView.getPersonCompartment(personId);
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.addPermissionById(compartmentId)//
@@ -189,46 +189,46 @@ public class PermissionResolver {
 
 	}
 
-	private void handlePersonRegionAssignmentEvent(final ResolverContext resolverContext, final PersonRegionAssignmentEvent personRegionAssignmentEvent) {
+	private void handlePersonRegionAssignmentEvent(final DataManagerContext dataManagerContext, final PersonRegionAssignmentEvent personRegionAssignmentEvent) {
 		final PersonId personId = personRegionAssignmentEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.check();//
 	}
 
-	private void handlePersonRemovalRequestEvent(final ResolverContext resolverContext, final PersonRemovalRequestEvent personRemovalRequestEvent) {
+	private void handlePersonRemovalRequestEvent(final DataManagerContext dataManagerContext, final PersonRemovalRequestEvent personRemovalRequestEvent) {
 		final PersonId personId = personRemovalRequestEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 		final CompartmentId compartmentId = compartmentLocationDataView.getPersonCompartment(personId);
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionById(compartmentId)//
 							.check();//
 	}
 
-	private void handlePersonResourceRemovalEvent(final ResolverContext resolverContext, final PersonResourceRemovalEvent personResourceRemovalEvent) {
+	private void handlePersonResourceRemovalEvent(final DataManagerContext dataManagerContext, final PersonResourceRemovalEvent personResourceRemovalEvent) {
 		final PersonId personId = personResourceRemovalEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 		final CompartmentId compartmentId = compartmentLocationDataView.getPersonCompartment(personId);
 
-		PermissionChecker	.newChecker(resolverContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.addPermissionById(compartmentId)//
 							.check();//
 	}
 
-	private void handleProducedResourceTransferToRegionEvent(final ResolverContext resolverContext, final ProducedResourceTransferToRegionEvent producedResourceTransferToRegionEvent) {
+	private void handleProducedResourceTransferToRegionEvent(final DataManagerContext dataManagerContext, final ProducedResourceTransferToRegionEvent producedResourceTransferToRegionEvent) {
 
 		final MaterialsProducerId materialsProducerId = producedResourceTransferToRegionEvent.getMaterialsProducerId();
 		final RegionId regionId = producedResourceTransferToRegionEvent.getRegionId();
 
-		validateRegionId(resolverContext, regionId);
-		validateMaterialsProducerId(resolverContext, materialsProducerId);
+		validateRegionId(dataManagerContext, regionId);
+		validateMaterialsProducerId(dataManagerContext, materialsProducerId);
 
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.addPermissionById(materialsProducerId)//
@@ -236,62 +236,62 @@ public class PermissionResolver {
 
 	}
 
-	private void handleRegionPropertyValueAssignmentEvent(final ResolverContext resolverContext, final RegionPropertyValueAssignmentEvent regionPropertyValueAssignmentEvent) {
+	private void handleRegionPropertyValueAssignmentEvent(final DataManagerContext dataManagerContext, final RegionPropertyValueAssignmentEvent regionPropertyValueAssignmentEvent) {
 		final RegionId regionId = regionPropertyValueAssignmentEvent.getRegionId();
-		validateRegionId(resolverContext, regionId);
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		validateRegionId(dataManagerContext, regionId);
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.check();//
 	}
 
-	private void handleRegionResourceAdditionEvent(final ResolverContext resolverContext, final RegionResourceAdditionEvent regionResourceAdditionEvent) {
+	private void handleRegionResourceAdditionEvent(final DataManagerContext dataManagerContext, final RegionResourceAdditionEvent regionResourceAdditionEvent) {
 		final RegionId regionId = regionResourceAdditionEvent.getRegionId();
-		validateRegionId(resolverContext, regionId);
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		validateRegionId(dataManagerContext, regionId);
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.permitResolverGeneratedEvents()//
 							.check();//
 	}
 
-	private void handleRegionResourceRemovalEvent(final ResolverContext resolverContext, final RegionResourceRemovalEvent regionResourceRemovalEvent) {
+	private void handleRegionResourceRemovalEvent(final DataManagerContext dataManagerContext, final RegionResourceRemovalEvent regionResourceRemovalEvent) {
 		final RegionId regionId = regionResourceRemovalEvent.getRegionId();
-		validateRegionId(resolverContext, regionId);
+		validateRegionId(dataManagerContext, regionId);
 
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.check();//
 	}
 
-	private void handleResourcePropertyValueAssignmentEvent(final ResolverContext resolverContext, final ResourcePropertyValueAssignmentEvent resourcePropertyValueAssignmentEvent) {
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+	private void handleResourcePropertyValueAssignmentEvent(final DataManagerContext dataManagerContext, final ResourcePropertyValueAssignmentEvent resourcePropertyValueAssignmentEvent) {
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.check();//
 
 	}
 
-	private void handleResourceTransferFromPersonEvent(final ResolverContext resolverContext, final ResourceTransferFromPersonEvent resourceTransferFromPersonEvent) {
+	private void handleResourceTransferFromPersonEvent(final DataManagerContext dataManagerContext, final ResourceTransferFromPersonEvent resourceTransferFromPersonEvent) {
 
 		final PersonId personId = resourceTransferFromPersonEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 		final CompartmentId compartmentId = compartmentLocationDataView.getPersonCompartment(personId);
 
-		PermissionChecker	.newChecker(resolverContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView).addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.addPermissionById(compartmentId)//
 							.check();//
 
 	}
 
-	private void handleResourceTransferToPersonEvent(final ResolverContext resolverContext, final ResourceTransferToPersonEvent resourceTransferToPersonEvent) {
+	private void handleResourceTransferToPersonEvent(final DataManagerContext dataManagerContext, final ResourceTransferToPersonEvent resourceTransferToPersonEvent) {
 		final PersonId personId = resourceTransferToPersonEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 		final CompartmentId compartmentId = compartmentLocationDataView.getPersonCompartment(personId);
-		PermissionChecker	.newChecker(resolverContext, componentDataView)//
+		PermissionChecker	.newChecker(dataManagerContext, componentDataView)//
 							.addPermissionByType(GlobalComponentId.class)//
 							.addPermissionById(regionId)//
 							.addPermissionById(compartmentId)//
@@ -299,41 +299,41 @@ public class PermissionResolver {
 
 	}
 
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
-		compartmentDataView = resolverContext.getDataView(CompartmentDataView.class).get();
-		compartmentLocationDataView = resolverContext.getDataView(CompartmentLocationDataView.class).get();
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
-		regionDataView = resolverContext.getDataView(RegionDataView.class).get();
-		materialsDataView = resolverContext.getDataView(MaterialsDataView.class).get();
-		regionLocationDataView = resolverContext.getDataView(RegionLocationDataView.class).get();
-		componentDataView = resolverContext.getDataView(ComponentDataView.class).get();
+		compartmentDataView = dataManagerContext.getDataView(CompartmentDataView.class).get();
+		compartmentLocationDataView = dataManagerContext.getDataView(CompartmentLocationDataView.class).get();
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
+		regionDataView = dataManagerContext.getDataView(RegionDataView.class).get();
+		materialsDataView = dataManagerContext.getDataView(MaterialsDataView.class).get();
+		regionLocationDataView = dataManagerContext.getDataView(RegionLocationDataView.class).get();
+		componentDataView = dataManagerContext.getDataView(ComponentDataView.class).get();
 
-		resolverContext.subscribeToEventValidationPhase(CompartmentPropertyValueAssignmentEvent.class, this::handleCompartmentPropertyValueAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(PersonCompartmentAssignmentEvent.class, this::handlePersonCompartmentAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(PersonRemovalRequestEvent.class, this::handlePersonRemovalRequestEvent);
-		resolverContext.subscribeToEventValidationPhase(GlobalPropertyValueAssignmentEvent.class, this::handleGlobalPropertyValueAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(GroupConstructionEvent.class, this::handleGroupConstructionEvent);
-		resolverContext.subscribeToEventValidationPhase(GroupCreationEvent.class, this::handleGroupCreationEvent);
-		resolverContext.subscribeToEventValidationPhase(GroupRemovalRequestEvent.class, this::handleGroupRemovalEvent);
-		resolverContext.subscribeToEventValidationPhase(GroupMembershipAdditionEvent.class, this::handleGroupMembershipAdditionEvent);
-		resolverContext.subscribeToEventValidationPhase(GroupMembershipRemovalEvent.class, this::handleGroupMembershipRemovalEvent);
-		resolverContext.subscribeToEventValidationPhase(GroupPropertyValueAssignmentEvent.class, this::handleGroupPropertyValueAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(MaterialsProducerPropertyValueAssignmentEvent.class, this::handleMaterialsProducerPropertyValueAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(ProducedResourceTransferToRegionEvent.class, this::handleProducedResourceTransferToRegionEvent);
-		resolverContext.subscribeToEventValidationPhase(PersonCreationEvent.class, this::handlePersonCreationEvent);
-		resolverContext.subscribeToEventValidationPhase(BulkPersonCreationEvent.class, this::handleBulkPersonCreationEvent);
-		resolverContext.subscribeToEventValidationPhase(OfferedStageTransferToMaterialsProducerEvent.class, this::handleOfferedStageTransferToMaterialsProducerEvent);
-		resolverContext.subscribeToEventValidationPhase(PersonPropertyValueAssignmentEvent.class, this::handlePersonPropertyValueAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(PersonRegionAssignmentEvent.class, this::handlePersonRegionAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(RegionPropertyValueAssignmentEvent.class, this::handleRegionPropertyValueAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(InterRegionalResourceTransferEvent.class, this::handleInterRegionalResourceTransferEvent);
-		resolverContext.subscribeToEventValidationPhase(PersonResourceRemovalEvent.class, this::handlePersonResourceRemovalEvent);
-		resolverContext.subscribeToEventValidationPhase(RegionResourceAdditionEvent.class, this::handleRegionResourceAdditionEvent);
-		resolverContext.subscribeToEventValidationPhase(RegionResourceRemovalEvent.class, this::handleRegionResourceRemovalEvent);
-		resolverContext.subscribeToEventValidationPhase(ResourcePropertyValueAssignmentEvent.class, this::handleResourcePropertyValueAssignmentEvent);
-		resolverContext.subscribeToEventValidationPhase(ResourceTransferFromPersonEvent.class, this::handleResourceTransferFromPersonEvent);
-		resolverContext.subscribeToEventValidationPhase(ResourceTransferToPersonEvent.class, this::handleResourceTransferToPersonEvent);
+		dataManagerContext.subscribeToEventValidationPhase(CompartmentPropertyValueAssignmentEvent.class, this::handleCompartmentPropertyValueAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCompartmentAssignmentEvent.class, this::handlePersonCompartmentAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(PersonRemovalRequestEvent.class, this::handlePersonRemovalRequestEvent);
+		dataManagerContext.subscribeToEventValidationPhase(GlobalPropertyValueAssignmentEvent.class, this::handleGlobalPropertyValueAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(GroupConstructionEvent.class, this::handleGroupConstructionEvent);
+		dataManagerContext.subscribeToEventValidationPhase(GroupCreationEvent.class, this::handleGroupCreationEvent);
+		dataManagerContext.subscribeToEventValidationPhase(GroupRemovalRequestEvent.class, this::handleGroupRemovalEvent);
+		dataManagerContext.subscribeToEventValidationPhase(GroupMembershipAdditionEvent.class, this::handleGroupMembershipAdditionEvent);
+		dataManagerContext.subscribeToEventValidationPhase(GroupMembershipRemovalEvent.class, this::handleGroupMembershipRemovalEvent);
+		dataManagerContext.subscribeToEventValidationPhase(GroupPropertyValueAssignmentEvent.class, this::handleGroupPropertyValueAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(MaterialsProducerPropertyValueAssignmentEvent.class, this::handleMaterialsProducerPropertyValueAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(ProducedResourceTransferToRegionEvent.class, this::handleProducedResourceTransferToRegionEvent);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCreationEvent.class, this::handlePersonCreationEvent);
+		dataManagerContext.subscribeToEventValidationPhase(BulkPersonCreationEvent.class, this::handleBulkPersonCreationEvent);
+		dataManagerContext.subscribeToEventValidationPhase(OfferedStageTransferToMaterialsProducerEvent.class, this::handleOfferedStageTransferToMaterialsProducerEvent);
+		dataManagerContext.subscribeToEventValidationPhase(PersonPropertyValueAssignmentEvent.class, this::handlePersonPropertyValueAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(PersonRegionAssignmentEvent.class, this::handlePersonRegionAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(RegionPropertyValueAssignmentEvent.class, this::handleRegionPropertyValueAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(InterRegionalResourceTransferEvent.class, this::handleInterRegionalResourceTransferEvent);
+		dataManagerContext.subscribeToEventValidationPhase(PersonResourceRemovalEvent.class, this::handlePersonResourceRemovalEvent);
+		dataManagerContext.subscribeToEventValidationPhase(RegionResourceAdditionEvent.class, this::handleRegionResourceAdditionEvent);
+		dataManagerContext.subscribeToEventValidationPhase(RegionResourceRemovalEvent.class, this::handleRegionResourceRemovalEvent);
+		dataManagerContext.subscribeToEventValidationPhase(ResourcePropertyValueAssignmentEvent.class, this::handleResourcePropertyValueAssignmentEvent);
+		dataManagerContext.subscribeToEventValidationPhase(ResourceTransferFromPersonEvent.class, this::handleResourceTransferFromPersonEvent);
+		dataManagerContext.subscribeToEventValidationPhase(ResourceTransferToPersonEvent.class, this::handleResourceTransferToPersonEvent);
 
 	}
 
@@ -341,43 +341,43 @@ public class PermissionResolver {
 	 * Validates the compartment id
 	 *
 	 */
-	private void validateCompartmentId(final ResolverContext resolverContext, final CompartmentId compartmentId) {
+	private void validateCompartmentId(final DataManagerContext dataManagerContext, final CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			resolverContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			dataManagerContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
 
 		if (!compartmentDataView.compartmentIdExists(compartmentId)) {
-			resolverContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
+			dataManagerContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
 		}
 	}
 
-	private void validateMaterialsProducerId(final ResolverContext resolverContext, final MaterialsProducerId materialsProducerId) {
+	private void validateMaterialsProducerId(final DataManagerContext dataManagerContext, final MaterialsProducerId materialsProducerId) {
 		if (materialsProducerId == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
+			dataManagerContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
 
 		if (!materialsDataView.materialsProducerIdExists(materialsProducerId)) {
-			resolverContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, materialsProducerId);
+			dataManagerContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, materialsProducerId);
 		}
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private void validateRegionId(final ResolverContext resolverContext, final RegionId regionId) {
+	private void validateRegionId(final DataManagerContext dataManagerContext, final RegionId regionId) {
 
 		if (regionId == null) {
-			resolverContext.throwContractException(RegionError.NULL_REGION_ID);
+			dataManagerContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionDataView.regionIdExists(regionId)) {
-			resolverContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			dataManagerContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 

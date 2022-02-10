@@ -20,10 +20,10 @@ import org.junit.jupiter.api.Test;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
@@ -61,7 +61,7 @@ import plugins.regions.initialdata.RegionInitialData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
 import util.MultiKey;
@@ -81,7 +81,7 @@ public class AT_PersonPropertyEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonPropertyChangeObservationEventLabelers() {
 
 		/*
@@ -118,7 +118,7 @@ public class AT_PersonPropertyEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonPropertyDataViewInitialization() {
 
 		// create a random generator
@@ -241,7 +241,7 @@ public class AT_PersonPropertyEventResolver {
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Add an agent that will show that the person property data view is
@@ -281,23 +281,23 @@ public class AT_PersonPropertyEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonPropertyValueAssignmentEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create some containers to hold the expected and actual observations
 		// for later comparison
@@ -325,8 +325,8 @@ public class AT_PersonPropertyEventResolver {
 			// establish data views
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select all the property ids that are mutable
 			Set<TestPersonPropertyId> mutableProperties = new LinkedHashSet<>();
@@ -417,17 +417,17 @@ public class AT_PersonPropertyEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonCreationObservationEvent() {
 
 		PersonPropertiesActionSupport.testConsumer(100, 4771130331997762252L, (c) -> {
 			// establish data views
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
 
 			// get the random generator for use later
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// add a person with some person property auxiliary data
 			PersonContructionData.Builder personBuilder = PersonContructionData.builder();
@@ -520,16 +520,16 @@ public class AT_PersonPropertyEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonCreationObservationEvent() {
 		PersonPropertiesActionSupport.testConsumer(100, 2547218192811543040L, (c) -> {
 			// establish data views
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
 
 			// get the random generator for use later
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// set the number of people we will add
 			int bulkPersonCount = 20;
@@ -668,10 +668,10 @@ public class AT_PersonPropertyEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonImminentRemovalObservationEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Have the agent remove a person and show that their properties remain

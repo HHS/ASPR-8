@@ -55,7 +55,7 @@ public class AT_ActionAgent {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		// add the agents to the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent(alias1);
 		pluginBuilder.addAgent(alias2);
 
@@ -75,16 +75,16 @@ public class AT_ActionAgent {
 		}
 
 		//build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
 		Simulation	.builder()//
-				.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init)//
+				.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init)//
 				.build()//
 				.execute();//
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the agents executed the expected actions
 		assertEquals(expectedObservations, actualObservations);

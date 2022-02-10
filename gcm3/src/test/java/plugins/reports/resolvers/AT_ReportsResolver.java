@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.ReportId;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import nucleus.SimpleReportId;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import plugins.components.ComponentPlugin;
+import plugins.reports.ReportId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportError;
@@ -40,7 +40,7 @@ public class AT_ReportsResolver {
 
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testInit() {
 		//add two reports to the reports plugin
 		ReportId reportId_A = new SimpleReportId("A");
@@ -67,10 +67,10 @@ public class AT_ReportsResolver {
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();

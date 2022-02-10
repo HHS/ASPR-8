@@ -26,9 +26,9 @@ import nucleus.NucleusError;
 import nucleus.ResolverId;
 import nucleus.SimpleResolverId;
 import nucleus.testsupport.actionplugin.ActionAgent;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
 import plugins.regions.RegionPlugin;
 import plugins.regions.datacontainers.RegionDataView;
 import plugins.regions.datacontainers.RegionLocationDataView;
@@ -66,7 +66,7 @@ import plugins.properties.support.PropertyError;
 import plugins.properties.support.TimeTrackingPolicy;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
 import util.MultiKey;
@@ -139,7 +139,7 @@ public class AT_RegionEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agents to create people
@@ -189,14 +189,14 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class AT_RegionEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agents to create people
@@ -260,14 +260,14 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -299,7 +299,7 @@ public class AT_RegionEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent to search for the regions
 		pluginBuilder.addAgent("agent");
@@ -326,14 +326,14 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -386,7 +386,7 @@ public class AT_RegionEventResolver {
 	public void testPersonRegionAssignmentEvent() {
 		int numberOfPeople = 30;
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create two agents to move and observe people being moved
 		pluginBuilder.addAgent("mover agent");
@@ -454,8 +454,8 @@ public class AT_RegionEventResolver {
 			// Select a person at random from the simulation and create a person
 			// id outside of the simulation
 			
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
@@ -492,8 +492,8 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(numberOfPeople, 5655227215512656797L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(numberOfPeople, 5655227215512656797L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 		// show that the observations were correct
 		assertEquals(expectedObservations.size(), recievedObservations.size());
@@ -515,7 +515,7 @@ public class AT_RegionEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonCreationObservationEvent() {
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agents to create people
@@ -527,12 +527,12 @@ public class AT_RegionEventResolver {
 		 * is in the correct region at the correct time
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
-					StochasticsDataView stochasticsDataView2 = c2.getDataView(StochasticsDataView.class).get();
+					StochasticsDataManager stochasticsDataView2 = c2.getDataView(StochasticsDataManager.class).get();
 					RegionLocationDataView regionLocationDataView = c2.getDataView(RegionLocationDataView.class).get();
 					PersonDataView personDataView = c2.getDataView(PersonDataView.class).get();
 
@@ -576,9 +576,9 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 		
-		RegionsActionSupport.testConsumers(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		RegionsActionSupport.testConsumers(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 				
 	}
 
@@ -601,7 +601,7 @@ public class AT_RegionEventResolver {
 	public void testBulkPersonCreationObservationEvent() {
 
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agents to create people
@@ -613,12 +613,12 @@ public class AT_RegionEventResolver {
 		 * is in the correct region at the correct time
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
-					StochasticsDataView stochasticsDataView2 = c2.getDataView(StochasticsDataView.class).get();
+					StochasticsDataManager stochasticsDataView2 = c2.getDataView(StochasticsDataManager.class).get();
 					RegionLocationDataView regionLocationDataView = c2.getDataView(RegionLocationDataView.class).get();
 					PersonDataView personDataView = c2.getDataView(PersonDataView.class).get();
 
@@ -684,8 +684,8 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(0, 2654453328570666100L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(0, 2654453328570666100L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 
@@ -714,7 +714,7 @@ public class AT_RegionEventResolver {
 
 		
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Precondition checks
@@ -739,10 +739,10 @@ public class AT_RegionEventResolver {
 		ResolverId resolverId = new SimpleResolverId("custom resolver");
 		pluginBuilder.addResolver(resolverId);
 
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(CustomEvent.class, (c2, e) -> {
 				PersonImminentRemovalObservationEvent event = new PersonImminentRemovalObservationEvent(e.getPersonId());
-				c.queueEventForResolution(event);
+				c.resolveEvent(event);
 			});
 		}));
 
@@ -799,8 +799,8 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		RegionsActionSupport.testConsumers(0, 163202760371564041L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		RegionsActionSupport.testConsumers(0, 163202760371564041L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPluginInitializer);
 		
 
 	}
@@ -876,7 +876,7 @@ public class AT_RegionEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create two agents to make and observe region property value
 		// changes
@@ -996,14 +996,14 @@ public class AT_RegionEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the observed changes match expectations
 		assertEquals(expectedObservations.size(), actualObservations.size());

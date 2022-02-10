@@ -11,11 +11,11 @@ import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.initialdata.CompartmentInitialData;
@@ -67,7 +67,7 @@ import plugins.reports.initialdata.ReportsInitialData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.initialdata.ResourceInitialData;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.SeedProvider;
 import util.TimeElapser;
@@ -125,7 +125,7 @@ public class PartitionManagementTest {
 
 	private Map<Integer, Integer> serumDensityLabels = new LinkedHashMap<>();
 
-	private double getWeight(final Context context, final LabelSet labelSet) {
+	private double getWeight(final SimulationContext simulationContext, final LabelSet labelSet) {
 		return 1;
 	}
 
@@ -447,12 +447,12 @@ public class PartitionManagementTest {
 		
 		Object partitionId = new Object();
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// load population
 		pluginBuilder.addAgentActionPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, new AgentActionPlan(phaseTimeMap.get(Phase.LOAD_POPULATION), (c) -> {
 			TimeElapser timeElapser = new TimeElapser();
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 
 			for (int i = 0; i < populationSize; i++) {
 				PersonContructionData.Builder constructionBuilder = PersonContructionData.builder();
@@ -477,9 +477,9 @@ public class PartitionManagementTest {
 		// load partition
 		pluginBuilder.addAgentActionPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, new AgentActionPlan(phaseTimeMap.get(Phase.LOAD_PARTITION), (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			Set<RegionId> regionsForFilter = new LinkedHashSet<>();
 			for (RegionId regionId : regionIds) {
@@ -525,7 +525,7 @@ public class PartitionManagementTest {
 			int count = 0;
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 
 			TimeElapser timeElapser = new TimeElapser();
 			List<PersonId> people = personDataView.getPeople();
@@ -552,7 +552,7 @@ public class PartitionManagementTest {
 
 		// take samples from the partition
 		pluginBuilder.addAgentActionPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, new AgentActionPlan(phaseTimeMap.get(Phase.SAMPLE_PARTITION), (c) -> {
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
 
 			TimeElapser timeElapser = new TimeElapser();
@@ -597,12 +597,12 @@ public class PartitionManagementTest {
 			}
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		return report;
 	}

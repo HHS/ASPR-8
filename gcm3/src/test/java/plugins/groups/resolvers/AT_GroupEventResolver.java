@@ -28,9 +28,9 @@ import nucleus.SimpleResolverId;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.groups.GroupPlugin;
 import plugins.groups.datacontainers.PersonGroupDataView;
@@ -71,7 +71,7 @@ import plugins.properties.support.PropertyDefinition;
 import plugins.properties.support.PropertyError;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
 import util.MultiKey;
@@ -199,7 +199,7 @@ public class AT_GroupEventResolver {
 	@UnitTestMethod(name = "init", args = { GroupInitialData.class })
 	public void testGroupConstructionEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create containers for observations
 		Set<GroupId> expectedGroupObservations = new LinkedHashSet<>();
@@ -219,7 +219,7 @@ public class AT_GroupEventResolver {
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			GroupConstructionInfo.Builder builder = GroupConstructionInfo.builder();
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -298,7 +298,7 @@ public class AT_GroupEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupInitialData.class })
 	public void testGroupCreationEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create containers for observations
 		Set<GroupId> expectedObservations = new LinkedHashSet<>();
@@ -357,7 +357,7 @@ public class AT_GroupEventResolver {
 		Set<GroupId> expectedGroupObservations = new LinkedHashSet<>();
 		Set<GroupId> actualGroupObservations = new LinkedHashSet<>();
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an observer that will observe the new groups being created as
 		// well as the people being added to the groups
@@ -508,7 +508,7 @@ public class AT_GroupEventResolver {
 	@UnitTestMethod(name = "init", args = { GroupInitialData.class })
 	public void testGroupMembershipAdditionEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create containers for observations
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
@@ -526,7 +526,7 @@ public class AT_GroupEventResolver {
 		// add an agent to add members to groups
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 			Collections.shuffle(people, new Random(randomGenerator.nextLong()));
@@ -608,7 +608,7 @@ public class AT_GroupEventResolver {
 	@UnitTestMethod(name = "init", args = { GroupInitialData.class })
 	public void testPersonImminentRemovalObservationEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Precondition checks
@@ -633,10 +633,10 @@ public class AT_GroupEventResolver {
 		ResolverId resolverId = new SimpleResolverId("custom resolver");
 		pluginBuilder.addResolver(resolverId);
 
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(CustomEvent.class, (c2, e) -> {
 				PersonImminentRemovalObservationEvent event = new PersonImminentRemovalObservationEvent(e.getPersonId());
-				c.queueEventForResolution(event);
+				c.resolveEvent(event);
 			});
 		}));
 
@@ -793,7 +793,7 @@ public class AT_GroupEventResolver {
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent that will demonstrate that the state of the data view
 		// reflects the contents of the group initial data.
@@ -854,15 +854,15 @@ public class AT_GroupEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 
@@ -871,7 +871,7 @@ public class AT_GroupEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupInitialData.class })
 	public void testGroupPropertyValueAssignmentEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create data structures for observations
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -891,8 +891,8 @@ public class AT_GroupEventResolver {
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
 
@@ -973,7 +973,7 @@ public class AT_GroupEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupInitialData.class })
 	public void testGroupRemovalRequestEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create containers for observations
 		Set<GroupId> actualObservations = new LinkedHashSet<>();
@@ -1036,7 +1036,7 @@ public class AT_GroupEventResolver {
 	@UnitTestMethod(name = "init", args = { GroupInitialData.class })
 	public void testGroupMembershipRemovalEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create containers for observations
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
@@ -1054,7 +1054,7 @@ public class AT_GroupEventResolver {
 		// add an agent to add members to groups
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 			Collections.shuffle(people, new Random(randomGenerator.nextLong()));

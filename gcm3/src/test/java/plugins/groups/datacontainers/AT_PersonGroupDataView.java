@@ -20,10 +20,10 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.groups.events.mutation.GroupCreationEvent;
 import plugins.groups.events.mutation.GroupMembershipAdditionEvent;
@@ -43,7 +43,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.properties.support.PropertyDefinition;
 import plugins.properties.support.TimeTrackingPolicy;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.ContractException;
@@ -65,7 +65,7 @@ public final class AT_PersonGroupDataView implements DataView {
 
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, PersonGroupDataManager.class })
+	@UnitTestConstructor(args = { SimulationContext.class, PersonGroupDataManager.class })
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4829992068683627833L, (c) -> {
@@ -251,8 +251,8 @@ public final class AT_PersonGroupDataView implements DataView {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Show that there are no groups since we selected 0 groups per
@@ -283,8 +283,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Show that there are no groups since we selected 0 groups per
@@ -332,8 +332,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -415,8 +415,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -486,8 +486,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
 			 * Show that there are no groups since we selected 0 groups per
@@ -534,8 +534,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -602,8 +602,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -678,8 +678,8 @@ public final class AT_PersonGroupDataView implements DataView {
 			// simulation
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -824,8 +824,8 @@ public final class AT_PersonGroupDataView implements DataView {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -893,8 +893,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -963,8 +963,8 @@ public final class AT_PersonGroupDataView implements DataView {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -1030,8 +1030,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -1093,7 +1093,7 @@ public final class AT_PersonGroupDataView implements DataView {
 	@UnitTestMethod(name = "groupExists", args = { GroupId.class })
 	public void testGroupExists() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		
 		List<GroupId> removedGroupIds = new ArrayList<>();
 		
@@ -1130,8 +1130,8 @@ public final class AT_PersonGroupDataView implements DataView {
 
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			List<PersonId> people = personDataView.getPeople();
 
@@ -1331,7 +1331,7 @@ public final class AT_PersonGroupDataView implements DataView {
 	@UnitTestMethod(name = "getGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class })
 	public void testGetGroupPropertyValue() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create a container to hold our expectations. The MultiKey will be
@@ -1383,8 +1383,8 @@ public final class AT_PersonGroupDataView implements DataView {
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (MultiKey multiKey : expectedValues.keySet()) {
 				GroupId groupId = multiKey.getKey(0);
@@ -1480,7 +1480,7 @@ public final class AT_PersonGroupDataView implements DataView {
 	@UnitTestMethod(name = "getGroupPropertyTime", args = { GroupId.class, GroupPropertyId.class })
 	public void testGetGroupPropertyTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create a container to hold our expectations. The MultiKey will be
@@ -1496,8 +1496,8 @@ public final class AT_PersonGroupDataView implements DataView {
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			List<GroupId> groupIds = personGroupDataView.getGroupIds();
 
@@ -1537,8 +1537,8 @@ public final class AT_PersonGroupDataView implements DataView {
 		 */
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (MultiKey multiKey : expectedTimes.keySet()) {
 				GroupId groupId = multiKey.getKey(0);

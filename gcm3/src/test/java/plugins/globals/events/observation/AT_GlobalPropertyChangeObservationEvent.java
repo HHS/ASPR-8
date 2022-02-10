@@ -9,12 +9,12 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.globals.GlobalPlugin;
@@ -95,7 +95,7 @@ public class AT_GlobalPropertyChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabel", args = { Context.class, GlobalPropertyId.class })
+	@UnitTestMethod(name = "getEventLabel", args = { SimulationContext.class, GlobalPropertyId.class })
 	public void testGetEventLabel() {
 		testConsumer((c) -> {
 			for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
@@ -172,19 +172,19 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		builder.addPlugin(PropertiesPlugin.PLUGIN_ID, new PropertiesPlugin()::init);
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 

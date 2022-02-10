@@ -3,7 +3,7 @@ package plugins.resources.datacontainers;
 import java.util.List;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.people.datacontainers.PersonDataView;
@@ -30,23 +30,23 @@ public final class ResourceDataView implements DataView {
 
 	private final ResourceDataManager resourceDataManager;
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	private PersonDataView personDataView;
 
 	private RegionDataView regionDataView;
 
-	public ResourceDataView(Context context, ResourceDataManager resourceDataManager) {
-		if (context == null) {
+	public ResourceDataView(SimulationContext simulationContext, ResourceDataManager resourceDataManager) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (resourceDataManager == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_DATA_MANAGER);
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.resourceDataManager = resourceDataManager;
-		personDataView = context.getDataView(PersonDataView.class).get();
-		regionDataView = context.getDataView(RegionDataView.class).get();
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
+		regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 	}
 
 	/**
@@ -270,10 +270,10 @@ public final class ResourceDataView implements DataView {
 
 	private void validatePersonExists(final PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
@@ -282,37 +282,37 @@ public final class ResourceDataView implements DataView {
 	 */
 	private void validatePersonResourceTimesTracked(final ResourceId resourceId) {
 		if (resourceDataManager.getPersonResourceTimeTrackingPolicy(resourceId) != TimeTrackingPolicy.TRACK_TIME) {
-			context.throwContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED);
+			simulationContext.throwContractException(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED);
 		}
 	}
 
 	private void validateRegionId(final RegionId regionId) {
 
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionDataView.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 
 	private void validateResourceId(final ResourceId resourceId) {
 		if (resourceId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
 		if (!resourceDataManager.resourceIdExists(resourceId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
 
 	private void validateResourcePropertyId(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
 		}
 
 		if (!resourceDataManager.resourcePropertyIdExists(resourceId, resourcePropertyId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
 		}
 	}
 }

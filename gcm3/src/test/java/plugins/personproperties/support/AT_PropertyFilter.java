@@ -9,7 +9,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
@@ -24,7 +24,7 @@ import plugins.personproperties.events.observation.PersonPropertyChangeObservati
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.properties.support.PropertyError;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -43,17 +43,17 @@ public class AT_PropertyFilter {
 
 	/**
 	 * Tests
-	 * {@link PropertyFilter#PropertyFilter(Context, PersonPropertyId, Equality, Object)}
+	 * {@link PropertyFilter#PropertyFilter(SimulationContext, PersonPropertyId, Equality, Object)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Context.class, PersonPropertyId.class, Equality.class, long.class })
+	@UnitTestConstructor(args = { SimulationContext.class, PersonPropertyId.class, Equality.class, long.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	/**
 	 * Tests
-	 * {@link PropertyFilter#PropertyFilter(Context, PersonPropertyId, Equality, Object)}
+	 * {@link PropertyFilter#PropertyFilter(SimulationContext, PersonPropertyId, Equality, Object)}
 	 */
 	@Test
 	@UnitTestMethod(name = "validate", args = {})
@@ -100,17 +100,17 @@ public class AT_PropertyFilter {
 	}
 
 	/**
-	 * Tests {@link PropertyFilter#evaluate(Context, PersonId)}
+	 * Tests {@link PropertyFilter#evaluate(SimulationContext, PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		
 		PersonPropertiesActionSupport.testConsumer(100, 9037413907425227057L, (c)->{
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonPropertyDataView personPropertyDataView = c.getDataView(PersonPropertyDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 			

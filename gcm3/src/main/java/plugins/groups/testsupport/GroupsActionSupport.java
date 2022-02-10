@@ -13,7 +13,7 @@ import nucleus.AgentContext;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.groups.GroupPlugin;
@@ -48,7 +48,7 @@ public class GroupsActionSupport {
 	 * passed to an invocation of the testConsumers() method.
 	 */
 	public static void testConsumer(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 		testConsumers(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, pluginBuilder.build());
@@ -75,7 +75,7 @@ public class GroupsActionSupport {
 	 *             all action plans execute or if there are no action plans
 	 *             contained in the action plugin</li>
 	 */
-	public static void testConsumers(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, ActionPlugin actionPlugin) {
+	public static void testConsumers(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, ActionPluginInitializer actionPluginInitializer) {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(seed);
 
@@ -149,13 +149,13 @@ public class GroupsActionSupport {
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
 		// add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 	}

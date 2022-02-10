@@ -2,7 +2,7 @@ package plugins.compartments.datacontainers;
 
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.compartments.initialdata.CompartmentInitialData;
@@ -21,10 +21,10 @@ import util.ContractException;
 public final class CompartmentDataView implements DataView {
 
 	private final CompartmentDataManager compartmentDataManager;
-	private Context context;
+	private SimulationContext simulationContext;
 
 	/**
-	 * Creates the Compartment Data View from the given {@link Context} and
+	 * Creates the Compartment Data View from the given {@link SimulationContext} and
 	 * {@link CompartmentDataManager}. Not null tolerant.
 	 * 
 	 * @throws ContractException
@@ -34,8 +34,8 @@ public final class CompartmentDataView implements DataView {
 	 *             if compartment data manager is null</li>
 	 * 
 	 */
-	public CompartmentDataView(Context context, CompartmentDataManager compartmentDataManager) {
-		if (context == null) {
+	public CompartmentDataView(SimulationContext simulationContext, CompartmentDataManager compartmentDataManager) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 
@@ -43,7 +43,7 @@ public final class CompartmentDataView implements DataView {
 			throw new ContractException(CompartmentError.NULL_COMPARTMENT_DATA_MANAGER);
 		}
 
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.compartmentDataManager = compartmentDataManager;
 	}
 
@@ -139,22 +139,22 @@ public final class CompartmentDataView implements DataView {
 
 	private void validateCompartmentId(final CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			context.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			simulationContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
 
 		if (!compartmentDataManager.compartmentIdExists(compartmentId)) {
-			context.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
+			simulationContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
 		}
 	}
 
 	private void validateCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
 
 		if (compartmentPropertyId == null) {
-			context.throwContractException(CompartmentError.NULL_COMPARTMENT_PROPERTY_ID);
+			simulationContext.throwContractException(CompartmentError.NULL_COMPARTMENT_PROPERTY_ID);
 		}
 
 		if (!compartmentDataManager.compartmentPropertyIdExists(compartmentId, compartmentPropertyId)) {
-			context.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_PROPERTY_ID, compartmentPropertyId);
+			simulationContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_PROPERTY_ID, compartmentPropertyId);
 		}
 	}
 }

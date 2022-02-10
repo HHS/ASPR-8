@@ -1,7 +1,7 @@
 package plugins.groups.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -40,23 +40,23 @@ public class GroupImminentRemovalObservationEvent implements Event {
 		return groupId;
 	}
 
-	private static void validateGroupId(Context context, GroupId groupId) {
+	private static void validateGroupId(SimulationContext simulationContext, GroupId groupId) {
 		if (groupId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		if (!personGroupDataView.groupExists(groupId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 	}
 
-	private static void validateGroupTypeId(Context context, GroupTypeId groupTypeId) {
+	private static void validateGroupTypeId(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		PersonGroupDataView personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+		PersonGroupDataView personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		if (!personGroupDataView.groupTypeIdExists(groupTypeId)) {
-			context.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
+			simulationContext.throwContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
 
@@ -78,8 +78,8 @@ public class GroupImminentRemovalObservationEvent implements Event {
 	 *             group id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupImminentRemovalObservationEvent> getEventLabelByGroup(Context context, GroupId groupId) {
-		validateGroupId(context, groupId);
+	public static EventLabel<GroupImminentRemovalObservationEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
+		validateGroupId(simulationContext, groupId);
 		return new MultiKeyEventLabel<>(GroupImminentRemovalObservationEvent.class, LabelerId.GROUP, GroupImminentRemovalObservationEvent.class, groupId);
 	}
 
@@ -105,8 +105,8 @@ public class GroupImminentRemovalObservationEvent implements Event {
 	 *             group type id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupImminentRemovalObservationEvent> getEventLabelByGroupType(Context context, GroupTypeId groupTypeId) {
-		validateGroupTypeId(context, groupTypeId);
+	public static EventLabel<GroupImminentRemovalObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+		validateGroupTypeId(simulationContext, groupTypeId);
 		return new MultiKeyEventLabel<>(GroupImminentRemovalObservationEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalObservationEvent.class, groupTypeId);
 	}
 

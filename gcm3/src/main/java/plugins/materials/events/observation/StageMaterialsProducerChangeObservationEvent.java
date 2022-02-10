@@ -1,7 +1,7 @@
 package plugins.materials.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -47,28 +47,28 @@ public class StageMaterialsProducerChangeObservationEvent implements Event {
 		SOURCE, DESTINATION, STAGE, ALL
 	}
 
-	private static void validateStageId(Context context, StageId stageId) {
+	private static void validateStageId(SimulationContext simulationContext, StageId stageId) {
 		if (stageId == null) {
-			context.throwContractException(MaterialsError.NULL_STAGE_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_STAGE_ID);
 		}
-		MaterialsDataView materialsDataView = context.getDataView(MaterialsDataView.class).get();
+		MaterialsDataView materialsDataView = simulationContext.getDataView(MaterialsDataView.class).get();
 		if (!materialsDataView.stageExists(stageId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_STAGE_ID);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_STAGE_ID);
 		}
 	}
 
-	private static void validateMaterialsProducerId(Context context, MaterialsProducerId materialsProducerId) {
+	private static void validateMaterialsProducerId(SimulationContext simulationContext, MaterialsProducerId materialsProducerId) {
 		if (materialsProducerId == null) {
-			context.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
-		MaterialsDataView materialsDataView = context.getDataView(MaterialsDataView.class).get();
+		MaterialsDataView materialsDataView = simulationContext.getDataView(MaterialsDataView.class).get();
 		if (!materialsDataView.materialsProducerIdExists(materialsProducerId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
 		}
 	}
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByDestination(Context context, MaterialsProducerId destinationMaterialsProducerId) {
-		validateMaterialsProducerId(context, destinationMaterialsProducerId);
+	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByDestination(SimulationContext simulationContext, MaterialsProducerId destinationMaterialsProducerId) {
+		validateMaterialsProducerId(simulationContext, destinationMaterialsProducerId);
 		return new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.DESTINATION, StageMaterialsProducerChangeObservationEvent.class, destinationMaterialsProducerId);
 	}
 
@@ -76,8 +76,8 @@ public class StageMaterialsProducerChangeObservationEvent implements Event {
 		return new SimpleEventLabeler<>(LabelerId.DESTINATION, StageMaterialsProducerChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.DESTINATION, StageMaterialsProducerChangeObservationEvent.class, event.getCurrentMaterialsProducerId()));
 	}
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelBySource(Context context, MaterialsProducerId sourceMaterialsProducerId) {
-		validateMaterialsProducerId(context, sourceMaterialsProducerId);
+	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelBySource(SimulationContext simulationContext, MaterialsProducerId sourceMaterialsProducerId) {
+		validateMaterialsProducerId(simulationContext, sourceMaterialsProducerId);
 		return new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.SOURCE, StageMaterialsProducerChangeObservationEvent.class, sourceMaterialsProducerId);
 	}
 
@@ -85,8 +85,8 @@ public class StageMaterialsProducerChangeObservationEvent implements Event {
 		return new SimpleEventLabeler<>(LabelerId.SOURCE, StageMaterialsProducerChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.SOURCE, StageMaterialsProducerChangeObservationEvent.class, event.getPreviousMaterialsProducerId()));
 	}
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByStage(Context context, StageId stageId) {
-		validateStageId(context, stageId);
+	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
+		validateStageId(simulationContext, stageId);
 		return new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.STAGE, StageMaterialsProducerChangeObservationEvent.class, stageId);
 	}
 
@@ -96,7 +96,7 @@ public class StageMaterialsProducerChangeObservationEvent implements Event {
 
 	private final static EventLabel<StageMaterialsProducerChangeObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.ALL, StageMaterialsProducerChangeObservationEvent.class);
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByAll(Context context) {
+	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByAll(SimulationContext simulationContext) {
 		return ALL_LABEL;
 	}
 

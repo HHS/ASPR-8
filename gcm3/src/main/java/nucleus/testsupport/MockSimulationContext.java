@@ -1,30 +1,27 @@
 package nucleus.testsupport;
 
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import nucleus.Context;
-import nucleus.DataView;
-import util.ContractError;
-import util.ContractException;
+import nucleus.DataManager;
+import nucleus.SimulationContext;
 
 /**
- * A mock implementation of the {@link Context} interface that allows
+ * A mock implementation of the {@link SimulationContext} interface that allows
  * for client overrides to behaviors through a builder pattern.
  * 
  * @author Shawn Hatch
  *
  */
-public class MockContext implements Context {
+public class MockSimulationContext implements SimulationContext {
 
 	private static class Scaffold {
 		public Consumer<Object> releaseOutputConsumer = (o) -> {
 		};
 
-		public Function<Class<?>, ?> dataViewFunction = (c) -> {
+		public Function<Class<?>, ?> dataManagerFunction = (c) -> {
 			return null;
 		};
 
@@ -32,19 +29,11 @@ public class MockContext implements Context {
 			return 0.0;
 		};
 
-		public Consumer<ContractError> contractErrorConsumer = (c) -> {
-			throw new ContractException(c);
-		};
-
-		public BiConsumer<ContractError, Object> detailedContractErrorConsumer = (c, d) -> {
-			throw new ContractException(c, d);
-		};
-
 	}
 
 	private final Scaffold scaffold;
 
-	private MockContext(Scaffold scaffold) {
+	private MockSimulationContext(Scaffold scaffold) {
 		this.scaffold = scaffold;
 	}
 
@@ -66,9 +55,9 @@ public class MockContext implements Context {
 
 		private Builder() {}
 
-		public MockContext build() {
+		public MockSimulationContext build() {
 			try {
-				return new MockContext(scaffold);
+				return new MockSimulationContext(scaffold);
 			} finally {
 				scaffold = new Scaffold();
 			}
@@ -79,8 +68,8 @@ public class MockContext implements Context {
 			return this;
 		}
 
-		public Builder setDataViewFunction(Function<Class<?>, ?> dataViewFunction) {
-			scaffold.dataViewFunction = dataViewFunction;
+		public Builder setDataManagerFunction(Function<Class<?>, ?> dataManagerFunction) {
+			scaffold.dataManagerFunction = dataManagerFunction;
 			return this;
 		};
 
@@ -89,15 +78,7 @@ public class MockContext implements Context {
 			return this;
 		};
 
-		public Builder setContractErrorConsumer(Consumer<ContractError> contractErrorConsumer) {
-			scaffold.contractErrorConsumer = contractErrorConsumer;
-			return this;
-		};
-
-		public Builder setDetailedContractErrorConsumer(BiConsumer<ContractError, Object> detailedContractErrorConsumer) {
-			scaffold.detailedContractErrorConsumer = detailedContractErrorConsumer;
-			return this;
-		}
+		
 
 	}
 
@@ -108,23 +89,13 @@ public class MockContext implements Context {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends DataView> Optional<T> getDataView(Class<T> dataViewClass) {
-		return Optional.ofNullable((T) scaffold.dataViewFunction.apply(dataViewClass));
+	public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+		return Optional.ofNullable((T) scaffold.dataManagerFunction.apply(dataManagerClass));
 	}
 
 	@Override
 	public double getTime() {
 		return scaffold.timeSupplier.get();
-	}
-
-	@Override
-	public void throwContractException(ContractError recoverableError) {
-		scaffold.contractErrorConsumer.accept(recoverableError);
-	}
-
-	@Override
-	public void throwContractException(ContractError recoverableError, Object details) {
-		scaffold.detailedContractErrorConsumer.accept(recoverableError, details);
 	}
 
 }

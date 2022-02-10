@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import plugins.groups.datacontainers.PersonGroupDataView;
@@ -50,7 +50,7 @@ public class AT_GroupImminentRemovalObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroup", args = { Context.class, GroupId.class })
+	@UnitTestMethod(name = "getEventLabelByGroup", args = { SimulationContext.class, GroupId.class })
 	public void testGetEventLabelByGroup() {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 4793492577271802585L, (c) -> {
@@ -149,7 +149,7 @@ public class AT_GroupImminentRemovalObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroupType", args = { Context.class, GroupTypeId.class })
+	@UnitTestMethod(name = "getEventLabelByGroupType", args = { SimulationContext.class, GroupTypeId.class })
 	public void testGetEventLabelByGroupType() {
 
 		

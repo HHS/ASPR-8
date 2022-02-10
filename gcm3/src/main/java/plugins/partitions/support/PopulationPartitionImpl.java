@@ -14,14 +14,14 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.NucleusError;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 
 /**
@@ -298,9 +298,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private int personCount;
 
-	private final StochasticsDataView stochasticsDataView;
+	private final StochasticsDataManager stochasticsDataManager;
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 	private final Map<Class<? extends Event>, List<FilterSensitivity<? extends Event>>> eventClassToFilterSensitivityMap = new LinkedHashMap<>();
 	private final Map<Class<? extends Event>, List<LabelerSensitivity<? extends Event>>> eventClassToLabelerSensitivityMap = new LinkedHashMap<>();
 
@@ -323,11 +323,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 *             <li>if partition is null</li>
 	 *             <li>if the partition contains labelers</li>
 	 */
-	public PopulationPartitionImpl(final Context context, final Partition partition) {
-		this.context = context;
+	public PopulationPartitionImpl(final SimulationContext simulationContext, final Partition partition) {
+		this.simulationContext = simulationContext;
 		
 		retainPersonKeys = partition.retainPersonKeys();
-		personDataView = context.getDataView(PersonDataView.class).get();
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
 
 		if (retainPersonKeys) {
 			personToKeyMap = new ArrayList<>(personDataView.getPersonIdLimit());
@@ -364,7 +364,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		labelerSensitivities = new LabelerSensitivity<?>[maxLabelerSensitivityCount];
 
-		stochasticsDataView = context.getDataView(StochasticsDataView.class).get();
+		stochasticsDataManager = simulationContext.getDataView(StochasticsDataManager.class).get();
 
 		keySize = labelers.size();
 		tempKeyForLabelSets = new Key(keySize);
@@ -382,7 +382,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		for (int i = 0; i < personIdLimit; i++) {
 			if (personDataView.personIndexExists(i)) {
 				final PersonId personId = personDataView.getBoxedPersonId(i);
-				if (filter.evaluate(context, personId)) {
+				if (filter.evaluate(simulationContext, personId)) {
 					/*
 					 * By contract, we know that the person id should not
 					 * already be a member of this container
@@ -412,7 +412,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final int n = labelManagers.length;
 		for (int i = 0; i < n; i++) {
 			final LabelManager labelManager = labelManagers[i];
-			final Object label = labelManager.labeler.getLabel(context, personId);
+			final Object label = labelManager.labeler.getLabel(simulationContext, personId);
 			// unsafe mutation add person
 			key.keys[i] = label;
 		}
@@ -425,7 +425,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			cleanedKey = new Key(key);
 			cleanedKey.calculateHashCode();
 			keyMap.put(cleanedKey, cleanedKey);
-			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(context);
+			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(simulationContext);
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			final LabelSet labelSet = getLabelSet(cleanedKey);
 			labelSetInfoMap.put(cleanedKey, labelSet);
@@ -464,7 +464,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void aquireWeightsLock() {
 		if (weightsAreLocked) {
-			context.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot access weighted sampling during the execution of a previous weighted sampling");
+			simulationContext.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot access weighted sampling during the execution of a previous weighted sampling");
 		}
 		weightsAreLocked = true;
 	}
@@ -473,7 +473,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void aquireEventHandlingLock() {
 		if (eventHandlingLocked) {
-			context.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot access event handling during the execution of a event");
+			simulationContext.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot access event handling during the execution of a event");
 		}
 		eventHandlingLocked = true;
 	}
@@ -483,7 +483,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 */
 	@Override
 	public void attemptPersonAddition(final PersonId personId) {
-		if (filter.evaluate(context, personId)) {
+		if (filter.evaluate(simulationContext, personId)) {
 			/*
 			 * By contract, we know that the person id should not already be a
 			 * member of this container
@@ -590,7 +590,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private Key tempKeyForLabelSets;
 	private Key tempKeyForPeople;
 
-	private double getDefaultWeight(final Context context, final LabelSet labelSet) {
+	private double getDefaultWeight(final SimulationContext simulationContext, final LabelSet labelSet) {
 		return 1;
 	}
 
@@ -637,7 +637,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			final int n = labelManagers.length;
 			for (int i = 0; i < n; i++) {
 				final LabelManager labelManager = labelManagers[i];
-				final Object label = labelManager.labeler.getLabel(context, personId);
+				final Object label = labelManager.labeler.getLabel(simulationContext, personId);
 				// unsafe mutation add person
 				key.keys[i] = label;
 			}
@@ -797,7 +797,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final List<FilterSensitivity<? extends Event>> filterSensitivities = eventClassToFilterSensitivityMap.get(event.getClass());
 		if (filterSensitivities != null) {
 			for (final FilterSensitivity<? extends Event> filterSensitivity : filterSensitivities) {
-				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(context, event);
+				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(simulationContext, event);
 				if (optionalPersonId.isPresent()) {
 					personId = optionalPersonId.get();
 					break;
@@ -851,14 +851,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				final int n = labelManagers.length;
 				for (int i = 0; i < n; i++) {
 					final LabelManager labelManager = labelManagers[i];
-					final Object label = labelManager.labeler.getLabel(context, personId);
+					final Object label = labelManager.labeler.getLabel(simulationContext, personId);
 					// unsafe mutation add person
 					currentKeyForPerson.keys[i] = label;
 				}
 				for (int i = 0; i < labelerSensitivityCount; i++) {
 					LabelerSensitivity<? extends Event> labelerSensitivity = labelerSensitivities[i];
 					final Labeler labeler = labelerSensitivityToLabelerMap.get(labelerSensitivity);
-					final Object pastLabel = labeler.getPastLabel(context, event);
+					final Object pastLabel = labeler.getPastLabel(simulationContext, event);
 					final Object dimension = labeler.getDimension();
 					final int dimensionIndex = dimensions.get(dimension);
 					// unsafe mutation
@@ -879,7 +879,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		// determine whether the person should be in the partition
 		boolean personShouldBeInPartition;
 		if (filterSensitivityFound) {
-			personShouldBeInPartition = filter.evaluate(context, personId);
+			personShouldBeInPartition = filter.evaluate(simulationContext, personId);
 		} else {
 			personShouldBeInPartition = personIsCurrentlyInPartition;
 		}
@@ -900,7 +900,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 						// for (final LabelerSensitivity<? extends Event>
 						// labelerSensitivity : labelerSensitivities) {
 						final Labeler labeler = labelerSensitivityToLabelerMap.get(labelerSensitivity);
-						final Object newLabel = labeler.getLabel(context, personId);
+						final Object newLabel = labeler.getLabel(simulationContext, personId);
 						final Object dimension = labeler.getDimension();
 						final int dimensionIndex = dimensions.get(dimension);
 						final LabelManager labelManager = labelManagers[dimensionIndex];
@@ -984,7 +984,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (cleanedNewKey == null) {
 			cleanedNewKey = newKey;
 			keyMap.put(cleanedNewKey, cleanedNewKey);
-			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(context));
+			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(simulationContext));
 			final LabelSet labelSet = getLabelSet(cleanedNewKey);
 			labelSetInfoMap.put(cleanedNewKey, labelSet);
 		}
@@ -1017,7 +1017,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void releaseEventHandlingLock() {
 		if (!eventHandlingLocked) {
-			context.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot release event handling lock when the lock is not present");
+			simulationContext.throwContractException(NucleusError.ACCESS_VIOLATION, "cannot release event handling lock when the lock is not present");
 		}
 		eventHandlingLocked = false;
 	}
@@ -1037,9 +1037,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		RandomGenerator randomGenerator;
 		final RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId().orElse(null);
 		if (randomNumberGeneratorId == null) {
-			randomGenerator = stochasticsDataView.getRandomGenerator();
+			randomGenerator = stochasticsDataManager.getRandomGenerator();
 		} else {
-			randomGenerator = stochasticsDataView.getRandomGeneratorFromId(randomNumberGeneratorId);
+			randomGenerator = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		}
 
 		final PersonId excludedPersonId = partitionSampler.getExcludedPerson().orElse(null);
@@ -1069,7 +1069,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				final Key fullKey = keyIterator.next();
 				final LabelSet fullLableSet = labelSetInfoMap.get(fullKey);
 				final PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				double weight = labelSetWeightingFunction.getWeight(context, fullLableSet);
+				double weight = labelSetWeightingFunction.getWeight(simulationContext, fullLableSet);
 				if (fullKey != keyForExcludedPersonId) {
 					weight *= peopleContainer.size();
 				} else {
@@ -1077,7 +1077,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				}
 
 				if (!Double.isFinite(weight) || (weight < 0)) {
-					context.throwContractException(PartitionError.MALFORMED_PARTITION_SAMPLE_WEIGHTING_FUNCTION);
+					simulationContext.throwContractException(PartitionError.MALFORMED_PARTITION_SAMPLE_WEIGHTING_FUNCTION);
 
 				}
 				/*
@@ -1103,7 +1103,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				 * can be made
 				 */
 				if (!Double.isFinite(sum)) {
-					context.throwContractException(PartitionError.MALFORMED_PARTITION_SAMPLE_WEIGHTING_FUNCTION);
+					simulationContext.throwContractException(PartitionError.MALFORMED_PARTITION_SAMPLE_WEIGHTING_FUNCTION);
 				}
 
 				final double targetValue = randomGenerator.nextDouble() * sum;

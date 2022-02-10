@@ -12,7 +12,7 @@ import java.util.Map;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.partitions.testsupport.PartitionsActionSupport;
@@ -24,7 +24,7 @@ import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -76,8 +76,8 @@ public final class AT_AttributesDataView implements DataView {
 
 		PartitionsActionSupport.testConsumer(100,3296963241519285254L, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			
 
 			AttributesDataView attributesDataView = c.getDataView(AttributesDataView.class).get();
@@ -159,7 +159,7 @@ public final class AT_AttributesDataView implements DataView {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, AttributesDataManager.class })
+	@UnitTestConstructor(args = { SimulationContext.class, AttributesDataManager.class })
 	public void testConstructor() {
 		PartitionsActionSupport.testConsumer(100,741785051056288440L, (c) -> {
 			AttributesDataManager attributesDataManager = new AttributesDataManager(c);

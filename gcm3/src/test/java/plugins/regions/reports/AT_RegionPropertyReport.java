@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.partitions.PartitionsPlugin;
@@ -24,6 +23,7 @@ import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
+import plugins.reports.ReportId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
@@ -101,7 +101,7 @@ public class AT_RegionPropertyReport {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent and have it assign various region properties at
 		// various times
@@ -138,8 +138,8 @@ public class AT_RegionPropertyReport {
 			c.resolveEvent(new RegionPropertyValueAssignmentEvent(regionB, prop_length, 60.0));
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
@@ -147,7 +147,7 @@ public class AT_RegionPropertyReport {
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Collect the expected report items. Note that order does not matter.		 * 

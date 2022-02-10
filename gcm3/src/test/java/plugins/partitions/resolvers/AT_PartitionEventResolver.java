@@ -20,10 +20,9 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.ReportId;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import nucleus.SimpleReportId;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import nucleus.testsupport.actionplugin.ReportActionPlan;
 import plugins.partitions.datacontainers.PartitionDataView;
@@ -47,7 +46,8 @@ import plugins.people.events.observation.PersonImminentRemovalObservationEvent;
 import plugins.people.support.BulkPersonContructionData;
 import plugins.people.support.PersonContructionData;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.reports.ReportId;
+import plugins.stochastics.StochasticsDataManager;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
@@ -98,8 +98,8 @@ public final class AT_PartitionEventResolver {
 	 */
 	private static void assignRandomAttributes(final AgentContext c) {
 		final PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-		final StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-		final RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+		final StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+		final RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 		for (final PersonId personId : personDataView.getPeople()) {
 			
@@ -177,8 +177,8 @@ public final class AT_PartitionEventResolver {
 	 */
 	private static void removePeople(final AgentContext c, final int numberOfPeopleToRemove) {
 		final PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-		final StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-		final long seed = stochasticsDataView.getRandomGenerator().nextLong();
+		final StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+		final long seed = stochasticsDataManager.getRandomGenerator().nextLong();
 		final Random random = new Random(seed);
 		final List<PersonId> people = personDataView.getPeople();
 		Collections.shuffle(people, random);
@@ -274,7 +274,7 @@ public final class AT_PartitionEventResolver {
 //	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPartitionAdditionEvent() {
 
 		// Have the simulation initialized with 1000 people. Have an agent
@@ -353,7 +353,7 @@ public final class AT_PartitionEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPartitionDataViewInitialization() {
 		PartitionsActionSupport.testConsumer(0, 2954766214498605129L, (c) -> {
 			final Optional<PartitionDataView> optional = c.getDataView(PartitionDataView.class);
@@ -362,7 +362,7 @@ public final class AT_PartitionEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPartitionRemovalEvent() {
 		PartitionsActionSupport.testConsumer(0, 3219096369262553225L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
@@ -389,7 +389,7 @@ public final class AT_PartitionEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonCreationObservationEvent() {
 		PartitionsActionSupport.testConsumer(100, 6964380012813498875L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();
@@ -428,12 +428,12 @@ public final class AT_PartitionEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonImminentRemovalObservationEvent() {
 		
 		
 		
-		final ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		final ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create a key for a partition of interest that will contain a person
@@ -557,12 +557,12 @@ public final class AT_PartitionEventResolver {
 		}));
 
 		// build and add the action plugin to the engine
-		final ActionPlugin actionPlugin = pluginBuilder.build();
-		PartitionsActionSupport.testConsumers(100, 6406306513403641718L, actionPlugin);
+		final ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		PartitionsActionSupport.testConsumers(100, 6406306513403641718L, actionPluginInitializer);
 			}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonCreationObservationEvent() {
 		PartitionsActionSupport.testConsumer(100, 2561425586247460069L, (c) -> {
 			PartitionDataView partitionDataView = c.getDataView(PartitionDataView.class).get();

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.partitions.support.PartitionError;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
@@ -20,7 +20,7 @@ import util.annotations.UnitTestMethod;
 public class AT_IntSetPeopleContainer {
 
 	
-	private PeopleContainer getPeopleContainer(Context context) {
+	private PeopleContainer getPeopleContainer(SimulationContext simulationContext) {
 		return new IntSetPeopleContainer();
 	}
 	

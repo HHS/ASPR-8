@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.compartments.datacontainers.CompartmentDataView;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.events.observation.PersonCompartmentChangeObservationEvent;
@@ -25,13 +25,13 @@ public final class CompartmentFilter extends Filter {
 	private final CompartmentId compartmentId;
 	private CompartmentLocationDataView compartmentLocationDataView;
 
-	private void validateCompartmentId(final Context context, final CompartmentId compartmentId) {
+	private void validateCompartmentId(final SimulationContext simulationContext, final CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			context.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			simulationContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
 		
-		if (!context.getDataView(CompartmentDataView.class).get().compartmentIdExists(compartmentId)) {
-			context.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
+		if (!simulationContext.getDataView(CompartmentDataView.class).get().compartmentIdExists(compartmentId)) {
+			simulationContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
 		}
 
 	}
@@ -54,14 +54,14 @@ public final class CompartmentFilter extends Filter {
 	 *             the compartment used to create the filter is unknown
 	 */
 	@Override
-	public void validate(Context context) {
-		validateCompartmentId(context, compartmentId);
+	public void validate(SimulationContext simulationContext) {
+		validateCompartmentId(simulationContext, compartmentId);
 	}
 
 	@Override
-	public boolean evaluate(Context context, PersonId personId) {
+	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
 		if (compartmentLocationDataView == null) {
-			compartmentLocationDataView = context.getDataView(CompartmentLocationDataView.class).get();
+			compartmentLocationDataView = simulationContext.getDataView(CompartmentLocationDataView.class).get();
 		}
 
 		return compartmentLocationDataView.getPersonCompartment(personId).equals(compartmentId);
@@ -76,7 +76,7 @@ public final class CompartmentFilter extends Filter {
 		return builder.toString();
 	}
 
-	private Optional<PersonId> requiresRefresh(Context context, PersonCompartmentChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonCompartmentChangeObservationEvent event) {
 		/*
 		 * We know that the two compartment ids from the event are not equal. If
 		 * either of them are equal to this filter's compartment id then this

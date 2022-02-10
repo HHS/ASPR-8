@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
@@ -43,14 +43,14 @@ public final class ResourceDataManager {
 	 * Static utility class for tracking region resources.
 	 */
 	private static class RegionResourceRecord {
-		private final Context context;
+		private final SimulationContext simulationContext;
 
 		private long amount;
 
 		private double assignmentTime;
 
-		public RegionResourceRecord(final Context context) {
-			this.context = context;
+		public RegionResourceRecord(final SimulationContext simulationContext) {
+			this.simulationContext = simulationContext;
 		}
 
 		public void decrementAmount(final long amount) {
@@ -62,7 +62,7 @@ public final class ResourceDataManager {
 				throw new ContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
 			}
 			this.amount = Math.subtractExact(this.amount, amount);
-			assignmentTime = context.getTime();
+			assignmentTime = simulationContext.getTime();
 		}
 
 		public long getAmount() {
@@ -78,7 +78,7 @@ public final class ResourceDataManager {
 				throw new ContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT);
 			}
 			this.amount = Math.addExact(this.amount, amount);
-			assignmentTime = context.getTime();
+			assignmentTime = simulationContext.getTime();
 		}
 
 	}
@@ -105,7 +105,7 @@ public final class ResourceDataManager {
 
 	private final Map<RegionId, Map<ResourceId, RegionResourceRecord>> regionResources = new LinkedHashMap<>();
 
-	private Context context;
+	private SimulationContext simulationContext;
 
 	/**
 	 * Reduces the resource for the particular person and resource by the
@@ -126,7 +126,7 @@ public final class ResourceDataManager {
 		 */
 		final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
 		if (doubleValueContainer != null) {
-			doubleValueContainer.setValue(personId.getValue(), context.getTime());
+			doubleValueContainer.setValue(personId.getValue(), simulationContext.getTime());
 		}
 	}
 
@@ -421,7 +421,7 @@ public final class ResourceDataManager {
 		 */
 		final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
 		if (doubleValueContainer != null) {
-			doubleValueContainer.setValue(personId.getValue(), context.getTime());
+			doubleValueContainer.setValue(personId.getValue(), simulationContext.getTime());
 		}
 	}
 
@@ -474,7 +474,7 @@ public final class ResourceDataManager {
 
 		for (RegionId regionId : regionResources.keySet()) {
 			Map<ResourceId, RegionResourceRecord> map = regionResources.get(regionId);
-			map.put(resourceId, new RegionResourceRecord(context));
+			map.put(resourceId, new RegionResourceRecord(simulationContext));
 		}
 
 		final IntValueContainer intValueContainer = new IntValueContainer(0L);
@@ -549,7 +549,7 @@ public final class ResourceDataManager {
 			map = new LinkedHashMap<>();
 			resourcePropertyMap.put(resourceId, map);
 		}
-		final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(context);
+		final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(simulationContext);
 		propertyValueRecord.setPropertyValue(resourcePropertyValue);
 		map.put(resourcePropertyId, propertyValueRecord);
 
@@ -576,7 +576,7 @@ public final class ResourceDataManager {
 		final Map<ResourceId, RegionResourceRecord> map = new LinkedHashMap<>();
 		regionResources.put(regionId, map);
 		for (final ResourceId resourceId : personResourceValues.keySet()) {
-			map.put(resourceId, new RegionResourceRecord(context));
+			map.put(resourceId, new RegionResourceRecord(simulationContext));
 		}
 
 	}
@@ -588,12 +588,12 @@ public final class ResourceDataManager {
 	 *             <li>{@linkplain NucleusError#NULL_CONTEXT} if the context is
 	 *             null</li>
 	 */
-	public ResourceDataManager(final Context context) {
-		if (context == null) {
+	public ResourceDataManager(final SimulationContext simulationContext) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
-		this.context = context;
-		personDataView = context.getDataView(PersonDataView.class).get();
+		this.simulationContext = simulationContext;
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
 	}
 
 	/**

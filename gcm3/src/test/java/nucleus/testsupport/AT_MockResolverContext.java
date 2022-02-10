@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import util.annotations.UnitTest;
 
-@UnitTest(target = MockResolverContext.class)
+@UnitTest(target = MockDataManagerContext.class)
 public class AT_MockResolverContext {
 	
 	@Test

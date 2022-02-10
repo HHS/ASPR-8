@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import plugins.gcm.agents.Environment;
 import plugins.partitions.testsupport.PartitionsActionSupport;
@@ -55,7 +55,7 @@ public class AT_Filter {
 		}
 
 		@Override
-		public boolean evaluate(Context context, PersonId personId) {
+		public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
 			return false;
 		}
 
@@ -65,13 +65,13 @@ public class AT_Filter {
 		}
 
 		@Override
-		public void validate(Context context) {
+		public void validate(SimulationContext simulationContext) {
 			// do nothing
 
 		}
 	}
 
-	private static Optional<PersonId> eventPredicate(Context context, Event event) {
+	private static Optional<PersonId> eventPredicate(SimulationContext simulationContext, Event event) {
 		return Optional.of(new PersonId(4));
 	}
 

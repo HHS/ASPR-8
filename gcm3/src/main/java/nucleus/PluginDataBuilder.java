@@ -1,8 +1,7 @@
 package nucleus;
 
-public interface PluginBuilder {
-
+public interface PluginDataBuilder {
 	
-	public Plugin build();
+	public PluginData build();
 	
 }

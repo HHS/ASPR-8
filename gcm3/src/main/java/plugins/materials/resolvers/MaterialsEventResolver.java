@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import nucleus.AgentContext;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.components.datacontainers.ComponentDataView;
 import plugins.components.events.ComponentConstructionEvent;
 import plugins.components.support.ComponentId;
@@ -499,14 +499,14 @@ public final class MaterialsEventResolver {
 	private Set<ResourceId> resourceIds;
 	private final Map<MaterialId, Set<BatchPropertyId>> materialToBatchPropertyIdsMap = new LinkedHashMap<>();
 
-	private void handleBatchConstructionEventExecution(final ResolverContext resolverContext, BatchConstructionEvent batchConstructionEvent) {
+	private void handleBatchConstructionEventExecution(final DataManagerContext dataManagerContext, BatchConstructionEvent batchConstructionEvent) {
 		BatchConstructionInfo batchConstructionInfo = batchConstructionEvent.getBatchConstructionInfo();
 		final MaterialId materialId = batchConstructionInfo.getMaterialId();
 		final MaterialsProducerId materialsProducerId = componentDataView.getFocalComponentId();
 		final Map<BatchPropertyId, Object> propertyValues = batchConstructionInfo.getPropertyValues();
 		final double amount = batchConstructionInfo.getAmount();
 		BatchId batchId = materialsDataManager.createBatch(materialsProducerId, materialId, amount);
-		resolverContext.queueEventForResolution(new BatchCreationObservationEvent(batchId));
+		dataManagerContext.resolveEvent(new BatchCreationObservationEvent(batchId));
 		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
 			final Object batchPropertyValue = propertyValues.get(batchPropertyId);
 			materialsDataManager.setBatchPropertyValue(batchId, batchPropertyId, batchPropertyValue);
@@ -514,134 +514,134 @@ public final class MaterialsEventResolver {
 
 	}
 
-	private void handleBatchConstructionEventValidation(final ResolverContext resolverContext, BatchConstructionEvent batchConstructionEvent) {
+	private void handleBatchConstructionEventValidation(final DataManagerContext dataManagerContext, BatchConstructionEvent batchConstructionEvent) {
 		BatchConstructionInfo batchConstructionInfo = batchConstructionEvent.getBatchConstructionInfo();
-		validateCurrentAgentIsAMaterialsProducer(resolverContext);
-		validateBatchConstructionInfoNotNull(resolverContext, batchConstructionInfo);
+		validateCurrentAgentIsAMaterialsProducer(dataManagerContext);
+		validateBatchConstructionInfoNotNull(dataManagerContext, batchConstructionInfo);
 		final MaterialId materialId = batchConstructionInfo.getMaterialId();
-		validateMaterialId(resolverContext, materialId);
-		validateNonnegativeFiniteMaterialAmount(resolverContext, batchConstructionInfo.getAmount());
+		validateMaterialId(dataManagerContext, materialId);
+		validateNonnegativeFiniteMaterialAmount(dataManagerContext, batchConstructionInfo.getAmount());
 
 		final Map<BatchPropertyId, Object> propertyValues = batchConstructionInfo.getPropertyValues();
 		for (final BatchPropertyId batchPropertyId : propertyValues.keySet()) {
-			validateBatchPropertyId(resolverContext, materialId, batchPropertyId);
+			validateBatchPropertyId(dataManagerContext, materialId, batchPropertyId);
 			final Object batchPropertyValue = propertyValues.get(batchPropertyId);
 			final PropertyDefinition propertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
-			validateBatchPropertyValueNotNull(resolverContext, batchPropertyValue);
-			validateValueCompatibility(resolverContext, batchPropertyId, propertyDefinition, batchPropertyValue);
+			validateBatchPropertyValueNotNull(dataManagerContext, batchPropertyValue);
+			validateValueCompatibility(dataManagerContext, batchPropertyId, propertyDefinition, batchPropertyValue);
 		}
 	}
 
-	private void handleBatchCreationEventValidation(final ResolverContext resolverContext, final BatchCreationEvent batchCreationEvent) {
+	private void handleBatchCreationEventValidation(final DataManagerContext dataManagerContext, final BatchCreationEvent batchCreationEvent) {
 		double amount = batchCreationEvent.getAmount();
 		MaterialId materialId = batchCreationEvent.getMaterialId();
-		validateCurrentAgentIsAMaterialsProducer(resolverContext);
-		validateMaterialId(resolverContext, materialId);
-		validateNonnegativeFiniteMaterialAmount(resolverContext, amount);
+		validateCurrentAgentIsAMaterialsProducer(dataManagerContext);
+		validateMaterialId(dataManagerContext, materialId);
+		validateNonnegativeFiniteMaterialAmount(dataManagerContext, amount);
 	}
 
-	private void handleBatchCreationEventExecution(final ResolverContext resolverContext, final BatchCreationEvent batchCreationEvent) {
+	private void handleBatchCreationEventExecution(final DataManagerContext dataManagerContext, final BatchCreationEvent batchCreationEvent) {
 		double amount = batchCreationEvent.getAmount();
 		MaterialId materialId = batchCreationEvent.getMaterialId();
 		final MaterialsProducerId materialsProducerId = componentDataView.getFocalComponentId();
 		BatchId batchId = materialsDataManager.createBatch(materialsProducerId, materialId, amount);
-		resolverContext.queueEventForResolution(new BatchCreationObservationEvent(batchId));
+		dataManagerContext.resolveEvent(new BatchCreationObservationEvent(batchId));
 	}
 
-	private void handleStageCreationEventValidation(final ResolverContext resolverContext, final StageCreationEvent stageCreationEvent) {
-		validateCurrentAgentIsAMaterialsProducer(resolverContext);
+	private void handleStageCreationEventValidation(final DataManagerContext dataManagerContext, final StageCreationEvent stageCreationEvent) {
+		validateCurrentAgentIsAMaterialsProducer(dataManagerContext);
 	}
 
-	private void handleStageCreationEventExecution(final ResolverContext resolverContext, final StageCreationEvent stageCreationEvent) {
+	private void handleStageCreationEventExecution(final DataManagerContext dataManagerContext, final StageCreationEvent stageCreationEvent) {
 		final MaterialsProducerId materialsProducerId = componentDataView.getFocalComponentId();
 		StageId stageId;
 		stageId = materialsDataManager.createStage(materialsProducerId);
-		resolverContext.queueEventForResolution(new StageCreationObservationEvent(stageId));
+		dataManagerContext.resolveEvent(new StageCreationObservationEvent(stageId));
 	}
 
-	public void init(ResolverContext resolverContext) {
+	public void init(DataManagerContext dataManagerContext) {
 
-		resolverContext.subscribeToEventExecutionPhase(BatchConstructionEvent.class, this::handleBatchConstructionEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BatchConstructionEvent.class, this::handleBatchConstructionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BatchConstructionEvent.class, this::handleBatchConstructionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BatchConstructionEvent.class, this::handleBatchConstructionEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(BatchContentShiftEvent.class, this::handleBatchContentShiftEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BatchContentShiftEvent.class, this::handleBatchContentShiftEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BatchContentShiftEvent.class, this::handleBatchContentShiftEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BatchContentShiftEvent.class, this::handleBatchContentShiftEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(BatchCreationEvent.class, this::handleBatchCreationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BatchCreationEvent.class, this::handleBatchCreationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BatchCreationEvent.class, this::handleBatchCreationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BatchCreationEvent.class, this::handleBatchCreationEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(BatchRemovalRequestEvent.class, this::handleBatchRemovalRequestEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BatchRemovalRequestEvent.class, this::handleBatchRemovalRequestEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BatchRemovalRequestEvent.class, this::handleBatchRemovalRequestEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BatchRemovalRequestEvent.class, this::handleBatchRemovalRequestEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(BatchPropertyValueAssignmentEvent.class, this::handleBatchPropertyValueAssignmentEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BatchPropertyValueAssignmentEvent.class, this::handleBatchPropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BatchPropertyValueAssignmentEvent.class, this::handleBatchPropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BatchPropertyValueAssignmentEvent.class, this::handleBatchPropertyValueAssignmentEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(MaterialsProducerPropertyValueAssignmentEvent.class, this::handleMaterialsProducerPropertyValueAssignmentEventExecution);
-		resolverContext.subscribeToEventValidationPhase(MaterialsProducerPropertyValueAssignmentEvent.class, this::handleMaterialsProducerPropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(MaterialsProducerPropertyValueAssignmentEvent.class, this::handleMaterialsProducerPropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(MaterialsProducerPropertyValueAssignmentEvent.class, this::handleMaterialsProducerPropertyValueAssignmentEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(MoveBatchToInventoryEvent.class, this::handleMoveBatchToInventoryEventExecution);
-		resolverContext.subscribeToEventValidationPhase(MoveBatchToInventoryEvent.class, this::handleMoveBatchToInventoryEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(MoveBatchToInventoryEvent.class, this::handleMoveBatchToInventoryEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(MoveBatchToInventoryEvent.class, this::handleMoveBatchToInventoryEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(MoveBatchToStageEvent.class, this::handleMoveBatchToStageEventExecution);
-		resolverContext.subscribeToEventValidationPhase(MoveBatchToStageEvent.class, this::handleMoveBatchToStageEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(MoveBatchToStageEvent.class, this::handleMoveBatchToStageEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(MoveBatchToStageEvent.class, this::handleMoveBatchToStageEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(OfferedStageTransferToMaterialsProducerEvent.class, this::handleOfferedStageTransferToMaterialsProducerEventExecution);
-		resolverContext.subscribeToEventValidationPhase(OfferedStageTransferToMaterialsProducerEvent.class, this::handleOfferedStageTransferToMaterialsProducerEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(OfferedStageTransferToMaterialsProducerEvent.class, this::handleOfferedStageTransferToMaterialsProducerEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(OfferedStageTransferToMaterialsProducerEvent.class, this::handleOfferedStageTransferToMaterialsProducerEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(ProducedResourceTransferToRegionEvent.class, this::handleProducedResourceTransferToRegionEventExecution);
-		resolverContext.subscribeToEventValidationPhase(ProducedResourceTransferToRegionEvent.class, this::handleProducedResourceTransferToRegionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(ProducedResourceTransferToRegionEvent.class, this::handleProducedResourceTransferToRegionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(ProducedResourceTransferToRegionEvent.class, this::handleProducedResourceTransferToRegionEventValidation);
 
-		resolverContext.subscribeToEventValidationPhase(StageCreationEvent.class, this::handleStageCreationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(StageCreationEvent.class, this::handleStageCreationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(StageCreationEvent.class, this::handleStageCreationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(StageCreationEvent.class, this::handleStageCreationEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(StageRemovalRequestEvent.class, this::handleStageRemovalRequestEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(StageRemovalRequestEvent.class, this::handleStageRemovalRequestEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(StageRemovalRequestEvent.class, this::handleStageRemovalRequestEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(StageRemovalRequestEvent.class, this::handleStageRemovalRequestEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(StageOfferEvent.class, this::handleStageOfferEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(StageOfferEvent.class, this::handleStageOfferEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(StageOfferEvent.class, this::handleStageOfferEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(StageOfferEvent.class, this::handleStageOfferEventExecution);
 
-		resolverContext.subscribeToEventExecutionPhase(StageToBatchConversionEvent.class, this::handleStageToBatchConversionEventExecution);
-		resolverContext.subscribeToEventValidationPhase(StageToBatchConversionEvent.class, this::handleStageToBatchConversionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(StageToBatchConversionEvent.class, this::handleStageToBatchConversionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(StageToBatchConversionEvent.class, this::handleStageToBatchConversionEventValidation);
 
-		resolverContext.subscribeToEventValidationPhase(StageToResourceConversionEvent.class, this::handleStageToResourceConversionEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(StageToResourceConversionEvent.class, this::handleStageToResourceConversionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(StageToResourceConversionEvent.class, this::handleStageToResourceConversionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(StageToResourceConversionEvent.class, this::handleStageToResourceConversionEventExecution);
 
 		/*
 		 * Establish all the convenience references
 		 */
-		resolverContext.addEventLabeler(StageOfferChangeObservationEvent.getEventLabelerForStage());
-		resolverContext.addEventLabeler(StageOfferChangeObservationEvent.getEventLabelerForAll());
-		resolverContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForAll());
-		resolverContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForDestination());
-		resolverContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForSource());
-		resolverContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForStage());
+		dataManagerContext.addEventLabeler(StageOfferChangeObservationEvent.getEventLabelerForStage());
+		dataManagerContext.addEventLabeler(StageOfferChangeObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForDestination());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForSource());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForStage());
 
-		resolverContext.addEventLabeler(MaterialsProducerPropertyChangeObservationEvent.getEventLabelerForMaterialsProducerAndProperty());
+		dataManagerContext.addEventLabeler(MaterialsProducerPropertyChangeObservationEvent.getEventLabelerForMaterialsProducerAndProperty());
 
-		resolverContext.addEventLabeler(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForMaterialsProducerAndResource());
-		resolverContext.addEventLabeler(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForResource());
+		dataManagerContext.addEventLabeler(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForMaterialsProducerAndResource());
+		dataManagerContext.addEventLabeler(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForResource());
 		
-		resolverContext.addEventLabeler(BatchCreationObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(BatchCreationObservationEvent.getEventLabelerForAll());
 		
-		resolverContext.addEventLabeler(BatchAmountChangeObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(BatchAmountChangeObservationEvent.getEventLabelerForAll());
 		
-		resolverContext.addEventLabeler(BatchImminentRemovalObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(BatchImminentRemovalObservationEvent.getEventLabelerForAll());
 		
-		resolverContext.addEventLabeler(BatchPropertyChangeObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(BatchPropertyChangeObservationEvent.getEventLabelerForAll());
 		
-		resolverContext.addEventLabeler(StageMembershipRemovalObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMembershipRemovalObservationEvent.getEventLabelerForAll());
 		
-		resolverContext.addEventLabeler(StageMembershipAdditionObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMembershipAdditionObservationEvent.getEventLabelerForAll());
 		
-		resolverContext.addEventLabeler(StageCreationObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageCreationObservationEvent.getEventLabelerForAll());
 		
-		resolverContext.addEventLabeler(StageImminentRemovalObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageImminentRemovalObservationEvent.getEventLabelerForAll());
 		
 		
 
-		resourceDataView = resolverContext.getDataView(ResourceDataView.class).get();
+		resourceDataView = dataManagerContext.getDataView(ResourceDataView.class).get();
 
-		materialsDataManager = new MaterialsDataManager(resolverContext.getSafeContext());
+		materialsDataManager = new MaterialsDataManager(dataManagerContext.getSafeContext());
 		for (final MaterialId materialId : materialsInitialData.getMaterialIds()) {
 			materialsDataManager.addMaterialId(materialId);
 			for (final BatchPropertyId batchPropertyId : materialsInitialData.getBatchPropertyIds(materialId)) {
@@ -663,13 +663,13 @@ public final class MaterialsEventResolver {
 			materialsDataManager.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
 		}
 
-		componentDataView = resolverContext.getDataView(ComponentDataView.class).get();
+		componentDataView = dataManagerContext.getDataView(ComponentDataView.class).get();
 
 		for (final MaterialId materialId : materialsInitialData.getMaterialIds()) {
 			materialToBatchPropertyIdsMap.put(materialId, materialsInitialData.getBatchPropertyIds(materialId));
 		}
 		resourceIds = resourceDataView.getResourceIds();
-		RegionDataView regionDataView = resolverContext.getDataView(RegionDataView.class).get();
+		RegionDataView regionDataView = dataManagerContext.getDataView(RegionDataView.class).get();
 		regionIds = regionDataView.getRegionIds();
 		materialsProducerIds = materialsInitialData.getMaterialsProducerIds();
 
@@ -686,23 +686,23 @@ public final class MaterialsEventResolver {
 		 * allowed to components.
 		 */
 
-		loadMaterialsProducerPropertyValues(resolverContext, materialsInitialData);
-		final Map<StageId, StageId> scenarioToSimStageMap = loadStages(resolverContext, materialsInitialData);
-		final Map<BatchId, BatchId> scenarioToSimBatchMap = loadBatches(resolverContext, materialsInitialData, scenarioToSimStageMap);
-		loadBatchProperties(resolverContext, materialsInitialData, scenarioToSimBatchMap);
-		loadStageOfferings(resolverContext, materialsInitialData, scenarioToSimStageMap);
-		loadMaterialsProducerResources(resolverContext, materialsInitialData);
+		loadMaterialsProducerPropertyValues(dataManagerContext, materialsInitialData);
+		final Map<StageId, StageId> scenarioToSimStageMap = loadStages(dataManagerContext, materialsInitialData);
+		final Map<BatchId, BatchId> scenarioToSimBatchMap = loadBatches(dataManagerContext, materialsInitialData, scenarioToSimStageMap);
+		loadBatchProperties(dataManagerContext, materialsInitialData, scenarioToSimBatchMap);
+		loadStageOfferings(dataManagerContext, materialsInitialData, scenarioToSimStageMap);
+		loadMaterialsProducerResources(dataManagerContext, materialsInitialData);
 
 		for (MaterialsProducerId materialsProducerId : materialsProducerIds) {
 			Consumer<AgentContext> consumer = materialsInitialData.getMaterialsProducerInitialBehavior(materialsProducerId);
-			resolverContext.queueEventForResolution(new ComponentConstructionEvent(materialsProducerId, consumer));
+			dataManagerContext.resolveEvent(new ComponentConstructionEvent(materialsProducerId, consumer));
 		}
 
-		resolverContext.publishDataView(new MaterialsDataView(resolverContext.getSafeContext(), materialsDataManager));
+		dataManagerContext.publishDataView(new MaterialsDataView(dataManagerContext.getSafeContext(), materialsDataManager));
 
 	}
 
-	private Map<BatchId, BatchId> loadBatches(final ResolverContext resolverContext, final MaterialsInitialData materialsInitialData, final Map<StageId, StageId> scenarioToSimStageMap) {
+	private Map<BatchId, BatchId> loadBatches(final DataManagerContext dataManagerContext, final MaterialsInitialData materialsInitialData, final Map<StageId, StageId> scenarioToSimStageMap) {
 		final Map<BatchId, BatchId> result = new LinkedHashMap<>();
 		final List<BatchId> scenarioBatchIds = new ArrayList<>(materialsInitialData.getBatchIds());
 		Collections.sort(scenarioBatchIds);
@@ -718,7 +718,7 @@ public final class MaterialsEventResolver {
 			final StageId simulationStageId = scenarioToSimStageMap.get(scenarioStageId);
 			for (final BatchId scenarioBatchId : scenarioBatches) {
 				final BatchId simulationBatchId = result.get(scenarioBatchId);
-				validateBatchAndStageOwnersMatch(resolverContext, simulationBatchId, simulationStageId);
+				validateBatchAndStageOwnersMatch(dataManagerContext, simulationBatchId, simulationStageId);
 				materialsDataManager.moveBatchToStage(simulationBatchId, simulationStageId);
 			}
 		}
@@ -726,7 +726,7 @@ public final class MaterialsEventResolver {
 		return result;
 	}
 
-	private void loadBatchProperties(final ResolverContext resolverContext, final MaterialsInitialData materialsInitialData, final Map<BatchId, BatchId> scenarioToSimBatchMap) {
+	private void loadBatchProperties(final DataManagerContext dataManagerContext, final MaterialsInitialData materialsInitialData, final Map<BatchId, BatchId> scenarioToSimBatchMap) {
 		final Set<BatchId> scenarioBatchIds = materialsInitialData.getBatchIds();
 		for (final BatchId scenarioBatchId : scenarioBatchIds) {
 			final MaterialId materialId = materialsInitialData.getBatchMaterial(scenarioBatchId);
@@ -735,15 +735,15 @@ public final class MaterialsEventResolver {
 				final Object batchPropertyValue = materialsInitialData.getBatchPropertyValue(scenarioBatchId, batchPropertyId);
 				final BatchId simulationBatchId = scenarioToSimBatchMap.get(scenarioBatchId);
 				final PropertyDefinition propertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
-				validateBatchPropertyValueNotNull(resolverContext, batchPropertyValue);
-				validateValueCompatibility(resolverContext, batchPropertyId, propertyDefinition, batchPropertyValue);
-				validateBatchIsNotOnOfferedStage(resolverContext, simulationBatchId);
+				validateBatchPropertyValueNotNull(dataManagerContext, batchPropertyValue);
+				validateValueCompatibility(dataManagerContext, batchPropertyId, propertyDefinition, batchPropertyValue);
+				validateBatchIsNotOnOfferedStage(dataManagerContext, simulationBatchId);
 				materialsDataManager.setBatchPropertyValue(simulationBatchId, batchPropertyId, batchPropertyValue);
 			}
 		}
 	}
 
-	private void loadMaterialsProducerPropertyValues(final ResolverContext resolverContext, final MaterialsInitialData materialsInitialData) {
+	private void loadMaterialsProducerPropertyValues(final DataManagerContext dataManagerContext, final MaterialsInitialData materialsInitialData) {
 		for (final MaterialsProducerId materialsProducerId : materialsInitialData.getMaterialsProducerIds()) {
 			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsInitialData.getMaterialsProducerPropertyIds()) {
 				final Object materialsProducerPropertyValue = materialsInitialData.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
@@ -752,7 +752,7 @@ public final class MaterialsEventResolver {
 		}
 	}
 
-	private void loadMaterialsProducerResources(final ResolverContext resolverContext, final MaterialsInitialData materialsInitialData) {
+	private void loadMaterialsProducerResources(final DataManagerContext dataManagerContext, final MaterialsInitialData materialsInitialData) {
 		for (ResourceId resourceId : materialsInitialData.getResourceIds()) {
 			if (!resourceIds.contains(resourceId)) {
 				throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " in resource levels of materials producers");
@@ -762,14 +762,14 @@ public final class MaterialsEventResolver {
 			for (final ResourceId resourceId : resourceIds) {
 				final Long amount = materialsInitialData.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 				if (amount != null) {
-					validateNonnegativeResourceAmount(resolverContext, amount);
+					validateNonnegativeResourceAmount(dataManagerContext, amount);
 					materialsDataManager.incrementMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
 				}
 			}
 		}
 	}
 
-	private void loadStageOfferings(final ResolverContext resolverContext, final MaterialsInitialData materialsInitialData, final Map<StageId, StageId> scenarioToSimStageMap) {
+	private void loadStageOfferings(final DataManagerContext dataManagerContext, final MaterialsInitialData materialsInitialData, final Map<StageId, StageId> scenarioToSimStageMap) {
 
 		/*
 		 * The stage offer state cannot be set until all of the batches have
@@ -783,7 +783,7 @@ public final class MaterialsEventResolver {
 
 	}
 
-	private Map<StageId, StageId> loadStages(final ResolverContext resolverContext, final MaterialsInitialData materialsInitialData) {
+	private Map<StageId, StageId> loadStages(final DataManagerContext dataManagerContext, final MaterialsInitialData materialsInitialData) {
 		final Map<StageId, StageId> result = new LinkedHashMap<>();
 
 		final List<StageId> scenarioStageIds = new ArrayList<>(materialsInitialData.getStageIds());
@@ -796,86 +796,86 @@ public final class MaterialsEventResolver {
 		return result;
 	}
 
-	private void handleMoveBatchToInventoryEventValidation(final ResolverContext resolverContext, final MoveBatchToInventoryEvent moveBatchToInventoryEvent) {
+	private void handleMoveBatchToInventoryEventValidation(final DataManagerContext dataManagerContext, final MoveBatchToInventoryEvent moveBatchToInventoryEvent) {
 		BatchId batchId = moveBatchToInventoryEvent.getBatchId();
-		validateBatchId(resolverContext, batchId);
+		validateBatchId(dataManagerContext, batchId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getBatchProducer(batchId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
-		validateBatchIsStaged(resolverContext, batchId);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
+		validateBatchIsStaged(dataManagerContext, batchId);
 		final StageId stageId = materialsDataManager.getBatchStageId(batchId).get();
-		validateStageIsNotOffered(resolverContext, stageId);
+		validateStageIsNotOffered(dataManagerContext, stageId);
 	}
 
-	private void handleMoveBatchToInventoryEventExecution(final ResolverContext resolverContext, final MoveBatchToInventoryEvent moveBatchToInventoryEvent) {
+	private void handleMoveBatchToInventoryEventExecution(final DataManagerContext dataManagerContext, final MoveBatchToInventoryEvent moveBatchToInventoryEvent) {
 		BatchId batchId = moveBatchToInventoryEvent.getBatchId();
 		final StageId stageId = materialsDataManager.getBatchStageId(batchId).get();
 		materialsDataManager.moveBatchToInventory(batchId);
-		resolverContext.queueEventForResolution(new StageMembershipRemovalObservationEvent(batchId, stageId));
+		dataManagerContext.resolveEvent(new StageMembershipRemovalObservationEvent(batchId, stageId));
 	}
 
-	private void handleMoveBatchToStageEventValidation(final ResolverContext resolverContext, final MoveBatchToStageEvent moveBatchToStageEvent) {
+	private void handleMoveBatchToStageEventValidation(final DataManagerContext dataManagerContext, final MoveBatchToStageEvent moveBatchToStageEvent) {
 		BatchId batchId = moveBatchToStageEvent.getBatchId();
 		StageId stageId = moveBatchToStageEvent.getStageId();
 
-		validateBatchId(resolverContext, batchId);
-		validateBatchIsNotStaged(resolverContext, batchId);
-		validateStageId(resolverContext, stageId);
-		validateStageIsNotOffered(resolverContext, stageId);
-		validateBatchAndStageOwnersMatch(resolverContext, batchId, stageId);
+		validateBatchId(dataManagerContext, batchId);
+		validateBatchIsNotStaged(dataManagerContext, batchId);
+		validateStageId(dataManagerContext, stageId);
+		validateStageIsNotOffered(dataManagerContext, stageId);
+		validateBatchAndStageOwnersMatch(dataManagerContext, batchId, stageId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getBatchProducer(batchId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
 	}
 
-	private void handleMoveBatchToStageEventExecution(final ResolverContext resolverContext, final MoveBatchToStageEvent moveBatchToStageEvent) {
+	private void handleMoveBatchToStageEventExecution(final DataManagerContext dataManagerContext, final MoveBatchToStageEvent moveBatchToStageEvent) {
 		BatchId batchId = moveBatchToStageEvent.getBatchId();
 		StageId stageId = moveBatchToStageEvent.getStageId();
 
 		materialsDataManager.moveBatchToStage(batchId, stageId);
-		resolverContext.queueEventForResolution(new StageMembershipAdditionObservationEvent(batchId, stageId));
+		dataManagerContext.resolveEvent(new StageMembershipAdditionObservationEvent(batchId, stageId));
 	}
 
-	private void handleBatchPropertyValueAssignmentEventValidation(final ResolverContext resolverContext, final BatchPropertyValueAssignmentEvent batchPropertyValueAssignmentEvent) {
+	private void handleBatchPropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final BatchPropertyValueAssignmentEvent batchPropertyValueAssignmentEvent) {
 		BatchId batchId = batchPropertyValueAssignmentEvent.getBatchId();
 		BatchPropertyId batchPropertyId = batchPropertyValueAssignmentEvent.getBatchPropertyId();
 		Object batchPropertyValue = batchPropertyValueAssignmentEvent.getBatchPropertyValue();
 
-		validateBatchId(resolverContext, batchId);
+		validateBatchId(dataManagerContext, batchId);
 		final MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);		
-		validateBatchPropertyId(resolverContext, materialId, batchPropertyId);
+		validateBatchPropertyId(dataManagerContext, materialId, batchPropertyId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getBatchProducer(batchId);
 		final PropertyDefinition propertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
-		validatePropertyMutability(resolverContext, propertyDefinition);
-		validateBatchPropertyValueNotNull(resolverContext, batchPropertyValue);
-		validateValueCompatibility(resolverContext, batchPropertyId, propertyDefinition, batchPropertyValue);
-		validateBatchIsNotOnOfferedStage(resolverContext, batchId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
+		validateBatchPropertyValueNotNull(dataManagerContext, batchPropertyValue);
+		validateValueCompatibility(dataManagerContext, batchPropertyId, propertyDefinition, batchPropertyValue);
+		validateBatchIsNotOnOfferedStage(dataManagerContext, batchId);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
 	}
 
-	private void handleBatchPropertyValueAssignmentEventExecution(final ResolverContext resolverContext, final BatchPropertyValueAssignmentEvent batchPropertyValueAssignmentEvent) {
+	private void handleBatchPropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final BatchPropertyValueAssignmentEvent batchPropertyValueAssignmentEvent) {
 		BatchId batchId = batchPropertyValueAssignmentEvent.getBatchId();
 		BatchPropertyId batchPropertyId = batchPropertyValueAssignmentEvent.getBatchPropertyId();
 		Object batchPropertyValue = batchPropertyValueAssignmentEvent.getBatchPropertyValue();
 
 		Object previousPropertyValue = materialsDataManager.getBatchPropertyValue(batchId, batchPropertyId);
 		materialsDataManager.setBatchPropertyValue(batchId, batchPropertyId, batchPropertyValue);
-		resolverContext.queueEventForResolution(new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
+		dataManagerContext.resolveEvent(new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
 	}
 
-	private void handleMaterialsProducerPropertyValueAssignmentEventValidation(final ResolverContext resolverContext,
+	private void handleMaterialsProducerPropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext,
 			final MaterialsProducerPropertyValueAssignmentEvent materialsProducerPropertyValueAssignmentEvent) {
 		MaterialsProducerId materialsProducerId = materialsProducerPropertyValueAssignmentEvent.getMaterialsProducerId();
 		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyValueAssignmentEvent.getMaterialsProducerPropertyId();
 		Object materialsProducerPropertyValue = materialsProducerPropertyValueAssignmentEvent.getMaterialsProducerPropertyValue();
 
-		validateMaterialsProducerId(resolverContext, materialsProducerId);
-		validateMaterialsProducerPropertyId(resolverContext, materialsProducerPropertyId);
+		validateMaterialsProducerId(dataManagerContext, materialsProducerId);
+		validateMaterialsProducerPropertyId(dataManagerContext, materialsProducerPropertyId);
 		final PropertyDefinition propertyDefinition = materialsDataManager.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
-		validatePropertyMutability(resolverContext, propertyDefinition);
-		validateMaterialProducerPropertyValueNotNull(resolverContext, materialsProducerPropertyValue);
-		validateValueCompatibility(resolverContext, materialsProducerPropertyId, propertyDefinition, materialsProducerPropertyValue);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
+		validateMaterialProducerPropertyValueNotNull(dataManagerContext, materialsProducerPropertyValue);
+		validateValueCompatibility(dataManagerContext, materialsProducerPropertyId, propertyDefinition, materialsProducerPropertyValue);
 	}
 
-	private void handleMaterialsProducerPropertyValueAssignmentEventExecution(final ResolverContext resolverContext,
+	private void handleMaterialsProducerPropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext,
 			final MaterialsProducerPropertyValueAssignmentEvent materialsProducerPropertyValueAssignmentEvent) {
 		MaterialsProducerId materialsProducerId = materialsProducerPropertyValueAssignmentEvent.getMaterialsProducerId();
 		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyValueAssignmentEvent.getMaterialsProducerPropertyId();
@@ -883,67 +883,67 @@ public final class MaterialsEventResolver {
 
 		Object oldPropertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 		materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
-		resolverContext.queueEventForResolution(
+		dataManagerContext.resolveEvent(
 				new MaterialsProducerPropertyChangeObservationEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
 	}
 
-	private void handleStageOfferEventValidation(final ResolverContext resolverContext, final StageOfferEvent stageOfferEvent) {
+	private void handleStageOfferEventValidation(final DataManagerContext dataManagerContext, final StageOfferEvent stageOfferEvent) {
 		StageId stageId = stageOfferEvent.getStageId();
 
-		validateStageId(resolverContext, stageId);
+		validateStageId(dataManagerContext, stageId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
 	}
 
-	private void handleStageOfferEventExecution(final ResolverContext resolverContext, final StageOfferEvent stageOfferEvent) {
+	private void handleStageOfferEventExecution(final DataManagerContext dataManagerContext, final StageOfferEvent stageOfferEvent) {
 		StageId stageId = stageOfferEvent.getStageId();
 		boolean offer = stageOfferEvent.isOffer();
 
 		materialsDataManager.setStageOffer(stageId, offer);
-		resolverContext.queueEventForResolution(new StageOfferChangeObservationEvent(stageId, !offer, offer));
+		dataManagerContext.resolveEvent(new StageOfferChangeObservationEvent(stageId, !offer, offer));
 	}
 
-	private void validateCurrentAgent(final ResolverContext resolverContext, MaterialsProducerId materialsProducerId) {
+	private void validateCurrentAgent(final DataManagerContext dataManagerContext, MaterialsProducerId materialsProducerId) {
 		ComponentId focalComponentId = componentDataView.getFocalComponentId();
 		if (!materialsProducerId.equals(focalComponentId)) {
-			resolverContext.throwContractException(MaterialsError.MATERIALS_OWNERSHIP);
+			dataManagerContext.throwContractException(MaterialsError.MATERIALS_OWNERSHIP);
 		}
 	}
 
-	private void validateCurrentAgentIsAMaterialsProducer(final ResolverContext resolverContext) {
+	private void validateCurrentAgentIsAMaterialsProducer(final DataManagerContext dataManagerContext) {
 		ComponentId focalComponentId = componentDataView.getFocalComponentId();
 		if (focalComponentId == null || !(focalComponentId instanceof MaterialsProducerId)) {
-			resolverContext.throwContractException(MaterialsError.MATERIALS_PRODUCER_REQUIRED);
+			dataManagerContext.throwContractException(MaterialsError.MATERIALS_PRODUCER_REQUIRED);
 		}
 	}
 
-	private void validateBatchHasSufficientUllage(ResolverContext resolverContext, BatchId batchId, double amount) {		
+	private void validateBatchHasSufficientUllage(DataManagerContext dataManagerContext, BatchId batchId, double amount) {		
 		if (!Double.isFinite(materialsDataManager.getBatchAmount(batchId) + amount)) {
-			resolverContext.throwContractException(MaterialsError.MATERIAL_ARITHMETIC_EXCEPTION);
+			dataManagerContext.throwContractException(MaterialsError.MATERIAL_ARITHMETIC_EXCEPTION);
 		}
 	}
 
-	private void handleBatchContentShiftEventValidation(final ResolverContext resolverContext, final BatchContentShiftEvent batchContentShiftEvent) {
+	private void handleBatchContentShiftEventValidation(final DataManagerContext dataManagerContext, final BatchContentShiftEvent batchContentShiftEvent) {
 		double amount = batchContentShiftEvent.getAmount();
 		BatchId destinationBatchId = batchContentShiftEvent.getDestinationBatchId();
 		BatchId sourceBatchId = batchContentShiftEvent.getSourceBatchId();
 
-		validateBatchId(resolverContext, sourceBatchId);
-		validateBatchId(resolverContext, destinationBatchId);
-		validateDifferentBatchesForShift(resolverContext, sourceBatchId, destinationBatchId);
-		validateMaterialsMatchForShift(resolverContext, sourceBatchId, destinationBatchId);
-		validateProducersMatchForShift(resolverContext, sourceBatchId, destinationBatchId);
-		validateBatchIsNotOnOfferedStage(resolverContext, sourceBatchId);
-		validateBatchIsNotOnOfferedStage(resolverContext, destinationBatchId);
-		validateNonnegativeFiniteMaterialAmount(resolverContext, amount);
-		validateBatchHasSufficientMaterial(resolverContext, sourceBatchId, amount);
-		validateBatchHasSufficientUllage(resolverContext, destinationBatchId, amount);
+		validateBatchId(dataManagerContext, sourceBatchId);
+		validateBatchId(dataManagerContext, destinationBatchId);
+		validateDifferentBatchesForShift(dataManagerContext, sourceBatchId, destinationBatchId);
+		validateMaterialsMatchForShift(dataManagerContext, sourceBatchId, destinationBatchId);
+		validateProducersMatchForShift(dataManagerContext, sourceBatchId, destinationBatchId);
+		validateBatchIsNotOnOfferedStage(dataManagerContext, sourceBatchId);
+		validateBatchIsNotOnOfferedStage(dataManagerContext, destinationBatchId);
+		validateNonnegativeFiniteMaterialAmount(dataManagerContext, amount);
+		validateBatchHasSufficientMaterial(dataManagerContext, sourceBatchId, amount);
+		validateBatchHasSufficientUllage(dataManagerContext, destinationBatchId, amount);
 
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getBatchProducer(sourceBatchId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
 	}
 
-	private void handleBatchContentShiftEventExecution(final ResolverContext resolverContext, final BatchContentShiftEvent batchContentShiftEvent) {
+	private void handleBatchContentShiftEventExecution(final DataManagerContext dataManagerContext, final BatchContentShiftEvent batchContentShiftEvent) {
 		double amount = batchContentShiftEvent.getAmount();
 		BatchId destinationBatchId = batchContentShiftEvent.getDestinationBatchId();
 		BatchId sourceBatchId = batchContentShiftEvent.getSourceBatchId();
@@ -953,50 +953,50 @@ public final class MaterialsEventResolver {
 		materialsDataManager.shiftBatchContent(sourceBatchId, destinationBatchId, amount);
 		double currentSourceAmount = materialsDataManager.getBatchAmount(sourceBatchId);
 		double currentDestinationAmount = materialsDataManager.getBatchAmount(destinationBatchId);
-		resolverContext.queueEventForResolution(new BatchAmountChangeObservationEvent(sourceBatchId, previousSourceAmount, currentSourceAmount));
-		resolverContext.queueEventForResolution(new BatchAmountChangeObservationEvent(destinationBatchId, previousDestinationAmount, currentDestinationAmount));
+		dataManagerContext.resolveEvent(new BatchAmountChangeObservationEvent(sourceBatchId, previousSourceAmount, currentSourceAmount));
+		dataManagerContext.resolveEvent(new BatchAmountChangeObservationEvent(destinationBatchId, previousDestinationAmount, currentDestinationAmount));
 	}
 
-	private void handleOfferedStageTransferToMaterialsProducerEventValidation(final ResolverContext resolverContext,
+	private void handleOfferedStageTransferToMaterialsProducerEventValidation(final DataManagerContext dataManagerContext,
 			final OfferedStageTransferToMaterialsProducerEvent offeredStageTransferToMaterialsProducerEvent) {
 		MaterialsProducerId materialsProducerId = offeredStageTransferToMaterialsProducerEvent.getMaterialsProducerId();
 		StageId stageId = offeredStageTransferToMaterialsProducerEvent.getStageId();
 
-		validateStageId(resolverContext, stageId);
-		validateMaterialsProducerId(resolverContext, materialsProducerId);
-		validateStageIsOffered(resolverContext, stageId);
-		validateStageNotOwnedByReceivingMaterialsProducer(resolverContext, stageId, materialsProducerId);
+		validateStageId(dataManagerContext, stageId);
+		validateMaterialsProducerId(dataManagerContext, materialsProducerId);
+		validateStageIsOffered(dataManagerContext, stageId);
+		validateStageNotOwnedByReceivingMaterialsProducer(dataManagerContext, stageId, materialsProducerId);
 	}
 
-	private void handleOfferedStageTransferToMaterialsProducerEventExecution(final ResolverContext resolverContext,
+	private void handleOfferedStageTransferToMaterialsProducerEventExecution(final DataManagerContext dataManagerContext,
 			final OfferedStageTransferToMaterialsProducerEvent offeredStageTransferToMaterialsProducerEvent) {
 		MaterialsProducerId materialsProducerId = offeredStageTransferToMaterialsProducerEvent.getMaterialsProducerId();
 		StageId stageId = offeredStageTransferToMaterialsProducerEvent.getStageId();
 
 		MaterialsProducerId stageProducer = materialsDataManager.getStageProducer(stageId);
 		materialsDataManager.transferOfferedStageToMaterialsProducer(materialsProducerId, stageId);
-		resolverContext.queueEventForResolution(new StageMaterialsProducerChangeObservationEvent(stageId, stageProducer, materialsProducerId));
-		resolverContext.queueEventForResolution(new StageOfferChangeObservationEvent(stageId, true, false));
+		dataManagerContext.resolveEvent(new StageMaterialsProducerChangeObservationEvent(stageId, stageProducer, materialsProducerId));
+		dataManagerContext.resolveEvent(new StageOfferChangeObservationEvent(stageId, true, false));
 
 	}
 
-	private void handleProducedResourceTransferToRegionEventValidation(final ResolverContext resolverContext, final ProducedResourceTransferToRegionEvent producedResourceTransferToRegionEvent) {
+	private void handleProducedResourceTransferToRegionEventValidation(final DataManagerContext dataManagerContext, final ProducedResourceTransferToRegionEvent producedResourceTransferToRegionEvent) {
 		long amount = producedResourceTransferToRegionEvent.getAmount();
 		MaterialsProducerId materialsProducerId = producedResourceTransferToRegionEvent.getMaterialsProducerId();
 		RegionId regionId = producedResourceTransferToRegionEvent.getRegionId();
 		ResourceId resourceId = producedResourceTransferToRegionEvent.getResourceId();
 
-		validateResourceId(resolverContext, resourceId);
-		validateRegionId(resolverContext, regionId);
-		validateMaterialsProducerId(resolverContext, materialsProducerId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
-		validateMaterialsProducerHasSufficientResource(resolverContext, materialsProducerId, resourceId, amount);
+		validateResourceId(dataManagerContext, resourceId);
+		validateRegionId(dataManagerContext, regionId);
+		validateMaterialsProducerId(dataManagerContext, materialsProducerId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
+		validateMaterialsProducerHasSufficientResource(dataManagerContext, materialsProducerId, resourceId, amount);
 		final long currentResourceLevel = resourceDataView.getRegionResourceLevel(regionId, resourceId);
-		validateResourceAdditionValue(resolverContext, currentResourceLevel, amount);
+		validateResourceAdditionValue(dataManagerContext, currentResourceLevel, amount);
 
 	}
 
-	private void handleProducedResourceTransferToRegionEventExecution(final ResolverContext resolverContext, final ProducedResourceTransferToRegionEvent producedResourceTransferToRegionEvent) {
+	private void handleProducedResourceTransferToRegionEventExecution(final DataManagerContext dataManagerContext, final ProducedResourceTransferToRegionEvent producedResourceTransferToRegionEvent) {
 		long amount = producedResourceTransferToRegionEvent.getAmount();
 		MaterialsProducerId materialsProducerId = producedResourceTransferToRegionEvent.getMaterialsProducerId();
 		RegionId regionId = producedResourceTransferToRegionEvent.getRegionId();
@@ -1004,93 +1004,93 @@ public final class MaterialsEventResolver {
 
 		long previousMaterialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 		materialsDataManager.decrementMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
-		resolverContext.queueEventForResolution(new RegionResourceAdditionEvent(resourceId, regionId, amount));
+		dataManagerContext.resolveEvent(new RegionResourceAdditionEvent(resourceId, regionId, amount));
 		long currentMaterialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-		resolverContext.queueEventForResolution(
+		dataManagerContext.resolveEvent(
 				new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
 	}
 
 	/*
 	 * Preconditions : the batch and stage must exist
 	 */
-	private void validateBatchAndStageOwnersMatch(final ResolverContext resolverContext, final BatchId batchId, final StageId stageId) {
+	private void validateBatchAndStageOwnersMatch(final DataManagerContext dataManagerContext, final BatchId batchId, final StageId stageId) {
 		final MaterialsProducerId batchProducerId = materialsDataManager.getBatchProducer(batchId);
 		final MaterialsProducerId stageProducerId = materialsDataManager.getStageProducer(stageId);
 		if (!batchProducerId.equals(stageProducerId)) {
-			resolverContext.throwContractException(MaterialsError.BATCH_STAGED_TO_DIFFERENT_OWNER);
+			dataManagerContext.throwContractException(MaterialsError.BATCH_STAGED_TO_DIFFERENT_OWNER);
 		}
 	}
 
-	private void validateBatchConstructionInfoNotNull(final ResolverContext resolverContext, final BatchConstructionInfo batchConstructionInfo) {
+	private void validateBatchConstructionInfoNotNull(final DataManagerContext dataManagerContext, final BatchConstructionInfo batchConstructionInfo) {
 		if (batchConstructionInfo == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_BATCH_CONSTRUCTION_INFO);
+			dataManagerContext.throwContractException(MaterialsError.NULL_BATCH_CONSTRUCTION_INFO);
 		}
 	}
 
 	/*
 	 * Precondition : batch must exist
 	 */
-	private void validateBatchHasSufficientMaterial(final ResolverContext resolverContext, final BatchId batchId, final double amount) {
+	private void validateBatchHasSufficientMaterial(final DataManagerContext dataManagerContext, final BatchId batchId, final double amount) {
 		if (materialsDataManager.getBatchAmount(batchId) < amount) {
-			resolverContext.throwContractException(MaterialsError.INSUFFICIENT_MATERIAL_AVAILABLE);
+			dataManagerContext.throwContractException(MaterialsError.INSUFFICIENT_MATERIAL_AVAILABLE);
 		}
 	}
 
-	private void validateBatchId(final ResolverContext resolverContext, final BatchId batchId) {
+	private void validateBatchId(final DataManagerContext dataManagerContext, final BatchId batchId) {
 
 		if (batchId == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_BATCH_ID);
+			dataManagerContext.throwContractException(MaterialsError.NULL_BATCH_ID);
 		}
 
 		if (!materialsDataManager.batchExists(batchId)) {
-			resolverContext.throwContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId);
+			dataManagerContext.throwContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId);
 		}
 	}
 
 	/*
 	 * Preconditions : batch must exist
 	 */
-	private void validateBatchIsNotOnOfferedStage(final ResolverContext resolverContext, final BatchId batchId) {
+	private void validateBatchIsNotOnOfferedStage(final DataManagerContext dataManagerContext, final BatchId batchId) {
 		final Optional<StageId> optionalStageId = materialsDataManager.getBatchStageId(batchId);
 		if (optionalStageId.isPresent()) {
 			if (materialsDataManager.isStageOffered(optionalStageId.get())) {
-				resolverContext.throwContractException(MaterialsError.OFFERED_STAGE_UNALTERABLE);
+				dataManagerContext.throwContractException(MaterialsError.OFFERED_STAGE_UNALTERABLE);
 			}
 		}
 	}
 
-	private void validateBatchIsNotStaged(final ResolverContext resolverContext, final BatchId batchId) {
+	private void validateBatchIsNotStaged(final DataManagerContext dataManagerContext, final BatchId batchId) {
 		if (materialsDataManager.getBatchStageId(batchId).isPresent()) {
-			resolverContext.throwContractException(MaterialsError.BATCH_ALREADY_STAGED);
+			dataManagerContext.throwContractException(MaterialsError.BATCH_ALREADY_STAGED);
 		}
 	}
 
-	private void validateBatchIsStaged(final ResolverContext resolverContext, final BatchId batchId) {
+	private void validateBatchIsStaged(final DataManagerContext dataManagerContext, final BatchId batchId) {
 		if (!materialsDataManager.getBatchStageId(batchId).isPresent()) {
-			resolverContext.throwContractException(MaterialsError.BATCH_NOT_STAGED);
+			dataManagerContext.throwContractException(MaterialsError.BATCH_NOT_STAGED);
 		}
 	}
 
-	private void validateBatchPropertyId(final ResolverContext resolverContext, final MaterialId materialId, final BatchPropertyId batchPropertyId) {
+	private void validateBatchPropertyId(final DataManagerContext dataManagerContext, final MaterialId materialId, final BatchPropertyId batchPropertyId) {
 		if (batchPropertyId == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_BATCH_PROPERTY_ID);
+			dataManagerContext.throwContractException(MaterialsError.NULL_BATCH_PROPERTY_ID);
 		}
 		final Set<BatchPropertyId> batchPropertyIds = materialIds.get(materialId);
 		if (!batchPropertyIds.contains(batchPropertyId)) {
-			resolverContext.throwContractException(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID);
+			dataManagerContext.throwContractException(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID);
 		}
 
 	}
 
-	private void validateBatchPropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private void validateBatchPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_BATCH_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(MaterialsError.NULL_BATCH_PROPERTY_VALUE);
 		}
 	}
 
-	private void validateDifferentBatchesForShift(final ResolverContext resolverContext, final BatchId sourceBatchId, final BatchId destinationBatchId) {
+	private void validateDifferentBatchesForShift(final DataManagerContext dataManagerContext, final BatchId sourceBatchId, final BatchId destinationBatchId) {
 		if (sourceBatchId.equals(destinationBatchId)) {
-			resolverContext.throwContractException(MaterialsError.REFLEXIVE_BATCH_SHIFT);
+			dataManagerContext.throwContractException(MaterialsError.REFLEXIVE_BATCH_SHIFT);
 		}
 
 	}
@@ -1106,26 +1106,26 @@ public final class MaterialsEventResolver {
 	 * <li>{@link SimulationErrorType#UNKNOWN_MATERIAL_ID} if the material id
 	 * does not correspond to a known material
 	 */
-	private void validateMaterialId(final ResolverContext resolverContext, final MaterialId materialId) {
+	private void validateMaterialId(final DataManagerContext dataManagerContext, final MaterialId materialId) {
 		if (materialId == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_MATERIAL_ID);
+			dataManagerContext.throwContractException(MaterialsError.NULL_MATERIAL_ID);
 		}
 
 		if (!materialIds.containsKey(materialId)) {
-			resolverContext.throwContractException(MaterialsError.UNKNOWN_MATERIAL_ID, materialId);
+			dataManagerContext.throwContractException(MaterialsError.UNKNOWN_MATERIAL_ID, materialId);
 		}
 	}
 
-	private void validateMaterialProducerPropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private void validateMaterialProducerPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_VALUE);
 		}
 	}
 
 	/*
 	 * Preconditions: The batches must exist
 	 */
-	private void validateMaterialsMatchForShift(final ResolverContext resolverContext, final BatchId sourceBatchId, final BatchId destinationBatchId) {
+	private void validateMaterialsMatchForShift(final DataManagerContext dataManagerContext, final BatchId sourceBatchId, final BatchId destinationBatchId) {
 		final MaterialId sourceMaterialId = materialsDataManager.getBatchMaterial(sourceBatchId);
 		final MaterialId destinationMaterialId = materialsDataManager.getBatchMaterial(destinationBatchId);
 
@@ -1139,10 +1139,10 @@ public final class MaterialsEventResolver {
 	/*
 	 * Preconditions : the resource and materials producer must exist
 	 */
-	private void validateMaterialsProducerHasSufficientResource(final ResolverContext resolverContext, final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
+	private void validateMaterialsProducerHasSufficientResource(final DataManagerContext dataManagerContext, final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
 		final long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 		if (materialsProducerResourceLevel < amount) {
-			resolverContext.throwContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
+			dataManagerContext.throwContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
 		}
 	}
 
@@ -1157,47 +1157,47 @@ public final class MaterialsEventResolver {
 	 * <li>{@link SimulationErrorType#UNKNOWN_MATERIALS_PRODUCER_ID} if the
 	 * materials Producer id does not correspond to a known material producer
 	 */
-	private void validateMaterialsProducerId(final ResolverContext resolverContext, final MaterialsProducerId materialsProducerId) {
+	private void validateMaterialsProducerId(final DataManagerContext dataManagerContext, final MaterialsProducerId materialsProducerId) {
 		if (materialsProducerId == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
+			dataManagerContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
 
 		if (!materialsProducerIds.contains(materialsProducerId)) {
-			resolverContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, materialsProducerId);
+			dataManagerContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, materialsProducerId);
 		}
 	}
 
-	private void validateMaterialsProducerPropertyId(final ResolverContext resolverContext, final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	private void validateMaterialsProducerPropertyId(final DataManagerContext dataManagerContext, final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		if (materialsProducerPropertyId == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
+			dataManagerContext.throwContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
 		}
 		if (!materialsProducerPropertyIds.contains(materialsProducerPropertyId)) {
-			resolverContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, materialsProducerPropertyId);
+			dataManagerContext.throwContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, materialsProducerPropertyId);
 		}
 	}
 
-	private void validateNonnegativeResourceAmount(final ResolverContext resolverContext, final long amount) {
+	private void validateNonnegativeResourceAmount(final DataManagerContext dataManagerContext, final long amount) {
 		if (amount < 0) {
-			resolverContext.throwContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT);
+			dataManagerContext.throwContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT);
 		}
 	}
 
 	/*
 	 * Preconditions : the batches must exist
 	 */
-	private void validateProducersMatchForShift(final ResolverContext resolverContext, final BatchId sourceBatchId, final BatchId destinationBatchId) {
+	private void validateProducersMatchForShift(final DataManagerContext dataManagerContext, final BatchId sourceBatchId, final BatchId destinationBatchId) {
 		final MaterialsProducerId sourceMaterialsProducerId = materialsDataManager.getBatchProducer(sourceBatchId);
 		final MaterialsProducerId destinationMaterialsProducerId = materialsDataManager.getBatchProducer(destinationBatchId);
 
 		if (!sourceMaterialsProducerId.equals(destinationMaterialsProducerId)) {
-			resolverContext.throwContractException(MaterialsError.BATCH_SHIFT_WITH_MULTIPLE_OWNERS);
+			dataManagerContext.throwContractException(MaterialsError.BATCH_SHIFT_WITH_MULTIPLE_OWNERS);
 		}
 
 	}
 
-	private void validatePropertyMutability(final ResolverContext resolverContext, final PropertyDefinition propertyDefinition) {
+	private void validatePropertyMutability(final DataManagerContext dataManagerContext, final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
-			resolverContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
+			dataManagerContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
 		}
 	}
 
@@ -1211,22 +1211,22 @@ public final class MaterialsEventResolver {
 	 * <li>{@link SimulationErrorType#UNKNOWN_REGION_ID} if the region id does
 	 * not correspond to a known region
 	 */
-	private void validateRegionId(final ResolverContext resolverContext, final RegionId regionId) {
+	private void validateRegionId(final DataManagerContext dataManagerContext, final RegionId regionId) {
 
 		if (regionId == null) {
-			resolverContext.throwContractException(RegionError.NULL_REGION_ID);
+			dataManagerContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionIds.contains(regionId)) {
-			resolverContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			dataManagerContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 
-	private void validateResourceAdditionValue(final ResolverContext resolverContext, final long currentResourceLevel, final long amount) {
+	private void validateResourceAdditionValue(final DataManagerContext dataManagerContext, final long currentResourceLevel, final long amount) {
 		try {
 			Math.addExact(currentResourceLevel, amount);
 		} catch (final ArithmeticException e) {
-			resolverContext.throwContractException(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION);
+			dataManagerContext.throwContractException(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION);
 		}
 	}
 
@@ -1241,12 +1241,12 @@ public final class MaterialsEventResolver {
 	 * <li>{@link SimulationErrorType#UNKNOWN_RESOURCE_ID} if the resource id
 	 * does not correspond to a known resource
 	 */
-	private void validateResourceId(final ResolverContext resolverContext, final ResourceId resourceId) {
+	private void validateResourceId(final DataManagerContext dataManagerContext, final ResourceId resourceId) {
 		if (resourceId == null) {
-			resolverContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			dataManagerContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
 		if (!resourceIds.contains(resourceId)) {
-			resolverContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
+			dataManagerContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
 
@@ -1260,142 +1260,142 @@ public final class MaterialsEventResolver {
 	 * <li>{@link SimulationErrorType#UNKNOWN_STAGE_ID} if the stage id does not
 	 * correspond to a known stage
 	 */
-	private void validateStageId(final ResolverContext resolverContext, final StageId stageId) {
+	private void validateStageId(final DataManagerContext dataManagerContext, final StageId stageId) {
 		if (stageId == null) {
-			resolverContext.throwContractException(MaterialsError.NULL_STAGE_ID);
+			dataManagerContext.throwContractException(MaterialsError.NULL_STAGE_ID);
 		}
 
 		if (!materialsDataManager.stageExists(stageId)) {
-			resolverContext.throwContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
+			dataManagerContext.throwContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
 		}
 	}
 
-	private void validateNonnegativeFiniteMaterialAmount(final ResolverContext resolverContext, final double amount) {
+	private void validateNonnegativeFiniteMaterialAmount(final DataManagerContext dataManagerContext, final double amount) {
 		if (!Double.isFinite(amount)) {
-			resolverContext.throwContractException(MaterialsError.NON_FINITE_MATERIAL_AMOUNT);
+			dataManagerContext.throwContractException(MaterialsError.NON_FINITE_MATERIAL_AMOUNT);
 		}
 		if (amount < 0) {
-			resolverContext.throwContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
+			dataManagerContext.throwContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
 		}
 	}
 
-	private void validateStageIsNotOffered(final ResolverContext resolverContext, final StageId stageId) {
+	private void validateStageIsNotOffered(final DataManagerContext dataManagerContext, final StageId stageId) {
 		if (materialsDataManager.isStageOffered(stageId)) {
-			resolverContext.throwContractException(MaterialsError.OFFERED_STAGE_UNALTERABLE);
+			dataManagerContext.throwContractException(MaterialsError.OFFERED_STAGE_UNALTERABLE);
 		}
 	}
 
-	private void validateStageIsOffered(final ResolverContext resolverContext, final StageId stageId) {
+	private void validateStageIsOffered(final DataManagerContext dataManagerContext, final StageId stageId) {
 		if (!materialsDataManager.isStageOffered(stageId)) {
-			resolverContext.throwContractException(MaterialsError.UNOFFERED_STAGE_NOT_TRANSFERABLE);
+			dataManagerContext.throwContractException(MaterialsError.UNOFFERED_STAGE_NOT_TRANSFERABLE);
 		}
 	}
 
 	/*
 	 * Preconditions : the stage and producer must exist
 	 */
-	private void validateStageNotOwnedByReceivingMaterialsProducer(final ResolverContext resolverContext, final StageId stageId, final MaterialsProducerId materialsProducerId) {
+	private void validateStageNotOwnedByReceivingMaterialsProducer(final DataManagerContext dataManagerContext, final StageId stageId, final MaterialsProducerId materialsProducerId) {
 		final MaterialsProducerId stageProducer = materialsDataManager.getStageProducer(stageId);
 		if (materialsProducerId.equals(stageProducer)) {
-			resolverContext.throwContractException(MaterialsError.REFLEXIVE_STAGE_TRANSFER);
+			dataManagerContext.throwContractException(MaterialsError.REFLEXIVE_STAGE_TRANSFER);
 		}
 	}
 
-	private void validateValueCompatibility(final ResolverContext resolverContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final DataManagerContext dataManagerContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			resolverContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
-	private void handleBatchRemovalRequestEventExecution(final ResolverContext resolverContext, final BatchRemovalRequestEvent batchRemovalRequestEvent) {
+	private void handleBatchRemovalRequestEventExecution(final DataManagerContext dataManagerContext, final BatchRemovalRequestEvent batchRemovalRequestEvent) {
 		BatchId batchId = batchRemovalRequestEvent.getBatchId();
-		resolverContext.queueEventForResolution(new BatchImminentRemovalObservationEvent(batchId));
-		resolverContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), resolverContext.getTime());
+		dataManagerContext.resolveEvent(new BatchImminentRemovalObservationEvent(batchId));
+		dataManagerContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), dataManagerContext.getTime());
 	}
 
-	private void handleBatchRemovalRequestEventValidation(final ResolverContext resolverContext, final BatchRemovalRequestEvent batchRemovalRequestEvent) {
+	private void handleBatchRemovalRequestEventValidation(final DataManagerContext dataManagerContext, final BatchRemovalRequestEvent batchRemovalRequestEvent) {
 		BatchId batchId = batchRemovalRequestEvent.getBatchId();
-		validateBatchId(resolverContext, batchId);
-		validateBatchIsNotOnOfferedStage(resolverContext, batchId);
+		validateBatchId(dataManagerContext, batchId);
+		validateBatchIsNotOnOfferedStage(dataManagerContext, batchId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getBatchProducer(batchId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
 	}
 
-	private void handleStageRemovalRequestEventValidation(final ResolverContext resolverContext, final StageRemovalRequestEvent stageRemovalRequestEvent) {
+	private void handleStageRemovalRequestEventValidation(final DataManagerContext dataManagerContext, final StageRemovalRequestEvent stageRemovalRequestEvent) {
 		StageId stageId = stageRemovalRequestEvent.getStageId();
 
-		validateStageId(resolverContext, stageId);
-		validateStageIsNotOffered(resolverContext, stageId);
+		validateStageId(dataManagerContext, stageId);
+		validateStageIsNotOffered(dataManagerContext, stageId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
 	}
 
-	private void handleStageRemovalRequestEventExecution(final ResolverContext resolverContext, final StageRemovalRequestEvent stageRemovalRequestEvent) {
+	private void handleStageRemovalRequestEventExecution(final DataManagerContext dataManagerContext, final StageRemovalRequestEvent stageRemovalRequestEvent) {
 		StageId stageId = stageRemovalRequestEvent.getStageId();
 		boolean destroyBatches = stageRemovalRequestEvent.isDestroyBatches();
 
 		List<BatchId> stageBatches = materialsDataManager.getStageBatches(stageId);
 		if (destroyBatches) {
 			for (BatchId batchId : stageBatches) {
-				resolverContext.queueEventForResolution(new BatchImminentRemovalObservationEvent(batchId));
-				resolverContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), resolverContext.getTime());
+				dataManagerContext.resolveEvent(new BatchImminentRemovalObservationEvent(batchId));
+				dataManagerContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), dataManagerContext.getTime());
 			}
 		} else {
 			for (BatchId batchId : stageBatches) {
 				materialsDataManager.moveBatchToInventory(batchId);
-				resolverContext.queueEventForResolution(new StageMembershipRemovalObservationEvent(batchId, stageId));
+				dataManagerContext.resolveEvent(new StageMembershipRemovalObservationEvent(batchId, stageId));
 			}
 		}
-		resolverContext.queueEventForResolution(new StageImminentRemovalObservationEvent(stageId));
-		resolverContext.addPlan((context) -> materialsDataManager.destroyStage(stageId), resolverContext.getTime());
+		dataManagerContext.resolveEvent(new StageImminentRemovalObservationEvent(stageId));
+		dataManagerContext.addPlan((context) -> materialsDataManager.destroyStage(stageId), dataManagerContext.getTime());
 	}
 
-	private void handleStageToBatchConversionEventValidation(final ResolverContext resolverContext, final StageToBatchConversionEvent stageToBatchConversionEvent) {
+	private void handleStageToBatchConversionEventValidation(final DataManagerContext dataManagerContext, final StageToBatchConversionEvent stageToBatchConversionEvent) {
 		double amount = stageToBatchConversionEvent.getAmount();
 		MaterialId materialId = stageToBatchConversionEvent.getMaterialId();
 		StageId stageId = stageToBatchConversionEvent.getStageId();
 
-		validateMaterialId(resolverContext, materialId);
-		validateStageId(resolverContext, stageId);
+		validateMaterialId(dataManagerContext, materialId);
+		validateStageId(dataManagerContext, stageId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
-		validateStageIsNotOffered(resolverContext, stageId);
-		validateNonnegativeFiniteMaterialAmount(resolverContext, amount);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
+		validateStageIsNotOffered(dataManagerContext, stageId);
+		validateNonnegativeFiniteMaterialAmount(dataManagerContext, amount);
 	}
 
-	private BatchId handleStageToBatchConversionEventExecution(final ResolverContext resolverContext, final StageToBatchConversionEvent stageToBatchConversionEvent) {
+	private BatchId handleStageToBatchConversionEventExecution(final DataManagerContext dataManagerContext, final StageToBatchConversionEvent stageToBatchConversionEvent) {
 		double amount = stageToBatchConversionEvent.getAmount();
 		MaterialId materialId = stageToBatchConversionEvent.getMaterialId();
 		StageId stageId = stageToBatchConversionEvent.getStageId();
 
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
 		for (BatchId batchId : materialsDataManager.getStageBatches(stageId)) {
-			resolverContext.queueEventForResolution(new BatchImminentRemovalObservationEvent(batchId));
-			resolverContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), resolverContext.getTime());
+			dataManagerContext.resolveEvent(new BatchImminentRemovalObservationEvent(batchId));
+			dataManagerContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), dataManagerContext.getTime());
 		}
 		BatchId batchId = materialsDataManager.createBatch(materialsProducerId, materialId, amount);
-		resolverContext.queueEventForResolution(new BatchCreationObservationEvent(batchId));
-		resolverContext.queueEventForResolution(new StageImminentRemovalObservationEvent(stageId));
-		resolverContext.addPlan((context) -> materialsDataManager.destroyStage(stageId), resolverContext.getTime());
+		dataManagerContext.resolveEvent(new BatchCreationObservationEvent(batchId));
+		dataManagerContext.resolveEvent(new StageImminentRemovalObservationEvent(stageId));
+		dataManagerContext.addPlan((context) -> materialsDataManager.destroyStage(stageId), dataManagerContext.getTime());
 		return batchId;
 	}
 
-	private void handleStageToResourceConversionEventValidation(final ResolverContext resolverContext, final StageToResourceConversionEvent stageToResourceConversionEvent) {
+	private void handleStageToResourceConversionEventValidation(final DataManagerContext dataManagerContext, final StageToResourceConversionEvent stageToResourceConversionEvent) {
 		long amount = stageToResourceConversionEvent.getAmount();
 		ResourceId resourceId = stageToResourceConversionEvent.getResourceId();
 		StageId stageId = stageToResourceConversionEvent.getStageId();
-		validateResourceId(resolverContext, resourceId);
-		validateStageId(resolverContext, stageId);
-		validateStageIsNotOffered(resolverContext, stageId);
+		validateResourceId(dataManagerContext, resourceId);
+		validateStageId(dataManagerContext, stageId);
+		validateStageIsNotOffered(dataManagerContext, stageId);
 		final MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
-		validateCurrentAgent(resolverContext, materialsProducerId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
+		validateCurrentAgent(dataManagerContext, materialsProducerId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
 		long currentResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-		validateResourceAdditionValue(resolverContext, currentResourceLevel, amount);
+		validateResourceAdditionValue(dataManagerContext, currentResourceLevel, amount);
 	}
 
-	private void handleStageToResourceConversionEventExecution(final ResolverContext resolverContext, final StageToResourceConversionEvent stageToResourceConversionEvent) {
+	private void handleStageToResourceConversionEventExecution(final DataManagerContext dataManagerContext, final StageToResourceConversionEvent stageToResourceConversionEvent) {
 		long amount = stageToResourceConversionEvent.getAmount();
 		ResourceId resourceId = stageToResourceConversionEvent.getResourceId();
 		StageId stageId = stageToResourceConversionEvent.getStageId();
@@ -1404,12 +1404,12 @@ public final class MaterialsEventResolver {
 		materialsDataManager.incrementMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
 		long currentResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 		for (BatchId batchId : materialsDataManager.getStageBatches(stageId)) {
-			resolverContext.queueEventForResolution(new BatchImminentRemovalObservationEvent(batchId));
-			resolverContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), resolverContext.getTime());
+			dataManagerContext.resolveEvent(new BatchImminentRemovalObservationEvent(batchId));
+			dataManagerContext.addPlan((context) -> materialsDataManager.destroyBatch(batchId), dataManagerContext.getTime());
 		}
-		resolverContext.queueEventForResolution(new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId, previousResourceLevel, currentResourceLevel));
-		resolverContext.queueEventForResolution(new StageImminentRemovalObservationEvent(stageId));
-		resolverContext.addPlan((context) -> materialsDataManager.destroyStage(stageId), resolverContext.getTime());
+		dataManagerContext.resolveEvent(new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId, previousResourceLevel, currentResourceLevel));
+		dataManagerContext.resolveEvent(new StageImminentRemovalObservationEvent(stageId));
+		dataManagerContext.addPlan((context) -> materialsDataManager.destroyStage(stageId), dataManagerContext.getTime());
 	}
 
 }

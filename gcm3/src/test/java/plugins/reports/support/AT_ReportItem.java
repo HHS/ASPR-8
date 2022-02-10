@@ -12,8 +12,8 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
+import plugins.reports.ReportId;
 import util.ContractException;
 import util.SeedProvider;
 import util.annotations.UnitTest;

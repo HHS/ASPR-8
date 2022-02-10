@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.events.mutation.PopulationGrowthProjectionEvent;
@@ -332,20 +332,20 @@ public final class ResourceEventResolver {
 
 	private Set<RegionId> regionIds;
 
-	private void handleRegionResourceAdditionEventValidation(final ResolverContext resolverContext, final RegionResourceAdditionEvent regionResourceAdditionEvent) {
+	private void handleRegionResourceAdditionEventValidation(final DataManagerContext dataManagerContext, final RegionResourceAdditionEvent regionResourceAdditionEvent) {
 
 		final long amount = regionResourceAdditionEvent.getAmount();
 		final RegionId regionId = regionResourceAdditionEvent.getRegionId();
 		final ResourceId resourceId = regionResourceAdditionEvent.getResourceId();
-		validateRegionId(resolverContext, regionId);
-		validateResourceId(resolverContext, resourceId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
+		validateRegionId(dataManagerContext, regionId);
+		validateResourceId(dataManagerContext, resourceId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
 		final long previousResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
-		validateResourceAdditionValue(resolverContext, previousResourceLevel, amount);
+		validateResourceAdditionValue(dataManagerContext, previousResourceLevel, amount);
 
 	}
 
-	private void handleRegionResourceAdditionEventExecution(final ResolverContext resolverContext, final RegionResourceAdditionEvent regionResourceAdditionEvent) {
+	private void handleRegionResourceAdditionEventExecution(final DataManagerContext dataManagerContext, final RegionResourceAdditionEvent regionResourceAdditionEvent) {
 
 		final long amount = regionResourceAdditionEvent.getAmount();
 		final RegionId regionId = regionResourceAdditionEvent.getRegionId();
@@ -355,7 +355,7 @@ public final class ResourceEventResolver {
 
 		resourceDataManager.incrementRegionResourceLevel(regionId, resourceId, amount);
 		currentResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
-		resolverContext.queueEventForResolution(new RegionResourceChangeObservationEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+		dataManagerContext.resolveEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 
 	}
 
@@ -388,58 +388,58 @@ public final class ResourceEventResolver {
 	 * 
 	 * </ul>
 	 */
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
-		resolverContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
+		dataManagerContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(InterRegionalResourceTransferEvent.class, this::handleInterRegionalResourceTransferEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(InterRegionalResourceTransferEvent.class, this::handleInterRegionalResourceTransferEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(InterRegionalResourceTransferEvent.class, this::handleInterRegionalResourceTransferEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(InterRegionalResourceTransferEvent.class, this::handleInterRegionalResourceTransferEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonResourceRemovalEvent.class, this::handlePersonResourceRemovalEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonResourceRemovalEvent.class, this::handlePersonResourceRemovalEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonResourceRemovalEvent.class, this::handlePersonResourceRemovalEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonResourceRemovalEvent.class, this::handlePersonResourceRemovalEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(RegionResourceAdditionEvent.class, this::handleRegionResourceAdditionEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(RegionResourceAdditionEvent.class, this::handleRegionResourceAdditionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(RegionResourceAdditionEvent.class, this::handleRegionResourceAdditionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(RegionResourceAdditionEvent.class, this::handleRegionResourceAdditionEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(RegionResourceRemovalEvent.class, this::handleRegionResourceRemovalEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(RegionResourceRemovalEvent.class, this::handleRegionResourceRemovalEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(RegionResourceRemovalEvent.class, this::handleRegionResourceRemovalEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(RegionResourceRemovalEvent.class, this::handleRegionResourceRemovalEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(ResourcePropertyValueAssignmentEvent.class, this::handleResourcePropertyValueAssignmentEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(ResourcePropertyValueAssignmentEvent.class, this::handleResourcePropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(ResourcePropertyValueAssignmentEvent.class, this::handleResourcePropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(ResourcePropertyValueAssignmentEvent.class, this::handleResourcePropertyValueAssignmentEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(ResourceTransferFromPersonEvent.class, this::handleResourceTransferFromPersonEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(ResourceTransferFromPersonEvent.class, this::handleResourceTransferFromPersonEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(ResourceTransferFromPersonEvent.class, this::handleResourceTransferFromPersonEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(ResourceTransferFromPersonEvent.class, this::handleResourceTransferFromPersonEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(ResourceTransferToPersonEvent.class, this::handleResourceTransferToPersonEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(ResourceTransferToPersonEvent.class, this::handleResourceTransferToPersonEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(ResourceTransferToPersonEvent.class, this::handleResourceTransferToPersonEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(ResourceTransferToPersonEvent.class, this::handleResourceTransferToPersonEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
 
 		/*
 		 * Establish all the convenience references
 		 */
-		CompartmentLocationDataView compartmentLocationDataView = resolverContext.getDataView(CompartmentLocationDataView.class).get();
-		regionLocationDataView = resolverContext.getDataView(RegionLocationDataView.class).get();
+		CompartmentLocationDataView compartmentLocationDataView = dataManagerContext.getDataView(CompartmentLocationDataView.class).get();
+		regionLocationDataView = dataManagerContext.getDataView(RegionLocationDataView.class).get();
 
-		resolverContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForCompartmentAndResource(compartmentLocationDataView));
-		resolverContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForRegionAndResource(regionLocationDataView));
-		resolverContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForPersonAndResource());
-		resolverContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForResource());
+		dataManagerContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForCompartmentAndResource(compartmentLocationDataView));
+		dataManagerContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForRegionAndResource(regionLocationDataView));
+		dataManagerContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForPersonAndResource());
+		dataManagerContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForResource());
 
-		resolverContext.addEventLabeler(ResourcePropertyChangeObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(ResourcePropertyChangeObservationEvent.getEventLabeler());
 
-		resolverContext.addEventLabeler(RegionResourceChangeObservationEvent.getEventLabelerForRegionAndResource());
+		dataManagerContext.addEventLabeler(RegionResourceChangeObservationEvent.getEventLabelerForRegionAndResource());
 
-		RegionDataView regionDataView = resolverContext.getDataView(RegionDataView.class).get();
+		RegionDataView regionDataView = dataManagerContext.getDataView(RegionDataView.class).get();
 
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
 
 		regionIds = regionDataView.getRegionIds();
 
@@ -456,7 +456,7 @@ public final class ResourceEventResolver {
 		 * material producers is covered here but do not correspond to mutations
 		 * allowed to components.
 		 */
-		resourceDataManager = new ResourceDataManager(resolverContext.getSafeContext());
+		resourceDataManager = new ResourceDataManager(dataManagerContext.getSafeContext());
 
 		for (ResourceId resourceId : resourceInitialData.getResourceIds()) {
 			TimeTrackingPolicy personResourceTimeTrackingPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(resourceId);
@@ -503,42 +503,42 @@ public final class ResourceEventResolver {
 			}
 		}
 
-		resolverContext.publishDataView(new ResourceDataView(resolverContext.getSafeContext(), resourceDataManager));
+		dataManagerContext.publishDataView(new ResourceDataView(dataManagerContext.getSafeContext(), resourceDataManager));
 		resourceInitialData = null;
 	}
 
-	private void handlePersonResourceRemovalEventValidation(final ResolverContext resolverContext, final PersonResourceRemovalEvent personResourceRemovalEvent) {
+	private void handlePersonResourceRemovalEventValidation(final DataManagerContext dataManagerContext, final PersonResourceRemovalEvent personResourceRemovalEvent) {
 		final long amount = personResourceRemovalEvent.getAmount();
 		final PersonId personId = personResourceRemovalEvent.getPersonId();
 		final ResourceId resourceId = personResourceRemovalEvent.getResourceId();
-		validatePersonExists(resolverContext, personId);
-		validateResourceId(resolverContext, resourceId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
-		validatePersonHasSufficientResources(resolverContext, resourceId, personId, amount);
+		validatePersonExists(dataManagerContext, personId);
+		validateResourceId(dataManagerContext, resourceId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
+		validatePersonHasSufficientResources(dataManagerContext, resourceId, personId, amount);
 	}
 
-	private void handlePersonResourceRemovalEventExecution(final ResolverContext resolverContext, final PersonResourceRemovalEvent personResourceRemovalEvent) {
+	private void handlePersonResourceRemovalEventExecution(final DataManagerContext dataManagerContext, final PersonResourceRemovalEvent personResourceRemovalEvent) {
 		final long amount = personResourceRemovalEvent.getAmount();
 		final PersonId personId = personResourceRemovalEvent.getPersonId();
 		final ResourceId resourceId = personResourceRemovalEvent.getResourceId();
 		final long oldLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
 		resourceDataManager.decrementPersonResourceLevel(resourceId, personId, amount);
 		final long newLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
-		resolverContext.queueEventForResolution(new PersonResourceChangeObservationEvent(personId, resourceId, oldLevel, newLevel));
+		dataManagerContext.resolveEvent(new PersonResourceChangeObservationEvent(personId, resourceId, oldLevel, newLevel));
 	}
 
-	private void handleRegionResourceRemovalEventValidation(final ResolverContext resolverContext, final RegionResourceRemovalEvent regionResourceRemovalEvent) {
+	private void handleRegionResourceRemovalEventValidation(final DataManagerContext dataManagerContext, final RegionResourceRemovalEvent regionResourceRemovalEvent) {
 		final RegionId regionId = regionResourceRemovalEvent.getRegionId();
 		final ResourceId resourceId = regionResourceRemovalEvent.getResourceId();
 		final long amount = regionResourceRemovalEvent.getAmount();
 
-		validateRegionId(resolverContext, regionId);
-		validateResourceId(resolverContext, resourceId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
-		validateRegionHasSufficientResources(resolverContext, resourceId, regionId, amount);
+		validateRegionId(dataManagerContext, regionId);
+		validateResourceId(dataManagerContext, resourceId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
+		validateRegionHasSufficientResources(dataManagerContext, resourceId, regionId, amount);
 	}
 
-	private void handleRegionResourceRemovalEventExecution(final ResolverContext resolverContext, final RegionResourceRemovalEvent regionResourceRemovalEvent) {
+	private void handleRegionResourceRemovalEventExecution(final DataManagerContext dataManagerContext, final RegionResourceRemovalEvent regionResourceRemovalEvent) {
 		final RegionId regionId = regionResourceRemovalEvent.getRegionId();
 		final ResourceId resourceId = regionResourceRemovalEvent.getResourceId();
 		final long amount = regionResourceRemovalEvent.getAmount();
@@ -547,53 +547,53 @@ public final class ResourceEventResolver {
 		long currentResourceLevel;
 		resourceDataManager.decrementRegionResourceLevel(regionId, resourceId, amount);
 		currentResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
-		resolverContext.queueEventForResolution(new RegionResourceChangeObservationEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+		dataManagerContext.resolveEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 	}
 
-	private void handleResourcePropertyValueAssignmentEventValidation(final ResolverContext resolverContext, final ResourcePropertyValueAssignmentEvent resourcePropertyValueAssignmentEvent) {
+	private void handleResourcePropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final ResourcePropertyValueAssignmentEvent resourcePropertyValueAssignmentEvent) {
 		final ResourceId resourceId = resourcePropertyValueAssignmentEvent.getResourceId();
 		final ResourcePropertyId resourcePropertyId = resourcePropertyValueAssignmentEvent.getResourcePropertyId();
 		final Object resourcePropertyValue = resourcePropertyValueAssignmentEvent.getResourcePropertyValue();
 
-		validateResourceId(resolverContext, resourceId);
-		validateResourcePropertyId(resolverContext, resourceId, resourcePropertyId);
-		validateResourcePropertyValueNotNull(resolverContext, resourcePropertyValue);
+		validateResourceId(dataManagerContext, resourceId);
+		validateResourcePropertyId(dataManagerContext, resourceId, resourcePropertyId);
+		validateResourcePropertyValueNotNull(dataManagerContext, resourcePropertyValue);
 		final PropertyDefinition propertyDefinition = resourceDataManager.getResourcePropertyDefinition(resourceId, resourcePropertyId);
-		validateValueCompatibility(resolverContext, resourcePropertyId, propertyDefinition, resourcePropertyValue);
-		validatePropertyMutability(resolverContext, propertyDefinition);
+		validateValueCompatibility(dataManagerContext, resourcePropertyId, propertyDefinition, resourcePropertyValue);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
 	}
 
-	private void handleResourcePropertyValueAssignmentEventExecution(final ResolverContext resolverContext, final ResourcePropertyValueAssignmentEvent resourcePropertyValueAssignmentEvent) {
+	private void handleResourcePropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final ResourcePropertyValueAssignmentEvent resourcePropertyValueAssignmentEvent) {
 		final ResourceId resourceId = resourcePropertyValueAssignmentEvent.getResourceId();
 		final ResourcePropertyId resourcePropertyId = resourcePropertyValueAssignmentEvent.getResourcePropertyId();
 		final Object resourcePropertyValue = resourcePropertyValueAssignmentEvent.getResourcePropertyValue();
 
 		final Object oldPropertyValue = resourceDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
 		resourceDataManager.setResourcePropertyValue(resourceId, resourcePropertyId, resourcePropertyValue);
-		resolverContext.queueEventForResolution(new ResourcePropertyChangeObservationEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
+		dataManagerContext.resolveEvent(new ResourcePropertyChangeObservationEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
 	}
 
-	private void handlePopulationGrowthProjectiontEventExecution(final ResolverContext resolverContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
+	private void handlePopulationGrowthProjectiontEventExecution(final DataManagerContext dataManagerContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
 		resourceDataManager.expandCapacity(populationGrowthProjectionEvent.getCount());
 	}
 
-	private void handleInterRegionalResourceTransferEventValidation(final ResolverContext resolverContext, final InterRegionalResourceTransferEvent interRegionalResourceTransferEvent) {
+	private void handleInterRegionalResourceTransferEventValidation(final DataManagerContext dataManagerContext, final InterRegionalResourceTransferEvent interRegionalResourceTransferEvent) {
 		final long amount = interRegionalResourceTransferEvent.getAmount();
 		final RegionId destinationRegionId = interRegionalResourceTransferEvent.getDestinationRegionId();
 		final ResourceId resourceId = interRegionalResourceTransferEvent.getResourceId();
 		final RegionId sourceRegionId = interRegionalResourceTransferEvent.getSourceRegionId();
 
-		validateRegionId(resolverContext, sourceRegionId);
-		validateRegionId(resolverContext, destinationRegionId);
-		validateResourceId(resolverContext, resourceId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
-		validateDifferentRegionsForResourceTransfer(resolverContext, sourceRegionId, destinationRegionId);
-		validateRegionHasSufficientResources(resolverContext, resourceId, sourceRegionId, amount);
+		validateRegionId(dataManagerContext, sourceRegionId);
+		validateRegionId(dataManagerContext, destinationRegionId);
+		validateResourceId(dataManagerContext, resourceId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
+		validateDifferentRegionsForResourceTransfer(dataManagerContext, sourceRegionId, destinationRegionId);
+		validateRegionHasSufficientResources(dataManagerContext, resourceId, sourceRegionId, amount);
 		final long regionResourceLevel = resourceDataManager.getRegionResourceLevel(destinationRegionId, resourceId);
-		validateResourceAdditionValue(resolverContext, regionResourceLevel, amount);
+		validateResourceAdditionValue(dataManagerContext, regionResourceLevel, amount);
 	}
 
-	private void handleInterRegionalResourceTransferEventExecution(final ResolverContext resolverContext, final InterRegionalResourceTransferEvent interRegionalResourceTransferEvent) {
+	private void handleInterRegionalResourceTransferEventExecution(final DataManagerContext dataManagerContext, final InterRegionalResourceTransferEvent interRegionalResourceTransferEvent) {
 		final long amount = interRegionalResourceTransferEvent.getAmount();
 		final RegionId destinationRegionId = interRegionalResourceTransferEvent.getDestinationRegionId();
 		final ResourceId resourceId = interRegionalResourceTransferEvent.getResourceId();
@@ -609,32 +609,32 @@ public final class ResourceEventResolver {
 		currentSourceRegionResourceLevel = resourceDataManager.getRegionResourceLevel(sourceRegionId, resourceId);
 		currentDestinationRegionResourceLevel = resourceDataManager.getRegionResourceLevel(destinationRegionId, resourceId);
 
-		resolverContext.queueEventForResolution(new RegionResourceChangeObservationEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
-		resolverContext.queueEventForResolution(
+		dataManagerContext.resolveEvent(new RegionResourceChangeObservationEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
+		dataManagerContext.resolveEvent(
 				new RegionResourceChangeObservationEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
 
 	}
 
-	private void handleResourceTransferFromPersonEventValidation(final ResolverContext resolverContext, final ResourceTransferFromPersonEvent resourceTransferFromPersonEvent) {
+	private void handleResourceTransferFromPersonEventValidation(final DataManagerContext dataManagerContext, final ResourceTransferFromPersonEvent resourceTransferFromPersonEvent) {
 		final long amount = resourceTransferFromPersonEvent.getAmount();
 		final PersonId personId = resourceTransferFromPersonEvent.getPersonId();
 		final ResourceId resourceId = resourceTransferFromPersonEvent.getResourceId();
 
-		validatePersonExists(resolverContext, personId);
-		validateResourceId(resolverContext, resourceId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
-		validatePersonHasSufficientResources(resolverContext, resourceId, personId, amount);
+		validatePersonExists(dataManagerContext, personId);
+		validateResourceId(dataManagerContext, resourceId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
+		validatePersonHasSufficientResources(dataManagerContext, resourceId, personId, amount);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 		final long regionResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
-		validateResourceAdditionValue(resolverContext, regionResourceLevel, amount);
+		validateResourceAdditionValue(dataManagerContext, regionResourceLevel, amount);
 	}
 
-	private void handleResourceTransferFromPersonEventExecution(final ResolverContext resolverContext, final ResourceTransferFromPersonEvent resourceTransferFromPersonEvent) {
+	private void handleResourceTransferFromPersonEventExecution(final DataManagerContext dataManagerContext, final ResourceTransferFromPersonEvent resourceTransferFromPersonEvent) {
 		final long amount = resourceTransferFromPersonEvent.getAmount();
 		final PersonId personId = resourceTransferFromPersonEvent.getPersonId();
 		final ResourceId resourceId = resourceTransferFromPersonEvent.getResourceId();
-		validateResourceId(resolverContext, resourceId);
-		validatePersonExists(resolverContext, personId);
+		validateResourceId(dataManagerContext, resourceId);
+		validatePersonExists(dataManagerContext, personId);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 		final long previousRegionResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
 		long currentRegionResourceLevel;
@@ -643,24 +643,24 @@ public final class ResourceEventResolver {
 		final long newLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
 		resourceDataManager.incrementRegionResourceLevel(regionId, resourceId, amount);
 		currentRegionResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
-		resolverContext.queueEventForResolution(new PersonResourceChangeObservationEvent(personId, resourceId, oldLevel, newLevel));
-		resolverContext.queueEventForResolution(new RegionResourceChangeObservationEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+		dataManagerContext.resolveEvent(new PersonResourceChangeObservationEvent(personId, resourceId, oldLevel, newLevel));
+		dataManagerContext.resolveEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 	}
 
-	private void handlePersonCreationObservationEventValidation(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
-		validatePersonExists(resolverContext, personCreationObservationEvent.getPersonId());
+		validatePersonExists(dataManagerContext, personCreationObservationEvent.getPersonId());
 		List<ResourceInitialization> resourceAssignments = personContructionData.getValues(ResourceInitialization.class);
 		for (final ResourceInitialization resourceAssignment : resourceAssignments) {
 			ResourceId resourceId = resourceAssignment.getResourceId();
 			Long amount = resourceAssignment.getAmount();
-			validateResourceId(resolverContext, resourceId);
-			validateNonnegativeResourceAmount(resolverContext, amount);
+			validateResourceId(dataManagerContext, resourceId);
+			validateNonnegativeResourceAmount(dataManagerContext, amount);
 		}
 
 	}
 
-	private void handlePersonCreationObservationEventExecution(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonId personId = personCreationObservationEvent.getPersonId();
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
 		List<ResourceInitialization> resourceAssignments = personContructionData.getValues(ResourceInitialization.class);
@@ -669,7 +669,7 @@ public final class ResourceEventResolver {
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEventValidation(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
 		List<PersonContructionData> personContructionDatas = bulkPersonContructionData.getPersonContructionDatas();
 		for (PersonContructionData personContructionData : personContructionDatas) {
@@ -677,14 +677,14 @@ public final class ResourceEventResolver {
 			for (final ResourceInitialization resourceAssignment : resourceAssignments) {
 				ResourceId resourceId = resourceAssignment.getResourceId();
 				Long amount = resourceAssignment.getAmount();
-				validateResourceId(resolverContext, resourceId);
-				validateNonnegativeResourceAmount(resolverContext, amount);
+				validateResourceId(dataManagerContext, resourceId);
+				validateNonnegativeResourceAmount(dataManagerContext, amount);
 			}
 		}
 
 	}
 
-	private void handleBulkPersonCreationObservationEventExecution(final ResolverContext resolverContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
 		int pId = personId.getValue();
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
@@ -700,21 +700,21 @@ public final class ResourceEventResolver {
 
 	}
 
-	private void handleResourceTransferToPersonEventValidation(final ResolverContext resolverContext, final ResourceTransferToPersonEvent resourceTransferToPersonEvent) {
+	private void handleResourceTransferToPersonEventValidation(final DataManagerContext dataManagerContext, final ResourceTransferToPersonEvent resourceTransferToPersonEvent) {
 		final PersonId personId = resourceTransferToPersonEvent.getPersonId();
 		final ResourceId resourceId = resourceTransferToPersonEvent.getResourceId();
 		final long amount = resourceTransferToPersonEvent.getAmount();
 
-		validatePersonExists(resolverContext, personId);
-		validateResourceId(resolverContext, resourceId);
-		validateNonnegativeResourceAmount(resolverContext, amount);
+		validatePersonExists(dataManagerContext, personId);
+		validateResourceId(dataManagerContext, resourceId);
+		validateNonnegativeResourceAmount(dataManagerContext, amount);
 		final RegionId regionId = regionLocationDataView.getPersonRegion(personId);
-		validateRegionHasSufficientResources(resolverContext, resourceId, regionId, amount);
+		validateRegionHasSufficientResources(dataManagerContext, resourceId, regionId, amount);
 		final long personResourceLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
-		validateResourceAdditionValue(resolverContext, personResourceLevel, amount);
+		validateResourceAdditionValue(dataManagerContext, personResourceLevel, amount);
 	}
 
-	private void handleResourceTransferToPersonEventExecution(final ResolverContext resolverContext, final ResourceTransferToPersonEvent resourceTransferToPersonEvent) {
+	private void handleResourceTransferToPersonEventExecution(final DataManagerContext dataManagerContext, final ResourceTransferToPersonEvent resourceTransferToPersonEvent) {
 		final PersonId personId = resourceTransferToPersonEvent.getPersonId();
 		final ResourceId resourceId = resourceTransferToPersonEvent.getResourceId();
 		final long amount = resourceTransferToPersonEvent.getAmount();
@@ -727,56 +727,56 @@ public final class ResourceEventResolver {
 		final long newLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
 		long currentRegionResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
 
-		resolverContext.queueEventForResolution(new RegionResourceChangeObservationEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+		dataManagerContext.resolveEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 
-		resolverContext.queueEventForResolution(new PersonResourceChangeObservationEvent(personId, resourceId, personResourceLevel, newLevel));
+		dataManagerContext.resolveEvent(new PersonResourceChangeObservationEvent(personId, resourceId, personResourceLevel, newLevel));
 
 	}
 
-	private void validateDifferentRegionsForResourceTransfer(final ResolverContext resolverContext, final RegionId sourceRegionId, final RegionId destinationRegionId) {
+	private void validateDifferentRegionsForResourceTransfer(final DataManagerContext dataManagerContext, final RegionId sourceRegionId, final RegionId destinationRegionId) {
 		if (sourceRegionId.equals(destinationRegionId)) {
-			resolverContext.throwContractException(ResourceError.REFLEXIVE_RESOURCE_TRANSFER);
+			dataManagerContext.throwContractException(ResourceError.REFLEXIVE_RESOURCE_TRANSFER);
 		}
 	}
 
-	private void validateNonnegativeResourceAmount(final ResolverContext resolverContext, final long amount) {
+	private void validateNonnegativeResourceAmount(final DataManagerContext dataManagerContext, final long amount) {
 		if (amount < 0) {
-			resolverContext.throwContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT);
+			dataManagerContext.throwContractException(ResourceError.NEGATIVE_RESOURCE_AMOUNT);
 		}
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
 	/*
 	 * Preconditions : the resource and person must exist
 	 */
-	private void validatePersonHasSufficientResources(final ResolverContext resolverContext, final ResourceId resourceId, final PersonId personId, final long amount) {
+	private void validatePersonHasSufficientResources(final DataManagerContext dataManagerContext, final ResourceId resourceId, final PersonId personId, final long amount) {
 		final long oldValue = resourceDataManager.getPersonResourceLevel(resourceId, personId);
 		if (oldValue < amount) {
-			resolverContext.throwContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
+			dataManagerContext.throwContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
 		}
 	}
 
-	private void validatePropertyMutability(final ResolverContext resolverContext, final PropertyDefinition propertyDefinition) {
+	private void validatePropertyMutability(final DataManagerContext dataManagerContext, final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
-			resolverContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
+			dataManagerContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
 		}
 	}
 
 	/*
 	 * Preconditions : the region and resource must exist
 	 */
-	private void validateRegionHasSufficientResources(final ResolverContext resolverContext, final ResourceId resourceId, final RegionId regionId, final long amount) {
+	private void validateRegionHasSufficientResources(final DataManagerContext dataManagerContext, final ResourceId resourceId, final RegionId regionId, final long amount) {
 		final long currentAmount = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
 		if (currentAmount < amount) {
-			resolverContext.throwContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
+			dataManagerContext.throwContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
 		}
 	}
 
@@ -790,22 +790,22 @@ public final class ResourceEventResolver {
 	 * <li>{@link SimulationErrorType#UNKNOWN_REGION_ID} if the region id does
 	 * not correspond to a known region
 	 */
-	private void validateRegionId(final ResolverContext resolverContext, final RegionId regionId) {
+	private void validateRegionId(final DataManagerContext dataManagerContext, final RegionId regionId) {
 
 		if (regionId == null) {
-			resolverContext.throwContractException(RegionError.NULL_REGION_ID);
+			dataManagerContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionIds.contains(regionId)) {
-			resolverContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			dataManagerContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 
-	private void validateResourceAdditionValue(final ResolverContext resolverContext, final long currentResourceLevel, final long amount) {
+	private void validateResourceAdditionValue(final DataManagerContext dataManagerContext, final long currentResourceLevel, final long amount) {
 		try {
 			Math.addExact(currentResourceLevel, amount);
 		} catch (final ArithmeticException e) {
-			resolverContext.throwContractException(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION);
+			dataManagerContext.throwContractException(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION);
 		}
 	}
 
@@ -820,52 +820,52 @@ public final class ResourceEventResolver {
 	 * <li>{@link SimulationErrorType#UNKNOWN_RESOURCE_ID} if the resource id
 	 * does not correspond to a known resource
 	 */
-	private void validateResourceId(final ResolverContext resolverContext, final ResourceId resourceId) {
+	private void validateResourceId(final DataManagerContext dataManagerContext, final ResourceId resourceId) {
 		if (resourceId == null) {
-			resolverContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			dataManagerContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
 		if (!resourceDataManager.resourceIdExists(resourceId)) {
-			resolverContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
+			dataManagerContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
 
 	/*
 	 * Assumes a valid resource id
 	 */
-	private void validateResourcePropertyId(final ResolverContext resolverContext, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	private void validateResourcePropertyId(final DataManagerContext dataManagerContext, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
-			resolverContext.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			dataManagerContext.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
 		}
 
 		final Set<ResourcePropertyId> set = resourcePropertyIdsMap.get(resourceId);
 		if (set == null) {
-			resolverContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
+			dataManagerContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
 		}
 		if (!set.contains(resourcePropertyId)) {
-			resolverContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
+			dataManagerContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
 		}
 
 	}
 
-	private void validateResourcePropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private void validateResourcePropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(ResourceError.NULL_RESOURCE_PROPERTY_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(final ResolverContext resolverContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final DataManagerContext dataManagerContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			resolverContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
-	private void handlePersonImminentRemovalObservationEventValidation(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(resolverContext, personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalObservationEventValidation(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		validatePersonExists(dataManagerContext, personImminentRemovalObservationEvent.getPersonId());
 	}
 
-	private void handlePersonImminentRemovalObservationEventExecution(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		resolverContext.addPlan((context) -> resourceDataManager.dropPerson(personImminentRemovalObservationEvent.getPersonId()), resolverContext.getTime());
+	private void handlePersonImminentRemovalObservationEventExecution(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		dataManagerContext.addPlan((context) -> resourceDataManager.dropPerson(personImminentRemovalObservationEvent.getPersonId()), dataManagerContext.getTime());
 	}
 
 }

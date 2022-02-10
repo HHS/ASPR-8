@@ -24,9 +24,9 @@ import nucleus.ResolverId;
 import nucleus.SimpleResolverId;
 import nucleus.testsupport.actionplugin.ActionAgent;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.initialdata.CompartmentInitialData;
@@ -77,7 +77,7 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
 import util.MultiKey;
@@ -109,7 +109,7 @@ public final class AT_ResourceEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testInterRegionalResourceTransferEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -130,8 +130,8 @@ public final class AT_ResourceEventResolver {
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 
 			// add resources to all the regions
@@ -256,15 +256,15 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		ResourcesActionSupport.testConsumers(0, 7976375269741360076L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		ResourcesActionSupport.testConsumers(0, 7976375269741360076L, actionPluginInitializer);
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonResourceRemovalEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
@@ -300,8 +300,8 @@ public final class AT_ResourceEventResolver {
 		// Have the agent remove resources from people
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 
@@ -385,9 +385,9 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		ResourcesActionSupport.testConsumers(50, 6476360369877622233L, actionPlugin);
+		ResourcesActionSupport.testConsumers(50, 6476360369877622233L, actionPluginInitializer);
 
 	}
 
@@ -395,7 +395,7 @@ public final class AT_ResourceEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testRegionResourceAdditionEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
@@ -416,8 +416,8 @@ public final class AT_ResourceEventResolver {
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 
 			// add random amounts of resources to regions
@@ -487,9 +487,9 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		ResourcesActionSupport.testConsumers(0, 2273638431976256278L, actionPlugin);
+		ResourcesActionSupport.testConsumers(0, 2273638431976256278L, actionPluginInitializer);
 
 	}
 
@@ -497,7 +497,7 @@ public final class AT_ResourceEventResolver {
 	@UnitTestMethod(name = "init", args = {})
 	public void testRegionResourceRemovalEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
@@ -534,8 +534,8 @@ public final class AT_ResourceEventResolver {
 		// Have the agent remove resources from regions
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 
 			// remove random amounts of resources from regions
@@ -604,15 +604,15 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		ResourcesActionSupport.testConsumers(0, 3784957617927969790L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		ResourcesActionSupport.testConsumers(0, 3784957617927969790L, actionPluginInitializer);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testResourcePropertyValueAssignmentEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
@@ -635,8 +635,8 @@ public final class AT_ResourceEventResolver {
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
@@ -707,15 +707,15 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		ResourcesActionSupport.testConsumers(0, 8240654442453940072L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		ResourcesActionSupport.testConsumers(0, 8240654442453940072L, actionPluginInitializer);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testResourceTransferFromPersonEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgent("observer");
@@ -763,8 +763,8 @@ public final class AT_ResourceEventResolver {
 		// Have an agent return resources from people back to their regions
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
@@ -874,16 +874,16 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		ResourcesActionSupport.testConsumers(30, 3166011813977431605L, actionPlugin);
+		ResourcesActionSupport.testConsumers(30, 3166011813977431605L, actionPluginInitializer);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testResourceTransferToPersonEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgent("observer");
@@ -930,8 +930,8 @@ public final class AT_ResourceEventResolver {
 		// Have an agent transfer the resources to people
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
@@ -1042,9 +1042,9 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
-		ResourcesActionSupport.testConsumers(30, 3808042869854225459L, actionPlugin);
+		ResourcesActionSupport.testConsumers(30, 3808042869854225459L, actionPluginInitializer);
 
 	}
 
@@ -1056,8 +1056,8 @@ public final class AT_ResourceEventResolver {
 		ResourcesActionSupport.testConsumer(0, 5441878385875188805L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create 30 people, testing each in turn for their resource levels
 			for (int i = 0; i < 30; i++) {
@@ -1146,8 +1146,8 @@ public final class AT_ResourceEventResolver {
 		ResourcesActionSupport.testConsumer(0, 1373835434254978465L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// prepare builders
 			BulkPersonContructionData.Builder bulkBuilder = BulkPersonContructionData.builder();
@@ -1273,7 +1273,7 @@ public final class AT_ResourceEventResolver {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testPersonImminentRemovalObservationEvent() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create a resolver that will demonstrate that the
@@ -1284,7 +1284,7 @@ public final class AT_ResourceEventResolver {
 		 */
 		ResolverId resolverId = new SimpleResolverId("test resolver");
 		pluginBuilder.addResolver(resolverId);
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, (c2, e) -> {
 				ResourceDataView resourceDataView = c2.getDataView(ResourceDataView.class).get();
 				long personResourceLevel = resourceDataView.getPersonResourceLevel(TestResourceId.RESOURCE_1, e.getPersonId());
@@ -1330,8 +1330,8 @@ public final class AT_ResourceEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		ResourcesActionSupport.testConsumers(0, 5231820238498733928L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		ResourcesActionSupport.testConsumers(0, 5231820238498733928L, actionPluginInitializer);
 
 	}
 
@@ -1433,7 +1433,7 @@ public final class AT_ResourceEventResolver {
 		// add the stochastics plugin
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(randomGenerator.nextLong()).build()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
@@ -1491,16 +1491,16 @@ public final class AT_ResourceEventResolver {
 			
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// add the action plugin
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
@@ -65,14 +65,14 @@ public final class MaterialsDataManager {
 	}
 
 	private static class ComponentResourceRecord {
-		private final Context context;
+		private final SimulationContext simulationContext;
 
 		private long amount;
 
 		private double assignmentTime;
 
-		public ComponentResourceRecord(final Context context) {
-			this.context = context;
+		public ComponentResourceRecord(final SimulationContext simulationContext) {
+			this.simulationContext = simulationContext;
 		}
 
 		public void decrementAmount(final long amount) {
@@ -84,7 +84,7 @@ public final class MaterialsDataManager {
 				throw new RuntimeException("cannot decrement to a negative level");
 			}
 			this.amount = Math.subtractExact(this.amount, amount);
-			assignmentTime = context.getTime();
+			assignmentTime = simulationContext.getTime();
 		}
 
 		public long getAmount() {
@@ -100,7 +100,7 @@ public final class MaterialsDataManager {
 				throw new RuntimeException("negative amount");
 			}
 			this.amount = Math.addExact(this.amount, amount);
-			assignmentTime = context.getTime();
+			assignmentTime = simulationContext.getTime();
 		}
 
 	}
@@ -194,7 +194,7 @@ public final class MaterialsDataManager {
 
 	private final Set<ResourceId> resourceIds = new LinkedHashSet<>();
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
 	 * Constructs the data manager.
@@ -203,12 +203,12 @@ public final class MaterialsDataManager {
 	 *        <li>{@linkplain NucleusError#NULL_CONTEXT} if the context is
 	 *        null</li>
 	 */
-	public MaterialsDataManager(final Context context) {
-		if (context == null) {
+	public MaterialsDataManager(final SimulationContext simulationContext) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 
-		this.context = context;
+		this.simulationContext = simulationContext;
 
 	}
 
@@ -260,7 +260,7 @@ public final class MaterialsDataManager {
 		final MaterialsProducerRecord materialsProducerRecord = new MaterialsProducerRecord();
 		materialsProducerRecord.materialProducerId = materialsProducerId;
 		for (final ResourceId resourceId : resourceIds) {
-			materialsProducerRecord.materialProducerResources.put(resourceId, new ComponentResourceRecord(context));
+			materialsProducerRecord.materialProducerResources.put(resourceId, new ComponentResourceRecord(simulationContext));
 		}
 		materialsProducerMap.put(materialsProducerId, materialsProducerRecord);
 		materialsProducerPropertyMap.put(materialsProducerId, new LinkedHashMap<>());
@@ -335,7 +335,7 @@ public final class MaterialsDataManager {
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 		final BatchRecord batchRecord = new BatchRecord(nextBatchRecordId++);
 		batchRecord.amount = amount;
-		batchRecord.creationTime = context.getTime();
+		batchRecord.creationTime = simulationContext.getTime();
 		batchRecord.materialId = materialId;
 		batchRecord.materialsProducerRecord = materialsProducerRecord;
 		materialsProducerRecord.inventory.add(batchRecord);
@@ -346,7 +346,7 @@ public final class MaterialsDataManager {
 		final Set<BatchPropertyId> batchPropertyIds = batchPropertyIdMap.get(materialId);
 		for (final BatchPropertyId batchPropertyId : batchPropertyIds) {
 			final PropertyDefinition propertyDefinition = getBatchPropertyDefinition(materialId, batchPropertyId);
-			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(context);
+			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(simulationContext);
 			propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
 			map.put(batchPropertyId, propertyValueRecord);
 		}
@@ -472,7 +472,7 @@ public final class MaterialsDataManager {
 		materialsProducerPropertyIds.add(materialsProducerPropertyId);
 		for (final MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {
 			final Map<MaterialsProducerPropertyId, PropertyValueRecord> map = materialsProducerPropertyMap.get(materialsProducerId);
-			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(context);
+			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(simulationContext);
 			map.put(materialsProducerPropertyId, propertyValueRecord);
 		}
 
@@ -1046,7 +1046,7 @@ public final class MaterialsDataManager {
 		final Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
 		PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
 		if (propertyValueRecord == null) {
-			propertyValueRecord = new PropertyValueRecord(context);
+			propertyValueRecord = new PropertyValueRecord(simulationContext);
 			map.put(batchPropertyId, propertyValueRecord);
 		}
 		propertyValueRecord.setPropertyValue(batchPropertyValue);

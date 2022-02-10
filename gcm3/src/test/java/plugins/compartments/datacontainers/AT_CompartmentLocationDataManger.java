@@ -11,8 +11,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
-import nucleus.testsupport.MockContext;
+import nucleus.SimulationContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.compartments.initialdata.CompartmentInitialData;
 import plugins.compartments.support.CompartmentId;
 import plugins.compartments.testsupport.TestCompartmentId;
@@ -29,14 +29,14 @@ public class AT_CompartmentLocationDataManger {
 	
 	
 	@Test
-	@UnitTestConstructor(args = { Context.class, CompartmentInitialData.class })
+	@UnitTestConstructor(args = { SimulationContext.class, CompartmentInitialData.class })
 	public void testConstructor() {
 
 		// precondition: the context cannot be null
 		assertThrows(RuntimeException.class, () -> new CompartmentLocationDataManager(null, CompartmentInitialData.builder().build()));
 
 		// precondition: the compartment initial data cannot be null
-		assertThrows(RuntimeException.class, () -> new CompartmentLocationDataManager(MockContext.builder().build(), null));
+		assertThrows(RuntimeException.class, () -> new CompartmentLocationDataManager(MockSimulationContext.builder().build(), null));
 
 	}
 
@@ -44,7 +44,7 @@ public class AT_CompartmentLocationDataManger {
 	 * Returns a CompartmentLocationDataManger with the full set of test
 	 * compartments, no people, obeying the given time tracking policy.
 	 */
-	private CompartmentLocationDataManager getCompartmentLocationDataManger(Context context, TimeTrackingPolicy timeTrackingPolicy) {
+	private CompartmentLocationDataManager getCompartmentLocationDataManger(SimulationContext simulationContext, TimeTrackingPolicy timeTrackingPolicy) {
 		// create a mock context
 
 		CompartmentInitialData.Builder builder = CompartmentInitialData.builder();
@@ -55,15 +55,15 @@ public class AT_CompartmentLocationDataManger {
 		builder.setPersonCompartmentArrivalTracking(timeTrackingPolicy);
 		CompartmentInitialData compartmentInitialData = builder.build();
 
-		CompartmentLocationDataManager compartmentLocationDataManager = new CompartmentLocationDataManager(context, compartmentInitialData);
+		CompartmentLocationDataManager compartmentLocationDataManager = new CompartmentLocationDataManager(simulationContext, compartmentInitialData);
 		return compartmentLocationDataManager;
 	}
 
 	@Test
 	@UnitTestMethod(name = "getCompartmentPopulationCount", args = { CompartmentId.class })
 	public void testGetCompartmentPopulationCount() {
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 		
 		// show that each compartment has no people
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -95,8 +95,8 @@ public class AT_CompartmentLocationDataManger {
 	@UnitTestMethod(name = "getCompartmentPopulationTime", args = { CompartmentId.class })
 	public void testGetCompartmentPopulationTime() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 		
 		// show that each compartment starts with zero population time
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -114,7 +114,7 @@ public class AT_CompartmentLocationDataManger {
 			time.setValue(i * 100);
 			TestCompartmentId compartmentId = TestCompartmentId.values()[i % n];
 			compartmentLocationDataManager.setPersonCompartment(new PersonId(i), compartmentId);
-			expectedAssignmentTimes.get(compartmentId).setValue(mockContext.getTime());
+			expectedAssignmentTimes.get(compartmentId).setValue(mockSimulationContext.getTime());
 		}
 
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
@@ -132,8 +132,8 @@ public class AT_CompartmentLocationDataManger {
 	@Test
 	@UnitTestMethod(name = "getPeopleInCompartment", args = { CompartmentId.class })
 	public void testGetPeopleInCompartment() {
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 
 
 		// show that each compartment has no people
@@ -183,8 +183,8 @@ public class AT_CompartmentLocationDataManger {
 	@Test
 	@UnitTestMethod(name = "getPersonCompartment", args = { PersonId.class })
 	public void testGetPersonCompartment() {
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockSimulationContext, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 
 		// show that adding people results in the correct population times
 		int n = TestCompartmentId.values().length;
@@ -221,8 +221,8 @@ public class AT_CompartmentLocationDataManger {
 	@UnitTestMethod(name = "getPersonCompartmentArrivalTime", args = { PersonId.class })
 	public void testGetPersonCompartmentArrivalTime() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(()->time.getValue()).build();
-		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockContext, TimeTrackingPolicy.TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(()->time.getValue()).build();
+		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockSimulationContext, TimeTrackingPolicy.TRACK_TIME);
 
 		Random random = new Random(4707435414693465083L);
 
@@ -244,9 +244,9 @@ public class AT_CompartmentLocationDataManger {
 			PersonId personId = new PersonId(random.nextInt(populationSize));
 			TestCompartmentId compartmentId = TestCompartmentId.values()[random.nextInt(TestCompartmentId.values().length)];
 			compartmentLocationDataManager.setPersonCompartment(personId, compartmentId);
-			assertEquals(mockContext.getTime(), compartmentLocationDataManager.getPersonCompartmentArrivalTime(personId));
+			assertEquals(mockSimulationContext.getTime(), compartmentLocationDataManager.getPersonCompartmentArrivalTime(personId));
 			// show that the arrival time in the compartment is correct
-			expectedArrivalTimes.get(personId).setValue(mockContext.getTime());
+			expectedArrivalTimes.get(personId).setValue(mockSimulationContext.getTime());
 		}
 
 		// show that the compartment arrival times remain stable over time
@@ -270,7 +270,7 @@ public class AT_CompartmentLocationDataManger {
 	@UnitTestMethod(name = "getPersonCompartmentArrivalTrackingPolicy", args = {})
 	public void testGetPersonCompartmentArrivalTrackingPolicy() {
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(MockContext.builder().build(), timeTrackingPolicy);
+			CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(MockSimulationContext.builder().build(), timeTrackingPolicy);
 			assertEquals(timeTrackingPolicy, compartmentLocationDataManager.getPersonCompartmentArrivalTrackingPolicy());
 		}
 	}
@@ -278,8 +278,8 @@ public class AT_CompartmentLocationDataManger {
 	@Test
 	@UnitTestMethod(name = "removePerson", args = { PersonId.class })
 	public void testRemovePerson() {
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockContext, TimeTrackingPolicy.TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockSimulationContext, TimeTrackingPolicy.TRACK_TIME);
 
 		int populationSize = 50;
 
@@ -310,8 +310,8 @@ public class AT_CompartmentLocationDataManger {
 	@Test
 	@UnitTestMethod(name = "setPersonCompartment", args = { PersonId.class, CompartmentId.class })
 	public void testSetPersonCompartment() {
-		MockContext mockContext = MockContext.builder().build();
-		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockContext, TimeTrackingPolicy.TRACK_TIME);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		CompartmentLocationDataManager compartmentLocationDataManager = getCompartmentLocationDataManger(mockSimulationContext, TimeTrackingPolicy.TRACK_TIME);
 
 		int populationSize = 50;
 

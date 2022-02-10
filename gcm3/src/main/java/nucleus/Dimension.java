@@ -10,7 +10,7 @@ public class Dimension {
 
 	private static class Data {
 		List<String> ids = new ArrayList<>();
-		List<Function<TypeMap<PluginBuilder>, List<String>>> memberGenerators = new ArrayList<>();
+		List<Function<TypeMap<PluginDataBuilder>, List<String>>> memberGenerators = new ArrayList<>();
 	}
 
 	public static Builder builder() {
@@ -31,7 +31,7 @@ public class Dimension {
 			}
 		}
 		
-		public Builder addMemberGenerator(Function<TypeMap<PluginBuilder>, List<String>> memberGenerator) {
+		public Builder addMemberGenerator(Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator) {
 			data.memberGenerators.add(memberGenerator);
 			return this;
 		}
@@ -55,7 +55,7 @@ public class Dimension {
 		return data.memberGenerators.size();
 	}
 		
-	public Function<TypeMap<PluginBuilder>, List<String>> getMemberGenerator(int index) {
+	public Function<TypeMap<PluginDataBuilder>, List<String>> getMemberGenerator(int index) {
 		return data.memberGenerators.get(index);
 	}
 

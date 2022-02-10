@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import util.ContractException;
 import util.annotations.UnitTest;
@@ -181,7 +181,7 @@ public class AT_Simulation {
 	@Test
 	@UnitTestMethod(target = Simulation.Builder.class, name = "addPlugin", args = { PluginId.class })
 	public void testAddPlugin() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -191,20 +191,20 @@ public class AT_Simulation {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// precondition : the plugin id cannot be null
-		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(null, actionPlugin::init));
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(null, actionPluginInitializer::init));
 		assertEquals(NucleusError.NULL_PLUGIN_ID, contractException.getErrorType());
 
 		// precondition : the plugin context consumer cannot be null
-		contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, null));
+		contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, null));
 		assertEquals(NucleusError.NULL_PLUGIN_CONTEXT_CONSUMER, contractException.getErrorType());
 
 	}
@@ -224,7 +224,7 @@ public class AT_Simulation {
 	@UnitTestMethod(target = Simulation.Builder.class, name = "setOutputConsumer", args = { Consumer.class })
 	public void testSetOutputConsumer() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Case 1 : there is a non-null output consumer added to the builder
@@ -253,13 +253,13 @@ public class AT_Simulation {
 		LocalOutputConsumer localOutputConsumer1 = new LocalOutputConsumer();
 		LocalOutputConsumer localOutputConsumer2 = new LocalOutputConsumer();
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(localOutputConsumer2).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(localOutputConsumer2).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the first local output consumer did not receive any values
 		assertTrue(localOutputConsumer1.receivedItems.isEmpty());
@@ -285,14 +285,14 @@ public class AT_Simulation {
 			}
 		}));
 
-		actionPlugin = pluginBuilder.build();
+		actionPluginInitializer = pluginBuilder.build();
 
 		localOutputConsumer1 = new LocalOutputConsumer();
 
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(null).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init).setOutputConsumer(localOutputConsumer1).setOutputConsumer(null).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the first local output consumer did not receive any values
 		assertTrue(localOutputConsumer1.receivedItems.isEmpty());

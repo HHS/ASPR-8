@@ -7,8 +7,8 @@ import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import nucleus.DataView;
-import nucleus.ResolverContext;
+import nucleus.DataManager;
+import nucleus.DataManagerContext;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import util.ContractException;
@@ -23,7 +23,7 @@ import util.SeedProvider;
 
 /**
  * <P>
- * Creates and publishes the {@linkplain StochasticsDataView}. Initializes the
+ * Creates and publishes the {@linkplain StochasticsDataManager}. Initializes the
  * data views from the {@linkplain StochasticsInitialData} and a plugin provided
  * seed value.
  * </P>
@@ -33,7 +33,7 @@ import util.SeedProvider;
  * @author Shawn Hatch
  *
  */
-public final class StochasticsDataView implements DataView {
+public final class StochasticsDataManager extends DataManager {
 
 	private Map<RandomNumberGeneratorId, RandomGenerator> randomGeneratorMap = new LinkedHashMap<>();
 
@@ -94,12 +94,12 @@ public final class StochasticsDataView implements DataView {
 	 * Creates the data view for the plugin
 	 * 
 	 */
-	public StochasticsDataView(StochasticsPlugin stochasticsPlugin) {
+	public StochasticsDataManager(StochasticsPluginData stochasticsPluginData) {
 
 		// create RandomGenerators for each of the ids using a hash built from
 		// the id and the replication seed
-		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPlugin.getRandomNumberGeneratorIds();
-		long seed = stochasticsPlugin.getSeed();
+		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPluginData.getRandomNumberGeneratorIds();
+		long seed = stochasticsPluginData.getSeed();
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
 			String name = randomNumberGeneratorId.toString();
 			long seedForId = name.hashCode() + seed;
@@ -116,12 +116,13 @@ public final class StochasticsDataView implements DataView {
 	 * 
 	 * <li>Subscribes to all handled events
 	 * 
-	 * <li>Publishes the {@linkplain StochasticsDataView}</li>
+	 * <li>Publishes the {@linkplain StochasticsDataManager}</li>
 	 * 
 	 *
 	 */
-	public void init(ResolverContext resolverContext) {
-		resolverContext.publishDataView(this);
+	@Override
+	public void init(DataManagerContext dataManagerContext) {
+		
 	}
 
 	/**

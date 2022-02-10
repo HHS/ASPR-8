@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
 import util.ContractError;
 import util.ContractException;
 import util.MultiKey;
@@ -59,7 +59,7 @@ public class AT_AgentContext {
 	@Test
 	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class })
 	public void testAddPlan() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a data view that exists to show that the plan we add is actually
 		// executed and thus the addition of the plan must have succeeded
@@ -89,17 +89,17 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the plan that was added by the action plan was executed and
 		// thus the addPlan invocation functioned correctly
 		assertTrue(addPlanDataView.planExecuted);
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class AT_AgentContext {
 	@Test
 	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddPlanWithKey() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -150,13 +150,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class AT_AgentContext {
 	@Test
 	@UnitTestMethod(name = "getPlan", args = { Object.class })
 	public void testGetPlan() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -187,13 +187,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -202,7 +202,7 @@ public class AT_AgentContext {
 	@Test
 	@UnitTestMethod(name = "getPlanTime", args = { Object.class })
 	public void testGetPlanTime() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -227,12 +227,12 @@ public class AT_AgentContext {
 			assertEquals(expectedPlanTime, actualPlanTime, 0);
 		}));
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -242,7 +242,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "removePlan", args = { Object.class })
 	public void testRemovePlan() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -274,13 +274,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -290,7 +290,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "getPlanKeys", args = {})
 	public void testGetPlanKeys() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -315,13 +315,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -331,7 +331,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "resolveEvent", args = { Event.class })
 	public void testResolveEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		MutableBoolean eventResolved = new MutableBoolean();
 
@@ -341,7 +341,7 @@ public class AT_AgentContext {
 
 		// Have the resolver subscribe to test event and then set the
 		// eventResolved to true
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
 				eventResolved.setValue(true);
 			});
@@ -363,13 +363,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -379,7 +379,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "getCurrentAgentId", args = {})
 	public void testGetCurrentAgentId() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add three test agents
 		pluginBuilder.addAgent("Alpha");
@@ -429,13 +429,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -445,7 +445,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "agentExists", args = { AgentId.class })
 	public void testAgentExists() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -461,13 +461,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -477,7 +477,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "halt", args = {})
 	public void testHalt() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a test agent
 		pluginBuilder.addAgent("Alpha");
@@ -508,10 +508,10 @@ public class AT_AgentContext {
 		pluginBuilder.addAgentActionPlan("Alpha", actionPlan5);
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the plans that were scheduled after the halt did not
 		// execute
@@ -699,7 +699,7 @@ public class AT_AgentContext {
 	@Test
 	@UnitTestMethod(name = "subscribe", args = { EventLabel.class, AgentEventConsumer.class })
 	public void testSubscribe() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addEventLabeler(new SimpleEventLabeler<TestEvent>(Local_Labeler_ID.TEST_LABELER_ID, TestEvent.class, (c, e) -> {
 			return new TestEventLabel();
@@ -716,15 +716,15 @@ public class AT_AgentContext {
 		 * Have the resolver generate multiple DataChangeObservation events.
 		 * Some will match the agent's subscription, some won't.
 		 */
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(10, (c) -> {
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
-			c.queueEventForResolution(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(10, (c) -> {
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
+			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
 		}));
 
 		// create the test agent
@@ -772,13 +772,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action plans got executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the Alpha agent
@@ -815,7 +815,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "unsubscribeToEvent", args = { EventLabel.class })
 	public void testUnsubscribeToEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// Generate an event label that will match all TestEvents. This will be
 		// used throughout.
@@ -851,10 +851,10 @@ public class AT_AgentContext {
 		 * at various times
 		 */
 
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					c2.queueEventForResolution(new TestEvent());
+					c2.resolveEvent(new TestEvent());
 				}, time);
 			}
 		}));
@@ -932,13 +932,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// run the simulation
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that all action plans were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the agents
@@ -966,7 +966,7 @@ public class AT_AgentContext {
 	public void testReleaseOutput() {
 
 		// begin building the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// ensure that the test agent will be created
 		pluginBuilder.addAgent("Alpha");
@@ -986,7 +986,7 @@ public class AT_AgentContext {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		Set<Object> actualOutput = new LinkedHashSet<>();
 
@@ -995,13 +995,13 @@ public class AT_AgentContext {
 		 * actualOutput set above and then execute the simulation
 		 */
 		Simulation	.builder()//
-				.addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init)//
+				.addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init)//
 				.setOutputConsumer((o) -> actualOutput.add(o))//
 				.build()//
 				.execute();//
 
 		// show that the agent action was executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the output matches expectations
 		assertEquals(expectedOutput, actualOutput);
@@ -1025,7 +1025,7 @@ public class AT_AgentContext {
 
 	public void testGetDataView() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// mark Agent1 for creation
 		pluginBuilder.addAgent("Agent1");
@@ -1050,13 +1050,13 @@ public class AT_AgentContext {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action was executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
@@ -1065,7 +1065,7 @@ public class AT_AgentContext {
 
 	public void testGetTime() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// mark Agent1 for creation
 		pluginBuilder.addAgent("Agent1");
@@ -1092,20 +1092,20 @@ public class AT_AgentContext {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that the action was executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
 	@UnitTestMethod(name = "throwContractException", args = { ContractError.class })
 	public void testThrowContractException() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// mark Agent1 for creation
 		pluginBuilder.addAgent("Agent1");
@@ -1118,15 +1118,15 @@ public class AT_AgentContext {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// execute the engine and show that the expected contract exception was
 		// thrown
-		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 
 		// show that the action was executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
@@ -1134,7 +1134,7 @@ public class AT_AgentContext {
 
 	public void testThrowContractExceptionWithDetails() {
 		// create the action plugin builder
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// mark Agent1 for creation
 		pluginBuilder.addAgent("Agent1");
@@ -1148,18 +1148,18 @@ public class AT_AgentContext {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		/*
 		 * Execute the engine. Show that the expected contract exception was
 		 * thrown and the exceptions message text contains the expected details
 		 */
-		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute());
+		ContractException contractException = assertThrows(ContractException.class, () -> Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute());
 		assertEquals(NucleusError.ACCESS_VIOLATION, contractException.getErrorType());
 		contractException.getMessage().contains(details);
 
 		// show that the action was executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 	
 	/*
@@ -1176,7 +1176,7 @@ public class AT_AgentContext {
 		}
 
 		@Override
-		public EventLabel<TestEvent> getEventLabel(Context context, TestEvent event) {
+		public EventLabel<TestEvent> getEventLabel(SimulationContext simulationContext, TestEvent event) {
 			return new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
 		}
 
@@ -1196,7 +1196,7 @@ public class AT_AgentContext {
 	@UnitTestMethod(name = "addEventLabeler", args = { EventLabeler.class })
 	public void testAddEventLabeler() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		//add an agent
 		pluginBuilder.addAgent("observer agent");
@@ -1263,18 +1263,18 @@ public class AT_AgentContext {
 		pluginBuilder.addResolver(resolverId);
 
 		// have the resolver create a test event for the agent to observe
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(3, (c) -> {
-			c.queueEventForResolution(new TestEvent());
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(3, (c) -> {
+			c.resolveEvent(new TestEvent());
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// build and execute the engine
-		Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,actionPlugin::init).build().execute();
+		Simulation.builder().addPlugin(ActionPluginInitializer.PLUGIN_ID,actionPluginInitializer::init).build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Show that the event labeler must have been added to the simulation

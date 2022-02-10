@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import plugins.groups.datacontainers.PersonGroupDataView;
@@ -80,7 +80,7 @@ public class AT_GroupPropertyChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroupAndProperty", args = { Context.class, GroupId.class, GroupPropertyId.class })
+	@UnitTestMethod(name = "getEventLabelByGroupAndProperty", args = { SimulationContext.class, GroupId.class, GroupPropertyId.class })
 	public void testGetEventLabelByGroupAndProperty() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 2608996249142401870L, (c) -> {
@@ -196,7 +196,7 @@ public class AT_GroupPropertyChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroup", args = { Context.class, GroupId.class })
+	@UnitTestMethod(name = "getEventLabelByGroup", args = { SimulationContext.class, GroupId.class })
 	public void testGetEventLabelByGroup() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 7912737444879496875L, (c) -> {
@@ -289,7 +289,7 @@ public class AT_GroupPropertyChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroupTypeAndProperty", args = { Context.class, GroupTypeId.class, GroupPropertyId.class })
+	@UnitTestMethod(name = "getEventLabelByGroupTypeAndProperty", args = { SimulationContext.class, GroupTypeId.class, GroupPropertyId.class })
 	public void testGetEventLabelByGroupTypeAndProperty() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 7297949839974902355L, (c) -> {
@@ -401,7 +401,7 @@ public class AT_GroupPropertyChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroupType", args = { Context.class, GroupTypeId.class })
+	@UnitTestMethod(name = "getEventLabelByGroupType", args = { SimulationContext.class, GroupTypeId.class })
 	public void testGetEventLabelByGroupType() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 676016189463079696L, (c) -> {
@@ -492,7 +492,7 @@ public class AT_GroupPropertyChangeObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByAll", args = { Context.class })
+	@UnitTestMethod(name = "getEventLabelByAll", args = { SimulationContext.class })
 	public void testGetEventLabelByAll() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 6107267895624819992L, (c) -> {

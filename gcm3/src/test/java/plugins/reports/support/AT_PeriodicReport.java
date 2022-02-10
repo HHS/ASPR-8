@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Simulation;
 import nucleus.ReportContext;
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
+import plugins.reports.ReportId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import util.ContractException;
@@ -232,15 +232,15 @@ public class AT_PeriodicReport {
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent that will make the engine run for a few days
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(simulationEndTime, (c) -> {
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
@@ -270,15 +270,15 @@ public class AT_PeriodicReport {
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent that will make the engine run for a few days
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(simulationEndTime, (c) -> {
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
@@ -308,15 +308,15 @@ public class AT_PeriodicReport {
 		// add the remaining plugins that are needed for dependencies
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent that will make the engine run for a few days
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(simulationEndTime, (c) -> {
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
@@ -353,15 +353,15 @@ public class AT_PeriodicReport {
 			// add the remaining plugins that are needed for dependencies
 			builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 
-			ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+			ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 			// create an agent that will make the engine run for a few days
 			pluginBuilder.addAgent("agent");
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(simulationEndTime, (c) -> {
 			}));
 
-			ActionPlugin actionPlugin = pluginBuilder.build();
-			builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+			ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+			builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 			// build and execute the engine
 			builder.build().execute();

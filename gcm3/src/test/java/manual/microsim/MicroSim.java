@@ -35,7 +35,7 @@ import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportItem;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 
 public class MicroSim {
@@ -50,8 +50,8 @@ public class MicroSim {
 
 	private static void compartmentAInitialization(AgentContext agentContext) {
 		PersonDataView personDataView = agentContext.getDataView(PersonDataView.class).get();
-		StochasticsDataView stochasticsDataView = agentContext.getDataView(StochasticsDataView.class).get();
-		RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+		StochasticsDataManager stochasticsDataManager = agentContext.getDataView(StochasticsDataManager.class).get();
+		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 		double transferTime = agentContext.getTime();
 		for (int i = 0; i < 10000; i++) {
 			agentContext.resolveEvent(new PersonCreationEvent(PersonContructionData.builder().add(Compartment.A).build()));

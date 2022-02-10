@@ -1,7 +1,7 @@
 package plugins.resources.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -73,23 +73,23 @@ public class RegionResourceChangeObservationEvent implements Event {
 		REGION_RESOURCE
 	}
 
-	private static void validateRegionId(Context context, RegionId regionId) {
+	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataView regionDataView = context.getDataView(RegionDataView.class).get();
+		RegionDataView regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 		if (!regionDataView.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
 
-	private static void validateResourceId(Context context, ResourceId resourceId) {
+	private static void validateResourceId(SimulationContext simulationContext, ResourceId resourceId) {
 		if (resourceId == null) {
-			context.throwContractException(ResourceError.NULL_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataView resourceDataView = context.getDataView(ResourceDataView.class).get();
+		ResourceDataView resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 		if (!resourceDataView.resourceIdExists(resourceId)) {
-			context.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID);
+			simulationContext.throwContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}
 	}
 
@@ -112,9 +112,9 @@ public class RegionResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<RegionResourceChangeObservationEvent> getEventLabelByRegionAndResource(Context context, RegionId regionId, ResourceId resourceId) {
-		validateRegionId(context, regionId);
-		validateResourceId(context, resourceId);
+	public static EventLabel<RegionResourceChangeObservationEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
+		validateRegionId(simulationContext, regionId);
+		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.REGION_RESOURCE, RegionResourceChangeObservationEvent.class, regionId, resourceId);
 	}
 

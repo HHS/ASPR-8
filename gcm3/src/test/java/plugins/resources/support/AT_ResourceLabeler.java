@@ -14,10 +14,10 @@ import java.util.function.Function;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
-import nucleus.testsupport.MockContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.MockSimulationContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datacontainers.PersonDataView;
@@ -31,7 +31,7 @@ import plugins.resources.events.mutation.ResourceTransferToPersonEvent;
 import plugins.resources.events.observation.PersonResourceChangeObservationEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -85,7 +85,7 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 		/*
 		 * Create a resource labeler from a function. Have an agent apply the
@@ -94,7 +94,7 @@ public final class AT_ResourceLabeler {
 		 * alone. Compare the two labels for equality.
 		 */
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// build a resource labeler with a function that can be tested
 		Function<Long, Object> function = (v) -> {
@@ -109,8 +109,8 @@ public final class AT_ResourceLabeler {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataView.getPeople()) {
 				RegionId regionId = regionLocationDataView.getPersonRegion(personId);
 				for (TestResourceId testResourceId : TestResourceId.values()) {
@@ -158,8 +158,8 @@ public final class AT_ResourceLabeler {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		ResourcesActionSupport.testConsumers(10, 7394122902151816457L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		ResourcesActionSupport.testConsumers(10, 7394122902151816457L, actionPluginInitializer);
 
 	}
 
@@ -172,7 +172,7 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPastLabel", args = { Context.class, Event.class })
+	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 		
 		final PersonId personId = new PersonId(45);
@@ -186,13 +186,13 @@ public final class AT_ResourceLabeler {
 
 		ResourceLabeler resourceLabeler = new ResourceLabeler(TestResourceId.RESOURCE_1, function);
 
-		MockContext mockContext = MockContext.builder().build();
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
 		
 		for(int i= 0; i<10;i++) {
 			previousResourceLevel = i;
 			Object expectedLabel = function.apply(previousResourceLevel);
 			PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-			Object actualLabel = resourceLabeler.getPastLabel(mockContext, personResourceChangeObservationEvent);
+			Object actualLabel = resourceLabeler.getPastLabel(mockSimulationContext, personResourceChangeObservationEvent);
 			assertEquals(expectedLabel, actualLabel);
 		}
 		

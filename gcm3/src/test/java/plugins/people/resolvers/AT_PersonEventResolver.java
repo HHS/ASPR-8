@@ -16,8 +16,8 @@ import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.people.PeoplePlugin;
 import plugins.people.datacontainers.PersonDataView;
@@ -49,7 +49,7 @@ public final class AT_PersonEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonDataViewInitialization() {
 		Builder builder = Simulation.builder();
 		PeopleInitialData.Builder peopleBuilder = PeopleInitialData.builder();
@@ -70,7 +70,7 @@ public final class AT_PersonEventResolver {
 
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(peopleBuilder.build())::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a test agent
 		pluginBuilder.addAgent("agent");
@@ -87,25 +87,25 @@ public final class AT_PersonEventResolver {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPopulationGrowthProjectionEvent() {
 		Builder builder = Simulation.builder();
 
 		// add the people plugin
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add a test agent
 		pluginBuilder.addAgent("agent");
@@ -117,25 +117,25 @@ public final class AT_PersonEventResolver {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalRequestEvent() {
 		Builder builder = Simulation.builder();
 
 		// add the people plugin
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add test agents
 		pluginBuilder.addAgent("agent");
@@ -180,28 +180,28 @@ public final class AT_PersonEventResolver {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the observed removals match the expected removals
 		assertEquals(expectedRemovals, observedRemovals);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonCreationEvent() {
 		Builder builder = Simulation.builder();
 
 		// add the people plugin
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create containers to hold observations
 		Set<PersonId> observedPersonIds = new LinkedHashSet<>();
@@ -240,28 +240,28 @@ public final class AT_PersonEventResolver {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedPersonIds, observedPersonIds);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonCreationEvent() {
 		Builder builder = Simulation.builder();
 
 		// add the people plugin
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create containers to hold observations
 		Set<BulkPersonContructionData> observedBulkPersonContructionData = new LinkedHashSet<>();
@@ -309,14 +309,14 @@ public final class AT_PersonEventResolver {
 		}));
 
 		// build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedBulkPersonContructionData, observedBulkPersonContructionData);
@@ -334,7 +334,7 @@ public final class AT_PersonEventResolver {
 
 		builder.addPlugin(PeoplePlugin.PLUGIN_ID, new PeoplePlugin(PeopleInitialData.builder().build())::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
@@ -343,33 +343,33 @@ public final class AT_PersonEventResolver {
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonCreationObservationEventLabelers() {
 		EventLabeler<BulkPersonCreationObservationEvent> eventLabeler = BulkPersonCreationObservationEvent.getEventLabeler();
 		testLabeler(eventLabeler);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonCreationObservationEventLabelers() {
 		EventLabeler<PersonCreationObservationEvent> eventLabeler = PersonCreationObservationEvent.getEventLabeler();
 		testLabeler(eventLabeler);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonImminentRemovalObservationEventLabelers() {
 		EventLabeler<PersonImminentRemovalObservationEvent> eventLabeler = PersonImminentRemovalObservationEvent.getEventLabeler();
 		testLabeler(eventLabeler);

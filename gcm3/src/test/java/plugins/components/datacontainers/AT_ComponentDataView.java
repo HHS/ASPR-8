@@ -13,9 +13,9 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentId;
-import nucleus.Context;
-import nucleus.testsupport.MockContext;
-import nucleus.testsupport.MockResolverContext;
+import nucleus.SimulationContext;
+import nucleus.testsupport.MockSimulationContext;
+import nucleus.testsupport.MockDataManagerContext;
 import plugins.components.support.ComponentError;
 import plugins.components.support.ComponentId;
 import plugins.components.testsupport.SimpleComponentId;
@@ -29,11 +29,11 @@ import util.annotations.UnitTestMethod;
 public final class AT_ComponentDataView {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, ComponentDataManager.class })
+	@UnitTestConstructor(args = { SimulationContext.class, ComponentDataManager.class })
 	public void testConstructor() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();		
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
-		ComponentDataView componentDataView = new ComponentDataView(MockContext.builder().build(),componentDataManager);
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();		
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
+		ComponentDataView componentDataView = new ComponentDataView(MockSimulationContext.builder().build(),componentDataManager);
 		assertNotNull(componentDataView);
 	}
 	
@@ -43,7 +43,7 @@ public final class AT_ComponentDataView {
 	public void testGetFocalComponentId() {
 		Holder<AgentId> currentAgentId = new Holder<>();
 
-		MockResolverContext mockResolverContext = MockResolverContext//
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext//
 																		.builder()//
 																		.setGetCurrentAgentIdSupplier(() -> currentAgentId.get())//
 																		.build();//
@@ -52,8 +52,8 @@ public final class AT_ComponentDataView {
 		 * Create a component manager and load it with agent/components
 		 * associations
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
-		ComponentDataView componentDataView = new ComponentDataView(MockContext.builder().build(),componentDataManager);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
+		ComponentDataView componentDataView = new ComponentDataView(MockSimulationContext.builder().build(),componentDataManager);
 		for (int i = 0; i < 10; i++) {
 			componentDataManager.addComponentData(new AgentId(i), new SimpleComponentId(i));
 		}
@@ -77,7 +77,7 @@ public final class AT_ComponentDataView {
 	@Test
 	@UnitTestMethod(name = "getAgentId", args = { ComponentId.class })
 	public void testGetAgentId() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
 
 		// create a container for expected results
 		Map<ComponentId, AgentId> expectedAssociations = new LinkedHashMap<>();
@@ -85,8 +85,8 @@ public final class AT_ComponentDataView {
 		/*
 		 * Create a component manager
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
-		ComponentDataView componentDataView = new ComponentDataView(mockResolverContext,componentDataManager);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
+		ComponentDataView componentDataView = new ComponentDataView(mockDataManagerContext,componentDataManager);
 		/*
 		 * Add several agent/component id associations
 		 */
@@ -124,7 +124,7 @@ public final class AT_ComponentDataView {
 	@Test
 	@UnitTestMethod(name = "containsComponentId", args = { ComponentId.class })
 	public void testContainsComponentId() {
-		MockResolverContext mockResolverContext = MockResolverContext.builder().build();
+		MockDataManagerContext mockDataManagerContext = MockDataManagerContext.builder().build();
 
 		// create a container for expected results
 		Map<ComponentId, AgentId> expectedAssociations = new LinkedHashMap<>();
@@ -132,8 +132,8 @@ public final class AT_ComponentDataView {
 		/*
 		 * Create a component manager
 		 */
-		ComponentDataManager componentDataManager = new ComponentDataManager(mockResolverContext);
-		ComponentDataView componentDataView = new ComponentDataView(mockResolverContext, componentDataManager);
+		ComponentDataManager componentDataManager = new ComponentDataManager(mockDataManagerContext);
+		ComponentDataView componentDataView = new ComponentDataView(mockDataManagerContext, componentDataManager);
 		/*
 		 * Add several agent/component id associations
 		 */

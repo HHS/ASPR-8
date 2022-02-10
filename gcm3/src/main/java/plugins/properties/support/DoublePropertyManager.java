@@ -1,6 +1,6 @@
 package plugins.properties.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import util.ContractException;
 import util.arraycontainers.DoubleValueContainer;
 
@@ -33,8 +33,8 @@ public final class DoublePropertyManager extends AbstractIndexedPropertyManager 
 	 *             if the property definition does not have a default value</li>
 	 * 
 	 */
-	public DoublePropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
-		super(context, propertyDefinition, initialSize);
+	public DoublePropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
+		super(simulationContext, propertyDefinition, initialSize);
 
 		if (propertyDefinition.getType() != Double.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition with Double type ");

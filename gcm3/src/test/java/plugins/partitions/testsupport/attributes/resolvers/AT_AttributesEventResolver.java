@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
@@ -41,7 +41,7 @@ public class AT_AttributesEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testAttributesDataViewInitialization() {
 		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
 			Optional<AttributesDataView> optional = c.getDataView(AttributesDataView.class);
@@ -57,10 +57,10 @@ public class AT_AttributesEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testAttributeValueAssignmentEvent() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent that will observe attribute changes
 		Set<PersonId> peopleObserved = new LinkedHashSet<>();
@@ -99,8 +99,8 @@ public class AT_AttributesEventResolver {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		PartitionsActionSupport.testConsumers(expectedPersonIds.size(), 5241628071704306523L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		PartitionsActionSupport.testConsumers(expectedPersonIds.size(), 5241628071704306523L, actionPluginInitializer);
 
 		// show that the correct observations were made;
 		assertEquals(expectedPersonIds, peopleObserved);
@@ -108,7 +108,7 @@ public class AT_AttributesEventResolver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ResolverContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testAttributeChangeObservationEventLabelers() {
 		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
 			EventLabeler<AttributeChangeObservationEvent> eventLabeler = AttributeChangeObservationEvent.getEventLabeler();

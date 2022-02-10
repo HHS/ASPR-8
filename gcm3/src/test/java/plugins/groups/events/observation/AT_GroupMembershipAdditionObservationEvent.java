@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import plugins.groups.datacontainers.PersonGroupDataView;
@@ -56,7 +56,7 @@ public class AT_GroupMembershipAdditionObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroupAndPerson", args = { Context.class, GroupId.class, PersonId.class })
+	@UnitTestMethod(name = "getEventLabelByGroupAndPerson", args = { SimulationContext.class, GroupId.class, PersonId.class })
 	public void testGetEventLabelByGroupAndPerson() {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 298549072627101248L, (c) -> {
@@ -159,7 +159,7 @@ public class AT_GroupMembershipAdditionObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroup", args = { Context.class, GroupId.class })
+	@UnitTestMethod(name = "getEventLabelByGroup", args = { SimulationContext.class, GroupId.class })
 	public void testGetEventLabelByGroup() {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 8484038291544974628L, (c) -> {
@@ -258,7 +258,7 @@ public class AT_GroupMembershipAdditionObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByPerson", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "getEventLabelByPerson", args = { SimulationContext.class, PersonId.class })
 	public void testGetEventLabelByPerson() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 5181120908681821960L, (c) -> {
@@ -349,7 +349,7 @@ public class AT_GroupMembershipAdditionObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroupTypeAndPerson", args = { Context.class, GroupTypeId.class, PersonId.class })
+	@UnitTestMethod(name = "getEventLabelByGroupTypeAndPerson", args = { SimulationContext.class, GroupTypeId.class, PersonId.class })
 	public void testGetEventLabelByGroupTypeAndPerson() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 2396297410749360025L, (c) -> {
@@ -454,7 +454,7 @@ public class AT_GroupMembershipAdditionObservationEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventLabelByGroupType", args = { Context.class, GroupTypeId.class })
+	@UnitTestMethod(name = "getEventLabelByGroupType", args = { SimulationContext.class, GroupTypeId.class })
 	public void testGetEventLabelByGroupType() {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4360946626249599442L, (c) -> {

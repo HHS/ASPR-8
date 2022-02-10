@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataView;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
@@ -39,7 +39,7 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.MultiKey;
 import util.MutableDouble;
@@ -51,7 +51,7 @@ import util.annotations.UnitTestMethod;
 public final class AT_ResourceDataView implements DataView {
 
 	@Test
-	@UnitTestConstructor(args = { ResolverContext.class, ResourceDataManager.class })
+	@UnitTestConstructor(args = { DataManagerContext.class, ResourceDataManager.class })
 	public void testConstructor() {
 
 		ResourcesActionSupport.testConsumer(15, 1963956124979067643L, (c) -> {
@@ -105,8 +105,8 @@ public final class AT_ResourceDataView implements DataView {
 		ResourcesActionSupport.testConsumer(100, 3641510187112920884L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 			// give about half of the people the resource
@@ -145,8 +145,8 @@ public final class AT_ResourceDataView implements DataView {
 		ResourcesActionSupport.testConsumer(100, 1030108367649001208L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 			// give about half of the people the resource
@@ -183,8 +183,8 @@ public final class AT_ResourceDataView implements DataView {
 		ResourcesActionSupport.testConsumer(20, 110987310555566746L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 
 			List<PersonId> people = personDataView.getPeople();
@@ -231,7 +231,7 @@ public final class AT_ResourceDataView implements DataView {
 	@Test
 	@UnitTestMethod(name = "getPersonResourceTime", args = { ResourceId.class, PersonId.class })
 	public void testGetPersonResourceTime() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Map<MultiKey, MutableDouble> expectedTimes = new LinkedHashMap<>();
 
@@ -242,8 +242,8 @@ public final class AT_ResourceDataView implements DataView {
 			// establish data views
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 
 			// establish the people and resources
@@ -288,8 +288,8 @@ public final class AT_ResourceDataView implements DataView {
 			// establish data views
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 
 			// establish the people and resources
@@ -316,8 +316,8 @@ public final class AT_ResourceDataView implements DataView {
 			// establish data views
 			RegionLocationDataView regionLocationDataView = c.getDataView(RegionLocationDataView.class).get();
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 
 			// establish the people and resources
@@ -416,8 +416,8 @@ public final class AT_ResourceDataView implements DataView {
 		
 		ResourcesActionSupport.testConsumer(20, 6606932435911201728L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			RegionDataView regionDataView = c.getDataView(RegionDataView.class).get();
 
 			List<RegionId> regionIds = new ArrayList<>(regionDataView.getRegionIds());
@@ -460,7 +460,7 @@ public final class AT_ResourceDataView implements DataView {
 	@UnitTestMethod(name = "getRegionResourceTime", args = { RegionId.class, ResourceId.class })
 	public void testGetRegionResourceTime() {
 		 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Map<MultiKey, MutableDouble> expectedTimes = new LinkedHashMap<>();
 
@@ -471,8 +471,8 @@ public final class AT_ResourceDataView implements DataView {
 			// establish data views
 			
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get(); 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			RegionDataView regionDataView = c.getDataView(RegionDataView.class).get();
 
 			// establish the people and resources
@@ -502,8 +502,8 @@ public final class AT_ResourceDataView implements DataView {
 			// establish data views
 			
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			RegionDataView regionDataView = c.getDataView(RegionDataView.class).get();
 
 			// establish the regions
@@ -524,8 +524,8 @@ public final class AT_ResourceDataView implements DataView {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 			// establish data views
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			RegionDataView regionDataView = c.getDataView(RegionDataView.class).get();
 
 			// establish the regions
@@ -721,8 +721,8 @@ public final class AT_ResourceDataView implements DataView {
 		 
 		ResourcesActionSupport.testConsumer(10, 8757871520559824784L, (c) -> {
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the expected values of all resource properties
 			Map<MultiKey, Object> expectedValues = new LinkedHashMap<>();
@@ -790,7 +790,7 @@ public final class AT_ResourceDataView implements DataView {
 	@UnitTestMethod(name = "getResourcePropertyTime", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyTime() {
 	 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Map<MultiKey, MutableDouble> expectedTimes = new LinkedHashMap<>();
 
@@ -799,8 +799,8 @@ public final class AT_ResourceDataView implements DataView {
 			// establish data views
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
 			
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the resources
 			Set<ResourceId> resourceIds = resourceDataView.getResourceIds();
@@ -830,8 +830,8 @@ public final class AT_ResourceDataView implements DataView {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c) -> {
 			// establish data views
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the resources
 			Set<ResourceId> resourceIds = resourceDataView.getResourceIds();
@@ -854,8 +854,8 @@ public final class AT_ResourceDataView implements DataView {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(2, (c) -> {
 			// establish data views
 			ResourceDataView resourceDataView = c.getDataView(ResourceDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the resources
 			Set<ResourceId> resourceIds = resourceDataView.getResourceIds();

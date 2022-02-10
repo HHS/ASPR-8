@@ -14,9 +14,9 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
@@ -34,8 +34,8 @@ public class AT_AttributesDataManager {
 	@Test
 	@UnitTestMethod(name = "getAttributeDefinition", args = { AttributeId.class })
 	public void testGetAttributeDefinition() {
-		MockContext mockContext = MockContext.builder().build();
-		AttributesDataManager attributesDataManager = new AttributesDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		AttributesDataManager attributesDataManager = new AttributesDataManager(mockSimulationContext);
 
 		Map<AttributeId, AttributeDefinition> expectedAttributeDefinitions = new LinkedHashMap<>();
 
@@ -67,8 +67,8 @@ public class AT_AttributesDataManager {
 	@Test
 	@UnitTestMethod(name = "getAttributeIds", args = {})
 	public void testGetAttributeIds() {
-		MockContext mockContext = MockContext.builder().build();
-		AttributesDataManager attributesDataManager = new AttributesDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		AttributesDataManager attributesDataManager = new AttributesDataManager(mockSimulationContext);
 
 		Set<AttributeId> expectedAttributeIds = new LinkedHashSet<>();
 
@@ -88,8 +88,8 @@ public class AT_AttributesDataManager {
 	public void testGetAttributeValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3563728721933611714L);
 
-		MockContext mockContext = MockContext.builder().build();
-		AttributesDataManager attributesDataManager = new AttributesDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		AttributesDataManager attributesDataManager = new AttributesDataManager(mockSimulationContext);
 
 		// add the attribute definitions to the manager
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -147,8 +147,8 @@ public class AT_AttributesDataManager {
 	public void testHandlePersonRemoval() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(978705363753978374L);
 
-		MockContext mockContext = MockContext.builder().build();
-		AttributesDataManager attributesDataManager = new AttributesDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		AttributesDataManager attributesDataManager = new AttributesDataManager(mockSimulationContext);
 
 		// add the attribute definitions to the manager
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -195,7 +195,7 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Context.class })
+	@UnitTestConstructor(args = { SimulationContext.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new AttributesDataManager(null));
 		assertEquals(NucleusError.NULL_CONTEXT, contractException.getErrorType());
@@ -205,8 +205,8 @@ public class AT_AttributesDataManager {
 	@UnitTestMethod(name = "attributeExists", args = { AttributeId.class })
 	public void testAttributeExists() {
 
-		MockContext mockContext = MockContext.builder().build();
-		AttributesDataManager attributesDataManager = new AttributesDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		AttributesDataManager attributesDataManager = new AttributesDataManager(mockSimulationContext);
 
 		// add the attribute definitions to the manager
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -228,8 +228,8 @@ public class AT_AttributesDataManager {
 	public void testSetAttributeValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3563728721933611714L);
 
-		MockContext mockContext = MockContext.builder().build();
-		AttributesDataManager attributesDataManager = new AttributesDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		AttributesDataManager attributesDataManager = new AttributesDataManager(mockSimulationContext);
 
 		// add the attribute definitions to the manager
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -293,8 +293,8 @@ public class AT_AttributesDataManager {
 	@Test
 	@UnitTestMethod(name = "addAttribute", args = { AttributeId.class, AttributeDefinition.class })
 	public void testAddAttribute() {
-		MockContext mockContext = MockContext.builder().build();
-		AttributesDataManager attributesDataManager = new AttributesDataManager(mockContext);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		AttributesDataManager attributesDataManager = new AttributesDataManager(mockSimulationContext);
 
 		AttributeDefinition attributeDefinition = TestAttributeId.BOOLEAN_0.getAttributeDefinition();
 		attributesDataManager.addAttribute(TestAttributeId.BOOLEAN_0, attributeDefinition);

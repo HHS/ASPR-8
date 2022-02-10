@@ -6,7 +6,7 @@ import nucleus.AgentContext;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
@@ -14,14 +14,14 @@ import util.ContractException;
 public class StochasticsActionSupport {
 	
 	public static void testConsumer(long seed, Consumer<AgentContext> consumer) {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
 		testConsumers(seed, pluginBuilder.build());
 	}
 
 	
-	public static void testConsumers(long seed, ActionPlugin actionPlugin) {
+	public static void testConsumers(long seed, ActionPluginInitializer actionPluginInitializer) {
 		Builder simBuilder = Simulation.builder();
 
 		// add the stochastics plugin
@@ -33,13 +33,13 @@ public class StochasticsActionSupport {
 
 		simBuilder.addPlugin(StochasticsPlugin.PLUGIN_ID, stochasticsBuilder.build()::init);
 		// add the action plugin
-		simBuilder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		simBuilder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		simBuilder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 	}

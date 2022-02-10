@@ -1,6 +1,6 @@
 package plugins.partitions.support;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 
 /**
  * A functional interface for selecting people from a {@link Partition} based on
@@ -16,5 +16,5 @@ public interface LabelSetWeightingFunction {
 	 * arguments should return the same value during the span of a single sample
 	 * of a {@link Partition}.
 	 */
-	public double getWeight(Context context, LabelSet labelSet);
+	public double getWeight(SimulationContext simulationContext, LabelSet labelSet);
 }

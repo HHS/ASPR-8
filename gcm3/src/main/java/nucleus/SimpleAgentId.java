@@ -1,31 +1,43 @@
 package nucleus;
 
 /**
- * A convenience class for representing a class reference as a ReportId
+ * A convenience class for representing a class reference as a PluginId
  * 
  * @author Shawn Hatch
  *
+ *
  */
-public final class SimpleReportId implements ReportId {
+
+public class SimpleAgentId implements AgentId {
 
 	private final Object value;
 
-	public SimpleReportId(Object value) {
+	/**
+	 * Constructs a SimpleResolverId from the given value
+	 * 
+	 * @throws RuntimeException
+	 *             <li>if the value is null
+	 * 
+	 * 
+	 */
+	public SimpleAgentId(Object value) {
 		if (value == null) {
 			throw new RuntimeException("null value");
 		}
 		this.value = value;
 	}
 
+	/**
+	 * Returns the toString form of the input
+	 */
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("SimpleReportId [value=");
-		builder.append(value);
-		builder.append("]");
-		return builder.toString();
+		return value.toString();
 	}
 
+	/**
+	 * Standard hash code implementation based on the contained value
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -34,15 +46,19 @@ public final class SimpleReportId implements ReportId {
 		return result;
 	}
 
+	/**
+	 * Simple Resolver Ids are equal if and only if their contained values are
+	 * equal
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof SimpleReportId)) {
+		if (!(obj instanceof SimpleAgentId)) {
 			return false;
 		}
-		SimpleReportId other = (SimpleReportId) obj;
+		SimpleAgentId other = (SimpleAgentId) obj;
 		if (value == null) {
 			if (other.value != null) {
 				return false;

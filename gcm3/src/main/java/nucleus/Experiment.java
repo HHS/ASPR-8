@@ -51,8 +51,13 @@ public final class Experiment {
 			data.experimentContextConsumers.add(experimentContextConsumer);
 		}
 
-		public Builder addPlugin(final Plugin plugin) {
-			data.plugins.add(plugin);
+		public Builder addPluginBehavior(final PluginInitializer pluginInitializer) {
+			data.pluginInitializers.add(pluginInitializer);
+			return this;
+		}
+		
+		public Builder addPluginData(PluginData pluginData) {
+			data.pluginDatas.add(pluginData);
 			return this;
 		}
 
@@ -112,9 +117,10 @@ public final class Experiment {
 	/*
 	 * A data class for holding the inputs to this builder from its client.
 	 */
-	private static class Data {
+	private static class Data {		
+		private final List<PluginData> pluginDatas = new ArrayList<>();
 		private final List<Dimension> dimensions = new ArrayList<>();
-		private final List<Plugin> plugins = new ArrayList<>();
+		private final List<PluginInitializer> pluginInitializers = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
 		private boolean reportExperimentProgessToConsole;
@@ -141,16 +147,18 @@ public final class Experiment {
 	 */
 	private static class SimulationCallable implements Callable<SimResult> {
 		private final ExperimentStateManager experimentStateManager;
-		private final List<Plugin> plugins;
+		private final List<PluginInitializer> pluginInitializers;
+		private final List<PluginData> pluginDatas;
 		private final Integer scenarioId;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins) {
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<PluginInitializer> pluginInitializers,final List<PluginData> pluginDatas) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
-			this.plugins = new ArrayList<>(plugins);
+			this.pluginInitializers = new ArrayList<>(pluginInitializers);
+			this.pluginDatas = new ArrayList<>(pluginDatas);
 		}
 
 		/**
@@ -165,8 +173,11 @@ public final class Experiment {
 			final Simulation.Builder simBuilder = Simulation.builder();
 
 			// Load the plugins into the simulation builder
-			for (final Plugin plugin : plugins) {
-				simBuilder.addPlugin(plugin.getPluginId(), plugin::init);
+			for (final PluginInitializer pluginInitializer : pluginInitializers) {
+				simBuilder.addPluginInitializer(pluginInitializer);
+			}
+			for (final PluginData pluginData : pluginDatas) {
+				simBuilder.addPluginData(pluginData);
 			}
 
 			// direct output from the simulation to the subscribed consumers
@@ -294,8 +305,8 @@ public final class Experiment {
 		 */
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
-			preSimActions(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.plugins));
+			List<PluginData> pluginDatas = preSimActions(scenarioId);
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.pluginInitializers,pluginDatas));
 			jobIndex++;
 		}
 
@@ -308,8 +319,8 @@ public final class Experiment {
 		while (jobCompletionCount < jobs.size()) {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
-				preSimActions(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.plugins));
+				List<PluginData> pluginDatas = preSimActions(scenarioId);
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.pluginInitializers,pluginDatas));
 				jobIndex++;
 			}
 
@@ -358,11 +369,16 @@ public final class Experiment {
 			}
 
 			// generate the plugins that will form the simulation
-			final List<Plugin> plugins = preSimActions(scenarioId);
+			final List<PluginData> pluginDatas = preSimActions(scenarioId);
 
-			// Load the plugins into the simulation builder
-			for (final Plugin plugin : plugins) {
-				simBuilder.addPlugin(plugin.getPluginId(), plugin::init);
+			// Load the plugin behaviors into the simulation builder
+			for (final PluginData pluginData : pluginDatas) {
+				simBuilder.addPluginData(pluginData);
+			}		
+			
+			// Load the plugin behaviors into the simulation builder
+			for (final PluginInitializer pluginInitializer : data.pluginInitializers) {
+				simBuilder.addPluginInitializer(pluginInitializer);
 			}
 
 			// direct output from the simulation to the subscribed consumers
@@ -386,16 +402,16 @@ public final class Experiment {
 		}
 	}
 
-	private List<Plugin> preSimActions(final int scenarioId) {
+	private List<PluginData> preSimActions(final int scenarioId) {
 		/*
 		 * Build the type map of the clone plugin builders from the plugins
 		 * supplied to the experiment builder
 		 */
-		final TypeMap.Builder<PluginBuilder> typeMapBuilder = TypeMap.builder(PluginBuilder.class);
-		for (final Plugin plugin : data.plugins) {
-			typeMapBuilder.add(plugin.getCloneBuilder());
+		final TypeMap.Builder<PluginDataBuilder> typeMapBuilder = TypeMap.builder(PluginDataBuilder.class);
+		for (final PluginData pluginData : data.pluginDatas) {
+			typeMapBuilder.add(pluginData.getCloneBuilder());
 		}
-		final TypeMap<PluginBuilder> typeMap = typeMapBuilder.build();
+		final TypeMap<PluginDataBuilder> typeMap = typeMapBuilder.build();
 
 		// initialize the scenario meta data
 		final List<String> scenarioMetaData = new ArrayList<>();
@@ -415,7 +431,7 @@ public final class Experiment {
 			modulus *= dimension.size();
 
 			// get the function from the dimension
-			final Function<TypeMap<PluginBuilder>, List<String>> memberGenerator = dimension.getMemberGenerator(index);
+			final Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator = dimension.getMemberGenerator(index);
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function
@@ -425,12 +441,12 @@ public final class Experiment {
 		// update the experiment state manager
 		experimentStateManager.openScenario(scenarioId, scenarioMetaData);
 
-		final List<Plugin> result = new ArrayList<>();
+		final List<PluginData> result = new ArrayList<>();
 		
 		// Build the plugins
-		for (final PluginBuilder pluginBuilder : typeMap.getContents()) {
-			final Plugin plugin = pluginBuilder.build();
-			result.add(plugin);
+		for (final PluginDataBuilder pluginDataBuilder : typeMap.getContents()) {
+			final PluginData pluginData = pluginDataBuilder.build();
+			result.add(pluginData);
 		}
 
 		return result;

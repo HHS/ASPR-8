@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.SimulationContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
 import plugins.compartments.events.observation.PersonCompartmentChangeObservationEvent;
@@ -39,7 +39,7 @@ import util.annotations.UnitTestMethod;
 public class AT_CompartmentFilter {
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { Context.class })
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		CompartmentsActionSupport.testConsumer(0, 162474236345345L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			// show that a null compartment id causes validate() throws a
@@ -105,13 +105,13 @@ public class AT_CompartmentFilter {
 	}
 
 	/**
-	 * Tests {@link CompartmentFilter#evaluate(Context, PersonId)}
+	 * Tests {@link CompartmentFilter#evaluate(SimulationContext, PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add the test agent
 		pluginBuilder.addAgent("agent");
@@ -165,8 +165,8 @@ public class AT_CompartmentFilter {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		CompartmentsActionSupport.testConsumers(0, 3457455345388988L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		CompartmentsActionSupport.testConsumers(0, 3457455345388988L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPluginInitializer);
 
 	}
 

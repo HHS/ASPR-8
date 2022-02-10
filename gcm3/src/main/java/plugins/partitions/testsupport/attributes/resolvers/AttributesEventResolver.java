@@ -1,6 +1,6 @@
 package plugins.partitions.testsupport.attributes.resolvers;
 
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.datacontainers.AttributesDataView;
@@ -78,86 +78,86 @@ public final class AttributesEventResolver {
 
 	private AttributesDataManager attributesDataManager;
 
-	private void handlePersonImminentRemovalObservationEventValidation(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(resolverContext, personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalObservationEventValidation(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		validatePersonExists(dataManagerContext, personImminentRemovalObservationEvent.getPersonId());
 	}
 
-	private void handlePersonImminentRemovalObservationEventExecution(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		resolverContext.addPlan((context) -> attributesDataManager.handlePersonRemoval(personImminentRemovalObservationEvent.getPersonId()), resolverContext.getTime());
+	private void handlePersonImminentRemovalObservationEventExecution(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		dataManagerContext.addPlan((context) -> attributesDataManager.handlePersonRemoval(personImminentRemovalObservationEvent.getPersonId()), dataManagerContext.getTime());
 	}
 
 	private PersonDataView personDataView;
 
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
-		attributesDataManager = new AttributesDataManager(resolverContext.getSafeContext());
+		attributesDataManager = new AttributesDataManager(dataManagerContext.getSafeContext());
 
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
 
-		resolverContext.addEventLabeler(AttributeChangeObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(AttributeChangeObservationEvent.getEventLabeler());
 		
-		resolverContext.subscribeToEventValidationPhase(AttributeValueAssignmentEvent.class, this::handleAttributeValueAssignmentEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(AttributeValueAssignmentEvent.class, this::handleAttributeValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(AttributeValueAssignmentEvent.class, this::handleAttributeValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(AttributeValueAssignmentEvent.class, this::handleAttributeValueAssignmentEventExecution);
 
-		resolverContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
 
 		for (AttributeId attributeId : attributeInitialData.getAttributeIds()) {
 			AttributeDefinition attributeDefinition = attributeInitialData.getAttributeDefinition(attributeId);
 			attributesDataManager.addAttribute(attributeId, attributeDefinition);
 		}
 
-		resolverContext.publishDataView(new AttributesDataView(resolverContext, attributesDataManager));
+		dataManagerContext.publishDataView(new AttributesDataView(dataManagerContext, attributesDataManager));
 	}
 
-	private void handleAttributeValueAssignmentEventValidation(final ResolverContext resolverContext, final AttributeValueAssignmentEvent attributeValueAssignmentEvent) {
+	private void handleAttributeValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final AttributeValueAssignmentEvent attributeValueAssignmentEvent) {
 		final PersonId personId = attributeValueAssignmentEvent.getPersonId();
 		final AttributeId attributeId = attributeValueAssignmentEvent.getAttributeId();
 		final Object value = attributeValueAssignmentEvent.getValue();
-		validatePersonExists(resolverContext, personId);
-		validateAttributeId(resolverContext, attributeId);
-		validateValueNotNull(resolverContext, value);
+		validatePersonExists(dataManagerContext, personId);
+		validateAttributeId(dataManagerContext, attributeId);
+		validateValueNotNull(dataManagerContext, value);
 		final AttributeDefinition attributeDefinition = attributesDataManager.getAttributeDefinition(attributeId);
-		validateValueCompatibility(resolverContext, attributeId, attributeDefinition, value);
+		validateValueCompatibility(dataManagerContext, attributeId, attributeDefinition, value);
 	}
 
-	private void handleAttributeValueAssignmentEventExecution(final ResolverContext resolverContext, final AttributeValueAssignmentEvent attributeValueAssignmentEvent) {
+	private void handleAttributeValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final AttributeValueAssignmentEvent attributeValueAssignmentEvent) {
 		final PersonId personId = attributeValueAssignmentEvent.getPersonId();
 		final AttributeId attributeId = attributeValueAssignmentEvent.getAttributeId();
 		final Object value = attributeValueAssignmentEvent.getValue();
 		Object previousValue = attributesDataManager.getAttributeValue(personId, attributeId);
 		attributesDataManager.setAttributeValue(personId, attributeId, value);		
-		resolverContext.queueEventForResolution(new AttributeChangeObservationEvent(personId, attributeId,previousValue, value));
+		dataManagerContext.resolveEvent(new AttributeChangeObservationEvent(personId, attributeId,previousValue, value));
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private static void validateValueNotNull(final ResolverContext resolverContext, final Object value) {
+	private static void validateValueNotNull(final DataManagerContext dataManagerContext, final Object value) {
 		if (value == null) {
-			resolverContext.throwContractException(AttributeError.NULL_ATTRIBUTE_VALUE);
+			dataManagerContext.throwContractException(AttributeError.NULL_ATTRIBUTE_VALUE);
 		}
 	}
 
-	private static void validateValueCompatibility(final ResolverContext resolverContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
+	private static void validateValueCompatibility(final DataManagerContext dataManagerContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
 		if (!attributeDefinition.getType().isAssignableFrom(value.getClass())) {
-			resolverContext.throwContractException(AttributeError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(AttributeError.INCOMPATIBLE_VALUE,
 					"Attribute value " + value + " is not of type " + attributeDefinition.getType().getName() + " and does not match definition of " + attributeId);
 		}
 	}
 
-	private void validateAttributeId(ResolverContext resolverContext, final AttributeId attributeId) {
+	private void validateAttributeId(DataManagerContext dataManagerContext, final AttributeId attributeId) {
 		if (attributeId == null) {
-			resolverContext.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
+			dataManagerContext.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
 		if (!attributesDataManager.attributeExists(attributeId)) {
-			resolverContext.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID, attributeId);
+			dataManagerContext.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID, attributeId);
 		}
 	}
 

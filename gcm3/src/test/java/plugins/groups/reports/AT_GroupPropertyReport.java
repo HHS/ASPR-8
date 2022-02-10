@@ -7,10 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.groups.GroupPlugin;
@@ -28,6 +27,7 @@ import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.initialdata.PeopleInitialData;
 import plugins.properties.PropertiesPlugin;
+import plugins.reports.ReportId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
@@ -98,7 +98,7 @@ public class AT_GroupPropertyReport {
 		 */
 
 		// add the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent to move people in and out of groups
 		pluginBuilder.addAgent("agent");
@@ -137,7 +137,7 @@ public class AT_GroupPropertyReport {
 			c.resolveEvent(new GroupPropertyValueAssignmentEvent(new GroupId(5), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 77));
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// create a container to hold expected results
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
@@ -175,7 +175,7 @@ public class AT_GroupPropertyReport {
 
 		GroupPropertyReport groupPropertyReport = builder.build();
 
-		testConsumers(actionPlugin, groupPropertyReport, expectedOutputConsumer, 6092832510476200219L);
+		testConsumers(actionPluginInitializer, groupPropertyReport, expectedOutputConsumer, 6092832510476200219L);
 
 	}
 
@@ -190,7 +190,7 @@ public class AT_GroupPropertyReport {
 		 */
 
 		// add the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent to move people in and out of groups
 		pluginBuilder.addAgent("agent");
@@ -231,7 +231,7 @@ public class AT_GroupPropertyReport {
 			c.resolveEvent(new GroupPropertyValueAssignmentEvent(new GroupId(4), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 127));
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// create a container to hold expected results
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
@@ -310,11 +310,11 @@ public class AT_GroupPropertyReport {
 		}
 		GroupPropertyReport groupPropertyReport = builder.build();
 
-		testConsumers(actionPlugin, groupPropertyReport, expectedOutputConsumer, 6092832510476200219L);
+		testConsumers(actionPluginInitializer, groupPropertyReport, expectedOutputConsumer, 6092832510476200219L);
 
 	}
 
-	private void testConsumers(ActionPlugin actionPlugin, GroupPropertyReport groupPropertyReport, TestReportItemOutputConsumer expectedOutputConsumer, long seed) {
+	private void testConsumers(ActionPluginInitializer actionPluginInitializer, GroupPropertyReport groupPropertyReport, TestReportItemOutputConsumer expectedOutputConsumer, long seed) {
 
 		Builder builder = Simulation.builder();
 
@@ -350,7 +350,7 @@ public class AT_GroupPropertyReport {
 		// add the stochastics plugin
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(seed).build()::init);
 
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// add the output consumer for the actual report items
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
@@ -360,7 +360,7 @@ public class AT_GroupPropertyReport {
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 

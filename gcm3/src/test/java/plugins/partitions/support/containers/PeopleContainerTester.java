@@ -16,11 +16,11 @@ import java.util.function.Function;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 
 /*
  * Static support class for testing PopulationContainer implementer classes
@@ -30,7 +30,7 @@ public class PeopleContainerTester {
 
 
 
-	public static void testGetPeople(Function<Context, PeopleContainer> provider, long seed) {
+	public static void testGetPeople(Function<SimulationContext, PeopleContainer> provider, long seed) {
 		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
 
 			// get the people container to test
@@ -38,8 +38,8 @@ public class PeopleContainerTester {
 
 			// get some data views that will be needed below
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, personDataView.getPopulationCount());
@@ -82,7 +82,7 @@ public class PeopleContainerTester {
 
 	}
 
-	public static void testSafeAdd(Function<Context, PeopleContainer> provider, long seed) {
+	public static void testSafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
 		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
 
 			// get the people container to test
@@ -90,8 +90,8 @@ public class PeopleContainerTester {
 
 			// get some data views that will be needed below
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, personDataView.getPopulationCount());
@@ -125,7 +125,7 @@ public class PeopleContainerTester {
 		});
 	}
 
-	public static void testUnsafeAdd(Function<Context, PeopleContainer> provider, long seed) {
+	public static void testUnsafeAdd(Function<SimulationContext, PeopleContainer> provider, long seed) {
 		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
 
 			// get the people container to test
@@ -133,8 +133,8 @@ public class PeopleContainerTester {
 
 			// get some data views that will be needed below
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, personDataView.getPopulationCount());
@@ -162,7 +162,7 @@ public class PeopleContainerTester {
 		});
 	}
 
-	public static void testRemove(Function<Context, PeopleContainer> provider, long seed) {
+	public static void testRemove(Function<SimulationContext, PeopleContainer> provider, long seed) {
 		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
 
 			// get the people container to test
@@ -170,8 +170,8 @@ public class PeopleContainerTester {
 
 			// get some data views that will be needed below
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, personDataView.getPopulationCount());
@@ -206,7 +206,7 @@ public class PeopleContainerTester {
 		});
 	}
 
-	public static void testSize(Function<Context, PeopleContainer> provider, long seed) {
+	public static void testSize(Function<SimulationContext, PeopleContainer> provider, long seed) {
 		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
 
 			// get the people container to test
@@ -214,8 +214,8 @@ public class PeopleContainerTester {
 
 			// get some data views that will be needed below
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, personDataView.getPopulationCount());
@@ -249,7 +249,7 @@ public class PeopleContainerTester {
 		});
 	}
 
-	public static void testContains(Function<Context, PeopleContainer> provider, long seed) {
+	public static void testContains(Function<SimulationContext, PeopleContainer> provider, long seed) {
 		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
 
 			// get the people container to test
@@ -257,8 +257,8 @@ public class PeopleContainerTester {
 
 			// get some data views that will be needed below
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, personDataView.getPopulationCount());
@@ -297,7 +297,7 @@ public class PeopleContainerTester {
 		});
 	}
 
-	public static void testGetRandomPersonId(Function<Context, PeopleContainer> provider, long seed) {
+	public static void testGetRandomPersonId(Function<SimulationContext, PeopleContainer> provider, long seed) {
 		PartitionsActionSupport.testConsumer(100, seed, (c) -> {
 
 			// get the people container to test
@@ -305,8 +305,8 @@ public class PeopleContainerTester {
 
 			// get some data views that will be needed below
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, personDataView.getPopulationCount());

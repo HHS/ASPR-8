@@ -3,7 +3,7 @@ package plugins.regions.datacontainers;
 import java.util.ArrayList;
 import java.util.List;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import plugins.compartments.support.CompartmentError;
 import plugins.people.datacontainers.PersonDataView;
@@ -23,7 +23,7 @@ import util.ContractException;
  */
 public final class RegionLocationDataView implements DataView {
 	private RegionLocationDataManager regionLocationDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 	private PersonDataView personDataView;
 	private RegionDataView regionDataView;
 
@@ -35,14 +35,14 @@ public final class RegionLocationDataView implements DataView {
 	 *             <li>if the region location data manager is null</li>
 	 * 
 	 */
-	public RegionLocationDataView(Context context, RegionLocationDataManager regionLocationDataManager) {
+	public RegionLocationDataView(SimulationContext simulationContext, RegionLocationDataManager regionLocationDataManager) {
 		if (regionLocationDataManager == null) {
 			throw new RuntimeException("null region location data manager");
 		}
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.regionLocationDataManager = regionLocationDataManager;
-		personDataView = context.getDataView(PersonDataView.class).get();
-		regionDataView = context.getDataView(RegionDataView.class).get();
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
+		regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 	}
 
 	/**
@@ -142,27 +142,27 @@ public final class RegionLocationDataView implements DataView {
 
 	private void validatePersonExists(final PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
 	private void validatePersonRegionArrivalsTimesTracked() {
 		if (regionLocationDataManager.getPersonRegionArrivalTrackingPolicy() != TimeTrackingPolicy.TRACK_TIME) {
-			context.throwContractException(RegionError.REGION_ARRIVAL_TIMES_NOT_TRACKED);
+			simulationContext.throwContractException(RegionError.REGION_ARRIVAL_TIMES_NOT_TRACKED);
 		}
 	}
 
 	private void validateRegionId(final RegionId regionId) {
 
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
 
 		if (!regionDataView.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
 }

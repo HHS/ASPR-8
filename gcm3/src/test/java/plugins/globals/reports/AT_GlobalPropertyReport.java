@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.globals.GlobalPlugin;
@@ -19,6 +18,7 @@ import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
 import plugins.properties.PropertiesPlugin;
 import plugins.properties.support.PropertyDefinition;
+import plugins.reports.ReportId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
@@ -73,7 +73,7 @@ public class AT_GlobalPropertyReport {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 	
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create an agent and have it assign various global properties at
 		// various times
@@ -110,8 +110,8 @@ public class AT_GlobalPropertyReport {
 			c.resolveEvent(new GlobalPropertyValueAssignmentEvent(globalPropertyId_3, true));
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
@@ -119,7 +119,7 @@ public class AT_GlobalPropertyReport {
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		/*
 		 * Collect the expected report items. Note that order does not matter. *

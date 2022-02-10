@@ -3,7 +3,7 @@ package plugins.partitions.support;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
 import util.ContractException;
 
@@ -19,8 +19,8 @@ public abstract class Filter {
 		}
 
 		@Override
-		public boolean evaluate(Context context, PersonId personId) {
-			return a.evaluate(context, personId) && b.evaluate(context, personId);
+		public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+			return a.evaluate(simulationContext, personId) && b.evaluate(simulationContext, personId);
 		}
 
 		@Override
@@ -42,9 +42,9 @@ public abstract class Filter {
 		}
 
 		@Override
-		public void validate(Context context) {
-			a.validate(context);
-			b.validate(context);
+		public void validate(SimulationContext simulationContext) {
+			a.validate(simulationContext);
+			b.validate(simulationContext);
 		}
 
 	}
@@ -59,8 +59,8 @@ public abstract class Filter {
 		}
 
 		@Override
-		public boolean evaluate(Context context, PersonId personId) {
-			return a.evaluate(context, personId) || b.evaluate(context, personId);
+		public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+			return a.evaluate(simulationContext, personId) || b.evaluate(simulationContext, personId);
 		}
 
 		@Override
@@ -71,9 +71,9 @@ public abstract class Filter {
 		}
 
 		@Override
-		public void validate(Context context) {
-			a.validate(context);
-			b.validate(context);
+		public void validate(SimulationContext simulationContext) {
+			a.validate(simulationContext);
+			b.validate(simulationContext);
 		}
 	}
 
@@ -85,13 +85,13 @@ public abstract class Filter {
 		}
 
 		@Override
-		public void validate(Context context) {
-			a.validate(context);
+		public void validate(SimulationContext simulationContext) {
+			a.validate(simulationContext);
 		}
 
 		@Override
-		public boolean evaluate(Context context, PersonId personId) {
-			return !a.evaluate(context, personId);
+		public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+			return !a.evaluate(simulationContext, personId);
 		}
 
 		@Override
@@ -148,7 +148,7 @@ public abstract class Filter {
 	private final static class NoPeopleFilter extends Filter {
 
 		@Override
-		public boolean evaluate(Context context, PersonId personId) {
+		public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
 			return false;
 		}
 
@@ -165,7 +165,7 @@ public abstract class Filter {
 		}
 
 		@Override
-		public void validate(Context context) {
+		public void validate(SimulationContext simulationContext) {
 
 		}
 
@@ -174,7 +174,7 @@ public abstract class Filter {
 	private final static class AllPeopleFilter extends Filter {
 
 		@Override
-		public boolean evaluate(Context context, PersonId personId) {
+		public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
 			return true;
 		}
 
@@ -191,7 +191,7 @@ public abstract class Filter {
 		}
 
 		@Override
-		public void validate(Context context) {
+		public void validate(SimulationContext simulationContext) {
 
 		}
 	}
@@ -207,7 +207,7 @@ public abstract class Filter {
 	 * 
 	 * <li>the person id is known</li>
 	 */
-	public abstract boolean evaluate(Context context, PersonId personId);
+	public abstract boolean evaluate(SimulationContext simulationContext, PersonId personId);
 
 	/**
 	 * Validates the filter from the given context.
@@ -216,7 +216,7 @@ public abstract class Filter {
 	 *  
 	 * <li>the context is not null</li>
 	 */
-	public abstract void validate(Context context);
+	public abstract void validate(SimulationContext simulationContext);
 
 	/**
 	 * Returns the filter sensitivities

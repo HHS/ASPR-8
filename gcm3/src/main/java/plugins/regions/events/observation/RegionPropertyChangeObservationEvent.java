@@ -1,7 +1,7 @@
 package plugins.regions.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -53,29 +53,29 @@ public class RegionPropertyChangeObservationEvent implements Event {
 		PROPERTY, REGION_PROPERTY
 	}
 
-	private static void validateRegionPropertyId(Context context, RegionPropertyId regionPropertyId) {
-		RegionDataView regionDataView = context.getDataView(RegionDataView.class).get();
+	private static void validateRegionPropertyId(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
+		RegionDataView regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 		regionDataView.getRegionPropertyDefinition(regionPropertyId);
 	}
 
-	private static void validateRegionId(Context context, RegionId regionId) {
+	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
 		if (regionId == null) {
-			context.throwContractException(RegionError.NULL_REGION_ID);
+			simulationContext.throwContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataView regionDataView = context.getDataView(RegionDataView.class).get();
+		RegionDataView regionDataView = simulationContext.getDataView(RegionDataView.class).get();
 		if (!regionDataView.regionIdExists(regionId)) {
-			context.throwContractException(RegionError.UNKNOWN_REGION_ID);
+			simulationContext.throwContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
 
-	public static EventLabel<RegionPropertyChangeObservationEvent> getEventLabelByProperty(Context context, RegionPropertyId regionPropertyId) {
-		validateRegionPropertyId(context, regionPropertyId);
+	public static EventLabel<RegionPropertyChangeObservationEvent> getEventLabelByProperty(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
+		validateRegionPropertyId(simulationContext, regionPropertyId);
 		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.PROPERTY, RegionPropertyChangeObservationEvent.class, regionPropertyId);
 	}
 
-	public static EventLabel<RegionPropertyChangeObservationEvent> getEventLabelByRegionAndProperty(Context context, RegionId regionId, RegionPropertyId regionPropertyId) {
-		validateRegionId(context, regionId);
-		validateRegionPropertyId(context, regionPropertyId);
+	public static EventLabel<RegionPropertyChangeObservationEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, RegionPropertyId regionPropertyId) {
+		validateRegionId(simulationContext, regionId);
+		validateRegionPropertyId(simulationContext, regionPropertyId);
 		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.REGION_PROPERTY, RegionPropertyChangeObservationEvent.class, regionId, regionPropertyId);
 	}
 

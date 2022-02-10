@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
@@ -24,40 +24,40 @@ public final class PropertyFilter extends Filter {
 	private final Equality equality;
 	private PersonPropertyDataView personPropertyDataView;
 
-	private void validatePersonPropertyId(Context context, final PersonPropertyId personPropertyId) {
+	private void validatePersonPropertyId(SimulationContext simulationContext, final PersonPropertyId personPropertyId) {
 		
 		if (personPropertyDataView == null) {
-			personPropertyDataView = context.getDataView(PersonPropertyDataView.class).get();
+			personPropertyDataView = simulationContext.getDataView(PersonPropertyDataView.class).get();
 		}
 		
 		if (personPropertyId == null) {
-			context.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			simulationContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
 		}
 
 		if (!personPropertyDataView.personPropertyIdExists(personPropertyId)) {
-			context.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+			simulationContext.throwContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
 		}
 	}
 
-	private void validateEquality(Context context, final Equality equality) {
+	private void validateEquality(SimulationContext simulationContext, final Equality equality) {
 		if (equality == null) {
-			context.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
+			simulationContext.throwContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
 
-	private void validatePersonPropertyValueNotNull(Context context, final Object propertyValue) {
+	private void validatePersonPropertyValueNotNull(SimulationContext simulationContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			context.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
+			simulationContext.throwContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(Context context, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(SimulationContext simulationContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			context.throwContractException(PropertyError.INCOMPATIBLE_VALUE, "Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
+			simulationContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE, "Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
-	private void validateEqualityCompatibility(Context context, final Object propertyId, final PropertyDefinition propertyDefinition, final Equality equality) {
+	private void validateEqualityCompatibility(SimulationContext simulationContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Equality equality) {
 
 		if (equality == Equality.EQUAL) {
 			return;
@@ -67,7 +67,7 @@ public final class PropertyFilter extends Filter {
 		}
 
 		if (!Comparable.class.isAssignableFrom(propertyDefinition.getType())) {
-			context.throwContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE, "Property values for " + propertyId + " are not comparable via " + equality);
+			simulationContext.throwContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE, "Property values for " + propertyId + " are not comparable via " + equality);
 		}
 	}
 
@@ -78,30 +78,30 @@ public final class PropertyFilter extends Filter {
 	}
 
 	@Override
-	public void validate(Context context) {
-		if(context == null) {
+	public void validate(SimulationContext simulationContext) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (personPropertyDataView == null) {
-			personPropertyDataView = context.getDataView(PersonPropertyDataView.class).get();
+			personPropertyDataView = simulationContext.getDataView(PersonPropertyDataView.class).get();
 		}
 		
-		validatePersonPropertyId(context, personPropertyId);
-		validateEquality(context, equality);
-		validatePersonPropertyValueNotNull(context, personPropertyValue);		
+		validatePersonPropertyId(simulationContext, personPropertyId);
+		validateEquality(simulationContext, equality);
+		validatePersonPropertyValueNotNull(simulationContext, personPropertyValue);		
 		final PropertyDefinition propertyDefinition = personPropertyDataView.getPersonPropertyDefinition(personPropertyId);
-		validateValueCompatibility(context, personPropertyId, propertyDefinition, personPropertyValue);
-		validateEqualityCompatibility(context, personPropertyId, propertyDefinition, equality);
+		validateValueCompatibility(simulationContext, personPropertyId, propertyDefinition, personPropertyValue);
+		validateEqualityCompatibility(simulationContext, personPropertyId, propertyDefinition, equality);
 	}
 
 	@Override
-	public boolean evaluate(Context context, PersonId personId) {
+	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
 		
-		if(context == null) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (personPropertyDataView == null) {
-			personPropertyDataView = context.getDataView(PersonPropertyDataView.class).get();
+			personPropertyDataView = simulationContext.getDataView(PersonPropertyDataView.class).get();
 		}
 		
 		// we do not assume that the returned property value is
@@ -138,7 +138,7 @@ public final class PropertyFilter extends Filter {
 		return builder.toString();
 	}
 
-	private Optional<PersonId> requiresRefresh(Context context, PersonPropertyChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonPropertyChangeObservationEvent event) {
 		if (event.getPersonPropertyId().equals(personPropertyId)) {
 			if (evaluate(event.getPreviousPropertyValue()) != evaluate(event.getCurrentPropertyValue())) {
 				return Optional.of(event.getPersonId());

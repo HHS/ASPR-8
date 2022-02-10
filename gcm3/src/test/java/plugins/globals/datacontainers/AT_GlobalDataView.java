@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataView;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
-import nucleus.testsupport.MockContext;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.globals.support.GlobalComponentId;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
@@ -34,16 +34,16 @@ import util.annotations.UnitTestMethod;
 public final class AT_GlobalDataView implements DataView {
 
 	@Test
-	@UnitTestConstructor(args = { ResolverContext.class, GlobalDataManager.class })
+	@UnitTestConstructor(args = { DataManagerContext.class, GlobalDataManager.class })
 	public void testConstructor() {
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
-		assertNotNull(new GlobalDataView(mockContext, globalDataManager));
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
+		assertNotNull(new GlobalDataView(mockSimulationContext, globalDataManager));
 
 		ContractException contractException = assertThrows(ContractException.class, () -> new GlobalDataView(null, globalDataManager));
 		assertEquals(NucleusError.NULL_CONTEXT, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new GlobalDataView(mockContext, null));
+		contractException = assertThrows(ContractException.class, () -> new GlobalDataView(mockSimulationContext, null));
 		assertEquals(GlobalError.NULL_GLOBAL_DATA_MANGER, contractException.getErrorType());
 
 	}
@@ -51,9 +51,9 @@ public final class AT_GlobalDataView implements DataView {
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
-		GlobalDataView globalDataView = new GlobalDataView(mockContext, globalDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
+		GlobalDataView globalDataView = new GlobalDataView(mockSimulationContext, globalDataManager);
 
 		// create a container for the expected property definitions
 		Map<GlobalPropertyId, PropertyDefinition> expectedPropertyDefintions = new LinkedHashMap<>();
@@ -86,9 +86,9 @@ public final class AT_GlobalDataView implements DataView {
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyIds", args = {})
 	public void testGetGlobalPropertyIds() {
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
-		GlobalDataView globalDataView = new GlobalDataView(mockContext, globalDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
+		GlobalDataView globalDataView = new GlobalDataView(mockSimulationContext, globalDataManager);
 		// create a container for the expected property ids
 		Set<GlobalPropertyId> expectedGlobalPropertyIds = new LinkedHashSet<>();
 
@@ -108,9 +108,9 @@ public final class AT_GlobalDataView implements DataView {
 	@Test
 	@UnitTestMethod(name = "getGlobalComponentIds", args = {})
 	public void testGetGlobalComponentIds() {
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
-		GlobalDataView globalDataView = new GlobalDataView(mockContext, globalDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
+		GlobalDataView globalDataView = new GlobalDataView(mockSimulationContext, globalDataManager);
 
 		Set<GlobalComponentId> expectedGlobalComponentIds = new LinkedHashSet<>();
 		for (int i = 0; i < 10; i++) {
@@ -126,9 +126,9 @@ public final class AT_GlobalDataView implements DataView {
 	public void testGetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1059537118783693383L);
 
-		MockContext mockContext = MockContext.builder().build();
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
-		GlobalDataView globalDataView = new GlobalDataView(mockContext, globalDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
+		GlobalDataView globalDataView = new GlobalDataView(mockSimulationContext, globalDataManager);
 
 		Map<GlobalPropertyId, MutableInteger> expectedGlobalPropertyValues = new LinkedHashMap<>();
 		for (int i = 0; i < 10; i++) {
@@ -166,15 +166,15 @@ public final class AT_GlobalDataView implements DataView {
 	public void testGetGlobalPropertyTime() {
 		MutableDouble time = new MutableDouble();
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5323616867741088481L);
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();	
-		GlobalDataManager globalDataManager = new GlobalDataManager(mockContext);
-		GlobalDataView globalDataView = new GlobalDataView(mockContext, globalDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();	
+		GlobalDataManager globalDataManager = new GlobalDataManager(mockSimulationContext);
+		GlobalDataView globalDataView = new GlobalDataView(mockSimulationContext, globalDataManager);
 		Map<GlobalPropertyId, MutableDouble> expectedGlobalPropertyTimes = new LinkedHashMap<>();
 		for (int i = 0; i < 10; i++) {
 			GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("property id " + i);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(i).build();
 			globalDataManager.addGlobalPropertyDefinition(globalPropertyId, propertyDefinition);
-			expectedGlobalPropertyTimes.put(globalPropertyId, new MutableDouble(mockContext.getTime()));
+			expectedGlobalPropertyTimes.put(globalPropertyId, new MutableDouble(mockSimulationContext.getTime()));
 		}
 
 		// Set the global property values a few times and record the values.
@@ -184,7 +184,7 @@ public final class AT_GlobalDataView implements DataView {
 			GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("property id " + index);
 			int value = randomGenerator.nextInt();
 			globalDataManager.setGlobalPropertyValue(globalPropertyId, value);
-			expectedGlobalPropertyTimes.get(globalPropertyId).setValue(mockContext.getTime());
+			expectedGlobalPropertyTimes.get(globalPropertyId).setValue(mockSimulationContext.getTime());
 		}
 
 		// show that the time associated with each value is correct

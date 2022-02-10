@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.observation.GroupMembershipAdditionObservationEvent;
@@ -18,9 +18,9 @@ public class GroupMemberFilter extends Filter {
 	final GroupId groupId;
 	private PersonGroupDataView personGroupDataView;
 
-	private void validateGroupIdNotNull(Context context, final GroupId groupId) {
+	private void validateGroupIdNotNull(SimulationContext simulationContext, final GroupId groupId) {
 		if (groupId == null) {
-			context.throwContractException(GroupError.NULL_GROUP_ID);
+			simulationContext.throwContractException(GroupError.NULL_GROUP_ID);
 		}
 	}
 
@@ -29,18 +29,18 @@ public class GroupMemberFilter extends Filter {
 	}
 
 	@Override
-	public void validate(Context context) {
-		validateGroupIdNotNull(context, groupId);
+	public void validate(SimulationContext simulationContext) {
+		validateGroupIdNotNull(simulationContext, groupId);
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(Context context, GroupMembershipAdditionObservationEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionObservationEvent event) {
 		if (event.getGroupId().equals(groupId)) {
 			return Optional.of(event.getPersonId());
 		}
 		return Optional.empty();
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(Context context, GroupMembershipRemovalObservationEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalObservationEvent event) {
 		if (event.getGroupId().equals(groupId)) {
 			return Optional.of(event.getPersonId());
 		}
@@ -58,12 +58,12 @@ public class GroupMemberFilter extends Filter {
 	}
 
 	@Override
-	public boolean evaluate(Context context, PersonId personId) {
-		if(context == null) {
+	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (personGroupDataView == null) {
-			personGroupDataView = context.getDataView(PersonGroupDataView.class).get();
+			personGroupDataView = simulationContext.getDataView(PersonGroupDataView.class).get();
 		}
 		return personGroupDataView.isGroupMember(groupId, personId);
 	}

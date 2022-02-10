@@ -14,7 +14,7 @@ import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.properties.support.PropertyDefinition;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
@@ -42,9 +42,9 @@ public class AT_RegionDataView {
 	@Test
 	@UnitTestMethod(name = "regionIdExists", args = { RegionId.class })
 	public void testRegionIdExists() {
-		MockContext mockContext = MockContext.builder().build();
-		RegionDataManager regionDataManager = new RegionDataManager(mockContext);
-		RegionDataView regionDataView = new RegionDataView(mockContext, regionDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		RegionDataManager regionDataManager = new RegionDataManager(mockSimulationContext);
+		RegionDataView regionDataView = new RegionDataView(mockSimulationContext, regionDataManager);
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionDataManager.addRegionId(testRegionId);
@@ -64,9 +64,9 @@ public class AT_RegionDataView {
 	@Test
 	@UnitTestMethod(name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
-		MockContext mockContext = MockContext.builder().build();
-		RegionDataManager regionDataManager = new RegionDataManager(mockContext);
-		RegionDataView regionDataView = new RegionDataView(mockContext, regionDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		RegionDataManager regionDataManager = new RegionDataManager(mockSimulationContext);
+		RegionDataView regionDataView = new RegionDataView(mockSimulationContext, regionDataManager);
 
 		// show that the region ids that are added can be retrieved
 		Set<RegionId> expectedRegionIds = new LinkedHashSet<>();
@@ -85,12 +85,12 @@ public class AT_RegionDataView {
 		Set<MultiKey> expectedPropertyDefinitions = new LinkedHashSet<>();
 
 		
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.setContractErrorConsumer((c)->{throw new ContractException(c);})
 				.setDetailedContractErrorConsumer((c,d)->{throw new ContractException(c);})
 				.build();
-		RegionDataManager regionDataManager = new RegionDataManager(mockContext);
-		RegionDataView regionDataView = new RegionDataView(mockContext, regionDataManager);
+		RegionDataManager regionDataManager = new RegionDataManager(mockSimulationContext);
+		RegionDataView regionDataView = new RegionDataView(mockSimulationContext, regionDataManager);
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionDataManager.addRegionId(testRegionId);
@@ -131,9 +131,9 @@ public class AT_RegionDataView {
 		// manager
 		Set<MultiKey> expectedPropertyDefinitions = new LinkedHashSet<>();
 		
-		MockContext mockContext = MockContext.builder().build();
-		RegionDataManager regionDataManager = new RegionDataManager(mockContext);
-		RegionDataView regionDataView = new RegionDataView(mockContext, regionDataManager);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		RegionDataManager regionDataManager = new RegionDataManager(mockSimulationContext);
+		RegionDataView regionDataView = new RegionDataView(mockSimulationContext, regionDataManager);
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionDataManager.addRegionId(testRegionId);
@@ -163,12 +163,12 @@ public class AT_RegionDataView {
 	@UnitTestMethod(name = "getRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class })
 	public void testGetRegionPropertyValue() {
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.setContractErrorConsumer((c)->{throw new ContractException(c);})
 				.setDetailedContractErrorConsumer((c,d)->{throw new ContractException(c);})
 				.setTimeSupplier(()->time.getValue()).build();
-		RegionDataManager rdm = new RegionDataManager(mockContext);
-		RegionDataView regionDataView = new RegionDataView(mockContext, rdm);
+		RegionDataManager rdm = new RegionDataManager(mockSimulationContext);
+		RegionDataView regionDataView = new RegionDataView(mockSimulationContext, rdm);
 
 		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -245,12 +245,12 @@ public class AT_RegionDataView {
 	public void testGetRegionPropertyTime() {
 
 		MutableDouble time = new MutableDouble(0);
-		MockContext mockContext = MockContext.builder()
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder()
 				.setContractErrorConsumer((c)->{throw new ContractException(c);})
 				.setDetailedContractErrorConsumer((c,d)->{throw new ContractException(c);})
 				.setTimeSupplier(()->time.getValue()).build();
-		RegionDataManager rdm = new RegionDataManager(mockContext);
-		RegionDataView regionDataView = new RegionDataView(mockContext, rdm);
+		RegionDataManager rdm = new RegionDataManager(mockSimulationContext);
+		RegionDataView regionDataView = new RegionDataView(mockSimulationContext, rdm);
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			rdm.addRegionId(testRegionId);
@@ -291,7 +291,7 @@ public class AT_RegionDataView {
 				// correct
 				rdm.setRegionPropertyValue(regionId, regionPropertyId, newPropertyValue++);
 				currentRegionPropertyTime = regionDataView.getRegionPropertyTime(regionId, regionPropertyId);
-				assertEquals(mockContext.getTime(), currentRegionPropertyTime, 0);
+				assertEquals(mockSimulationContext.getTime(), currentRegionPropertyTime, 0);
 			}
 		}
 

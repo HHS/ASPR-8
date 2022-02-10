@@ -16,7 +16,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.testsupport.MockContext;
+import nucleus.testsupport.MockSimulationContext;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import util.ContractException;
@@ -40,8 +40,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "personExists", args = { PersonId.class })
 	public void testPersonExists() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 10);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 10);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		for (int i = 0; i < 10; i++) {
@@ -62,8 +62,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getPeople", args = {})
 	public void testGetPeople() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 10);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 10);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		// add some people
@@ -93,8 +93,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getLastIssuedPersonId", args = {})
 	public void getLastIssuedPersonId() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 10);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 10);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		// show that no people have been added
@@ -114,8 +114,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "personIndexExists", args = { int.class })
 	public void testPersonIndexExists() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 10);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 10);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		// initially there are no people despite the initial size
@@ -140,8 +140,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getPersonIdLimit", args = {})
 	public void testGetPersonIdLimit() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 10);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 10);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		// initially there are no people despite the initial size, so we expect
@@ -158,8 +158,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getBoxedPersonId", args = { int.class })
 	public void testGetBoxedPersonId() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 10);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 10);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		// show that the boxed person id is correct
@@ -180,8 +180,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getScenarioToSimPeopleMap", args = {})
 	public void testGetScenarioToSimPeopleMap() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 0);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 0);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		/*
@@ -209,8 +209,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getSimToScenarioPeopleMap", args = {})
 	public void testGetSimToScenarioPeopleMap() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 0);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 0);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		/*
@@ -239,8 +239,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getPopulationCount", args = {})
 	public void testGetPopulationCount() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 0);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 0);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		// show the population count grows as we add people
@@ -254,8 +254,8 @@ public class AT_PersonDataView {
 	@Test
 	@UnitTestMethod(name = "getProjectedPopulationCount", args = {})
 	public void testGetProjectedPopulationCount() {
-		MockContext mockContext = MockContext.builder().build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 0);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 0);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 
 		assertEquals(0, personDataView.getProjectedPopulationCount());
@@ -298,18 +298,18 @@ public class AT_PersonDataView {
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3301789058397712945L);
 
 		MutableDouble time = new MutableDouble();
-		MockContext mockContext = MockContext.builder().setTimeSupplier(() -> time.getValue()).build();
-		PersonDataManager personDataManager = new PersonDataManager(mockContext, 0);
+		MockSimulationContext mockSimulationContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		PersonDataManager personDataManager = new PersonDataManager(mockSimulationContext, 0);
 		PersonDataView personDataView = new PersonDataView(personDataManager);
 		
 		for (int i = 0; i < 10; i++) {
 			personDataManager.addPersonId();
-			assertEquals(mockContext.getTime(), personDataView.getPopulationTime());
+			assertEquals(mockSimulationContext.getTime(), personDataView.getPopulationTime());
 			time.increment(randomGenerator.nextDouble());
 		}
 		for (int i = 0; i < 10; i++) {
 			personDataManager.removePerson(new PersonId(i));
-			assertEquals(mockContext.getTime(), personDataView.getPopulationTime());
+			assertEquals(mockSimulationContext.getTime(), personDataView.getPopulationTime());
 			time.increment(randomGenerator.nextDouble());
 		}
 	}

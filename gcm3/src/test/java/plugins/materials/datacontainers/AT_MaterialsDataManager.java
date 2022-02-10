@@ -20,11 +20,11 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.materials.initialdata.MaterialsInitialData;
 import plugins.materials.support.BatchId;
@@ -45,7 +45,7 @@ import plugins.resources.datacontainers.ResourceDataView;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.MultiKey;
 import util.MutableDouble;
@@ -63,12 +63,12 @@ public final class AT_MaterialsDataManager {
 	 * from the MaterialsDataView. This will not copy the materials producer
 	 * property values or any batches or stages.
 	 */
-	private MaterialsDataManager getMaterialsDataManager(Context context) {
-		MaterialsDataManager result = new MaterialsDataManager(context);
+	private MaterialsDataManager getMaterialsDataManager(SimulationContext simulationContext) {
+		MaterialsDataManager result = new MaterialsDataManager(simulationContext);
 
-		MaterialsDataView materialsDataView = context.getDataView(MaterialsDataView.class).get();
+		MaterialsDataView materialsDataView = simulationContext.getDataView(MaterialsDataView.class).get();
 
-		ResourceDataView resourceDataView = context.getDataView(ResourceDataView.class).get();
+		ResourceDataView resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 
 		for (ResourceId resourceId : resourceDataView.getResourceIds()) {
 			result.addResource(resourceId);
@@ -105,8 +105,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(4304396078647347650L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -130,8 +130,8 @@ public final class AT_MaterialsDataManager {
 	public void testCreateBatch() {
 		MaterialsActionSupport.testConsumer(4304396078647347650L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			Set<BatchId> batchIds = new LinkedHashSet<>();
 			for (int i = 0; i < 100; i++) {
@@ -169,8 +169,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(2954527776362069867L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			Set<StageId> stageIds = new LinkedHashSet<>();
 			for (int i = 0; i < 100; i++) {
@@ -203,8 +203,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(872123029658730134L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 1000; i++) {
 				TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
@@ -248,8 +248,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(449693794508704901L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			List<BatchId> batchIds = new ArrayList<>();
 			for (int i = 0; i < 100; i++) {
@@ -283,8 +283,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(6323403688959267719L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			List<StageId> stageIds = new ArrayList<>();
 			for (int i = 0; i < 100; i++) {
@@ -315,8 +315,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(587243311667892614L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
 				TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
@@ -339,8 +339,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(7237305498429140287L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
 				TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
@@ -363,8 +363,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(8167047880252723180L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
 				TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
@@ -468,7 +468,7 @@ public final class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "getBatchPropertyTime", args = { BatchId.class, BatchPropertyId.class })
 	public void testGetBatchPropertyTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addDataView(new LocalDataView());
 
 		// create a data structure to hold the assignments we expect to
@@ -485,8 +485,8 @@ public final class AT_MaterialsDataManager {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
 			LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 			localDataView.materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a few batches
 			for (int i = 0; i < 50; i++) {
@@ -512,8 +512,8 @@ public final class AT_MaterialsDataManager {
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(actionTime, (c) -> {
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				// plan several times to alter some of the batch properties
 
@@ -544,8 +544,8 @@ public final class AT_MaterialsDataManager {
 		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(10, (c) -> {
 			LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 			MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(materialsProducerId);
@@ -589,8 +589,8 @@ public final class AT_MaterialsDataManager {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(757267012486628481L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(757267012486628481L, actionPluginInitializer);
 	}
 
 	@Test
@@ -608,8 +608,8 @@ public final class AT_MaterialsDataManager {
 			 */
 
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a few batches
 			for (int i = 0; i < 50; i++) {
@@ -714,7 +714,7 @@ public final class AT_MaterialsDataManager {
 	@Test
 	@UnitTestMethod(name = "getBatchTime", args = { BatchId.class })
 	public void testGetBatchTime() {
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		Map<BatchId, Double> expectedBatchTimes = new LinkedHashMap<>();
 
@@ -735,8 +735,8 @@ public final class AT_MaterialsDataManager {
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
 
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				// build a few batches
 				int numberOfBatches = randomGenerator.nextInt(5) + 1;
@@ -771,8 +771,8 @@ public final class AT_MaterialsDataManager {
 				assertThrows(RuntimeException.class, () -> materialsDataManager.getBatchTime(new BatchId(1000000)));
 			}));
 		}
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(2148567900898183351L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(2148567900898183351L, actionPluginInitializer);
 	}
 
 	@Test
@@ -781,8 +781,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(5461135233101939296L, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
@@ -844,8 +844,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(3492079207976577634L, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
@@ -922,8 +922,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(8362619045299929852L, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 			assertFalse(materialsDataManager.getLastIssuedBatchId().isPresent());
@@ -943,8 +943,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(6693768795920272844L, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 			assertFalse(materialsDataManager.getLastIssuedStageId().isPresent());
@@ -1022,7 +1022,7 @@ public final class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "getMaterialsProducerPropertyTime", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class })
 	public void testGetMaterialsProducerPropertyTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 
 		pluginBuilder.addDataView(new LocalDataView());
@@ -1048,8 +1048,8 @@ public final class AT_MaterialsDataManager {
 		// update several random property values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
@@ -1100,8 +1100,8 @@ public final class AT_MaterialsDataManager {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(3007587740871717747L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(3007587740871717747L, actionPluginInitializer);
 
 	}
 
@@ -1109,7 +1109,7 @@ public final class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "getMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class })
 	public void testGetMaterialsProducerPropertyValue() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 
 		pluginBuilder.addDataView(new LocalDataView());
@@ -1139,8 +1139,8 @@ public final class AT_MaterialsDataManager {
 		// update several random property values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
@@ -1191,15 +1191,15 @@ public final class AT_MaterialsDataManager {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(6607259282289246382L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(6607259282289246382L, actionPluginInitializer);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getMaterialsProducerResourceTime", args = { MaterialsProducerId.class, ResourceId.class })
 	public void testGetMaterialsProducerResourceTime() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 
 		pluginBuilder.addDataView(new LocalDataView());
@@ -1225,8 +1225,8 @@ public final class AT_MaterialsDataManager {
 		// update several random resource levels values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
@@ -1274,15 +1274,15 @@ public final class AT_MaterialsDataManager {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(8812558494817366843L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(8812558494817366843L, actionPluginInitializer);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class })
 	public void testGetMaterialsProducerResourceLevel() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 
 		pluginBuilder.addDataView(new LocalDataView());
@@ -1307,8 +1307,8 @@ public final class AT_MaterialsDataManager {
 		// update several random resource levels values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
@@ -1357,8 +1357,8 @@ public final class AT_MaterialsDataManager {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(2508411066079102944L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(2508411066079102944L, actionPluginInitializer);
 	}
 
 	@Test
@@ -1366,8 +1366,8 @@ public final class AT_MaterialsDataManager {
 	public void testGetOfferedStages() {
 
 		MaterialsActionSupport.testConsumer(6961352999804722865L, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
 			// create several stages and place about half of them into the offer
@@ -1412,8 +1412,8 @@ public final class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumer(605353680135796702L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create some stages and batches
 
@@ -1459,8 +1459,8 @@ public final class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumer(566215504762667367L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// build a structure to hold the batches expected per stage and
 			// material id
@@ -1548,8 +1548,8 @@ public final class AT_MaterialsDataManager {
 
 		MaterialsActionSupport.testConsumer(6063607931844819363L, (c) -> {
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			Map<TestMaterialsProducerId, Set<StageId>> expectedStagesMap = new LinkedHashMap<>();
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
@@ -1584,7 +1584,7 @@ public final class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "incrementMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class, long.class })
 	public void testIncrementMaterialsProducerResourceLevel() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 
 		pluginBuilder.addDataView(new LocalDataView());
@@ -1609,8 +1609,8 @@ public final class AT_MaterialsDataManager {
 		// update several random resource levels values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
@@ -1666,12 +1666,12 @@ public final class AT_MaterialsDataManager {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(1600752904847403602L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(1600752904847403602L, actionPluginInitializer);
 	}
 
 	@Test
-	@UnitTestConstructor(args = { ResolverContext.class, MaterialsInitialData.class })
+	@UnitTestConstructor(args = { DataManagerContext.class, MaterialsInitialData.class })
 	public void testConstructor() {
 
 		ContractException contractException = assertThrows(ContractException.class, () -> new MaterialsDataManager(null));
@@ -1683,8 +1683,8 @@ public final class AT_MaterialsDataManager {
 	public void testIsStageOffered() {
 
 		MaterialsActionSupport.testConsumer(5828712166763133131L, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
 			for (int i = 0; i < 100; i++) {
@@ -1743,8 +1743,8 @@ public final class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumer(5365422390939417105L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a stage and put batches on and off of it
 
@@ -1789,8 +1789,8 @@ public final class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumer(7520513202615429081L, (c) -> {
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a stage and put batches on and off of it
 
@@ -1839,8 +1839,8 @@ public final class AT_MaterialsDataManager {
 			 */
 
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a few batches
 			for (int i = 0; i < 50; i++) {
@@ -1879,7 +1879,7 @@ public final class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "setMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class })
 	public void testSetMaterialsProducerPropertyValue() {
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 		pluginBuilder.addAgent("agent");
 
 		pluginBuilder.addDataView(new LocalDataView());
@@ -1909,8 +1909,8 @@ public final class AT_MaterialsDataManager {
 		// update several random property values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, (c) -> {
-				StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-				RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+				StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				LocalDataView localDataView = c.getDataView(LocalDataView.class).get();
 				MaterialsDataManager materialsDataManager = localDataView.materialsDataManager;
@@ -1961,8 +1961,8 @@ public final class AT_MaterialsDataManager {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		MaterialsActionSupport.testConsumers(153532399992465971L, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		MaterialsActionSupport.testConsumers(153532399992465971L, actionPluginInitializer);
 	}
 
 	@Test
@@ -1970,8 +1970,8 @@ public final class AT_MaterialsDataManager {
 	public void testSetStageOffer() {
 
 		MaterialsActionSupport.testConsumer(5098593357153704158L, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
 			for (int i = 0; i < 100; i++) {
@@ -2000,8 +2000,8 @@ public final class AT_MaterialsDataManager {
 	public void testShiftBatchContent() {
 
 		MaterialsActionSupport.testConsumer(5471599806591291876L, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
 			for (int i = 0; i < 100; i++) {
@@ -2042,8 +2042,8 @@ public final class AT_MaterialsDataManager {
 	public void testStageExists() {
 
 		MaterialsActionSupport.testConsumer(35431003820781165L, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
 			for (int i = 0; i < 10; i++) {
@@ -2063,8 +2063,8 @@ public final class AT_MaterialsDataManager {
 	public void testTransferOfferedStageToMaterialsProducer() {
 
 		MaterialsActionSupport.testConsumer(7401116571668245131L, (c) -> {
-			StochasticsDataView stochasticsDataView = c.getDataView(StochasticsDataView.class).get();
-			RandomGenerator randomGenerator = stochasticsDataView.getRandomGenerator();
+			StochasticsDataManager stochasticsDataManager = c.getDataView(StochasticsDataManager.class).get();
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = getMaterialsDataManager(c);
 
 			for (int i = 0; i < 10; i++) {

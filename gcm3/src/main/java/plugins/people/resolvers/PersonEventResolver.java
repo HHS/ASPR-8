@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.compartments.support.CompartmentError;
 import plugins.people.datacontainers.PersonDataManager;
 import plugins.people.datacontainers.PersonDataView;
@@ -121,48 +121,48 @@ public final class PersonEventResolver {
 
 	private PersonDataManager personDataManager;
 
-	private void handlePopulationGrowthProjectiontEventExecution(final ResolverContext resolverContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
+	private void handlePopulationGrowthProjectiontEventExecution(final DataManagerContext dataManagerContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
 		personDataManager.expandCapacity(populationGrowthProjectionEvent.getCount());
 	}
 
-	private void validateGrowthCount(ResolverContext resolverContext, int count) {
+	private void validateGrowthCount(DataManagerContext dataManagerContext, int count) {
 		if (count < 0) {
-			resolverContext.throwContractException(PersonError.NEGATIVE_GROWTH_PROJECTION);
+			dataManagerContext.throwContractException(PersonError.NEGATIVE_GROWTH_PROJECTION);
 		}
 	}
 
-	private void handlePopulationGrowthProjectiontEventValidation(final ResolverContext resolverContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
-		validateGrowthCount(resolverContext, populationGrowthProjectionEvent.getCount());
+	private void handlePopulationGrowthProjectiontEventValidation(final DataManagerContext dataManagerContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
+		validateGrowthCount(dataManagerContext, populationGrowthProjectionEvent.getCount());
 	}
 
-	private void validatePersonContructionDataNotNull(ResolverContext resolverContext,PersonContructionData personContructionData) {
+	private void validatePersonContructionDataNotNull(DataManagerContext dataManagerContext,PersonContructionData personContructionData) {
 		if(personContructionData == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_CONTRUCTION_DATA);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_CONTRUCTION_DATA);
 		}
 	}
 	
-	private void handlePersonCreationEventExecutionValidation(final ResolverContext resolverContext, final PersonCreationEvent personCreationEvent) {
-		validatePersonContructionDataNotNull(resolverContext,personCreationEvent.getPersonContructionData());
+	private void handlePersonCreationEventExecutionValidation(final DataManagerContext dataManagerContext, final PersonCreationEvent personCreationEvent) {
+		validatePersonContructionDataNotNull(dataManagerContext,personCreationEvent.getPersonContructionData());
 	}
 	
-	private void handlePersonCreationEventExecution(final ResolverContext resolverContext, final PersonCreationEvent personCreationEvent) {
+	private void handlePersonCreationEventExecution(final DataManagerContext dataManagerContext, final PersonCreationEvent personCreationEvent) {
 		PersonContructionData personContructionData = personCreationEvent.getPersonContructionData();
 		PersonId personId = personDataManager.addPersonId();
 		PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(personId, personContructionData);
-		resolverContext.queueEventForResolution(personCreationObservationEvent);
+		dataManagerContext.resolveEvent(personCreationObservationEvent);
 	}
 
-	private void validateBulkPersonContructionDataNotNull(ResolverContext resolverContext, BulkPersonContructionData bulkPersonContructionData) {
+	private void validateBulkPersonContructionDataNotNull(DataManagerContext dataManagerContext, BulkPersonContructionData bulkPersonContructionData) {
 		if(bulkPersonContructionData == null) {
-			resolverContext.throwContractException(PersonError.NULL_BULK_PERSON_CONTRUCTION_DATA);
+			dataManagerContext.throwContractException(PersonError.NULL_BULK_PERSON_CONTRUCTION_DATA);
 		}
 	}
 	
-	private void handleBulkPersonCreationEventValidation(final ResolverContext resolverContext, final BulkPersonCreationEvent bulkPersonCreationEvent) {
-		validateBulkPersonContructionDataNotNull(resolverContext,bulkPersonCreationEvent.getBulkPersonContructionData());
+	private void handleBulkPersonCreationEventValidation(final DataManagerContext dataManagerContext, final BulkPersonCreationEvent bulkPersonCreationEvent) {
+		validateBulkPersonContructionDataNotNull(dataManagerContext,bulkPersonCreationEvent.getBulkPersonContructionData());
 	}
 	
-	private void handleBulkPersonCreationEventExecution(final ResolverContext resolverContext, final BulkPersonCreationEvent bulkPersonCreationEvent) {
+	private void handleBulkPersonCreationEventExecution(final DataManagerContext dataManagerContext, final BulkPersonCreationEvent bulkPersonCreationEvent) {
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationEvent.getBulkPersonContructionData();
 		List<PersonContructionData> personContructionDatas = bulkPersonContructionData.getPersonContructionDatas();
 		PersonId personId = null;
@@ -175,31 +175,31 @@ public final class PersonEventResolver {
 			}
 		}
 		BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent = new BulkPersonCreationObservationEvent(personId, bulkPersonContructionData);
-		resolverContext.queueEventForResolution(bulkPersonCreationObservationEvent);
+		dataManagerContext.resolveEvent(bulkPersonCreationObservationEvent);
 	}
 
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
-		resolverContext.addEventLabeler(BulkPersonCreationObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(BulkPersonCreationObservationEvent.getEventLabeler());
 
-		resolverContext.addEventLabeler(PersonCreationObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(PersonCreationObservationEvent.getEventLabeler());
 
-		resolverContext.addEventLabeler(PersonImminentRemovalObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(PersonImminentRemovalObservationEvent.getEventLabeler());
 
-		resolverContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(PersonCreationEvent.class, this::handlePersonCreationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PersonCreationEvent.class, this::handlePersonCreationEventExecutionValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonCreationEvent.class, this::handlePersonCreationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCreationEvent.class, this::handlePersonCreationEventExecutionValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(BulkPersonCreationEvent.class, this::handleBulkPersonCreationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BulkPersonCreationEvent.class, this::handleBulkPersonCreationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BulkPersonCreationEvent.class, this::handleBulkPersonCreationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BulkPersonCreationEvent.class, this::handleBulkPersonCreationEventValidation);
 
-		resolverContext.subscribeToEventValidationPhase(PersonRemovalRequestEvent.class, this::handlePersonRemovalRequestEventValidation);
-		resolverContext.subscribeToEventExecutionPhase(PersonRemovalRequestEvent.class, this::handlePersonRemovalRequestEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonRemovalRequestEvent.class, this::handlePersonRemovalRequestEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonRemovalRequestEvent.class, this::handlePersonRemovalRequestEventExecution);
 
 		final List<PersonId> scenarioPeopleIds = new ArrayList<>(peopleInitialData.getPersonIds());
-		personDataManager = new PersonDataManager(resolverContext.getSafeContext(), scenarioPeopleIds.size());
+		personDataManager = new PersonDataManager(dataManagerContext.getSafeContext(), scenarioPeopleIds.size());
 		Collections.sort(scenarioPeopleIds);
 		final Map<PersonId, PersonId> scenarioToSimPeopleMap = new LinkedHashMap<>();
 		for (final PersonId scenarioPersonId : scenarioPeopleIds) {
@@ -208,28 +208,28 @@ public final class PersonEventResolver {
 		}
 
 		personDataManager.setScenarioToSimPeopleMap(scenarioToSimPeopleMap);
-		resolverContext.publishDataView(new PersonDataView(personDataManager));
+		dataManagerContext.publishDataView(new PersonDataView(personDataManager));
 		peopleInitialData = null;
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataManager.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private void handlePersonRemovalRequestEventValidation(final ResolverContext resolverContext, final PersonRemovalRequestEvent personRemovalRequestEvent) {
+	private void handlePersonRemovalRequestEventValidation(final DataManagerContext dataManagerContext, final PersonRemovalRequestEvent personRemovalRequestEvent) {
 		final PersonId personId = personRemovalRequestEvent.getPersonId();
-		validatePersonExists(resolverContext, personId);
+		validatePersonExists(dataManagerContext, personId);
 	}
 
-	private void handlePersonRemovalRequestEventExecution(final ResolverContext resolverContext, final PersonRemovalRequestEvent personRemovalRequestEvent) {
+	private void handlePersonRemovalRequestEventExecution(final DataManagerContext dataManagerContext, final PersonRemovalRequestEvent personRemovalRequestEvent) {
 		final PersonId personId = personRemovalRequestEvent.getPersonId();
-		resolverContext.queueEventForResolution(new PersonImminentRemovalObservationEvent(personId));
-		resolverContext.addPlan((context) -> personDataManager.removePerson(personRemovalRequestEvent.getPersonId()), resolverContext.getTime());
+		dataManagerContext.resolveEvent(new PersonImminentRemovalObservationEvent(personId));
+		dataManagerContext.addPlan((context) -> personDataManager.removePerson(personRemovalRequestEvent.getPersonId()), dataManagerContext.getTime());
 	}
 
 }

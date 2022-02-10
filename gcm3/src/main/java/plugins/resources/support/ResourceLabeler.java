@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.NucleusError;
 import plugins.partitions.support.Labeler;
@@ -53,13 +53,13 @@ public final class ResourceLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getLabel(Context context, PersonId personId) {
-		if (context == null) {
+	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 
 		if (resourceDataView == null) {
-			resourceDataView = context.getDataView(ResourceDataView.class).get();
+			resourceDataView = simulationContext.getDataView(ResourceDataView.class).get();
 		}
 		long personResourceLevel = resourceDataView.getPersonResourceLevel(resourceId, personId);
 		return resourceLabelingFunction.apply(personResourceLevel);
@@ -71,7 +71,7 @@ public final class ResourceLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getPastLabel(Context context, Event event) {
+	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonResourceChangeObservationEvent personResourceChangeObservationEvent = (PersonResourceChangeObservationEvent)event;
 		return resourceLabelingFunction.apply(personResourceChangeObservationEvent.getPreviousResourceLevel());
 	}

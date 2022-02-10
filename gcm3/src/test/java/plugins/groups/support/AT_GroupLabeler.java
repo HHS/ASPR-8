@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.observation.GroupMembershipAdditionObservationEvent;
 import plugins.groups.events.observation.GroupMembershipRemovalObservationEvent;
@@ -81,7 +81,7 @@ public final class AT_GroupLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 5880749882920317232L, (c) -> {

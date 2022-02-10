@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import nucleus.AgentContext;
 import nucleus.NucleusError;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.components.datacontainers.ComponentDataView;
 import plugins.components.events.ComponentConstructionEvent;
 import plugins.components.support.ComponentError;
@@ -111,17 +111,17 @@ public final class GlobalPropertyResolver {
 		this.globalInitialData = globalInitialData;
 	}
 
-	public void init(final ResolverContext resolverContext) {
-		componentDataView = resolverContext.getDataView(ComponentDataView.class).get();
-		resolverContext.addEventLabeler(GlobalPropertyChangeObservationEvent.getEventLabeler());
+	public void init(final DataManagerContext dataManagerContext) {
+		componentDataView = dataManagerContext.getDataView(ComponentDataView.class).get();
+		dataManagerContext.addEventLabeler(GlobalPropertyChangeObservationEvent.getEventLabeler());
 
-		resolverContext.subscribeToEventExecutionPhase(GlobalPropertyValueAssignmentEvent.class, this::handleGlobalPropertyValueAssignmentEventExecution);
-		resolverContext.subscribeToEventValidationPhase(GlobalPropertyValueAssignmentEvent.class, this::handleGlobalPropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GlobalPropertyValueAssignmentEvent.class, this::handleGlobalPropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GlobalPropertyValueAssignmentEvent.class, this::handleGlobalPropertyValueAssignmentEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(GlobalComponentConstructionEvent.class, this::handleGlobalComponentConstructionEventExecution);
-		resolverContext.subscribeToEventValidationPhase(GlobalComponentConstructionEvent.class, this::handleGlobalComponentConstructionEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(GlobalComponentConstructionEvent.class, this::handleGlobalComponentConstructionEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(GlobalComponentConstructionEvent.class, this::handleGlobalComponentConstructionEventValidation);
 
-		globalDataManager = new GlobalDataManager(resolverContext.getSafeContext());
+		globalDataManager = new GlobalDataManager(dataManagerContext.getSafeContext());
 
 		for (GlobalComponentId globalComponentId : globalInitialData.getGlobalComponentIds()) {
 			globalDataManager.addGlobalComponentId(globalComponentId);
@@ -133,101 +133,101 @@ public final class GlobalPropertyResolver {
 			final Object globalPropertyValue = globalInitialData.getGlobalPropertyValue(globalPropertyId);
 			if (globalPropertyValue != null) {
 				final PropertyDefinition propertyDefinition = globalDataManager.getGlobalPropertyDefinition(globalPropertyId);
-				validateValueCompatibility(resolverContext, globalPropertyId, propertyDefinition, globalPropertyValue);
+				validateValueCompatibility(dataManagerContext, globalPropertyId, propertyDefinition, globalPropertyValue);
 				globalDataManager.setGlobalPropertyValue(globalPropertyId, globalPropertyValue);
 			}
 		}
 
 		for (GlobalComponentId globalComponentId : globalInitialData.getGlobalComponentIds()) {
 			Consumer<AgentContext> consumer = globalInitialData.getGlobalComponentInitialBehavior(globalComponentId);
-			resolverContext.queueEventForResolution(new ComponentConstructionEvent(globalComponentId, consumer));
+			dataManagerContext.resolveEvent(new ComponentConstructionEvent(globalComponentId, consumer));
 		}
 
-		resolverContext.publishDataView(new GlobalDataView(resolverContext, globalDataManager));
+		dataManagerContext.publishDataView(new GlobalDataView(dataManagerContext, globalDataManager));
 		globalInitialData = null;
 	}
 
-	private void handleGlobalComponentConstructionEventValidation(final ResolverContext resolverContext, final GlobalComponentConstructionEvent globalComponentConstructionEvent) {
-		validateCurrentAgentIsEventSource(resolverContext);
-		validateGlobalComponentId(resolverContext, globalComponentConstructionEvent.getGlobalComponentId());
-		validateConsumerNotNull(resolverContext, globalComponentConstructionEvent.getConsumer());
+	private void handleGlobalComponentConstructionEventValidation(final DataManagerContext dataManagerContext, final GlobalComponentConstructionEvent globalComponentConstructionEvent) {
+		validateCurrentAgentIsEventSource(dataManagerContext);
+		validateGlobalComponentId(dataManagerContext, globalComponentConstructionEvent.getGlobalComponentId());
+		validateConsumerNotNull(dataManagerContext, globalComponentConstructionEvent.getConsumer());
 	}
 
-	private void validateGlobalComponentId(final ResolverContext resolverContext, GlobalComponentId globalComponentId) {
+	private void validateGlobalComponentId(final DataManagerContext dataManagerContext, GlobalComponentId globalComponentId) {
 		if (globalComponentId == null) {
-			resolverContext.throwContractException(GlobalError.NULL_GLOBAL_COMPONENT_ID);
+			dataManagerContext.throwContractException(GlobalError.NULL_GLOBAL_COMPONENT_ID);
 		}
 
 		if (componentDataView.containsComponentId(globalComponentId)) {
-			resolverContext.throwContractException(GlobalError.DUPLICATE_GLOBAL_COMPONENT_ID);
+			dataManagerContext.throwContractException(GlobalError.DUPLICATE_GLOBAL_COMPONENT_ID);
 		}
 	}
 
-	private void validateConsumerNotNull(final ResolverContext resolverContext, Consumer<AgentContext> consumer) {
+	private void validateConsumerNotNull(final DataManagerContext dataManagerContext, Consumer<AgentContext> consumer) {
 		if (consumer == null) {
-			resolverContext.throwContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
+			dataManagerContext.throwContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
 		}
 	}
 
-	private void handleGlobalComponentConstructionEventExecution(final ResolverContext resolverContext, final GlobalComponentConstructionEvent globalComponentConstructionEvent) {
+	private void handleGlobalComponentConstructionEventExecution(final DataManagerContext dataManagerContext, final GlobalComponentConstructionEvent globalComponentConstructionEvent) {
 		GlobalComponentId globalComponentId = globalComponentConstructionEvent.getGlobalComponentId();
 		Consumer<AgentContext> consumer = globalComponentConstructionEvent.getConsumer();
 		globalDataManager.addGlobalComponentId(globalComponentId);
-		resolverContext.queueEventForResolution(new ComponentConstructionEvent(globalComponentId, consumer));
+		dataManagerContext.resolveEvent(new ComponentConstructionEvent(globalComponentId, consumer));
 	}
 
-	private void handleGlobalPropertyValueAssignmentEventExecution(final ResolverContext resolverContext, final GlobalPropertyValueAssignmentEvent globalPropertyValueAssignmentEvent) {
+	private void handleGlobalPropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final GlobalPropertyValueAssignmentEvent globalPropertyValueAssignmentEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyValueAssignmentEvent.getGlobalPropertyId();
 		final Object globalPropertyValue = globalPropertyValueAssignmentEvent.getGlobalPropertyValue();
-		validateGlobalPropertyId(resolverContext, globalPropertyId);
+		validateGlobalPropertyId(dataManagerContext, globalPropertyId);
 		final Object oldPropertyValue = globalDataManager.getGlobalPropertyValue(globalPropertyId);
 		globalDataManager.setGlobalPropertyValue(globalPropertyId, globalPropertyValue);
-		resolverContext.queueEventForResolution(new GlobalPropertyChangeObservationEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+		dataManagerContext.resolveEvent(new GlobalPropertyChangeObservationEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
 	}
 
-	private void handleGlobalPropertyValueAssignmentEventValidation(final ResolverContext resolverContext, final GlobalPropertyValueAssignmentEvent globalPropertyValueAssignmentEvent) {
+	private void handleGlobalPropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final GlobalPropertyValueAssignmentEvent globalPropertyValueAssignmentEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyValueAssignmentEvent.getGlobalPropertyId();
 		final Object globalPropertyValue = globalPropertyValueAssignmentEvent.getGlobalPropertyValue();
 
-		validateGlobalPropertyId(resolverContext, globalPropertyId);
-		validateGlobalPropertyValueNotNull(resolverContext, globalPropertyValue);
+		validateGlobalPropertyId(dataManagerContext, globalPropertyId);
+		validateGlobalPropertyValueNotNull(dataManagerContext, globalPropertyValue);
 		final PropertyDefinition propertyDefinition = globalDataManager.getGlobalPropertyDefinition(globalPropertyId);
-		validatePropertyMutability(resolverContext, propertyDefinition);
-		validateValueCompatibility(resolverContext, globalPropertyId, propertyDefinition, globalPropertyValue);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
+		validateValueCompatibility(dataManagerContext, globalPropertyId, propertyDefinition, globalPropertyValue);
 	}
 
-	private void validateGlobalPropertyId(final ResolverContext resolverContext, final GlobalPropertyId globalPropertyId) {
+	private void validateGlobalPropertyId(final DataManagerContext dataManagerContext, final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
-			resolverContext.throwContractException(GlobalError.NULL_GLOBAL_PROPERTY_ID);
+			dataManagerContext.throwContractException(GlobalError.NULL_GLOBAL_PROPERTY_ID);
 		}
 
 		if (!globalDataManager.globalPropertyIdExists(globalPropertyId)) {
-			resolverContext.throwContractException(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+			dataManagerContext.throwContractException(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
 		}
 	}
 
-	private void validateGlobalPropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private void validateGlobalPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(GlobalError.NULL_GLOBAL_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(GlobalError.NULL_GLOBAL_PROPERTY_VALUE);
 		}
 	}
 
-	private void validatePropertyMutability(final ResolverContext resolverContext, final PropertyDefinition propertyDefinition) {
+	private void validatePropertyMutability(final DataManagerContext dataManagerContext, final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
-			resolverContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
+			dataManagerContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(final ResolverContext resolverContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final DataManagerContext dataManagerContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			resolverContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}
 
-	private void validateCurrentAgentIsEventSource(final ResolverContext resolverContext) {
-		if (!resolverContext.currentAgentIsEventSource()) {
-			resolverContext.throwContractException(ComponentError.AGENT_EXCLUSIVE_EVENT);
+	private void validateCurrentAgentIsEventSource(final DataManagerContext dataManagerContext) {
+		if (!dataManagerContext.currentAgentIsEventSource()) {
+			dataManagerContext.throwContractException(ComponentError.AGENT_EXCLUSIVE_EVENT);
 		}
 	}
 

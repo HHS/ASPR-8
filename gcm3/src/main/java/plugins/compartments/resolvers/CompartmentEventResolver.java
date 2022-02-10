@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import nucleus.AgentContext;
-import nucleus.ResolverContext;
+import nucleus.DataManagerContext;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.datacontainers.CompartmentDataManager;
 import plugins.compartments.datacontainers.CompartmentDataView;
@@ -183,28 +183,28 @@ public final class CompartmentEventResolver {
 
 	private Set<CompartmentId> compartmentIds;
 
-	private void handlePersonImminentRemovalObservationEventExecution(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		resolverContext.addPlan((context) -> compartmentLocationDataManager.removePerson(personImminentRemovalObservationEvent.getPersonId()), resolverContext.getTime());
+	private void handlePersonImminentRemovalObservationEventExecution(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		dataManagerContext.addPlan((context) -> compartmentLocationDataManager.removePerson(personImminentRemovalObservationEvent.getPersonId()), dataManagerContext.getTime());
 	}
 
-	private void handlePersonImminentRemovalObservationEventValidation(final ResolverContext resolverContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(resolverContext, personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalObservationEventValidation(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+		validatePersonExists(dataManagerContext, personImminentRemovalObservationEvent.getPersonId());
 	}
 
-	private void handlePersonCreationObservationEventExecution(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonId personId = personCreationObservationEvent.getPersonId();
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
 		CompartmentId compartmentId = personContructionData.getValue(CompartmentId.class).orElse(null);
 		compartmentLocationDataManager.setPersonCompartment(personId, compartmentId);
 	}
 
-	private void handlePersonCreationObservationEventValidation(final ResolverContext resolverContext, final PersonCreationObservationEvent personCreationObservationEvent) {
+	private void handlePersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
 		PersonContructionData personContructionData = personCreationObservationEvent.getPersonContructionData();
 		CompartmentId compartmentId = personContructionData.getValue(CompartmentId.class).orElse(null);
-		validateCompartmentId(resolverContext, compartmentId);
+		validateCompartmentId(dataManagerContext, compartmentId);
 	}
 
-	private void handleBulkPersonCreationObservationEventExecution(final ResolverContext resolverContext, BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventExecution(final DataManagerContext dataManagerContext, BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
 		int pId = personId.getValue();
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
@@ -217,51 +217,51 @@ public final class CompartmentEventResolver {
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEventValidation(final ResolverContext resolverContext, BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonCreationObservationEventValidation(final DataManagerContext dataManagerContext, BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
 		BulkPersonContructionData bulkPersonContructionData = bulkPersonCreationObservationEvent.getBulkPersonContructionData();
 		List<PersonContructionData> personContructionDatas = bulkPersonContructionData.getPersonContructionDatas();
 		for (PersonContructionData personContructionData : personContructionDatas) {
 			CompartmentId compartmentId = personContructionData.getValue(CompartmentId.class).orElse(null);
-			validateCompartmentId(resolverContext, compartmentId);
+			validateCompartmentId(dataManagerContext, compartmentId);
 		}
 	}
 
-	private void validatePersonExists(final ResolverContext resolverContext, final PersonId personId) {
+	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
 		if (personId == null) {
-			resolverContext.throwContractException(PersonError.NULL_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private void handlePopulationGrowthProjectiontEventExecution(final ResolverContext resolverContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
+	private void handlePopulationGrowthProjectiontEventExecution(final DataManagerContext dataManagerContext, final PopulationGrowthProjectionEvent populationGrowthProjectionEvent) {
 		compartmentLocationDataManager.expandCapacity(populationGrowthProjectionEvent.getCount());
 	}
 
-	private void handlePersonCompartmentAssignmentEventExecution(final ResolverContext resolverContext, final PersonCompartmentAssignmentEvent personCompartmentAssignmentEvent) {
+	private void handlePersonCompartmentAssignmentEventExecution(final DataManagerContext dataManagerContext, final PersonCompartmentAssignmentEvent personCompartmentAssignmentEvent) {
 		final PersonId personId = personCompartmentAssignmentEvent.getPersonId();
 		final CompartmentId newCompartmentId = personCompartmentAssignmentEvent.getCompartmentId();
 		final CompartmentId oldCompartmentId = compartmentLocationDataManager.getPersonCompartment(personId);
 		compartmentLocationDataManager.setPersonCompartment(personId, newCompartmentId);
-		resolverContext.queueEventForResolution(new PersonCompartmentChangeObservationEvent(personId, oldCompartmentId, newCompartmentId));
+		dataManagerContext.resolveEvent(new PersonCompartmentChangeObservationEvent(personId, oldCompartmentId, newCompartmentId));
 	}
 
-	private void handlePersonCompartmentAssignmentEventValidation(final ResolverContext resolverContext, final PersonCompartmentAssignmentEvent personCompartmentAssignmentEvent) {
+	private void handlePersonCompartmentAssignmentEventValidation(final DataManagerContext dataManagerContext, final PersonCompartmentAssignmentEvent personCompartmentAssignmentEvent) {
 		final PersonId personId = personCompartmentAssignmentEvent.getPersonId();
 		final CompartmentId newCompartmentId = personCompartmentAssignmentEvent.getCompartmentId();
-		validatePersonExists(resolverContext, personId);
-		validateCompartmentId(resolverContext, newCompartmentId);
-		validatePersonNotInCompartment(resolverContext, personId, newCompartmentId);
+		validatePersonExists(dataManagerContext, personId);
+		validateCompartmentId(dataManagerContext, newCompartmentId);
+		validatePersonNotInCompartment(dataManagerContext, personId, newCompartmentId);
 	}
 
 	/*
 	 * Precondition : person must exist
 	 */
-	private void validatePersonNotInCompartment(final ResolverContext resolverContext, final PersonId personId, final CompartmentId compartmentId) {
+	private void validatePersonNotInCompartment(final DataManagerContext dataManagerContext, final PersonId personId, final CompartmentId compartmentId) {
 		final CompartmentId currentCompartmentId = compartmentLocationDataManager.getPersonCompartment(personId);
 		if (currentCompartmentId.equals(compartmentId)) {
-			resolverContext.throwContractException(CompartmentError.SAME_COMPARTMENT, compartmentId);
+			dataManagerContext.throwContractException(CompartmentError.SAME_COMPARTMENT, compartmentId);
 		}
 	}
 
@@ -290,34 +290,34 @@ public final class CompartmentEventResolver {
 	 * <li>Publishes the {@linkplain CompartmentLocationDataView}</li>
 	 * </ul>
 	 */
-	public void init(final ResolverContext resolverContext) {
+	public void init(final DataManagerContext dataManagerContext) {
 
-		resolverContext.addEventLabeler(CompartmentPropertyChangeObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(CompartmentPropertyChangeObservationEvent.getEventLabeler());
 
-		resolverContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
+		dataManagerContext.subscribeToEventExecutionPhase(PopulationGrowthProjectionEvent.class, this::handlePopulationGrowthProjectiontEventExecution);
 
-		resolverContext.subscribeToEventExecutionPhase(PersonCompartmentAssignmentEvent.class, this::handlePersonCompartmentAssignmentEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PersonCompartmentAssignmentEvent.class, this::handlePersonCompartmentAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonCompartmentAssignmentEvent.class, this::handlePersonCompartmentAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCompartmentAssignmentEvent.class, this::handlePersonCompartmentAssignmentEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(CompartmentPropertyValueAssignmentEvent.class, this::handleCompartmentPropertyValueAssignmentEventExecution);
-		resolverContext.subscribeToEventValidationPhase(CompartmentPropertyValueAssignmentEvent.class, this::handleCompartmentPropertyValueAssignmentEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(CompartmentPropertyValueAssignmentEvent.class, this::handleCompartmentPropertyValueAssignmentEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(CompartmentPropertyValueAssignmentEvent.class, this::handleCompartmentPropertyValueAssignmentEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEventValidation);
 
-		resolverContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
-		resolverContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
+		dataManagerContext.subscribeToEventExecutionPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventExecution);
+		dataManagerContext.subscribeToEventValidationPhase(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEventValidation);
 
-		resolverContext.addEventLabeler(PersonCompartmentChangeObservationEvent.getEventLabelerForArrivalCompartment());
-		resolverContext.addEventLabeler(PersonCompartmentChangeObservationEvent.getEventLabelerForDepartureCompartment());
-		resolverContext.addEventLabeler(PersonCompartmentChangeObservationEvent.getEventLabelerForPerson());
-		personDataView = resolverContext.getDataView(PersonDataView.class).get();
+		dataManagerContext.addEventLabeler(PersonCompartmentChangeObservationEvent.getEventLabelerForArrivalCompartment());
+		dataManagerContext.addEventLabeler(PersonCompartmentChangeObservationEvent.getEventLabelerForDepartureCompartment());
+		dataManagerContext.addEventLabeler(PersonCompartmentChangeObservationEvent.getEventLabelerForPerson());
+		personDataView = dataManagerContext.getDataView(PersonDataView.class).get();
 
-		compartmentDataManager = new CompartmentDataManager(resolverContext.getSafeContext());
-		compartmentLocationDataManager = new CompartmentLocationDataManager(resolverContext, compartmentInitialData);
+		compartmentDataManager = new CompartmentDataManager(dataManagerContext.getSafeContext());
+		compartmentLocationDataManager = new CompartmentLocationDataManager(dataManagerContext, compartmentInitialData);
 
 		compartmentIds = compartmentInitialData.getCompartmentIds();
 
@@ -325,23 +325,23 @@ public final class CompartmentEventResolver {
 			compartmentPropertyIds.put(compartmentId, compartmentInitialData.getCompartmentPropertyIds(compartmentId));
 		}
 
-		addCompartments(resolverContext, compartmentInitialData);
-		addCompartmentsPropertyDefinitions(resolverContext, compartmentInitialData);
-		loadCompartmentPropertyValues(resolverContext, compartmentInitialData);
+		addCompartments(dataManagerContext, compartmentInitialData);
+		addCompartmentsPropertyDefinitions(dataManagerContext, compartmentInitialData);
+		loadCompartmentPropertyValues(dataManagerContext, compartmentInitialData);
 
 		for (CompartmentId compartmentId : compartmentIds) {
 			Consumer<AgentContext> consumer = compartmentInitialData.getCompartmentInitialBehavior(compartmentId);
-			resolverContext.queueEventForResolution(new ComponentConstructionEvent(compartmentId, consumer));
+			dataManagerContext.resolveEvent(new ComponentConstructionEvent(compartmentId, consumer));
 		}
 
-		loadPeople(resolverContext, compartmentInitialData);
+		loadPeople(dataManagerContext, compartmentInitialData);
 
-		resolverContext.publishDataView(new CompartmentDataView(resolverContext.getSafeContext(), compartmentDataManager));
-		resolverContext.publishDataView(new CompartmentLocationDataView(resolverContext.getSafeContext(), compartmentLocationDataManager));
+		dataManagerContext.publishDataView(new CompartmentDataView(dataManagerContext.getSafeContext(), compartmentDataManager));
+		dataManagerContext.publishDataView(new CompartmentLocationDataView(dataManagerContext.getSafeContext(), compartmentLocationDataManager));
 		compartmentInitialData = null;
 	}
 
-	private void loadPeople(final ResolverContext resolverContext, final CompartmentInitialData compartmentInitialData) {
+	private void loadPeople(final DataManagerContext dataManagerContext, final CompartmentInitialData compartmentInitialData) {
 		final Map<PersonId, PersonId> scenarioToSimPeopleMap = personDataView.getScenarioToSimPeopleMap();
 
 		/*
@@ -351,7 +351,7 @@ public final class CompartmentEventResolver {
 		Set<PersonId> compartmentallyDefinedPeople = compartmentInitialData.getPersonIds();
 		for (PersonId compartmentPersonId : compartmentallyDefinedPeople) {
 			if (!scenarioToSimPeopleMap.containsKey(compartmentPersonId)) {
-				resolverContext.throwContractException(PersonError.UNKNOWN_PERSON_ID, compartmentPersonId + " in compartment initial data");
+				dataManagerContext.throwContractException(PersonError.UNKNOWN_PERSON_ID, compartmentPersonId + " in compartment initial data");
 			}
 		}
 
@@ -361,7 +361,7 @@ public final class CompartmentEventResolver {
 		 */
 		for (PersonId scenarioPersonID : scenarioToSimPeopleMap.keySet()) {
 			if (!compartmentallyDefinedPeople.contains(scenarioPersonID)) {
-				resolverContext.throwContractException(CompartmentError.MISSING_COMPARTMENT_ASSIGNMENT, scenarioPersonID);
+				dataManagerContext.throwContractException(CompartmentError.MISSING_COMPARTMENT_ASSIGNMENT, scenarioPersonID);
 			}
 		}
 
@@ -375,13 +375,13 @@ public final class CompartmentEventResolver {
 		}
 	}
 
-	private void addCompartments(final ResolverContext resolverContext, final CompartmentInitialData compartmentInitialData) {
+	private void addCompartments(final DataManagerContext dataManagerContext, final CompartmentInitialData compartmentInitialData) {
 		for (CompartmentId compartmentId : compartmentInitialData.getCompartmentIds()) {
 			compartmentDataManager.addCompartmentId(compartmentId);
 		}
 	}
 
-	private void addCompartmentsPropertyDefinitions(final ResolverContext resolverContext, final CompartmentInitialData compartmentInitialData) {
+	private void addCompartmentsPropertyDefinitions(final DataManagerContext dataManagerContext, final CompartmentInitialData compartmentInitialData) {
 		for (CompartmentId compartmentId : compartmentInitialData.getCompartmentIds()) {
 			Set<CompartmentPropertyId> compartmentPropertyIds = compartmentInitialData.getCompartmentPropertyIds(compartmentId);
 			for (CompartmentPropertyId compartmentPropertyId : compartmentPropertyIds) {
@@ -391,79 +391,79 @@ public final class CompartmentEventResolver {
 		}
 	}
 
-	private void loadCompartmentPropertyValues(final ResolverContext resolverContext, final CompartmentInitialData compartmentInitialData) {
+	private void loadCompartmentPropertyValues(final DataManagerContext dataManagerContext, final CompartmentInitialData compartmentInitialData) {
 		for (final CompartmentId compartmentId : compartmentInitialData.getCompartmentIds()) {
 			for (final CompartmentPropertyId compartmentPropertyId : compartmentInitialData.getCompartmentPropertyIds(compartmentId)) {
 				final Object compartmentPropertyValue = compartmentInitialData.getCompartmentPropertyValue(compartmentId, compartmentPropertyId);
 				final PropertyDefinition propertyDefinition = compartmentDataManager.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
-				validateValueCompatibility(resolverContext, compartmentPropertyId, propertyDefinition, compartmentPropertyValue);
+				validateValueCompatibility(dataManagerContext, compartmentPropertyId, propertyDefinition, compartmentPropertyValue);
 				compartmentDataManager.setCompartmentPropertyValue(compartmentId, compartmentPropertyId, compartmentPropertyValue);
 			}
 		}
 	}
 
-	private void handleCompartmentPropertyValueAssignmentEventExecution(final ResolverContext resolverContext, final CompartmentPropertyValueAssignmentEvent compartmentPropertyValueAssignmentEvent) {
+	private void handleCompartmentPropertyValueAssignmentEventExecution(final DataManagerContext dataManagerContext, final CompartmentPropertyValueAssignmentEvent compartmentPropertyValueAssignmentEvent) {
 		final CompartmentId compartmentId = compartmentPropertyValueAssignmentEvent.getCompartmentId();
 		final CompartmentPropertyId compartmentPropertyId = compartmentPropertyValueAssignmentEvent.getCompartmentPropertyId();
 		final Object compartmentPropertyValue = compartmentPropertyValueAssignmentEvent.getCompartmentPropertyValue();
 		final Object oldPropertyValue = compartmentDataManager.getCompartmentPropertyValue(compartmentId, compartmentPropertyId);
 		compartmentDataManager.setCompartmentPropertyValue(compartmentId, compartmentPropertyId, compartmentPropertyValue);
-		resolverContext.queueEventForResolution(new CompartmentPropertyChangeObservationEvent(compartmentId, compartmentPropertyId, oldPropertyValue, compartmentPropertyValue));
+		dataManagerContext.resolveEvent(new CompartmentPropertyChangeObservationEvent(compartmentId, compartmentPropertyId, oldPropertyValue, compartmentPropertyValue));
 	}
 
-	private void handleCompartmentPropertyValueAssignmentEventValidation(final ResolverContext resolverContext, final CompartmentPropertyValueAssignmentEvent compartmentPropertyValueAssignmentEvent) {
+	private void handleCompartmentPropertyValueAssignmentEventValidation(final DataManagerContext dataManagerContext, final CompartmentPropertyValueAssignmentEvent compartmentPropertyValueAssignmentEvent) {
 		final CompartmentId compartmentId = compartmentPropertyValueAssignmentEvent.getCompartmentId();
 		final CompartmentPropertyId compartmentPropertyId = compartmentPropertyValueAssignmentEvent.getCompartmentPropertyId();
 		final Object compartmentPropertyValue = compartmentPropertyValueAssignmentEvent.getCompartmentPropertyValue();
-		validateCompartmentId(resolverContext, compartmentId);
-		validateCompartmentProperty(resolverContext, compartmentId, compartmentPropertyId);
+		validateCompartmentId(dataManagerContext, compartmentId);
+		validateCompartmentProperty(dataManagerContext, compartmentId, compartmentPropertyId);
 		final PropertyDefinition propertyDefinition = compartmentDataManager.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
-		validatePropertyMutability(resolverContext, propertyDefinition);
-		validateCompartmentPropertyValueNotNull(resolverContext, compartmentPropertyValue);
-		validateValueCompatibility(resolverContext, compartmentPropertyId, propertyDefinition, compartmentPropertyValue);
+		validatePropertyMutability(dataManagerContext, propertyDefinition);
+		validateCompartmentPropertyValueNotNull(dataManagerContext, compartmentPropertyValue);
+		validateValueCompatibility(dataManagerContext, compartmentPropertyId, propertyDefinition, compartmentPropertyValue);
 	}
 
 	/*
 	 * Validates the compartment id
 	 *
 	 */
-	private void validateCompartmentId(final ResolverContext resolverContext, final CompartmentId compartmentId) {
+	private void validateCompartmentId(final DataManagerContext dataManagerContext, final CompartmentId compartmentId) {
 		if (compartmentId == null) {
-			resolverContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
+			dataManagerContext.throwContractException(CompartmentError.NULL_COMPARTMENT_ID);
 		}
 
 		if (!compartmentIds.contains(compartmentId)) {
-			resolverContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
+			dataManagerContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_ID, compartmentId);
 		}
 	}
 
-	private void validateCompartmentProperty(final ResolverContext resolverContext, final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	private void validateCompartmentProperty(final DataManagerContext dataManagerContext, final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
 
 		if (compartmentPropertyId == null) {
-			resolverContext.throwContractException(CompartmentError.NULL_COMPARTMENT_PROPERTY_ID);
+			dataManagerContext.throwContractException(CompartmentError.NULL_COMPARTMENT_PROPERTY_ID);
 		}
 		final Set<CompartmentPropertyId> set = compartmentPropertyIds.get(compartmentId);
 		if ((set == null) || !set.contains(compartmentPropertyId)) {
-			resolverContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_PROPERTY_ID, compartmentPropertyId);
+			dataManagerContext.throwContractException(CompartmentError.UNKNOWN_COMPARTMENT_PROPERTY_ID, compartmentPropertyId);
 		}
 
 	}
 
-	private void validateCompartmentPropertyValueNotNull(final ResolverContext resolverContext, final Object propertyValue) {
+	private void validateCompartmentPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			resolverContext.throwContractException(CompartmentError.NULL_COMPARTMENT_PROPERTY_VALUE);
+			dataManagerContext.throwContractException(CompartmentError.NULL_COMPARTMENT_PROPERTY_VALUE);
 		}
 	}
 
-	private void validatePropertyMutability(final ResolverContext resolverContext, final PropertyDefinition propertyDefinition) {
+	private void validatePropertyMutability(final DataManagerContext dataManagerContext, final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
-			resolverContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
+			dataManagerContext.throwContractException(PropertyError.IMMUTABLE_VALUE);
 		}
 	}
 
-	private void validateValueCompatibility(final ResolverContext resolverContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final DataManagerContext dataManagerContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-			resolverContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
+			dataManagerContext.throwContractException(PropertyError.INCOMPATIBLE_VALUE,
 					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
 		}
 	}

@@ -6,12 +6,11 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportId;
 import nucleus.SimpleReportId;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionError;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
 import plugins.components.ComponentPlugin;
 import plugins.groups.GroupPlugin;
@@ -29,6 +28,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.initialdata.PeopleInitialData;
 import plugins.people.support.PersonId;
 import plugins.properties.PropertiesPlugin;
+import plugins.reports.ReportId;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
 import plugins.reports.support.ReportHeader;
@@ -54,7 +54,7 @@ public class AT_GroupPopulationReport {
 		 */
 
 		// add the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent to move people in and out of groups
 		pluginBuilder.addAgent("agent");
@@ -104,7 +104,7 @@ public class AT_GroupPopulationReport {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// create a container to hold expected results
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
@@ -137,7 +137,7 @@ public class AT_GroupPopulationReport {
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1,5, TestGroupTypeId.GROUP_TYPE_1, 5, 2));
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.HOURLY, 1,5, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		testConsumers(actionPlugin, ReportPeriod.HOURLY, expectedOutputConsumer, 5524610980534223950L);
+		testConsumers(actionPluginInitializer, ReportPeriod.HOURLY, expectedOutputConsumer, 5524610980534223950L);
 	}
 
 	/*
@@ -160,7 +160,7 @@ public class AT_GroupPopulationReport {
 		 */
 
 		// add the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent to move people in and out of groups
 		pluginBuilder.addAgent("agent");
@@ -210,7 +210,7 @@ public class AT_GroupPopulationReport {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// create a container to hold expected results
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
@@ -236,7 +236,7 @@ public class AT_GroupPopulationReport {
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1, 5, 2));
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		testConsumers(actionPlugin, ReportPeriod.DAILY, expectedOutputConsumer, 4023600052052959521L);
+		testConsumers(actionPluginInitializer, ReportPeriod.DAILY, expectedOutputConsumer, 4023600052052959521L);
 	}
 
 	@Test
@@ -250,7 +250,7 @@ public class AT_GroupPopulationReport {
 		 */
 
 		// add the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// add an agent to move people in and out of groups
 		pluginBuilder.addAgent("agent");
@@ -300,7 +300,7 @@ public class AT_GroupPopulationReport {
 
 		}));
 
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
 
 		// create a container to hold expected results
 		TestReportItemOutputConsumer expectedOutputConsumer = new TestReportItemOutputConsumer();
@@ -310,10 +310,10 @@ public class AT_GroupPopulationReport {
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_1, 5, 2));
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 
-		testConsumers(actionPlugin, ReportPeriod.END_OF_SIMULATION, expectedOutputConsumer, 2753155357216960554L);
+		testConsumers(actionPluginInitializer, ReportPeriod.END_OF_SIMULATION, expectedOutputConsumer, 2753155357216960554L);
 	}
 
-	private void testConsumers(ActionPlugin actionPlugin, ReportPeriod reportPeriod, TestReportItemOutputConsumer expectedOutputConsumer, long seed) {
+	private void testConsumers(ActionPluginInitializer actionPluginInitializer, ReportPeriod reportPeriod, TestReportItemOutputConsumer expectedOutputConsumer, long seed) {
 
 		Random random = new Random(seed);
 
@@ -371,7 +371,7 @@ public class AT_GroupPopulationReport {
 		// add the stochastics plugin
 		builder.addPlugin(StochasticsPlugin.PLUGIN_ID, StochasticsPlugin.builder().setSeed(random.nextLong()).build()::init);
 
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// add the output consumer for the actual report items
 		TestReportItemOutputConsumer actualOutputConsumer = new TestReportItemOutputConsumer();
@@ -381,7 +381,7 @@ public class AT_GroupPopulationReport {
 		builder.build().execute();
 
 		// show that all actions were executed
-		if (!actionPlugin.allActionsExecuted()) {
+		if (!actionPluginInitializer.allActionsExecuted()) {
 			throw new ContractException(ActionError.ACTION_EXECUTION_FAILURE);
 		}
 

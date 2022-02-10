@@ -2,7 +2,7 @@ package plugins.partitions.testsupport.attributes.datacontainers;
 
 import java.util.Set;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
@@ -22,7 +22,7 @@ import util.ContractException;
 
 public final class AttributesDataView implements DataView {
 
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	private final AttributesDataManager attributesDataManager;
 
@@ -43,11 +43,11 @@ public final class AttributesDataView implements DataView {
 
 	private void validateAttributeId(AttributeId attributeId) {
 		if (attributeId == null) {
-			context.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
+			simulationContext.throwContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
 
 		if (!attributeExists(attributeId)) {
-			context.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID);
+			simulationContext.throwContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID);
 		}
 
 	}
@@ -81,10 +81,10 @@ public final class AttributesDataView implements DataView {
 
 	private void validatePersonId(PersonId personId) {
 		if (personId == null) {
-			context.throwContractException(PersonError.NULL_PERSON_ID);
+			simulationContext.throwContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (!personDataView.personExists(personId)) {
-			context.throwContractException(PersonError.UNKNOWN_PERSON_ID);
+			simulationContext.throwContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
@@ -99,16 +99,16 @@ public final class AttributesDataView implements DataView {
 	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DATA_MANAGER} if the context is
 	 *             null</li>
 	 */
-	public AttributesDataView(final Context context, AttributesDataManager attributesDataManager) {
-		if(context == null) {
+	public AttributesDataView(final SimulationContext simulationContext, AttributesDataManager attributesDataManager) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if(attributesDataManager == null) {
 			throw new ContractException(AttributeError.NULL_ATTRIBUTE_DATA_MANAGER);
 		}
 		this.attributesDataManager = attributesDataManager;
-		this.context = context;
-		personDataView = context.getDataView(PersonDataView.class).get();
+		this.simulationContext = simulationContext;
+		personDataView = simulationContext.getDataView(PersonDataView.class).get();
 	}
 
 	/**

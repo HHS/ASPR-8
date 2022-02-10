@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.NucleusError;
 import plugins.partitions.support.Labeler;
@@ -51,12 +51,12 @@ public final class PersonPropertyLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getLabel(Context context, PersonId personId) {
-		if(context == null) {
+	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
+		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 		if (personPropertyDataView == null) {
-			personPropertyDataView = context.getDataView(PersonPropertyDataView.class).get();
+			personPropertyDataView = simulationContext.getDataView(PersonPropertyDataView.class).get();
 		}
 		Object personPropertyValue = personPropertyDataView.getPersonPropertyValue(personId, personPropertyId);
 		return personPropertyValueLabelingFunction.apply(personPropertyValue);
@@ -68,7 +68,7 @@ public final class PersonPropertyLabeler implements Labeler {
 	}
 
 	@Override
-	public Object getPastLabel(Context context, Event event) {
+	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent =(PersonPropertyChangeObservationEvent)event;
 		return personPropertyValueLabelingFunction.apply(personPropertyChangeObservationEvent.getPreviousPropertyValue());
 	}

@@ -3,7 +3,7 @@ package plugins.reports.datacontainers;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.ReportId;
+import plugins.reports.ReportId;
 
 /**
  * Mutable data manager that backs the {@linkplain ReportsDataView}. This data

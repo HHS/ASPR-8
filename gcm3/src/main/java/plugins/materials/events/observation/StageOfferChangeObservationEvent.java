@@ -1,7 +1,7 @@
 package plugins.materials.events.observation;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -46,18 +46,18 @@ public class StageOfferChangeObservationEvent implements Event {
 		STAGE, ALL
 	}
 
-	private static void validateStageId(Context context, StageId stageId) {
+	private static void validateStageId(SimulationContext simulationContext, StageId stageId) {
 		if (stageId == null) {
-			context.throwContractException(MaterialsError.NULL_STAGE_ID);
+			simulationContext.throwContractException(MaterialsError.NULL_STAGE_ID);
 		}
-		MaterialsDataView materialsDataView = context.getDataView(MaterialsDataView.class).get();
+		MaterialsDataView materialsDataView = simulationContext.getDataView(MaterialsDataView.class).get();
 		if (!materialsDataView.stageExists(stageId)) {
-			context.throwContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
+			simulationContext.throwContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
 		}
 	}
 
-	public static EventLabel<StageOfferChangeObservationEvent> getEventLabelByStage(Context context, StageId stageId) {
-		validateStageId(context, stageId);
+	public static EventLabel<StageOfferChangeObservationEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
+		validateStageId(simulationContext, stageId);
 		return new MultiKeyEventLabel<>(StageOfferChangeObservationEvent.class, LabelerId.STAGE, StageOfferChangeObservationEvent.class, stageId);
 	}
 
@@ -67,7 +67,7 @@ public class StageOfferChangeObservationEvent implements Event {
 
 	private final static EventLabel<StageOfferChangeObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageOfferChangeObservationEvent.class, LabelerId.ALL, StageOfferChangeObservationEvent.class);
 
-	public static EventLabel<StageOfferChangeObservationEvent> getEventLabelByAll(Context context) {
+	public static EventLabel<StageOfferChangeObservationEvent> getEventLabelByAll(SimulationContext simulationContext) {
 		return ALL_LABEL;
 	}
 

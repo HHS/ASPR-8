@@ -1,19 +1,19 @@
 package plugins.reports.datacontainers;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.DataView;
 import nucleus.NucleusError;
-import nucleus.ReportId;
+import plugins.reports.ReportId;
 import plugins.reports.support.ReportError;
 import util.ContractException;
 
 public final class ReportsDataView implements DataView {
 
 	private final ReportsDataManager reportsDataManager;
-	private final Context context;
+	private final SimulationContext simulationContext;
 
 	/**
-	 * Creates the Reports Data View from the given {@link Context}
+	 * Creates the Reports Data View from the given {@link SimulationContext}
 	 * and {@link ReportsDataManager}. Not null tolerant.
 	 * 
 	  * @throws ContractException
@@ -23,9 +23,9 @@ public final class ReportsDataView implements DataView {
 	 *             if compartment data manager is null</li>
 	 * 
 	 */
-	public ReportsDataView(Context context, ReportsDataManager reportsDataManager) {
+	public ReportsDataView(SimulationContext simulationContext, ReportsDataManager reportsDataManager) {
 		
-		if (context == null) {
+		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_CONTEXT);
 		}
 
@@ -33,7 +33,7 @@ public final class ReportsDataView implements DataView {
 			throw new ContractException(ReportError.NULL_REPORT_DATA_MANAGER);
 		}
 		
-		this.context = context;
+		this.simulationContext = simulationContext;
 		this.reportsDataManager = reportsDataManager;
 	}
 
@@ -50,7 +50,7 @@ public final class ReportsDataView implements DataView {
 
 	private void validateReportIdIsNotNull(ReportId reportId) {
 		if (reportId == null) {
-			context.throwContractException(ReportError.NULL_REPORT_ID);
+			simulationContext.throwContractException(ReportError.NULL_REPORT_ID);
 		}
 	}
 }

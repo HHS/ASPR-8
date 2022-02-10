@@ -13,10 +13,10 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class SimpleEventLabeler<T extends Event> implements EventLabeler<T> {
 	private final Class<T> eventClass;	
-	private final BiFunction<Context, T, EventLabel<T>> labelMaker;
+	private final BiFunction<SimulationContext, T, EventLabel<T>> labelMaker;
 	private final EventLabelerId id;
 
-	public SimpleEventLabeler(final EventLabelerId id, final Class<T> eventClass, BiFunction<Context, T, EventLabel<T>> labelMaker) {		
+	public SimpleEventLabeler(final EventLabelerId id, final Class<T> eventClass, BiFunction<SimulationContext, T, EventLabel<T>> labelMaker) {		
 		this.eventClass = eventClass;
 		this.labelMaker = labelMaker;
 		this.id = id;
@@ -28,8 +28,8 @@ public class SimpleEventLabeler<T extends Event> implements EventLabeler<T> {
 	}
 
 	@Override
-	public EventLabel<T> getEventLabel(Context context, T event) {
-		return labelMaker.apply(context, event);
+	public EventLabel<T> getEventLabel(SimulationContext simulationContext, T event) {
+		return labelMaker.apply(simulationContext, event);
 	}
 
 	@Override

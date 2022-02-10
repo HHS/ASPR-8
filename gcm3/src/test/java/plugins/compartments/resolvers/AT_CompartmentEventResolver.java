@@ -26,9 +26,9 @@ import nucleus.SimpleResolverId;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import nucleus.testsupport.actionplugin.ActionAgent;
-import nucleus.testsupport.actionplugin.ActionPlugin;
+import nucleus.testsupport.actionplugin.ActionPluginInitializer;
 import nucleus.testsupport.actionplugin.AgentActionPlan;
-import nucleus.testsupport.actionplugin.ResolverActionPlan;
+import nucleus.testsupport.actionplugin.DataManagerActionPlan;
 import plugins.compartments.CompartmentPlugin;
 import plugins.compartments.datacontainers.CompartmentDataView;
 import plugins.compartments.datacontainers.CompartmentLocationDataView;
@@ -66,7 +66,7 @@ import plugins.properties.support.PropertyError;
 import plugins.properties.support.TimeTrackingPolicy;
 import plugins.reports.ReportPlugin;
 import plugins.reports.initialdata.ReportsInitialData;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import util.ContractException;
 import util.MultiKey;
@@ -140,7 +140,7 @@ public class AT_CompartmentEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agents to create people
@@ -191,14 +191,14 @@ public class AT_CompartmentEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 	}
 
 	/**
@@ -321,7 +321,7 @@ public class AT_CompartmentEventResolver {
 
 		// Create the standard pre-populated engine builder
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5655227215512656797L);
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create two agents to move and observe people being moved
 		pluginBuilder.addAgent("mover agent");
@@ -424,8 +424,8 @@ public class AT_CompartmentEventResolver {
 		}));
 
 		// build the plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		CompartmentsActionSupport.testConsumers(30, 5655227215512656797L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		CompartmentsActionSupport.testConsumers(30, 5655227215512656797L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 		// show that the observations were correct
 		assertEquals(expectedObservations.size(), recievedObservations.size());
@@ -480,7 +480,7 @@ public class AT_CompartmentEventResolver {
 		builder.addPlugin(ComponentPlugin.PLUGIN_ID, new ComponentPlugin()::init);
 		builder.addPlugin(PartitionsPlugin.PLUGIN_ID, new PartitionsPlugin()::init);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		// create two agents to make and observe compartment property value
 		// changes
@@ -601,15 +601,15 @@ public class AT_CompartmentEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();				
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();				
 		
-		builder.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init);
+		builder.addPlugin(ActionPluginInitializer.PLUGIN_ID, actionPluginInitializer::init);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the observed changes match expectations
 		assertEquals(expectedObservations.size(), actualObservations.size());
@@ -635,7 +635,7 @@ public class AT_CompartmentEventResolver {
 
 		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8294774271110836859L);
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agents to create people
@@ -650,7 +650,7 @@ public class AT_CompartmentEventResolver {
 
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
-					StochasticsDataView stochasticsDataView = c2.getDataView(StochasticsDataView.class).get();
+					StochasticsDataManager stochasticsDataManager = c2.getDataView(StochasticsDataManager.class).get();
 					CompartmentLocationDataView compartmentLocationDataView = c2.getDataView(CompartmentLocationDataView.class).get();
 					PersonDataView personDataView = c2.getDataView(PersonDataView.class).get();
 
@@ -658,7 +658,7 @@ public class AT_CompartmentEventResolver {
 					 * Generate a random compartment to for the new person and
 					 * add the person
 					 */
-					TestCompartmentId randomCompartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataView.getRandomGenerator());
+					TestCompartmentId randomCompartmentId = TestCompartmentId.getRandomCompartmentId(stochasticsDataManager.getRandomGenerator());
 					PersonContructionData personContructionData = PersonContructionData.builder().add(randomCompartmentId).build();
 					c2.resolveEvent(new PersonCreationEvent(personContructionData));
 					PersonId personId = personDataView.getLastIssuedPersonId().get();
@@ -694,8 +694,8 @@ public class AT_CompartmentEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		CompartmentsActionSupport.testConsumers(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		CompartmentsActionSupport.testConsumers(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 
@@ -722,7 +722,7 @@ public class AT_CompartmentEventResolver {
 		
 
 
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Create an agents to create people
@@ -737,11 +737,11 @@ public class AT_CompartmentEventResolver {
 
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
-					StochasticsDataView stochasticsDataView = c2.getDataView(StochasticsDataView.class).get();
+					StochasticsDataManager stochasticsDataManager = c2.getDataView(StochasticsDataManager.class).get();
 					CompartmentLocationDataView compartmentLocationDataView = c2.getDataView(CompartmentLocationDataView.class).get();
 					PersonDataView personDataView = c2.getDataView(PersonDataView.class).get();
 
-					RandomGenerator rng = stochasticsDataView.getRandomGenerator();
+					RandomGenerator rng = stochasticsDataManager.getRandomGenerator();
 					/*
 					 * Generate a random compartment to for each new person and
 					 * add the person
@@ -803,8 +803,8 @@ public class AT_CompartmentEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		CompartmentsActionSupport.testConsumers(0, 2654453328570666100L, TimeTrackingPolicy.TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		CompartmentsActionSupport.testConsumers(0, 2654453328570666100L, TimeTrackingPolicy.TRACK_TIME, actionPluginInitializer);
 
 	}
 
@@ -829,7 +829,7 @@ public class AT_CompartmentEventResolver {
 	public void testPersonImminentRemovalObservationEvent() {
 
 		
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
+		ActionPluginInitializer.Builder pluginBuilder = ActionPluginInitializer.builder();
 
 		/*
 		 * Precondition checks
@@ -854,10 +854,10 @@ public class AT_CompartmentEventResolver {
 		ResolverId resolverId = new SimpleResolverId("custom resolver");
 		pluginBuilder.addResolver(resolverId);
 
-		pluginBuilder.addResolverActionPlan(resolverId, new ResolverActionPlan(0, (c) -> {
+		pluginBuilder.addResolverActionPlan(resolverId, new DataManagerActionPlan(0, (c) -> {
 			c.subscribeToEventExecutionPhase(CustomEvent.class, (c2, e) -> {
 				PersonImminentRemovalObservationEvent event = new PersonImminentRemovalObservationEvent(e.getPersonId());
-				c.queueEventForResolution(event);
+				c.resolveEvent(event);
 			});
 		}));
 
@@ -914,8 +914,8 @@ public class AT_CompartmentEventResolver {
 		}));
 
 		// build action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
-		CompartmentsActionSupport.testConsumers(0, 163202760371564041L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPlugin);
+		ActionPluginInitializer actionPluginInitializer = pluginBuilder.build();
+		CompartmentsActionSupport.testConsumers(0, 163202760371564041L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, actionPluginInitializer);
 	}
 
 }

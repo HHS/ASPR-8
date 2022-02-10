@@ -1,4 +1,4 @@
-package nucleus;
+package plugins.reports;
 
 /**
  * Marker interface for the unique report identifiers

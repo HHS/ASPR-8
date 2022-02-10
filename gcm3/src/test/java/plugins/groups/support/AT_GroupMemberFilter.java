@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.mutation.GroupCreationEvent;
 import plugins.groups.events.mutation.GroupMembershipAdditionEvent;
@@ -25,7 +25,7 @@ import plugins.partitions.support.FilterSensitivity;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -35,7 +35,7 @@ import util.annotations.UnitTestMethod;
 public class AT_GroupMemberFilter {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, GroupId.class })
+	@UnitTestConstructor(args = { SimulationContext.class, GroupId.class })
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 8499169041100865476L, (c) -> {
@@ -86,11 +86,11 @@ public class AT_GroupMemberFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		
 		GroupsActionSupport.testConsumer(100, 3, 10, 6248106595116941770L, (c) -> {
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 			c.resolveEvent(new GroupCreationEvent(TestGroupTypeId.GROUP_TYPE_3));

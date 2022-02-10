@@ -11,7 +11,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Context;
+import nucleus.SimulationContext;
 import nucleus.NucleusError;
 import plugins.groups.datacontainers.PersonGroupDataView;
 import plugins.groups.events.mutation.GroupCreationEvent;
@@ -25,7 +25,7 @@ import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.people.datacontainers.PersonDataView;
 import plugins.people.support.PersonId;
-import plugins.stochastics.StochasticsDataView;
+import plugins.stochastics.StochasticsDataManager;
 import util.ContractException;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
@@ -36,13 +36,13 @@ import util.annotations.UnitTestMethod;
 public class AT_GroupsForPersonFilter {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, Equality.class, int.class })
+	@UnitTestConstructor(args = { SimulationContext.class, Equality.class, int.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { Context.class, Equality.class, int.class })
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class, Equality.class, int.class })
 	public void testValidate() {
 		GroupsActionSupport.testConsumer(100, 3, 10, 5329703278551588697L, (c) -> {
 			// precondition tests
@@ -79,11 +79,11 @@ public class AT_GroupsForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		GroupsActionSupport.testConsumer(100, 0, 10, 6164158277278234559L, (c) -> {
-			RandomGenerator randomGenerator = c.getDataView(StochasticsDataView.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataView(StochasticsDataManager.class).get().getRandomGenerator();
 			PersonDataView personDataView = c.getDataView(PersonDataView.class).get();
 			PersonGroupDataView personGroupDataView = c.getDataView(PersonGroupDataView.class).get();
 

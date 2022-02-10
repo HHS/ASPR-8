@@ -7,8 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.AgentId;
-import nucleus.ReportId;
-import nucleus.ResolverId;
+import plugins.reports.ReportId;
 
 /**
  * Test Support unit that provides a mutable, shared data source that is
@@ -25,9 +24,7 @@ public final class ActionDataContainer {
 	 */
 	private final Map<Object, Set<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();
 
-	private final Map<ReportId, Set<ReportActionPlan>> reportActionPlanMap = new LinkedHashMap<>();
-
-	private final Map<ResolverId, Set<ResolverActionPlan>> resolverActionPlanMap = new LinkedHashMap<>();
+	private final Map<ResolverId, Set<DataManagerActionPlan>> resolverActionPlanMap = new LinkedHashMap<>();
 
 	/**
 	 * Returns the action plans associated with the given alias in the order of
@@ -74,24 +71,7 @@ public final class ActionDataContainer {
 		set.add(agentActionPlan);
 	}
 
-	/**
-	 * Returns the report plans associated with the given report id in the order
-	 * of their addition
-	 * 
-	 * @throw {@link RuntimeException}
-	 *        <li>if the report id is null</li>
-	 */
-	public Set<ReportActionPlan> getReportActionPlans(final ReportId reportId) {
-		if (reportId == null) {
-			throw new RuntimeException("null report id");
-		}
-		final Set<ReportActionPlan> result = new LinkedHashSet<>();
-		final Set<ReportActionPlan> set = reportActionPlanMap.get(reportId);
-		if (set != null) {
-			result.addAll(set);
-		}
-		return result;
-	}
+	
 
 	/**
 	 * Returns the resolver plans associated with the given resolver id in the
@@ -100,61 +80,36 @@ public final class ActionDataContainer {
 	 * @throw {@link RuntimeException}
 	 *        <li>if the resolver id is null</li>
 	 */
-	public Set<ResolverActionPlan> getResolverActionPlans(final ResolverId resolverId) {
+	public Set<DataManagerActionPlan> getResolverActionPlans(final ResolverId resolverId) {
 		if (resolverId == null) {
 			throw new RuntimeException("null resolver id");
 		}
-		final Set<ResolverActionPlan> result = new LinkedHashSet<>();
-		final Set<ResolverActionPlan> set = resolverActionPlanMap.get(resolverId);
+		final Set<DataManagerActionPlan> result = new LinkedHashSet<>();
+		final Set<DataManagerActionPlan> set = resolverActionPlanMap.get(resolverId);
 		if (set != null) {
 			result.addAll(set);
 		}
 		return result;
 	}
 
-	/**
-	 * Adds the report action plan in association with the given report id.
-	 * Duplicate report action plans replace previously added report action
-	 * plans
-	 * 
-	 * @throws RuntimeException
-	 *             <li>if the report id is null</li>
-	 *             <li>if the report action plan is null</li>
-	 */
-	public void addReportActionPlan(final ReportId reportId, ReportActionPlan reportActionPlan) {
-		if (reportId == null) {
-			throw new RuntimeException("null report id");
-		}
-		if (reportActionPlan == null) {
-			throw new RuntimeException("null action plan");
-		}
+	
 
-		Set<ReportActionPlan> set = reportActionPlanMap.get(reportId);
-
-		if (set == null) {
-			set = new LinkedHashSet<>();
-			reportActionPlanMap.put(reportId, set);
-		}
-
-		set.add(reportActionPlan);
-	}
-
-	public void addResolverActionPlan(final ResolverId resolverId, ResolverActionPlan resolverActionPlan) {
+	public void addResolverActionPlan(final ResolverId resolverId, DataManagerActionPlan dataManagerActionPlan) {
 		if (resolverId == null) {
 			throw new RuntimeException("null report id");
 		}
-		if (resolverActionPlan == null) {
+		if (dataManagerActionPlan == null) {
 			throw new RuntimeException("null action plan");
 		}
 
-		Set<ResolverActionPlan> set = resolverActionPlanMap.get(resolverId);
+		Set<DataManagerActionPlan> set = resolverActionPlanMap.get(resolverId);
 
 		if (set == null) {
 			set = new LinkedHashSet<>();
 			resolverActionPlanMap.put(resolverId, set);
 		}
 
-		set.add(resolverActionPlan);
+		set.add(dataManagerActionPlan);
 	}
 
 	/*
