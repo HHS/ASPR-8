@@ -1,8 +1,9 @@
 package nucleus.testsupport.actionplugin;
 
-import java.util.Set;
+import java.util.List;
 
 import nucleus.AgentContext;
+import nucleus.AgentId;
 
 /**
  * Test Support agent implementation designed to execute test-defined behaviors
@@ -18,20 +19,6 @@ import nucleus.AgentContext;
  *
  */
 public final class ActionAgent {
-	private final Object alias;
-
-	/**
-	 * Constructs an ActionAgent with the given alias
-	 * 
-	 * @throws RuntimeException
-	 *             <li>if the alias is null</li>
-	 */
-	public ActionAgent(Object alias) {
-		if(alias == null) {
-			throw new RuntimeException("null alias");
-		}		
-		this.alias = alias;
-	}
 
 	/**
 	 * Associates its AgentId with its alias via an AliasAssignmentEvent. Schedules the
@@ -39,18 +26,12 @@ public final class ActionAgent {
 	 * with its alias.
 	 */
 	public void init(AgentContext agentContext) {
-		ActionDataView actionDataView = agentContext.getDataView(ActionDataView.class).get();
-		// let the action data view know how to associate an agent id with its
-		// alias
-
-		agentContext.resolveEvent(new AliasAssignmentEvent(alias));
-
-		// retrieve the action plans from the action data view and schedule them
-		// with the context
-		Set<AgentActionPlan> agentActionPlans = actionDataView.getAgentActionPlans(alias);
+		ActionPluginDataManager actionPluginDataManager = agentContext.getDataManager(ActionPluginDataManager.class).get();
+		AgentId agentId = agentContext.getCurrentAgentId();
+		List<AgentActionPlan> agentActionPlans = actionPluginDataManager.getAgentActionPlans(agentId);
 		for (final AgentActionPlan agentActionPlan : agentActionPlans) {
 			if (agentActionPlan.getKey() != null) {
-				agentContext.addPlan(agentActionPlan::executeAction, agentActionPlan.getScheduledTime(), agentActionPlan.getKey());
+				agentContext.addKeyedPlan(agentActionPlan::executeAction, agentActionPlan.getScheduledTime(), agentActionPlan.getKey());
 			} else {
 				agentContext.addPlan(agentActionPlan::executeAction, agentActionPlan.getScheduledTime());
 			}

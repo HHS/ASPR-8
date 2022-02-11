@@ -8,37 +8,43 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
+import nucleus.AgentId;
 import nucleus.EventLabeler;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import nucleus.SimpleAgentId;
 
 @ThreadSafe
 public class ActionPluginData implements PluginData {
 
 	private static class Data {
+		
 		private Data() {
 		}
 
 		private Data(Data data) {
+			
 		}
 
 		/*
 		 * Map of action plans key by agent aliases
 		 */
-		private final Map<Object, List<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();
+		private final Map<AgentId, List<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();
 
 		/*
 		 * Contains the alias values for which agent construction must be
 		 * handled by the Action Plugin Initializer
 		 */
-		private Set<Object> agentAliasesMarkedForConstruction = new LinkedHashSet<>();
+		private Set<AgentId> agentAliasesMarkedForConstruction = new LinkedHashSet<>();
 
 		/*
 		 * List of stored event labelers
 		 */
 		private List<EventLabeler<?>> eventLabelers = new ArrayList<>();
-
-		private Map<Object,ActionDataManager> actionDataManagers = new LinkedHashMap<>();
+		
+		private Map<Class<? extends ActionDataManager>,Object> dataManagerAliasMap = new LinkedHashMap<>();
+		
+		private Map<Object, Class<? extends ActionDataManager>> actionDataManagerTypes = new LinkedHashMap<>();
 
 		private final Map<Object, List<DataManagerActionPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
 
@@ -88,7 +94,8 @@ public class ActionPluginData implements PluginData {
 
 			if (list == null) {
 				list = new ArrayList<>();
-				data.agentActionPlanMap.put(alias, list);
+				AgentId agentId = new SimpleAgentId(alias);
+				data.agentActionPlanMap.put( agentId, list);
 			}
 
 			list.add(agentActionPlan);
@@ -108,7 +115,8 @@ public class ActionPluginData implements PluginData {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
-			data.agentAliasesMarkedForConstruction.add(alias);
+			AgentId agentId = new SimpleAgentId(alias);
+			data.agentAliasesMarkedForConstruction.add(agentId);
 			return this;
 		}
 
@@ -126,14 +134,15 @@ public class ActionPluginData implements PluginData {
 			return this;
 		}
 
-		public Builder addActionDataManager(Object alias,ActionDataManager actionDataManager) {
+		public Builder addActionDataManager(Object alias,Class<? extends ActionDataManager> actionDataManagerClass) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
-			if (actionDataManager == null) {
-				throw new RuntimeException("null action data manager");
+			if (actionDataManagerClass == null) {
+				throw new RuntimeException("null action data manager class");
 			}
-			data.actionDataManagers.put(alias,actionDataManager);
+			data.actionDataManagerTypes.put(alias,actionDataManagerClass);
+			data.dataManagerAliasMap.put(actionDataManagerClass, alias);
 			return this;
 		}
 		
@@ -173,5 +182,45 @@ public class ActionPluginData implements PluginData {
 	}
 
 	private final Data data;
+	
+	
+	
+	
+	public List<EventLabeler<?>> getEventLabelers(){
+		return new ArrayList<>(data.eventLabelers);
+	}
+	
+	public List<AgentId> getAgentIdsRequiringConstruction(){
+		return new ArrayList<>(data.agentAliasesMarkedForConstruction);
+	}
+	
+	public List<AgentId> getAgentIdsRequiringPlanning(){
+		return new ArrayList<>(data.agentActionPlanMap.keySet());
+	}
+	
+	public List<AgentActionPlan> getAgentActionPlans(AgentId agentId){
+		List<AgentActionPlan> result = new ArrayList<>();
+		List<AgentActionPlan> list = data.agentActionPlanMap.get(agentId);
+		if(list != null) {
+			result.addAll(list);
+		}
+		return result;
+	}
+	
+	
+	public List<Class<? extends ActionDataManager>> getActionDataManagerTypes(){
+		return new ArrayList<>(data.actionDataManagerTypes.values());
+	}
+	
+	public List<DataManagerActionPlan>getDataManagerActionPlans(Class<? extends ActionDataManager> actionDataManagerType){
+		Object alias = data.dataManagerAliasMap.get(actionDataManagerType);
+		List<DataManagerActionPlan> list = data.dataManagerActionPlanMap.get(alias);
+		List<DataManagerActionPlan> result = new ArrayList<>();
+		if(list != null) {
+			result.addAll(list);
+		}
+		return list;
+	}
+	
 
 }

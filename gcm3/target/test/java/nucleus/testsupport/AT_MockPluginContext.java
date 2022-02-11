@@ -2,33 +2,38 @@ package nucleus.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import nucleus.AgentId;
+import nucleus.DataManager;
+import nucleus.PluginData;
 import nucleus.PluginId;
-import nucleus.DataManagerContext;
-import nucleus.ResolverId;
 import nucleus.SimplePluginId;
-import nucleus.SimpleResolverId;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
 @UnitTest(target = MockPluginContext.class)
+@Disabled
 public class AT_MockPluginContext {
 
-	/**
-	 * Shows that an added plugin dependency can be retrieved
-	 */
+	@Test
+	@UnitTestMethod(name = "addPluginData", args = { PluginData.class })
+	public void testAddPluginData() {
+		fail();
+
+	}
+
 	@Test
 	@UnitTestMethod(name = "addPluginDependency", args = { PluginId.class })
 	public void testAddPluginDependency() {
-
+		fail();
 		Set<PluginId> expectedPluginIds = new LinkedHashSet<>();
 
 		expectedPluginIds.add(new SimplePluginId("A"));
@@ -55,64 +60,71 @@ public class AT_MockPluginContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineResolver", args = { ResolverId.class, Consumer.class })
-	public void testDefineResolver() {
-
-		Map<ResolverId, Consumer<DataManagerContext>> expectedResolvers = new LinkedHashMap<>();
-
-		expectedResolvers.put(new SimpleResolverId("A"), (c) -> {
-		});
-		expectedResolvers.put(new SimpleResolverId("B"), (c) -> {
-		});
-		expectedResolvers.put(new SimpleResolverId("C"), (c) -> {
-		});
-
-		MockPluginContext mockPluginContext = new MockPluginContext();
-		for (ResolverId resolverId : expectedResolvers.keySet()) {
-			mockPluginContext.defineResolver(resolverId, expectedResolvers.get(resolverId));
-		}
-
-		assertEquals(expectedResolvers, mockPluginContext.getResolverMap());
-
-		// show that repeated additions have no effect
-		for (ResolverId resolverId : expectedResolvers.keySet()) {
-			mockPluginContext.defineResolver(resolverId, expectedResolvers.get(resolverId));
-		}
-		assertEquals(expectedResolvers, mockPluginContext.getResolverMap());
-
-		// precondition tests
-
-		// null resolver id
-		assertThrows(RuntimeException.class, () -> new MockPluginContext().defineResolver(null, (c) -> {
-		}));
-
-		// null context consumer
-		assertThrows(RuntimeException.class, () -> new MockPluginContext().defineResolver(new SimpleResolverId("resolver"), null));
+	@UnitTestMethod(name = "addDataManager", args = { DataManager.class })
+	public void testAddDataManager() {
+		fail();
+//		Map<ResolverId, Consumer<DataManagerContext>> expectedResolvers = new LinkedHashMap<>();
+//
+//		expectedResolvers.put(new SimpleResolverId("A"), (c) -> {
+//		});
+//		expectedResolvers.put(new SimpleResolverId("B"), (c) -> {
+//		});
+//		expectedResolvers.put(new SimpleResolverId("C"), (c) -> {
+//		});
+//
+//		MockPluginContext mockPluginContext = new MockPluginContext();
+//		for (ResolverId resolverId : expectedResolvers.keySet()) {
+//			mockPluginContext.defineResolver(resolverId, expectedResolvers.get(resolverId));
+//		}
+//
+//		assertEquals(expectedResolvers, mockPluginContext.getResolverMap());
+//
+//		// show that repeated additions have no effect
+//		for (ResolverId resolverId : expectedResolvers.keySet()) {
+//			mockPluginContext.defineResolver(resolverId, expectedResolvers.get(resolverId));
+//		}
+//		assertEquals(expectedResolvers, mockPluginContext.getResolverMap());
+//
+//		// precondition tests
+//
+//		// null resolver id
+//		assertThrows(RuntimeException.class, () -> new MockPluginContext().defineResolver(null, (c) -> {
+//		}));
+//
+//		// null context consumer
+//		assertThrows(RuntimeException.class, () -> new MockPluginContext().defineResolver(new SimpleResolverId("resolver"), null));
 
 	}
 
-	/**
-	 * Shows plugin ids are properly retrieved
-	 * 
-	 * Covered by {@linkplain AT_MockPluginContext#testAddPluginDependency() }
-	 */
+	@Test
+	@UnitTestMethod(name = "addAgent", args = { AgentId.class, Consumer.class })
+	public void testAddAgent() {
+		fail();
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPluginData", args = { Class.class })
+	public void testGetPluginData() {
+		fail();
+	}
+
+	@Test
+	@UnitTestMethod(name = "getAgents", args = {})
+	public void testGetAgents() {
+		fail();
+	}
+
 	@Test
 	@UnitTestMethod(name = "getPluginDependencies", args = {})
 	public void testGetPluginDependencies() {
-		// covered by test for adding plugin ids
-
+		fail();
 	}
 
-	/**
-	 * Show resolver context consumers are property retrieved
-	 * 
-	 * Covered by {@linkplain AT_MockPluginContext#testDefineResolver() }
-	 * 
-	 */
 	@Test
-	@UnitTestMethod(name = "getResolverMap", args = { ResolverId.class, Consumer.class })
-	public void testGetResolverMap() {
-		// covered by test for adding resolver context consumers
+	@UnitTestMethod(name = "getDataManagers", args = {})
+	public void testGetDataManagers() {
+		fail();
 	}
 
 }

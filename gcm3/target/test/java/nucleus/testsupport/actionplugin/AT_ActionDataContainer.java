@@ -17,6 +17,7 @@ import nucleus.AgentId;
 import nucleus.ResolverId;
 import nucleus.SimpleReportId;
 import nucleus.SimpleResolverId;
+import nucleus.testsupport.actionplugin.junk.ActionDataContainer;
 import plugins.reports.ReportId;
 import util.MultiKey;
 import util.annotations.UnitTest;

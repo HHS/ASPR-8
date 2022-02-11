@@ -9,6 +9,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Simulation;
+import nucleus.testsupport.actionplugin.junk.ActionResolver;
 import nucleus.ReportContext;
 import nucleus.ResolverId;
 import nucleus.SimpleResolverId;

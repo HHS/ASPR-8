@@ -81,6 +81,10 @@ public class Simulation {
 				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 			}
 			Map<AgentId, Consumer<AgentContext>> map = agentsMap.get(focalPluginId);
+			if(map == null) {
+				map = new LinkedHashMap<>();
+				agentsMap.put(focalPluginId, map);
+			}
 
 			map.put(agentId, consumer);
 		}
@@ -765,16 +769,17 @@ public class Simulation {
 		}
 
 		/*
-		 * Initialize the data managers and queue the initializations of the
-		 * agents
+		 * Retrieve the data managers and agents from the plugins in the correct order
 		 */
 		for (PluginId pluginId : getOrderedPluginIds()) {
+			
 			Set<DataManager> dataManagerSet = dataMangagersMap.get(pluginId);
 			if (dataManagerSet != null) {
 				for (DataManager dataManager : dataManagerSet) {
 					DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
 					DataManagerContext dataManagerContext = new DataManagerContextImpl(this, dataManagerId);
 					dataManagerContextMap.put(dataManagerId, dataManagerContext);
+					dataManagerMap.put(dataManager.getClass(), dataManager);
 					dataManager.init(dataManagerContext);
 				}
 			}
@@ -787,6 +792,11 @@ public class Simulation {
 				agentQueue.add(agentContentRec);
 			}
 		}
+		
+		//TODO -- the data managers should all be in place before initializing any of them
+//		for(DataManager dataManager : dataManagerMap.values()) {
+//			
+//		};
 
 		// flush the agent queue
 		executeAgentQueue();

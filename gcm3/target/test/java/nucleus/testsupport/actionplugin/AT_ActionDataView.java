@@ -14,9 +14,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentId;
-import nucleus.ResolverId;
-import nucleus.SimpleReportId;
-import nucleus.SimpleResolverId;
 import plugins.reports.ReportId;
 import util.MultiKey;
 import util.annotations.UnitTest;
@@ -26,21 +23,8 @@ import util.annotations.UnitTestMethod;
 @UnitTest(target = ActionDataView.class)
 public class AT_ActionDataView {
 
-	/**
-	 * Shows that an action data view can be created from an action data
-	 * container.
-	 */
-	@Test
-	@UnitTestConstructor(args = { ActionDataContainer.class })
-	public void testConstructor() {
-		// precondition tests
-
-		// if the action data container is null
-		assertThrows(RuntimeException.class, () -> new ActionDataView(null));
-	}
-	/**
-	 * Shows that agent action plans can be retrieved by agent aliases
-	 */
+	
+	
 	@Test
 	@UnitTestMethod(name = "getAgentActionPlans", args = { Object.class })
 	public void testGetAgentActionPlans() {

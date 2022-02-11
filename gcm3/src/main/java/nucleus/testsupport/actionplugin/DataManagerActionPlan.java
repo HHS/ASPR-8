@@ -16,7 +16,7 @@ public class DataManagerActionPlan {
 	 */
 	private static int masterKey;
 
-	private synchronized int getNextKey() {
+	private static synchronized int getNextKey() {
 		return masterKey++;
 	}
 
@@ -28,6 +28,13 @@ public class DataManagerActionPlan {
 
 	private final Consumer<DataManagerContext> action;
 
+	public DataManagerActionPlan(DataManagerActionPlan dataManagerActionPlan) {
+		scheduledTime = dataManagerActionPlan.scheduledTime;
+		key = dataManagerActionPlan.key;
+		executed = dataManagerActionPlan.executed;
+		action = dataManagerActionPlan.action;
+	}
+	
 	public DataManagerActionPlan(final double scheduledTime, Consumer<DataManagerContext> action, boolean assignKey) {
 		if (scheduledTime < 0) {
 			throw new RuntimeException("negative scheduled time");
@@ -78,7 +85,5 @@ public class DataManagerActionPlan {
 	public double getScheduledTime() {
 		return scheduledTime;
 	}
-
-	
 
 }

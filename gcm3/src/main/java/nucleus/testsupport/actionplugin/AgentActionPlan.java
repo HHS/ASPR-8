@@ -16,7 +16,7 @@ public class AgentActionPlan {
 	 */
 	private static int masterKey;
 
-	private synchronized int getNextKey() {
+	private static synchronized int getNextKey() {
 		return masterKey++;
 	}
 
@@ -54,6 +54,13 @@ public class AgentActionPlan {
 	 */
 	public AgentActionPlan(final double scheduledTime, Consumer<AgentContext> action) {
 		this(scheduledTime, action, true);
+	}
+	
+	public AgentActionPlan(AgentActionPlan agentActionPlan) {
+		scheduledTime = agentActionPlan.scheduledTime;
+		key = agentActionPlan.key;
+		executed = agentActionPlan.executed;
+		action = agentActionPlan.action;
 	}
 
 	/**
