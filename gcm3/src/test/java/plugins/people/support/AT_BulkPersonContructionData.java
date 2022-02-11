@@ -1,0 +1,206 @@
+package plugins.people.support;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+
+import nucleus.Event;
+import util.annotations.UnitTest;
+import util.annotations.UnitTestMethod;
+
+@UnitTest(target = BulkPersonContructionData.class)
+public final class AT_BulkPersonContructionData implements Event {
+
+	@Test
+	@UnitTestMethod(name = "builder", args = {})
+	public void testBuilder() {
+		assertNotNull(BulkPersonContructionData.builder());
+	}
+
+	@Test
+	@UnitTestMethod(target = BulkPersonContructionData.Builder.class, name = "build", args = {})
+	public void testBuild() {
+		assertNotNull(BulkPersonContructionData.builder().build());
+	}
+
+	@Test
+	@UnitTestMethod(target = BulkPersonContructionData.Builder.class, name = "add", args = { PersonContructionData.class })
+	public void testAdd() {
+		BulkPersonContructionData.Builder builder = BulkPersonContructionData.builder();
+
+		List<PersonContructionData> expectedPersonConstructionData = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			expectedPersonConstructionData.add(PersonContructionData.builder().add(i).build());
+		}
+
+		for (PersonContructionData personContructionData : expectedPersonConstructionData) {
+			builder.add(personContructionData);
+		}
+
+		// show the person construction data returned match the ones contributed
+		// in the correct order
+		assertEquals(expectedPersonConstructionData, builder.build().getPersonContructionDatas());
+	}
+
+	@Test
+	@UnitTestMethod(target = BulkPersonContructionData.Builder.class, name = "addAuxiliaryData", args = { Object.class })
+	public void testAddAuxiliaryData() {
+		Map<Class<?>, List<Object>> expectedValues = new LinkedHashMap<>();
+
+		List<Object> values = new ArrayList<>();
+		values.add("aux1");
+		values.add(15);
+		values.add(3);
+		values.add("aux2");
+		values.add("aux1");
+		values.add(3);
+		values.add(false);
+
+		/*
+		 * Fill the builder and add to the expected values map
+		 */
+		BulkPersonContructionData.Builder builder = BulkPersonContructionData.builder();
+		for (Object value : values) {
+			builder.addAuxiliaryData(value);
+			List<Object> list = expectedValues.get(value.getClass());
+			if (list == null) {
+				list = new ArrayList<>();
+				expectedValues.put(value.getClass(), list);
+			}
+			list.add(value);
+		}
+
+		/*
+		 * Show that the bulk construction data returns the auxiliary data by type
+		 * and in the correct order
+		 */
+		BulkPersonContructionData bulkPersonContructionData = builder.build();
+		for (Class<?> c : expectedValues.keySet()) {
+			List<Object> expectedList = expectedValues.get(c);
+			List<?> actualList = bulkPersonContructionData.getValues(c);
+			assertEquals(expectedList, actualList);
+		}
+		
+		//show that types that have no values return an empty list
+		assertTrue(bulkPersonContructionData.getValues(Double.class).isEmpty());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPersonContructionDatas", args = {})
+	public void testGetPersonContructionDatas() {
+		BulkPersonContructionData.Builder builder = BulkPersonContructionData.builder();
+
+		List<PersonContructionData> expectedPersonConstructionData = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			expectedPersonConstructionData.add(PersonContructionData.builder().add(i).build());
+		}
+
+		for (PersonContructionData personContructionData : expectedPersonConstructionData) {
+			builder.add(personContructionData);
+		}
+
+		// show the person construction data returned match the ones contributed
+		// in the correct order
+		assertEquals(expectedPersonConstructionData, builder.build().getPersonContructionDatas());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getValue", args = { Class.class })
+	public void testGetValue() {
+		Map<Class<?>, List<Object>> expectedValues = new LinkedHashMap<>();
+
+		List<Object> values = new ArrayList<>();
+		values.add("aux1");
+		values.add(15);
+		values.add(3);
+		values.add("aux2");
+		values.add("aux1");
+		values.add(3);
+		values.add(false);
+
+		/*
+		 * Fill the builder and add to the expected values map
+		 */
+		BulkPersonContructionData.Builder builder = BulkPersonContructionData.builder();
+		for (Object value : values) {
+			builder.addAuxiliaryData(value);
+			List<Object> list = expectedValues.get(value.getClass());
+			if (list == null) {
+				list = new ArrayList<>();
+				expectedValues.put(value.getClass(), list);
+			}
+			list.add(value);
+		}
+
+		/*
+		 * Show that the bulk construction data returns the first auxiliary data by type
+		 * 
+		 */
+		BulkPersonContructionData bulkPersonContructionData = builder.build();
+		for (Class<?> c : expectedValues.keySet()) {
+			Object expectedValue = expectedValues.get(c).get(0);
+			Optional<?> optional = bulkPersonContructionData.getValue(c);
+			assertTrue(optional.isPresent());
+			Object actualValue = optional.get(); 
+			assertEquals(expectedValue, actualValue);
+		}
+		
+		//show that types not contained return 
+		
+		Optional<Double> optional = bulkPersonContructionData.getValue(Double.class);
+		assertFalse(optional.isPresent());
+		
+	}
+
+	@Test
+	@UnitTestMethod(name = "build", args = { Class.class })
+	public void testGetValues() {
+		Map<Class<?>, List<Object>> expectedValues = new LinkedHashMap<>();
+
+		List<Object> values = new ArrayList<>();
+		values.add("aux1");
+		values.add(15);
+		values.add(3);
+		values.add("aux2");
+		values.add("aux1");
+		values.add(3);
+		values.add(false);
+
+		/*
+		 * Fill the builder and add to the expected values map
+		 */
+		BulkPersonContructionData.Builder builder = BulkPersonContructionData.builder();
+		for (Object value : values) {
+			builder.addAuxiliaryData(value);
+			List<Object> list = expectedValues.get(value.getClass());
+			if (list == null) {
+				list = new ArrayList<>();
+				expectedValues.put(value.getClass(), list);
+			}
+			list.add(value);
+		}
+
+		/*
+		 * Show that the bulk construction data returns the auxiliary data by type
+		 * and in the correct order
+		 */
+		BulkPersonContructionData bulkPersonContructionData = builder.build();
+		for (Class<?> c : expectedValues.keySet()) {
+			List<Object> expectedList = expectedValues.get(c);
+			List<?> actualList = bulkPersonContructionData.getValues(c);
+			assertEquals(expectedList, actualList);
+		}
+		
+		//show that types that have no values return an empty list
+		assertTrue(bulkPersonContructionData.getValues(Double.class).isEmpty());
+	}
+}
