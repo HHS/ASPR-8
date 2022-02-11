@@ -1,9 +1,7 @@
 package nucleus.testsupport.actionplugin;
 
 import java.util.List;
-import java.util.function.Consumer;
 
-import nucleus.AgentContext;
 import nucleus.AgentId;
 import nucleus.PluginContext;
 import nucleus.PluginId;

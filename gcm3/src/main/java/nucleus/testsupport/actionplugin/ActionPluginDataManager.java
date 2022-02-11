@@ -53,17 +53,6 @@ public class ActionPluginDataManager extends DataManager {
 
 	public List<AgentActionPlan> getAgentActionPlans(AgentId agentId) {
 		List<AgentActionPlan> result = new ArrayList<>();
-		
-		for(AgentId aId : agentActionPlanMap.keySet()) {
-			if(aId.equals(agentId)) {
-				System.out.println("match");
-			}else {
-				System.out.println(aId+" is not a match for "+ agentId );
-				System.out.println(aId.getClass().getSimpleName());
-				System.out.println(agentId.getClass().getSimpleName());
-			}
-		}
-		
 		List<AgentActionPlan> list = agentActionPlanMap.get(agentId);
 		if(list != null) {
 			result.addAll(list);
