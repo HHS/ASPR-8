@@ -136,16 +136,9 @@ public interface AgentContext extends SimulationContext {
 	 */
 	public AgentId getAgentId();
 
-	/**
-	 * Returns true if an only if an agent is associated with the given id.
-	 * Tolerates null values.
-	 */
-	public boolean agentExists(AgentId agentId);
+	
 
-	/**
-	 * Terminates the simulation after the current plan is fully executed.
-	 */
-	public void halt();
+	
 
 	/**
 	 * Subscribes the current agent to the given event label. Events of the type
@@ -202,21 +195,7 @@ public interface AgentContext extends SimulationContext {
 	 */
 	public <T extends Event> void unsubscribe(EventLabel<T> eventLabel);
 
-	/**
-	 * Adds an event labeler to nucleus.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_LABELER} if the event
-	 *             labeler is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS_IN_EVENT_LABELER} if
-	 *             the event class is null
-	 *             <li>{@link NucleusError#NULL_LABELER_ID_IN_EVENT_LABELER} if
-	 *             the event labeler contains a null labeler id
-	 *             <li>{@link NucleusError#DUPLICATE_LABELER_ID_IN_EVENT_LABELER}
-	 *             if the event labeler contains a labeler id that is the id of
-	 *             a previously added event labeler
-	 */
-	public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler);
+	
 	
 	/**
 	 * Subscribes the current report to have the given ReportContext consumer

@@ -5,7 +5,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import nucleus.AgentId;
 import nucleus.DataManager;
+import nucleus.Event;
+import nucleus.EventLabeler;
 import nucleus.SimulationContext;
 
 /**
@@ -28,7 +31,16 @@ public class MockSimulationContext implements SimulationContext {
 		public Supplier<Double> timeSupplier = () -> {
 			return 0.0;
 		};
-
+		
+		public Runnable haltRunable = () -> {
+		};
+		
+		public Consumer<EventLabeler<?>> addEventLabelerConsumer = (e) -> {
+		};
+		
+		public Function<AgentId, Boolean> agentExistsFunction = (a) -> {
+			return false;
+		};
 	}
 
 	private final Scaffold scaffold;
@@ -62,6 +74,11 @@ public class MockSimulationContext implements SimulationContext {
 				scaffold = new Scaffold();
 			}
 		}
+		
+		public Builder setAgentExistsFunction(Function<AgentId, Boolean> agentExistsFunction) {
+			scaffold.agentExistsFunction = agentExistsFunction;
+			return this;
+		}
 
 		public Builder setReleaseOutputConsumer(Consumer<Object> releaseOutputConsumer) {
 			scaffold.releaseOutputConsumer = releaseOutputConsumer;
@@ -78,8 +95,15 @@ public class MockSimulationContext implements SimulationContext {
 			return this;
 		};
 
-		
+		public Builder setHaltRunable(Runnable haltRunable) {
+			scaffold.haltRunable = haltRunable;
+			return this;
+		}
 
+		public Builder setAddEventLabelerConsumer(Consumer<EventLabeler<?>> addEventLabelerConsumer) {
+			scaffold.addEventLabelerConsumer = addEventLabelerConsumer;
+			return this;
+		}
 	}
 
 	@Override
@@ -96,6 +120,23 @@ public class MockSimulationContext implements SimulationContext {
 	@Override
 	public double getTime() {
 		return scaffold.timeSupplier.get();
+	}
+
+	@Override
+	public void halt() {
+		scaffold.haltRunable.run();
+		
+	}
+
+	@Override
+	public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
+		scaffold.addEventLabelerConsumer.accept(eventLabeler);
+		
+	}
+
+	@Override
+	public boolean agentExists(AgentId agentId) {
+		return scaffold.agentExistsFunction.apply(agentId);
 	}
 
 }

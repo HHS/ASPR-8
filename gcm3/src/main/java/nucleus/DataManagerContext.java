@@ -135,11 +135,7 @@ public interface DataManagerContext extends SimulationContext {
 	 */
 	public Optional<AgentId> getCurrentAgentId();
 
-	/**
-	 * Returns true if and only if the given AgentId corresponds to an existing
-	 * agent
-	 */
-	public boolean agentExists(AgentId agentId);
+	
 
 	/**
 	 * Adds an agent to the simulation. The agent is added immediately, but the
@@ -168,10 +164,7 @@ public interface DataManagerContext extends SimulationContext {
 
 
 
-	/**
-	 * Terminates the simulation after the current plan is fully executed.
-	 */
-	public void halt();
+	
 
 	
 	/**
@@ -215,21 +208,7 @@ public interface DataManagerContext extends SimulationContext {
 	 */
 	public void unSubscribeToEvent(Class<? extends Event> eventClass);
 
-	/**
-	 * Adds an event labeler to nucleus.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_LABELER} if the event
-	 *             labeler is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS_IN_EVENT_LABELER} if
-	 *             the event class is null
-	 *             <li>{@link NucleusError#NULL_LABELER_ID_IN_EVENT_LABELER} if
-	 *             the event labeler contains a null labeler id
-	 *             <li>{@link NucleusError#DUPLICATE_LABELER_ID_IN_EVENT_LABELER}
-	 *             if the event labeler contains a labeler id that is the id of
-	 *             a previously added event labeler
-	 */
-	public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler);
+	
 
 	
 
