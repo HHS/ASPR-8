@@ -12,7 +12,6 @@ import nucleus.AgentContext;
 import nucleus.AgentId;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.DataManagerEventConsumer;
 import nucleus.DataManagerId;
 import nucleus.Event;
 import nucleus.EventLabeler;
@@ -29,7 +28,7 @@ import util.TriConsumer;
 public final class MockDataManagerContext implements DataManagerContext {
 
 	private static class Scaffold {
-		public Consumer<Object>	releaseOutputConsumer = (o) -> {
+		public Consumer<Object> releaseOutputConsumer = (o) -> {
 		};
 
 		public Function<Class<?>, ?> dataManagerFunction = (c) -> {
@@ -40,15 +39,11 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return 0.0;
 		};
 
-		
-
 		public BiConsumer<Consumer<DataManagerContext>, Double> addPlanConsumer = (c, d) -> {
 		};
 
-		
 		public BiConsumer<Consumer<DataManagerContext>, Double> addPassivePlanConsumer = (c, d) -> {
 		};
-
 
 		public TriConsumer<Consumer<DataManagerContext>, Double, Object> addKeyedPlanConsumer = (c, d, k) -> {
 		};
@@ -60,7 +55,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return null;
 		};
 
-
 		public Function<Object, Double> getPlanTimeFunction = (o) -> 0.0;
 
 		public Function<Object, Object> removePlanFunction = (o) -> null;
@@ -68,10 +62,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 		public Supplier<List<Object>> getPlanKeysSupplier = () -> {
 			return new ArrayList<>();
 		};
-
-		
-		
-		
 
 		public Consumer<Event> queueEventForResolutionConsumer = (e) -> {
 
@@ -81,13 +71,11 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return null;
 		};
 
-		
-
 		public Function<AgentId, Boolean> agentExistsFunction = (a) -> {
 			return false;
 		};
-		
-		public Supplier<DataManagerId> dataManagerIdSupplier = ()->{
+
+		public Supplier<DataManagerId> dataManagerIdSupplier = () -> {
 			return null;
 		};
 
@@ -98,20 +86,12 @@ public final class MockDataManagerContext implements DataManagerContext {
 		public Consumer<AgentId> removeAgentConsumer = (a) -> {
 		};
 
-
-		
-
 		public Runnable haltRunable = () -> {
 		};
 
-		
+		public BiConsumer<Class<?>, BiConsumer<DataManagerContext, ?>> subscribeToEventExecutionPhaseConsumer = (c,b)->{};
 
-		public BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventExecutionPhaseConsumer = (c, r) -> {
-		};
-
-
-		public BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventPostPhaseConsumer = (c, r) -> {
-		};
+		public BiConsumer<Class<?>, BiConsumer<DataManagerContext, ?>> subscribeToEventPostPhaseConsumer = (c,b)->{};
 
 		public Consumer<Class<? extends Event>> unSubscribeToEventConsumer = (c) -> {
 
@@ -124,7 +104,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return false;
 		};
 
-		
 	}
 
 	private final Scaffold scaffold;
@@ -190,7 +169,7 @@ public final class MockDataManagerContext implements DataManagerContext {
 			scaffold.addPassiveKeyedPlanConsumer = addKeyedPlanConsumer;
 			return this;
 		}
-		
+
 		public Builder setGetPlanFunction(Function<Object, Consumer<? extends DataManagerContext>> getPlanFunction) {
 			scaffold.getPlanFunction = getPlanFunction;
 			return this;
@@ -211,20 +190,15 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return this;
 		}
 
-		
-
 		public Builder setQueueEventForResolutionConsumer(Consumer<Event> queueEventForResolutionConsumer) {
 			scaffold.queueEventForResolutionConsumer = queueEventForResolutionConsumer;
 			return this;
 		}
 
-		
-
 		public Builder setGetCurrentAgentIdSupplier(Supplier<AgentId> getCurrentAgentIdSupplier) {
 			scaffold.getCurrentAgentIdSupplier = getCurrentAgentIdSupplier;
 			return this;
 		}
-		
 
 		public Builder setAgentExistsFunction(Function<AgentId, Boolean> agentExistsFunction) {
 			scaffold.agentExistsFunction = agentExistsFunction;
@@ -235,7 +209,7 @@ public final class MockDataManagerContext implements DataManagerContext {
 			scaffold.dataManagerIdSupplier = dataManagerIdSupplier;
 			return this;
 		}
-		
+
 		public Builder setAddAgentFunction(Function<Consumer<AgentContext>, AgentId> addAgentFunction) {
 			scaffold.addAgentFunction = addAgentFunction;
 			return this;
@@ -251,12 +225,12 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return this;
 		}
 
-		public Builder setSubscribeToEventExecutionPhaseConsumer(BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventExecutionPhaseConsumer) {
+		public Builder setSubscribeToEventExecutionPhaseConsumer(BiConsumer<Class<?>, BiConsumer<DataManagerContext,?>> subscribeToEventExecutionPhaseConsumer) {
 			scaffold.subscribeToEventExecutionPhaseConsumer = subscribeToEventExecutionPhaseConsumer;
 			return this;
 		}
 
-		public Builder setSubscribeToEventPostPhaseConsumer(BiConsumer<Class<?>, DataManagerEventConsumer<?>> subscribeToEventPostPhaseConsumer) {
+		public Builder setSubscribeToEventPostPhaseConsumer(BiConsumer<Class<?>, BiConsumer<DataManagerContext,?>> subscribeToEventPostPhaseConsumer) {
 			scaffold.subscribeToEventPostPhaseConsumer = subscribeToEventPostPhaseConsumer;
 			return this;
 		}
@@ -270,7 +244,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 			scaffold.addEventLabelerConsumer = addEventLabelerConsumer;
 			return this;
 		}
-
 
 		public Builder setSubscribersExistForEventFunction(Function<Class<? extends Event>, Boolean> subscribersExistForEventFunction) {
 			scaffold.subscribersExistForEventFunction = subscribersExistForEventFunction;
@@ -290,7 +263,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 		return Optional.ofNullable((T) scaffold.dataManagerFunction.apply(dataManagerClass));
 	}
 
-
 	@Override
 	public double getTime() {
 		return scaffold.timeSupplier.get();
@@ -300,7 +272,7 @@ public final class MockDataManagerContext implements DataManagerContext {
 	public void addPlan(Consumer<DataManagerContext> plan, double planTime) {
 		scaffold.addPlanConsumer.accept(plan, planTime);
 	}
-	
+
 	@Override
 	public void addPassivePlan(Consumer<DataManagerContext> plan, double planTime) {
 		scaffold.addPassivePlanConsumer.accept(plan, planTime);
@@ -338,13 +310,10 @@ public final class MockDataManagerContext implements DataManagerContext {
 		return scaffold.getPlanKeysSupplier.get();
 	}
 
-
 	@Override
 	public void resolveEvent(Event event) {
 		scaffold.queueEventForResolutionConsumer.accept(event);
 	}
-
-	
 
 	@Override
 	public Optional<AgentId> getCurrentAgentId() {
@@ -372,13 +341,13 @@ public final class MockDataManagerContext implements DataManagerContext {
 	}
 
 	@Override
-	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
-		scaffold.subscribeToEventExecutionPhaseConsumer.accept(eventClass, resolverConsumer);
+	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+		scaffold.subscribeToEventExecutionPhaseConsumer.accept(eventClass, eventConsumer);
 	}
 
 	@Override
-	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
-		scaffold.subscribeToEventPostPhaseConsumer.accept(eventClass, resolverConsumer);
+	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {	
+		scaffold.subscribeToEventPostPhaseConsumer.accept(eventClass, eventConsumer);
 	}
 
 	@Override
@@ -397,7 +366,7 @@ public final class MockDataManagerContext implements DataManagerContext {
 	}
 
 	@Override
-	public DataManagerId getDataManagerId() {		
+	public DataManagerId getDataManagerId() {
 		return scaffold.dataManagerIdSupplier.get();
 	}
 

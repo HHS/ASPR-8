@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -134,7 +135,7 @@ public class Simulation {
 		}
 
 		@Override
-		public AgentId getCurrentAgentId() {
+		public AgentId getAgentId() {
 			return focalAgentId;
 		}
 
@@ -182,13 +183,13 @@ public class Simulation {
 		}
 
 		@Override
-		public <T extends Event> void subscribe(EventLabel<T> eventLabel, AgentEventConsumer<T> agentEventConsumer) {
-			Simulation.this.subscribeAgentToEvent(eventLabel, agentEventConsumer);
+		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<AgentContext,T> eventConsumer) {
+			Simulation.this.subscribeAgentToEvent(eventLabel, eventConsumer);
 		}
 
 		@Override
-		public <T extends Event> void subscribe(Class<T> eventClass, AgentEventConsumer<T> agentConsumer) {
-			Simulation.this.subscribeAgentToEvent(eventClass, agentConsumer);
+		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<AgentContext,T> eventConsumer) {
+			Simulation.this.subscribeAgentToEvent(eventClass, eventConsumer);
 		}
 
 		@Override
@@ -496,13 +497,13 @@ public class Simulation {
 		}
 
 		@Override
-		public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
-			simulation.subscribeResolverToEventPostPhase(dataManagerId, eventClass, resolverConsumer);
+		public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+			simulation.subscribeResolverToEventPostPhase(dataManagerId, eventClass, eventConsumer);
 		}
 
 		@Override
-		public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
-			simulation.subscribeResolverToEventExecutionPhase(dataManagerId, eventClass, resolverConsumer);
+		public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+			simulation.subscribeResolverToEventExecutionPhase(dataManagerId, eventClass, eventConsumer);
 		}
 
 		@Override
@@ -1003,12 +1004,12 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeAgentToEvent(Class<? extends Event> eventClass, AgentEventConsumer<T> reportConsumer) {
+	private <T extends Event> void subscribeAgentToEvent(Class<? extends Event> eventClass, BiConsumer<AgentContext,T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 
-		if (reportConsumer == null) {
+		if (eventConsumer == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
@@ -1017,7 +1018,7 @@ public class Simulation {
 			map = new LinkedHashMap<>();
 			agentEventMap.put(eventClass, map);
 		}
-		MetaAgentEventConsumer<T> metaAgentEventConsumer = new MetaAgentEventConsumer<>(agentContext, reportConsumer);
+		MetaAgentEventConsumer<T> metaAgentEventConsumer = new MetaAgentEventConsumer<>(agentContext, eventConsumer);
 		map.put(focalAgentId, metaAgentEventConsumer);
 	}
 
@@ -1063,12 +1064,12 @@ public class Simulation {
 
 	private static class MetaAgentEventConsumer<T extends Event> {
 
-		private final AgentEventConsumer<T> agentEventConsumer;
+		private final BiConsumer<AgentContext,T> eventConsumer;
 
 		private final AgentContext context;
 
-		public MetaAgentEventConsumer(AgentContext context, AgentEventConsumer<T> eventConsumer) {
-			this.agentEventConsumer = eventConsumer;
+		public MetaAgentEventConsumer(AgentContext context, BiConsumer<AgentContext,T> eventConsumer) {
+			this.eventConsumer = eventConsumer;
 			this.context = context;
 		}
 
@@ -1076,7 +1077,7 @@ public class Simulation {
 		public void handleEvent(Event event) {
 
 			try {
-				agentEventConsumer.handleEvent(context, (T) event);
+				eventConsumer.accept(context, (T) event);
 			} catch (ClassCastException e) {
 				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}
@@ -1172,13 +1173,13 @@ public class Simulation {
 		id_Labeler_Map.put(metaEventLabeler.getId(), metaEventLabeler);
 	}
 
-	private <T extends Event> void subscribeAgentToEvent(EventLabel<T> eventLabel, AgentEventConsumer<T> agentEventConsumer) {
+	private <T extends Event> void subscribeAgentToEvent(EventLabel<T> eventLabel, BiConsumer<AgentContext,T> eventConsumer) {
 
 		if (eventLabel == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
 		}
 
-		if (agentEventConsumer == null) {
+		if (eventConsumer == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 		Class<T> eventClass = eventLabel.getEventClass();
@@ -1228,7 +1229,7 @@ public class Simulation {
 			map3.put(eventLabel, map4);
 		}
 
-		MetaAgentEventConsumer<T> metaEventConsumer = new MetaAgentEventConsumer<>(agentContext, agentEventConsumer);
+		MetaAgentEventConsumer<T> metaEventConsumer = new MetaAgentEventConsumer<>(agentContext, eventConsumer);
 		map4.put(focalAgentId, metaEventConsumer);
 
 	}
@@ -1315,11 +1316,11 @@ public class Simulation {
 		EXECUTION, POST_EXECUTION
 	}
 
-	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataMangerId, Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
+	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataMangerId, Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
-		if (resolverConsumer == null) {
+		if (eventConsumer == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
@@ -1331,7 +1332,7 @@ public class Simulation {
 			incrementSubscriberCount(eventClass);
 		}
 		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataMangerId);
-		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataMangerId, resolverConsumer, EventPhase.EXECUTION);
+		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataMangerId, eventConsumer, EventPhase.EXECUTION);
 
 		int insertionIndex = -1;
 
@@ -1350,11 +1351,11 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeResolverToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
+	private <T extends Event> void subscribeResolverToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
-		if (resolverConsumer == null) {
+		if (eventConsumer == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
@@ -1366,7 +1367,7 @@ public class Simulation {
 			incrementSubscriberCount(eventClass);
 		}
 		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
-		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, resolverConsumer, EventPhase.POST_EXECUTION);
+		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.POST_EXECUTION);
 
 		list.add(metaResolverEventConsumer);
 
@@ -1435,7 +1436,7 @@ public class Simulation {
 
 	private static class MetaDataManagerEventConsumer<T extends Event> {
 
-		private final DataManagerEventConsumer<T> dataManagerEventConsumer;
+		private final BiConsumer<DataManagerContext,T> dataManagerEventConsumer;
 
 		private final DataManagerContext context;
 
@@ -1443,7 +1444,7 @@ public class Simulation {
 
 		private final EventPhase eventPhase;
 
-		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, DataManagerEventConsumer<T> eventConsumer, EventPhase eventPhase) {
+		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext,T> eventConsumer, EventPhase eventPhase) {
 			this.dataManagerEventConsumer = eventConsumer;
 			this.context = context;
 			this.dataManagerId = dataManagerId;
@@ -1454,7 +1455,7 @@ public class Simulation {
 		public void handleEvent(Event event) {
 
 			try {
-				dataManagerEventConsumer.handleEvent(context, (T) event);
+				dataManagerEventConsumer.accept(context, (T) event);
 			} catch (ClassCastException e) {
 				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}

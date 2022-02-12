@@ -2,6 +2,7 @@ package nucleus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import util.ContractException;
@@ -133,7 +134,7 @@ public interface AgentContext extends SimulationContext {
 	/**
 	 * Returns the AgentId of the current agent
 	 */
-	public AgentId getCurrentAgentId();
+	public AgentId getAgentId();
 
 	/**
 	 * Returns true if an only if an agent is associated with the given id.
@@ -169,7 +170,7 @@ public interface AgentContext extends SimulationContext {
 	 *             label has a null primary key
 	 * 
 	 */
-	public <T extends Event> void subscribe(EventLabel<T> eventLabel, AgentEventConsumer<T> agentEventConsumer);
+	public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<AgentContext,T> eventConsumer);
 	
 	/**
 	 * Subscribes the current agent to the given event. 
@@ -182,7 +183,7 @@ public interface AgentContext extends SimulationContext {
 	 *             ReportEventConsumer is null
 	 * 
 	 */
-	public <T extends Event> void subscribe(Class<T> eventClass, AgentEventConsumer<T> reportConsumer);
+	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<AgentContext,T> eventConsumer);
 	/**
 	 * Unsubscribes the current agent from the given event label.
 	 * 

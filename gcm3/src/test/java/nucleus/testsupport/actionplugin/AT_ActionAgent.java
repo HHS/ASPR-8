@@ -53,7 +53,7 @@ public class AT_ActionAgent {
 			Double expectedTime = multiKey.getKey(1);
 			pluginDataBuilder.addAgentActionPlan(expectedAlias, new AgentActionPlan(expectedTime, (c) -> {
 				ActionPluginDataManager actionPluginDataManager = c.getDataManager(ActionPluginDataManager.class).get();
-				Object alias = actionPluginDataManager.getAgentAlias(c.getCurrentAgentId()).get();				
+				Object alias = actionPluginDataManager.getAgentAlias(c.getAgentId()).get();				
 				actualObservations.add(new MultiKey(alias, c.getTime()));
 			}));
 		}

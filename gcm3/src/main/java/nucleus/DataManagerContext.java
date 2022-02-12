@@ -2,6 +2,7 @@ package nucleus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import util.ContractException;
@@ -185,7 +186,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
 	 *             event consumer is null
 	 */
-	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer);
+	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
 
 	/**
 	 * Subscribes the event resolver to events of the given type for handling
@@ -202,9 +203,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
 	 *             event consumer is null
 	 */
-	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer);
-	
-	//public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> resolverConsumer);
+	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
 
 	/**
 	 * Unsubscribes the event resolver from events of the given type for all
