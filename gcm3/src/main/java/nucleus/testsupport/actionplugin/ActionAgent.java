@@ -3,7 +3,6 @@ package nucleus.testsupport.actionplugin;
 import java.util.List;
 
 import nucleus.AgentContext;
-import nucleus.AgentId;
 
 /**
  * Test Support agent implementation designed to execute test-defined behaviors
@@ -19,7 +18,11 @@ import nucleus.AgentId;
  *
  */
 public final class ActionAgent {
-
+	private final Object alias;
+	public ActionAgent(Object alias) {
+		this.alias = alias;
+	}
+	
 	/**
 	 * Associates its AgentId with its alias via an AliasAssignmentEvent. Schedules the
 	 * AgentActionPlans that were stored in the ActionDataView that were associated
@@ -27,8 +30,8 @@ public final class ActionAgent {
 	 */
 	public void init(AgentContext agentContext) {
 		ActionPluginDataManager actionPluginDataManager = agentContext.getDataManager(ActionPluginDataManager.class).get();
-		AgentId agentId = agentContext.getCurrentAgentId();
-		List<AgentActionPlan> agentActionPlans = actionPluginDataManager.getAgentActionPlans(agentId);
+		actionPluginDataManager.setAgentAlias(alias);
+		List<AgentActionPlan> agentActionPlans = actionPluginDataManager.getAgentActionPlans(alias);
 		for (final AgentActionPlan agentActionPlan : agentActionPlans) {
 			if (agentActionPlan.getKey() != null) {
 				agentContext.addKeyedPlan(agentActionPlan::executeAction, agentActionPlan.getScheduledTime(), agentActionPlan.getKey());

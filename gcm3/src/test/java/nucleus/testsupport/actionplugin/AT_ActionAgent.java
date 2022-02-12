@@ -1,7 +1,6 @@
 package nucleus.testsupport.actionplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -13,27 +12,13 @@ import nucleus.AgentContext;
 import nucleus.Simulation;
 import util.MultiKey;
 import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
 @UnitTest(target = ActionAgent.class)
 public class AT_ActionAgent {
 
-	/**
-	 * Show construction works
-	 */
-	@Test
-	@UnitTestConstructor(args = { Object.class })
-	public void testConstructor() {
-		// precondition checks
-		assertThrows(RuntimeException.class, () -> new ActionAgent(null));
-	}
-
-	/**
-	 * 
-	 * Show that an action agent executes its AgentActionPlans via its alias as
-	 * expected.
-	 */
+	
+	
 	@Test
 	@UnitTestMethod(name = "init", args = { AgentContext.class })
 	public void testInit() {
@@ -55,9 +40,9 @@ public class AT_ActionAgent {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		// add the agents to the action plugin
-		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		pluginBuilder.addAgent(alias1);
-		pluginBuilder.addAgent(alias2);
+		ActionPluginData.Builder pluginDataBuilder = ActionPluginData.builder();
+		pluginDataBuilder.addAgent(alias1);
+		pluginDataBuilder.addAgent(alias2);
 
 		/*
 		 * Create AgentActionPlans from the expected observations. Each action
@@ -66,27 +51,36 @@ public class AT_ActionAgent {
 		for (MultiKey multiKey : expectedObservations) {
 			Object expectedAlias = multiKey.getKey(0);
 			Double expectedTime = multiKey.getKey(1);
-			pluginBuilder.addAgentActionPlan(expectedAlias, new AgentActionPlan(expectedTime, (c) -> {
-				ActionDataView actionDataView = c.getDataView(ActionDataView.class).get();
-				Object actaulAlias = actionDataView.getAgentAliasId(c.getCurrentAgentId()).get();
-				Double actualTime = c.getTime();
-				actualObservations.add(new MultiKey(actaulAlias, actualTime));
+			pluginDataBuilder.addAgentActionPlan(expectedAlias, new AgentActionPlan(expectedTime, (c) -> {
+				ActionPluginDataManager actionPluginDataManager = c.getDataManager(ActionPluginDataManager.class).get();
+				Object alias = actionPluginDataManager.getAgentAlias(c.getCurrentAgentId()).get();				
+				actualObservations.add(new MultiKey(alias, c.getTime()));
 			}));
 		}
 
 		//build the action plugin
-		ActionPlugin actionPlugin = pluginBuilder.build();
+		ActionPluginData actionPluginData = pluginDataBuilder.build();
+		ActionPluginInitializer actionPluginInitializer = new ActionPluginInitializer();
 
 		// build and execute the engine
 		Simulation	.builder()//
-				.addPlugin(ActionPlugin.PLUGIN_ID, actionPlugin::init)//
+				.addPluginData(actionPluginData)//
+				.addPluginInitializer(actionPluginInitializer)//
 				.build()//
 				.execute();//
 
 		// show that all actions executed
-		assertTrue(actionPlugin.allActionsExecuted());
+		assertTrue(actionPluginInitializer.allActionsExecuted());
 
 		// show that the agents executed the expected actions
+//		for(MultiKey observation : expectedObservations) {
+//			System.out.println(observation.toKeyString());
+//		}
+//		System.out.println();
+//		for(MultiKey observation : actualObservations) {
+//			System.out.println(observation.toKeyString());
+//		}
+
 		assertEquals(expectedObservations, actualObservations);
 
 	}

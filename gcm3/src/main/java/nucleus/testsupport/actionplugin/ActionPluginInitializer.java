@@ -2,7 +2,6 @@ package nucleus.testsupport.actionplugin;
 
 import java.util.List;
 
-import nucleus.AgentId;
 import nucleus.PluginContext;
 import nucleus.PluginId;
 import nucleus.PluginInitializer;
@@ -51,12 +50,8 @@ public class ActionPluginInitializer implements PluginInitializer{
 			pluginContext.addDataManager(actionDataManager);
 		}
 		
-		for(AgentId agentId :  actionPluginData.getAgentIdsRequiringConstruction()) {
-//			ActionAgent actionAgent = new ActionAgent();
-//			Consumer<AgentContext> consumer = actionAgent::init;
-//			pluginContext.addAgent(agentId, consumer);	
-			
-			pluginContext.addAgent(agentId, new ActionAgent()::init);
+		for(Object alias :  actionPluginData.getAgentsRequiringConstruction()) {
+			pluginContext.addAgent(new ActionAgent(alias)::init);
 		}
 
 	}

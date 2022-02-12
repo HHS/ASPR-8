@@ -63,7 +63,7 @@ public interface PluginContext {
 
 	public void addDataManager(DataManager dataManager);
 
-	public void addAgent(AgentId agentId, Consumer<AgentContext> init);
+	public AgentId addAgent(Consumer<AgentContext> init);
 
 	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass);
 }

@@ -22,6 +22,8 @@ import nucleus.PluginId;
 public final class MockPluginContext implements PluginContext {
 
 	private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
+	
+	private int masterAgentIdValue;
 
 	@Override
 	public void addPluginDependency(PluginId pluginId) {
@@ -46,8 +48,10 @@ public final class MockPluginContext implements PluginContext {
 	private Map<AgentId, Consumer<AgentContext>> agentMap = new LinkedHashMap<>();
 
 	@Override
-	public void addAgent(AgentId agentId, Consumer<AgentContext> init) {
+	public AgentId addAgent(Consumer<AgentContext> init) {
+		AgentId agentId =  new AgentId(masterAgentIdValue++); 
 		agentMap.put(agentId, init);
+		return agentId;
 	}
 
 	public Map<AgentId, Consumer<AgentContext>> getAgents() {

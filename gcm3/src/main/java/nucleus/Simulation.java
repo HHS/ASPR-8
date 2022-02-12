@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.NotThreadSafe;
-
 import util.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -68,10 +67,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void addAgent(AgentId agentId, Consumer<AgentContext> consumer) {
-			if (agentId == null) {
-				throw new ContractException(NucleusError.NULL_AGENT_ID);
-			}
+		public AgentId addAgent(Consumer<AgentContext> consumer) {
 
 			if (consumer == null) {
 				throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
@@ -80,13 +76,22 @@ public class Simulation {
 			if (focalPluginId == null) {
 				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 			}
+
+			AgentId result = new AgentId(masterAgentIdValue++);
+			agentIds.add(result);
+
+			// Do not queue the agent yet. We will wait until all the plugins
+			// have established their order and then add the agents to the
+			// queue.
 			Map<AgentId, Consumer<AgentContext>> map = agentsMap.get(focalPluginId);
-			if(map == null) {
+			if (map == null) {
 				map = new LinkedHashMap<>();
 				agentsMap.put(focalPluginId, map);
 			}
 
-			map.put(agentId, consumer);
+			map.put(result, consumer);
+			return result;
+
 		}
 
 		@SuppressWarnings("unchecked")
@@ -96,8 +101,6 @@ public class Simulation {
 		}
 
 	}
-
-	
 
 	private class AgentContextImpl implements AgentContext {
 
@@ -351,26 +354,21 @@ public class Simulation {
 		}
 
 		@Override
-		public void addAgent(Consumer<AgentContext> init, AgentId agentId) {
-			if (agentId == null) {
-				throw new ContractException(NucleusError.NULL_AGENT_ID);
-			}
+		public AgentId addAgent(Consumer<AgentContext> consumer) {
 
-			if (init == null) {
+			AgentId result = new AgentId(simulation.masterAgentIdValue++);
+
+			if (consumer == null) {
 				throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
 			}
 
-			if (simulation.agentIds.contains(agentId)) {
-				throw new ContractException(NucleusError.AGENT_ID_IN_USE, agentId);
-			}
-
-			simulation.agentIds.add(agentId);
+			simulation.agentIds.add(result);
 
 			final AgentContentRec agentContentRec = new AgentContentRec();
-			agentContentRec.agentId = agentId;
-			agentContentRec.plan = init;
+			agentContentRec.agentId = result;
+			agentContentRec.plan = consumer;
 			simulation.agentQueue.add(agentContentRec);
-
+			return result;
 		}
 
 		@Override
@@ -451,11 +449,23 @@ public class Simulation {
 				throw new ContractException(NucleusError.NULL_AGENT_ID);
 			}
 
-			boolean removed = simulation.agentIds.remove(agentId);
+			int agentIndex = agentId.getValue();
 
-			if (!removed) {
+			if (agentIndex < 0) {
 				throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
 			}
+
+			if (agentIndex >= simulation.agentIds.size()) {
+				throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+			}
+
+			AgentId existingAgentId = simulation.agentIds.get(agentIndex);
+
+			if (existingAgentId == null) {
+				throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+			}
+
+			simulation.agentIds.set(agentIndex, null);
 
 			simulation.containsDeletedAgents = true;
 		}
@@ -480,12 +490,10 @@ public class Simulation {
 			simulation.addEventLabeler(eventLabeler);
 		}
 
-
 		@Override
 		public boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
 			return simulation.subscribersExistForEvent(eventClass);
 		}
-
 
 		@Override
 		public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
@@ -495,6 +503,11 @@ public class Simulation {
 		@Override
 		public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
 			simulation.subscribeResolverToEventExecutionPhase(dataManagerId, eventClass, resolverConsumer);
+		}
+
+		@Override
+		public DataManagerId getDataManagerId() {
+			return dataManagerId;
 		}
 
 	}
@@ -527,6 +540,7 @@ public class Simulation {
 		}
 	};
 
+	private int masterAgentIdValue;
 	private Map<PluginId, Map<AgentId, Consumer<AgentContext>>> agentsMap = new LinkedHashMap<>();
 
 	// planning
@@ -542,23 +556,22 @@ public class Simulation {
 
 	private final Map<AgentId, Consumer<AgentContext>> simulationCloseCallbacks = new LinkedHashMap<>();
 
-	
 	private final AgentContext agentContext = new AgentContextImpl();
-	
-	private final Set<AgentId> agentIds = new LinkedHashSet<>();
-	
+
+	private final List<AgentId> agentIds = new ArrayList<>();
+
 	private boolean containsDeletedAgents;
 
 	private final Map<AgentId, Map<Object, PlanRec>> agentPlanMap = new LinkedHashMap<>();
-	
+
 	private final Deque<AgentContentRec> agentQueue = new ArrayDeque<>();
-	
+
 	private AgentId focalAgentId;
 
 	private boolean started;
 
 	private final PluginContext pluginContext = new PluginContextImpl();
-	
+
 	private PluginId focalPluginId;
 
 	private final Map<Class<?>, PluginData> pluginDataMap = new LinkedHashMap<>();
@@ -769,10 +782,11 @@ public class Simulation {
 		}
 
 		/*
-		 * Retrieve the data managers and agents from the plugins in the correct order
+		 * Retrieve the data managers and agents from the plugins in the correct
+		 * order
 		 */
 		for (PluginId pluginId : getOrderedPluginIds()) {
-			
+
 			Set<DataManager> dataManagerSet = dataMangagersMap.get(pluginId);
 			if (dataManagerSet != null) {
 				for (DataManager dataManager : dataManagerSet) {
@@ -792,11 +806,12 @@ public class Simulation {
 				agentQueue.add(agentContentRec);
 			}
 		}
-		
-		//TODO -- the data managers should all be in place before initializing any of them
-//		for(DataManager dataManager : dataManagerMap.values()) {
-//			
-//		};
+
+		// TODO -- the data managers should all be in place before initializing
+		// any of them
+		// for(DataManager dataManager : dataManagerMap.values()) {
+		//
+		// };
 
 		// flush the agent queue
 		executeAgentQueue();
@@ -809,7 +824,7 @@ public class Simulation {
 			}
 			switch (planRec.planner) {
 			case AGENT:
-				
+
 				if (planRec.agentPlan != null) {
 					if (planRec.key != null) {
 						agentPlanMap.get(planRec.agentId).remove(planRec.key);
@@ -818,17 +833,17 @@ public class Simulation {
 					agentContentRec.agentId = planRec.agentId;
 					agentContentRec.plan = planRec.agentPlan;
 					agentQueue.add(agentContentRec);
-					executeAgentQueue();					
+					executeAgentQueue();
 				}
-				break;			
-			case DATA_MANAGER:				
+				break;
+			case DATA_MANAGER:
 				if (planRec.resolverPlan != null) {
 					if (planRec.key != null) {
 						resolverPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
 					DataManagerContext dataManagerContext = dataManagerContextMap.get(planRec.dataManagerId);
 					planRec.resolverPlan.accept(dataManagerContext);
-					executeAgentQueue();					
+					executeAgentQueue();
 				}
 				break;
 			default:
@@ -854,7 +869,7 @@ public class Simulation {
 				 * the agentMap never shrinks, so we do not have to range check
 				 * the agent id
 				 */
-				if (!agentIds.contains(agentContentRec.agentId)) {
+				if (agentIds.get(agentContentRec.agentId.getValue()) == null) {
 					continue;
 				}
 			}
@@ -1134,8 +1149,6 @@ public class Simulation {
 		}
 	}
 
-	
-
 	private <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
 		if (eventLabeler == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABELER);
@@ -1302,8 +1315,6 @@ public class Simulation {
 		EXECUTION, POST_EXECUTION
 	}
 
-	
-
 	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataMangerId, Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
@@ -1401,7 +1412,7 @@ public class Simulation {
 				agentQueue.add(contentRec);
 			}
 		}
-		
+
 		broadcastEventToAgentSubscribers(event);
 
 		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(event.getClass());
@@ -1419,41 +1430,8 @@ public class Simulation {
 
 	private int masterDataManagerIndex;
 
-	/*
-	 * id class for data mangers with overridden equals contract to improve
-	 * performance as a key
-	 */
-	private static class DataManagerId {
-		private final int id;
-
-		public DataManagerId(int id) {
-			this.id = id;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + id;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (!(obj instanceof DataManagerId)) {
-				return false;
-			}
-			DataManagerId other = (DataManagerId) obj;
-			if (id != other.id) {
-				return false;
-			}
-			return true;
-		}
-
-	}
+	
+	
 
 	private static class MetaDataManagerEventConsumer<T extends Event> {
 

@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.people.support.PersonId;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -30,7 +29,7 @@ public class AT_IntId {
 	@UnitTestMethod(name = "getValue", args = {})
 	public void testGetValue() {
 		for (int i = 0; i < 1000; i++) {
-			PersonId personId = new PersonId(i);
+			IntId personId = new IntId(i);
 			assertEquals(i, personId.getValue());
 		}
 	}
@@ -56,15 +55,15 @@ public class AT_IntId {
 	@UnitTestMethod(name = "compareTo", args = { IntId.class })
 	public void testCompareTo() {
 		int testSize = 30;
-		List<PersonId> personIds = new ArrayList<>();
+		List<IntId> personIds = new ArrayList<>();
 		for (int i = 0; i < testSize; i++) {
-			personIds.add(new PersonId(i));
+			personIds.add(new IntId(i));
 		}
 
 		for (int i = 0; i < testSize; i++) {
-			PersonId personIdI = personIds.get(i);
+			IntId personIdI = personIds.get(i);
 			for (int j = 0; j < testSize; j++) {
-				PersonId personIdJ = personIds.get(j);
+				IntId personIdJ = personIds.get(j);
 				int comparisonResult = personIdI.compareTo(personIdJ);
 				if (i < j) {
 					assertTrue(comparisonResult < 0);
@@ -86,7 +85,7 @@ public class AT_IntId {
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 		for (int i = 0; i < 1000; i++) {
-			PersonId personId = new PersonId(i);
+			IntId personId = new IntId(i);
 			assertEquals(personId.getValue(), personId.hashCode());
 		}
 	}
@@ -98,15 +97,15 @@ public class AT_IntId {
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		int testSize = 30;
-		List<PersonId> personIds = new ArrayList<>();
+		List<IntId> personIds = new ArrayList<>();
 		for (int i = 0; i < testSize; i++) {
-			personIds.add(new PersonId(i));
+			personIds.add(new IntId(i));
 		}
 
 		for (int i = 0; i < testSize; i++) {
-			PersonId personIdI = personIds.get(i);
+			IntId personIdI = personIds.get(i);
 			for (int j = 0; j < testSize; j++) {
-				PersonId personIdJ = personIds.get(j);
+				IntId personIdJ = personIds.get(j);
 				if (i == j) {
 					assertTrue(personIdI.equals(personIdJ));
 					assertEquals(personIdI.hashCode(), personIdJ.hashCode());

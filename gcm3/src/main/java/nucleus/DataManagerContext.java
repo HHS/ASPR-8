@@ -146,16 +146,12 @@ public interface DataManagerContext extends SimulationContext {
 	 * and before time progresses.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_AGENT_ID} if the agentId is null
+	 *             
 	 *             <li>{@link NucleusError#NULL_AGENT_CONTEXT_CONSUMER} if the
 	 *             agent context consumer is null
-	 *             <li>{@link NucleusError#NEGATIVE_AGENT_ID} if the agent id is
-	 *             negative
-	 *             <li>{@link NucleusError#AGENT_ID_IN_USE} if the agent id is
-	 *             currently in use by another agent
 	 * 
 	 */
-	public void addAgent(Consumer<AgentContext> init, AgentId agentId);
+	public AgentId addAgent(Consumer<AgentContext> consumer);
 
 	/**
 	 * Removes the given agent from the simulation.
@@ -207,6 +203,8 @@ public interface DataManagerContext extends SimulationContext {
 	 *             event consumer is null
 	 */
 	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, DataManagerEventConsumer<T> resolverConsumer);
+	
+	//public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> resolverConsumer);
 
 	/**
 	 * Unsubscribes the event resolver from events of the given type for all
@@ -241,5 +239,8 @@ public interface DataManagerContext extends SimulationContext {
 	 * subscriptions to the given event class type.
 	 */
 	public boolean subscribersExistForEvent(Class<? extends Event> eventClass);
+	
+	
+	public DataManagerId getDataManagerId();
 
 }

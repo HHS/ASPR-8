@@ -13,6 +13,7 @@ import nucleus.AgentId;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.DataManagerEventConsumer;
+import nucleus.DataManagerId;
 import nucleus.Event;
 import nucleus.EventLabeler;
 import util.TriConsumer;
@@ -69,6 +70,8 @@ public final class MockDataManagerContext implements DataManagerContext {
 		};
 
 		
+		
+		
 
 		public Consumer<Event> queueEventForResolutionConsumer = (e) -> {
 
@@ -83,9 +86,13 @@ public final class MockDataManagerContext implements DataManagerContext {
 		public Function<AgentId, Boolean> agentExistsFunction = (a) -> {
 			return false;
 		};
+		
+		public Supplier<DataManagerId> dataManagerIdSupplier = ()->{
+			return null;
+		};
 
-		public BiConsumer<Consumer<AgentContext>, AgentId> addAgentConsumer = (c, a) -> {
-
+		public Function<Consumer<AgentContext>, AgentId> addAgentFunction = (c) -> {
+			return null;
 		};
 
 		public Consumer<AgentId> removeAgentConsumer = (a) -> {
@@ -224,8 +231,13 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return this;
 		}
 
-		public Builder setAddAgentConsumer(BiConsumer<Consumer<AgentContext>, AgentId> addAgentConsumer) {
-			scaffold.addAgentConsumer = addAgentConsumer;
+		public Builder setDataManagerIdSupplier(Supplier<DataManagerId> dataManagerIdSupplier) {
+			scaffold.dataManagerIdSupplier = dataManagerIdSupplier;
+			return this;
+		}
+		
+		public Builder setAddAgentFunction(Function<Consumer<AgentContext>, AgentId> addAgentFunction) {
+			scaffold.addAgentFunction = addAgentFunction;
 			return this;
 		}
 
@@ -345,8 +357,8 @@ public final class MockDataManagerContext implements DataManagerContext {
 	}
 
 	@Override
-	public void addAgent(Consumer<AgentContext> init, AgentId agentId) {
-		scaffold.addAgentConsumer.accept(init, agentId);
+	public AgentId addAgent(Consumer<AgentContext> consumer) {
+		return scaffold.addAgentFunction.apply(consumer);
 	}
 
 	@Override
@@ -384,7 +396,9 @@ public final class MockDataManagerContext implements DataManagerContext {
 		return scaffold.subscribersExistForEventFunction.apply(eventClass);
 	}
 
-
-	
+	@Override
+	public DataManagerId getDataManagerId() {		
+		return scaffold.dataManagerIdSupplier.get();
+	}
 
 }

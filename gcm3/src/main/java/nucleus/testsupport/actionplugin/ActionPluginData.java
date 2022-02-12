@@ -8,11 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import nucleus.AgentId;
 import nucleus.EventLabeler;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.SimpleAgentId;
 
 @ThreadSafe
 public class ActionPluginData implements PluginData {
@@ -29,13 +27,13 @@ public class ActionPluginData implements PluginData {
 		/*
 		 * Map of action plans key by agent aliases
 		 */
-		private final Map<AgentId, List<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();
+		private final Map<Object, List<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();
 
 		/*
 		 * Contains the alias values for which agent construction must be
 		 * handled by the Action Plugin Initializer
 		 */
-		private Set<AgentId> agentAliasesMarkedForConstruction = new LinkedHashSet<>();
+		private Set<Object> agentAliasesMarkedForConstruction = new LinkedHashSet<>();
 
 		/*
 		 * List of stored event labelers
@@ -93,9 +91,8 @@ public class ActionPluginData implements PluginData {
 			List<AgentActionPlan> list = data.agentActionPlanMap.get(alias);
 
 			if (list == null) {
-				list = new ArrayList<>();
-				AgentId agentId = new SimpleAgentId(alias);
-				data.agentActionPlanMap.put( agentId, list);
+				list = new ArrayList<>();				
+				data.agentActionPlanMap.put( alias, list);
 			}
 
 			list.add(agentActionPlan);
@@ -114,11 +111,12 @@ public class ActionPluginData implements PluginData {
 		public Builder addAgent(Object alias) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
-			}
-			AgentId agentId = new SimpleAgentId(alias);
-			data.agentAliasesMarkedForConstruction.add(agentId);
+			}			
+			data.agentAliasesMarkedForConstruction.add(alias);
 			return this;
 		}
+		
+		
 
 		/**
 		 * Stores an event labeler that will be added to nucleus by the
@@ -190,17 +188,17 @@ public class ActionPluginData implements PluginData {
 		return new ArrayList<>(data.eventLabelers);
 	}
 	
-	public List<AgentId> getAgentIdsRequiringConstruction(){
+	public List<Object> getAgentsRequiringConstruction(){
 		return new ArrayList<>(data.agentAliasesMarkedForConstruction);
 	}
 	
-	public List<AgentId> getAgentIdsRequiringPlanning(){
+	public List<Object> getAgentsRequiringPlanning(){
 		return new ArrayList<>(data.agentActionPlanMap.keySet());
 	}
 	
-	public List<AgentActionPlan> getAgentActionPlans(AgentId agentId){
+	public List<AgentActionPlan> getAgentActionPlans(Object alias){
 		List<AgentActionPlan> result = new ArrayList<>();
-		List<AgentActionPlan> list = data.agentActionPlanMap.get(agentId);
+		List<AgentActionPlan> list = data.agentActionPlanMap.get(alias);
 		if(list != null) {
 			result.addAll(list);
 		}
