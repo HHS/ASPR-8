@@ -38,6 +38,10 @@ public final class MockDataManagerContext implements DataManagerContext {
 		public Supplier<Double> timeSupplier = () -> {
 			return 0.0;
 		};
+		
+		
+		public Consumer<Consumer<DataManagerContext>> subscribeToSimCloseConsumer = (c) -> {
+		};
 
 		public BiConsumer<Consumer<DataManagerContext>, Double> addPlanConsumer = (c, d) -> {
 		};
@@ -67,9 +71,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 
 		};
 
-		public Supplier<AgentId> getCurrentAgentIdSupplier = () -> {
-			return null;
-		};
 
 		public Function<AgentId, Boolean> agentExistsFunction = (a) -> {
 			return false;
@@ -195,10 +196,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 			return this;
 		}
 
-		public Builder setGetCurrentAgentIdSupplier(Supplier<AgentId> getCurrentAgentIdSupplier) {
-			scaffold.getCurrentAgentIdSupplier = getCurrentAgentIdSupplier;
-			return this;
-		}
 
 		public Builder setAgentExistsFunction(Function<AgentId, Boolean> agentExistsFunction) {
 			scaffold.agentExistsFunction = agentExistsFunction;
@@ -233,6 +230,10 @@ public final class MockDataManagerContext implements DataManagerContext {
 		public Builder setSubscribeToEventPostPhaseConsumer(BiConsumer<Class<?>, BiConsumer<DataManagerContext,?>> subscribeToEventPostPhaseConsumer) {
 			scaffold.subscribeToEventPostPhaseConsumer = subscribeToEventPostPhaseConsumer;
 			return this;
+		}
+		
+		public void setSubscribeToSimulationCloseConsumer(Consumer<Consumer<DataManagerContext>> simCloseConsumer) {
+			scaffold.subscribeToSimCloseConsumer = simCloseConsumer;
 		}
 
 		public Builder setUnSubscribeToEventConsumer(Consumer<Class<? extends Event>> unSubscribeToEventConsumer) {
@@ -315,10 +316,6 @@ public final class MockDataManagerContext implements DataManagerContext {
 		scaffold.queueEventForResolutionConsumer.accept(event);
 	}
 
-	@Override
-	public Optional<AgentId> getCurrentAgentId() {
-		return Optional.ofNullable(scaffold.getCurrentAgentIdSupplier.get());
-	}
 
 	@Override
 	public boolean agentExists(AgentId agentId) {
@@ -341,17 +338,17 @@ public final class MockDataManagerContext implements DataManagerContext {
 	}
 
 	@Override
-	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
 		scaffold.subscribeToEventExecutionPhaseConsumer.accept(eventClass, eventConsumer);
 	}
 
 	@Override
-	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {	
+	public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {	
 		scaffold.subscribeToEventPostPhaseConsumer.accept(eventClass, eventConsumer);
 	}
 
 	@Override
-	public void unSubscribeToEvent(Class<? extends Event> eventClass) {
+	public void unSubscribe(Class<? extends Event> eventClass) {
 		scaffold.unSubscribeToEventConsumer.accept(eventClass);
 	}
 
@@ -361,13 +358,18 @@ public final class MockDataManagerContext implements DataManagerContext {
 	}
 
 	@Override
-	public boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
+	public boolean subscribersExist(Class<? extends Event> eventClass) {
 		return scaffold.subscribersExistForEventFunction.apply(eventClass);
 	}
 
 	@Override
 	public DataManagerId getDataManagerId() {
 		return scaffold.dataManagerIdSupplier.get();
+	}
+
+	@Override
+	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
+		scaffold.subscribeToSimCloseConsumer.accept(consumer);	
 	}
 
 }

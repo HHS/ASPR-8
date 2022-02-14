@@ -181,14 +181,19 @@ public class Simulation {
 			Simulation.this.releaseOutput(output);
 
 		}
-
+		
 		@Override
-		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<AgentContext,T> eventConsumer) {
+		public void resolveEvent(final Event event) {
+			Simulation.this.resolveEvent(event);
+
+		}
+		@Override
+		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<AgentContext, T> eventConsumer) {
 			Simulation.this.subscribeAgentToEvent(eventLabel, eventConsumer);
 		}
 
 		@Override
-		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<AgentContext,T> eventConsumer) {
+		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<AgentContext, T> eventConsumer) {
 			Simulation.this.subscribeAgentToEvent(eventClass, eventConsumer);
 		}
 
@@ -203,9 +208,23 @@ public class Simulation {
 		}
 
 		@Override
-		public void subscribeToSimulationClose(Consumer<AgentContext> closeHandler) {
-			Simulation.this.subscribeAgentToSimulationClose(closeHandler);
+		public void subscribeToSimulationClose(Consumer<AgentContext> consumer) {
+			subscribeAgentToSimulationClose(consumer);
+		}
 
+		@Override
+		public AgentId addAgent(Consumer<AgentContext> consumer) {
+			return Simulation.this.addAgent(consumer);
+		}
+
+		@Override
+		public void removeAgent(AgentId agentId) {
+			Simulation.this.removeAgent(agentId);
+		}
+
+		@Override
+		public void unSubscribe(Class<? extends Event> eventClass) {
+			unSubscribeAgentToEvent(eventClass);
 		}
 
 	}
@@ -356,20 +375,7 @@ public class Simulation {
 
 		@Override
 		public AgentId addAgent(Consumer<AgentContext> consumer) {
-
-			AgentId result = new AgentId(simulation.masterAgentIdValue++);
-
-			if (consumer == null) {
-				throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
-			}
-
-			simulation.agentIds.add(result);
-
-			final AgentContentRec agentContentRec = new AgentContentRec();
-			agentContentRec.agentId = result;
-			agentContentRec.plan = consumer;
-			simulation.agentQueue.add(agentContentRec);
-			return result;
+			return simulation.addAgent(consumer);
 		}
 
 		@Override
@@ -399,11 +405,6 @@ public class Simulation {
 		@Override
 		public boolean agentExists(final AgentId agentId) {
 			return simulation.agentExists(agentId);
-		}
-
-		@Override
-		public Optional<AgentId> getCurrentAgentId() {
-			return Optional.ofNullable(simulation.focalAgentId);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -440,35 +441,13 @@ public class Simulation {
 
 		@Override
 		public void resolveEvent(final Event event) {
-			simulation.resolveEventForDataManager(event);
+			simulation.resolveEvent(event);
 
 		}
 
 		@Override
 		public void removeAgent(final AgentId agentId) {
-			if (agentId == null) {
-				throw new ContractException(NucleusError.NULL_AGENT_ID);
-			}
-
-			int agentIndex = agentId.getValue();
-
-			if (agentIndex < 0) {
-				throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
-			}
-
-			if (agentIndex >= simulation.agentIds.size()) {
-				throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
-			}
-
-			AgentId existingAgentId = simulation.agentIds.get(agentIndex);
-
-			if (existingAgentId == null) {
-				throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
-			}
-
-			simulation.agentIds.set(agentIndex, null);
-
-			simulation.containsDeletedAgents = true;
+			simulation.removeAgent(agentId);
 		}
 
 		@Override
@@ -482,7 +461,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void unSubscribeToEvent(Class<? extends Event> eventClass) {
+		public void unSubscribe(Class<? extends Event> eventClass) {
 			simulation.unSubscribeResolverToEvent(dataManagerId, eventClass);
 		}
 
@@ -492,23 +471,28 @@ public class Simulation {
 		}
 
 		@Override
-		public boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
+		public boolean subscribersExist(Class<? extends Event> eventClass) {
 			return simulation.subscribersExistForEvent(eventClass);
 		}
 
 		@Override
-		public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+		public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 			simulation.subscribeResolverToEventPostPhase(dataManagerId, eventClass, eventConsumer);
 		}
 
 		@Override
-		public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 			simulation.subscribeResolverToEventExecutionPhase(dataManagerId, eventClass, eventConsumer);
 		}
 
 		@Override
 		public DataManagerId getDataManagerId() {
 			return dataManagerId;
+		}
+		
+		@Override
+		public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
+			simulation.subscribeDataManagerToSimulationClose(dataManagerId,consumer);
 		}
 
 	}
@@ -555,7 +539,9 @@ public class Simulation {
 
 	private final Map<Class<? extends Event>, Map<AgentId, MetaAgentEventConsumer<?>>> agentEventMap = new LinkedHashMap<>();
 
-	private final Map<AgentId, Consumer<AgentContext>> simulationCloseCallbacks = new LinkedHashMap<>();
+	private final Map<AgentId, Consumer<AgentContext>> simulationCloseAgentCallbacks = new LinkedHashMap<>();
+
+	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
 
 	private final AgentContext agentContext = new AgentContextImpl();
 
@@ -852,12 +838,22 @@ public class Simulation {
 			}
 		}
 
-		for (AgentId agentId : simulationCloseCallbacks.keySet()) {
-			Consumer<AgentContext> simulationCloseCallback = simulationCloseCallbacks.get(agentId);
-			focalAgentId = agentId;
-			simulationCloseCallback.accept(agentContext);
+		for (AgentId agentId : simulationCloseAgentCallbacks.keySet()) {
+			if (agentIds.get(agentId.getValue()) != null) {
+				focalAgentId = agentId;
+				Consumer<AgentContext> simulationCloseCallback = simulationCloseAgentCallbacks.get(agentId);
+				simulationCloseCallback.accept(agentContext);
+				focalAgentId = null;
+			}
 		}
-		focalAgentId = null;
+		
+		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
+				Consumer<DataManagerContext> dataManagerCloseCallback = simulationCloseDataManagerCallbacks.get(dataManagerId);
+				DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
+				dataManagerCloseCallback.accept(dataManagerContext);
+		}
+
+		
 	}
 
 	private void executeAgentQueue() {
@@ -1004,7 +1000,7 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeAgentToEvent(Class<? extends Event> eventClass, BiConsumer<AgentContext,T> eventConsumer) {
+	private <T extends Event> void subscribeAgentToEvent(Class<? extends Event> eventClass, BiConsumer<AgentContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1064,11 +1060,11 @@ public class Simulation {
 
 	private static class MetaAgentEventConsumer<T extends Event> {
 
-		private final BiConsumer<AgentContext,T> eventConsumer;
+		private final BiConsumer<AgentContext, T> eventConsumer;
 
 		private final AgentContext context;
 
-		public MetaAgentEventConsumer(AgentContext context, BiConsumer<AgentContext,T> eventConsumer) {
+		public MetaAgentEventConsumer(AgentContext context, BiConsumer<AgentContext, T> eventConsumer) {
 			this.eventConsumer = eventConsumer;
 			this.context = context;
 		}
@@ -1173,7 +1169,7 @@ public class Simulation {
 		id_Labeler_Map.put(metaEventLabeler.getId(), metaEventLabeler);
 	}
 
-	private <T extends Event> void subscribeAgentToEvent(EventLabel<T> eventLabel, BiConsumer<AgentContext,T> eventConsumer) {
+	private <T extends Event> void subscribeAgentToEvent(EventLabel<T> eventLabel, BiConsumer<AgentContext, T> eventConsumer) {
 
 		if (eventLabel == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
@@ -1305,18 +1301,25 @@ public class Simulation {
 
 	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>>> agentPubSub = new LinkedHashMap<>();
 
-	private void subscribeAgentToSimulationClose(Consumer<AgentContext> closeHandler) {
-		if (closeHandler == null) {
+	private void subscribeAgentToSimulationClose(Consumer<AgentContext> consumer) {
+		if (consumer == null) {
 			throw new RuntimeException("null close handler");
 		}
-		simulationCloseCallbacks.put(focalAgentId, closeHandler);
+		simulationCloseAgentCallbacks.put(focalAgentId, consumer);
+	}
+
+	private void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
+		if (consumer == null) {
+			throw new RuntimeException("null close handler");
+		}
+		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
 	}
 
 	private static enum EventPhase {
 		EXECUTION, POST_EXECUTION
 	}
 
-	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataMangerId, Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataMangerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1351,7 +1354,7 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeResolverToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer) {
+	private <T extends Event> void subscribeResolverToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1396,7 +1399,15 @@ public class Simulation {
 		}
 	}
 
-	private void resolveEventForDataManager(final Event event) {
+	private void unSubscribeAgentToEvent(Class<? extends Event> eventClass) {
+		if (eventClass == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
+		}
+		Map<AgentId, MetaAgentEventConsumer<?>> map = agentEventMap.get(eventClass);
+		map.remove(focalAgentId);
+	}
+
+	private void resolveEvent(final Event event) {
 
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
@@ -1424,6 +1435,49 @@ public class Simulation {
 		}
 	}
 
+	private AgentId addAgent(Consumer<AgentContext> consumer) {
+
+		AgentId result = new AgentId(masterAgentIdValue++);
+
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
+		}
+
+		agentIds.add(result);
+
+		final AgentContentRec agentContentRec = new AgentContentRec();
+		agentContentRec.agentId = result;
+		agentContentRec.plan = consumer;
+		agentQueue.add(agentContentRec);
+		return result;
+	}
+
+	private void removeAgent(final AgentId agentId) {
+		if (agentId == null) {
+			throw new ContractException(NucleusError.NULL_AGENT_ID);
+		}
+
+		int agentIndex = agentId.getValue();
+
+		if (agentIndex < 0) {
+			throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+		}
+
+		if (agentIndex >= agentIds.size()) {
+			throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+		}
+
+		AgentId existingAgentId = agentIds.get(agentIndex);
+
+		if (existingAgentId == null) {
+			throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+		}
+
+		agentIds.set(agentIndex, null);
+
+		containsDeletedAgents = true;
+	}
+
 	/////////////////////////////////
 	// data manager support
 	/////////////////////////////////
@@ -1431,12 +1485,9 @@ public class Simulation {
 
 	private int masterDataManagerIndex;
 
-	
-	
-
 	private static class MetaDataManagerEventConsumer<T extends Event> {
 
-		private final BiConsumer<DataManagerContext,T> dataManagerEventConsumer;
+		private final BiConsumer<DataManagerContext, T> dataManagerEventConsumer;
 
 		private final DataManagerContext context;
 
@@ -1444,7 +1495,7 @@ public class Simulation {
 
 		private final EventPhase eventPhase;
 
-		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext,T> eventConsumer, EventPhase eventPhase) {
+		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext, T> eventConsumer, EventPhase eventPhase) {
 			this.dataManagerEventConsumer = eventConsumer;
 			this.context = context;
 			this.dataManagerId = dataManagerId;

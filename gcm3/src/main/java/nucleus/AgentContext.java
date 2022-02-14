@@ -137,7 +137,8 @@ public interface AgentContext extends SimulationContext {
 	public AgentId getAgentId();
 
 	
-
+	
+	public void resolveEvent(final Event event);
 	
 
 	/**
@@ -195,12 +196,23 @@ public interface AgentContext extends SimulationContext {
 	 */
 	public <T extends Event> void unsubscribe(EventLabel<T> eventLabel);
 
-	
+	/**
+	 * Unsubscribes the event resolver from events of the given type for all
+	 * phases of event handling.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
+	 *             is null
+	 */
+	public void unSubscribe(Class<? extends Event> eventClass);
+
 	
 	/**
-	 * Subscribes the current report to have the given ReportContext consumer
+	 * Subscribes the agent to have the given ReportContext consumer
 	 * invoked at the end of the simulation.
 	 */
-	public void subscribeToSimulationClose(Consumer<AgentContext> closeHandler);
+	public void subscribeToSimulationClose(Consumer<AgentContext> consumer);
+	
+	
 
 }

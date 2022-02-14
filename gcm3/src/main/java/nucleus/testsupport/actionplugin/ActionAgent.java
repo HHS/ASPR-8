@@ -30,7 +30,7 @@ public final class ActionAgent {
 	 */
 	public void init(AgentContext agentContext) {
 		ActionPluginDataManager actionPluginDataManager = agentContext.getDataManager(ActionPluginDataManager.class).get();
-		actionPluginDataManager.setAgentAlias(alias);
+		actionPluginDataManager.setAgentAlias(agentContext.getAgentId(),alias);
 		List<AgentActionPlan> agentActionPlans = actionPluginDataManager.getAgentActionPlans(alias);
 		for (final AgentActionPlan agentActionPlan : agentActionPlans) {
 			if (agentActionPlan.getKey() != null) {

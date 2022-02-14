@@ -47,11 +47,8 @@ public class ActionPluginDataManager extends DataManager {
 		}
 	}
 
-	private DataManagerContext dataManagerContext;
-
 	@Override
 	protected void init(DataManagerContext dataManagerContext) {
-		this.dataManagerContext = dataManagerContext;
 		for (EventLabeler<?> eventLabeler : eventLabelers) {
 			dataManagerContext.addEventLabeler(eventLabeler);
 		}
@@ -110,14 +107,12 @@ public class ActionPluginDataManager extends DataManager {
 		return Optional.ofNullable(agentAliasMap.get(agentId));
 	}
 
-	public void setAgentAlias(Object alias) {
-		Optional<AgentId> optional = dataManagerContext.getCurrentAgentId();
-		if (optional.isPresent()) {
-			AgentId agentId = optional.get();
-			if (alias != null) {
-				agentAliasMap.put(agentId, alias);
-			}
+	public void setAgentAlias(AgentId agentId, Object alias) {
+
+		if ((agentId != null) && (alias != null)) {
+			agentAliasMap.put(agentId, alias);
 		}
+
 	}
 
 	public Optional<Object> getDataManagerAlias(DataManagerId dataManagerId) {

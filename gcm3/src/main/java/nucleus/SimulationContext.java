@@ -1,6 +1,7 @@
 package nucleus;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import util.ContractException;
 
@@ -51,4 +52,30 @@ public interface SimulationContext {
 	 * Tolerates null values.
 	 */
 	public boolean agentExists(AgentId agentId);
+	
+	/**
+	 * Adds an agent to the simulation. The agent is added immediately, but the
+	 * consumer of AgentContext is invoked after event resolution is finished
+	 * and before time progresses.
+	 * 
+	 * @throws ContractException
+	 *             
+	 *             <li>{@link NucleusError#NULL_AGENT_CONTEXT_CONSUMER} if the
+	 *             agent context consumer is null
+	 * 
+	 */
+	public AgentId addAgent(Consumer<AgentContext> consumer);
+	
+	
+	/**
+	 * Removes the given agent from the simulation.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_AGENT_ID} if the agentId is null
+	 *             <li>{@link NucleusError#NEGATIVE_AGENT_ID} if the agent id is
+	 *             negative
+	 *             <li>{@link NucleusError#UNKNOWN_AGENT_ID} if the agent id
+	 *             does not correspond to a known agent
+	 */
+	public void removeAgent(AgentId agentId);
 }

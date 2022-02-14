@@ -129,48 +129,18 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
 	 */
 	public void resolveEvent(Event event);
-
-	/**
-	 * Returns the AgentId of the current agent
-	 */
-	public Optional<AgentId> getCurrentAgentId();
-
 	
 
 	/**
-	 * Adds an agent to the simulation. The agent is added immediately, but the
-	 * consumer of AgentContext is invoked after event resolution is finished
-	 * and before time progresses.
-	 * 
-	 * @throws ContractException
-	 *             
-	 *             <li>{@link NucleusError#NULL_AGENT_CONTEXT_CONSUMER} if the
-	 *             agent context consumer is null
-	 * 
+	 * Returns true if and only if the given AgentId corresponds to an existing
+	 * agent
 	 */
-	public AgentId addAgent(Consumer<AgentContext> consumer);
-
-	/**
-	 * Removes the given agent from the simulation.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_AGENT_ID} if the agentId is null
-	 *             <li>{@link NucleusError#NEGATIVE_AGENT_ID} if the agent id is
-	 *             negative
-	 *             <li>{@link NucleusError#UNKNOWN_AGENT_ID} if the agent id
-	 *             does not correspond to a known agent
-	 */
-	public void removeAgent(AgentId agentId);
-
-
-
-	
+	public boolean agentExists(AgentId agentId);
 
 	
 	/**
 	 * Subscribes the event resolver to events of the given type for the purpose
-	 * of execution of the event. This occurs after the validation phase, so no
-	 * validation of the event is required. Changes to data views should take
+	 * of execution of the event. Changes to data views should take
 	 * place during this phase.
 	 * 
 	 * @throws ContractException
@@ -179,7 +149,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
 	 *             event consumer is null
 	 */
-	public <T extends Event> void subscribeToEventExecutionPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
+	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
 
 	/**
 	 * Subscribes the event resolver to events of the given type for handling
@@ -196,7 +166,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
 	 *             event consumer is null
 	 */
-	public <T extends Event> void subscribeToEventPostPhase(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
+	public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
 
 	/**
 	 * Unsubscribes the event resolver from events of the given type for all
@@ -206,7 +176,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
 	 */
-	public void unSubscribeToEvent(Class<? extends Event> eventClass);
+	public void unSubscribe(Class<? extends Event> eventClass);
 
 	
 
@@ -216,9 +186,11 @@ public interface DataManagerContext extends SimulationContext {
 	 * Returns true if and only if there exists agent, report or resolver
 	 * subscriptions to the given event class type.
 	 */
-	public boolean subscribersExistForEvent(Class<? extends Event> eventClass);
+	public boolean subscribersExist(Class<? extends Event> eventClass);
 	
 	
 	public DataManagerId getDataManagerId();
+	
+	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer);
 
 }
