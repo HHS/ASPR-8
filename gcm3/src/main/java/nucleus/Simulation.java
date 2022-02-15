@@ -242,7 +242,7 @@ public class Simulation {
 		private Consumer<AgentContext> agentPlan;
 		private AgentId agentId;
 
-		private Consumer<DataManagerContext> resolverPlan;
+		private Consumer<DataManagerContext> dataManagerPlan;
 		private DataManagerId dataManagerId;
 
 		private Object key;
@@ -381,26 +381,26 @@ public class Simulation {
 
 		@Override
 		public void addPlan(final Consumer<DataManagerContext> plan, final double planTime) {
-			simulation.addResolverPlan(dataManagerId, plan, planTime, true, null);
+			simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, null);
 		}
 
 		@Override
 		public void addKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
 			simulation.validatePlanKeyNotNull(key);
-			simulation.validateResolverPlanKeyNotDuplicate(dataManagerId, key);
-			simulation.addResolverPlan(dataManagerId, plan, planTime, true, key);
+			simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
+			simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, key);
 		}
 
 		@Override
 		public void addPassivePlan(final Consumer<DataManagerContext> plan, final double planTime) {
-			simulation.addResolverPlan(dataManagerId, plan, planTime, false, null);
+			simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, null);
 		}
 
 		@Override
 		public void addKeyedPassivePlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
 			simulation.validatePlanKeyNotNull(key);
-			simulation.validateResolverPlanKeyNotDuplicate(dataManagerId, key);
-			simulation.addResolverPlan(dataManagerId, plan, planTime, false, key);
+			simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
+			simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, key);
 		}
 
 		@Override
@@ -417,17 +417,17 @@ public class Simulation {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends Consumer<DataManagerContext>> T getPlan(final Object key) {
-			return (T) simulation.getResolverPlan(dataManagerId, key);
+			return (T) simulation.getDataManagerPlan(dataManagerId, key);
 		}
 
 		@Override
 		public List<Object> getPlanKeys() {
-			return simulation.getResolverPlanKeys(dataManagerId);
+			return simulation.getDataManagerPlanKeys(dataManagerId);
 		}
 
 		@Override
 		public double getPlanTime(final Object key) {
-			return simulation.getResolverPlanTime(dataManagerId, key);
+			return simulation.getDataManagerPlanTime(dataManagerId, key);
 		}
 
 		@Override
@@ -453,7 +453,7 @@ public class Simulation {
 
 		@Override
 		public <T> Optional<T> removePlan(final Object key) {
-			return simulation.removeResolverPlan(dataManagerId, key);
+			return simulation.removeDataManagerPlan(dataManagerId, key);
 		}
 
 		@Override
@@ -463,7 +463,7 @@ public class Simulation {
 
 		@Override
 		public void unSubscribe(Class<? extends Event> eventClass) {
-			simulation.unSubscribeResolverToEvent(dataManagerId, eventClass);
+			simulation.unSubscribeDataManagerFromEvent(dataManagerId, eventClass);
 		}
 
 		@Override
@@ -478,12 +478,12 @@ public class Simulation {
 
 		@Override
 		public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-			simulation.subscribeResolverToEventPostPhase(dataManagerId, eventClass, eventConsumer);
+			simulation.subscribeDataManagerToEventPostPhase(dataManagerId, eventClass, eventConsumer);
 		}
 
 		@Override
 		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-			simulation.subscribeResolverToEventExecutionPhase(dataManagerId, eventClass, eventConsumer);
+			simulation.subscribeDataManagerToEventExecutionPhase(dataManagerId, eventClass, eventConsumer);
 		}
 
 		@Override
@@ -576,7 +576,7 @@ public class Simulation {
 		}
 	}
 
-	private void validateResolverPlan(final Consumer<DataManagerContext> plan) {
+	private void validateDataManagerPlan(final Consumer<DataManagerContext> plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
@@ -615,9 +615,9 @@ public class Simulation {
 
 	}
 
-	private void addResolverPlan(final DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	private void addDataManagerPlan(final DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
-		validateResolverPlan(plan);
+		validateDataManagerPlan(plan);
 		validatePlanTime(time);
 
 		final PlanRec planRec = new PlanRec();
@@ -625,17 +625,17 @@ public class Simulation {
 		planRec.arrivalId = masterPlanningArrivalId++;
 		planRec.planner = Planner.DATA_MANAGER;
 		planRec.time = FastMath.max(time, this.time);
-		planRec.resolverPlan = plan;
+		planRec.dataManagerPlan = plan;
 		planRec.key = key;
 
 		Map<Object, PlanRec> map;
 
 		planRec.dataManagerId = dataManagerId;
 		if (key != null) {
-			map = resolverPlanMap.get(dataManagerId);
+			map = dataManagerPlanMap.get(dataManagerId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
-				resolverPlanMap.put(dataManagerId, map);
+				dataManagerPlanMap.put(dataManagerId, map);
 			}
 			map.put(key, planRec);
 		}
@@ -646,8 +646,8 @@ public class Simulation {
 		planningQueue.add(planRec);
 	}
 
-	private void validateResolverPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
-		if (getResolverPlan(dataManagerId, key) != null) {
+	private void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
+		if (getDataManagerPlan(dataManagerId, key) != null) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
@@ -830,12 +830,12 @@ public class Simulation {
 				}
 				break;
 			case DATA_MANAGER:
-				if (planRec.resolverPlan != null) {
+				if (planRec.dataManagerPlan != null) {
 					if (planRec.key != null) {
-						resolverPlanMap.get(planRec.dataManagerId).remove(planRec.key);
+						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
 					DataManagerContext dataManagerContext = dataManagerContextMap.get(planRec.dataManagerId);
-					planRec.resolverPlan.accept(dataManagerContext);
+					planRec.dataManagerPlan.accept(dataManagerContext);
 					executeAgentQueue();
 				}
 				break;
@@ -900,14 +900,14 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private Consumer<DataManagerContext> getResolverPlan(DataManagerId dataManagerId, final Object key) {
+	private Consumer<DataManagerContext> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		Consumer<DataManagerContext> result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
 			if (planRecord != null) {
-				result = planRecord.resolverPlan;
+				result = planRecord.dataManagerPlan;
 			}
 		}
 		return result;
@@ -921,8 +921,8 @@ public class Simulation {
 		return new ArrayList<>();
 	}
 
-	private List<Object> getResolverPlanKeys(DataManagerId dataManagerId) {
-		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
+	private List<Object> getDataManagerPlanKeys(DataManagerId dataManagerId) {
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
 		}
@@ -942,9 +942,9 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private double getResolverPlanTime(final DataManagerId dataManagerId, final Object key) {
+	private double getDataManagerPlanTime(final DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		double result = -1;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
@@ -978,16 +978,16 @@ public class Simulation {
 	 */
 
 	@SuppressWarnings("unchecked")
-	private <T> Optional<T> removeResolverPlan(DataManagerId dataManagerId, final Object key) {
+	private <T> Optional<T> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 
-		Map<Object, PlanRec> map = resolverPlanMap.get(dataManagerId);
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		T result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
-				result = (T) planRecord.resolverPlan;
-				planRecord.resolverPlan = null;
+				result = (T) planRecord.dataManagerPlan;
+				planRecord.dataManagerPlan = null;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -1324,7 +1324,7 @@ public class Simulation {
 		EXECUTION, POST_EXECUTION
 	}
 
-	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+	private <T extends Event> void subscribeDataManagerToEventExecutionPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1340,7 +1340,7 @@ public class Simulation {
 			incrementSubscriberCount(eventClass);
 		}
 		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
-		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
+		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
 
 		int insertionIndex = -1;
 
@@ -1353,13 +1353,13 @@ public class Simulation {
 		}
 
 		if (insertionIndex < 0) {
-			list.add(metaResolverEventConsumer);
+			list.add(metaDataManagerEventConsumer);
 		} else {
-			list.add(insertionIndex, metaResolverEventConsumer);
+			list.add(insertionIndex, metaDataManagerEventConsumer);
 		}
 	}
 
-	private <T extends Event> void subscribeResolverToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+	private <T extends Event> void subscribeDataManagerToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1375,13 +1375,13 @@ public class Simulation {
 			incrementSubscriberCount(eventClass);
 		}
 		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
-		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.POST_EXECUTION);
+		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.POST_EXECUTION);
 
-		list.add(metaResolverEventConsumer);
+		list.add(metaDataManagerEventConsumer);
 
 	}
 
-	private void unSubscribeResolverToEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
+	private void unSubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1391,8 +1391,8 @@ public class Simulation {
 		if (list != null) {
 			Iterator<MetaDataManagerEventConsumer<?>> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				MetaDataManagerEventConsumer<?> metaResolverEventConsumer = iterator.next();
-				if (metaResolverEventConsumer.dataManagerId.equals(dataManagerId)) {
+				MetaDataManagerEventConsumer<?> metaDataManagerEventConsumer = iterator.next();
+				if (metaDataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
 					iterator.remove();
 					decrementSubscriberCount(eventClass);
 				}
@@ -1434,8 +1434,8 @@ public class Simulation {
 
 		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(event.getClass());
 		if (list != null) {
-			for (MetaDataManagerEventConsumer<?> metaResolverEventConsumer : list) {
-				metaResolverEventConsumer.handleEvent(event);
+			for (MetaDataManagerEventConsumer<?> metaDataManagerEventConsumer : list) {
+				metaDataManagerEventConsumer.handleEvent(event);
 			}
 		}
 	}
@@ -1526,7 +1526,7 @@ public class Simulation {
 	private final Map<Class<? extends Event>, List<MetaDataManagerEventConsumer<?>>> dataManagerEventMap = new LinkedHashMap<>();
 
 	// used for retrieving and canceling plans owned by data managers
-	private final Map<DataManagerId, Map<Object, PlanRec>> resolverPlanMap = new LinkedHashMap<>();
+	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
 
 	// used to locate data managers by class type
 	private Map<Class<?>, DataManager> dataManagerMap = new LinkedHashMap<>();

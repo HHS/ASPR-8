@@ -34,8 +34,8 @@ public interface ExperimentContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
-	 *             event consumer is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
+	 *             consumer is null
 	 */
 	public <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer);
 

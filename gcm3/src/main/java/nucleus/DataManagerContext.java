@@ -8,10 +8,8 @@ import java.util.function.Consumer;
 import util.ContractException;
 
 /**
- * A resolver context provides access to the nucleus engine and published data
- * views to resolver. It is supplied by the engine each time it interacts with a
- * resolver. Resolvers are defined by this context. If this context is passed to
- * a method invocation, then that method is a resolver method.
+ * A data manager context provides access to the nucleus engine and other data
+ * manager.
  * 
  * @author Shawn Hatch
  *
@@ -117,7 +115,7 @@ public interface DataManagerContext extends SimulationContext {
 
 	/**
 	 * Returns a list of the current plan keys associated with the current
-	 * resolver
+	 * data manager
 	 */
 	public List<Object> getPlanKeys();
 
@@ -137,37 +135,34 @@ public interface DataManagerContext extends SimulationContext {
 	public boolean agentExists(AgentId agentId);
 
 	/**
-	 * Subscribes the event resolver to events of the given type for the purpose
-	 * of execution of the event. Changes to data views should take place during
-	 * this phase.
+	 * Subscribes the data manager to events of the given type for the purpose
+	 * of execution of data changes. 
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
-	 *             event consumer is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event consumer is null
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer);
 
 	/**
-	 * Subscribes the event resolver to events of the given type for handling
+	 * Subscribes the data manager to events of the given type for handling
 	 * after the execution phase is complete. This should only be used for
 	 * special cases where order of resolution is difficult to determine and the
-	 * resolver needs to take action after all other resolvers. Dependency
+	 * data manager needs to take action after all other data managers. Dependency
 	 * ordering in this phase is indeterminate and thus should only be used when
-	 * the resolver will not generate observation events that might be consumed
-	 * by other resolvers.
+	 * the data manager will not generate observation events that might be consumed
+	 * by other data managers.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
-	 *             event consumer is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event consumer is null
 	 */
 	public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer);
 
 	/**
-	 * Unsubscribes the event resolver from events of the given type for all
+	 * Unsubscribes the data manager from events of the given type for all
 	 * phases of event handling.
 	 * 
 	 * @throws ContractException
@@ -177,8 +172,8 @@ public interface DataManagerContext extends SimulationContext {
 	public void unSubscribe(Class<? extends Event> eventClass);
 
 	/**
-	 * Returns true if and only if there are agent or data managers
-	 * subscribed to the given event type.
+	 * Returns true if and only if there are agent or data managers subscribed
+	 * to the given event type.
 	 */
 	public boolean subscribersExist(Class<? extends Event> eventClass);
 

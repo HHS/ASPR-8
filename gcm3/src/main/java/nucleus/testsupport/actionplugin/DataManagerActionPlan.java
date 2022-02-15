@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import nucleus.DataManagerContext;
 
 /**
- * Test Support class that describes an action for a resolver as a scheduled plan with an
+ * Test Support class that describes an action for a data manager as a scheduled plan with an
  * optional key.
  */
 public class DataManagerActionPlan {

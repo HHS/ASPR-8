@@ -13,10 +13,10 @@ public class ExperimentActionCompletionObserver {
 	private Map<Integer,ActionCompletionReport> actionCompletionReports = new LinkedHashMap<>(); 
 
 	public synchronized void init(ExperimentContext experimentContext) {
-		experimentContext.subscribeToOutput(ActionCompletionReport.class, this::asdf);
+		experimentContext.subscribeToOutput(ActionCompletionReport.class, this::handleActionCompletionReport);
 	}
 
-	private synchronized void asdf(ExperimentContext experimentContext, Integer scenarioId, ActionCompletionReport actionCompletionReport) {
+	private synchronized void handleActionCompletionReport(ExperimentContext experimentContext, Integer scenarioId, ActionCompletionReport actionCompletionReport) {
 		actionCompletionReports.put(scenarioId, actionCompletionReport);
 	}
 	

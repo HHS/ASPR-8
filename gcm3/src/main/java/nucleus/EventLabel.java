@@ -17,7 +17,7 @@ package nucleus;
  * label used by the fox, then the fox will receive the movement observation
  * event.
  * 
- * Event labels are paired with event labelers. An event resolver registers an
+ * Event labels are paired with event labelers. A data manager registers an
  * event labeler in anticipation of agents needing to use the corresponding
  * event labels. Event labels remain active until the agent unsubscribes them.
  * 

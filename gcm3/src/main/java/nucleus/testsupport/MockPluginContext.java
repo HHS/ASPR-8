@@ -16,13 +16,13 @@ import nucleus.PluginId;
 
 /**
  * A mock implementation of a {@link PluginContext} that allows for the
- * retrieval of plugin dependencies and resolvers recorded during the
- * initialization phase of a plugin.
+ * retrieval of plugin dependencies and data managers and agents recorded during
+ * the initialization phase of a plugin.
  */
 public final class MockPluginContext implements PluginContext {
 
 	private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
-	
+
 	private int masterAgentIdValue;
 
 	@Override
@@ -49,7 +49,7 @@ public final class MockPluginContext implements PluginContext {
 
 	@Override
 	public AgentId addAgent(Consumer<AgentContext> init) {
-		AgentId agentId =  new AgentId(masterAgentIdValue++); 
+		AgentId agentId = new AgentId(masterAgentIdValue++);
 		agentMap.put(agentId, init);
 		return agentId;
 	}

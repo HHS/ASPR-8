@@ -42,14 +42,9 @@ public interface PluginContext {
 	public void addPluginDependency(PluginId pluginId);
 
 	/**
-	 * Defines the initialization behavior for event resolvers contributed by
-	 * this plugin using this plugin context. At the start of the simulation,
-	 * nucleus determines the order to initialize each plugin. For each plugin,
-	 * nucleus invokes the consumers of ResolverContext supplied here in the
-	 * order the were added by the plugin.
 	 * 
-	 * Resolvers use this initialization invocation to 1) initialize and publish
-	 * data views, 2) create initial agents and 3) schedule plans.
+	 * Adds a data manager to the simulation.
+	 * 
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED} if

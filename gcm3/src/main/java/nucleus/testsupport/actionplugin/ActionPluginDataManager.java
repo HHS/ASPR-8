@@ -14,6 +14,7 @@ import nucleus.DataManagerId;
 public class ActionPluginDataManager extends DataManager {
 
 	private Map<AgentId, Object> agentAliasMap = new LinkedHashMap<>();
+	
 	private Map<DataManagerId, Object> dataManagerAliasMap = new LinkedHashMap<>();
 
 	private final Map<Object, List<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();

@@ -197,8 +197,7 @@ public interface AgentContext extends SimulationContext {
 	public <T extends Event> void unsubscribe(EventLabel<T> eventLabel);
 
 	/**
-	 * Unsubscribes the event resolver from events of the given type for all
-	 * phases of event handling.
+	 * Unsubscribes the agent from events of the given type.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class

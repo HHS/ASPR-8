@@ -13,7 +13,7 @@ public class SimplePluginId implements PluginId {
 	private final Object value;
 
 	/**
-	 * Constructs a SimpleResolverId from the given value
+	 * Constructs a SimplePluginId from the given value
 	 * 
 	 * @throws RuntimeException
 	 *             <li>if the value is null
@@ -47,7 +47,7 @@ public class SimplePluginId implements PluginId {
 	}
 
 	/**
-	 * Simple Resolver Ids are equal if and only if their contained values are
+	 * Simple Plugin Ids are equal if and only if their contained values are
 	 * equal
 	 */
 	@Override
