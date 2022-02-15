@@ -181,12 +181,13 @@ public class Simulation {
 			Simulation.this.releaseOutput(output);
 
 		}
-		
+
 		@Override
 		public void resolveEvent(final Event event) {
 			Simulation.this.resolveEvent(event);
 
 		}
+
 		@Override
 		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<AgentContext, T> eventConsumer) {
 			Simulation.this.subscribeAgentToEvent(eventLabel, eventConsumer);
@@ -489,10 +490,10 @@ public class Simulation {
 		public DataManagerId getDataManagerId() {
 			return dataManagerId;
 		}
-		
+
 		@Override
 		public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
-			simulation.subscribeDataManagerToSimulationClose(dataManagerId,consumer);
+			simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
 		}
 
 	}
@@ -763,6 +764,9 @@ public class Simulation {
 
 		for (PluginInitializer pluginInitializer : data.pluginInitializers) {
 			focalPluginId = pluginInitializer.getPluginId();
+			if (focalPluginId == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
+			}
 			pluginDependencyGraph.addNode(focalPluginId);
 			pluginInitializer.init(pluginContext);
 			focalPluginId = null;
@@ -785,12 +789,14 @@ public class Simulation {
 				}
 			}
 			Map<AgentId, Consumer<AgentContext>> map = agentsMap.get(pluginId);
-			for (AgentId agentId : map.keySet()) {
-				agentIds.add(agentId);
-				final AgentContentRec agentContentRec = new AgentContentRec();
-				agentContentRec.agentId = agentId;
-				agentContentRec.plan = map.get(agentId);
-				agentQueue.add(agentContentRec);
+			if (map != null) {
+				for (AgentId agentId : map.keySet()) {
+					agentIds.add(agentId);
+					final AgentContentRec agentContentRec = new AgentContentRec();
+					agentContentRec.agentId = agentId;
+					agentContentRec.plan = map.get(agentId);
+					agentQueue.add(agentContentRec);
+				}
 			}
 		}
 
@@ -838,6 +844,12 @@ public class Simulation {
 			}
 		}
 
+		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
+			Consumer<DataManagerContext> dataManagerCloseCallback = simulationCloseDataManagerCallbacks.get(dataManagerId);
+			DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
+			dataManagerCloseCallback.accept(dataManagerContext);
+		}
+
 		for (AgentId agentId : simulationCloseAgentCallbacks.keySet()) {
 			if (agentIds.get(agentId.getValue()) != null) {
 				focalAgentId = agentId;
@@ -846,14 +858,7 @@ public class Simulation {
 				focalAgentId = null;
 			}
 		}
-		
-		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
-				Consumer<DataManagerContext> dataManagerCloseCallback = simulationCloseDataManagerCallbacks.get(dataManagerId);
-				DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
-				dataManagerCloseCallback.accept(dataManagerContext);
-		}
 
-		
 	}
 
 	private void executeAgentQueue() {
@@ -1319,7 +1324,7 @@ public class Simulation {
 		EXECUTION, POST_EXECUTION
 	}
 
-	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataMangerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+	private <T extends Event> void subscribeResolverToEventExecutionPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1334,8 +1339,8 @@ public class Simulation {
 			// invoke the increment only when adding to the map
 			incrementSubscriberCount(eventClass);
 		}
-		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataMangerId);
-		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataMangerId, eventConsumer, EventPhase.EXECUTION);
+		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
+		MetaDataManagerEventConsumer<T> metaResolverEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
 
 		int insertionIndex = -1;
 
@@ -1413,10 +1418,10 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
 
-		Map<AgentId, MetaAgentEventConsumer<?>> reportMap = agentEventMap.get(event.getClass());
-		if (reportMap != null) {
-			for (final AgentId agentId : reportMap.keySet()) {
-				MetaAgentEventConsumer<?> metaAgentEventConsumer = reportMap.get(agentId);
+		Map<AgentId, MetaAgentEventConsumer<?>> consumerMap = agentEventMap.get(event.getClass());
+		if (consumerMap != null) {
+			for (final AgentId agentId : consumerMap.keySet()) {
+				MetaAgentEventConsumer<?> metaAgentEventConsumer = consumerMap.get(agentId);
 				final AgentContentRec contentRec = new AgentContentRec();
 				contentRec.agentId = agentId;
 				contentRec.event = event;

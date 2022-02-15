@@ -44,14 +44,15 @@ public final class Experiment {
 		 * @throws RuntimeException
 		 *             if the output item handler is null
 		 */
-		public void addOutputHandler(final Consumer<ExperimentContext> experimentContextConsumer) {
+		public Builder addOutputHandler(final Consumer<ExperimentContext> experimentContextConsumer) {
 			if (experimentContextConsumer == null) {
 				throw new RuntimeException("null output item handler");
 			}
 			data.experimentContextConsumers.add(experimentContextConsumer);
+			return this;
 		}
 
-		public Builder addPluginBehavior(final PluginInitializer pluginInitializer) {
+		public Builder addPluginInitializer(final PluginInitializer pluginInitializer) {
 			data.pluginInitializers.add(pluginInitializer);
 			return this;
 		}
@@ -86,7 +87,7 @@ public final class Experiment {
 		 * logging and run resumption. Default value is null.
 		 *
 		 * @param path
-		 *            the {@link Path} where the report will be recorded
+		 *            the {@link Path} where the experiment progress will be recorded
 		 */
 		public void setExperimentProgressLog(final Path path) {
 			data.experimentProgressLogPath = path;
@@ -164,7 +165,7 @@ public final class Experiment {
 		/**
 		 * Executes the simulation for a scenario. Returns a SimResult
 		 * indicating success/failure. If the simulation throws an exception it
-		 * is handled by printing a stack trace and reporting a failure for the
+		 * is handled by printing a stack trace and reports a failure for the
 		 * scenario.
 		 */
 		@Override

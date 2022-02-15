@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import nucleus.EventLabeler;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 
@@ -16,12 +15,39 @@ import nucleus.PluginDataBuilder;
 public class ActionPluginData implements PluginData {
 
 	private static class Data {
-		
+
 		private Data() {
 		}
 
 		private Data(Data data) {
+
 			
+			for(Object alias : data.agentActionPlanMap.keySet()) {
+				List<AgentActionPlan> oldPlans = data.agentActionPlanMap.get(alias);
+				List<AgentActionPlan> newPlans = new ArrayList<>();
+				agentActionPlanMap.put(alias, newPlans);
+				for(AgentActionPlan oldPlan : oldPlans) {
+					AgentActionPlan newPlan = new AgentActionPlan(oldPlan);
+					newPlans.add(newPlan);
+				}				
+			}
+			
+			agentAliasesMarkedForConstruction.addAll(data.agentAliasesMarkedForConstruction);
+			
+			dataManagerAliasMap.putAll(data.dataManagerAliasMap);
+
+			actionDataManagerTypes.putAll(data.actionDataManagerTypes);
+			
+			for(Object alias : data.dataManagerActionPlanMap.keySet()) {
+				List<DataManagerActionPlan> oldPlans = data.dataManagerActionPlanMap.get(alias);
+				List<DataManagerActionPlan> newPlans = new ArrayList<>();
+				dataManagerActionPlanMap.put(alias, newPlans);
+				for(DataManagerActionPlan oldPlan : oldPlans) {
+					DataManagerActionPlan newPlan = new DataManagerActionPlan(oldPlan);
+					newPlans.add(newPlan);
+				}				
+			}			
+
 		}
 
 		/*
@@ -34,14 +60,10 @@ public class ActionPluginData implements PluginData {
 		 * handled by the Action Plugin Initializer
 		 */
 		private Set<Object> agentAliasesMarkedForConstruction = new LinkedHashSet<>();
+		
 
-		/*
-		 * List of stored event labelers
-		 */
-		private List<EventLabeler<?>> eventLabelers = new ArrayList<>();
-		
-		private Map<Class<? extends ActionDataManager>,Object> dataManagerAliasMap = new LinkedHashMap<>();
-		
+		private Map<Class<? extends ActionDataManager>, Object> dataManagerAliasMap = new LinkedHashMap<>();
+
 		private Map<Object, Class<? extends ActionDataManager>> actionDataManagerTypes = new LinkedHashMap<>();
 
 		private final Map<Object, List<DataManagerActionPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
@@ -91,8 +113,8 @@ public class ActionPluginData implements PluginData {
 			List<AgentActionPlan> list = data.agentActionPlanMap.get(alias);
 
 			if (list == null) {
-				list = new ArrayList<>();				
-				data.agentActionPlanMap.put( alias, list);
+				list = new ArrayList<>();
+				data.agentActionPlanMap.put(alias, list);
 			}
 
 			list.add(agentActionPlan);
@@ -111,39 +133,25 @@ public class ActionPluginData implements PluginData {
 		public Builder addAgent(Object alias) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
-			}			
+			}
 			data.agentAliasesMarkedForConstruction.add(alias);
 			return this;
 		}
-		
+
 		
 
-		/**
-		 * Stores an event labeler that will be added to nucleus by the
-		 * ActionResolver. Note that event labelers must be unique(by id) and
-		 * well formed. See {@link EventLabeler} for details.
-		 * 
-		 */
-		public Builder addEventLabeler(EventLabeler<?> eventLabeler) {
-			if (eventLabeler == null) {
-				throw new RuntimeException("null event labeler");
-			}
-			data.eventLabelers.add(eventLabeler);
-			return this;
-		}
-
-		public Builder addActionDataManager(Object alias,Class<? extends ActionDataManager> actionDataManagerClass) {
+		public Builder addActionDataManager(Object alias, Class<? extends ActionDataManager> actionDataManagerClass) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
 			if (actionDataManagerClass == null) {
 				throw new RuntimeException("null action data manager class");
 			}
-			data.actionDataManagerTypes.put(alias,actionDataManagerClass);
+			data.actionDataManagerTypes.put(alias, actionDataManagerClass);
 			data.dataManagerAliasMap.put(actionDataManagerClass, alias);
 			return this;
 		}
-		
+
 		/**
 		 * Adds an data manager action plan associated with the alias
 		 * 
@@ -180,45 +188,36 @@ public class ActionPluginData implements PluginData {
 	}
 
 	private final Data data;
-	
-	
-	
-	
-	public List<EventLabeler<?>> getEventLabelers(){
-		return new ArrayList<>(data.eventLabelers);
-	}
-	
-	public List<Object> getAgentsRequiringConstruction(){
+
+	public List<Object> getAgentsRequiringConstruction() {
 		return new ArrayList<>(data.agentAliasesMarkedForConstruction);
 	}
-	
-	public List<Object> getAgentsRequiringPlanning(){
+
+	public List<Object> getAgentsRequiringPlanning() {
 		return new ArrayList<>(data.agentActionPlanMap.keySet());
 	}
-	
-	public List<AgentActionPlan> getAgentActionPlans(Object alias){
+
+	public List<AgentActionPlan> getAgentActionPlans(Object alias) {
 		List<AgentActionPlan> result = new ArrayList<>();
 		List<AgentActionPlan> list = data.agentActionPlanMap.get(alias);
-		if(list != null) {
+		if (list != null) {
 			result.addAll(list);
 		}
 		return result;
 	}
-	
-	
-	public List<Class<? extends ActionDataManager>> getActionDataManagerTypes(){
+
+	public List<Class<? extends ActionDataManager>> getActionDataManagerTypes() {
 		return new ArrayList<>(data.actionDataManagerTypes.values());
 	}
-	
-	public List<DataManagerActionPlan>getDataManagerActionPlans(Class<? extends ActionDataManager> actionDataManagerType){
+
+	public List<DataManagerActionPlan> getDataManagerActionPlans(Class<? extends ActionDataManager> actionDataManagerType) {
 		Object alias = data.dataManagerAliasMap.get(actionDataManagerType);
 		List<DataManagerActionPlan> list = data.dataManagerActionPlanMap.get(alias);
 		List<DataManagerActionPlan> result = new ArrayList<>();
-		if(list != null) {
+		if (list != null) {
 			result.addAll(list);
 		}
 		return list;
 	}
-	
 
 }

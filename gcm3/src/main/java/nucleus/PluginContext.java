@@ -7,8 +7,7 @@ import util.ContractException;
 
 /**
  * A plugin represents a suite of software delivering a set of generally related
- * simulation capabilities. Plugins define all of the abilities not supplied by
- * nucleus: data views, events, resolvers, agents and reports.
+ * simulation capabilities. 
  * 
  * Plugins are loaded into the nucleus engine and organized based upon their
  * dependency requirements. Each plugin contributes zero to many initialization
@@ -54,11 +53,8 @@ public interface PluginContext {
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED} if
-	 *             plugin initialization is over
-	 *             <li>{@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER} if the
-	 *             resolver context consumer is null
-	 *             <li>{@link NucleusError#NULL_RESOLVER_ID} if the resolver id
-	 *             is null
+	 *             plugin initialization is over	 *             
+	 *             
 	 */
 
 	public void addDataManager(DataManager dataManager);

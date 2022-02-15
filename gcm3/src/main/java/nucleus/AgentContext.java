@@ -174,7 +174,7 @@ public interface AgentContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
-	 *             ReportEventConsumer is null
+	 *             event consumer is null
 	 * 
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<AgentContext,T> eventConsumer);
@@ -208,8 +208,9 @@ public interface AgentContext extends SimulationContext {
 
 	
 	/**
-	 * Subscribes the agent to have the given ReportContext consumer
-	 * invoked at the end of the simulation.
+	 * Registers the given consumer to be executed at the end of the simulation.
+	 * Activity associated with the consumer should be limited to querying data
+	 * state and releasing output.
 	 */
 	public void subscribeToSimulationClose(Consumer<AgentContext> consumer);
 	

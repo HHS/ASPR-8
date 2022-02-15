@@ -10,7 +10,6 @@ import nucleus.AgentId;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.DataManagerId;
-import nucleus.EventLabeler;
 
 public class ActionPluginDataManager extends DataManager {
 
@@ -21,7 +20,7 @@ public class ActionPluginDataManager extends DataManager {
 
 	private final Map<Class<? extends ActionDataManager>, List<DataManagerActionPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
 
-	private List<EventLabeler<?>> eventLabelers = new ArrayList<>();
+	
 
 	public ActionPluginDataManager(ActionPluginData actionPluginData) {
 
@@ -34,9 +33,7 @@ public class ActionPluginDataManager extends DataManager {
 			}
 		}
 
-		for (EventLabeler<?> eventLabeler : actionPluginData.getEventLabelers()) {
-			eventLabelers.add(eventLabeler);
-		}
+		
 		List<Class<? extends ActionDataManager>> actionDataManagerTypes = actionPluginData.getActionDataManagerTypes();
 		for (Class<? extends ActionDataManager> c : actionDataManagerTypes) {
 			List<DataManagerActionPlan> newDataManagerActionPlans = new ArrayList<>();
@@ -48,10 +45,8 @@ public class ActionPluginDataManager extends DataManager {
 	}
 
 	@Override
-	protected void init(DataManagerContext dataManagerContext) {
-		for (EventLabeler<?> eventLabeler : eventLabelers) {
-			dataManagerContext.addEventLabeler(eventLabeler);
-		}
+	protected void init(DataManagerContext dataManagerContext) {		
+		dataManagerContext.subscribeToSimulationClose(this::sendActionCompletionReport);
 	}
 
 	public List<AgentActionPlan> getAgentActionPlans(Object alias) {
@@ -80,7 +75,11 @@ public class ActionPluginDataManager extends DataManager {
 	 * STORED.
 	 */
 
-	public boolean allActionsExecuted() {
+	private void sendActionCompletionReport(DataManagerContext context) {
+		context.releaseOutput(new ActionCompletionReport(allActionsExecuted()));
+	}
+	
+	private boolean allActionsExecuted() {
 		int planCount = 0;
 		for (Object alias : agentActionPlanMap.keySet()) {
 			for (AgentActionPlan agentActionPlan : agentActionPlanMap.get(alias)) {
@@ -101,6 +100,7 @@ public class ActionPluginDataManager extends DataManager {
 		}
 
 		return planCount > 0;
+		
 	}
 
 	public Optional<Object> getAgentAlias(AgentId agentId) {

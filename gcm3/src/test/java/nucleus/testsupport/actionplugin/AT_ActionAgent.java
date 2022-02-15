@@ -4,12 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import nucleus.AgentContext;
-import nucleus.Simulation;
+import nucleus.Experiment;
 import util.MultiKey;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -17,8 +18,6 @@ import util.annotations.UnitTestMethod;
 @UnitTest(target = ActionAgent.class)
 public class AT_ActionAgent {
 
-	
-	
 	@Test
 	@UnitTestMethod(name = "init", args = { AgentContext.class })
 	public void testInit() {
@@ -53,34 +52,41 @@ public class AT_ActionAgent {
 			Double expectedTime = multiKey.getKey(1);
 			pluginDataBuilder.addAgentActionPlan(expectedAlias, new AgentActionPlan(expectedTime, (c) -> {
 				ActionPluginDataManager actionPluginDataManager = c.getDataManager(ActionPluginDataManager.class).get();
-				Object alias = actionPluginDataManager.getAgentAlias(c.getAgentId()).get();				
+				Object alias = actionPluginDataManager.getAgentAlias(c.getAgentId()).get();
 				actualObservations.add(new MultiKey(alias, c.getTime()));
 			}));
 		}
 
-		//build the action plugin
+		// build the action plugin
 		ActionPluginData actionPluginData = pluginDataBuilder.build();
 		ActionPluginInitializer actionPluginInitializer = new ActionPluginInitializer();
 
+		ExperimentActionCompletionObserver experimentActionCompletionObserver = new ExperimentActionCompletionObserver();
+
 		// build and execute the engine
-		Simulation	.builder()//
-				.addPluginData(actionPluginData)//
-				.addPluginInitializer(actionPluginInitializer)//
-				.build()//
-				.execute();//
+		Experiment	.builder()//
+					.addOutputHandler(experimentActionCompletionObserver::init)//
+					.addPluginInitializer(actionPluginInitializer)//
+					.addPluginData(actionPluginData)//
+					.build()//
+					.execute();//
 
 		// show that all actions executed
-		assertTrue(actionPluginInitializer.allActionsExecuted());
+		Optional<ActionCompletionReport> optional = experimentActionCompletionObserver.getActionCompletionReport(0);
+		assertTrue(optional.isPresent(),"Scenario did not complete");
+		
+		ActionCompletionReport actionCompletionReport = optional.get();
+		assertTrue(actionCompletionReport.isComplete(), "Some planned action were not executed");
+
+//		for (MultiKey observation : expectedObservations) {
+//			System.out.println(observation.toKeyString());
+//		}
+//		System.out.println("------");
+//		for (MultiKey observation : actualObservations) {
+//			System.out.println(observation.toKeyString());
+//		}
 
 		// show that the agents executed the expected actions
-//		for(MultiKey observation : expectedObservations) {
-//			System.out.println(observation.toKeyString());
-//		}
-//		System.out.println();
-//		for(MultiKey observation : actualObservations) {
-//			System.out.println(observation.toKeyString());
-//		}
-
 		assertEquals(expectedObservations, actualObservations);
 
 	}

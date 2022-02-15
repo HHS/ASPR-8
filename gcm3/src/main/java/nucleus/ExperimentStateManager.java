@@ -40,11 +40,10 @@ public final class ExperimentStateManager {
 
 	private class ExperimentContextImpl implements ExperimentContext {
 
-		
 		@Override
 		public void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
 			ExperimentStateManager.this.subscribeToSimulationOpen(consumer);
-			
+
 		}
 
 		@Override
@@ -110,11 +109,21 @@ public final class ExperimentStateManager {
 
 	public synchronized void openScenario(Integer scenarioId, List<String> metaData) {
 
-		ScenarioRecord scenarioRecord = new ScenarioRecord();
-		scenarioRecord.scenarioStatus = ScenarioStatus.RUNNING;
-		scenarioRecord.metaData = metaData;
+		if (scenarioId == null) {
+			throw new ContractException(NucleusError.NULL_SCENARIO_ID);
+		}
 
-		scenarioRecords.put(scenarioId, scenarioRecord);
+		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
+		if (scenarioRecord == null) {
+			throw new ContractException(NucleusError.UNKNOWN_SCENARIO_ID, scenarioId);
+		}
+		if (scenarioRecord.scenarioStatus != ScenarioStatus.READY) {
+			throw new ContractException(NucleusError.SCENARIO_CANNOT_BE_EXECUTED, "scenario " + scenarioId + " " + scenarioRecord.scenarioStatus);
+		}
+		scenarioRecord.scenarioStatus = ScenarioStatus.RUNNING;
+		scenarioRecord.metaData.addAll(metaData);
+
+		
 
 		for (BiConsumer<ExperimentContext, Integer> consumer : simOpenConsumers) {
 			consumer.accept(experimentContext, scenarioId);
@@ -137,7 +146,7 @@ public final class ExperimentStateManager {
 			consumer.accept(experimentContext, scenarioId);
 		}
 
-		if (success && writer!=null) {
+		if (success && writer != null) {
 			try {
 				writer.write(scenarioId);
 				for (String metaDatum : scenarioRecord.metaData) {
@@ -286,6 +295,13 @@ public final class ExperimentStateManager {
 	private ExperimentStateManager(Data data) {
 		this.data = data;
 		experimentContext = new ExperimentContextImpl();
+
+		for (int i = 0; i < data.scenarioCount; i++) {
+			ScenarioRecord scenarioRecord = new ScenarioRecord();
+			scenarioRecord.scenarioStatus = ScenarioStatus.READY;
+			scenarioRecords.put(i, scenarioRecord);
+		}
+
 	}
 
 	private void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
@@ -402,7 +418,7 @@ public final class ExperimentStateManager {
 	}
 
 	private void writeProgressFile() {
-		if(data.progressLogFile == null) {
+		if (data.progressLogFile == null) {
 			return;
 		}
 		/*
@@ -426,20 +442,18 @@ public final class ExperimentStateManager {
 					writer.write("\t");
 					writer.write(metaDatum);
 				}
-				writer.write(LINE_SEPARATOR);				
+				writer.write(LINE_SEPARATOR);
 			}
 			writer.flush();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public synchronized void openExperiment() {
 
 		readProgressFile();
 		writeProgressFile();
-
-		
 
 		// handshake with the consumers
 		for (Consumer<ExperimentContext> consumer : data.contextConsumers) {
@@ -458,7 +472,9 @@ public final class ExperimentStateManager {
 		}
 
 		try {
-			writer.close();
+			if (writer != null) {
+				writer.close();
+			}
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}

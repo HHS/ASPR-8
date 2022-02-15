@@ -129,7 +129,6 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
 	 */
 	public void resolveEvent(Event event);
-	
 
 	/**
 	 * Returns true if and only if the given AgentId corresponds to an existing
@@ -137,11 +136,10 @@ public interface DataManagerContext extends SimulationContext {
 	 */
 	public boolean agentExists(AgentId agentId);
 
-	
 	/**
 	 * Subscribes the event resolver to events of the given type for the purpose
-	 * of execution of the event. Changes to data views should take
-	 * place during this phase.
+	 * of execution of the event. Changes to data views should take place during
+	 * this phase.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
@@ -149,7 +147,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
 	 *             event consumer is null
 	 */
-	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
+	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer);
 
 	/**
 	 * Subscribes the event resolver to events of the given type for handling
@@ -166,7 +164,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the resolver
 	 *             event consumer is null
 	 */
-	public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext,T> eventConsumer);
+	public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer);
 
 	/**
 	 * Unsubscribes the event resolver from events of the given type for all
@@ -178,19 +176,19 @@ public interface DataManagerContext extends SimulationContext {
 	 */
 	public void unSubscribe(Class<? extends Event> eventClass);
 
-	
-
-	
-
 	/**
-	 * Returns true if and only if there exists agent, report or resolver
-	 * subscriptions to the given event class type.
+	 * Returns true if and only if there are agent or data managers
+	 * subscribed to the given event type.
 	 */
 	public boolean subscribersExist(Class<? extends Event> eventClass);
-	
-	
+
 	public DataManagerId getDataManagerId();
-	
+
+	/**
+	 * Registers the given consumer to be executed at the end of the simulation.
+	 * Activity associated with the consumer should be limited to querying data
+	 * state and releasing output.
+	 */
 	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer);
 
 }
