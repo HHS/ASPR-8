@@ -1,15 +1,15 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import nucleus.AgentContext;
+import nucleus.ActorContext;
 
 /**
- * Test Support class that describes an action for an agent as a scheduled plan
+ * Test Support class that describes an action for an actor as a scheduled plan
  * with an optional key.
  */
-public class AgentActionPlan {
+public class TestActorPlan {
 
 	/*
 	 * Key value generator for plans
@@ -24,15 +24,17 @@ public class AgentActionPlan {
 
 	private final Object key;
 
+	private final boolean releaseKey;
+
 	private boolean executed;
 
-	private final Consumer<AgentContext> action;
+	private final Consumer<ActorContext> action;
 
 	/**
-	 * Constructs an agent action plan. If assignKey is false, then this agent
+	 * Constructs an actor action plan. If assignKey is false, then this actor
 	 * action plan will return an empty optional key.
 	 */
-	public AgentActionPlan(final double scheduledTime, Consumer<AgentContext> action, boolean assignKey) {
+	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> action, boolean assignKey) {
 		if (scheduledTime < 0) {
 			throw new RuntimeException("negative scheduled time");
 		}
@@ -41,30 +43,72 @@ public class AgentActionPlan {
 			throw new RuntimeException("null action plan");
 		}
 		this.scheduledTime = scheduledTime;
-		if (assignKey) {
-			this.key = getNextKey();
-		} else {
-			this.key = null;
-		}
+
+		this.key = getNextKey();
+
+		releaseKey = assignKey;
+
 		this.action = action;
 	}
 
 	/**
-	 * Constructs an agent action plan. A key value will be generated.
+	 * Constructs an actor action plan. A key value will be generated.
 	 */
-	public AgentActionPlan(final double scheduledTime, Consumer<AgentContext> action) {
+	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> action) {
 		this(scheduledTime, action, true);
 	}
-	
-	public AgentActionPlan(AgentActionPlan agentActionPlan) {
-		scheduledTime = agentActionPlan.scheduledTime;
-		key = agentActionPlan.key;
-		executed = agentActionPlan.executed;
-		action = agentActionPlan.action;
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (executed ? 1231 : 1237);
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + (releaseKey ? 1231 : 1237);
+		long temp;
+		temp = Double.doubleToLongBits(scheduledTime);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof TestActorPlan)) {
+			return false;
+		}
+		TestActorPlan other = (TestActorPlan) obj;
+		if (executed != other.executed) {
+			return false;
+		}
+		if (key == null) {
+			if (other.key != null) {
+				return false;
+			}
+		} else if (!key.equals(other.key)) {
+			return false;
+		}
+		if (releaseKey != other.releaseKey) {
+			return false;
+		}
+		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
+			return false;
+		}
+		return true;
+	}
+
+	public TestActorPlan(TestActorPlan testActorPlan) {
+		scheduledTime = testActorPlan.scheduledTime;
+		key = testActorPlan.key;
+		releaseKey = testActorPlan.releaseKey;
+		executed = testActorPlan.executed;
+		action = testActorPlan.action;
 	}
 
 	/**
-	 * Returns true if an only if this agent action plan was executed
+	 * Returns true if an only if this actor action plan was executed
 	 */
 	public boolean executed() {
 		return executed;
@@ -74,9 +118,9 @@ public class AgentActionPlan {
 	 * Package access. Executes the embedded action and marks this action plan
 	 * as executed.
 	 */
-	void executeAction(final AgentContext agentContext) {
+	void executeAction(final ActorContext actorContext) {
 		try {
-			action.accept(agentContext);
+			action.accept(actorContext);
 		} finally {
 			executed = true;
 		}
@@ -86,7 +130,10 @@ public class AgentActionPlan {
 	 * Returns the key, possibly empty, associated with this action plan
 	 */
 	public Optional<Object> getKey() {
-		return Optional.ofNullable(key);
+		if (releaseKey) {
+			return Optional.of(key);
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -95,7 +142,5 @@ public class AgentActionPlan {
 	public double getScheduledTime() {
 		return scheduledTime;
 	}
-
-	
 
 }

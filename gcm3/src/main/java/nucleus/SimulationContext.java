@@ -48,34 +48,34 @@ public interface SimulationContext {
 	public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler);
 	
 	/**
-	 * Returns true if an only if an agent is associated with the given id.
+	 * Returns true if an only if an actor is associated with the given id.
 	 * Tolerates null values.
 	 */
-	public boolean agentExists(AgentId agentId);
+	public boolean actorExists(ActorId actorId);
 	
 	/**
-	 * Adds an agent to the simulation. The agent is added immediately, but the
-	 * consumer of AgentContext is invoked after event resolution is finished
+	 * Adds an actor to the simulation. The actor is added immediately, but the
+	 * consumer of ActorContext is invoked after event resolution is finished
 	 * and before time progresses.
 	 * 
 	 * @throws ContractException
 	 *             
-	 *             <li>{@link NucleusError#NULL_AGENT_CONTEXT_CONSUMER} if the
-	 *             agent context consumer is null
+	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
+	 *             actor context consumer is null
 	 * 
 	 */
-	public AgentId addAgent(Consumer<AgentContext> consumer);
+	public ActorId addActor(Consumer<ActorContext> consumer);
 	
 	
 	/**
-	 * Removes the given agent from the simulation.
+	 * Removes the given actor from the simulation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_AGENT_ID} if the agentId is null
-	 *             <li>{@link NucleusError#NEGATIVE_AGENT_ID} if the agent id is
+	 *             <li>{@link NucleusError#NULL_ACTOR_ID} if the actorId is null
+	 *             <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the actor id is
 	 *             negative
-	 *             <li>{@link NucleusError#UNKNOWN_AGENT_ID} if the agent id
-	 *             does not correspond to a known agent
+	 *             <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the actor id
+	 *             does not correspond to a known actor
 	 */
-	public void removeAgent(AgentId agentId);
+	public void removeActor(ActorId actorId);
 }

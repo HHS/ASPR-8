@@ -30,7 +30,7 @@ import util.graph.MutableGraph;
  * from a set of contributed plugins. Plugins are loaded from the included
  * builder class and organized based upon their dependency requirementsF. Each
  * plugin contributes zero to many initialization behaviors that 1) start the
- * simulation, 2)initialize and publish data views, 3)create agents, 4) generate
+ * simulation, 2)initialize and publish data views, 3)create actors, 4) generate
  * initial events(mutations to data views), 5) register for event observation
  * and 6)schedule future plans. Time moves forward via planning and the
  * simulation halts once all plans are complete.
@@ -68,26 +68,26 @@ public class Simulation {
 		}
 
 		@Override
-		public AgentId addAgent(Consumer<AgentContext> consumer) {
+		public ActorId addActor(Consumer<ActorContext> consumer) {
 
 			if (consumer == null) {
-				throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
+				throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 			}
 
 			if (focalPluginId == null) {
 				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 			}
 
-			AgentId result = new AgentId(masterAgentIdValue++);
-			agentIds.add(result);
+			ActorId result = new ActorId(masterActorIdValue++);
+			actorIds.add(result);
 
-			// Do not queue the agent yet. We will wait until all the plugins
-			// have established their order and then add the agents to the
+			// Do not queue the actor yet. We will wait until all the plugins
+			// have established their order and then add the actors to the
 			// queue.
-			Map<AgentId, Consumer<AgentContext>> map = agentsMap.get(focalPluginId);
+			Map<ActorId, Consumer<ActorContext>> map = actorsMap.get(focalPluginId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
-				agentsMap.put(focalPluginId, map);
+				actorsMap.put(focalPluginId, map);
 			}
 
 			map.put(result, consumer);
@@ -103,40 +103,40 @@ public class Simulation {
 
 	}
 
-	private class AgentContextImpl implements AgentContext {
+	private class ActorContextImpl implements ActorContext {
 
 		@Override
-		public void addPlan(final Consumer<AgentContext> plan, final double planTime) {
-			addAgentPlan(plan, planTime, true, null);
+		public void addPlan(final Consumer<ActorContext> plan, final double planTime) {
+			addActorPlan(plan, planTime, true, null);
 		}
 
 		@Override
-		public void addKeyedPlan(final Consumer<AgentContext> plan, final double planTime, final Object key) {
+		public void addKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
 			validatePlanKeyNotNull(key);
-			validateAgentPlanKeyNotDuplicate(key);
-			addAgentPlan(plan, planTime, true, key);
+			validateActorPlanKeyNotDuplicate(key);
+			addActorPlan(plan, planTime, true, key);
 		}
 
 		@Override
-		public void addPassivePlan(final Consumer<AgentContext> plan, final double planTime) {
-			addAgentPlan(plan, planTime, false, null);
+		public void addPassivePlan(final Consumer<ActorContext> plan, final double planTime) {
+			addActorPlan(plan, planTime, false, null);
 		}
 
 		@Override
-		public void addPassiveKeyedPlan(final Consumer<AgentContext> plan, final double planTime, final Object key) {
+		public void addPassiveKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
 			validatePlanKeyNotNull(key);
-			validateAgentPlanKeyNotDuplicate(key);
-			addAgentPlan(plan, planTime, false, key);
+			validateActorPlanKeyNotDuplicate(key);
+			addActorPlan(plan, planTime, false, key);
 		}
 
 		@Override
-		public boolean agentExists(final AgentId agentId) {
-			return Simulation.this.agentExists(agentId);
+		public boolean actorExists(final ActorId actorId) {
+			return Simulation.this.actorExists(actorId);
 		}
 
 		@Override
-		public AgentId getAgentId() {
-			return focalAgentId;
+		public ActorId getActorId() {
+			return focalActorId;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -147,18 +147,18 @@ public class Simulation {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends Consumer<AgentContext>> Optional<T> getPlan(final Object key) {
-			return (Optional<T>) Simulation.this.getAgentPlan(key);
+		public <T extends Consumer<ActorContext>> Optional<T> getPlan(final Object key) {
+			return (Optional<T>) Simulation.this.getActorPlan(key);
 		}
 
 		@Override
 		public List<Object> getPlanKeys() {
-			return Simulation.this.getAgentPlanKeys();
+			return Simulation.this.getActorPlanKeys();
 		}
 
 		@Override
 		public Optional<Double> getPlanTime(final Object key) {
-			return Simulation.this.getAgentPlanTime(key);
+			return Simulation.this.getActorPlanTime(key);
 		}
 
 		@Override
@@ -173,7 +173,7 @@ public class Simulation {
 
 		@Override
 		public <T> Optional<T> removePlan(final Object key) {
-			return Simulation.this.removeAgentPlan(key);
+			return Simulation.this.removeActorPlan(key);
 		}
 
 		@Override
@@ -189,18 +189,18 @@ public class Simulation {
 		}
 
 		@Override
-		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<AgentContext, T> eventConsumer) {
-			Simulation.this.subscribeAgentToEvent(eventLabel, eventConsumer);
+		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
+			Simulation.this.subscribeActorToEvent(eventLabel, eventConsumer);
 		}
 
 		@Override
-		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<AgentContext, T> eventConsumer) {
-			Simulation.this.subscribeAgentToEvent(eventClass, eventConsumer);
+		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
+			Simulation.this.subscribeActorToEvent(eventClass, eventConsumer);
 		}
 
 		@Override
 		public <T extends Event> void unsubscribe(EventLabel<T> eventLabel) {
-			Simulation.this.unsubscribeAgentFromEvent(eventLabel);
+			Simulation.this.unsubscribeActorFromEvent(eventLabel);
 		}
 
 		@Override
@@ -209,23 +209,23 @@ public class Simulation {
 		}
 
 		@Override
-		public void subscribeToSimulationClose(Consumer<AgentContext> consumer) {
-			subscribeAgentToSimulationClose(consumer);
+		public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
+			subscribeActorToSimulationClose(consumer);
 		}
 
 		@Override
-		public AgentId addAgent(Consumer<AgentContext> consumer) {
-			return Simulation.this.addAgent(consumer);
+		public ActorId addActor(Consumer<ActorContext> consumer) {
+			return Simulation.this.addActor(consumer);
 		}
 
 		@Override
-		public void removeAgent(AgentId agentId) {
-			Simulation.this.removeAgent(agentId);
+		public void removeActor(ActorId actorId) {
+			Simulation.this.removeActor(actorId);
 		}
 
 		@Override
 		public void unSubscribe(Class<? extends Event> eventClass) {
-			unSubscribeAgentToEvent(eventClass);
+			unSubscribeActorToEvent(eventClass);
 		}
 
 	}
@@ -239,8 +239,8 @@ public class Simulation {
 		private long arrivalId;
 		private boolean isActive;
 
-		private Consumer<AgentContext> agentPlan;
-		private AgentId agentId;
+		private Consumer<ActorContext> actorPlan;
+		private ActorId actorId;
 
 		private Consumer<DataManagerContext> dataManagerPlan;
 		private DataManagerId dataManagerId;
@@ -266,8 +266,8 @@ public class Simulation {
 			builder.append(planner);
 			builder.append(" = ");
 			switch (planner) {
-			case AGENT:
-				builder.append(agentId);
+			case ACTOR:
+				builder.append(actorId);
 				break;
 			case DATA_MANAGER:
 				builder.append(dataManagerId);
@@ -283,15 +283,15 @@ public class Simulation {
 		}
 	}
 
-	private static class AgentContentRec {
+	private static class ActorContentRec {
 
 		private Event event;
 
-		private MetaAgentEventConsumer<?> metaAgentEventConsumer;
+		private MetaActorEventConsumer<?> metaActorEventConsumer;
 
-		private Consumer<AgentContext> plan;
+		private Consumer<ActorContext> plan;
 
-		private AgentId agentId;
+		private ActorId actorId;
 
 	}
 
@@ -362,7 +362,7 @@ public class Simulation {
 	 * IS CRITICAL TO THE FUNCTION OF THE SIMULATION!
 	 */
 	private static enum Planner {
-		DATA_MANAGER, AGENT
+		DATA_MANAGER, ACTOR
 	}
 
 	private static class DataManagerContextImpl implements DataManagerContext {
@@ -375,8 +375,8 @@ public class Simulation {
 		}
 
 		@Override
-		public AgentId addAgent(Consumer<AgentContext> consumer) {
-			return simulation.addAgent(consumer);
+		public ActorId addActor(Consumer<ActorContext> consumer) {
+			return simulation.addActor(consumer);
 		}
 
 		@Override
@@ -404,8 +404,8 @@ public class Simulation {
 		}
 
 		@Override
-		public boolean agentExists(final AgentId agentId) {
-			return simulation.agentExists(agentId);
+		public boolean actorExists(final ActorId actorId) {
+			return simulation.actorExists(actorId);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -447,8 +447,8 @@ public class Simulation {
 		}
 
 		@Override
-		public void removeAgent(final AgentId agentId) {
-			simulation.removeAgent(agentId);
+		public void removeActor(final ActorId actorId) {
+			simulation.removeActor(actorId);
 		}
 
 		@Override
@@ -526,8 +526,8 @@ public class Simulation {
 		}
 	};
 
-	private int masterAgentIdValue;
-	private Map<PluginId, Map<AgentId, Consumer<AgentContext>>> agentsMap = new LinkedHashMap<>();
+	private int masterActorIdValue;
+	private Map<PluginId, Map<ActorId, Consumer<ActorContext>>> actorsMap = new LinkedHashMap<>();
 
 	// planning
 	private long masterPlanningArrivalId;
@@ -536,25 +536,25 @@ public class Simulation {
 	private int activePlanCount;
 	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
 
-	// agents
+	// actors
 
-	private final Map<Class<? extends Event>, Map<AgentId, MetaAgentEventConsumer<?>>> agentEventMap = new LinkedHashMap<>();
+	private final Map<Class<? extends Event>, Map<ActorId, MetaActorEventConsumer<?>>> actorEventMap = new LinkedHashMap<>();
 
-	private final Map<AgentId, Consumer<AgentContext>> simulationCloseAgentCallbacks = new LinkedHashMap<>();
+	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
 	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
 
-	private final AgentContext agentContext = new AgentContextImpl();
+	private final ActorContext actorContext = new ActorContextImpl();
 
-	private final List<AgentId> agentIds = new ArrayList<>();
+	private final List<ActorId> actorIds = new ArrayList<>();
 
-	private boolean containsDeletedAgents;
+	private boolean containsDeletedActors;
 
-	private final Map<AgentId, Map<Object, PlanRec>> agentPlanMap = new LinkedHashMap<>();
+	private final Map<ActorId, Map<Object, PlanRec>> actorPlanMap = new LinkedHashMap<>();
 
-	private final Deque<AgentContentRec> agentQueue = new ArrayDeque<>();
+	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 
-	private AgentId focalAgentId;
+	private ActorId focalActorId;
 
 	private boolean started;
 
@@ -570,7 +570,7 @@ public class Simulation {
 		this.data = data;
 	}
 
-	private void validateAgentPlan(final Consumer<AgentContext> plan) {
+	private void validateActorPlan(final Consumer<ActorContext> plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
@@ -582,28 +582,28 @@ public class Simulation {
 		}
 	}
 
-	private void addAgentPlan(final Consumer<AgentContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	private void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validatePlanTime(time);
-		validateAgentPlan(plan);
+		validateActorPlan(plan);
 
 		final PlanRec planRec = new PlanRec();
 		planRec.isActive = isActivePlan;
 		planRec.arrivalId = masterPlanningArrivalId++;
-		planRec.planner = Planner.AGENT;
+		planRec.planner = Planner.ACTOR;
 		planRec.time = FastMath.max(time, this.time);
-		planRec.agentPlan = plan;
+		planRec.actorPlan = plan;
 		planRec.key = key;
 
 		Map<Object, PlanRec> map;
 
-		planRec.agentId = focalAgentId;
+		planRec.actorId = focalActorId;
 
 		if (key != null) {
-			map = agentPlanMap.get(focalAgentId);
+			map = actorPlanMap.get(focalActorId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
-				agentPlanMap.put(focalAgentId, map);
+				actorPlanMap.put(focalActorId, map);
 			}
 			map.put(key, planRec);
 		}
@@ -652,24 +652,24 @@ public class Simulation {
 		}
 	}
 
-	private void validateAgentPlanKeyNotDuplicate(final Object key) {
-		if (getAgentPlan(key).isPresent()) {
+	private void validateActorPlanKeyNotDuplicate(final Object key) {
+		if (getActorPlan(key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Optional<T> removeAgentPlan(final Object key) {
+	private <T> Optional<T> removeActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
-		Map<Object, PlanRec> map = agentPlanMap.get(focalAgentId);
+		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 
 		T result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
-				result = (T) planRecord.agentPlan;
-				planRecord.agentPlan = null;
+				result = (T) planRecord.actorPlan;
+				planRecord.actorPlan = null;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -734,7 +734,7 @@ public class Simulation {
 
 	/**
 	 * Executes this Simulation instance. Contributed plugin initializers are
-	 * accessed in the order of their addition to the builder. Agents and data
+	 * accessed in the order of their addition to the builder. Actors and data
 	 * managers are organized based on their plugin dependency ordering. Time
 	 * starts at zero and flows based on planning. When all plans are executed,
 	 * time stops and the simulation halts.
@@ -773,7 +773,7 @@ public class Simulation {
 		}
 
 		/*
-		 * Retrieve the data managers and agents from the plugins in the correct
+		 * Retrieve the data managers and actors from the plugins in the correct
 		 * order
 		 */
 		for (PluginId pluginId : getOrderedPluginIds()) {
@@ -788,14 +788,14 @@ public class Simulation {
 					dataManager.init(dataManagerContext);
 				}
 			}
-			Map<AgentId, Consumer<AgentContext>> map = agentsMap.get(pluginId);
+			Map<ActorId, Consumer<ActorContext>> map = actorsMap.get(pluginId);
 			if (map != null) {
-				for (AgentId agentId : map.keySet()) {
-					agentIds.add(agentId);
-					final AgentContentRec agentContentRec = new AgentContentRec();
-					agentContentRec.agentId = agentId;
-					agentContentRec.plan = map.get(agentId);
-					agentQueue.add(agentContentRec);
+				for (ActorId actorId : map.keySet()) {
+					actorIds.add(actorId);
+					final ActorContentRec actorContentRec = new ActorContentRec();
+					actorContentRec.actorId = actorId;
+					actorContentRec.plan = map.get(actorId);
+					actorQueue.add(actorContentRec);
 				}
 			}
 		}
@@ -806,8 +806,8 @@ public class Simulation {
 		//
 		// };
 
-		// flush the agent queue
-		executeAgentQueue();
+		// flush the actor queue
+		executeActorQueue();
 
 		while (processEvents && (activePlanCount > 0)) {
 			final PlanRec planRec = planningQueue.poll();
@@ -816,17 +816,17 @@ public class Simulation {
 				activePlanCount--;
 			}
 			switch (planRec.planner) {
-			case AGENT:
+			case ACTOR:
 
-				if (planRec.agentPlan != null) {
+				if (planRec.actorPlan != null) {
 					if (planRec.key != null) {
-						agentPlanMap.get(planRec.agentId).remove(planRec.key);
+						actorPlanMap.get(planRec.actorId).remove(planRec.key);
 					}
-					AgentContentRec agentContentRec = new AgentContentRec();
-					agentContentRec.agentId = planRec.agentId;
-					agentContentRec.plan = planRec.agentPlan;
-					agentQueue.add(agentContentRec);
-					executeAgentQueue();
+					ActorContentRec actorContentRec = new ActorContentRec();
+					actorContentRec.actorId = planRec.actorId;
+					actorContentRec.plan = planRec.actorPlan;
+					actorQueue.add(actorContentRec);
+					executeActorQueue();
 				}
 				break;
 			case DATA_MANAGER:
@@ -836,7 +836,7 @@ public class Simulation {
 					}
 					DataManagerContext dataManagerContext = dataManagerContextMap.get(planRec.dataManagerId);
 					planRec.dataManagerPlan.accept(dataManagerContext);
-					executeAgentQueue();
+					executeActorQueue();
 				}
 				break;
 			default:
@@ -850,51 +850,51 @@ public class Simulation {
 			dataManagerCloseCallback.accept(dataManagerContext);
 		}
 
-		for (AgentId agentId : simulationCloseAgentCallbacks.keySet()) {
-			if (agentIds.get(agentId.getValue()) != null) {
-				focalAgentId = agentId;
-				Consumer<AgentContext> simulationCloseCallback = simulationCloseAgentCallbacks.get(agentId);
-				simulationCloseCallback.accept(agentContext);
-				focalAgentId = null;
+		for (ActorId actorId : simulationCloseActorCallbacks.keySet()) {
+			if (actorIds.get(actorId.getValue()) != null) {
+				focalActorId = actorId;
+				Consumer<ActorContext> simulationCloseCallback = simulationCloseActorCallbacks.get(actorId);
+				simulationCloseCallback.accept(actorContext);
+				focalActorId = null;
 			}
 		}
 
 	}
 
-	private void executeAgentQueue() {
-		while (!agentQueue.isEmpty()) {
-			final AgentContentRec agentContentRec = agentQueue.pollFirst();
+	private void executeActorQueue() {
+		while (!actorQueue.isEmpty()) {
+			final ActorContentRec actorContentRec = actorQueue.pollFirst();
 
-			if (containsDeletedAgents) {
+			if (containsDeletedActors) {
 				/*
-				 * we know that the agent id was valid at some point and that
-				 * the agentMap never shrinks, so we do not have to range check
-				 * the agent id
+				 * we know that the actor id was valid at some point and that
+				 * the actorMap never shrinks, so we do not have to range check
+				 * the actor id
 				 */
-				if (agentIds.get(agentContentRec.agentId.getValue()) == null) {
+				if (actorIds.get(actorContentRec.actorId.getValue()) == null) {
 					continue;
 				}
 			}
 
-			focalAgentId = agentContentRec.agentId;
-			if (agentContentRec.event != null) {
-				agentContentRec.metaAgentEventConsumer.handleEvent(agentContentRec.event);
+			focalActorId = actorContentRec.actorId;
+			if (actorContentRec.event != null) {
+				actorContentRec.metaActorEventConsumer.handleEvent(actorContentRec.event);
 			} else {
-				agentContentRec.plan.accept(agentContext);
+				actorContentRec.plan.accept(actorContext);
 			}
-			focalAgentId = null;
+			focalActorId = null;
 		}
 
 	}
 
-	private Optional<Consumer<AgentContext>> getAgentPlan(final Object key) {
+	private Optional<Consumer<ActorContext>> getActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = agentPlanMap.get(focalAgentId);
-		Consumer<AgentContext> result = null;
+		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
+		Consumer<ActorContext> result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
 			if (planRecord != null) {
-				result = planRecord.agentPlan;
+				result = planRecord.actorPlan;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -913,8 +913,8 @@ public class Simulation {
 		return result;
 	}
 
-	private List<Object> getAgentPlanKeys() {
-		Map<Object, PlanRec> map = agentPlanMap.get(focalAgentId);
+	private List<Object> getActorPlanKeys() {
+		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
 		}
@@ -929,9 +929,9 @@ public class Simulation {
 		return new ArrayList<>();
 	}
 
-	private Optional<Double> getAgentPlanTime(final Object key) {
+	private Optional<Double> getActorPlanTime(final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = agentPlanMap.get(focalAgentId);
+		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 		Double result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
@@ -1005,7 +1005,7 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeAgentToEvent(Class<? extends Event> eventClass, BiConsumer<AgentContext, T> eventConsumer) {
+	private <T extends Event> void subscribeActorToEvent(Class<? extends Event> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1014,13 +1014,13 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
-		Map<AgentId, MetaAgentEventConsumer<?>> map = agentEventMap.get(eventClass);
+		Map<ActorId, MetaActorEventConsumer<?>> map = actorEventMap.get(eventClass);
 		if (map == null) {
 			map = new LinkedHashMap<>();
-			agentEventMap.put(eventClass, map);
+			actorEventMap.put(eventClass, map);
 		}
-		MetaAgentEventConsumer<T> metaAgentEventConsumer = new MetaAgentEventConsumer<>(agentContext, eventConsumer);
-		map.put(focalAgentId, metaAgentEventConsumer);
+		MetaActorEventConsumer<T> metaActorEventConsumer = new MetaActorEventConsumer<>(actorContext, eventConsumer);
+		map.put(focalActorId, metaActorEventConsumer);
 	}
 
 	private void releaseOutput(Object output) {
@@ -1063,13 +1063,13 @@ public class Simulation {
 
 	}
 
-	private static class MetaAgentEventConsumer<T extends Event> {
+	private static class MetaActorEventConsumer<T extends Event> {
 
-		private final BiConsumer<AgentContext, T> eventConsumer;
+		private final BiConsumer<ActorContext, T> eventConsumer;
 
-		private final AgentContext context;
+		private final ActorContext context;
 
-		public MetaAgentEventConsumer(AgentContext context, BiConsumer<AgentContext, T> eventConsumer) {
+		public MetaActorEventConsumer(ActorContext context, BiConsumer<ActorContext, T> eventConsumer) {
 			this.eventConsumer = eventConsumer;
 			this.context = context;
 		}
@@ -1117,34 +1117,34 @@ public class Simulation {
 		return false;
 	}
 
-	private boolean agentExists(final AgentId agentId) {
-		return agentIds.contains(agentId);
+	private boolean actorExists(final ActorId actorId) {
+		return actorIds.contains(actorId);
 	}
 
-	private void broadcastEventToAgentSubscribers(final Event event) {
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>> map1 = agentPubSub.get(event.getClass());
+	private void broadcastEventToActorSubscribers(final Event event) {
+		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(event.getClass());
 		if (map1 == null) {
 			return;
 		}
 		Object primaryKeyValue = event.getPrimaryKeyValue();
-		Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
+		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
 		if (map2 == null) {
 			return;
 		}
 
 		for (EventLabelerId eventLabelerId : map2.keySet()) {
 			MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
-			EventLabel<?> eventLabel = metaEventLabeler.getEventLabel(agentContext, event);
-			Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>> map3 = map2.get(eventLabelerId);
-			Map<AgentId, MetaAgentEventConsumer<?>> map4 = map3.get(eventLabel);
+			EventLabel<?> eventLabel = metaEventLabeler.getEventLabel(actorContext, event);
+			Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>> map3 = map2.get(eventLabelerId);
+			Map<ActorId, MetaActorEventConsumer<?>> map4 = map3.get(eventLabel);
 			if (map4 != null) {
-				for (AgentId agentId : map4.keySet()) {
-					MetaAgentEventConsumer<?> metaConsumer = map4.get(agentId);
-					final AgentContentRec agentContentRec = new AgentContentRec();
-					agentContentRec.event = event;
-					agentContentRec.agentId = agentId;
-					agentContentRec.metaAgentEventConsumer = metaConsumer;
-					agentQueue.add(agentContentRec);
+				for (ActorId actorId : map4.keySet()) {
+					MetaActorEventConsumer<?> metaConsumer = map4.get(actorId);
+					final ActorContentRec actorContentRec = new ActorContentRec();
+					actorContentRec.event = event;
+					actorContentRec.actorId = actorId;
+					actorContentRec.metaActorEventConsumer = metaConsumer;
+					actorQueue.add(actorContentRec);
 
 				}
 			}
@@ -1174,7 +1174,7 @@ public class Simulation {
 		id_Labeler_Map.put(metaEventLabeler.getId(), metaEventLabeler);
 	}
 
-	private <T extends Event> void subscribeAgentToEvent(EventLabel<T> eventLabel, BiConsumer<AgentContext, T> eventConsumer) {
+	private <T extends Event> void subscribeActorToEvent(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
 
 		if (eventLabel == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
@@ -1205,37 +1205,37 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
 		}
 
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>> map1 = agentPubSub.get(eventLabel.getEventClass());
+		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(eventLabel.getEventClass());
 		if (map1 == null) {
 			map1 = new LinkedHashMap<>();
-			agentPubSub.put(eventClass, map1);
+			actorPubSub.put(eventClass, map1);
 			incrementSubscriberCount(eventClass);
 		}
 
-		Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
+		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
 		if (map2 == null) {
 			map2 = new LinkedHashMap<>();
 			map1.put(primaryKeyValue, map2);
 		}
 
-		Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>> map3 = map2.get(eventLabelerId);
+		Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>> map3 = map2.get(eventLabelerId);
 		if (map3 == null) {
 			map3 = new LinkedHashMap<>();
 			map2.put(eventLabelerId, map3);
 		}
 
-		Map<AgentId, MetaAgentEventConsumer<?>> map4 = map3.get(eventLabel);
+		Map<ActorId, MetaActorEventConsumer<?>> map4 = map3.get(eventLabel);
 		if (map4 == null) {
 			map4 = new LinkedHashMap<>();
 			map3.put(eventLabel, map4);
 		}
 
-		MetaAgentEventConsumer<T> metaEventConsumer = new MetaAgentEventConsumer<>(agentContext, eventConsumer);
-		map4.put(focalAgentId, metaEventConsumer);
+		MetaActorEventConsumer<T> metaEventConsumer = new MetaActorEventConsumer<>(actorContext, eventConsumer);
+		map4.put(focalActorId, metaEventConsumer);
 
 	}
 
-	private <T extends Event> void unsubscribeAgentFromEvent(EventLabel<T> eventLabel) {
+	private <T extends Event> void unsubscribeActorFromEvent(EventLabel<T> eventLabel) {
 
 		if (eventLabel == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
@@ -1261,31 +1261,31 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
 		}
 
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>> map1 = agentPubSub.get(eventClass);
+		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(eventClass);
 
 		if (map1 == null) {
 			return;
 		}
 
-		Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
+		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
 
 		if (map2 == null) {
 			return;
 		}
 
-		Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>> map3 = map2.get(eventLabelerId);
+		Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>> map3 = map2.get(eventLabelerId);
 
 		if (map3 == null) {
 			return;
 		}
 
-		Map<AgentId, MetaAgentEventConsumer<?>> map4 = map3.get(eventLabel);
+		Map<ActorId, MetaActorEventConsumer<?>> map4 = map3.get(eventLabel);
 
 		if (map4 == null) {
 			return;
 		}
 
-		map4.remove(focalAgentId);
+		map4.remove(focalActorId);
 
 		if (map4.isEmpty()) {
 			map3.remove(eventLabel);
@@ -1294,7 +1294,7 @@ public class Simulation {
 				if (map2.isEmpty()) {
 					map1.remove(primaryKeyValue);
 					if (map1.isEmpty()) {
-						agentPubSub.remove(eventClass);
+						actorPubSub.remove(eventClass);
 						decrementSubscriberCount(eventClass);
 					}
 				}
@@ -1304,13 +1304,13 @@ public class Simulation {
 
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
 
-	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<AgentId, MetaAgentEventConsumer<?>>>>>> agentPubSub = new LinkedHashMap<>();
+	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>>> actorPubSub = new LinkedHashMap<>();
 
-	private void subscribeAgentToSimulationClose(Consumer<AgentContext> consumer) {
+	private void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new RuntimeException("null close handler");
 		}
-		simulationCloseAgentCallbacks.put(focalAgentId, consumer);
+		simulationCloseActorCallbacks.put(focalActorId, consumer);
 	}
 
 	private void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
@@ -1404,12 +1404,12 @@ public class Simulation {
 		}
 	}
 
-	private void unSubscribeAgentToEvent(Class<? extends Event> eventClass) {
+	private void unSubscribeActorToEvent(Class<? extends Event> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
-		Map<AgentId, MetaAgentEventConsumer<?>> map = agentEventMap.get(eventClass);
-		map.remove(focalAgentId);
+		Map<ActorId, MetaActorEventConsumer<?>> map = actorEventMap.get(eventClass);
+		map.remove(focalActorId);
 	}
 
 	private void resolveEvent(final Event event) {
@@ -1418,19 +1418,19 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
 
-		Map<AgentId, MetaAgentEventConsumer<?>> consumerMap = agentEventMap.get(event.getClass());
+		Map<ActorId, MetaActorEventConsumer<?>> consumerMap = actorEventMap.get(event.getClass());
 		if (consumerMap != null) {
-			for (final AgentId agentId : consumerMap.keySet()) {
-				MetaAgentEventConsumer<?> metaAgentEventConsumer = consumerMap.get(agentId);
-				final AgentContentRec contentRec = new AgentContentRec();
-				contentRec.agentId = agentId;
+			for (final ActorId actorId : consumerMap.keySet()) {
+				MetaActorEventConsumer<?> metaActorEventConsumer = consumerMap.get(actorId);
+				final ActorContentRec contentRec = new ActorContentRec();
+				contentRec.actorId = actorId;
 				contentRec.event = event;
-				contentRec.metaAgentEventConsumer = metaAgentEventConsumer;
-				agentQueue.add(contentRec);
+				contentRec.metaActorEventConsumer = metaActorEventConsumer;
+				actorQueue.add(contentRec);
 			}
 		}
 
-		broadcastEventToAgentSubscribers(event);
+		broadcastEventToActorSubscribers(event);
 
 		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(event.getClass());
 		if (list != null) {
@@ -1440,47 +1440,47 @@ public class Simulation {
 		}
 	}
 
-	private AgentId addAgent(Consumer<AgentContext> consumer) {
+	private ActorId addActor(Consumer<ActorContext> consumer) {
 
-		AgentId result = new AgentId(masterAgentIdValue++);
+		ActorId result = new ActorId(masterActorIdValue++);
 
 		if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_AGENT_CONTEXT_CONSUMER);
+			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
 
-		agentIds.add(result);
+		actorIds.add(result);
 
-		final AgentContentRec agentContentRec = new AgentContentRec();
-		agentContentRec.agentId = result;
-		agentContentRec.plan = consumer;
-		agentQueue.add(agentContentRec);
+		final ActorContentRec actorContentRec = new ActorContentRec();
+		actorContentRec.actorId = result;
+		actorContentRec.plan = consumer;
+		actorQueue.add(actorContentRec);
 		return result;
 	}
 
-	private void removeAgent(final AgentId agentId) {
-		if (agentId == null) {
-			throw new ContractException(NucleusError.NULL_AGENT_ID);
+	private void removeActor(final ActorId actorId) {
+		if (actorId == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_ID);
 		}
 
-		int agentIndex = agentId.getValue();
+		int actorIndex = actorId.getValue();
 
-		if (agentIndex < 0) {
-			throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+		if (actorIndex < 0) {
+			throw new ContractException(NucleusError.UNKNOWN_ACTOR_ID);
 		}
 
-		if (agentIndex >= agentIds.size()) {
-			throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+		if (actorIndex >= actorIds.size()) {
+			throw new ContractException(NucleusError.UNKNOWN_ACTOR_ID);
 		}
 
-		AgentId existingAgentId = agentIds.get(agentIndex);
+		ActorId existingActorId = actorIds.get(actorIndex);
 
-		if (existingAgentId == null) {
-			throw new ContractException(NucleusError.UNKNOWN_AGENT_ID);
+		if (existingActorId == null) {
+			throw new ContractException(NucleusError.UNKNOWN_ACTOR_ID);
 		}
 
-		agentIds.set(agentIndex, null);
+		actorIds.set(actorIndex, null);
 
-		containsDeletedAgents = true;
+		containsDeletedActors = true;
 	}
 
 	/////////////////////////////////
@@ -1535,7 +1535,7 @@ public class Simulation {
 	private Map<DataManagerId, DataManagerContext> dataManagerContextMap = new LinkedHashMap<>();
 
 	//////////////////////////////
-	// agent support
+	// actor support
 	//////////////////////////////
 
 }

@@ -1,26 +1,29 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import java.util.List;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 
-public class ActionDataManager extends DataManager {
-	private final Object alias;
-	public ActionDataManager(Object alias) {
+public class TestDataManager extends DataManager {
+	private Object alias;
+	
+	
+	
+	void setAlias(Object alias){
 		this.alias = alias;
 	}
 	
 	@Override
 	protected void init(DataManagerContext dataManagerContext) {
-		ActionPluginDataManager actionPluginDataManager = dataManagerContext.getDataManager(ActionPluginDataManager.class).get();
-		actionPluginDataManager.setDataManagerAlias(dataManagerContext.getDataManagerId(),alias);
-		List<DataManagerActionPlan> dataManagerActionPlans = actionPluginDataManager.getDataManagerActionPlans(this.getClass());
-		for (final DataManagerActionPlan dataManagerActionPlan : dataManagerActionPlans) {
-			if (dataManagerActionPlan.getKey() != null) {
-				dataManagerContext.addKeyedPlan(dataManagerActionPlan::executeAction, dataManagerActionPlan.getScheduledTime(), dataManagerActionPlan.getKey());
+		TestPluginDataManager testPluginDataManager = dataManagerContext.getDataManager(TestPluginDataManager.class).get();
+		testPluginDataManager.setDataManagerAlias(dataManagerContext.getDataManagerId(),alias);
+		List<TestDataManagerPlan> testDataManagerPlans = testPluginDataManager.getDataManagerActionPlans(this.getClass());
+		for (final TestDataManagerPlan testDataManagerPlan : testDataManagerPlans) {
+			if (testDataManagerPlan.getKey() != null) {
+				dataManagerContext.addKeyedPlan(testDataManagerPlan::executeAction, testDataManagerPlan.getScheduledTime(), testDataManagerPlan.getKey());
 			} else {
-				dataManagerContext.addPlan(dataManagerActionPlan::executeAction, dataManagerActionPlan.getScheduledTime());
+				dataManagerContext.addPlan(testDataManagerPlan::executeAction, testDataManagerPlan.getScheduledTime());
 			}
 		}
 	}

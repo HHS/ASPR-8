@@ -1,4 +1,4 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 import nucleus.DataManagerContext;
 
 /**
- * Test Support class that describes an action for a data manager as a scheduled plan with an
- * optional key.
+ * Test Support class that describes an action for a data manager as a scheduled
+ * plan with an optional key.
  */
-public class DataManagerActionPlan {
+public class TestDataManagerPlan {
 
 	/*
 	 * Key value generator for plans
@@ -24,18 +24,21 @@ public class DataManagerActionPlan {
 
 	private final Object key;
 
+	private final boolean releaseKey;
+
 	private boolean executed;
 
 	private final Consumer<DataManagerContext> action;
 
-	public DataManagerActionPlan(DataManagerActionPlan dataManagerActionPlan) {
-		scheduledTime = dataManagerActionPlan.scheduledTime;
-		key = dataManagerActionPlan.key;
-		executed = dataManagerActionPlan.executed;
-		action = dataManagerActionPlan.action;
+	public TestDataManagerPlan(TestDataManagerPlan testDataManagerPlan) {
+		scheduledTime = testDataManagerPlan.scheduledTime;
+		key = testDataManagerPlan.key;
+		releaseKey = testDataManagerPlan.releaseKey;
+		executed = testDataManagerPlan.executed;
+		action = testDataManagerPlan.action;
 	}
-	
-	public DataManagerActionPlan(final double scheduledTime, Consumer<DataManagerContext> action, boolean assignKey) {
+
+	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> action, boolean assignKey) {
 		if (scheduledTime < 0) {
 			throw new RuntimeException("negative scheduled time");
 		}
@@ -44,15 +47,12 @@ public class DataManagerActionPlan {
 			throw new RuntimeException("null action plan");
 		}
 		this.scheduledTime = scheduledTime;
-		if (assignKey) {
-			this.key = getNextKey();
-		} else {
-			this.key = null;
-		}
+		this.key = getNextKey();
+		this.releaseKey = assignKey;
 		this.action = action;
 	}
 
-	public DataManagerActionPlan(final double scheduledTime, Consumer<DataManagerContext> action) {
+	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> action) {
 		this(scheduledTime, action, true);
 	}
 
@@ -64,19 +64,63 @@ public class DataManagerActionPlan {
 	 * Package access. Executes the embedded action and marks this action plan
 	 * as executed.
 	 */
-	void executeAction(final DataManagerContext agentContext) {
+	void executeAction(final DataManagerContext dataManagerContext) {
 		try {
-			action.accept(agentContext);
+			action.accept(dataManagerContext);
 		} finally {
 			executed = true;
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (executed ? 1231 : 1237);
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		result = prime * result + (releaseKey ? 1231 : 1237);
+		long temp;
+		temp = Double.doubleToLongBits(scheduledTime);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof TestDataManagerPlan)) {
+			return false;
+		}
+		TestDataManagerPlan other = (TestDataManagerPlan) obj;
+		if (executed != other.executed) {
+			return false;
+		}
+		if (key == null) {
+			if (other.key != null) {
+				return false;
+			}
+		} else if (!key.equals(other.key)) {
+			return false;
+		}
+		if (releaseKey != other.releaseKey) {
+			return false;
+		}
+		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
 	 * Returns the key, possibly null, associated with this action plan
 	 */
 	public Optional<Object> getKey() {
-		return Optional.ofNullable(key);
+		if (releaseKey) {
+			return Optional.of(key);
+		}
+		return Optional.empty();
 	}
 
 	/**

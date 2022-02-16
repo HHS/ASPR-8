@@ -35,8 +35,8 @@ public interface DataManagerContext extends SimulationContext {
 	 * Schedules a plan that will be executed at the given time. If the plan
 	 * time is less than the current time the plan is scheduled for immediate
 	 * execution. The plan is associated with the given key and can be canceled
-	 * or retrieved via this key. Keys must be unique to the agent doing the
-	 * planning, but can be repeated across agents and other planning entities.
+	 * or retrieved via this key. Keys must be unique to the actor doing the
+	 * planning, but can be repeated across actors and other planning entities.
 	 * Use of keys with plans should be avoided unless retrieval or cancellation
 	 * is needed.
 	 * 
@@ -69,8 +69,8 @@ public interface DataManagerContext extends SimulationContext {
 	 * Schedules a plan that will be executed at the given time. If the plan
 	 * time is less than the current time the plan is scheduled for immediate
 	 * execution. The plan is associated with the given key and can be canceled
-	 * or retrieved via this key. Keys must be unique to the agent doing the
-	 * planning, but can be repeated across agents and other planning entities.
+	 * or retrieved via this key. Keys must be unique to the actor doing the
+	 * planning, but can be repeated across actors and other planning entities.
 	 * Use of keys with plans should be avoided unless retrieval or cancellation
 	 * is needed.Passive plans are not required to execute and the simulation
 	 * will terminate if only passive plans remain on the planning schedule.
@@ -129,10 +129,10 @@ public interface DataManagerContext extends SimulationContext {
 	public void resolveEvent(Event event);
 
 	/**
-	 * Returns true if and only if the given AgentId corresponds to an existing
-	 * agent
+	 * Returns true if and only if the given ActorId corresponds to an existing
+	 * actor
 	 */
-	public boolean agentExists(AgentId agentId);
+	public boolean actorExists(ActorId actorId);
 
 	/**
 	 * Subscribes the data manager to events of the given type for the purpose
@@ -172,7 +172,7 @@ public interface DataManagerContext extends SimulationContext {
 	public void unSubscribe(Class<? extends Event> eventClass);
 
 	/**
-	 * Returns true if and only if there are agent or data managers subscribed
+	 * Returns true if and only if there are actor or data managers subscribed
 	 * to the given event type.
 	 */
 	public boolean subscribersExist(Class<? extends Event> eventClass);

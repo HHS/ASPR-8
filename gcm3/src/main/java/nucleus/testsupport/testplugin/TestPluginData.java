@@ -1,10 +1,11 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
@@ -12,7 +13,7 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 
 @ThreadSafe
-public class ActionPluginData implements PluginData {
+public class TestPluginData implements PluginData {
 
 	private static class Data {
 
@@ -20,57 +21,102 @@ public class ActionPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-
 			
-			for(Object alias : data.agentActionPlanMap.keySet()) {
-				List<AgentActionPlan> oldPlans = data.agentActionPlanMap.get(alias);
-				List<AgentActionPlan> newPlans = new ArrayList<>();
-				agentActionPlanMap.put(alias, newPlans);
-				for(AgentActionPlan oldPlan : oldPlans) {
-					AgentActionPlan newPlan = new AgentActionPlan(oldPlan);
+			for(Object alias : data.actorActionPlanMap.keySet()) {
+				List<TestActorPlan> oldPlans = data.actorActionPlanMap.get(alias);
+				List<TestActorPlan> newPlans = new ArrayList<>();
+				actorActionPlanMap.put(alias, newPlans);
+				for(TestActorPlan oldPlan : oldPlans) {
+					TestActorPlan newPlan = new TestActorPlan(oldPlan);
 					newPlans.add(newPlan);
 				}				
 			}
 			
-			agentAliasesMarkedForConstruction.addAll(data.agentAliasesMarkedForConstruction);
-			
-			dataManagerAliasMap.putAll(data.dataManagerAliasMap);
+			actorAliasesMarkedForConstruction.addAll(data.actorAliasesMarkedForConstruction);
 
 			actionDataManagerTypes.putAll(data.actionDataManagerTypes);
 			
 			for(Object alias : data.dataManagerActionPlanMap.keySet()) {
-				List<DataManagerActionPlan> oldPlans = data.dataManagerActionPlanMap.get(alias);
-				List<DataManagerActionPlan> newPlans = new ArrayList<>();
+				List<TestDataManagerPlan> oldPlans = data.dataManagerActionPlanMap.get(alias);
+				List<TestDataManagerPlan> newPlans = new ArrayList<>();
 				dataManagerActionPlanMap.put(alias, newPlans);
-				for(DataManagerActionPlan oldPlan : oldPlans) {
-					DataManagerActionPlan newPlan = new DataManagerActionPlan(oldPlan);
+				for(TestDataManagerPlan oldPlan : oldPlans) {
+					TestDataManagerPlan newPlan = new TestDataManagerPlan(oldPlan);
 					newPlans.add(newPlan);
 				}				
 			}			
 
 		}
 
-		/*
-		 * Map of action plans key by agent aliases
-		 */
-		private final Map<Object, List<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((actionDataManagerTypes == null) ? 0 : actionDataManagerTypes.hashCode());
+			result = prime * result + ((actorActionPlanMap == null) ? 0 : actorActionPlanMap.hashCode());
+			result = prime * result + ((actorAliasesMarkedForConstruction == null) ? 0 : actorAliasesMarkedForConstruction.hashCode());
+			result = prime * result + ((dataManagerActionPlanMap == null) ? 0 : dataManagerActionPlanMap.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof Data)) {
+				return false;
+			}
+			Data other = (Data) obj;
+			if (actionDataManagerTypes == null) {
+				if (other.actionDataManagerTypes != null) {
+					return false;
+				}
+			} else if (!actionDataManagerTypes.equals(other.actionDataManagerTypes)) {
+				return false;
+			}
+			if (actorActionPlanMap == null) {
+				if (other.actorActionPlanMap != null) {
+					return false;
+				}
+			} else if (!actorActionPlanMap.equals(other.actorActionPlanMap)) {
+				return false;
+			}
+			if (actorAliasesMarkedForConstruction == null) {
+				if (other.actorAliasesMarkedForConstruction != null) {
+					return false;
+				}
+			} else if (!actorAliasesMarkedForConstruction.equals(other.actorAliasesMarkedForConstruction)) {
+				return false;
+			}
+			if (dataManagerActionPlanMap == null) {
+				if (other.dataManagerActionPlanMap != null) {
+					return false;
+				}
+			} else if (!dataManagerActionPlanMap.equals(other.dataManagerActionPlanMap)) {
+				return false;
+			}
+			return true;
+		}
 
 		/*
-		 * Contains the alias values for which agent construction must be
+		 * Map of action plans key by actor aliases
+		 */
+		private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
+
+		/*
+		 * Contains the alias values for which actor construction must be
 		 * handled by the Action Plugin Initializer
 		 */
-		private Set<Object> agentAliasesMarkedForConstruction = new LinkedHashSet<>();
-		
+		private Set<Object> actorAliasesMarkedForConstruction = new LinkedHashSet<>();
 
-		private Map<Class<? extends ActionDataManager>, Object> dataManagerAliasMap = new LinkedHashMap<>();
+		private Map<Object, Class<? extends TestDataManager>> actionDataManagerTypes = new LinkedHashMap<>();
 
-		private Map<Object, Class<? extends ActionDataManager>> actionDataManagerTypes = new LinkedHashMap<>();
-
-		private final Map<Object, List<DataManagerActionPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
+		private final Map<Object, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
 
 	}
 
-	private ActionPluginData(Data data) {
+	private TestPluginData(Data data) {
 		this.data = data;
 
 	}
@@ -87,68 +133,67 @@ public class ActionPluginData implements PluginData {
 		}
 
 		@Override
-		public ActionPluginData build() {
+		public TestPluginData build() {
 			try {
-				return new ActionPluginData(data);
+				return new TestPluginData(data);
 			} finally {
 				data = new Data();
 			}
 		}
 
 		/**
-		 * Adds an agent action plan associated with the alias
+		 * Adds an actor action plan associated with the alias
 		 * 
 		 * @throws RuntimeException
 		 *             <li>if the alias is null</li>
-		 *             <li>if the agent action plan is null</li>
+		 *             <li>if the actor action plan is null</li>
 		 */
-		public Builder addAgentActionPlan(final Object alias, AgentActionPlan agentActionPlan) {
+		public Builder addTestActorPlan(final Object alias, TestActorPlan testActorPlan) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
-			if (agentActionPlan == null) {
+			if (testActorPlan == null) {
 				throw new RuntimeException("null action plan");
 			}
 
-			List<AgentActionPlan> list = data.agentActionPlanMap.get(alias);
+			List<TestActorPlan> list = data.actorActionPlanMap.get(alias);
 
 			if (list == null) {
 				list = new ArrayList<>();
-				data.agentActionPlanMap.put(alias, list);
+				data.actorActionPlanMap.put(alias, list);
 			}
 
-			list.add(agentActionPlan);
+			list.add(testActorPlan);
 
 			return this;
 
 		}
 
 		/**
-		 * Causes the action plugin to create the agent as an ActionAgent
+		 * Causes the action plugin to create the actor as an ActionActor
 		 * 
 		 * @throws RuntimeException
 		 *             <li>if the alias is null
 		 * 
 		 */
-		public Builder addAgent(Object alias) {
+		public Builder addTestActor(Object alias) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
-			data.agentAliasesMarkedForConstruction.add(alias);
+			data.actorAliasesMarkedForConstruction.add(alias);
 			return this;
 		}
 
 		
 
-		public Builder addActionDataManager(Object alias, Class<? extends ActionDataManager> actionDataManagerClass) {
+		public Builder addTestDataManager(Object alias, Class<? extends TestDataManager> testDataManagerClass) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
-			if (actionDataManagerClass == null) {
+			if (testDataManagerClass == null) {
 				throw new RuntimeException("null action data manager class");
 			}
-			data.actionDataManagerTypes.put(alias, actionDataManagerClass);
-			data.dataManagerAliasMap.put(actionDataManagerClass, alias);
+			data.actionDataManagerTypes.put(alias, testDataManagerClass);			
 			return this;
 		}
 
@@ -157,24 +202,24 @@ public class ActionPluginData implements PluginData {
 		 * 
 		 * @throws RuntimeException
 		 *             <li>if the alias is null</li>
-		 *             <li>if the agent action plan is null</li>
+		 *             <li>if the actor action plan is null</li>
 		 */
-		public Builder addDataManagerActionPlan(final Object alias, DataManagerActionPlan dataManagerActionPlan) {
+		public Builder addTestDataManagerPlan(final Object alias, TestDataManagerPlan testDataManagerPlan) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
-			if (dataManagerActionPlan == null) {
+			if (testDataManagerPlan == null) {
 				throw new RuntimeException("null action plan");
 			}
 
-			List<DataManagerActionPlan> list = data.dataManagerActionPlanMap.get(alias);
+			List<TestDataManagerPlan> list = data.dataManagerActionPlanMap.get(alias);
 
 			if (list == null) {
 				list = new ArrayList<>();
 				data.dataManagerActionPlanMap.put(alias, list);
 			}
 
-			list.add(dataManagerActionPlan);
+			list.add(testDataManagerPlan);
 
 			return this;
 
@@ -189,35 +234,66 @@ public class ActionPluginData implements PluginData {
 
 	private final Data data;
 
-	public List<Object> getAgentsRequiringConstruction() {
-		return new ArrayList<>(data.agentAliasesMarkedForConstruction);
+	public List<Object> getActorsRequiringConstruction() {
+		return new ArrayList<>(data.actorAliasesMarkedForConstruction);
 	}
 
-	public List<Object> getAgentsRequiringPlanning() {
-		return new ArrayList<>(data.agentActionPlanMap.keySet());
+	public List<Object> getActorsRequiringPlanning() {
+		return new ArrayList<>(data.actorActionPlanMap.keySet());
 	}
 
-	public List<AgentActionPlan> getAgentActionPlans(Object alias) {
-		List<AgentActionPlan> result = new ArrayList<>();
-		List<AgentActionPlan> list = data.agentActionPlanMap.get(alias);
+	public List<TestActorPlan> getTestActorPlans(Object alias) {
+		List<TestActorPlan> result = new ArrayList<>();
+		List<TestActorPlan> list = data.actorActionPlanMap.get(alias);
 		if (list != null) {
 			result.addAll(list);
 		}
 		return result;
 	}
 
-	public List<Class<? extends ActionDataManager>> getActionDataManagerTypes() {
-		return new ArrayList<>(data.actionDataManagerTypes.values());
+	public Optional<Class<? extends TestDataManager>> getTestDataManagerType(Object alias) {
+		Class<? extends TestDataManager> c = data.actionDataManagerTypes.get(alias);
+		return Optional.ofNullable(c);		
 	}
 
-	public List<DataManagerActionPlan> getDataManagerActionPlans(Class<? extends ActionDataManager> actionDataManagerType) {
-		Object alias = data.dataManagerAliasMap.get(actionDataManagerType);
-		List<DataManagerActionPlan> list = data.dataManagerActionPlanMap.get(alias);
-		List<DataManagerActionPlan> result = new ArrayList<>();
+	public List<TestDataManagerPlan> getTestDataManagerPlans(Object alias) {		
+		List<TestDataManagerPlan> list = data.dataManagerActionPlanMap.get(alias);
+		List<TestDataManagerPlan> result = new ArrayList<>();
 		if (list != null) {
 			result.addAll(list);
 		}
-		return list;
+		return result;
+	}
+	
+	public List<Object> getTestDataManagerAliases(){
+		return new ArrayList<>(data.actionDataManagerTypes.keySet());
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof TestPluginData)) {
+			return false;
+		}
+		TestPluginData other = (TestPluginData) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }

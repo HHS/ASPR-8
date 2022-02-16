@@ -1,39 +1,39 @@
 package nucleus;
 
 /**
- * The unique identifier for agents. Agents are constructed dynamically and ids
+ * The unique identifier for actors. Actors are constructed dynamically and ids
  * are distributed contiguously from 0.
  * 
  * @author Shawn Hatch
  *
  */
 
-public final class AgentId {
+public final class ActorId {
 
 	private final int id;
 
 	/**
-	 * Returns the int id of this AgentId
+	 * Returns the int id of this ActorId
 	 */
 	public final int getValue() {
 		return id;
 	}
 
 	/**
-	 * Creates an AgentId having the value id
+	 * Creates an ActorId having the value id
 	 */
-	public AgentId(int id) {
+	public ActorId(int id) {
 		this.id = id;
 	}
 
 	/**
-	 * Returns string of the form "AgentId[X]" where the value of the agent id
+	 * Returns string of the form "ActorId[X]" where the value of the actor id
 	 * is X
 	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("AgentId [id=");
+		builder.append("ActorId [id=");
 		builder.append(id);
 		builder.append("]");
 		return builder.toString();
@@ -51,7 +51,7 @@ public final class AgentId {
 	}
 
 	/**
-	 * Agent Id instances are equal if and only if their values are equal
+	 * Actor Id instances are equal if and only if their values are equal
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -61,7 +61,7 @@ public final class AgentId {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AgentId other = (AgentId) obj;
+		ActorId other = (ActorId) obj;
 		if (id != other.id)
 			return false;
 		return true;

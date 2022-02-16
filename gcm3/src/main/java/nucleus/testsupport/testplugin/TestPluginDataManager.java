@@ -1,4 +1,4 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -6,63 +6,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import nucleus.AgentId;
+import nucleus.ActorId;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.DataManagerId;
 
-public class ActionPluginDataManager extends DataManager {
+public class TestPluginDataManager extends DataManager {
 
-	private Map<AgentId, Object> agentAliasMap = new LinkedHashMap<>();
-	
+	private Map<ActorId, Object> actorAliasMap = new LinkedHashMap<>();
+
 	private Map<DataManagerId, Object> dataManagerAliasMap = new LinkedHashMap<>();
 
-	private final Map<Object, List<AgentActionPlan>> agentActionPlanMap = new LinkedHashMap<>();
+	private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
 
-	private final Map<Class<? extends ActionDataManager>, List<DataManagerActionPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
+	private final Map<Class<? extends TestDataManager>, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
 
-	
+	public TestPluginDataManager(TestPluginData testPluginData) {
 
-	public ActionPluginDataManager(ActionPluginData actionPluginData) {
-
-		for (Object alias : actionPluginData.getAgentsRequiringPlanning()) {
-			List<AgentActionPlan> newAgentActionPlans = new ArrayList<>();
-			agentActionPlanMap.put(alias, newAgentActionPlans);
-			List<AgentActionPlan> agentActionPlans = actionPluginData.getAgentActionPlans(alias);
-			for (AgentActionPlan agentActionPlan : agentActionPlans) {
-				newAgentActionPlans.add(new AgentActionPlan(agentActionPlan));
+		for (Object alias : testPluginData.getActorsRequiringPlanning()) {
+			List<TestActorPlan> newActorActionPlans = new ArrayList<>();
+			actorActionPlanMap.put(alias, newActorActionPlans);
+			List<TestActorPlan> testActorPlans = testPluginData.getTestActorPlans(alias);
+			for (TestActorPlan testActorPlan : testActorPlans) {
+				newActorActionPlans.add(new TestActorPlan(testActorPlan));
 			}
 		}
 
-		
-		List<Class<? extends ActionDataManager>> actionDataManagerTypes = actionPluginData.getActionDataManagerTypes();
-		for (Class<? extends ActionDataManager> c : actionDataManagerTypes) {
-			List<DataManagerActionPlan> newDataManagerActionPlans = new ArrayList<>();
+		for (Object alias : testPluginData.getTestDataManagerAliases()) {
+			Class<? extends TestDataManager> c = testPluginData.getTestDataManagerType(alias).get();
+			List<TestDataManagerPlan> newDataManagerActionPlans = new ArrayList<>();
 			dataManagerActionPlanMap.put(c, newDataManagerActionPlans);
-			for (DataManagerActionPlan dataManagerActionPlan : actionPluginData.getDataManagerActionPlans(c)) {
-				newDataManagerActionPlans.add(new DataManagerActionPlan(dataManagerActionPlan));
+			for (TestDataManagerPlan testDataManagerPlan : testPluginData.getTestDataManagerPlans(alias)) {
+				newDataManagerActionPlans.add(new TestDataManagerPlan(testDataManagerPlan));
 			}
 		}
 	}
 
 	@Override
-	protected void init(DataManagerContext dataManagerContext) {		
+	protected void init(DataManagerContext dataManagerContext) {
 		dataManagerContext.subscribeToSimulationClose(this::sendActionCompletionReport);
 	}
 
-	public List<AgentActionPlan> getAgentActionPlans(Object alias) {
-		List<AgentActionPlan> result = new ArrayList<>();
-		List<AgentActionPlan> list = agentActionPlanMap.get(alias);
+	public List<TestActorPlan> getTestActorPlans(Object alias) {
+		List<TestActorPlan> result = new ArrayList<>();
+		List<TestActorPlan> list = actorActionPlanMap.get(alias);
 		if (list != null) {
 			result.addAll(list);
 		}
 		return result;
 	}
 
-	public List<DataManagerActionPlan> getDataManagerActionPlans(Class<? extends ActionDataManager> actionDataManagerClass) {
-		List<DataManagerActionPlan> result = new ArrayList<>();
+	public List<TestDataManagerPlan> getDataManagerActionPlans(Class<? extends TestDataManager> actionDataManagerClass) {
+		List<TestDataManagerPlan> result = new ArrayList<>();
 
-		List<DataManagerActionPlan> list = dataManagerActionPlanMap.get(actionDataManagerClass);
+		List<TestDataManagerPlan> list = dataManagerActionPlanMap.get(actionDataManagerClass);
 		if (list != null) {
 			result.addAll(list);
 		}
@@ -77,43 +74,41 @@ public class ActionPluginDataManager extends DataManager {
 	 */
 
 	private void sendActionCompletionReport(DataManagerContext context) {
-		context.releaseOutput(new ActionCompletionReport(allActionsExecuted()));
+		context.releaseOutput(new TestScenarioReport(allActionsExecuted()));
 	}
-	
+
 	private boolean allActionsExecuted() {
 		int planCount = 0;
-		for (Object alias : agentActionPlanMap.keySet()) {
-			for (AgentActionPlan agentActionPlan : agentActionPlanMap.get(alias)) {
+		for (Object alias : actorActionPlanMap.keySet()) {
+			for (TestActorPlan testActorPlan : actorActionPlanMap.get(alias)) {
 				planCount++;
-				if (!agentActionPlan.executed()) {
+				if (!testActorPlan.executed()) {
 					return false;
 				}
 			}
 		}
 
-		for (Class<? extends ActionDataManager> c : dataManagerActionPlanMap.keySet()) {
-			for (DataManagerActionPlan dataManagerActionPlan : dataManagerActionPlanMap.get(c)) {
+		for (Class<? extends TestDataManager> c : dataManagerActionPlanMap.keySet()) {
+			for (TestDataManagerPlan testDataManagerPlan : dataManagerActionPlanMap.get(c)) {
 				planCount++;
-				if (!dataManagerActionPlan.executed()) {
+				if (!testDataManagerPlan.executed()) {
 					return false;
 				}
 			}
 		}
 
 		return planCount > 0;
-		
+
 	}
 
-	public Optional<Object> getAgentAlias(AgentId agentId) {
-		return Optional.ofNullable(agentAliasMap.get(agentId));
+	public Optional<Object> getActorAlias(ActorId actorId) {
+		return Optional.ofNullable(actorAliasMap.get(actorId));
 	}
 
-	public void setAgentAlias(AgentId agentId, Object alias) {
-
-		if ((agentId != null) && (alias != null)) {
-			agentAliasMap.put(agentId, alias);
+	public void setActorAlias(ActorId actorId, Object alias) {
+		if ((actorId != null) && (alias != null)) {
+			actorAliasMap.put(actorId, alias);
 		}
-
 	}
 
 	public Optional<Object> getDataManagerAlias(DataManagerId dataManagerId) {

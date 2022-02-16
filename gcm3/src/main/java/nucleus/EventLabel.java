@@ -4,10 +4,10 @@ package nucleus;
  * 
  * A generics-based class that is used to filter event observations.
  * 
- * When an agent subscribes to observe a particular type of event, it may need
+ * When an actor subscribes to observe a particular type of event, it may need
  * to filter such events.
  * 
- * For example, suppose a fox(agent) has subscribed to agent movement events.
+ * For example, suppose a fox(actor) has subscribed to actor movement events.
  * The fox is only interested in rabbits that are close by and is unconcerned
  * with distant rabbits or other animals. When the fox subscribes to movement
  * event observation, it uses an event label to describe this filtering. When
@@ -18,8 +18,8 @@ package nucleus;
  * event.
  * 
  * Event labels are paired with event labelers. A data manager registers an
- * event labeler in anticipation of agents needing to use the corresponding
- * event labels. Event labels remain active until the agent unsubscribes them.
+ * event labeler in anticipation of actors needing to use the corresponding
+ * event labels. Event labels remain active until the actor unsubscribes them.
  * 
  * 
  * @author Shawn Hatch

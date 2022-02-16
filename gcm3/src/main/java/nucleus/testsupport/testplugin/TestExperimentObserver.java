@@ -1,4 +1,4 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,20 +8,20 @@ import net.jcip.annotations.ThreadSafe;
 import nucleus.ExperimentContext;
 
 @ThreadSafe
-public class ExperimentActionCompletionObserver {
+public final class TestExperimentObserver {
 	
-	private Map<Integer,ActionCompletionReport> actionCompletionReports = new LinkedHashMap<>(); 
+	private Map<Integer,TestScenarioReport> testScenarioReports = new LinkedHashMap<>(); 
 
 	public synchronized void init(ExperimentContext experimentContext) {
-		experimentContext.subscribeToOutput(ActionCompletionReport.class, this::handleActionCompletionReport);
+		experimentContext.subscribeToOutput(TestScenarioReport.class, this::handleActionCompletionReport);
 	}
 
-	private synchronized void handleActionCompletionReport(ExperimentContext experimentContext, Integer scenarioId, ActionCompletionReport actionCompletionReport) {
-		actionCompletionReports.put(scenarioId, actionCompletionReport);
+	private synchronized void handleActionCompletionReport(ExperimentContext experimentContext, Integer scenarioId, TestScenarioReport testScenarioReport) {
+		testScenarioReports.put(scenarioId, testScenarioReport);
 	}
 	
-	public Optional<ActionCompletionReport> getActionCompletionReport(Integer scenarioId) {
-		return Optional.ofNullable(actionCompletionReports.get(scenarioId));
+	public Optional<TestScenarioReport> getActionCompletionReport(Integer scenarioId) {
+		return Optional.ofNullable(testScenarioReports.get(scenarioId));
 	}
 	
 	

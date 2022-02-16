@@ -5,8 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import nucleus.AgentContext;
-import nucleus.AgentId;
+import nucleus.ActorContext;
+import nucleus.ActorId;
 import nucleus.DataManager;
 import nucleus.Event;
 import nucleus.EventLabeler;
@@ -39,14 +39,14 @@ public class MockSimulationContext implements SimulationContext {
 		public Consumer<EventLabeler<?>> addEventLabelerConsumer = (e) -> {
 		};
 		
-		public Function<AgentId, Boolean> agentExistsFunction = (a) -> {
+		public Function<ActorId, Boolean> actorExistsFunction = (a) -> {
 			return false;
 		};
 		
-		public Consumer<AgentId> removeAgentConsumer = (a) -> {
+		public Consumer<ActorId> removeActorConsumer = (a) -> {
 		};
 		
-		public Function<Consumer<AgentContext>, AgentId> addAgentFunction = (c) -> {
+		public Function<Consumer<ActorContext>, ActorId> addActorFunction = (c) -> {
 			return null;
 		};
 
@@ -84,8 +84,8 @@ public class MockSimulationContext implements SimulationContext {
 			}
 		}
 		
-		public Builder setAgentExistsFunction(Function<AgentId, Boolean> agentExistsFunction) {
-			scaffold.agentExistsFunction = agentExistsFunction;
+		public Builder setActorExistsFunction(Function<ActorId, Boolean> actorExistsFunction) {
+			scaffold.actorExistsFunction = actorExistsFunction;
 			return this;
 		}
 
@@ -114,13 +114,13 @@ public class MockSimulationContext implements SimulationContext {
 			return this;
 		}
 		
-		public Builder setRemoveAgentConsumer(Consumer<AgentId> removeAgentConsumer) {
-			scaffold.removeAgentConsumer = removeAgentConsumer;
+		public Builder setRemoveActorConsumer(Consumer<ActorId> removeActorConsumer) {
+			scaffold.removeActorConsumer = removeActorConsumer;
 			return this;
 		}
 		
-		public Builder setAddAgentFunction(Function<Consumer<AgentContext>, AgentId> addAgentFunction) {
-			scaffold.addAgentFunction = addAgentFunction;
+		public Builder setAddActorFunction(Function<Consumer<ActorContext>, ActorId> addActorFunction) {
+			scaffold.addActorFunction = addActorFunction;
 			return this;
 		}
 	}
@@ -154,18 +154,18 @@ public class MockSimulationContext implements SimulationContext {
 	}
 
 	@Override
-	public boolean agentExists(AgentId agentId) {
-		return scaffold.agentExistsFunction.apply(agentId);
+	public boolean actorExists(ActorId actorId) {
+		return scaffold.actorExistsFunction.apply(actorId);
 	}
 
 	@Override
-	public AgentId addAgent(Consumer<AgentContext> consumer) {
-		return scaffold.addAgentFunction.apply(consumer);
+	public ActorId addActor(Consumer<ActorContext> consumer) {
+		return scaffold.addActorFunction.apply(consumer);
 	}
 
 	@Override
-	public void removeAgent(AgentId agentId) {
-		scaffold.removeAgentConsumer.accept(agentId);
+	public void removeActor(ActorId actorId) {
+		scaffold.removeActorConsumer.accept(actorId);
 		
 	}
 

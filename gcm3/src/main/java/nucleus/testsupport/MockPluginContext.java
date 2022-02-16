@@ -7,8 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import nucleus.AgentContext;
-import nucleus.AgentId;
+import nucleus.ActorContext;
+import nucleus.ActorId;
 import nucleus.DataManager;
 import nucleus.PluginContext;
 import nucleus.PluginData;
@@ -16,14 +16,14 @@ import nucleus.PluginId;
 
 /**
  * A mock implementation of a {@link PluginContext} that allows for the
- * retrieval of plugin dependencies and data managers and agents recorded during
+ * retrieval of plugin dependencies and data managers and actors recorded during
  * the initialization phase of a plugin.
  */
 public final class MockPluginContext implements PluginContext {
 
 	private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 
-	private int masterAgentIdValue;
+	private int masterActorIdValue;
 
 	@Override
 	public void addPluginDependency(PluginId pluginId) {
@@ -45,17 +45,17 @@ public final class MockPluginContext implements PluginContext {
 		return new LinkedHashSet<>(dataManagers);
 	}
 
-	private Map<AgentId, Consumer<AgentContext>> agentMap = new LinkedHashMap<>();
+	private Map<ActorId, Consumer<ActorContext>> actorMap = new LinkedHashMap<>();
 
 	@Override
-	public AgentId addAgent(Consumer<AgentContext> init) {
-		AgentId agentId = new AgentId(masterAgentIdValue++);
-		agentMap.put(agentId, init);
-		return agentId;
+	public ActorId addActor(Consumer<ActorContext> init) {
+		ActorId actorId = new ActorId(masterActorIdValue++);
+		actorMap.put(actorId, init);
+		return actorId;
 	}
 
-	public Map<AgentId, Consumer<AgentContext>> getAgents() {
-		return new LinkedHashMap<>(agentMap);
+	public Map<ActorId, Consumer<ActorContext>> getActors() {
+		return new LinkedHashMap<>(actorMap);
 	}
 
 	private Map<Class<?>, PluginData> pluginDataMap = new LinkedHashMap<>();

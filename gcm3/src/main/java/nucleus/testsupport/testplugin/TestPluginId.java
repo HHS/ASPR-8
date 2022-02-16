@@ -1,9 +1,9 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
 
-public class ActionPluginId {
-	private ActionPluginId() {}
-	public final static PluginId PLUGIN_ID = new SimplePluginId(ActionPluginId.class);
+public class TestPluginId {
+	private TestPluginId() {}
+	public final static PluginId PLUGIN_ID = new SimplePluginId(TestPluginId.class);
 }

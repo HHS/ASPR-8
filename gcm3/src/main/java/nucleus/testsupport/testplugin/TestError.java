@@ -1,4 +1,4 @@
-package nucleus.testsupport.actionplugin;
+package nucleus.testsupport.testplugin;
 
 import util.ContractError;
 import util.ContractException;
@@ -10,13 +10,13 @@ import util.ContractException;
  * @author Shawn Hatch
  *
  */
-public enum ActionError implements ContractError {
+public enum TestError implements ContractError {
 
 	ACTION_EXECUTION_FAILURE("Not all action plans were executed or no action plans were added to the action plugin");
 
 	private final String description;
 
-	private ActionError(final String description) {
+	private TestError(final String description) {
 		this.description = description;
 	}
 
