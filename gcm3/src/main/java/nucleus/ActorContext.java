@@ -200,7 +200,7 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
 	 */
-	public void unSubscribe(Class<? extends Event> eventClass);
+	public <T extends Event> void unsubscribe(Class<T> eventClass);
 
 	
 	/**

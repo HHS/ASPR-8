@@ -291,13 +291,14 @@ public final class MockDataManagerContext implements DataManagerContext {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Consumer<DataManagerContext>> T getPlan(Object key) {
-		return (T) scaffold.getPlanFunction.apply(key);
+	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(Object key) {
+		return (Optional<T>) Optional.ofNullable(scaffold.getPlanFunction.apply(key));
 	}
 
 	@Override
-	public double getPlanTime(Object key) {
-		return scaffold.getPlanTimeFunction.apply(key);
+	public Optional<Double> getPlanTime(Object key) {
+		Double result = scaffold.getPlanTimeFunction.apply(key);
+		return Optional.ofNullable(result);
 	}
 
 	@SuppressWarnings("unchecked")

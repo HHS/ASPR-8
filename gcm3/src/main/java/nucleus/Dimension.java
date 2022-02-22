@@ -9,8 +9,8 @@ import util.TypeMap;
 public class Dimension {
 
 	private static class Data {
-		List<String> ids = new ArrayList<>();
-		List<Function<TypeMap<PluginDataBuilder>, List<String>>> memberGenerators = new ArrayList<>();
+		List<String> metaData = new ArrayList<>();
+		List<Function<TypeMap<PluginDataBuilder>, List<String>>> points = new ArrayList<>();
 	}
 
 	public static Builder builder() {
@@ -31,12 +31,12 @@ public class Dimension {
 			}
 		}
 		
-		public Builder addMemberGenerator(Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator) {
-			data.memberGenerators.add(memberGenerator);
+		public Builder addPoint(Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator) {
+			data.points.add(memberGenerator);
 			return this;
 		}
-		public Builder addIdValue(String idValue) {
-			data.ids.add(idValue);
+		public Builder addMetaDatum(String idValue) {
+			data.metaData.add(idValue);
 			return this;
 		}
 	}
@@ -47,16 +47,16 @@ public class Dimension {
 
 	private final Data data;
 
-	public List<String> getIds() {
-		return new ArrayList<>(data.ids);
+	public List<String> getMetaData() {
+		return new ArrayList<>(data.metaData);
 	}
 
 	public int size() {
-		return data.memberGenerators.size();
+		return data.points.size();
 	}
 		
-	public Function<TypeMap<PluginDataBuilder>, List<String>> getMemberGenerator(int index) {
-		return data.memberGenerators.get(index);
+	public Function<TypeMap<PluginDataBuilder>, List<String>> getPoint(int index) {
+		return data.points.get(index);
 	}
 
 }

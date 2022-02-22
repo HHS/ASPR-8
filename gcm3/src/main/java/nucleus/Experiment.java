@@ -235,7 +235,7 @@ public final class Experiment {
 
 		final List<String> experimentMetaData = new ArrayList<>();
 		for (final Dimension dimension : data.dimensions) {
-			experimentMetaData.addAll(dimension.getIds());
+			experimentMetaData.addAll(dimension.getMetaData());
 		}
 		
 		builder.setExperimentMetaData(experimentMetaData);
@@ -432,7 +432,7 @@ public final class Experiment {
 			modulus *= dimension.size();
 
 			// get the function from the dimension
-			final Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator = dimension.getMemberGenerator(index);
+			final Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator = dimension.getPoint(index);
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function

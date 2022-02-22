@@ -40,8 +40,6 @@ public class AT_TestActor {
 
 		// add the actors to the action plugin
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestActor(alias1);
-		pluginDataBuilder.addTestActor(alias2);
 
 		/*
 		 * Create ActorActionPlans from the expected observations. Each action

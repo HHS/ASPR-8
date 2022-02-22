@@ -92,7 +92,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public <T extends Consumer<DataManagerContext>> T getPlan(final Object key);
+	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key);
 
 	/**
 	 * Returns the scheduled execution time for the plan associated with the
@@ -102,7 +102,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public double getPlanTime(final Object key);
+	public Optional<Double> getPlanTime(final Object key);
 
 	/**
 	 * Removes and returns the plan associated with the given key.
@@ -128,11 +128,7 @@ public interface DataManagerContext extends SimulationContext {
 	 */
 	public void resolveEvent(Event event);
 
-	/**
-	 * Returns true if and only if the given ActorId corresponds to an existing
-	 * actor
-	 */
-	public boolean actorExists(ActorId actorId);
+	
 
 	/**
 	 * Subscribes the data manager to events of the given type for the purpose

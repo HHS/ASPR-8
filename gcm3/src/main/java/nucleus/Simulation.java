@@ -68,7 +68,7 @@ public class Simulation {
 		}
 
 		@Override
-		public ActorId addActor(Consumer<ActorContext> consumer) {
+		public void addActor(Consumer<ActorContext> consumer) {
 
 			if (consumer == null) {
 				throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
@@ -77,21 +77,16 @@ public class Simulation {
 			if (focalPluginId == null) {
 				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 			}
-
-			ActorId result = new ActorId(masterActorIdValue++);
-			actorIds.add(result);
-
 			// Do not queue the actor yet. We will wait until all the plugins
 			// have established their order and then add the actors to the
 			// queue.
-			Map<ActorId, Consumer<ActorContext>> map = actorsMap.get(focalPluginId);
-			if (map == null) {
-				map = new LinkedHashMap<>();
-				actorsMap.put(focalPluginId, map);
+			Set<Consumer<ActorContext>> set = actorsMap.get(focalPluginId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				actorsMap.put(focalPluginId, set);
 			}
 
-			map.put(result, consumer);
-			return result;
+			set.add(consumer);			
 
 		}
 
@@ -224,7 +219,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void unSubscribe(Class<? extends Event> eventClass) {
+		public <T extends Event> void unsubscribe(Class<T> eventClass) {
 			unSubscribeActorToEvent(eventClass);
 		}
 
@@ -416,8 +411,8 @@ public class Simulation {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends Consumer<DataManagerContext>> T getPlan(final Object key) {
-			return (T) simulation.getDataManagerPlan(dataManagerId, key);
+		public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key) {
+			return (Optional<T>) simulation.getDataManagerPlan(dataManagerId, key);
 		}
 
 		@Override
@@ -426,7 +421,7 @@ public class Simulation {
 		}
 
 		@Override
-		public double getPlanTime(final Object key) {
+		public Optional<Double> getPlanTime(final Object key) {
 			return simulation.getDataManagerPlanTime(dataManagerId, key);
 		}
 
@@ -526,8 +521,8 @@ public class Simulation {
 		}
 	};
 
-	private int masterActorIdValue;
-	private Map<PluginId, Map<ActorId, Consumer<ActorContext>>> actorsMap = new LinkedHashMap<>();
+	
+	private Map<PluginId, Set<Consumer<ActorContext>>> actorsMap = new LinkedHashMap<>();
 
 	// planning
 	private long masterPlanningArrivalId;
@@ -647,7 +642,7 @@ public class Simulation {
 	}
 
 	private void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
-		if (getDataManagerPlan(dataManagerId, key) != null) {
+		if (getDataManagerPlan(dataManagerId, key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
@@ -788,13 +783,14 @@ public class Simulation {
 					dataManager.init(dataManagerContext);
 				}
 			}
-			Map<ActorId, Consumer<ActorContext>> map = actorsMap.get(pluginId);
-			if (map != null) {
-				for (ActorId actorId : map.keySet()) {
+			Set<Consumer<ActorContext>> consumers = actorsMap.get(pluginId);
+			if (consumers != null) {
+				for (Consumer<ActorContext> consumer : consumers) {
+					ActorId actorId = new ActorId(actorIds.size());
 					actorIds.add(actorId);
 					final ActorContentRec actorContentRec = new ActorContentRec();
 					actorContentRec.actorId = actorId;
-					actorContentRec.plan = map.get(actorId);
+					actorContentRec.plan = consumer;
 					actorQueue.add(actorContentRec);
 				}
 			}
@@ -900,7 +896,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private Consumer<DataManagerContext> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	private  Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		Consumer<DataManagerContext> result = null;
@@ -910,9 +906,9 @@ public class Simulation {
 				result = planRecord.dataManagerPlan;
 			}
 		}
-		return result;
+		return Optional.ofNullable(result);
 	}
-
+	
 	private List<Object> getActorPlanKeys() {
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 		if (map != null) {
@@ -942,17 +938,17 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private double getDataManagerPlanTime(final DataManagerId dataManagerId, final Object key) {
+	private Optional<Double> getDataManagerPlanTime(final DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
-		double result = -1;
+		Double result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
 			if (planRecord != null) {
 				result = planRecord.time;
 			}
 		}
-		return result;
+		return Optional.ofNullable(result);
 	}
 
 	private void halt() {
@@ -1118,7 +1114,18 @@ public class Simulation {
 	}
 
 	private boolean actorExists(final ActorId actorId) {
-		return actorIds.contains(actorId);
+		if(actorId == null) {
+			return false;
+		}
+		int index = actorId.getValue();
+		if(index<0) {
+			return false;
+		}
+		if(index>=actorIds.size()) {
+			return false;
+		}
+		
+		return actorIds.get(index) != null;
 	}
 
 	private void broadcastEventToActorSubscribers(final Event event) {
@@ -1404,7 +1411,7 @@ public class Simulation {
 		}
 	}
 
-	private void unSubscribeActorToEvent(Class<? extends Event> eventClass) {
+	private <T extends Event>void unSubscribeActorToEvent(Class<T> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1442,12 +1449,11 @@ public class Simulation {
 
 	private ActorId addActor(Consumer<ActorContext> consumer) {
 
-		ActorId result = new ActorId(masterActorIdValue++);
-
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
 
+		ActorId result = new ActorId(actorIds.size());
 		actorIds.add(result);
 
 		final ActorContentRec actorContentRec = new ActorContentRec();

@@ -53,6 +53,8 @@ public interface SimulationContext {
 	 */
 	public boolean actorExists(ActorId actorId);
 	
+	
+	
 	/**
 	 * Adds an actor to the simulation. The actor is added immediately, but the
 	 * consumer of ActorContext is invoked after event resolution is finished

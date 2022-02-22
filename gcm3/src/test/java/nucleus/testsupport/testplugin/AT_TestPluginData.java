@@ -90,9 +90,8 @@ public class AT_TestPluginData {
 		}));
 
 		// Build the plugin data from the items above
-		TestPluginData.Builder builder = TestPluginData	.builder()//
-														.addTestActor("actor1")//
-														.addTestActor("actor2");//
+		TestPluginData.Builder builder = TestPluginData	.builder();//
+														
 		for (String alias : expectedTestActorPlans.keySet()) {
 			testActorPlans = expectedTestActorPlans.get(alias);
 			for (TestActorPlan testActorPlan : testActorPlans) {
@@ -112,53 +111,26 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getActorsRequiringConstruction", args = {})
-	public void testGetActorsRequiringConstruction() {
+	@UnitTestMethod(name = "getTestActorAliases", args = {})
+	public void testGetTestActorAliases() {
 
-		Set<Object> aliasesForConstruction = new LinkedHashSet<>();
-		aliasesForConstruction.add("A");
-		aliasesForConstruction.add("B");
-		aliasesForConstruction.add("C");
+		Set<Object> expectedAliases = new LinkedHashSet<>();
+		expectedAliases.add("A");
+		expectedAliases.add("B");
+		expectedAliases.add("C");
 
 		TestPluginData.Builder builder = TestPluginData.builder();//
-		for (Object alias : aliasesForConstruction) {
-			builder.addTestActor(alias);
+		for(Object alias : expectedAliases ) {
+			builder.addTestActorPlan(alias, new TestActorPlan(0,(c)->{}));
 		}
-
-		// include an alias that is not marked for construction
-		builder.addTestActorPlan("D", new TestActorPlan(0, (c) -> {
-		}));
 
 		TestPluginData testPluginData = builder.build();
 
-		LinkedHashSet<Object> actualAliasesForConstruction = new LinkedHashSet<>(testPluginData.getActorsRequiringConstruction());
-		assertEquals(aliasesForConstruction, actualAliasesForConstruction);
+		LinkedHashSet<Object> actualAliases = new LinkedHashSet<>(testPluginData.getTestActorAliases());
+		assertEquals(expectedAliases, actualAliases);
 
 	}
 
-	@Test
-	@UnitTestMethod(name = "getActorsRequiringPlanning", args = {})
-	public void testGetActorsRequiringPlanning() {
-		Set<Object> aliasesForPlanning = new LinkedHashSet<>();
-		aliasesForPlanning.add("A");
-		aliasesForPlanning.add("B");
-		aliasesForPlanning.add("C");
-
-		TestPluginData.Builder builder = TestPluginData.builder();//
-		for (Object alias : aliasesForPlanning) {
-			builder.addTestActor(alias);
-			builder.addTestActorPlan(alias, new TestActorPlan(0, (c) -> {
-			}));
-		}
-
-		// include an alias that is not associated with plans
-		builder.addTestActor("D");
-
-		TestPluginData testPluginData = builder.build();
-
-		LinkedHashSet<Object> actualAliasesForPlanning = new LinkedHashSet<>(testPluginData.getActorsRequiringPlanning());
-		assertEquals(aliasesForPlanning, actualAliasesForPlanning);
-	}
 
 	@Test
 	@UnitTestMethod(name = "getCloneBuilder", args = {})
@@ -166,10 +138,10 @@ public class AT_TestPluginData {
 
 		TestPluginData.Builder builder = TestPluginData.builder();//
 		// add actors
-		builder.addTestActor("A");
+		
 		builder.addTestActorPlan("A", new TestActorPlan(0, (c) -> {
 		}));
-		builder.addTestActor("B");
+		
 		builder.addTestActorPlan("B", new TestActorPlan(0, (c) -> {
 		}));
 		builder.addTestActorPlan("B", new TestActorPlan(0, (c) -> {
@@ -229,6 +201,9 @@ public class AT_TestPluginData {
 				builder.addTestDataManagerPlan(alias, testDataManagerPlan);
 			}
 		}
+		
+		builder.addTestDataManager("A", TestDataManager1.class);
+		builder.addTestDataManager("B", TestDataManager2.class);
 
 		TestPluginData testPluginData = builder.build();
 
@@ -260,24 +235,7 @@ public class AT_TestPluginData {
 
 	}
 
-	@Test
-	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestActor", args = { Object.class })
-	public void testAddTestActor() {
-		Set<Object> expectedAliases = new LinkedHashSet<>();
-		expectedAliases.add("A");
-		expectedAliases.add("B");
-		expectedAliases.add("C");
-		expectedAliases.add("D");
-
-		TestPluginData.Builder builder = TestPluginData.builder();
-		for (Object alias : expectedAliases) {
-			builder.addTestActor(alias);
-		}
-		TestPluginData testPluginData = builder.build();
-
-		LinkedHashSet<Object> actualAliases = new LinkedHashSet<>(testPluginData.getActorsRequiringConstruction());
-		assertEquals(expectedAliases, actualAliases);
-	}
+	
 
 	@Test
 	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestActorPlan", args = { Object.class, TestActorPlan.class })
@@ -308,7 +266,10 @@ public class AT_TestPluginData {
 				builder.addTestDataManagerPlan(alias, testDataManagerPlan);
 			}
 		}
-
+		
+		builder.addTestDataManager("A", TestDataManager1.class);
+		builder.addTestDataManager("B", TestDataManager2.class);
+		
 		TestPluginData testPluginData = builder.build();
 
 		// show that the plugin data contains the expected plans
@@ -370,6 +331,9 @@ public class AT_TestPluginData {
 						builder.addTestDataManagerPlan(alias, testDataManagerPlan);
 					}
 				}
+				
+				builder.addTestDataManager("A", TestDataManager1.class);
+				builder.addTestDataManager("B", TestDataManager2.class);
 
 				TestPluginData testPluginData = builder.build();
 

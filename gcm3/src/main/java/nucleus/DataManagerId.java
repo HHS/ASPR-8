@@ -6,7 +6,14 @@ public final class DataManagerId {
 	public DataManagerId(int id) {
 		this.id = id;
 	}
-
+	
+	/**
+	 * Returns the int id of this ActorId
+	 */
+	public final int getValue() {
+		return id;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -28,6 +35,15 @@ public final class DataManagerId {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DataManagerId [id=");
+		builder.append(id);
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

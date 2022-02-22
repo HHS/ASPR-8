@@ -46,7 +46,7 @@ public final class ExperimentStatusConsole {
 		return h + ":" + getBase60String(m) + ":" + getBase60String(s);
 	}
 
-	public void handleExperimentClose(ExperimentContext experimentContext) {
+	private void handleExperimentClose(ExperimentContext experimentContext) {
 		String timeExpression = getTimeExpression(experimentContext.getElapsedSeconds());
 
 		int previousProgressCount = experimentContext.getStatusCount(ScenarioStatus.PREVIOUSLY_SUCCEEDED);

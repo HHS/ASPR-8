@@ -19,26 +19,18 @@ public class TestPluginDataManager extends DataManager {
 
 	private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
 
-	private final Map<Class<? extends TestDataManager>, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
+	private final Map<Object, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
 
 	public TestPluginDataManager(TestPluginData testPluginData) {
 
-		for (Object alias : testPluginData.getActorsRequiringPlanning()) {
-			List<TestActorPlan> newActorActionPlans = new ArrayList<>();
-			actorActionPlanMap.put(alias, newActorActionPlans);
+		for (Object alias : testPluginData.getTestActorAliases()) {
 			List<TestActorPlan> testActorPlans = testPluginData.getTestActorPlans(alias);
-			for (TestActorPlan testActorPlan : testActorPlans) {
-				newActorActionPlans.add(new TestActorPlan(testActorPlan));
-			}
+			actorActionPlanMap.put(alias, testActorPlans);
 		}
 
-		for (Object alias : testPluginData.getTestDataManagerAliases()) {
-			Class<? extends TestDataManager> c = testPluginData.getTestDataManagerType(alias).get();
-			List<TestDataManagerPlan> newDataManagerActionPlans = new ArrayList<>();
-			dataManagerActionPlanMap.put(c, newDataManagerActionPlans);
-			for (TestDataManagerPlan testDataManagerPlan : testPluginData.getTestDataManagerPlans(alias)) {
-				newDataManagerActionPlans.add(new TestDataManagerPlan(testDataManagerPlan));
-			}
+		for (Object alias : testPluginData.getTestDataManagerAliases()) {			
+			List<TestDataManagerPlan> testDataManagerPlans = testPluginData.getTestDataManagerPlans(alias);
+			dataManagerActionPlanMap.put(alias, testDataManagerPlans);
 		}
 	}
 
@@ -56,10 +48,10 @@ public class TestPluginDataManager extends DataManager {
 		return result;
 	}
 
-	public List<TestDataManagerPlan> getDataManagerActionPlans(Class<? extends TestDataManager> actionDataManagerClass) {
+	public List<TestDataManagerPlan> getTestDataManagerPlans(Object alias) {
 		List<TestDataManagerPlan> result = new ArrayList<>();
 
-		List<TestDataManagerPlan> list = dataManagerActionPlanMap.get(actionDataManagerClass);
+		List<TestDataManagerPlan> list = dataManagerActionPlanMap.get(alias);
 		if (list != null) {
 			result.addAll(list);
 		}
@@ -88,8 +80,8 @@ public class TestPluginDataManager extends DataManager {
 			}
 		}
 
-		for (Class<? extends TestDataManager> c : dataManagerActionPlanMap.keySet()) {
-			for (TestDataManagerPlan testDataManagerPlan : dataManagerActionPlanMap.get(c)) {
+		for (Object alias : dataManagerActionPlanMap.keySet()) {
+			for (TestDataManagerPlan testDataManagerPlan : dataManagerActionPlanMap.get(alias)) {
 				planCount++;
 				if (!testDataManagerPlan.executed()) {
 					return false;

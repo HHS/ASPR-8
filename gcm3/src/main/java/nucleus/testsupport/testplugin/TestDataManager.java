@@ -18,7 +18,7 @@ public class TestDataManager extends DataManager {
 	protected void init(DataManagerContext dataManagerContext) {
 		TestPluginDataManager testPluginDataManager = dataManagerContext.getDataManager(TestPluginDataManager.class).get();
 		testPluginDataManager.setDataManagerAlias(dataManagerContext.getDataManagerId(),alias);
-		List<TestDataManagerPlan> testDataManagerPlans = testPluginDataManager.getDataManagerActionPlans(this.getClass());
+		List<TestDataManagerPlan> testDataManagerPlans = testPluginDataManager.getTestDataManagerPlans(alias);
 		for (final TestDataManagerPlan testDataManagerPlan : testDataManagerPlans) {
 			if (testDataManagerPlan.getKey() != null) {
 				dataManagerContext.addKeyedPlan(testDataManagerPlan::executeAction, testDataManagerPlan.getScheduledTime(), testDataManagerPlan.getKey());

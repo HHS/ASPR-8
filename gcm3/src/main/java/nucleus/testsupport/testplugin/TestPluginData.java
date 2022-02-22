@@ -2,15 +2,14 @@ package nucleus.testsupport.testplugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import util.ContractException;
 
 @ThreadSafe
 public class TestPluginData implements PluginData {
@@ -22,24 +21,24 @@ public class TestPluginData implements PluginData {
 
 		private Data(Data data) {
 			
-			for(Object alias : data.actorActionPlanMap.keySet()) {
-				List<TestActorPlan> oldPlans = data.actorActionPlanMap.get(alias);
+			for(Object alias : data.testActorPlanMap.keySet()) {
+				List<TestActorPlan> oldPlans = data.testActorPlanMap.get(alias);
 				List<TestActorPlan> newPlans = new ArrayList<>();
-				actorActionPlanMap.put(alias, newPlans);
+				testActorPlanMap.put(alias, newPlans);
 				for(TestActorPlan oldPlan : oldPlans) {
 					TestActorPlan newPlan = new TestActorPlan(oldPlan);
 					newPlans.add(newPlan);
 				}				
 			}
 			
-			actorAliasesMarkedForConstruction.addAll(data.actorAliasesMarkedForConstruction);
-
-			actionDataManagerTypes.putAll(data.actionDataManagerTypes);
 			
-			for(Object alias : data.dataManagerActionPlanMap.keySet()) {
-				List<TestDataManagerPlan> oldPlans = data.dataManagerActionPlanMap.get(alias);
+
+			testDataManagerTypeMap.putAll(data.testDataManagerTypeMap);
+			
+			for(Object alias : data.testDataManagerPlanMap.keySet()) {
+				List<TestDataManagerPlan> oldPlans = data.testDataManagerPlanMap.get(alias);
 				List<TestDataManagerPlan> newPlans = new ArrayList<>();
-				dataManagerActionPlanMap.put(alias, newPlans);
+				testDataManagerPlanMap.put(alias, newPlans);
 				for(TestDataManagerPlan oldPlan : oldPlans) {
 					TestDataManagerPlan newPlan = new TestDataManagerPlan(oldPlan);
 					newPlans.add(newPlan);
@@ -48,14 +47,15 @@ public class TestPluginData implements PluginData {
 
 		}
 
+		
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((actionDataManagerTypes == null) ? 0 : actionDataManagerTypes.hashCode());
-			result = prime * result + ((actorActionPlanMap == null) ? 0 : actorActionPlanMap.hashCode());
-			result = prime * result + ((actorAliasesMarkedForConstruction == null) ? 0 : actorAliasesMarkedForConstruction.hashCode());
-			result = prime * result + ((dataManagerActionPlanMap == null) ? 0 : dataManagerActionPlanMap.hashCode());
+			result = prime * result + ((testDataManagerTypeMap == null) ? 0 : testDataManagerTypeMap.hashCode());
+			result = prime * result + ((testActorPlanMap == null) ? 0 : testActorPlanMap.hashCode());
+			result = prime * result + ((testDataManagerPlanMap == null) ? 0 : testDataManagerPlanMap.hashCode());
 			return result;
 		}
 
@@ -68,51 +68,40 @@ public class TestPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (actionDataManagerTypes == null) {
-				if (other.actionDataManagerTypes != null) {
+			if (testDataManagerTypeMap == null) {
+				if (other.testDataManagerTypeMap != null) {
 					return false;
 				}
-			} else if (!actionDataManagerTypes.equals(other.actionDataManagerTypes)) {
+			} else if (!testDataManagerTypeMap.equals(other.testDataManagerTypeMap)) {
 				return false;
 			}
-			if (actorActionPlanMap == null) {
-				if (other.actorActionPlanMap != null) {
+			if (testActorPlanMap == null) {
+				if (other.testActorPlanMap != null) {
 					return false;
 				}
-			} else if (!actorActionPlanMap.equals(other.actorActionPlanMap)) {
+			} else if (!testActorPlanMap.equals(other.testActorPlanMap)) {
 				return false;
 			}
-			if (actorAliasesMarkedForConstruction == null) {
-				if (other.actorAliasesMarkedForConstruction != null) {
+			if (testDataManagerPlanMap == null) {
+				if (other.testDataManagerPlanMap != null) {
 					return false;
 				}
-			} else if (!actorAliasesMarkedForConstruction.equals(other.actorAliasesMarkedForConstruction)) {
-				return false;
-			}
-			if (dataManagerActionPlanMap == null) {
-				if (other.dataManagerActionPlanMap != null) {
-					return false;
-				}
-			} else if (!dataManagerActionPlanMap.equals(other.dataManagerActionPlanMap)) {
+			} else if (!testDataManagerPlanMap.equals(other.testDataManagerPlanMap)) {
 				return false;
 			}
 			return true;
 		}
 
+
+
 		/*
 		 * Map of action plans key by actor aliases
 		 */
-		private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
+		private final Map<Object, List<TestActorPlan>> testActorPlanMap = new LinkedHashMap<>();
 
-		/*
-		 * Contains the alias values for which actor construction must be
-		 * handled by the Action Plugin Initializer
-		 */
-		private Set<Object> actorAliasesMarkedForConstruction = new LinkedHashSet<>();
+		private Map<Object, Class<? extends TestDataManager>> testDataManagerTypeMap = new LinkedHashMap<>();
 
-		private Map<Object, Class<? extends TestDataManager>> actionDataManagerTypes = new LinkedHashMap<>();
-
-		private final Map<Object, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
+		private final Map<Object, List<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
 
 	}
 
@@ -135,9 +124,19 @@ public class TestPluginData implements PluginData {
 		@Override
 		public TestPluginData build() {
 			try {
+				validate();
 				return new TestPluginData(data);
 			} finally {
 				data = new Data();
+			}
+		}
+		
+		private void validate() {
+			
+			for(Object alias : data.testDataManagerPlanMap.keySet()) {
+				if(!data.testDataManagerTypeMap.containsKey(alias)) {
+					throw new ContractException(TestError.UNKNOWN_DATA_MANAGER_ALIAS,alias);
+				}
 			}
 		}
 
@@ -156,11 +155,11 @@ public class TestPluginData implements PluginData {
 				throw new RuntimeException("null action plan");
 			}
 
-			List<TestActorPlan> list = data.actorActionPlanMap.get(alias);
+			List<TestActorPlan> list = data.testActorPlanMap.get(alias);
 
 			if (list == null) {
 				list = new ArrayList<>();
-				data.actorActionPlanMap.put(alias, list);
+				data.testActorPlanMap.put(alias, list);
 			}
 
 			list.add(testActorPlan);
@@ -169,22 +168,6 @@ public class TestPluginData implements PluginData {
 
 		}
 
-		/**
-		 * Causes the action plugin to create the actor as an ActionActor
-		 * 
-		 * @throws RuntimeException
-		 *             <li>if the alias is null
-		 * 
-		 */
-		public Builder addTestActor(Object alias) {
-			if (alias == null) {
-				throw new RuntimeException("null alias");
-			}
-			data.actorAliasesMarkedForConstruction.add(alias);
-			return this;
-		}
-
-		
 
 		public Builder addTestDataManager(Object alias, Class<? extends TestDataManager> testDataManagerClass) {
 			if (alias == null) {
@@ -193,7 +176,7 @@ public class TestPluginData implements PluginData {
 			if (testDataManagerClass == null) {
 				throw new RuntimeException("null action data manager class");
 			}
-			data.actionDataManagerTypes.put(alias, testDataManagerClass);			
+			data.testDataManagerTypeMap.put(alias, testDataManagerClass);			
 			return this;
 		}
 
@@ -212,11 +195,11 @@ public class TestPluginData implements PluginData {
 				throw new RuntimeException("null action plan");
 			}
 
-			List<TestDataManagerPlan> list = data.dataManagerActionPlanMap.get(alias);
+			List<TestDataManagerPlan> list = data.testDataManagerPlanMap.get(alias);
 
 			if (list == null) {
 				list = new ArrayList<>();
-				data.dataManagerActionPlanMap.put(alias, list);
+				data.testDataManagerPlanMap.put(alias, list);
 			}
 
 			list.add(testDataManagerPlan);
@@ -234,17 +217,15 @@ public class TestPluginData implements PluginData {
 
 	private final Data data;
 
-	public List<Object> getActorsRequiringConstruction() {
-		return new ArrayList<>(data.actorAliasesMarkedForConstruction);
+	public List<Object> getTestActorAliases() {
+		return new ArrayList<>(data.testActorPlanMap.keySet());
 	}
 
-	public List<Object> getActorsRequiringPlanning() {
-		return new ArrayList<>(data.actorActionPlanMap.keySet());
-	}
+	
 
 	public List<TestActorPlan> getTestActorPlans(Object alias) {
 		List<TestActorPlan> result = new ArrayList<>();
-		List<TestActorPlan> list = data.actorActionPlanMap.get(alias);
+		List<TestActorPlan> list = data.testActorPlanMap.get(alias);
 		if (list != null) {
 			result.addAll(list);
 		}
@@ -252,12 +233,12 @@ public class TestPluginData implements PluginData {
 	}
 
 	public Optional<Class<? extends TestDataManager>> getTestDataManagerType(Object alias) {
-		Class<? extends TestDataManager> c = data.actionDataManagerTypes.get(alias);
+		Class<? extends TestDataManager> c = data.testDataManagerTypeMap.get(alias);
 		return Optional.ofNullable(c);		
 	}
 
 	public List<TestDataManagerPlan> getTestDataManagerPlans(Object alias) {		
-		List<TestDataManagerPlan> list = data.dataManagerActionPlanMap.get(alias);
+		List<TestDataManagerPlan> list = data.testDataManagerPlanMap.get(alias);
 		List<TestDataManagerPlan> result = new ArrayList<>();
 		if (list != null) {
 			result.addAll(list);
@@ -266,7 +247,7 @@ public class TestPluginData implements PluginData {
 	}
 	
 	public List<Object> getTestDataManagerAliases(){
-		return new ArrayList<>(data.actionDataManagerTypes.keySet());
+		return new ArrayList<>(data.testDataManagerTypeMap.keySet());
 	}
 
 	@Override

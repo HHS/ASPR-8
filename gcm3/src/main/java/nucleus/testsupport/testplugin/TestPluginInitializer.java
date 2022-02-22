@@ -53,7 +53,7 @@ public class TestPluginInitializer implements PluginInitializer {
 			pluginContext.addDataManager(testDataManager);
 		}
 
-		for (Object alias : testPluginData.getActorsRequiringConstruction()) {
+		for (Object alias : testPluginData.getTestActorAliases()) {
 			pluginContext.addActor(new TestActor(alias)::init);
 		}
 

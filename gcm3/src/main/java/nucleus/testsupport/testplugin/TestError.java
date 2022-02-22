@@ -12,7 +12,10 @@ import util.ContractException;
  */
 public enum TestError implements ContractError {
 
-	ACTION_EXECUTION_FAILURE("Not all action plans were executed or no action plans were added to the action plugin");
+	ACTION_EXECUTION_FAILURE("Not all action plans were executed or no action plans were added to the action plugin"),
+	UNKNOWN_DATA_MANAGER_ALIAS("A data manager test plan was submitted under an alias that does not have a test data manager class type"),
+	
+	;
 
 	private final String description;
 
