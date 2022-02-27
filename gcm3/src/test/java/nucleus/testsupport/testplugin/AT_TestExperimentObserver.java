@@ -21,7 +21,7 @@ import util.TriConsumer;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
-@UnitTest(target = TestExperimentObserver.class)
+@UnitTest(target = ExperimentPlanCompletionObserver.class)
 public class AT_TestExperimentObserver {
 
 	private static class MetaOutputConsumer<T> {
@@ -126,8 +126,8 @@ public class AT_TestExperimentObserver {
 		MockExperimentContext mockExperimentContext = new MockExperimentContext();
 
 		//create a TestExperimentObserver to test
-		TestExperimentObserver testExperimentObserver = new TestExperimentObserver();
-		testExperimentObserver.init(mockExperimentContext);
+		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
+		experimentPlanCompletionObserver.init(mockExperimentContext);
 
 		//create TestScenarioReport items using random scenario id and completion states
 		Map<Integer, TestScenarioReport> expectedTestScenarioReports = new LinkedHashMap<>();
@@ -147,7 +147,7 @@ public class AT_TestExperimentObserver {
 		//show that the correct TestScenarioReport items can be retrieved
 		for(Integer scenarioId : expectedTestScenarioReports.keySet()) {
 			TestScenarioReport expectedTestScenarioReport = expectedTestScenarioReports.get(scenarioId);
-			Optional<TestScenarioReport> optional = testExperimentObserver.getActionCompletionReport(scenarioId);
+			Optional<TestScenarioReport> optional = experimentPlanCompletionObserver.getActionCompletionReport(scenarioId);
 			assertTrue(optional.isPresent());
 			TestScenarioReport actualTestScenarioReport = optional.get();
 			assertEquals(expectedTestScenarioReport, actualTestScenarioReport);
@@ -155,10 +155,10 @@ public class AT_TestExperimentObserver {
 		
 		//show that an unknown scenario id will not retrieve TestScenarioReport items
 		
-		Optional<TestScenarioReport> optional = testExperimentObserver.getActionCompletionReport(1000);
+		Optional<TestScenarioReport> optional = experimentPlanCompletionObserver.getActionCompletionReport(1000);
 		assertFalse(optional.isPresent());
 
-		optional = testExperimentObserver.getActionCompletionReport(null);
+		optional = experimentPlanCompletionObserver.getActionCompletionReport(null);
 		assertFalse(optional.isPresent());
 
 

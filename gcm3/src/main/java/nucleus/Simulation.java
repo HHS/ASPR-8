@@ -392,7 +392,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void addKeyedPassivePlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+		public void addPassiveKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
 			simulation.validatePlanKeyNotNull(key);
 			simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
 			simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, key);

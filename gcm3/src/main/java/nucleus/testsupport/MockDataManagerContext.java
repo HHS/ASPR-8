@@ -285,7 +285,7 @@ public final class MockDataManagerContext implements DataManagerContext {
 	}
 
 	@Override
-	public void addKeyedPassivePlan(Consumer<DataManagerContext> plan, double planTime, Object key) {
+	public void addPassiveKeyedPlan(Consumer<DataManagerContext> plan, double planTime, Object key) {
 		scaffold.addPassiveKeyedPlanConsumer.accept(plan, planTime, key);
 	}
 

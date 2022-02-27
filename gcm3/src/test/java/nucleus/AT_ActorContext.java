@@ -1480,7 +1480,6 @@ public class AT_ActorContext {
 			
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					System.out.println("generator "+c2.getTime()+" is generating an event");
 					c2.resolveEvent(new TestEvent());
 				}, time);
 			}
@@ -1524,7 +1523,7 @@ public class AT_ActorContext {
 
 		// have the Beta actor unsubscribe to the Test Event at time 8
 		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {
-			System.out.println("Beta "+context.getTime()+" is unsubscribing to events");
+			
 			context.unsubscribe(TestEvent.class);
 		}));
 
@@ -1613,7 +1612,6 @@ public class AT_ActorContext {
 			
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					System.out.println("generator "+c2.getTime()+" is generating an event");
 					c2.resolveEvent(new TestEvent());
 				}, time);
 			}
@@ -1669,8 +1667,7 @@ public class AT_ActorContext {
 		}));
 
 		// have the Beta actor unsubscribe to the Test Event at time 8
-		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {
-			System.out.println("Beta "+context.getTime()+" is unsubscribing to events");
+		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {			
 			context.unsubscribe(eventLabel);
 		}));
 

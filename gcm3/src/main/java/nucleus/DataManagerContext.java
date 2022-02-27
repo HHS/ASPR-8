@@ -83,7 +83,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
 	 */
-	public void addKeyedPassivePlan(Consumer<DataManagerContext> plan, double planTime, Object key);
+	public void addPassiveKeyedPlan(Consumer<DataManagerContext> plan, double planTime, Object key);
 
 	/**
 	 * Retrieves a plan for the given key.

@@ -416,7 +416,6 @@ public final class Experiment {
 
 		// initialize the scenario meta data
 		final List<String> scenarioMetaData = new ArrayList<>();
-		scenarioMetaData.add(Integer.toString(scenarioId));
 
 		/*
 		 * From the scenario id select the functions from each dimension. Have

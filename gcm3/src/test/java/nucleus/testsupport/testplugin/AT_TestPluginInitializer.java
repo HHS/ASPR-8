@@ -127,18 +127,18 @@ public class AT_TestPluginInitializer {
 
 		TestPluginInitializer testPluginInitializer = new TestPluginInitializer();
 
-		TestExperimentObserver testExperimentObserver = new TestExperimentObserver();
+		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 
 		// build and execute the engine
 		Experiment	.builder()//
-					.addOutputHandler(testExperimentObserver::init)//
+					.addOutputHandler(experimentPlanCompletionObserver::init)//
 					.addPluginInitializer(testPluginInitializer)//
 					.addPluginData(testPluginData)//
 					.build()//
 					.execute();//
 
 		// show that all actions executed
-		Optional<TestScenarioReport> optional = testExperimentObserver.getActionCompletionReport(0);
+		Optional<TestScenarioReport> optional = experimentPlanCompletionObserver.getActionCompletionReport(0);
 		assertTrue(optional.isPresent(), "Scenario did not complete");
 		TestScenarioReport testScenarioReport = optional.get();
 		assertTrue(testScenarioReport.isComplete(), "Some planned action were not executed");

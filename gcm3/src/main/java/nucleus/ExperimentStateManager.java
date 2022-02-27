@@ -123,8 +123,6 @@ public final class ExperimentStateManager {
 		scenarioRecord.scenarioStatus = ScenarioStatus.RUNNING;
 		scenarioRecord.metaData.addAll(metaData);
 
-		
-
 		for (BiConsumer<ExperimentContext, Integer> consumer : simOpenConsumers) {
 			consumer.accept(experimentContext, scenarioId);
 		}
@@ -483,14 +481,15 @@ public final class ExperimentStateManager {
 	@NotThreadSafe
 	private static class OutputItemConsumerManager {
 
-		private final Map<Class<?>, Set<TriConsumer<ExperimentContext, Integer, Object>>> map;
+		private final Map<Class<?>, Set<TriConsumer<ExperimentContext, Integer, Object>>> baseMap;
+		private final Map<Class<?>, Set<TriConsumer<ExperimentContext, Integer, Object>>> workingMap = new LinkedHashMap<>();
 		private final Integer scenarioId;
 		private ExperimentContext experimentContext;
 
 		public OutputItemConsumerManager(ExperimentContext experimentContext, Integer scenarioId, Map<Class<?>, Set<TriConsumer<ExperimentContext, Integer, Object>>> consumerMap) {
 			this.experimentContext = experimentContext;
 			this.scenarioId = scenarioId;
-			this.map = new LinkedHashMap<>(consumerMap);
+			this.baseMap = new LinkedHashMap<>(consumerMap);
 		}
 
 		public void handleOutput(Object output) {
@@ -498,47 +497,22 @@ public final class ExperimentStateManager {
 				throw new ContractException(NucleusError.NULL_OUTPUT_ITEM);
 			}
 
-			Set<TriConsumer<ExperimentContext, Integer, Object>> set = map.get(output.getClass());
-			if (set != null) {
-				for (TriConsumer<ExperimentContext, Integer, Object> triConsumer : set) {
-					triConsumer.accept(experimentContext, scenarioId, output);
+			Set<TriConsumer<ExperimentContext, Integer, Object>> consumers = workingMap.get(output.getClass());
+			if (consumers == null) {
+				consumers = new LinkedHashSet<>();
+				Class<? extends Object> outputClass = output.getClass();
+				for (Class<?> c : baseMap.keySet()) {
+					if (c.isAssignableFrom(outputClass)) {
+						consumers.addAll(baseMap.get(c));
+					}
 				}
+				workingMap.put(outputClass, consumers);
 			}
 
-			// Set<OutputItemHandler> handlers =
-			// handlerMap.get(output.getClass());
-			//
-			// /*
-			// * It may happen that the class of an output item do not
-			// explicitly
-			// * match any handler, but that it compatible with that handler.
-			// *
-			// * For example suppose handlerX lists OutputItemY class as a type
-			// it
-			// * handles. When we encounter an instance of OutputItemZ that is a
-			// * descendant of OutputItemY then we would want to extend the
-			// content of
-			// * the handlerMap so that all OutputItemZ are mapped to handlerX.
-			// */
-			// if (handlers == null) {
-			// handlers = new LinkedHashSet<>();
-			// for (Class<?> outputItemClass : handlerMap.keySet()) {
-			// if (outputItemClass.isAssignableFrom(output.getClass())) {
-			// handlers.addAll(handlerMap.get(outputItemClass));
-			// }
-			// }
-			// handlerMap.put(output.getClass(), handlers);
-			// }
-			//
-			// /*
-			// * It is possible that the handlers set is empty. In that case the
-			// * output item will be ignored.
-			// */
-			// for (OutputItemHandler outputItemHandler : handlers) {
-			// outputItemHandler.handle(scenarioId, output);
-			// }
+			for (TriConsumer<ExperimentContext, Integer, Object> triConsumer : consumers) {
+				triConsumer.accept(experimentContext, scenarioId, output);
+			}
 		}
-
 	}
 
 	/**

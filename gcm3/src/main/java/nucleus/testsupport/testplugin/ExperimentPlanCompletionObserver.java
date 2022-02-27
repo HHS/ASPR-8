@@ -8,7 +8,7 @@ import net.jcip.annotations.ThreadSafe;
 import nucleus.ExperimentContext;
 
 @ThreadSafe
-public final class TestExperimentObserver {
+public final class ExperimentPlanCompletionObserver {
 	
 	private Map<Integer,TestScenarioReport> testScenarioReports = new LinkedHashMap<>(); 
 
@@ -20,7 +20,7 @@ public final class TestExperimentObserver {
 		testScenarioReports.put(scenarioId, testScenarioReport);
 	}
 	
-	public Optional<TestScenarioReport> getActionCompletionReport(Integer scenarioId) {
+	public synchronized Optional<TestScenarioReport> getActionCompletionReport(Integer scenarioId) {
 		return Optional.ofNullable(testScenarioReports.get(scenarioId));
 	}
 	

@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -14,9 +13,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +26,7 @@ import nucleus.testsupport.testplugin.TestPluginInitializer;
 import nucleus.testsupport.testplugin.TestScenarioReport;
 import util.ContractException;
 import util.MutableBoolean;
+import util.MutableInteger;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
@@ -133,7 +130,35 @@ public class AT_DataManagerContext {
 	@Test
 	@UnitTestMethod(name = "subscribeToSimulationClose", args = { Consumer.class })
 	public void testSubscribeToSimulationClose() {
-		fail();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		MutableBoolean simCloseEventHandled = new MutableBoolean();
+
+		// have a data manager schedule a few events and subscribe to simulation
+		// close
+		pluginBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+			c.addPlan((c2) -> {
+			}, 1);
+			c.addPlan((c2) -> {
+			}, 2);
+			c.addPlan((c2) -> {
+			}, 3);
+			c.subscribeToSimulationClose((c2) -> {
+				simCloseEventHandled.setValue(true);
+			});
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		Simulation	.builder()//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		// show that the subscription to simulation close was successful
+		assertTrue(simCloseEventHandled.getValue());
 
 	}
 
@@ -181,21 +206,20 @@ public class AT_DataManagerContext {
 	@UnitTestMethod(name = "getDataManagerId", args = {})
 	public void testGetDataManagerId() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		
+
 		pluginBuilder.addTestDataManager("dm1", TestDataManager1.class);
 		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (context) -> {
 			TestPluginDataManager testPluginDataManager = context.getDataManager(TestPluginDataManager.class).get();
 			Object alias = testPluginDataManager.getDataManagerAlias(context.getDataManagerId()).get();
 			assertEquals("dm1", alias);
 		}));
-		
+
 		pluginBuilder.addTestDataManager("dm2", TestDataManager2.class);
 		pluginBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
 			TestPluginDataManager testPluginDataManager = context.getDataManager(TestPluginDataManager.class).get();
 			Object alias = testPluginDataManager.getDataManagerAlias(context.getDataManagerId()).get();
 			assertEquals("dm2", alias);
 		}));
-
 
 		// build the plugin
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -260,169 +284,241 @@ public class AT_DataManagerContext {
 		// show that the last two passive plans did not execute
 		assertTrue(planExecuted.getValue());
 
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// // add a resolver
-		// ResolverId resolverId = new SimpleResolverId("resolver");
-		// pluginBuilder.addResolver(resolverId);
-		//
-		// // have the resolver test preconditions
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(5, (c) -> {
-		// // if the plan is null
-		// ContractException contractException =
-		// assertThrows(ContractException.class, () -> {
-		// c.addPlan(null, 12.0);
-		// });
-		// assertEquals(NucleusError.NULL_PLAN,
-		// contractException.getErrorType());
-		//
-		// // if the plan is scheduled for a time in the past
-		// contractException = assertThrows(ContractException.class, () -> {
-		// c.addPlan((c2) -> {
-		// }, 4.0);
-		// });
-		// assertEquals(NucleusError.PAST_PLANNING_TIME,
-		// contractException.getErrorType());
-		// }));
-		//
-		// // create a container for expected planning values
-		// Set<Integer> expectedPlanningValues = new LinkedHashSet<>();
-		// for (int i = 0; i < 10; i++) {
-		// expectedPlanningValues.add(i);
-		// }
-		//
-		// // create a container to collect executed plan information
-		// Set<Integer> observedPlanningValues = new LinkedHashSet<>();
-		//
-		// // have the resolver add some plans and have each plan execution
-		// record
-		// // data
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(5, (c) -> {
-		// double planTime = c.getTime();
-		// for (Integer value : expectedPlanningValues) {
-		// planTime += 1;
-		// c.addPlan((c2) -> {
-		// observedPlanningValues.add(value);
-		// }, planTime);
-		// }
-		// }));
-		//
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all the actions executed
-		// assertTrue(actionPlugin.allActionsExecuted());
-		//
-		// // show that all the plans added by the resolver were executed
-		// assertEquals(expectedPlanningValues, observedPlanningValues);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "addPassivePlan", args = { Consumer.class, double.class })
 	public void testAddPassivePlan() {
-		fail();
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		pluginBuilder.addTestDataManager("dm", TestDataManager1.class);
+
+		// test preconditions
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+			double scheduledTime = context.getTime() + 1;
+
+			ContractException contractException = assertThrows(ContractException.class, () -> context.addPassivePlan(null, scheduledTime));
+			assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> context.addPassivePlan((c) -> {
+			}, 0));
+			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+		}));
+
+		/*
+		 * Show that passive plans do not execute if there are no remaining
+		 * active plans. To do this, we will schedule a few passive plans, one
+		 * active plan and then a few more passive plans. We will then show that
+		 * the passive plans that come after the last active plan never execute
+		 */
+
+		// create some containers for passive keys
+		Set<Integer> expectedPassiveValues = new LinkedHashSet<>();
+		expectedPassiveValues.add(1);
+		expectedPassiveValues.add(2);
+		Set<Integer> actualPassiveValues = new LinkedHashSet<>();
+
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4, (context) -> {
+
+			// schedule two passive plans
+			context.addPassivePlan((c) -> {
+				actualPassiveValues.add(1);
+			}, 5);
+			context.addPassivePlan((c) -> {
+				actualPassiveValues.add(2);
+			}, 6);
+
+			// schedule the last active plan
+			context.addPlan((c) -> {
+			}, 7);
+
+			// schedule two more passive plans
+			context.addPassivePlan((c) -> {
+				actualPassiveValues.add(3);
+			}, 8);
+			context.addPassivePlan((c) -> {
+				actualPassiveValues.add(4);
+			}, 9);
+
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		// run the simulation
+		Simulation	.builder()//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		// we do not need to show that all plans executed
+
+		// show that the last two passive plans did not execute
+		assertEquals(expectedPassiveValues, actualPassiveValues);
 	}
 
 	@Test
-	@UnitTestMethod(name = "addKeyedPassivePlan", args = { Consumer.class, double.class, Object.class })
-	public void testAddKeyedPassivePlan() {
-		fail();
+	@UnitTestMethod(name = "addPassiveKeyedPlan", args = { Consumer.class, double.class, Object.class })
+	public void testAddPassiveKeyedPlan() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// test preconditions
+		pluginBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+			Object key = new Object();
+
+			double scheduledTime = context.getTime() + 1;
+
+			ContractException contractException = assertThrows(ContractException.class, () -> context.addPassiveKeyedPlan(null, scheduledTime, key));
+			assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> context.addPassiveKeyedPlan((c) -> {
+			}, 0, key));
+			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> context.addPassiveKeyedPlan((c) -> {
+			}, scheduledTime, null));
+			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
+
+			context.addPassiveKeyedPlan((c) -> {
+			}, scheduledTime, key);
+
+			contractException = assertThrows(ContractException.class, () -> context.addPassiveKeyedPlan((c) -> {
+			}, scheduledTime, key));
+			assertEquals(NucleusError.DUPLICATE_PLAN_KEY, contractException.getErrorType());
+
+		}));
+
+		/*
+		 * have the added test agent add a plan that can be retrieved and thus
+		 * was added successfully
+		 */
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (context) -> {
+			Object key = new Object();
+
+			assertFalse(context.getPlan(key).isPresent());
+
+			context.addPassiveKeyedPlan((c) -> {
+			}, 3, key);
+
+			assertTrue(context.getPlan(key).isPresent());
+		}));
+
+		/*
+		 * Show that passive plans do not execute if there are no remaining
+		 * active plans. To do this, we will schedule a few passive plans, one
+		 * active plan and then a few more passive plans. We will then show that
+		 * the passive plans that come after the last active plan never execute
+		 */
+
+		// create some containers for passive keys
+		Set<Integer> expectedPassiveKeys = new LinkedHashSet<>();
+		expectedPassiveKeys.add(1);
+		expectedPassiveKeys.add(2);
+		Set<Integer> actualPassiveKeys = new LinkedHashSet<>();
+
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4, (context) -> {
+
+			// schedule two passive plans
+			context.addPassiveKeyedPlan((c) -> {
+				actualPassiveKeys.add(1);
+			}, 5, 1);
+			context.addPassiveKeyedPlan((c) -> {
+				actualPassiveKeys.add(2);
+			}, 6, 2);
+
+			// schedule the last active plan
+			context.addPlan((c) -> {
+			}, 7);
+
+			// schedule two more passive plans
+			context.addPassiveKeyedPlan((c) -> {
+				actualPassiveKeys.add(3);
+			}, 8, 3);
+			context.addPassiveKeyedPlan((c) -> {
+				actualPassiveKeys.add(4);
+			}, 9, 4);
+
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		// run the simulation
+		Simulation	.builder()//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		// we do not need to show that all plans executed
+
+		// show that the last two passive plans did not execute
+		assertEquals(expectedPassiveKeys, actualPassiveKeys);
+
 	}
 
 	@Test
 	@UnitTestMethod(name = "addKeyedPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddKeyedPlan() {
-		fail();
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// // add a resolver
-		// ResolverId resolverId = new SimpleResolverId("resolver");
-		// pluginBuilder.addResolver(resolverId);
-		//
-		// // have the resolver test preconditions
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(5, (c) -> {
-		// // if the plan is null
-		// ContractException contractException =
-		// assertThrows(ContractException.class, () -> {
-		// c.addPlan(null, 12.0, new Object());
-		// });
-		// assertEquals(NucleusError.NULL_PLAN,
-		// contractException.getErrorType());
-		//
-		// // if the plan is scheduled for a time in the past
-		// contractException = assertThrows(ContractException.class, () -> {
-		// c.addPlan((c2) -> {
-		// }, 4.0, new Object());
-		// });
-		// assertEquals(NucleusError.PAST_PLANNING_TIME,
-		// contractException.getErrorType());
-		//
-		// // if the key is already in use by an existing plan
-		// Object key = new Object();
-		// c.addPlan((c2) -> {
-		// }, 17, key);
-		//
-		// contractException = assertThrows(ContractException.class, () -> {
-		// c.addPlan((c2) -> {
-		// }, 4.0, key);
-		// });
-		// assertEquals(NucleusError.DUPLICATE_PLAN_KEY,
-		// contractException.getErrorType());
-		// }));
-		//
-		// // create a container for expected planning values
-		// Set<Integer> expectedPlanningValues = new LinkedHashSet<>();
-		// for (int i = 0; i < 10; i++) {
-		// expectedPlanningValues.add(i);
-		// }
-		//
-		// // create a container to collected executed plan information
-		// Set<Integer> observedPlanningValues = new LinkedHashSet<>();
-		//
-		// // Have the resolver add some plans and have each plan record data.
-		// Show
-		// // that each added plan is retrievable by its key.
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(5, (c) -> {
-		// double planTime = c.getTime();
-		// for (Integer value : expectedPlanningValues) {
-		// planTime += 1;
-		// // create a plan
-		// Consumer<ResolverContext> plan = (c2) -> {
-		// observedPlanningValues.add(value);
-		// };
-		// // schedule the plan with the context
-		// c.addPlan(plan, planTime, value);
-		//
-		// // retrieve the plan by its key
-		// Consumer<ResolverContext> plan2 = c.getPlan(value);
-		//
-		// // show that the retrieved plan is the plan that was added
-		// assertEquals(plan, plan2);
-		// }
-		//
-		// }));
-		//
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all the actions executed
-		// assertTrue(actionPlugin.allActionsExecuted());
-		//
-		// // show that all the plans added by the resolver were executed
-		// assertEquals(expectedPlanningValues, observedPlanningValues);
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// test preconditions
+		pluginBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+			Object key = new Object();
+
+			double scheduledTime = context.getTime() + 1;
+
+			ContractException contractException = assertThrows(ContractException.class, () -> context.addKeyedPlan(null, scheduledTime, key));
+			assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> context.addKeyedPlan((c) -> {
+			}, 0, key));
+			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> context.addKeyedPlan((c) -> {
+			}, scheduledTime, null));
+			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
+
+			context.addKeyedPlan((c) -> {
+			}, scheduledTime, key);
+
+			contractException = assertThrows(ContractException.class, () -> context.addKeyedPlan((c) -> {
+			}, scheduledTime, key));
+			assertEquals(NucleusError.DUPLICATE_PLAN_KEY, contractException.getErrorType());
+
+		}));
+
+		/*
+		 * have the added test agent add a plan that can be retrieved and thus
+		 * was added successfully
+		 */
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (context) -> {
+			Object key = new Object();
+			assertFalse(context.getPlan(key).isPresent());
+			context.addKeyedPlan((c) -> {
+			}, 100, key);
+			assertTrue(context.getPlan(key).isPresent());
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// run the simulation
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		// show that the action plans got executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 
 	}
 
@@ -514,58 +610,53 @@ public class AT_DataManagerContext {
 	@Test
 	@UnitTestMethod(name = "removePlan", args = { Object.class })
 	public void testRemovePlan() {
-		fail();
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// // create a resolver
-		// ResolverId resolverId = new SimpleResolverId("resolver");
-		// pluginBuilder.addResolver(resolverId);
-		//
-		// // have the resolver test preconditions
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// ContractException contractException =
-		// assertThrows(ContractException.class, () -> c.removePlan(null));
-		// assertEquals(NucleusError.NULL_PLAN_KEY,
-		// contractException.getErrorType());
-		// }));
-		//
-		// /*
-		// * Create a counter that will be incremented each time that a plan is
-		// * executed despite having been removed.
-		// */
-		// MutableInteger planExecutionCounter = new MutableInteger();
-		//
-		// /*
-		// * Have the resolver add and remove some plans, showing that removed
-		// * plans are removed and have each plan increment a counter. We expect
-		// * the counter to be zero at the end of the simulation.
-		// */
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(1, (c) -> {
-		// for (int i = 0; i < 10; i++) {
-		// double planTime = i + 5;
-		// Object key = i;
-		// c.addPlan((c2) -> {
-		// planExecutionCounter.increment();
-		// }, planTime, key);
-		// assertNotNull(c.getPlan(key));
-		// c.removePlan(key);
-		// assertNull(c.getPlan(key));
-		// }
-		// }));
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all actions were executed
-		// assertTrue(actionPlugin.allActionsExecuted());
-		//
-		// // show that non of the removed plans executed
-		// assertEquals(0, planExecutionCounter.getValue());
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// test preconditions
+		pluginBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> context.removePlan(null));
+			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
+		}));
+
+		Object key = new Object();
+		MutableBoolean removedPlanHasExecuted = new MutableBoolean();
+
+		// have the added test agent add a plan
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (context) -> {
+			context.addKeyedPlan((c2) -> {
+				removedPlanHasExecuted.setValue(true);
+			}, 4, key);
+		}));
+
+		// have the test agent remove the plan and show the plan no longer
+		// exists
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (context) -> {
+			assertTrue(context.getPlan(key).isPresent());
+
+			context.removePlan(key);
+
+			assertFalse(context.getPlan(key).isPresent());
+
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// run the simulation
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		// show that the action plans got executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+
+		// show that the remove plan was not executed
+		assertFalse(removedPlanHasExecuted.getValue());
 	}
 
 	@Test
@@ -611,61 +702,43 @@ public class AT_DataManagerContext {
 	@Test
 	@UnitTestMethod(name = "resolveEvent", args = { Event.class })
 	public void testResolveEvent() {
-		fail();
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// // add two resolvers
-		// ResolverId resolverId_1 = new SimpleResolverId("resolver 1");
-		// pluginBuilder.addResolver(resolverId_1);
-		//
-		// ResolverId resolverId_2 = new SimpleResolverId("resolver 2");
-		// pluginBuilder.addResolver(resolverId_2);
-		//
-		// // have the first resolver test preconditions
-		// pluginBuilder.addResolverActionPlan(resolverId_1, new
-		// ResolverActionPlan(0, (c) -> {
-		// ContractException contractException =
-		// assertThrows(ContractException.class, () ->
-		// c.queueEventForResolution(null));
-		// assertEquals(NucleusError.NULL_EVENT,
-		// contractException.getErrorType());
-		// }));
-		//
-		// /*
-		// * Create a container that shows the test event was received and thus
-		// * the queue works
-		// */
-		// MutableBoolean testEventReceived = new MutableBoolean();
-		//
-		// /*
-		// * Have the second resolver subscribe to test events and record when a
-		// * test event is received
-		// */
-		// pluginBuilder.addResolverActionPlan(resolverId_2, new
-		// ResolverActionPlan(0, (c) -> {
-		// c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
-		// testEventReceived.setValue(true);
-		// });
-		// }));
-		//
-		// // have the first resolver queue a test event for resolution
-		// pluginBuilder.addResolverActionPlan(resolverId_2, new
-		// ResolverActionPlan(5, (c) -> {
-		// c.queueEventForResolution(new TestEvent());
-		// }));
-		//
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all actions were executed
-		// assertTrue(actionPlugin.allActionsExecuted());
-		//
-		// // show that the test event was received and thus the queue works
-		// assertTrue(testEventReceived.getValue());
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		MutableBoolean eventResolved = new MutableBoolean();
+
+		// Have the data manager subscribe to test event and then set the
+		// eventResolved to true
+		pluginBuilder.addTestDataManager("dm1", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
+			c.subscribe(TestEvent.class, (c2, e) -> {
+				eventResolved.setValue(true);
+			});
+		}));
+
+		// have another data manager resolve a test event
+		pluginBuilder.addTestDataManager("dm2", TestDataManager2.class);
+		pluginBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
+			context.resolveEvent(new TestEvent());
+		}));
+
+		// precondition tests
+		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(1, (context) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> context.resolveEvent(null));
+			assertEquals(NucleusError.NULL_EVENT, contractException.getErrorType());
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		// run the simulation
+		Simulation	.builder()//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		// show that event actually resolved
+		assertTrue(eventResolved.getValue());
 
 	}
 
@@ -750,62 +823,6 @@ public class AT_DataManagerContext {
 		// show that the action plans got executed
 		assertTrue(actorWasAdded.getValue());
 
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// // add a resolver
-		// ResolverId resolverId = new SimpleResolverId("resolver");
-		// pluginBuilder.addResolver(resolverId);
-		//
-		// // have the resolver create a few agents
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// for (int i = 0; i < 10; i++) {
-		// assertFalse(c.agentExists(new AgentId(i)));
-		//
-		// c.addAgent((c2) -> {
-		// }, new AgentId(i));
-		//
-		// assertTrue(c.agentExists(new AgentId(i)));
-		// }
-		//
-		// }));
-		//
-		// // precondition tests
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		//
-		// AgentId availableAgentId = c.getAvailableAgentId();
-		//
-		// ContractException contractException =
-		// assertThrows(ContractException.class, () -> c.addAgent(null,
-		// availableAgentId));
-		//
-		// assertEquals(NucleusError.NULL_AGENT_CONTEXT_CONSUMER,
-		// contractException.getErrorType());
-		//
-		// contractException = assertThrows(ContractException.class, () ->
-		// c.addAgent((c2) -> {
-		// }, new AgentId(-1)));
-		// assertEquals(NucleusError.NEGATIVE_AGENT_ID,
-		// contractException.getErrorType());
-		//
-		// contractException = assertThrows(ContractException.class, () ->
-		// c.addAgent((c2) -> {
-		// }, new AgentId(0)));
-		// assertEquals(NucleusError.AGENT_ID_IN_USE,
-		// contractException.getErrorType());
-		//
-		// }));
-		//
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all the actions executed
-		// assertTrue(actionPlugin.allActionsExecuted());
 
 	}
 
@@ -918,212 +935,176 @@ public class AT_DataManagerContext {
 	}
 
 	private void combinedSubscriptionTest() {
-		fail();
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// // add a resolver
-		// ResolverId resolverId = new SimpleResolverId("resolver");
-		// pluginBuilder.addResolver(resolverId);
-		//
-		// /*
-		// * create a container that will record the phases of event resolution
-		// * that were executed by the resolver that reflects the order in which
-		// * they occured
-		// */
-		//
-		// List<String> observedPhases = new ArrayList<>();
-		//
-		// // create a container with the phases we expect in the order we
-		// expect
-		// // them
-		// List<String> expectedPhases = new ArrayList<>();
-		// expectedPhases.add("validation");
-		// expectedPhases.add("execution");
-		// expectedPhases.add("post-action");
-		//
-		// // have the resolver test preconditions for all the phases
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// ContractException contractException =
-		// assertThrows(ContractException.class, () ->
-		// c.subscribeToEventValidationPhase(null, (c2, e) -> {
-		// }));
-		// assertEquals(NucleusError.NULL_EVENT_CLASS,
-		// contractException.getErrorType());
-		//
-		// contractException = assertThrows(ContractException.class, () ->
-		// c.subscribeToEventValidationPhase(TestEvent.class, null));
-		// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
-		// contractException.getErrorType());
-		//
-		// contractException = assertThrows(ContractException.class, () ->
-		// c.subscribeToEventExecutionPhase(null, (c2, e) -> {
-		// }));
-		// assertEquals(NucleusError.NULL_EVENT_CLASS,
-		// contractException.getErrorType());
-		//
-		// contractException = assertThrows(ContractException.class, () ->
-		// c.subscribeToEventExecutionPhase(TestEvent.class, null));
-		// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
-		// contractException.getErrorType());
-		//
-		// contractException = assertThrows(ContractException.class, () ->
-		// c.subscribeToEventPostPhase(null, (c2, e) -> {
-		// }));
-		// assertEquals(NucleusError.NULL_EVENT_CLASS,
-		// contractException.getErrorType());
-		//
-		// contractException = assertThrows(ContractException.class, () ->
-		// c.subscribeToEventPostPhase(TestEvent.class, null));
-		// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
-		// contractException.getErrorType());
-		//
-		// }));
-		//
-		// // have the resolver subscribe to the three phases for test events.
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// c.subscribeToEventValidationPhase(TestEvent.class, (c2, e) -> {
-		// observedPhases.add("validation");
-		// });
-		//
-		// c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
-		// observedPhases.add("execution");
-		// });
-		//
-		// c.subscribeToEventPostPhase(TestEvent.class, (c2, e) -> {
-		// observedPhases.add("post-action");
-		// });
-		// }));
-		//
-		// // create an agent that will generate a test event
-		// pluginBuilder.addAgent("agent");
-		// pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c)
-		// -> {
-		// c.resolveEvent(new TestEvent());
-		// }));
-		//
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that the resolver engaged in the three event resolution
-		// phases
-		// // in the proper order
-		// assertEquals(expectedPhases, observedPhases);
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		/*
+		 * create a container that will record the phases of event resolution
+		 * that were executed by the resolver that reflects the order in which
+		 * they occured
+		 */
+
+		List<String> observedPhases = new ArrayList<>();
+
+		/*
+		 * Create a container with the phases we expect in the order we expect
+		 * them.
+		 */
+		List<String> expectedPhases = new ArrayList<>();
+		expectedPhases.add("execution");
+		expectedPhases.add("post-action");
+
+		// have the resolver test preconditions for all the phases
+		pluginBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+
+			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribe(null, (c2, e) -> {
+			}));
+			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, null));
+			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> c.subscribePostOrder(null, (c2, e) -> {
+			}));
+			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
+
+			contractException = assertThrows(ContractException.class, () -> c.subscribePostOrder(TestEvent.class, null));
+			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
+
+		}));
+
+		// have the resolver subscribe to the two phases for test events.
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+
+			c.subscribe(TestEvent.class, (c2, e) -> {
+				observedPhases.add("execution");
+			});
+
+			c.subscribePostOrder(TestEvent.class, (c2, e) -> {
+				observedPhases.add("post-action");
+			});
+		}));
+
+		// create an agent that will generate a test event
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			c.resolveEvent(new TestEvent());
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+
+		// build and execute the engine
+		Simulation	.builder()//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		/*
+		 * show that the resolver engaged in the three event resolution phases
+		 * in the proper order
+		 */
+		assertEquals(expectedPhases, observedPhases);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "subscribe", args = { Class.class, BiConsumer.class })
 	public void testSubscribe() {
-		fail();
-		// combinedSubscriptionTest();
+		combinedSubscriptionTest();
 	}
 
 	@Test
 	@UnitTestMethod(name = "subscribeToEventPostPhase", args = { Class.class, BiConsumer.class })
 	public void testSubscribeToEventPostPhase() {
-		fail();
-		// combinedSubscriptionTest();
+		combinedSubscriptionTest();
 	}
 
 	@Test
 	@UnitTestMethod(name = "unSubscribeToEvent", args = { Class.class })
 	public void testUnSubscribeToEvent() {
-		fail();
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// // add a resolver
-		// ResolverId resolverId = new SimpleResolverId("resolver");
-		// pluginBuilder.addResolver(resolverId);
-		//
-		// // have the resolver test preconditions
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// ContractException contractException =
-		// assertThrows(ContractException.class, () ->
-		// c.unSubscribeToEvent(null));
-		// assertEquals(NucleusError.NULL_EVENT_CLASS,
-		// contractException.getErrorType());
-		// }));
-		//
-		// /*
-		// * Create a container to count then number of times a subscription
-		// * execution occured
-		// */
-		// MutableInteger phaseExecutionCount = new MutableInteger();
-		//
-		// // have the resolver subscribe to the test event and have it handle
-		// each
-		// // type of event handling by incrementing a counter
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		//
-		// c.subscribeToEventValidationPhase(TestEvent.class, (c2, e) -> {
-		// phaseExecutionCount.increment();
-		// });
-		//
-		// c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
-		// phaseExecutionCount.increment();
-		// });
-		//
-		// c.subscribeToEventPostPhase(TestEvent.class, (c2, e) -> {
-		// phaseExecutionCount.increment();
-		// });
-		//
-		// }));
-		//
-		// // create an agent that will produce a test event
-		// pluginBuilder.addAgent("agent");
-		// pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c)
-		// -> {
-		// c.resolveEvent(new TestEvent());
-		// }));
-		//
-		// /*
-		// * Show that the phaseExecutionCount is three after the the agent is
-		// * done
-		// */
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(2, (c) -> {
-		// assertEquals(3, phaseExecutionCount.getValue());
-		// }));
-		//
-		// // have the resolver unsubscribe
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(3, (c) -> {
-		// c.unSubscribeToEvent(TestEvent.class);
-		// }));
-		//
-		// // have the agent generate another test event
-		// pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(4, (c)
-		// -> {
-		// c.resolveEvent(new TestEvent());
-		// }));
-		//
-		// /*
-		// * Show that the phaseExecutionCount is still three after the the
-		// agent
-		// * is done and thus the resolver is no longer subscribed
-		// */
-		// pluginBuilder.addResolverActionPlan(resolverId, new
-		// ResolverActionPlan(5, (c) -> {
-		// assertEquals(3, phaseExecutionCount.getValue());
-		// }));
-		//
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all actions executed
-		// assertTrue(actionPlugin.allActionsExecuted());
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+
+
+		// have the resolver test preconditions
+		pluginBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> c.unSubscribe(null));
+			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
+		}));
+
+		/*
+		 * Create a container to count then number of times a subscription
+		 * execution occured
+		 */
+		MutableInteger phaseExecutionCount = new MutableInteger();
+
+		/*
+		 * have the resolver subscribe to the test event and have it handle each
+		 * type of event handling by incrementing a counter
+		 */
+
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+
+			c.subscribe(TestEvent.class, (c2, e) -> {
+				phaseExecutionCount.increment();
+			});
+
+			c.subscribePostOrder(TestEvent.class, (c2, e) -> {
+				phaseExecutionCount.increment();
+			});
+
+		}));
+
+		// create an agent that will produce a test event
+		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+			c.resolveEvent(new TestEvent());
+		}));
+
+		/*
+		 * Show that the phaseExecutionCount is three after the the agent is
+		 * done
+		 */
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (c) -> {
+			assertEquals(2, phaseExecutionCount.getValue());
+		}));
+
+		// have the resolver unsubscribe
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (c) -> {
+			c.unSubscribe(TestEvent.class);
+		}));
+
+		// have the agent generate another test event
+		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(4, (c) -> {
+			c.resolveEvent(new TestEvent());
+		}));
+
+		/*
+		 * Show that the phaseExecutionCount is still three after the the agent
+		 * is done and thus the resolver is no longer subscribed
+		 */
+		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(5, (c) -> {
+			assertEquals(2, phaseExecutionCount.getValue());
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// build and execute the engine
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPluginData(testPluginData)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.build()//
+					.execute();//
+
+		// show that all actions executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
 	/*
@@ -1245,185 +1226,102 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribersExistForEvent", args = { Class.class })
-	public void testSubscribersExistForEvent() {
-		fail();
-		// // create an event labeler id
-		// EventLabelerId eventLabelerId = new EventLabelerId() {
-		// };
-		//
-		// // create a simple event label as a place holder -- all test events
-		// will
-		// // be matched
-		// MultiKeyEventLabel<TestEvent> eventLabel = new
-		// MultiKeyEventLabel<>(TestEvent.class, eventLabelerId,
-		// TestEvent.class);
-		//
-		// // create an event labeler that always returns the label above
-		// EventLabeler<TestEvent> eventLabeler = new
-		// SimpleEventLabeler<>(eventLabelerId, TestEvent.class, (c2, e) -> {
-		// return eventLabel;
-		// });
-		//
-		// ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-		//
-		// /////////////////////////////////////////////////////////
-		// // Case 1 : an agent subscriber
-		// /////////////////////////////////////////////////////////
-		//
-		// // add the test resolver
-		// ResolverId testResolverId = new SimpleResolverId("test resolver");
-		// pluginBuilder.addResolver(testResolverId);
-		//
-		// /*
-		// * Have the test resolver show that there are initially no subscribers
-		// * to test events.
-		// */
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// assertFalse(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		//
-		// // create an agent and have it subscribe to test events at time 1
-		// pluginBuilder.addAgent("agent");
-		// pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(1, (c)
-		// -> {
-		// // add the event labeler to the context
-		// c.addEventLabeler(eventLabeler);
-		//
-		// // subscribe to the event label
-		// c.subscribe(eventLabel, (c2, e) -> {
-		// });
-		// }));
-		//
-		// // show that the resolver now sees that there are subscribers
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(2, (c) -> {
-		// assertTrue(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		// // have the agent unsubscribe
-		// pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(3, (c)
-		// -> {
-		// c.unsubscribe(eventLabel);
-		// }));
-		// // show that the resolver see no subscribers
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(4, (c) -> {
-		// assertFalse(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		//
-		// // build the plugin
-		// ActionPlugin actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all actions were executed
-		// assertTrue(actionPlugin.allActionsExecuted());
-		//
-		// /////////////////////////////////////////////////////////
-		// // Case 2 : a report subscriber
-		// /////////////////////////////////////////////////////////
-		//
-		// // add the test resolver
-		// testResolverId = new SimpleResolverId("test resolver");
-		// pluginBuilder.addResolver(testResolverId);
-		//
-		// /*
-		// * Have the test resolver show that there are initially no subscribers
-		// * to test events.
-		// */
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// assertFalse(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		//
-		// // add a report
-		// ReportId reportId = new SimpleReportId("report");
-		// pluginBuilder.addReport(reportId);
-		//
-		// // have the report subscribe to the test event
-		// pluginBuilder.addReportActionPlan(reportId, new ReportActionPlan(1,
-		// (c) -> {
-		// // add the event labeler to the context
-		// c.addEventLabeler(eventLabeler);
-		//
-		// // subscribe to the event label
-		// c.subscribe(eventLabel, (c2, e) -> {
-		// });
-		// }));
-		//
-		// // show that the resolver now sees that there are subscribers
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(2, (c) -> {
-		// assertTrue(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		//
-		// // build the plugin
-		// actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all actions were executed
-		// assertTrue(actionPlugin.allActionsExecuted());
-		// /////////////////////////////////////////////////////////
-		// // Case 3 : a resolver subscriber
-		// /////////////////////////////////////////////////////////
-		//
-		// // add the test resolver
-		// testResolverId = new SimpleResolverId("test resolver");
-		// pluginBuilder.addResolver(testResolverId);
-		//
-		// /*
-		// * Have the test resolver show that there are initially no subscribers
-		// * to test events.
-		// */
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(0, (c) -> {
-		// assertFalse(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		//
-		// // add a second resolver and have it subscribe to the test event
-		// ResolverId subscriberResolverId = new SimpleResolverId("subscriber
-		// resolver");
-		// pluginBuilder.addResolver(subscriberResolverId);
-		//
-		// pluginBuilder.addResolverActionPlan(subscriberResolverId, new
-		// ResolverActionPlan(1, (c) -> {
-		// c.subscribeToEventExecutionPhase(TestEvent.class, (c2, e) -> {
-		// });
-		// }));
-		//
-		// // show that the test resolver now sees that there are subscribers
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(2, (c) -> {
-		// assertTrue(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		//
-		// // have the second resolver unsubscribe
-		// pluginBuilder.addResolverActionPlan(subscriberResolverId, new
-		// ResolverActionPlan(3, (c) -> {
-		// c.unSubscribeToEvent(TestEvent.class);
-		// }));
-		//
-		// // show that the test resolver now sees that there are no subscribers
-		// pluginBuilder.addResolverActionPlan(testResolverId, new
-		// ResolverActionPlan(4, (c) -> {
-		// assertFalse(c.subscribersExistForEvent(TestEvent.class));
-		// }));
-		//
-		// // build the plugin
-		// actionPlugin = pluginBuilder.build();
-		//
-		// // build and execute the engine
-		// Simulation.builder().addPlugin(ActionPlugin.PLUGIN_ID,
-		// actionPlugin::init).build().execute();
-		//
-		// // show that all actions were executed
-		// assertTrue(actionPlugin.allActionsExecuted());
+	@UnitTestMethod(name = "subscribersExist", args = { Class.class })
+	public void testSubscribersExist() {
+
+		// create an event labeler id
+		EventLabelerId eventLabelerId = new EventLabelerId() {
+		};
+
+		/*
+		 * create a simple event label as a place holder -- all test events will
+		 * be matched
+		 */
+		MultiKeyEventLabel<TestEvent> eventLabel = new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
+
+		// create an event labeler that always returns the label above
+		EventLabeler<TestEvent> eventLabeler = new SimpleEventLabeler<>(eventLabelerId, TestEvent.class, (c2, e) -> {
+			return eventLabel;
+		});
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// add the first data manager
+
+		/*
+		 * Have the test resolver show that there are initially no subscribers
+		 * to test events.
+		 */
+		pluginBuilder.addTestDataManager("dm1", TestDataManager1.class);
+		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
+			assertFalse(c.subscribersExist(TestEvent.class));
+
+			// add the event labeler to the context
+			c.addEventLabeler(eventLabeler);
+
+		}));
+
+		// create an agent and have it subscribe to test events at time 1
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			// subscribe to the event label
+			c.subscribe(eventLabel, (c2, e) -> {
+			});
+		}));
+
+		// show that the resolver now sees that there are subscribers
+		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(2, (c) -> {
+			assertTrue(c.subscribersExist(TestEvent.class));
+		}));
+
+		// have the agent unsubscribe
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
+			c.unsubscribe(eventLabel);
+		}));
+
+		// show that the resolver see no subscribers
+		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(4, (c) -> {
+			assertFalse(c.subscribersExist(TestEvent.class));
+		}));
+
+		// add a second data manager
+
+		pluginBuilder.addTestDataManager("dm2", TestDataManager2.class);
+
+		pluginBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(5, (c) -> {
+			c.subscribe(TestEvent.class, (c2, e) -> {
+			});
+		}));
+
+		// show that the test resolver now sees that there are subscribers
+		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(6, (c) -> {
+			assertTrue(c.subscribersExist(TestEvent.class));
+		}));
+
+		// have the second data manager unsubscribe
+		pluginBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(7, (c) -> {
+			c.unSubscribe(TestEvent.class);
+		}));
+
+		// show that dm1 now sees that there are no subscribers
+		pluginBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(8, (c) -> {
+			assertFalse(c.subscribersExist(TestEvent.class));
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// build and execute the engine
+		Simulation	.builder().setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPluginInitializer(new TestPluginInitializer())//
+					.addPluginData(testPluginData)//
+					.build()//
+					.execute();//
+
+		// show that all actions were executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
 }
