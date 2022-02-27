@@ -12,7 +12,6 @@ import nucleus.ActorId;
 import nucleus.DataManager;
 import nucleus.PluginContext;
 import nucleus.PluginData;
-import nucleus.PluginId;
 
 /**
  * A mock implementation of a {@link PluginContext} that allows for the
@@ -21,18 +20,9 @@ import nucleus.PluginId;
  */
 public final class MockPluginContext implements PluginContext {
 
-	private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 
 	private int masterActorIdValue;
-
-	@Override
-	public void addPluginDependency(PluginId pluginId) {
-		pluginDependencies.add(pluginId);
-	}
-
-	public Set<PluginId> getPluginDependencies() {
-		return new LinkedHashSet<>(pluginDependencies);
-	}
+	
 
 	private Set<DataManager> dataManagers = new LinkedHashSet<>();
 

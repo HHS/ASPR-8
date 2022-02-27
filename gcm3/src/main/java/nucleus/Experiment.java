@@ -52,15 +52,11 @@ public final class Experiment {
 			return this;
 		}
 
-		public Builder addPluginInitializer(final PluginInitializer pluginInitializer) {
-			data.pluginInitializers.add(pluginInitializer);
+		public Builder addPlugin(final Plugin plugin) {
+			data.plugins.add(plugin);
 			return this;
 		}
 		
-		public Builder addPluginData(PluginData pluginData) {
-			data.pluginDatas.add(pluginData);
-			return this;
-		}
 
 		public Experiment build() {
 			try {
@@ -118,10 +114,9 @@ public final class Experiment {
 	/*
 	 * A data class for holding the inputs to this builder from its client.
 	 */
-	private static class Data {		
-		private final List<PluginData> pluginDatas = new ArrayList<>();
+	private static class Data {	
 		private final List<Dimension> dimensions = new ArrayList<>();
-		private final List<PluginInitializer> pluginInitializers = new ArrayList<>();
+		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
 		private boolean reportExperimentProgessToConsole;
@@ -148,18 +143,16 @@ public final class Experiment {
 	 */
 	private static class SimulationCallable implements Callable<SimResult> {
 		private final ExperimentStateManager experimentStateManager;
-		private final List<PluginInitializer> pluginInitializers;
-		private final List<PluginData> pluginDatas;
+		private final List<Plugin> plugins;		
 		private final Integer scenarioId;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<PluginInitializer> pluginInitializers,final List<PluginData> pluginDatas) {
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
-			this.pluginInitializers = new ArrayList<>(pluginInitializers);
-			this.pluginDatas = new ArrayList<>(pluginDatas);
+			this.plugins = new ArrayList<>(plugins);			
 		}
 
 		/**

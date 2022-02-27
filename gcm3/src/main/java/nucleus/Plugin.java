@@ -1,6 +1,7 @@
 package nucleus;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -44,7 +45,25 @@ public final class Plugin {
 			data.pluginId = pluginId;
 			return this;
 		}
-
+		/**
+		 * Establishes that the plugin using this plugin context depends upon the
+		 * given plugin.
+		 * 
+		 * Plugin dependencies are gathered by nucleus and used to determine that
+		 * the simulation is well formed. Nucleus requires that: 1) there are no
+		 * duplicate plugins, 2)there are no null plugins, 3)there are no missing
+		 * plugins, and 4) the plugin dependencies form an acyclic, directed graph.
+		 * 
+		 * Nucleus will initialize each plugin primarily in the order dictated by
+		 * this graph and secondarily in the order each plugin was contributed to
+		 * nucleus.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED} if
+		 *             plugin initialization is over
+		 *             <li>{@link NucleusError#NULL_PLUGIN_ID} if the plugin id is
+		 *             null
+		 */
 		public Builder addPluginDependency(PluginId pluginId) {
 			data.pluginDependencies.add(pluginId);
 			return this;
@@ -80,9 +99,7 @@ public final class Plugin {
 		return new LinkedHashSet<>(data.pluginDatas);
 	}
 
-	public void init(PluginContext pluginContext) {
-		if (data.init != null) {
-			data.init.accept(pluginContext);
-		}
+	public Optional<Consumer<PluginContext>> getInitializer() {
+		return Optional.ofNullable(data.init);
 	}
 }

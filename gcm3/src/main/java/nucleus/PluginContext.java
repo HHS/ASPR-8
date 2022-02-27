@@ -20,26 +20,6 @@ import util.ContractException;
  *
  */
 public interface PluginContext {
-	/**
-	 * Establishes that the plugin using this plugin context depends upon the
-	 * given plugin.
-	 * 
-	 * Plugin dependencies are gathered by nucleus and used to determine that
-	 * the simulation is well formed. Nucleus requires that: 1) there are no
-	 * duplicate plugins, 2)there are no null plugins, 3)there are no missing
-	 * plugins, and 4) the plugin dependencies form an acyclic, directed graph.
-	 * 
-	 * Nucleus will initialize each plugin primarily in the order dictated by
-	 * this graph and secondarily in the order each plugin was contributed to
-	 * nucleus.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED} if
-	 *             plugin initialization is over
-	 *             <li>{@link NucleusError#NULL_PLUGIN_ID} if the plugin id is
-	 *             null
-	 */
-	public void addPluginDependency(PluginId pluginId);
 
 	/**
 	 * 

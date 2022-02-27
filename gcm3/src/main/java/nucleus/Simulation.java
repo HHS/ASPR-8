@@ -44,14 +44,6 @@ public class Simulation {
 	private class PluginContextImpl implements PluginContext {
 
 		@Override
-		public void addPluginDependency(PluginId pluginId) {
-			if (focalPluginId == null) {
-				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
-			}
-			pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
-		}
-
-		@Override
 		public void addDataManager(DataManager dataManager) {
 
 			if (focalPluginId == null) {
@@ -86,7 +78,7 @@ public class Simulation {
 				actorsMap.put(focalPluginId, set);
 			}
 
-			set.add(consumer);			
+			set.add(consumer);
 
 		}
 
@@ -278,17 +270,7 @@ public class Simulation {
 		}
 	}
 
-	private static class ActorContentRec {
-
-		private Event event;
-
-		private MetaActorEventConsumer<?> metaActorEventConsumer;
-
-		private Consumer<ActorContext> plan;
-
-		private ActorId actorId;
-
-	}
+	
 
 	public static class Builder {
 
@@ -316,26 +298,11 @@ public class Simulation {
 		 * 
 		 */
 
-		public Builder addPluginInitializer(PluginInitializer pluginInitializer) {
-			if (pluginInitializer == null) {
-				throw new ContractException(NucleusError.NULL_PLUGIN_INITIALIZER);
+		public Builder addPlugin(Plugin plugin) {
+			if (plugin == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN);
 			}
-			data.pluginInitializers.add(pluginInitializer);
-			return this;
-		}
-
-		/**
-		 * Adds a plugin to this builder for inclusion in the simulation
-		 * 
-		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_PLUGIN_DATA} if the plugin
-		 *             data is null
-		 */
-		public Builder addPluginData(PluginData pluginData) {
-			if (pluginData == null) {
-				throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
-			}
-			data.pluginDatas.add(pluginData);
+			data.plugins.add(plugin);
 			return this;
 		}
 
@@ -494,8 +461,7 @@ public class Simulation {
 	}
 
 	private static class Data {
-		private List<PluginInitializer> pluginInitializers = new ArrayList<>();
-		private List<PluginData> pluginDatas = new ArrayList<>();
+		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
 	}
 
@@ -522,7 +488,6 @@ public class Simulation {
 	};
 
 	
-	private Map<PluginId, Set<Consumer<ActorContext>>> actorsMap = new LinkedHashMap<>();
 
 	// planning
 	private long masterPlanningArrivalId;
@@ -533,23 +498,11 @@ public class Simulation {
 
 	// actors
 
-	private final Map<Class<? extends Event>, Map<ActorId, MetaActorEventConsumer<?>>> actorEventMap = new LinkedHashMap<>();
 
 	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
 	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
 
-	private final ActorContext actorContext = new ActorContextImpl();
-
-	private final List<ActorId> actorIds = new ArrayList<>();
-
-	private boolean containsDeletedActors;
-
-	private final Map<ActorId, Map<Object, PlanRec>> actorPlanMap = new LinkedHashMap<>();
-
-	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
-
-	private ActorId focalActorId;
 
 	private boolean started;
 
@@ -747,23 +700,34 @@ public class Simulation {
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
 		}
+
+		for (Plugin plugin : data.plugins) {
+			focalPluginId = plugin.getPluginId();
+			for (PluginId pluginId : plugin.getPluginDependencies()) {
+				pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
+			}
+		}
+
 		started = true;
 
 		// set the output consumer
 		outputConsumer = data.outputConsumer;
 
 		// Make the plugin data available to the plugin initializers
-		for (PluginData pluginData : data.pluginDatas) {
-			pluginDataMap.put(pluginData.getClass(), pluginData);
+		for (Plugin plugin : data.plugins) {
+			for (PluginData pluginData : plugin.getPluginDatas()) {
+				pluginDataMap.put(pluginData.getClass(), pluginData);
+			}
 		}
+		List<PluginId> orderedPluginIds = getOrderedPluginIds();
 
-		for (PluginInitializer pluginInitializer : data.pluginInitializers) {
-			focalPluginId = pluginInitializer.getPluginId();
+		for (Plugin plugin : data.plugins) {
+			focalPluginId = plugin.getPluginId();
 			if (focalPluginId == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
 			}
 			pluginDependencyGraph.addNode(focalPluginId);
-			pluginInitializer.init(pluginContext);
+			plugin.init(pluginContext);
 			focalPluginId = null;
 		}
 
@@ -771,7 +735,7 @@ public class Simulation {
 		 * Retrieve the data managers and actors from the plugins in the correct
 		 * order
 		 */
-		for (PluginId pluginId : getOrderedPluginIds()) {
+		for (PluginId pluginId : orderedPluginIds) {
 
 			Set<DataManager> dataManagerSet = dataMangagersMap.get(pluginId);
 			if (dataManagerSet != null) {
@@ -896,7 +860,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private  Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	private Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		Consumer<DataManagerContext> result = null;
@@ -908,7 +872,7 @@ public class Simulation {
 		}
 		return Optional.ofNullable(result);
 	}
-	
+
 	private List<Object> getActorPlanKeys() {
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 		if (map != null) {
@@ -1114,17 +1078,17 @@ public class Simulation {
 	}
 
 	private boolean actorExists(final ActorId actorId) {
-		if(actorId == null) {
+		if (actorId == null) {
 			return false;
 		}
 		int index = actorId.getValue();
-		if(index<0) {
+		if (index < 0) {
 			return false;
 		}
-		if(index>=actorIds.size()) {
+		if (index >= actorIds.size()) {
 			return false;
 		}
-		
+
 		return actorIds.get(index) != null;
 	}
 
@@ -1411,7 +1375,7 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event>void unSubscribeActorToEvent(Class<T> eventClass) {
+	private <T extends Event> void unSubscribeActorToEvent(Class<T> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1543,5 +1507,32 @@ public class Simulation {
 	//////////////////////////////
 	// actor support
 	//////////////////////////////
+	private Map<PluginId, Set<Consumer<ActorContext>>> actorsMap = new LinkedHashMap<>();
+	
+	private final Map<Class<? extends Event>, Map<ActorId, MetaActorEventConsumer<?>>> actorEventMap = new LinkedHashMap<>();
+	
+	private final ActorContext actorContext = new ActorContextImpl();
+
+	private final List<ActorId> actorIds = new ArrayList<>();
+
+	private boolean containsDeletedActors;
+
+	private final Map<ActorId, Map<Object, PlanRec>> actorPlanMap = new LinkedHashMap<>();
+
+	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
+
+	private ActorId focalActorId;
+	
+	private static class ActorContentRec {
+
+		private Event event;
+
+		private MetaActorEventConsumer<?> metaActorEventConsumer;
+
+		private Consumer<ActorContext> plan;
+
+		private ActorId actorId;
+
+	}
 
 }

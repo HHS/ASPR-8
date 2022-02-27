@@ -2,9 +2,9 @@ package nucleus.testsupport.testplugin;
 
 import java.util.List;
 
+import nucleus.Plugin;
 import nucleus.PluginContext;
-import nucleus.PluginId;
-import nucleus.PluginInitializer;
+import nucleus.PluginData;
 
 /**
  * Test Support plugin that is designed to work with a unit testing framework.
@@ -15,11 +15,9 @@ import nucleus.PluginInitializer;
  * @author Shawn Hatch
  *
  */
-public class TestPluginInitializer implements PluginInitializer {
+public class TestPlugin {
 
-	
-
-	/**
+	/*
 	 * Initializes a simulation via the given context. Using an ActionPluginData
 	 * retrieved from the context, this initializer adds ActionActor and
 	 * ActionDataManager instances that are used in testing. It also creates an
@@ -29,7 +27,7 @@ public class TestPluginInitializer implements PluginInitializer {
 	 * @throws RuntimeException
 	 *             <li>if the pluginContext is null</li>
 	 */
-	public void init(PluginContext pluginContext) {
+	private static void init(PluginContext pluginContext) {
 		if (pluginContext == null) {
 			throw new RuntimeException("null plugin context");
 		}
@@ -39,7 +37,7 @@ public class TestPluginInitializer implements PluginInitializer {
 		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(testPluginData);
 		pluginContext.addDataManager(testPluginDataManager);
 
-		List<Object> dataManagerAliases = testPluginData.getTestDataManagerAliases();		
+		List<Object> dataManagerAliases = testPluginData.getTestDataManagerAliases();
 		for (Object alias : dataManagerAliases) {
 			Class<? extends TestDataManager> c = testPluginData.getTestDataManagerType(alias).get();
 			TestDataManager testDataManager;
@@ -59,10 +57,12 @@ public class TestPluginInitializer implements PluginInitializer {
 
 	}
 
-
-	@Override
-	public PluginId getPluginId() {
-		return TestPluginId.PLUGIN_ID;
+	public static Plugin getPlugin(PluginData pluginData) {
+		return Plugin	.builder()//
+						.setSimInit(TestPlugin::init)//
+						.addPluginData(pluginData)//
+						.setPluginId(TestPluginId.PLUGIN_ID)//
+						.build();//
 	}
 
 }

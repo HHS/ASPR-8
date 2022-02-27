@@ -34,7 +34,7 @@ public enum NucleusError implements ContractError {
 	NULL_PLAN_KEY("Null planning key"),
 	NULL_PLUGIN_DATA("Null plugin data"),
 	NULL_PLUGIN_ID("Null plugin id"),
-	NULL_PLUGIN_INITIALIZER("Null plugin initializer"),
+	NULL_PLUGIN("Null plugin"),
 	NULL_PRIMARY_KEY_VALUE("Null primary key value"),
 	NULL_SCENARIO_ID("Null scenario id"),
 	PAST_PLANNING_TIME("Plan execution time is in the past"),
