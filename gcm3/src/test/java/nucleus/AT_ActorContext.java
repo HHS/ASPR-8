@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test;
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
+import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginDataManager;
-import nucleus.testsupport.testplugin.TestPluginInitializer;
 import nucleus.testsupport.testplugin.TestScenarioReport;
 import util.ContractException;
 import util.MultiKey;
@@ -280,26 +280,28 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "actorExists", args = { ActorId.class })
 	public void testActorExists() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		double testTime = 1;
 		// there are no precondition tests
 
 		// have the test agent show it exists and that other agents do not
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(testTime++, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(testTime++, (context) -> {
 			assertTrue(context.actorExists(new ActorId(0)));
 			assertFalse(context.actorExists(new ActorId(1)));
 			assertFalse(context.actorExists(new ActorId(2)));
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -310,24 +312,24 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "addActor", args = { ActorContext.class })
 	public void testAddActor() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		MutableBoolean actorWasAdded = new MutableBoolean();
 
 		// there are no precondition tests
 
 		// have the test agent show it exists and that other agents do not
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			c.addActor((c2) -> actorWasAdded.setValue(true));
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -339,10 +341,10 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "addEventLabeler", args = { EventLabeler.class })
 	public void testAddEventLabeler() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have the actor test the preconditions
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			EventLabelerId eventLabelerId = new EventLabelerId() {
 			};
 
@@ -378,7 +380,7 @@ public class AT_ActorContext {
 		EventLabeler<TestEvent> eventLabeler = new TestEventLabeler(TestEvent.class, id);
 
 		// have the actor add the event labeler
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			c.addEventLabeler(eventLabeler);
 		}));
 
@@ -391,25 +393,27 @@ public class AT_ActorContext {
 
 		// have the agent observe the test event
 
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
 			c.subscribe(new MultiKeyEventLabel<>(TestEvent.class, id, TestEvent.class), (c2, e) -> {
 				eventObserved.setValue(true);
 			});
 		}));
 
 		// have the actor create a test event for the agent to observe
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
 			c.resolveEvent(new TestEvent());
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// build and execute the engine
 		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer()).build()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
 					.execute();//
 
 		// show that all plans were executed
@@ -430,10 +434,10 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "addKeyedPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddKeyedPlan() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("Alpha", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(1, (context) -> {
 			Object key = new Object();
 
 			double scheduledTime = context.getTime() + 1;
@@ -462,7 +466,7 @@ public class AT_ActorContext {
 		 * have the added test agent add a plan that can be retrieved and thus
 		 * was added successfully
 		 */
-		pluginBuilder.addTestActorPlan("Alpha", new TestActorPlan(2, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(2, (context) -> {
 			Object key = new Object();
 			assertFalse(context.getPlan(key).isPresent());
 			context.addKeyedPlan((c) -> {
@@ -471,14 +475,14 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -489,10 +493,10 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "addPassiveKeyedPlan", args = { Consumer.class, Object.class })
 	public void testAddPassiveKeyedPlan() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			Object key = new Object();
 
 			double scheduledTime = context.getTime() + 1;
@@ -521,7 +525,7 @@ public class AT_ActorContext {
 		 * have the added test agent add a plan that can be retrieved and thus
 		 * was added successfully
 		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
 			Object key = new Object();
 
 			assertFalse(context.getPlan(key).isPresent());
@@ -545,7 +549,7 @@ public class AT_ActorContext {
 		expectedPassiveKeys.add(2);
 		Set<Integer> actualPassiveKeys = new LinkedHashSet<>();
 
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
 
 			// schedule two passive plans
 			context.addPassiveKeyedPlan((c) -> {
@@ -570,12 +574,12 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -589,10 +593,10 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "addPassivePlan", args = { Consumer.class, double.class })
 	public void testAddPassivePlan() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			double scheduledTime = context.getTime() + 1;
 
 			ContractException contractException = assertThrows(ContractException.class, () -> context.addPassivePlan(null, scheduledTime));
@@ -617,7 +621,7 @@ public class AT_ActorContext {
 		expectedPassiveValues.add(2);
 		Set<Integer> actualPassiveValues = new LinkedHashSet<>();
 
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
 
 			// schedule two passive plans
 			context.addPassivePlan((c) -> {
@@ -642,12 +646,12 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -667,10 +671,10 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class })
 	public void testAddPlan() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			double scheduledTime = context.getTime() + 1;
 
 			ContractException contractException = assertThrows(ContractException.class, () -> context.addPlan(null, scheduledTime));
@@ -688,7 +692,7 @@ public class AT_ActorContext {
 
 		MutableBoolean planExecuted = new MutableBoolean();
 
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
 			// schedule two passive plans
 			context.addPlan((c) -> {
 				planExecuted.setValue(true);
@@ -696,12 +700,12 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -715,7 +719,7 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "getActorId", args = {})
 	public void testGetActorId() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		double testTime = 1;
 		// there are no precondition tests
@@ -725,7 +729,7 @@ public class AT_ActorContext {
 		 * expected values established duing the initialization of the
 		 * TestActors.
 		 */
-		pluginBuilder.addTestActorPlan("Alpha", new TestActorPlan(testTime++, (c) -> {
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			assertNotNull(actorId);
 			TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
@@ -733,7 +737,7 @@ public class AT_ActorContext {
 			assertEquals("Alpha", alias);
 		}));
 
-		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(testTime++, (c) -> {
+		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			assertNotNull(actorId);
 			TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
@@ -741,7 +745,7 @@ public class AT_ActorContext {
 			assertEquals("Beta", alias);
 		}));
 
-		pluginBuilder.addTestActorPlan("Gamma", new TestActorPlan(testTime++, (c) -> {
+		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			assertNotNull(actorId);
 			TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
@@ -750,13 +754,14 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
 		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -769,18 +774,18 @@ public class AT_ActorContext {
 	public void testGetDataManager() {
 
 		// create the test plugin data builder
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a data manager for the actor to find
 
-		pluginBuilder.addTestDataManager("dm1", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm1", TestDataManager1.class);
 
 		/*
 		 * Have the agent search for the data manager that was added to the
 		 * simulation. Show that there is no instance of the second type of data
 		 * manager present.
 		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
 			Optional<TestDataManager1> optional1 = c.getDataManager(TestDataManager1.class);
 			assertTrue(optional1.isPresent());
 
@@ -789,14 +794,15 @@ public class AT_ActorContext {
 		}));
 
 		// build the action plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// execute the engine
 		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -812,10 +818,10 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "getPlan", args = { Object.class })
 	public void testGetPlan() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 		}));
@@ -824,7 +830,7 @@ public class AT_ActorContext {
 		 * have the added test agent add a plan that can be retrieved and thus
 		 * was added successfully
 		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
 			Object key = new Object();
 			assertFalse(context.getPlan(key).isPresent());
 			context.addKeyedPlan((c) -> {
@@ -833,14 +839,14 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -855,7 +861,7 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "getPlanKeys", args = {})
 	public void testGetPlanKeys() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// There are no precondition tests
 		Set<Object> expectedKeys = new LinkedHashSet<>();
@@ -865,7 +871,7 @@ public class AT_ActorContext {
 		}
 
 		// have the test agent add some plans
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			for (Object key : expectedKeys) {
 				context.addKeyedPlan((c) -> {
 				}, 100, key);
@@ -877,14 +883,16 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
 		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer()).build()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
 					.execute();//
 
 		// show that the action plans got executed
@@ -898,10 +906,10 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "getPlanTime", args = { Object.class })
 	public void testGetPlanTime() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlanTime(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 		}));
@@ -910,7 +918,7 @@ public class AT_ActorContext {
 		 * have the added test agent add a plan and show that the plan time is
 		 * as expected
 		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
 			Object key = new Object();
 			assertFalse(context.getPlanTime(key).isPresent());
 			double expectedPlanTime = 100;
@@ -922,13 +930,14 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		// run the simulation
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -941,7 +950,7 @@ public class AT_ActorContext {
 
 	public void testGetTime() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		Set<Double> planTimes = new LinkedHashSet<>();
 
@@ -956,7 +965,7 @@ public class AT_ActorContext {
 		 * Have the agent build plans to check the time in the simulation
 		 * against the planning time
 		 */
-		pluginBuilder.addTestActorPlan("Agent1", new TestActorPlan(0, (context1) -> {
+		pluginDataBuilder.addTestActorPlan("Agent1", new TestActorPlan(0, (context1) -> {
 			for (Double planTime : planTimes) {
 				context1.addPlan((context2) -> {
 					assertEquals(planTime.doubleValue(), context2.getTime(), 0);
@@ -965,15 +974,15 @@ public class AT_ActorContext {
 		}));
 
 		// build the action plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// execute the engine
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -987,7 +996,7 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "halt", args = {})
 	public void testHalt() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// there are no precondition tests
 
@@ -995,32 +1004,32 @@ public class AT_ActorContext {
 		// halting the simulation
 		TestActorPlan actionPlan1 = new TestActorPlan(1, (context) -> {
 		});
-		pluginBuilder.addTestActorPlan("actor", actionPlan1);
+		pluginDataBuilder.addTestActorPlan("actor", actionPlan1);
 
 		TestActorPlan actionPlan2 = new TestActorPlan(2, (context) -> {
 		});
-		pluginBuilder.addTestActorPlan("actor", actionPlan2);
+		pluginDataBuilder.addTestActorPlan("actor", actionPlan2);
 
 		TestActorPlan actionPlan3 = new TestActorPlan(3, (context) -> {
 			context.halt();
 		});
-		pluginBuilder.addTestActorPlan("actor", actionPlan3);
+		pluginDataBuilder.addTestActorPlan("actor", actionPlan3);
 
 		TestActorPlan actionPlan4 = new TestActorPlan(4, (context) -> {
 		});
-		pluginBuilder.addTestActorPlan("actor", actionPlan4);
+		pluginDataBuilder.addTestActorPlan("actor", actionPlan4);
 
 		TestActorPlan actionPlan5 = new TestActorPlan(5, (context) -> {
 		});
-		pluginBuilder.addTestActorPlan("actor", actionPlan5);
+		pluginDataBuilder.addTestActorPlan("actor", actionPlan5);
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -1039,7 +1048,7 @@ public class AT_ActorContext {
 	public void testReleaseOutput() {
 
 		// begin building the action plugin
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// set up the expected output
 		Set<Object> expectedOutput = new LinkedHashSet<>();
@@ -1049,14 +1058,15 @@ public class AT_ActorContext {
 		expectedOutput.add(45.34513453);
 
 		// have the agent release the output
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			for (Object outputValue : expectedOutput) {
 				c.releaseOutput(outputValue);
 			}
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		Set<Object> actualOutput = new LinkedHashSet<>();
 
@@ -1065,8 +1075,7 @@ public class AT_ActorContext {
 		 * actualOutput set above and then execute the simulation
 		 */
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.setOutputConsumer((o) -> {
 						if (!(o instanceof TestScenarioReport)) {
 							actualOutput.add(o);
@@ -1083,10 +1092,10 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "removeActor", args = { ActorId.class })
 	public void testRemoveActor() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have the resolver execute the precondition tests
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> c.removeActor(null));
 			assertEquals(NucleusError.NULL_ACTOR_ID, contractException.getErrorType());
@@ -1099,7 +1108,7 @@ public class AT_ActorContext {
 		List<ActorId> addedActorIds = new ArrayList<>();
 
 		// have the add a few agents
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				ActorId actorId = c.addActor((c2) -> {
 				});
@@ -1109,7 +1118,7 @@ public class AT_ActorContext {
 		}));
 
 		// have the actor remove the added actors
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			for (ActorId actorId : addedActorIds) {
 				c.removeActor(actorId);
 				assertFalse(c.actorExists(actorId));
@@ -1117,15 +1126,15 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// build and execute the engine
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -1141,10 +1150,10 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "removePlan", args = { Object.class })
 	public void testRemovePlan() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.removePlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 		}));
@@ -1153,7 +1162,7 @@ public class AT_ActorContext {
 		MutableBoolean removedPlanHasExecuted = new MutableBoolean();
 
 		// have the added test agent add a plan
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
 			context.addKeyedPlan((c2) -> {
 				removedPlanHasExecuted.setValue(true);
 			}, 4, key);
@@ -1161,7 +1170,7 @@ public class AT_ActorContext {
 
 		// have the test agent remove the plan and show the plan no longer
 		// exists
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (context) -> {
 			assertTrue(context.getPlan(key).isPresent());
 
 			context.removePlan(key);
@@ -1171,14 +1180,14 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -1195,36 +1204,36 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "resolveEvent", args = { Event.class })
 	public void testResolveEvent() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		MutableBoolean eventResolved = new MutableBoolean();
 
 		// Have the actor subscribe to test event and then set the
 		// eventResolved to true
-		pluginBuilder.addTestActorPlan("alpha", new TestActorPlan(0, (c) -> {
+		pluginDataBuilder.addTestActorPlan("alpha", new TestActorPlan(0, (c) -> {
 			c.subscribe(TestEvent.class, (c2, e) -> {
 				eventResolved.setValue(true);
 			});
 		}));
 
 		// have another actor resolve a test event
-		pluginBuilder.addTestActorPlan("beta", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("beta", new TestActorPlan(1, (context) -> {
 			context.resolveEvent(new TestEvent());
 		}));
 
 		// precondition tests
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.resolveEvent(null));
 			assertEquals(NucleusError.NULL_EVENT, contractException.getErrorType());
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -1235,10 +1244,10 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "subscribe", args = { Class.class, BiConsumer.class })
 	public void testSubscribe_EventClass() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have an actor perform precondition tests
-		pluginBuilder.addTestActorPlan("precondition checker", new TestActorPlan(0, (context) -> {
+		pluginDataBuilder.addTestActorPlan("precondition checker", new TestActorPlan(0, (context) -> {
 			Class<? extends Event> eventClass = null;
 			ContractException contractException = assertThrows(ContractException.class, () -> context.subscribe(eventClass, (c, e) -> {
 			}));
@@ -1255,7 +1264,7 @@ public class AT_ActorContext {
 		 * Have an actor subscribe to data change events.
 		 */
 
-		pluginBuilder.addTestActorPlan("subscriber", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("subscriber", new TestActorPlan(1, (context) -> {
 			context.subscribe(DataChangeObservationEvent.class, (c, e) -> {
 				receivedEvents.add(new MultiKey(c.getTime(), e));
 			});
@@ -1265,14 +1274,14 @@ public class AT_ActorContext {
 		 * Have another actor generate several data change observation events
 		 * with differing types and values.
 		 */
-		pluginBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
 
 		}));
 
-		pluginBuilder.addTestActorPlan("generator", new TestActorPlan(3, (c) -> {
+		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(3, (c) -> {
 
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
@@ -1282,14 +1291,14 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -1320,10 +1329,10 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "subscribe", args = { EventLabel.class, BiConsumer.class })
 	public void testSubscribe_EventLabel() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have an actor perform precondition tests
-		pluginBuilder.addTestActorPlan("precondition checker", new TestActorPlan(0, (context) -> {
+		pluginDataBuilder.addTestActorPlan("precondition checker", new TestActorPlan(0, (context) -> {
 
 			context.addEventLabeler(new SimpleEventLabeler<TestEvent>(Local_Labeler_ID.TEST_LABELER_ID, TestEvent.class, (c, e) -> {
 				return new TestEventLabel();
@@ -1364,7 +1373,7 @@ public class AT_ActorContext {
 		 * as a multi-key in the received events set.
 		 */
 
-		pluginBuilder.addTestActorPlan("subscriber", new TestActorPlan(1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("subscriber", new TestActorPlan(1, (context) -> {
 
 			context.addEventLabeler(getEventLabelerForDataChangeObservation());
 			context.subscribe(getEventLabelByDatumAndValue(DatumType.TYPE_1, ValueType.HIGH), (c, e) -> {
@@ -1376,7 +1385,7 @@ public class AT_ActorContext {
 		 * Have another actor generate several data change observation events
 		 * with differing types and values.
 		 */
-		pluginBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
 			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
@@ -1388,14 +1397,15 @@ public class AT_ActorContext {
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -1415,12 +1425,12 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "subscribeToSimulationClose", args = { Consumer.class })
 	public void testSubscribeToSimulationClose() {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		MutableBoolean simCloseEventHandled = new MutableBoolean();
 
 		// have an actor schedule a few events and subscribe to simulation close
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			c.addPlan((c2) -> {
 			}, 1);
 			c.addPlan((c2) -> {
@@ -1432,11 +1442,10 @@ public class AT_ActorContext {
 			});
 		}));
 
-		TestPluginData testPluginData = pluginBuilder.build();
-
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 		Simulation	.builder()//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -1448,13 +1457,8 @@ public class AT_ActorContext {
 	@Test
 	@UnitTestMethod(name = "unsubscribe", args = { Class.class })
 	public void testUnsubscribe_EventClass() {
-	
-		
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		
-
-		
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create some times for the resolver to generate events
 		List<Double> eventGenerationTimes = new ArrayList<>();
@@ -1473,11 +1477,8 @@ public class AT_ActorContext {
 		 * at various times
 		 */
 
-		pluginBuilder.addTestActorPlan("generator", new TestActorPlan(0, (c) -> {
-						
-			
-			
-			
+		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(0, (c) -> {
+
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
 					c2.resolveEvent(new TestEvent());
@@ -1489,10 +1490,10 @@ public class AT_ActorContext {
 		 * precondition tests -- have the first actor test all the precondition
 		 * exceptions
 		 */
-		pluginBuilder.addTestActorPlan("precondition tester", new TestActorPlan(0, (context) -> {
+		pluginDataBuilder.addTestActorPlan("precondition tester", new TestActorPlan(0, (context) -> {
 
 			// if the Event class is null
-			Class<? extends Event> eventClass =  null;
+			Class<? extends Event> eventClass = null;
 			ContractException contractException = assertThrows(ContractException.class, () -> context.unsubscribe(eventClass));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
 
@@ -1503,43 +1504,48 @@ public class AT_ActorContext {
 		Set<MultiKey> recievedEvents = new LinkedHashSet<>();
 
 		// have the Alpha actor subscribe to the Test Event at time 0
-		pluginBuilder.addTestActorPlan("Alpha", new TestActorPlan(0.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(0.1, (context) -> {
 			context.subscribe(TestEvent.class, (c, e) -> {
 				recievedEvents.add(new MultiKey("Alpha", c.getTime()));
 			});
 		}));
 
 		// have the Alpha actor unsubscribe to the Test Event at time 5
-		pluginBuilder.addTestActorPlan("Alpha", new TestActorPlan(5.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(5.1, (context) -> {
 			context.unsubscribe(TestEvent.class);
 		}));
 
 		// have the Beta actor subscribe to the Test Event at time 4
-		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(4.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(4.1, (context) -> {
 			context.subscribe(TestEvent.class, (c, e) -> {
 				recievedEvents.add(new MultiKey("Beta", c.getTime()));
 			});
 		}));
 
 		// have the Beta actor unsubscribe to the Test Event at time 8
-		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {
-			
+		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {
+
 			context.unsubscribe(TestEvent.class);
 		}));
 
 		// have the Gamma actor subscribe to the Test Event at time 6
-		pluginBuilder.addTestActorPlan("Gamma", new TestActorPlan(6.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(6.1, (context) -> {
 			context.subscribe(TestEvent.class, (c, e) -> {
 				recievedEvents.add(new MultiKey("Gamma", c.getTime()));
 			});
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
-		Simulation.builder().setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPluginData(testPluginData).addPluginInitializer(new TestPluginInitializer()).build().execute();
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
 
 		// show that all action plans were executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
@@ -1571,15 +1577,13 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "unsubscribe", args = { EventLabel.class })
 	public void testUnsubscribe_EventLabel() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		/*
 		 * Generate an event label that will match all TestEvents. This will be
 		 * used throughout.
 		 */
 		MultiKeyEventLabel<TestEvent> eventLabel = new MultiKeyEventLabel<>(TestEvent.class, Local_Labeler_ID.TEST_LABELER_ID, TestEvent.class);
-
-		
 
 		// create some times for the resolver to generate events
 		List<Double> eventGenerationTimes = new ArrayList<>();
@@ -1598,7 +1602,7 @@ public class AT_ActorContext {
 		 * at various times
 		 */
 
-		pluginBuilder.addTestActorPlan("generator", new TestActorPlan(0, (c) -> {
+		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(0, (c) -> {
 			/*
 			 * Add the required event labeler -- we want all TestEvents to be
 			 * passed to all actor subscribers so that we can demonstrate that
@@ -1607,9 +1611,8 @@ public class AT_ActorContext {
 			EventLabeler<TestEvent> eventLabeler = new SimpleEventLabeler<TestEvent>(Local_Labeler_ID.TEST_LABELER_ID, TestEvent.class, (c2, e) -> {
 				return eventLabel;
 			});
-			c.addEventLabeler(eventLabeler);			
-			
-			
+			c.addEventLabeler(eventLabeler);
+
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
 					c2.resolveEvent(new TestEvent());
@@ -1621,7 +1624,7 @@ public class AT_ActorContext {
 		 * precondition tests -- have the first actor test all the precondition
 		 * exceptions
 		 */
-		pluginBuilder.addTestActorPlan("precondition tester", new TestActorPlan(0, (context) -> {
+		pluginDataBuilder.addTestActorPlan("precondition tester", new TestActorPlan(0, (context) -> {
 
 			// if the EventLabel is null
 			EventLabel<TestEvent> nullEventLabel = null;
@@ -1648,42 +1651,48 @@ public class AT_ActorContext {
 		Set<MultiKey> recievedEvents = new LinkedHashSet<>();
 
 		// have the Alpha actor subscribe to the Test Event at time 0
-		pluginBuilder.addTestActorPlan("Alpha", new TestActorPlan(0.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(0.1, (context) -> {
 			context.subscribe(eventLabel, (c, e) -> {
 				recievedEvents.add(new MultiKey("Alpha", c.getTime()));
 			});
 		}));
 
 		// have the Alpha actor unsubscribe to the Test Event at time 5
-		pluginBuilder.addTestActorPlan("Alpha", new TestActorPlan(5.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(5.1, (context) -> {
 			context.unsubscribe(eventLabel);
 		}));
 
 		// have the Beta actor subscribe to the Test Event at time 4
-		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(4.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(4.1, (context) -> {
 			context.subscribe(eventLabel, (c, e) -> {
 				recievedEvents.add(new MultiKey("Beta", c.getTime()));
 			});
 		}));
 
 		// have the Beta actor unsubscribe to the Test Event at time 8
-		pluginBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {			
+		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {
 			context.unsubscribe(eventLabel);
 		}));
 
 		// have the Gamma actor subscribe to the Test Event at time 6
-		pluginBuilder.addTestActorPlan("Gamma", new TestActorPlan(6.1, (context) -> {
+		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(6.1, (context) -> {
 			context.subscribe(eventLabel, (c, e) -> {
 				recievedEvents.add(new MultiKey("Gamma", c.getTime()));
 			});
 		}));
 
 		// build the plugin
-		TestPluginData testPluginData = pluginBuilder.build();
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 
 		// run the simulation
-		Simulation.builder().setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPluginData(testPluginData).addPluginInitializer(new TestPluginInitializer()).build().execute();
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
 
 		// show that all action plans were executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());

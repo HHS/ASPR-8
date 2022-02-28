@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.Experiment;
+import nucleus.Plugin;
 import util.MultiKey;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -79,15 +80,14 @@ public class AT_TestDataManager {
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		TestPluginInitializer testPluginInitializer = new TestPluginInitializer();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 
 		// build and execute the engine
 		Experiment	.builder()//
 					.addOutputHandler(experimentPlanCompletionObserver::init)//
-					.addPluginInitializer(testPluginInitializer)//
-					.addPluginData(testPluginData)//
+					.addPlugin(testPlugin)//					
 					.build()//
 					.execute();//
 

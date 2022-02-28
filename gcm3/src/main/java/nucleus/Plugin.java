@@ -74,7 +74,7 @@ public final class Plugin {
 			return this;
 		}
 
-		public Builder setSimInit(Consumer<PluginContext> init) {
+		public Builder setInitializer(Consumer<PluginContext> init) {
 			data.init = init;
 			return this;
 		}

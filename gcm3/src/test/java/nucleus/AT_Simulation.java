@@ -12,9 +12,10 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestPluginInitializer;
 import util.ContractException;
+import util.MutableBoolean;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
@@ -54,34 +55,6 @@ public class AT_Simulation {
 		assertNotNull(Simulation.builder().build());
 	}
 
-	@Test
-	@UnitTestMethod(target = Simulation.Builder.class, name = "addPluginInitializer", args = { PluginInitializer.class })
-	public void testAddPluginInitializer() {
-		/*
-		 * Add three initializers to the sim
-		 */
-
-		PluginInitializer2 initializer1 = new PluginInitializer2();
-		PluginInitializer2 initializer2 = new PluginInitializer2();
-		PluginInitializer2 initializer3 = new PluginInitializer2();
-
-		Simulation	.builder()//					
-					.addPluginInitializer(initializer1)//
-					.addPluginInitializer(initializer2)//
-					.addPluginInitializer(initializer3)//
-					.build()//
-					.execute();
-		
-		
-
-		/*
-		 * Show that each initializer was executed and thus was indeed added
-		 */
-		assertTrue(initializer1.executed);
-		assertTrue(initializer2.executed);
-		assertTrue(initializer3.executed);
-	}
-
 	private static class PluginData1 implements PluginData {
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
@@ -96,63 +69,36 @@ public class AT_Simulation {
 		}
 	}
 
-	private static class PluginInitializer1 implements PluginInitializer {
-
-		private boolean executedAssertions;
-
-		@Override
-		public PluginId getPluginId() {
-			return new SimplePluginId(PluginInitializer1.class);
-		}
-
-		@Override
-		public void init(PluginContext pluginContext) {
-			assertTrue(pluginContext.getPluginData(PluginData1.class).isPresent());
-			assertTrue(pluginContext.getPluginData(PluginData2.class).isPresent());
-			executedAssertions = true;
-		}
-
-	}
-
-	private static class PluginInitializer2 implements PluginInitializer {
-		
-		private boolean executed;
-
-		@Override
-		public PluginId getPluginId() {
-			return new SimplePluginId(PluginInitializer2.class);
-		}
-		@Override
-		public void init(PluginContext pluginContext) {
-			executed = true;
-			
-		}
-		
-	}
-	
 	@Test
-	@UnitTestMethod(target = Simulation.Builder.class, name = "addPluginData", args = { PluginData.class })
-	public void testAddPluginData() {
+	@UnitTestMethod(target = Simulation.Builder.class, name = "addPlugin", args = { Plugin.class })
+	public void testAddPlugin() {
 
 		/*
-		 * Show that the plugin data items are retrievable by the given
-		 * initializer which contains the necessary assertions
+		 * Show that the plugin is added correctly by showing that its init
+		 * method is invoked and that the plugin data are available from the
+		 * plugin context.
 		 */
 
-		PluginInitializer1 pluginInitializer1 = new PluginInitializer1();
+		MutableBoolean pluginAssertionsExecuted = new MutableBoolean();
+
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(new SimplePluginId("plugin"))//
+								.addPluginData(new PluginData1()).addPluginData(new PluginData2()).setInitializer((c) -> {
+									assertTrue(c.getPluginData(PluginData1.class).isPresent());
+									assertTrue(c.getPluginData(PluginData2.class).isPresent());
+									pluginAssertionsExecuted.setValue(true);
+								})//
+								.build();//
 
 		Simulation	.builder()//
-					.addPluginData(new PluginData1())//
-					.addPluginData(new PluginData2())//
-					.addPluginInitializer(pluginInitializer1)//
+					.addPlugin(plugin)//
 					.build()//
 					.execute();
 
 		/*
-		 * Examine the plugin initializer to show that the assertions that show
-		 * that the two plugin data items were executed
+		 * Show that the initializer containing the assertions was executed
 		 */
-		assertTrue(pluginInitializer1.executedAssertions);
+		assertTrue(pluginAssertionsExecuted.getValue());
 
 	}
 
@@ -198,11 +144,11 @@ public class AT_Simulation {
 		LocalOutputConsumer localOutputConsumer2 = new LocalOutputConsumer();
 
 		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//
-					.addPluginInitializer(new TestPluginInitializer())//
-					.addPluginData(testPluginData)//
+					.addPlugin(testPlugin)//
 					.setOutputConsumer(localOutputConsumer1)//
 					.setOutputConsumer(localOutputConsumer2)//
 					.build()//
@@ -225,8 +171,7 @@ public class AT_Simulation {
 		LocalOutputConsumer localOutputConsumer3 = new LocalOutputConsumer();
 
 		Simulation	.builder()//
-					.addPluginInitializer(new TestPluginInitializer())//
-					.addPluginData(testPluginData)//
+					.addPlugin(testPlugin)//
 					.setOutputConsumer(localOutputConsumer3)//
 					.setOutputConsumer(null)//
 					.build()//

@@ -2,7 +2,10 @@ package nucleus;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -56,7 +59,6 @@ public final class Experiment {
 			data.plugins.add(plugin);
 			return this;
 		}
-		
 
 		public Experiment build() {
 			try {
@@ -83,7 +85,8 @@ public final class Experiment {
 		 * logging and run resumption. Default value is null.
 		 *
 		 * @param path
-		 *            the {@link Path} where the experiment progress will be recorded
+		 *            the {@link Path} where the experiment progress will be
+		 *            recorded
 		 */
 		public void setExperimentProgressLog(final Path path) {
 			data.experimentProgressLogPath = path;
@@ -114,7 +117,7 @@ public final class Experiment {
 	/*
 	 * A data class for holding the inputs to this builder from its client.
 	 */
-	private static class Data {	
+	private static class Data {
 		private final List<Dimension> dimensions = new ArrayList<>();
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
@@ -143,7 +146,7 @@ public final class Experiment {
 	 */
 	private static class SimulationCallable implements Callable<SimResult> {
 		private final ExperimentStateManager experimentStateManager;
-		private final List<Plugin> plugins;		
+		private final List<Plugin> plugins;
 		private final Integer scenarioId;
 
 		/*
@@ -152,7 +155,7 @@ public final class Experiment {
 		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
-			this.plugins = new ArrayList<>(plugins);			
+			this.plugins = new ArrayList<>(plugins);
 		}
 
 		/**
@@ -167,11 +170,8 @@ public final class Experiment {
 			final Simulation.Builder simBuilder = Simulation.builder();
 
 			// Load the plugins into the simulation builder
-			for (final PluginInitializer pluginInitializer : pluginInitializers) {
-				simBuilder.addPluginInitializer(pluginInitializer);
-			}
-			for (final PluginData pluginData : pluginDatas) {
-				simBuilder.addPluginData(pluginData);
+			for (final Plugin plugin : plugins) {
+				simBuilder.addPlugin(plugin);
 			}
 
 			// direct output from the simulation to the subscribed consumers
@@ -220,17 +220,16 @@ public final class Experiment {
 		for (final Dimension dimension : data.dimensions) {
 			scenarioCount *= dimension.size();
 		}
-		
+
 		ExperimentStateManager.Builder builder = ExperimentStateManager.builder();
 		builder.setScenarioCount(scenarioCount);
 		builder.setScenarioProgressLogFile(data.experimentProgressLogPath);
-		
 
 		final List<String> experimentMetaData = new ArrayList<>();
 		for (final Dimension dimension : data.dimensions) {
 			experimentMetaData.addAll(dimension.getMetaData());
 		}
-		
+
 		builder.setExperimentMetaData(experimentMetaData);
 
 		if (data.reportExperimentProgessToConsole) {
@@ -299,8 +298,8 @@ public final class Experiment {
 		 */
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
-			List<PluginData> pluginDatas = preSimActions(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.pluginInitializers,pluginDatas));
+			List<Plugin> plugins = preSimActions(scenarioId);
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins));
 			jobIndex++;
 		}
 
@@ -313,8 +312,8 @@ public final class Experiment {
 		while (jobCompletionCount < jobs.size()) {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
-				List<PluginData> pluginDatas = preSimActions(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, data.pluginInitializers,pluginDatas));
+				List<Plugin> plugins = preSimActions(scenarioId);
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins));
 				jobIndex++;
 			}
 
@@ -362,17 +361,12 @@ public final class Experiment {
 				continue;
 			}
 
-			// generate the plugins that will form the simulation
-			final List<PluginData> pluginDatas = preSimActions(scenarioId);
+			// generate the plugins that will form the simulation for the given scenario id
+			final List<Plugin> plugins = preSimActions(scenarioId);
 
 			// Load the plugin behaviors into the simulation builder
-			for (final PluginData pluginData : pluginDatas) {
-				simBuilder.addPluginData(pluginData);
-			}		
-			
-			// Load the plugin behaviors into the simulation builder
-			for (final PluginInitializer pluginInitializer : data.pluginInitializers) {
-				simBuilder.addPluginInitializer(pluginInitializer);
+			for (final Plugin plugin : plugins) {
+				simBuilder.addPlugin(plugin);
 			}
 
 			// direct output from the simulation to the subscribed consumers
@@ -396,14 +390,26 @@ public final class Experiment {
 		}
 	}
 
-	private List<PluginData> preSimActions(final int scenarioId) {
+	private List<Plugin> preSimActions(final int scenarioId) {
 		/*
-		 * Build the type map of the clone plugin builders from the plugins
-		 * supplied to the experiment builder
+		 * Build the type map of the clone plugin data builders from the plugins
+		 * supplied to the dimensions of the experiment
 		 */
+
 		final TypeMap.Builder<PluginDataBuilder> typeMapBuilder = TypeMap.builder(PluginDataBuilder.class);
-		for (final PluginData pluginData : data.pluginDatas) {
-			typeMapBuilder.add(pluginData.getCloneBuilder());
+
+		/*
+		 * Set up a map that will allow us to associate each data builder with
+		 * the plugin that should own that data
+		 */
+		Map<PluginDataBuilder, PluginId> humptyMap = new LinkedHashMap<>();
+
+		for (final Plugin plugin : data.plugins) {
+			for (final PluginData pluginData : plugin.getPluginDatas()) {
+				PluginDataBuilder pluginDataBuilder = pluginData.getCloneBuilder();
+				humptyMap.put(pluginDataBuilder, plugin.getPluginId());
+				typeMapBuilder.add(pluginDataBuilder);
+			}
 		}
 		final TypeMap<PluginDataBuilder> typeMap = typeMapBuilder.build();
 
@@ -431,15 +437,47 @@ public final class Experiment {
 			scenarioMetaData.addAll(memberGenerator.apply(typeMap));
 
 		}
-		// update the experiment state manager
+
+		// update the experiment state manager with the meta data for the
+		// scenario
 		experimentStateManager.openScenario(scenarioId, scenarioMetaData);
 
-		final List<PluginData> result = new ArrayList<>();
-		
-		// Build the plugins
+		/*
+		 * Rebuild the plugins.
+		 */
+
+		// First, copy each plugin, excluding the plugin data items.
+		Map<PluginId, Plugin.Builder> dumptyMap = new LinkedHashMap<>();
+		for (final Plugin plugin : data.plugins) {
+			Plugin.Builder pluginBuilder = Plugin.builder();
+			dumptyMap.put(plugin.getPluginId(), pluginBuilder);
+			pluginBuilder.setPluginId(plugin.getPluginId());
+			for (PluginId pluginId : plugin.getPluginDependencies()) {
+				pluginBuilder.addPluginDependency(pluginId);
+			}
+			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
+			if (optionalInitializer.isPresent()) {
+				pluginBuilder.setInitializer(optionalInitializer.get());
+			}
+		}
+
+		// Get the plugin data builders and create the new plugin datas,
+		// associating each with the correct plugin. The plugin datas should be
+		// added in the order that they were in in the original plugins
 		for (final PluginDataBuilder pluginDataBuilder : typeMap.getContents()) {
 			final PluginData pluginData = pluginDataBuilder.build();
-			result.add(pluginData);
+			PluginId pluginId = humptyMap.get(pluginDataBuilder);
+			Plugin.Builder pluginBuilder = dumptyMap.get(pluginId);
+			pluginBuilder.addPluginData(pluginData);
+		}
+
+		/*
+		 * Construct the new plugins from the plugin builders 
+		 */
+		final List<Plugin> result = new ArrayList<>();
+		
+		for (Plugin.Builder plugingBuilder : dumptyMap.values()) {
+			result.add(plugingBuilder.build());
 		}
 
 		return result;

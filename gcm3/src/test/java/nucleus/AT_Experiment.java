@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestPluginInitializer;
 import util.MultiKey;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
@@ -58,6 +58,8 @@ public class AT_Experiment {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		
 		Set<MultiKey> actualOutput = new LinkedHashSet<>();
 
 		Consumer<ExperimentContext> integerOutputHandler = (c) -> {
@@ -127,8 +129,7 @@ public class AT_Experiment {
 					.addOutputHandler(stringOutputHandler)//
 					.addOutputHandler(doubleOutputHandler)//
 					.addOutputHandler(numberOutputHandler)//
-					.addPluginData(testPluginData)//
-					.addPluginInitializer(new TestPluginInitializer())//
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
@@ -160,16 +161,11 @@ public class AT_Experiment {
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "addPluginData", args = { PluginData.class })
-	public void testAddPluginData() {
+	@UnitTestMethod(target = Experiment.Builder.class, name = "addPlugin", args = { Plugin.class })
+	public void testAddPlugin() {
 		fail();
 	}
 
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "addPluginInitializer", args = { PluginInitializer.class })
-	public void testAddPluginInitializer() {
-		fail();
-	}
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "build", args = {})

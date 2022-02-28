@@ -16,6 +16,8 @@ import nucleus.PluginData;
  *
  */
 public class TestPlugin {
+	
+	private TestPlugin() {}
 
 	/*
 	 * Initializes a simulation via the given context. Using an ActionPluginData
@@ -59,7 +61,7 @@ public class TestPlugin {
 
 	public static Plugin getPlugin(PluginData pluginData) {
 		return Plugin	.builder()//
-						.setSimInit(TestPlugin::init)//
+						.setInitializer(TestPlugin::init)//
 						.addPluginData(pluginData)//
 						.setPluginId(TestPluginId.PLUGIN_ID)//
 						.build();//

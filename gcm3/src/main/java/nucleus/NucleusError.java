@@ -12,7 +12,9 @@ import util.ContractException;
  */
 public enum NucleusError implements ContractError {
 
+	AMBIGUOUS_DATA_MANAGER_CLASS("Multiple data manager matches found"),
 	CIRCULAR_PLUGIN_DEPENDENCIES("Circular plugin dependencies were found"),
+	DUPLICATE_DATA_MANAGER_TYPE("Duplicate data manager type"),
 	DUPLICATE_LABELER_ID_IN_EVENT_LABELER("Duplicate labeler id in labeler"),
 	DUPLICATE_PLAN_KEY("There is an existing plan currently scheduled with the same key"),
 	LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS("Event labler generated a label with an incorrect event class"),
@@ -20,6 +22,7 @@ public enum NucleusError implements ContractError {
 	LABLER_GENERATED_LABEL_WITH_INCORRECT_PRIMARY_KEY("Event labler generated a label with an incorrect primary key"),
 	NULL_ACTOR_CONTEXT_CONSUMER("Null actor context consumer"),
 	NULL_ACTOR_ID("Null actor id"),
+	NULL_DATA_MANAGER("Null data manager"),
 	NULL_EVENT("Event is null"),
 	NULL_EVENT_CLASS("Null event class"),
 	NULL_EVENT_CLASS_IN_EVENT_LABEL("Event label returns a null event class"),

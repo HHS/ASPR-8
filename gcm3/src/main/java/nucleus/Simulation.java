@@ -50,12 +50,19 @@ public class Simulation {
 				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 			}
 
-			Set<DataManager> set = dataMangagersMap.get(focalPluginId);
-			if (set == null) {
-				set = new LinkedHashSet<>();
-				dataMangagersMap.put(focalPluginId, set);
+			if (dataManager == null) {
+				throw new ContractException(NucleusError.NULL_DATA_MANAGER);
 			}
-			set.add(dataManager);
+
+			if (baseClassToDataManagerMap.containsKey(dataManager.getClass())) {
+				throw new ContractException(NucleusError.DUPLICATE_DATA_MANAGER_TYPE);
+			}
+
+			DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
+			DataManagerContext dataManagerContext = new DataManagerContextImpl(Simulation.this, dataManagerId);
+			dataManagerIdToContextMap.put(dataManagerId, dataManagerContext);
+			baseClassToDataManagerMap.put(dataManager.getClass(), dataManager);
+			dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
 
 		}
 
@@ -69,16 +76,16 @@ public class Simulation {
 			if (focalPluginId == null) {
 				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 			}
-			// Do not queue the actor yet. We will wait until all the plugins
-			// have established their order and then add the actors to the
-			// queue.
-			Set<Consumer<ActorContext>> set = actorsMap.get(focalPluginId);
-			if (set == null) {
-				set = new LinkedHashSet<>();
-				actorsMap.put(focalPluginId, set);
-			}
 
-			set.add(consumer);
+			// assign an actorId
+			ActorId actorId = new ActorId(actorIds.size());
+			actorIds.add(actorId);
+
+			// add the actor's initialization to the actor queue
+			final ActorContentRec actorContentRec = new ActorContentRec();
+			actorContentRec.actorId = actorId;
+			actorContentRec.plan = consumer;
+			actorQueue.add(actorContentRec);
 
 		}
 
@@ -126,10 +133,9 @@ public class Simulation {
 			return focalActorId;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
-			return Optional.ofNullable((T) dataManagerMap.get(dataManagerClass));
+			return Simulation.this.getDataManager(dataManagerClass);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -270,8 +276,6 @@ public class Simulation {
 		}
 	}
 
-	
-
 	public static class Builder {
 
 		private Data data = new Data();
@@ -370,10 +374,9 @@ public class Simulation {
 			return simulation.actorExists(actorId);
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
-			return Optional.ofNullable((T) simulation.dataManagerMap.get(dataManagerClass));
+			return simulation.getDataManager(dataManagerClass);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -487,8 +490,6 @@ public class Simulation {
 		}
 	};
 
-	
-
 	// planning
 	private long masterPlanningArrivalId;
 	private double time;
@@ -498,11 +499,9 @@ public class Simulation {
 
 	// actors
 
-
 	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
 	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
-
 
 	private boolean started;
 
@@ -624,7 +623,19 @@ public class Simulation {
 
 	}
 
-	private List<PluginId> getOrderedPluginIds() {
+	private List<Plugin> getOrderedPlugins() {
+		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
+
+		for (Plugin plugin : data.plugins) {
+			focalPluginId = plugin.getPluginId();
+			pluginMap.put(focalPluginId, plugin);
+			pluginDependencyGraph.addNode(focalPluginId);
+			for (PluginId pluginId : plugin.getPluginDependencies()) {
+				pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
+			}
+		}
+
+		
 		/*
 		 * Determine whether the graph is acyclic and generate a graph depth
 		 * evaluator for the graph so that we can determine the order of
@@ -677,7 +688,13 @@ public class Simulation {
 		// the graph is acyclic, so the depth evaluator is present
 		GraphDepthEvaluator<PluginId> graphDepthEvaluator = optional.get();
 
-		return graphDepthEvaluator.getNodesInRankOrder();
+		List<PluginId> orderedPluginIds = graphDepthEvaluator.getNodesInRankOrder();
+		
+		List<Plugin> orderedPlugins = new ArrayList<>();
+		for (PluginId pluginId : orderedPluginIds) {
+			orderedPlugins.add(pluginMap.get(pluginId));
+		}
+		return orderedPlugins;
 	}
 
 	/**
@@ -697,78 +714,50 @@ public class Simulation {
 	 * 
 	 */
 	public void execute() {
+		// start the simulation
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
 		}
-
-		for (Plugin plugin : data.plugins) {
-			focalPluginId = plugin.getPluginId();
-			for (PluginId pluginId : plugin.getPluginDependencies()) {
-				pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
-			}
-		}
-
 		started = true;
 
 		// set the output consumer
 		outputConsumer = data.outputConsumer;
 
-		// Make the plugin data available to the plugin initializers
-		for (Plugin plugin : data.plugins) {
+		/*
+		 * Get the plugins listed in dependency order
+		 */		
+		List<Plugin> orderedPlugins = getOrderedPlugins();
+
+		// Make the plugin data available
+		for (Plugin plugin : orderedPlugins) {
+			focalPluginId = plugin.getPluginId();
 			for (PluginData pluginData : plugin.getPluginDatas()) {
 				pluginDataMap.put(pluginData.getClass(), pluginData);
 			}
 		}
-		List<PluginId> orderedPluginIds = getOrderedPluginIds();
 
-		for (Plugin plugin : data.plugins) {
+		// Have each plugin contribute data managers and actors
+		for (Plugin plugin : orderedPlugins) {
 			focalPluginId = plugin.getPluginId();
-			if (focalPluginId == null) {
-				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
-			}
 			pluginDependencyGraph.addNode(focalPluginId);
-			plugin.init(pluginContext);
+			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
+			if (optionalInitializer.isPresent()) {
+				optionalInitializer.get().accept(pluginContext);
+			}
 			focalPluginId = null;
 		}
 
-		/*
-		 * Retrieve the data managers and actors from the plugins in the correct
-		 * order
-		 */
-		for (PluginId pluginId : orderedPluginIds) {
-
-			Set<DataManager> dataManagerSet = dataMangagersMap.get(pluginId);
-			if (dataManagerSet != null) {
-				for (DataManager dataManager : dataManagerSet) {
-					DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
-					DataManagerContext dataManagerContext = new DataManagerContextImpl(this, dataManagerId);
-					dataManagerContextMap.put(dataManagerId, dataManagerContext);
-					dataManagerMap.put(dataManager.getClass(), dataManager);
-					dataManager.init(dataManagerContext);
-				}
-			}
-			Set<Consumer<ActorContext>> consumers = actorsMap.get(pluginId);
-			if (consumers != null) {
-				for (Consumer<ActorContext> consumer : consumers) {
-					ActorId actorId = new ActorId(actorIds.size());
-					actorIds.add(actorId);
-					final ActorContentRec actorContentRec = new ActorContentRec();
-					actorContentRec.actorId = actorId;
-					actorContentRec.plan = consumer;
-					actorQueue.add(actorContentRec);
-				}
-			}
+		// initialize the data managers
+		for (DataManagerId dataManagerId : dataManagerIdToDataManagerMap.keySet()) {
+			DataManager dataManager = dataManagerIdToDataManagerMap.get(dataManagerId);
+			DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
+			dataManager.init(dataManagerContext);
 		}
 
-		// TODO -- the data managers should all be in place before initializing
-		// any of them
-		// for(DataManager dataManager : dataManagerMap.values()) {
-		//
-		// };
-
-		// flush the actor queue
+		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
+		// start the planning-based portion of the simulation where time flows
 		while (processEvents && (activePlanCount > 0)) {
 			final PlanRec planRec = planningQueue.poll();
 			time = planRec.time;
@@ -794,7 +783,7 @@ public class Simulation {
 					if (planRec.key != null) {
 						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
-					DataManagerContext dataManagerContext = dataManagerContextMap.get(planRec.dataManagerId);
+					DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(planRec.dataManagerId);
 					planRec.dataManagerPlan.accept(dataManagerContext);
 					executeActorQueue();
 				}
@@ -804,12 +793,14 @@ public class Simulation {
 			}
 		}
 
+		// signal to the data managers that the simulation is closing
 		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
 			Consumer<DataManagerContext> dataManagerCloseCallback = simulationCloseDataManagerCallbacks.get(dataManagerId);
-			DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
+			DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 			dataManagerCloseCallback.accept(dataManagerContext);
 		}
 
+		// signal to the actors that the simulation is closing
 		for (ActorId actorId : simulationCloseActorCallbacks.keySet()) {
 			if (actorIds.get(actorId.getValue()) != null) {
 				focalActorId = actorId;
@@ -1310,7 +1301,7 @@ public class Simulation {
 			// invoke the increment only when adding to the map
 			incrementSubscriberCount(eventClass);
 		}
-		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
+		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
 
 		int insertionIndex = -1;
@@ -1345,7 +1336,7 @@ public class Simulation {
 			// invoke the increment only when adding to the map
 			incrementSubscriberCount(eventClass);
 		}
-		DataManagerContext dataManagerContext = dataManagerContextMap.get(dataManagerId);
+		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.POST_EXECUTION);
 
 		list.add(metaDataManagerEventConsumer);
@@ -1453,6 +1444,40 @@ public class Simulation {
 		containsDeletedActors = true;
 	}
 
+	@SuppressWarnings("unchecked")
+	private <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+
+		DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
+		/*
+		 * If the working map does not contain the data manager, try to find a
+		 * single match from the base map that was collected from the plugins.
+		 * 
+		 * If two or more matches are found, then throw an exception.
+		 * 
+		 * If exactly one match is found, update the working map.
+		 * 
+		 * If no matches are found, nothing is done, but we are vulnerable to
+		 * somewhat slower performance if the data manager is sought repeatedly.
+		 */
+		if (dataManager == null) {
+			List<Class<?>> candidates = new ArrayList<>();
+			for (Class<?> c : baseClassToDataManagerMap.keySet()) {
+				if (c.isAssignableFrom(dataManagerClass)) {
+					candidates.add(c);
+				}
+			}
+			if (candidates.size() > 1) {
+				throw new ContractException(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS);
+			}
+			if (candidates.size() == 1) {
+				dataManager = baseClassToDataManagerMap.get(candidates.get(0));
+				workingClassToDataManagerMap.put(dataManagerClass, dataManager);
+			}
+		}
+
+		return Optional.ofNullable((T) dataManager);
+	}
+
 	/////////////////////////////////
 	// data manager support
 	/////////////////////////////////
@@ -1489,9 +1514,6 @@ public class Simulation {
 		}
 	}
 
-	// used to contain the data managers while the plugins are getting organized
-	private Map<PluginId, Set<DataManager>> dataMangagersMap = new LinkedHashMap<>();
-
 	// used for subscriptions
 	private final Map<Class<? extends Event>, List<MetaDataManagerEventConsumer<?>>> dataManagerEventMap = new LinkedHashMap<>();
 
@@ -1499,18 +1521,21 @@ public class Simulation {
 	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
 
 	// used to locate data managers by class type
-	private Map<Class<?>, DataManager> dataManagerMap = new LinkedHashMap<>();
+	private Map<Class<?>, DataManager> baseClassToDataManagerMap = new LinkedHashMap<>();
+	private Map<Class<?>, DataManager> workingClassToDataManagerMap = new LinkedHashMap<>();
 
 	// map of contexts for each data manager
-	private Map<DataManagerId, DataManagerContext> dataManagerContextMap = new LinkedHashMap<>();
+	private Map<DataManagerId, DataManagerContext> dataManagerIdToContextMap = new LinkedHashMap<>();
+
+	// map of data manager id to data manager instances
+	private Map<DataManagerId, DataManager> dataManagerIdToDataManagerMap = new LinkedHashMap<>();
 
 	//////////////////////////////
 	// actor support
 	//////////////////////////////
-	private Map<PluginId, Set<Consumer<ActorContext>>> actorsMap = new LinkedHashMap<>();
-	
+
 	private final Map<Class<? extends Event>, Map<ActorId, MetaActorEventConsumer<?>>> actorEventMap = new LinkedHashMap<>();
-	
+
 	private final ActorContext actorContext = new ActorContextImpl();
 
 	private final List<ActorId> actorIds = new ArrayList<>();
@@ -1522,7 +1547,7 @@ public class Simulation {
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 
 	private ActorId focalActorId;
-	
+
 	private static class ActorContentRec {
 
 		private Event event;
