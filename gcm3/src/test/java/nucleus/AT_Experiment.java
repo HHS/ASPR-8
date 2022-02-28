@@ -2,14 +2,18 @@ package nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.awt.geom.Arc2D;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,17 +22,87 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import util.MultiKey;
+import util.MutableBoolean;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
 @UnitTest(target = Experiment.class)
-@Disabled
 public class AT_Experiment {
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "addDimension", args = { Dimension.class })
 	public void testAddDimension() {
-		fail();
+
+		Dimension dimension1 = Dimension.builder()//
+										.addMetaDatum("Alpha")//
+										.addPoint((typeMap) -> {
+											List<String> result = new ArrayList<>();
+											result.add("alpha1");
+											return result;
+										})//
+										.addPoint((typeMap) -> {
+											List<String> result = new ArrayList<>();
+											result.add("alpha2");
+											return result;
+										})//
+										.build();//
+
+		Dimension dimension2 = Dimension.builder()//
+										.addMetaDatum("Beta")//
+										.addPoint((typeMap) -> {
+											List<String> result = new ArrayList<>();
+											result.add("beta1");
+											return result;
+										})//
+										.addPoint((typeMap) -> {
+											List<String> result = new ArrayList<>();
+											result.add("beta2");
+											return result;
+										})//
+										.addPoint((typeMap) -> {
+											List<String> result = new ArrayList<>();
+											result.add("beta3");
+											return result;
+										})//
+										.build();//
+
+		Set<MultiKey> expectedExperimentInstances = new LinkedHashSet<>();
+		expectedExperimentInstances.add(new MultiKey("alpha1", "beta1"));
+		expectedExperimentInstances.add(new MultiKey("alpha2", "beta1"));
+		expectedExperimentInstances.add(new MultiKey("alpha1", "beta2"));
+		expectedExperimentInstances.add(new MultiKey("alpha2", "beta2"));
+		expectedExperimentInstances.add(new MultiKey("alpha1", "beta3"));
+		expectedExperimentInstances.add(new MultiKey("alpha2", "beta3"));
+
+		Set<MultiKey> actualExperimentInstances = new LinkedHashSet<>();
+
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
+									c.addActor((c2) -> {
+										c2.releaseOutput(new Object());
+									});
+								}).build();//
+
+		Experiment	.builder()//
+					.addOutputHandler(c -> {
+						c.subscribeToOutput(Object.class, (c2, s, e) -> {
+							System.out.println(Thread.currentThread().getId());
+
+							List<String> scenarioMetaData = c2.getScenarioMetaData(s).get();
+							MultiKey.Builder builder = MultiKey.builder();
+							for (String scenarioMetaDatum : scenarioMetaData) {
+								builder.addKey(scenarioMetaDatum);
+							}
+							actualExperimentInstances.add(builder.build());
+						});
+					}).addPlugin(plugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.setThreadCount(4).build()//
+					.execute();//
+
+		assertEquals(expectedExperimentInstances, actualExperimentInstances);
+
 	}
 
 	@Test
@@ -59,7 +133,7 @@ public class AT_Experiment {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
-		
+
 		Set<MultiKey> actualOutput = new LinkedHashSet<>();
 
 		Consumer<ExperimentContext> integerOutputHandler = (c) -> {
@@ -163,9 +237,61 @@ public class AT_Experiment {
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "addPlugin", args = { Plugin.class })
 	public void testAddPlugin() {
-		fail();
-	}
 
+		// show that several plugins can be added and that they execute in the
+		// correct order
+
+		// create plugin ids
+		PluginId aId = new SimplePluginId("plugin A");
+		PluginId bId = new SimplePluginId("plugin B");
+		PluginId cId = new SimplePluginId("plugin C");
+
+		/*
+		 * Build the expected order of initialization based on the dependencies
+		 * between the plugins
+		 */
+		List<PluginId> expectedExecutedPlugins = new ArrayList<>();
+		expectedExecutedPlugins.add(cId);
+		expectedExecutedPlugins.add(bId);
+		expectedExecutedPlugins.add(aId);
+
+		// build a container for the actual initialization order
+		List<PluginId> actualExecutedPlugins = new ArrayList<>();
+
+		// create the three plugins with A depending on B and C and B depending
+		// on C alone.
+		Plugin pluginA = Plugin	.builder()//
+								.setPluginId(aId)//
+								.addPluginDependency(cId)//
+								.addPluginDependency(bId)//
+								.setInitializer((c) -> {
+									actualExecutedPlugins.add(aId);
+								}).build();//
+
+		Plugin pluginB = Plugin	.builder()//
+								.setPluginId(bId)//
+								.addPluginDependency(cId)//
+								.setInitializer((c) -> {
+									actualExecutedPlugins.add(bId);
+								}).build();//
+
+		Plugin pluginC = Plugin	.builder()//
+								.setPluginId(cId)//
+								.setInitializer((c) -> {
+									actualExecutedPlugins.add(cId);
+								}).build();//
+
+		// create the simulation
+		Experiment	.builder()//
+					.addPlugin(pluginA)//
+					.addPlugin(pluginB)//
+					.addPlugin(pluginC)//
+					.build()//
+					.execute();//
+
+		// show that the plugins initialized in the correct order
+		assertEquals(expectedExecutedPlugins, actualExecutedPlugins);
+	}
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "build", args = {})
@@ -180,20 +306,64 @@ public class AT_Experiment {
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressConsole", args = { boolean.class })
+	@Disabled
 	public void testSetExperimentProgressConsole() {
+		//should be manually tested
 		fail();
 	}
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class })
+	@Disabled
 	public void testSetExperimentProgressLog() {
+		//should be manually tested
 		fail();
 	}
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setThreadCount", args = { int.class })
 	public void testSetThreadCount() {
-		fail();
+		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("Alpha");//
+		IntStream.range(0, 5).forEach((i) -> {
+			dimBuilder.addPoint((typeMap) -> {
+				List<String> result = new ArrayList<>();
+				result.add(Integer.toString(i));
+				return result;
+			});
+		});
+
+		Dimension dimension1 = dimBuilder.build();
+
+		IntStream.range(0, 8).forEach((i) -> {
+			dimBuilder.addPoint((typeMap) -> {
+				List<String> result = new ArrayList<>();
+				result.add(Integer.toString(i));
+				return result;
+			});
+		});
+
+		Dimension dimension2 = dimBuilder.build();
+
+		Set<Long> threadIds = new LinkedHashSet<>();
+
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
+									c.addActor((c2) -> {
+										threadIds.add(Thread.currentThread().getId());
+									});
+								}).build();//
+
+		Experiment	.builder()//
+					.addPlugin(plugin)//
+					.addDimension(dimension1)//
+					.addDimension(dimension2)//
+					.setThreadCount(50).build()//
+					.execute();//
+
+		// We show that more than one thread was used. It is very difficult,
+		// especially with simulation instances that run very quickly, to reason
+		// out the number of threads that will be allocated or reused. 
+		assertTrue(threadIds.size() > 1);
 	}
 
 	@Test

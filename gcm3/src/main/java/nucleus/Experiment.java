@@ -76,8 +76,9 @@ public final class Experiment {
 		 *            turns on/off production of the experiment progress
 		 *            reporting
 		 */
-		public void setExperimentProgressConsole(final boolean reportExperimentProgessToConsole) {
+		public Builder setExperimentProgressConsole(final boolean reportExperimentProgessToConsole) {
 			data.reportExperimentProgessToConsole = reportExperimentProgessToConsole;
+			return this;
 		}
 
 		/**
@@ -88,8 +89,9 @@ public final class Experiment {
 		 *            the {@link Path} where the experiment progress will be
 		 *            recorded
 		 */
-		public void setExperimentProgressLog(final Path path) {
+		public Builder setExperimentProgressLog(final Path path) {
 			data.experimentProgressLogPath = path;
+			return this;
 		}
 
 		/**
@@ -105,11 +107,12 @@ public final class Experiment {
 		 *             if the thread count is negative
 		 *
 		 */
-		public void setThreadCount(final int threadCount) {
+		public Builder setThreadCount(final int threadCount) {
 			if (threadCount < 0) {
 				throw new RuntimeException("negative thread count");
 			}
 			data.threadCount = threadCount;
+			return this;
 		}
 
 	}
