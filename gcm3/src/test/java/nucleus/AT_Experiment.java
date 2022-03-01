@@ -1,16 +1,15 @@
 package nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.awt.geom.Arc2D;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -22,7 +21,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import util.MultiKey;
-import util.MutableBoolean;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
@@ -86,8 +84,6 @@ public class AT_Experiment {
 		Experiment	.builder()//
 					.addOutputHandler(c -> {
 						c.subscribeToOutput(Object.class, (c2, s, e) -> {
-							System.out.println(Thread.currentThread().getId());
-
 							List<String> scenarioMetaData = c2.getScenarioMetaData(s).get();
 							MultiKey.Builder builder = MultiKey.builder();
 							for (String scenarioMetaDatum : scenarioMetaData) {
@@ -98,7 +94,7 @@ public class AT_Experiment {
 					}).addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.setThreadCount(4).build()//
+					.build()//
 					.execute();//
 
 		assertEquals(expectedExperimentInstances, actualExperimentInstances);
@@ -308,7 +304,7 @@ public class AT_Experiment {
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressConsole", args = { boolean.class })
 	@Disabled
 	public void testSetExperimentProgressConsole() {
-		//should be manually tested
+		// should be manually tested
 		fail();
 	}
 
@@ -316,13 +312,16 @@ public class AT_Experiment {
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class })
 	@Disabled
 	public void testSetExperimentProgressLog() {
-		//should be manually tested
+		// should be manually tested
 		fail();
 	}
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setThreadCount", args = { int.class })
 	public void testSetThreadCount() {
+
+		// add two dimensions that will cause the experiment to execute 40
+		// simulation instances
 		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("Alpha");//
 		IntStream.range(0, 5).forEach((i) -> {
 			dimBuilder.addPoint((typeMap) -> {
@@ -344,8 +343,16 @@ public class AT_Experiment {
 
 		Dimension dimension2 = dimBuilder.build();
 
-		Set<Long> threadIds = new LinkedHashSet<>();
+		/*
+		 * Create a thread safe set to record the thread ids that are used by
+		 * each simulation
+		 */
+		Set<Long> threadIds = Collections.synchronizedSet(new LinkedHashSet<>());
 
+		/*
+		 * Add a plugin that will add an actor that records the thread id of the
+		 * simulation running that actor
+		 */
 		Plugin plugin = Plugin	.builder()//
 								.setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
 									c.addActor((c2) -> {
@@ -353,17 +360,22 @@ public class AT_Experiment {
 									});
 								}).build();//
 
+		// Run the experiment using several threads
 		Experiment	.builder()//
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.setThreadCount(50).build()//
+					.setThreadCount(6).build()//
 					.execute();//
 
 		// We show that more than one thread was used. It is very difficult,
 		// especially with simulation instances that run very quickly, to reason
-		// out the number of threads that will be allocated or reused. 
-		assertTrue(threadIds.size() > 1);
+		// out the number of threads that will be allocated or reused. The best
+		// we can do is show that the main thread was not used for any
+		// simulation instance. In practice only a long running manual test can
+		// demonstrate that the experiment thread management is working as
+		// intended.
+		assertFalse(threadIds.contains(Thread.currentThread().getId()));
 	}
 
 	@Test

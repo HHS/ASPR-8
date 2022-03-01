@@ -115,6 +115,14 @@ public final class Experiment {
 			return this;
 		}
 
+		/**
+		 * Sets the policy on reporting scenario failures.  Defaults to true.
+		 */
+		public Builder setReportScenarioFailureToConsole(final boolean reportScenarioFailureToConsole) {
+			data.reportScenarioFailureToConsole = reportScenarioFailureToConsole;
+			return this;
+		}
+
 	}
 
 	/*
@@ -125,6 +133,7 @@ public final class Experiment {
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
+		private boolean reportScenarioFailureToConsole = true;
 		private boolean reportExperimentProgessToConsole;
 		private Path experimentProgressLogPath;
 	}
@@ -151,14 +160,16 @@ public final class Experiment {
 		private final ExperimentStateManager experimentStateManager;
 		private final List<Plugin> plugins;
 		private final Integer scenarioId;
+		private final boolean reportScenarioFailureToConsole;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins) {
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean reportScenarioFailureToConsole) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
+			this.reportScenarioFailureToConsole = reportScenarioFailureToConsole;
 		}
 
 		/**
@@ -189,8 +200,10 @@ public final class Experiment {
 				simulation.execute();
 				success = true;
 			} catch (final Exception e) {
-				System.err.println("Simulation failure for scenario " + scenarioId);
-				e.printStackTrace();
+				if (reportScenarioFailureToConsole) {
+					System.err.println("Simulation failure for scenario " + scenarioId);
+					e.printStackTrace();
+				}
 			}
 			return new SimResult(scenarioId, success);
 		}
@@ -302,7 +315,7 @@ public final class Experiment {
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = preSimActions(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins));
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportExperimentProgessToConsole));
 			jobIndex++;
 		}
 
@@ -316,7 +329,7 @@ public final class Experiment {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = preSimActions(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins));
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportExperimentProgessToConsole));
 				jobIndex++;
 			}
 
@@ -364,7 +377,8 @@ public final class Experiment {
 				continue;
 			}
 
-			// generate the plugins that will form the simulation for the given scenario id
+			// generate the plugins that will form the simulation for the given
+			// scenario id
 			final List<Plugin> plugins = preSimActions(scenarioId);
 
 			// Load the plugin behaviors into the simulation builder
@@ -384,8 +398,10 @@ public final class Experiment {
 				simulation.execute();
 				success = true;
 			} catch (final Exception e) {
-				System.err.println("Simulation failure for scenario " + scenarioId);
-				e.printStackTrace();
+				if (data.reportScenarioFailureToConsole) {
+					System.err.println("Simulation failure for scenario " + scenarioId);
+					e.printStackTrace();
+				}
 			}
 
 			experimentStateManager.closeScenario(scenarioId, success);
@@ -475,10 +491,10 @@ public final class Experiment {
 		}
 
 		/*
-		 * Construct the new plugins from the plugin builders 
+		 * Construct the new plugins from the plugin builders
 		 */
 		final List<Plugin> result = new ArrayList<>();
-		
+
 		for (Plugin.Builder plugingBuilder : dumptyMap.values()) {
 			result.add(plugingBuilder.build());
 		}
