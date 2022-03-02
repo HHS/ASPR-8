@@ -10,6 +10,7 @@ import util.ContractException;
 
 @ThreadSafe
 public final class Plugin {
+	
 	private static class Data {
 		private PluginId pluginId;
 		private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
@@ -86,20 +87,22 @@ public final class Plugin {
 	private Plugin(Data data) {
 		this.data = data;
 	}
+	
+	
 
-	public PluginId getPluginId() {
+	public final PluginId getPluginId() {
 		return data.pluginId;
 	}
 
-	public Set<PluginId> getPluginDependencies() {
+	public final Set<PluginId> getPluginDependencies() {
 		return new LinkedHashSet<>(data.pluginDependencies);
 	}
 
-	public Set<PluginData> getPluginDatas() {
+	public final Set<PluginData> getPluginDatas() {
 		return new LinkedHashSet<>(data.pluginDatas);
 	}
 
-	public Optional<Consumer<PluginContext>> getInitializer() {
+	public final Optional<Consumer<PluginContext>> getInitializer() {
 		return Optional.ofNullable(data.init);
 	}
 }
