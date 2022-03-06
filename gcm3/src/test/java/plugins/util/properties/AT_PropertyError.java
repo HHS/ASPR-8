@@ -1,4 +1,4 @@
-package plugins.properties.support;
+package plugins.util.properties;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

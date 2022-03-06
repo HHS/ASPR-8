@@ -1,4 +1,4 @@
-package plugins.properties.support;
+package plugins.util.properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.properties.support.PropertyDefinition.Builder;
+import plugins.util.properties.PropertyDefinition.Builder;
 import util.ContractException;
 import util.SeedProvider;
 import util.annotations.UnitTest;

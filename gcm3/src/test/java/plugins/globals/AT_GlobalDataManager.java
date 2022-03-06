@@ -35,11 +35,10 @@ import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
 import plugins.globals.testsupport.GlobalsActionSupport;
 import plugins.globals.testsupport.TestGlobalPropertyId;
-import plugins.properties.PropertiesPlugin;
-import plugins.properties.support.PropertyDefinition;
-import plugins.properties.support.PropertyError;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
+import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import util.ContractException;
 import util.MultiKey;
 import util.SeedProvider;
@@ -126,7 +125,6 @@ public final class AT_GlobalDataManager {
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		Simulation	.builder()//
 					.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()))//
-					.addPlugin(PropertiesPlugin.getPlugin())//
 					.addPlugin(globalsPlugin)//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPlugin(testPlugin)//
 					.build()//

@@ -10,9 +10,9 @@ import nucleus.DataManagerContext;
 import plugins.globals.events.GlobalPropertyChangeObservationEvent;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
-import plugins.properties.support.PropertyDefinition;
-import plugins.properties.support.PropertyError;
-import plugins.properties.support.PropertyValueRecord;
+import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
+import plugins.util.properties.PropertyValueRecord;
 import util.ContractException;
 
 /**

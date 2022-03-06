@@ -3,8 +3,8 @@ package plugins.globals.testsupport;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.globals.support.GlobalPropertyId;
-import plugins.properties.support.PropertyDefinition;
-import plugins.properties.support.TimeTrackingPolicy;
+import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.TimeTrackingPolicy;
 
 /**
  * Enumeration that identifies global property definitions

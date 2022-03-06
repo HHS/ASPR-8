@@ -1,4 +1,4 @@
-package plugins.properties.support;
+package plugins.util.properties;
 
 /**
  * An enumeration used to control the tracking of assignment times of properties

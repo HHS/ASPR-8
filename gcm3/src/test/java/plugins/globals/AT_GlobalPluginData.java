@@ -17,7 +17,7 @@ import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
 import plugins.globals.testsupport.TestGlobalPropertyId;
-import plugins.properties.support.PropertyDefinition;
+import plugins.util.properties.PropertyDefinition;
 import util.ContractException;
 import util.SeedProvider;
 import util.annotations.UnitTest;

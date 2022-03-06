@@ -1,4 +1,4 @@
-package plugins.properties.support;
+package plugins.util.properties;
 
 import nucleus.SimulationContext;
 

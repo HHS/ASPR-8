@@ -24,10 +24,9 @@ import plugins.globals.GlobalPluginData;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
 import plugins.globals.testsupport.TestGlobalPropertyId;
-import plugins.properties.PropertiesPlugin;
-import plugins.properties.support.PropertyDefinition;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
+import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
@@ -171,7 +170,7 @@ public class AT_GlobalPropertyChangeObservationEvent {
 
 		builder.addPlugin(GlobalPlugin.getPlugin(globalInitialData));
 		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
-		builder.addPlugin(PropertiesPlugin.getPlugin());
+		
 		
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();

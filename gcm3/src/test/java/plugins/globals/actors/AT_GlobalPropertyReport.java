@@ -19,8 +19,6 @@ import plugins.globals.GlobalPlugin;
 import plugins.globals.GlobalPluginData;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
-import plugins.properties.PropertiesPlugin;
-import plugins.properties.support.PropertyDefinition;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.reports.support.ReportHeader;
@@ -28,6 +26,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
+import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTest;
 import util.annotations.UnitTestMethod;
 
@@ -76,8 +75,7 @@ public class AT_GlobalPropertyReport {
 																.build();//
 		builder.addPlugin(ReportsPlugin.getReportPlugin(reportsInitialData));
 
-		// add the remaining plugins
-		builder.addPlugin(PropertiesPlugin.getPlugin());
+		
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

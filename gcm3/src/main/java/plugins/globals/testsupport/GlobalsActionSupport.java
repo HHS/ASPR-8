@@ -12,7 +12,6 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.globals.GlobalPlugin;
 import plugins.globals.GlobalPluginData;
-import plugins.properties.PropertiesPlugin;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import util.ContractException;
@@ -41,7 +40,6 @@ public class GlobalsActionSupport {
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		Simulation	.builder()//
 					.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()))//
-					.addPlugin(PropertiesPlugin.getPlugin())//
 					.addPlugin(globalsPlugin)//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPlugin(testPlugin)//
 					.build()//

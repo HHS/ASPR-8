@@ -10,7 +10,7 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
-import plugins.properties.support.PropertyDefinition;
+import plugins.util.properties.PropertyDefinition;
 import util.ContractException;
 
 /**
