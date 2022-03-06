@@ -34,7 +34,7 @@ public interface PluginContext {
 
 	public void addDataManager(DataManager dataManager);
 
-	public void addActor(Consumer<ActorContext> init);
+	public ActorId addActor(Consumer<ActorContext> init);
 
 	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass);
 }

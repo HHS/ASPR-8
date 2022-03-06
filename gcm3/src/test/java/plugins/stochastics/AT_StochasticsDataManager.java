@@ -54,7 +54,7 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(name = "getRandomGeneratorFromId", args = { RandomNumberGeneratorId.class })
 	public void testGetRandomGeneratorFromId() {
 
-		// show that random generators can be retrieved by ids
+		// show that random generators can be retrieved by ids.
 		StochasticsActionSupport.testConsumer(5489824520767978373L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
@@ -62,6 +62,43 @@ public class AT_StochasticsDataManager {
 				assertNotNull(randomGeneratorFromId);
 			}
 		});
+		
+		// show that an unknown random number generator id will retrieve a random generator
+		StochasticsActionSupport.testConsumer(2276874395058795370L, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			
+			RandomNumberGeneratorId randomNumberGeneratorIdA = new RandomNumberGeneratorId() {
+				@Override
+				public String toString() {
+					return "some string";
+				}				
+			};
+			
+			RandomNumberGeneratorId randomNumberGeneratorIdB = new RandomNumberGeneratorId() {
+				@Override
+				public String toString() {
+					return "some string";
+				}				
+			};
+
+
+			//show that random number generators can be retrieved for new id values
+			RandomGenerator randomGeneratorFromIdA = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorIdA);
+			assertNotNull(randomGeneratorFromIdA);
+			
+			RandomGenerator randomGeneratorFromIdB = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorIdB);
+			assertNotNull(randomGeneratorFromIdB);
+			
+			//show that the random generators are identical since their ids evaluate to same string and were generated under the same base seed value(no reseed invocations between generators)
+			
+			for(int i = 0;i<10;i++) {
+				long valueA = randomGeneratorFromIdA.nextLong();
+				long valueB = randomGeneratorFromIdB.nextLong();
+				assertEquals(valueA, valueB);
+			}
+			
+		});
+
 
 		// precondition test : if the random number generator is null
 		StochasticsActionSupport.testConsumer(5489824520767978373L, (c) -> {
@@ -70,13 +107,6 @@ public class AT_StochasticsDataManager {
 			assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
 		});
 
-		// precondition test : if the random number generator is unknown
-		StochasticsActionSupport.testConsumer(2276874395058795370L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> stochasticsDataManager.getRandomGeneratorFromId(TestRandomGeneratorId.getUnknownRandomNumberGeneratorId()));
-			assertEquals(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
-		});
 
 	}
 

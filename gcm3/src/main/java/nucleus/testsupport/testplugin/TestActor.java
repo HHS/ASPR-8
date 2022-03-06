@@ -29,9 +29,9 @@ public final class TestActor {
 	 * with its alias.
 	 */
 	public void init(ActorContext actorContext) {
-		TestPluginDataManager testPluginDataManager = actorContext.getDataManager(TestPluginDataManager.class).get();
-		testPluginDataManager.setActorAlias(actorContext.getActorId(),alias);
-		List<TestActorPlan> testActorPlans = testPluginDataManager.getTestActorPlans(alias);
+		TestPlanDataManager testPlanDataManager = actorContext.getDataManager(TestPlanDataManager.class).get();
+		testPlanDataManager.setActorAlias(actorContext.getActorId(),alias);
+		List<TestActorPlan> testActorPlans = testPlanDataManager.getTestActorPlans(alias);
 		for (final TestActorPlan testActorPlan : testActorPlans) {
 			if (testActorPlan.getKey() != null) {
 				actorContext.addKeyedPlan(testActorPlan::executeAction, testActorPlan.getScheduledTime(), testActorPlan.getKey());

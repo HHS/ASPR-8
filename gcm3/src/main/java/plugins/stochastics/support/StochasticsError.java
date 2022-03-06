@@ -15,7 +15,7 @@ public enum StochasticsError implements ContractError {
 	NULL_RANDOM_NUMBER_GENERATOR("Null random number generator"),//
 	DUPLICATE_RANDOM_NUMBER_GENERATOR_ID("Duplicate random number generator id"),//
 	NULL_RANDOM_NUMBER_GENERATOR_ID("Null random number generator id"),//
-	UNKNOWN_RANDOM_NUMBER_GENERATOR_ID("Unknown random number generator id");//
+	;
 
 	private final String description;
 

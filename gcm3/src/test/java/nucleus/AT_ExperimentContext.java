@@ -34,6 +34,8 @@ public class AT_ExperimentContext {
 		 */
 		MutableDouble elapsedSeconds = new MutableDouble();
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
 					.addOutputHandler(c -> {
 						elapsedSeconds.setValue(c.getElapsedSeconds());
 					}).build()//
@@ -49,6 +51,8 @@ public class AT_ExperimentContext {
 
 		List<String> actualMetaData = new ArrayList<>();
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
 					.addOutputHandler(c -> {
 						actualMetaData.addAll(c.getExperimentMetaData());
 					}).build()//
@@ -115,6 +119,9 @@ public class AT_ExperimentContext {
 		MutableInteger scenarioCount = new MutableInteger();
 
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
+
 					.addOutputHandler((c) -> {
 						scenarioCount.setValue(c.getScenarioCount());
 					})//
@@ -146,6 +153,9 @@ public class AT_ExperimentContext {
 
 		// execute the experiment
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
+
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addOutputHandler((c) -> {
@@ -207,6 +217,9 @@ public class AT_ExperimentContext {
 		// information
 		Set<MultiKey> combinedMetaData = new LinkedHashSet<>();
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
+
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
@@ -308,6 +321,9 @@ public class AT_ExperimentContext {
 
 		// execute the experiment
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
+
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
@@ -381,6 +397,9 @@ public class AT_ExperimentContext {
 		 * notification of scenario failures.
 		 */
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
+
 					.addDimension(dimension)//
 					.addPlugin(plugin)//
 					.setReportScenarioFailureToConsole(false)//
@@ -482,7 +501,9 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder	.build()//
+		builder	.setExperimentProgressConsole(false)//
+				.setReportScenarioFailureToConsole(false)//
+				.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation
@@ -518,7 +539,9 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder	.build()//
+		builder	.setExperimentProgressConsole(false)//
+				.setReportScenarioFailureToConsole(false)//
+				.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation
@@ -552,6 +575,9 @@ public class AT_ExperimentContext {
 		 */
 		Set<MultiKey> observedOutput = new LinkedHashSet<>();
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
+
 					.addPlugin(plugin)//
 					.addOutputHandler((c) -> {
 						c.subscribeToOutput(Integer.class, (c2, s, o) -> {
@@ -606,7 +632,9 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder	.build()//
+		builder	.setExperimentProgressConsole(false)//
+				.setReportScenarioFailureToConsole(false)//
+				.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation

@@ -1,7 +1,9 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -9,8 +11,7 @@ import java.util.Set;
 public final class TypeMap<K> {
 	public static enum TypeMapError implements ContractError {
 
-		NULL_INSTANCE("A null instance was added to the type map"),
-		;
+		NULL_INSTANCE("A null instance was added to the type map"),;
 
 		private final String description;
 
@@ -23,18 +24,39 @@ public final class TypeMap<K> {
 			return description;
 		}
 	}
-	
+
 	private TypeMap() {
 	}
 
-	private Map<Class<?>, K> map = new LinkedHashMap<>();
+	private Map<Class<?>, K> baseMap = new LinkedHashMap<>();
+
+	private Map<Class<?>, K> workingMap = new LinkedHashMap<>();
 
 	/**
 	 * Returns the optional contain the instance stored for the given class
+	 * 
+	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends K> Optional<T> get(Class<T> c) {
-		return Optional.ofNullable((T) map.get(c));
+	public <T extends K> Optional<T> get(Class<T> classRef) {
+
+		K k = workingMap.get(classRef);
+		if (k == null) {
+			List<Class<?>> candidates = new ArrayList<>();
+			for (Class<?> c : baseMap.keySet()) {
+				if (classRef.isAssignableFrom(c)) {
+					candidates.add(c);
+				}
+			}
+			if (candidates.size() > 1) {
+				throw new RuntimeException("Class reference matches multiple values");
+			}
+			if (candidates.size() == 1) {
+				k = baseMap.get(candidates.get(0));
+				workingMap.put(classRef, k);
+			}
+		}
+		return Optional.ofNullable((T) k);
 	}
 
 	/**
@@ -46,6 +68,7 @@ public final class TypeMap<K> {
 
 	/**
 	 * A type builder class for TypeMap
+	 * 
 	 * @author Shawn Hatch
 	 *
 	 */
@@ -56,12 +79,13 @@ public final class TypeMap<K> {
 		private Map<Class<?>, N> map = new LinkedHashMap<>();
 
 		/**
-		 * Returns the TypeMap instance composed from the inputs to this builder.
+		 * Returns the TypeMap instance composed from the inputs to this
+		 * builder.
 		 */
 		public TypeMap<N> build() {
 			try {
 				TypeMap<N> result = new TypeMap<>();
-				result.map = map;
+				result.baseMap = map;
 				return result;
 			} finally {
 				map = new LinkedHashMap<>();
@@ -81,10 +105,10 @@ public final class TypeMap<K> {
 			return this;
 		}
 	}
-	
+
 	public Set<K> getContents() {
 		Set<K> result = new LinkedHashSet<>();
-		for (K value : map.values()) {
+		for (K value : baseMap.values()) {
 			result.add(value);
 		}
 		return result;

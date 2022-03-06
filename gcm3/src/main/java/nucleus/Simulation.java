@@ -55,7 +55,7 @@ public class Simulation {
 			}
 
 			if (baseClassToDataManagerMap.containsKey(dataManager.getClass())) {
-				throw new ContractException(NucleusError.DUPLICATE_DATA_MANAGER_TYPE);
+				throw new ContractException(NucleusError.DUPLICATE_DATA_MANAGER_TYPE, dataManager.getClass());
 			}
 
 			DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
@@ -67,7 +67,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void addActor(Consumer<ActorContext> consumer) {
+		public ActorId addActor(Consumer<ActorContext> consumer) {
 
 			if (consumer == null) {
 				throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
@@ -86,6 +86,8 @@ public class Simulation {
 			actorContentRec.actorId = actorId;
 			actorContentRec.plan = consumer;
 			actorQueue.add(actorContentRec);
+			
+			return actorId;
 
 		}
 
@@ -752,6 +754,9 @@ public class Simulation {
 			DataManager dataManager = dataManagerIdToDataManagerMap.get(dataManagerId);
 			DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 			dataManager.init(dataManagerContext);
+			if(!dataManager.isInitialized()) {
+				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE);
+			}
 		}
 
 		// initialize the actors by flushing the actor queue
@@ -1446,6 +1451,10 @@ public class Simulation {
 
 	@SuppressWarnings("unchecked")
 	private <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+		
+		if(dataManagerClass == null) {
+			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
+		}
 
 		DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
 		/*
@@ -1461,8 +1470,8 @@ public class Simulation {
 		 */
 		if (dataManager == null) {
 			List<Class<?>> candidates = new ArrayList<>();
-			for (Class<?> c : baseClassToDataManagerMap.keySet()) {
-				if (c.isAssignableFrom(dataManagerClass)) {
+			for (Class<?> c : baseClassToDataManagerMap.keySet()) {				
+				if (dataManagerClass.isAssignableFrom(c)) {
 					candidates.add(c);
 				}
 			}

@@ -18,7 +18,7 @@ import util.annotations.UnitTest;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 
-@UnitTest(target = TestPluginDataManager.class)
+@UnitTest(target = TestPlanDataManager.class)
 public class AT_TestPluginDataManager {
 	public static class TestDataManager1 extends TestDataManager {
 
@@ -72,12 +72,12 @@ public class AT_TestPluginDataManager {
 		}
 
 		TestPluginData testPluginData = builder.build();
-		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(testPluginData);
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(testPluginData);
 
 		// show that the plans associated with each actors are correct
 		for (String alias : expectedTestActorPlans.keySet()) {
 			Set<TestActorPlan> expectedPlans = expectedTestActorPlans.get(alias);
-			Set<TestActorPlan> actualPlans = new LinkedHashSet<>(testPluginDataManager.getTestActorPlans(alias));
+			Set<TestActorPlan> actualPlans = new LinkedHashSet<>(testPlanDataManager.getTestActorPlans(alias));
 			assertEquals(expectedPlans, actualPlans);
 		}
 	}
@@ -85,25 +85,25 @@ public class AT_TestPluginDataManager {
 	@Test
 	@UnitTestMethod(name = "getActorAlias", args = { ActorId.class })
 	public void testGetActorAlias() {
-		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(TestPluginData.builder().build());
-		Optional<Object> optional = testPluginDataManager.getActorAlias(null);
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(TestPluginData.builder().build());
+		Optional<Object> optional = testPlanDataManager.getActorAlias(null);
 		assertFalse(optional.isPresent());
 
-		testPluginDataManager.setActorAlias(new ActorId(0), "A");
-		testPluginDataManager.setActorAlias(new ActorId(1), "B");
-		testPluginDataManager.setActorAlias(new ActorId(2), "C");
+		testPlanDataManager.setActorAlias(new ActorId(0), "A");
+		testPlanDataManager.setActorAlias(new ActorId(1), "B");
+		testPlanDataManager.setActorAlias(new ActorId(2), "C");
 
-		optional = testPluginDataManager.getActorAlias(new ActorId(0));
+		optional = testPlanDataManager.getActorAlias(new ActorId(0));
 		assertTrue(optional.isPresent());
 		Object alias = optional.get();
 		assertEquals("A", alias);
 
-		optional = testPluginDataManager.getActorAlias(new ActorId(1));
+		optional = testPlanDataManager.getActorAlias(new ActorId(1));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("B", alias);
 
-		optional = testPluginDataManager.getActorAlias(new ActorId(2));
+		optional = testPlanDataManager.getActorAlias(new ActorId(2));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("C", alias);
@@ -145,12 +145,12 @@ public class AT_TestPluginDataManager {
 		TestPluginData testPluginData = builder.build();
 
 		//create the test plugin data manager
-		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(testPluginData);
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(testPluginData);
 		
 		//show that the correct plans are stored
 		for (Object alias : planMap.keySet()) {
 			Set<TestDataManagerPlan> expectedPlans = planMap.get(alias);
-			Set<TestDataManagerPlan> actualPlans = new LinkedHashSet<>(testPluginDataManager.getTestDataManagerPlans(alias));
+			Set<TestDataManagerPlan> actualPlans = new LinkedHashSet<>(testPlanDataManager.getTestDataManagerPlans(alias));
 			assertEquals(expectedPlans, actualPlans);
 		}
 	}
@@ -158,26 +158,26 @@ public class AT_TestPluginDataManager {
 	@Test
 	@UnitTestMethod(name = "getDataManagerAlias", args = { DataManagerId.class })
 	public void testGetDataManagerAlias() {
-		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(TestPluginData.builder().build());
-		Optional<Object> optional = testPluginDataManager.getActorAlias(null);
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(TestPluginData.builder().build());
+		Optional<Object> optional = testPlanDataManager.getActorAlias(null);
 		assertFalse(optional.isPresent());
 
-		testPluginDataManager.setDataManagerAlias(new DataManagerId(0), "A");
-		testPluginDataManager.setDataManagerAlias(new DataManagerId(1), "B");
-		testPluginDataManager.setDataManagerAlias(new DataManagerId(2), "C");
+		testPlanDataManager.setDataManagerAlias(new DataManagerId(0), "A");
+		testPlanDataManager.setDataManagerAlias(new DataManagerId(1), "B");
+		testPlanDataManager.setDataManagerAlias(new DataManagerId(2), "C");
 		
 
-		optional = testPluginDataManager.getDataManagerAlias(new DataManagerId(0));
+		optional = testPlanDataManager.getDataManagerAlias(new DataManagerId(0));
 		assertTrue(optional.isPresent());
 		Object alias = optional.get();
 		assertEquals("A", alias);
 
-		optional = testPluginDataManager.getDataManagerAlias(new DataManagerId(1));
+		optional = testPlanDataManager.getDataManagerAlias(new DataManagerId(1));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("B", alias);
 
-		optional = testPluginDataManager.getDataManagerAlias(new DataManagerId(2));
+		optional = testPlanDataManager.getDataManagerAlias(new DataManagerId(2));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("C", alias);
@@ -186,25 +186,25 @@ public class AT_TestPluginDataManager {
 	@Test
 	@UnitTestMethod(name = "setActorAlias", args = { ActorId.class, Object.class })
 	public void testSetActorAlias() {
-		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(TestPluginData.builder().build());
-		Optional<Object> optional = testPluginDataManager.getActorAlias(null);
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(TestPluginData.builder().build());
+		Optional<Object> optional = testPlanDataManager.getActorAlias(null);
 		assertFalse(optional.isPresent());
 
-		testPluginDataManager.setActorAlias(new ActorId(0), "A");
-		testPluginDataManager.setActorAlias(new ActorId(1), "B");
-		testPluginDataManager.setActorAlias(new ActorId(2), "C");
+		testPlanDataManager.setActorAlias(new ActorId(0), "A");
+		testPlanDataManager.setActorAlias(new ActorId(1), "B");
+		testPlanDataManager.setActorAlias(new ActorId(2), "C");
 
-		optional = testPluginDataManager.getActorAlias(new ActorId(0));
+		optional = testPlanDataManager.getActorAlias(new ActorId(0));
 		assertTrue(optional.isPresent());
 		Object alias = optional.get();
 		assertEquals("A", alias);
 
-		optional = testPluginDataManager.getActorAlias(new ActorId(1));
+		optional = testPlanDataManager.getActorAlias(new ActorId(1));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("B", alias);
 
-		optional = testPluginDataManager.getActorAlias(new ActorId(2));
+		optional = testPlanDataManager.getActorAlias(new ActorId(2));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("C", alias);
@@ -213,26 +213,26 @@ public class AT_TestPluginDataManager {
 	@Test
 	@UnitTestMethod(name = "setDataManagerAlias", args = { DataManagerId.class, Object.class })
 	public void testSetDataManagerAlias() {
-		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(TestPluginData.builder().build());
-		Optional<Object> optional = testPluginDataManager.getActorAlias(null);
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(TestPluginData.builder().build());
+		Optional<Object> optional = testPlanDataManager.getActorAlias(null);
 		assertFalse(optional.isPresent());
 
-		testPluginDataManager.setDataManagerAlias(new DataManagerId(0), "A");
-		testPluginDataManager.setDataManagerAlias(new DataManagerId(1), "B");
-		testPluginDataManager.setDataManagerAlias(new DataManagerId(2), "C");
+		testPlanDataManager.setDataManagerAlias(new DataManagerId(0), "A");
+		testPlanDataManager.setDataManagerAlias(new DataManagerId(1), "B");
+		testPlanDataManager.setDataManagerAlias(new DataManagerId(2), "C");
 		
 
-		optional = testPluginDataManager.getDataManagerAlias(new DataManagerId(0));
+		optional = testPlanDataManager.getDataManagerAlias(new DataManagerId(0));
 		assertTrue(optional.isPresent());
 		Object alias = optional.get();
 		assertEquals("A", alias);
 
-		optional = testPluginDataManager.getDataManagerAlias(new DataManagerId(1));
+		optional = testPlanDataManager.getDataManagerAlias(new DataManagerId(1));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("B", alias);
 
-		optional = testPluginDataManager.getDataManagerAlias(new DataManagerId(2));
+		optional = testPlanDataManager.getDataManagerAlias(new DataManagerId(2));
 		assertTrue(optional.isPresent());
 		alias = optional.get();
 		assertEquals("C", alias);

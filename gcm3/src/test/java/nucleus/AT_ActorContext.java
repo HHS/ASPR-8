@@ -22,7 +22,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestPluginDataManager;
+import nucleus.testsupport.testplugin.TestPlanDataManager;
 import nucleus.testsupport.testplugin.TestScenarioReport;
 import util.ContractException;
 import util.MultiKey;
@@ -50,6 +50,31 @@ public class AT_ActorContext {
 	 * DataView implementor to support tests
 	 */
 	public static class TestDataManager2 extends TestDataManager {
+
+	}
+
+	public static class TestDataManager3 extends TestDataManager {
+
+	}
+
+	public static class TestDataManager3A extends TestDataManager3 {
+
+	}
+
+	public static class TestDataManager3B extends TestDataManager3 {
+
+	}
+
+	public static class TestDataManager4 extends TestDataManager {
+
+	}
+
+	public static class TestDataManager4A extends TestDataManager4 {
+
+	}
+
+	public static class TestDataManager4B extends TestDataManager4 {
+
 	}
 
 	private static class DataChangeObservationEvent implements Event {
@@ -732,24 +757,24 @@ public class AT_ActorContext {
 		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			assertNotNull(actorId);
-			TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
-			Object alias = testPluginDataManager.getActorAlias(actorId).get();
+			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
+			Object alias = testPlanDataManager.getActorAlias(actorId).get();
 			assertEquals("Alpha", alias);
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			assertNotNull(actorId);
-			TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
-			Object alias = testPluginDataManager.getActorAlias(actorId).get();
+			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
+			Object alias = testPlanDataManager.getActorAlias(actorId).get();
 			assertEquals("Beta", alias);
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			assertNotNull(actorId);
-			TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
-			Object alias = testPluginDataManager.getActorAlias(actorId).get();
+			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
+			Object alias = testPlanDataManager.getActorAlias(actorId).get();
 			assertEquals("Gamma", alias);
 		}));
 
@@ -773,12 +798,16 @@ public class AT_ActorContext {
 	@UnitTestMethod(name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
 
+		
 		// create the test plugin data builder
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create a data manager for the actor to find
 
 		pluginDataBuilder.addTestDataManager("dm1", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm3A", TestDataManager3A.class);
+		pluginDataBuilder.addTestDataManager("dm3B", TestDataManager3B.class);
+		pluginDataBuilder.addTestDataManager("dm4A", TestDataManager4A.class);
 
 		/*
 		 * Have the agent search for the data manager that was added to the
@@ -791,6 +820,18 @@ public class AT_ActorContext {
 
 			Optional<TestDataManager2> optional2 = c.getDataManager(TestDataManager2.class);
 			assertFalse(optional2.isPresent());
+			
+			//show that we can ask for the child classes of a type individually
+			Optional<TestDataManager3A> optional3A = c.getDataManager(TestDataManager3A.class);
+			assertTrue(optional3A.isPresent());
+
+			Optional<TestDataManager3B> optional3B = c.getDataManager(TestDataManager3B.class);
+			assertTrue(optional3B.isPresent());
+			
+			//show that we can retrieve by the super type when there is no collision
+			Optional<TestDataManager4> optional4 = c.getDataManager(TestDataManager4.class);
+			assertTrue(optional4.isPresent());
+			
 		}));
 
 		// build the action plugin
@@ -808,7 +849,53 @@ public class AT_ActorContext {
 
 		// show that the action was executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		
+		//Precondition test 1
+		pluginDataBuilder.addTestDataManager("dm3A", TestDataManager3A.class);
+		pluginDataBuilder.addTestDataManager("dm3B", TestDataManager3B.class);
+		
+		//show that ambiguous class matching throws an exception 
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {			
+			ContractException contractException = assertThrows(ContractException.class,()-> c.getDataManager(TestDataManager3.class));
+			assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
+		}));
 
+		// build the action plugin
+		testPluginData = pluginDataBuilder.build();
+		testPlugin = TestPlugin.getPlugin(testPluginData);
+		scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// execute the engine
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
+
+		// show that the action was executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+
+		
+		//Precondition test 2
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {			
+			ContractException contractException = assertThrows(ContractException.class,()-> c.getDataManager(null));
+			assertEquals(NucleusError.NULL_DATA_MANAGER_CLASS, contractException.getErrorType());
+		}));
+
+		// build the action plugin
+		testPluginData = pluginDataBuilder.build();
+		testPlugin = TestPlugin.getPlugin(testPluginData);
+		scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// execute the engine
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
+
+		// show that the action was executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
 	/**

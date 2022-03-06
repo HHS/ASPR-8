@@ -36,8 +36,8 @@ public class TestPlugin {
 
 		TestPluginData testPluginData = pluginContext.getPluginData(TestPluginData.class).get();
 
-		TestPluginDataManager testPluginDataManager = new TestPluginDataManager(testPluginData);
-		pluginContext.addDataManager(testPluginDataManager);
+		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(testPluginData);
+		pluginContext.addDataManager(testPlanDataManager);
 
 		List<Object> dataManagerAliases = testPluginData.getTestDataManagerAliases();
 		for (Object alias : dataManagerAliases) {

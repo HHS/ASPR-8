@@ -5,7 +5,7 @@ import util.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general
- * description of the exception.
+ * description of the exception.  
  * 
  * @author Shawn Hatch
  *
@@ -13,7 +13,9 @@ import util.ContractException;
 public enum NucleusError implements ContractError {
 
 	AMBIGUOUS_DATA_MANAGER_CLASS("Multiple data manager matches found"),
-	CIRCULAR_PLUGIN_DEPENDENCIES("Circular plugin dependencies were found"),
+	DATA_MANAGER_DUPLICATE_INITIALIZATION("Data manager was already initialized"),
+	DATA_MANAGER_INITIALIZATION_FAILURE("Data manager base class was not properly initialized, be sure to call super()"),
+	CIRCULAR_PLUGIN_DEPENDENCIES("Circular plugin dependencies were found"),	
 	DUPLICATE_DATA_MANAGER_TYPE("Duplicate data manager type"),
 	DUPLICATE_LABELER_ID_IN_EVENT_LABELER("Duplicate labeler id in labeler"),
 	DUPLICATE_PLAN_KEY("There is an existing plan currently scheduled with the same key"),
@@ -23,6 +25,7 @@ public enum NucleusError implements ContractError {
 	NULL_ACTOR_CONTEXT_CONSUMER("Null actor context consumer"),
 	NULL_ACTOR_ID("Null actor id"),
 	NULL_DATA_MANAGER("Null data manager"),
+	NULL_DATA_MANAGER_CLASS("Null data manager class"),
 	NULL_EVENT("Event is null"),
 	NULL_EVENT_CLASS("Null event class"),
 	NULL_EVENT_CLASS_IN_EVENT_LABEL("Event label returns a null event class"),

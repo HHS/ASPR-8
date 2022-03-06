@@ -87,8 +87,6 @@ public final class Plugin {
 	private Plugin(Data data) {
 		this.data = data;
 	}
-	
-	
 
 	public final PluginId getPluginId() {
 		return data.pluginId;

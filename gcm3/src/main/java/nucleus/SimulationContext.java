@@ -19,7 +19,13 @@ public interface SimulationContext {
 	 */
 	public void releaseOutput(Object output);
 
-	
+	/**
+	 * 
+	 * @throws ContractException
+	 * <li> {@linkplain NucleusError#NULL_DATA_MANAGER_CLASS} if data manager class is null</li>
+	 * <li> {@linkplain NucleusError#AMBIGUOUS_DATA_MANAGER_CLASS} if more than one data manager matches the given class</li>
+	 * 
+	 */
 	public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass);
 
 	/**

@@ -11,7 +11,7 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.DataManagerId;
 
-public class TestPluginDataManager extends DataManager {
+public class TestPlanDataManager extends DataManager {
 
 	private Map<ActorId, Object> actorAliasMap = new LinkedHashMap<>();
 
@@ -21,7 +21,7 @@ public class TestPluginDataManager extends DataManager {
 
 	private final Map<Object, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
 
-	public TestPluginDataManager(TestPluginData testPluginData) {
+	public TestPlanDataManager(TestPluginData testPluginData) {
 
 		for (Object alias : testPluginData.getTestActorAliases()) {
 			List<TestActorPlan> testActorPlans = testPluginData.getTestActorPlans(alias);
@@ -35,7 +35,8 @@ public class TestPluginDataManager extends DataManager {
 	}
 
 	@Override
-	protected void init(DataManagerContext dataManagerContext) {
+	public void init(DataManagerContext dataManagerContext) {
+		super.init(dataManagerContext);
 		dataManagerContext.subscribeToSimulationClose(this::sendActionCompletionReport);
 	}
 

@@ -38,9 +38,10 @@ public final class MockPluginContext implements PluginContext {
 	private Map<ActorId, Consumer<ActorContext>> actorMap = new LinkedHashMap<>();
 
 	@Override
-	public void addActor(Consumer<ActorContext> init) {
+	public ActorId addActor(Consumer<ActorContext> init) {
 		ActorId actorId = new ActorId(masterActorIdValue++);
 		actorMap.put(actorId, init);
+		return actorId;
 	}
 
 	public Map<ActorId, Consumer<ActorContext>> getActors() {

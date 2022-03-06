@@ -50,8 +50,8 @@ public class AT_TestActor {
 			Object expectedAlias = multiKey.getKey(0);
 			Double expectedTime = multiKey.getKey(1);
 			pluginDataBuilder.addTestActorPlan(expectedAlias, new TestActorPlan(expectedTime, (c) -> {
-				TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
-				Object alias = testPluginDataManager.getActorAlias(c.getActorId()).get();
+				TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
+				Object alias = testPlanDataManager.getActorAlias(c.getActorId()).get();
 				actualObservations.add(new MultiKey(alias, c.getTime()));
 			}));
 		}
@@ -64,15 +64,17 @@ public class AT_TestActor {
 
 		// build and execute the engine
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
 					.addOutputHandler(experimentPlanCompletionObserver::init)//
-					.addPlugin(testPlugin)//					
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
 		// show that all actions executed
 		Optional<TestScenarioReport> optional = experimentPlanCompletionObserver.getActionCompletionReport(0);
-		assertTrue(optional.isPresent(),"Scenario did not complete");
-		
+		assertTrue(optional.isPresent(), "Scenario did not complete");
+
 		TestScenarioReport testScenarioReport = optional.get();
 		assertTrue(testScenarioReport.isComplete(), "Some planned action were not executed");
 

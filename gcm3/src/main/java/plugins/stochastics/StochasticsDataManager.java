@@ -8,7 +8,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.DataManager;
-import nucleus.DataManagerContext;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import util.ContractException;
@@ -23,9 +22,9 @@ import util.SeedProvider;
 
 /**
  * <P>
- * Creates and publishes the {@linkplain StochasticsDataManager}. Initializes the
- * data views from the {@linkplain StochasticsInitialData} and a plugin provided
- * seed value.
+ * Creates and publishes the {@linkplain StochasticsDataManager}. Initializes
+ * the data views from the {@linkplain StochasticsInitialData} and a plugin
+ * provided seed value.
  * </P>
  * 
  * 
@@ -62,7 +61,11 @@ public final class StochasticsDataManager extends DataManager {
 	 */
 	public RandomGenerator getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		validateRandomNumberGeneratorId(randomNumberGeneratorId);
-		return randomGeneratorMap.get(randomNumberGeneratorId);
+		RandomGenerator result = randomGeneratorMap.get(randomNumberGeneratorId);
+		if(result == null) {
+			result = addRandomGenerator(randomNumberGeneratorId);
+		}
+		return result;
 	}
 
 	/**
@@ -83,12 +86,10 @@ public final class StochasticsDataManager extends DataManager {
 	private void validateRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		if (randomNumberGeneratorId == null) {
 			throw new ContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
-		}
-		RandomGenerator rng = randomGeneratorMap.get(randomNumberGeneratorId);
-		if (rng == null) {
-			throw new ContractException(StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
-		}
+		}		
 	}
+
+	private long seed;
 
 	/**
 	 * Creates the data view for the plugin
@@ -99,36 +100,32 @@ public final class StochasticsDataManager extends DataManager {
 		// create RandomGenerators for each of the ids using a hash built from
 		// the id and the replication seed
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPluginData.getRandomNumberGeneratorIds();
-		long seed = stochasticsPluginData.getSeed();
+		seed = stochasticsPluginData.getSeed();
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
-			String name = randomNumberGeneratorId.toString();
-			long seedForId = name.hashCode() + seed;
-			RandomGenerator randomGeneratorForID = SeedProvider.getRandomGenerator(seedForId);
-			this.randomGeneratorMap.put(randomNumberGeneratorId, randomGeneratorForID);			
+			addRandomGenerator(randomNumberGeneratorId);
 		}
 		// finally, set up the standard RandomGenerator
 		randomGenerator = SeedProvider.getRandomGenerator(seed);
 
 	}
-
-	/**
-	 * Initial behavior of this resolver.
-	 * 
-	 * <li>Subscribes to all handled events
-	 * 
-	 * <li>Publishes the {@linkplain StochasticsDataManager}</li>
-	 * 
-	 *
+	
+	/*
+	 * The random generator should not already exist
 	 */
-	@Override
-	public void init(DataManagerContext dataManagerContext) {
-		
+	private RandomGenerator addRandomGenerator(RandomNumberGeneratorId randomNumberGeneratorId) {
+		String name = randomNumberGeneratorId.toString();
+		long seedForId = name.hashCode() + seed;
+		RandomGenerator randomGeneratorForID = SeedProvider.getRandomGenerator(seedForId);
+		this.randomGeneratorMap.put(randomNumberGeneratorId, randomGeneratorForID);
+		return randomGeneratorForID;
 	}
 
 	/**
-	 * Resets the seeds for all managed random number generators from the given seed.
+	 * Resets the seeds for all managed random number generators from the given
+	 * seed.
 	 */
 	public void resetSeeds(long seed) {
+		this.seed = seed;
 
 		// reset the default random number generator
 		randomGenerator.setSeed(seed);

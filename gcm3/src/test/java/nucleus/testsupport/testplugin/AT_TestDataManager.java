@@ -18,15 +18,14 @@ import util.annotations.UnitTestMethod;
 
 @UnitTest(target = TestActor.class)
 public class AT_TestDataManager {
-	
-	public static class TestDataManagerType1 extends TestDataManager{
-		
-	}
-	
-	public static class TestDataManagerType2 extends TestDataManager{
-		
+
+	public static class TestDataManagerType1 extends TestDataManager {
+
 	}
 
+	public static class TestDataManagerType2 extends TestDataManager {
+
+	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { ActorContext.class })
@@ -50,8 +49,8 @@ public class AT_TestDataManager {
 
 		// add the actors to the action plugin
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager(alias1,TestDataManagerType1.class);
-		pluginDataBuilder.addTestDataManager(alias2,TestDataManagerType2.class);
+		pluginDataBuilder.addTestDataManager(alias1, TestDataManagerType1.class);
+		pluginDataBuilder.addTestDataManager(alias2, TestDataManagerType2.class);
 
 		/*
 		 * Create ActorActionPlans from the expected observations. Each action
@@ -61,22 +60,20 @@ public class AT_TestDataManager {
 			Object expectedAlias = multiKey.getKey(0);
 			Double expectedTime = multiKey.getKey(1);
 			pluginDataBuilder.addTestDataManagerPlan(expectedAlias, new TestDataManagerPlan(expectedTime, (c) -> {
-				TestPluginDataManager testPluginDataManager = c.getDataManager(TestPluginDataManager.class).get();
-				Object alias = testPluginDataManager.getDataManagerAlias(c.getDataManagerId()).get();
+				TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
+				Object alias = testPlanDataManager.getDataManagerAlias(c.getDataManagerId()).get();
 				actualObservations.add(new MultiKey(alias, c.getTime()));
 			}));
 		}
-		
-		
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1,(c)->{
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			Optional<TestDataManagerType1> optional1 = c.getDataManager(TestDataManagerType1.class);
 			assertTrue(optional1.isPresent());
-			
+
 			Optional<TestDataManagerType2> optional2 = c.getDataManager(TestDataManagerType2.class);
 			assertTrue(optional2.isPresent());
-			
+
 		}));
-		
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -86,15 +83,17 @@ public class AT_TestDataManager {
 
 		// build and execute the engine
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
 					.addOutputHandler(experimentPlanCompletionObserver::init)//
-					.addPlugin(testPlugin)//					
+					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
 
 		// show that all actions executed
 		Optional<TestScenarioReport> optional = experimentPlanCompletionObserver.getActionCompletionReport(0);
-		assertTrue(optional.isPresent(),"Scenario did not complete");
-		
+		assertTrue(optional.isPresent(), "Scenario did not complete");
+
 		TestScenarioReport testScenarioReport = optional.get();
 		assertTrue(testScenarioReport.isComplete(), "Some plans were not executed");
 
