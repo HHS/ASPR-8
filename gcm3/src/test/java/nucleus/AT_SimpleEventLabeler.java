@@ -8,9 +8,9 @@ import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
 
 @UnitTest(target = SimpleEventLabeler.class)
 public class AT_SimpleEventLabeler {

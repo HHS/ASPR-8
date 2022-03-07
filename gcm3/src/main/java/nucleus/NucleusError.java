@@ -1,7 +1,7 @@
 package nucleus;
 
-import util.ContractError;
-import util.ContractException;
+import nucleus.util.ContractError;
+import nucleus.util.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general

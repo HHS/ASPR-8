@@ -1,4 +1,4 @@
-package util.arraycontainers;
+package plugins.util.properties.arraycontainers;
 
 import java.util.BitSet;
 

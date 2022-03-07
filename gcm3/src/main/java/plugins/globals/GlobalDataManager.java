@@ -7,13 +7,13 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.util.ContractException;
 import plugins.globals.events.GlobalPropertyChangeObservationEvent;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.PropertyValueRecord;
-import util.ContractException;
 
 /**
  * 

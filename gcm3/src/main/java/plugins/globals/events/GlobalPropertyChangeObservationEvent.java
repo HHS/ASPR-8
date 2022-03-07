@@ -2,6 +2,7 @@ package plugins.globals.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.SimulationContext;
+import nucleus.util.ContractException;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -11,7 +12,6 @@ import nucleus.SimpleEventLabeler;
 import plugins.globals.GlobalDataManager;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
-import util.ContractException;
 
 @Immutable
 public class GlobalPropertyChangeObservationEvent implements Event {

@@ -9,12 +9,12 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import util.MultiKey;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = TestActor.class)
 public class AT_TestActor {

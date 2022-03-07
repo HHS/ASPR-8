@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
-import util.TypeMap;
+import nucleus.util.TypeMap;
 
 /**
  * Multi-threaded executor of an experiment

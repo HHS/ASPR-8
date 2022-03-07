@@ -3,7 +3,7 @@ package nucleus;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import util.ContractException;
+import nucleus.util.ContractException;
 
 /**
  * A plugin represents a suite of software delivering a set of generally related

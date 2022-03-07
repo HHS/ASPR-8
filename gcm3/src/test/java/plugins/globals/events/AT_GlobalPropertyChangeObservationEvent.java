@@ -8,6 +8,9 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -27,9 +30,6 @@ import plugins.globals.testsupport.TestGlobalPropertyId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.util.properties.PropertyDefinition;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = GlobalPropertyChangeObservationEvent.class)
 

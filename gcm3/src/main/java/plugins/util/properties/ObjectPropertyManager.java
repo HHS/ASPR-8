@@ -1,8 +1,8 @@
 package plugins.util.properties;
 
 import nucleus.SimulationContext;
-import util.ContractException;
-import util.arraycontainers.ObjectValueContainer;
+import nucleus.util.ContractException;
+import plugins.util.properties.arraycontainers.ObjectValueContainer;
 
 /**
  * Implementor of IndexedPropertyManager that stores Object property values in an

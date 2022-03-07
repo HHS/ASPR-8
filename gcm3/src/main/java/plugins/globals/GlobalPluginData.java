@@ -8,10 +8,10 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import nucleus.util.ContractException;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import util.ContractException;
 
 /**
  * An immutable container of the initial state of global components and global

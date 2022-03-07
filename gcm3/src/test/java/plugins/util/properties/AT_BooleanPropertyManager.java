@@ -14,13 +14,13 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
 import nucleus.testsupport.MockSimulationContext;
-import util.ContractException;
+import nucleus.util.ContractException;
 import util.MutableDouble;
 import util.SeedProvider;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
 
 /**
  * Common interface to all person property managers. A person property manager

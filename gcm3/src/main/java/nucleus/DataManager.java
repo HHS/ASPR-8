@@ -1,6 +1,6 @@
 package nucleus;
 
-import util.ContractException;
+import nucleus.util.ContractException;
 
 public class DataManager {
 	/**

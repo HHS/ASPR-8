@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 import plugins.stochastics.support.RandomNumberGeneratorId;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = TestRandomGeneratorId.class)
 public class AT_TestRandomGeneratorId {

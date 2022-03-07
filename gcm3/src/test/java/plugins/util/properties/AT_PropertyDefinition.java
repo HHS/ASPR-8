@@ -12,11 +12,11 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
+import nucleus.util.ContractException;
 import plugins.util.properties.PropertyDefinition.Builder;
-import util.ContractException;
 import util.SeedProvider;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = PropertyDefinition.class)
 public class AT_PropertyDefinition {

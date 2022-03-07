@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
-import util.ContractException;
+import nucleus.util.ContractException;
 
 /**
  * An immutable, ordered container for the string values in the header of a

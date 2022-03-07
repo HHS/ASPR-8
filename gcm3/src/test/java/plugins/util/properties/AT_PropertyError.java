@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 
 @UnitTest(target = PropertyError.class)
 public class AT_PropertyError {

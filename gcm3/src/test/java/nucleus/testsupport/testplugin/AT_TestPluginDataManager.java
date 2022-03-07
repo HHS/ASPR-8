@@ -12,11 +12,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
 import nucleus.ActorId;
 import nucleus.DataManagerId;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = TestPlanDataManager.class)
 public class AT_TestPluginDataManager {

@@ -10,11 +10,11 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.SimpleReportId;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = ReportsPluginData.class)
 public class AT_ReportsPluginData {

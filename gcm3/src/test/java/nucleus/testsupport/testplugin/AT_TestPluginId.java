@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
+import annotations.UnitTest;
 
 @UnitTest(target = TestPluginId.class)
 public class AT_TestPluginId {

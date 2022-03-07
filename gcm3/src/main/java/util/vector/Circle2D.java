@@ -13,13 +13,13 @@ import util.spherical.Chirality;
  * 
  * The utility can use any of four algorithms for forming the circle.
  * 
- * CENTROID - The centroid the points is used as the center of the circle with
+ * CENTROID - The centroid of the points is used as the center of the circle with
  * the radius being the largest distance from any point to that centroid.
  * Solution is order O(n).
  * 
  * N3 - The order O(n^3) version of the N4 algorithm. It is a bit more complex
  * than N4, but is just a streamlined version of N4 and should return the same
- * circle with precision error.
+ * circle within precision error.
  * 
  * N4 - The order O(n^4) algorithm that returns the smallest circle that will
  * contain all of the points. This will return the same solution as Nimrod

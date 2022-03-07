@@ -2,7 +2,7 @@ package plugins.globals.support;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
+import annotations.UnitTest;
 
 @UnitTest(target = GlobalPropertyId.class)
 public class AT_GlobalPropertyId{

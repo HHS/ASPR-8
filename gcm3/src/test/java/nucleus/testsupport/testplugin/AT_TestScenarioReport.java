@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
 
 @UnitTest(target = TestScenarioReport.class)
 public class AT_TestScenarioReport {

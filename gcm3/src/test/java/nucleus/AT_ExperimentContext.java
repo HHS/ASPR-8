@@ -15,12 +15,12 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
+import nucleus.util.TriConsumer;
 import util.MultiKey;
 import util.MutableDouble;
 import util.MutableInteger;
-import util.TriConsumer;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = ExperimentContext.class)
 public class AT_ExperimentContext {

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
+import annotations.UnitTest;
 
 @UnitTest(target = ExperimentStateManager.class)
 @Disabled

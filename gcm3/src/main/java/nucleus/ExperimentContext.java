@@ -7,8 +7,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.jcip.annotations.ThreadSafe;
-import util.ContractException;
-import util.TriConsumer;
+import nucleus.util.ContractException;
+import nucleus.util.TriConsumer;
 
 /**
  * Interface for the thread safe access of experiment/scenario state and meta

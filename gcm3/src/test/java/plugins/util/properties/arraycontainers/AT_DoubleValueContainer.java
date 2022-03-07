@@ -1,4 +1,4 @@
-package util;
+package plugins.util.properties.arraycontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,10 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.arraycontainers.DoubleValueContainer;
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
 
 @UnitTest(target = DoubleValueContainer.class)
 public class AT_DoubleValueContainer {

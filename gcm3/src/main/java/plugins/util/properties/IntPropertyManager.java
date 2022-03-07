@@ -1,9 +1,9 @@
 package plugins.util.properties;
 
 import nucleus.SimulationContext;
-import util.ContractException;
-import util.arraycontainers.IntValueContainer;
-import util.arraycontainers.IntValueContainer.IntValueType;
+import nucleus.util.ContractException;
+import plugins.util.properties.arraycontainers.IntValueContainer;
+import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Byte, Short, Integer or

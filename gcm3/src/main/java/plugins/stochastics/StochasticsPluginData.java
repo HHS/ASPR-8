@@ -6,10 +6,10 @@ import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import nucleus.util.ContractError;
+import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
-import util.ContractError;
-import util.ContractException;
 
 /**
  *

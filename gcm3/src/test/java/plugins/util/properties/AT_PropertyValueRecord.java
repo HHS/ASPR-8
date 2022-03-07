@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
 import nucleus.SimulationContext;
 import nucleus.testsupport.MockSimulationContext;
 import util.MutableDouble;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = PropertyValueRecord.class)
 public class AT_PropertyValueRecord {

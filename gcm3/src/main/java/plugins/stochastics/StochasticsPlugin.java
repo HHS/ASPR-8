@@ -2,7 +2,7 @@ package plugins.stochastics;
 
 import net.jcip.annotations.ThreadSafe;
 import nucleus.Plugin;
-import util.ContractError;
+import nucleus.util.ContractError;
 
 /**
  *

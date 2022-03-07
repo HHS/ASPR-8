@@ -2,7 +2,7 @@ package plugins.util.properties;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
+import annotations.UnitTest;
 
 
 @UnitTest(target = IndexedPropertyManager.class)

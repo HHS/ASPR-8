@@ -10,11 +10,11 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.util.ContractException;
 import plugins.globals.GlobalPlugin;
 import plugins.globals.GlobalPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import util.ContractException;
 
 public class GlobalsActionSupport {
 

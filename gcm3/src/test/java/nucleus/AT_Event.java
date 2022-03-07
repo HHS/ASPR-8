@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 /**
  * Test unit for Event
  * @author Shawn Hatch

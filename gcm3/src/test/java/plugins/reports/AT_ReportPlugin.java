@@ -7,12 +7,12 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.SimpleReportId;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = ReportsPlugin.class)
 public class AT_ReportPlugin {

@@ -3,7 +3,7 @@ package nucleus;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import util.ContractException;
+import nucleus.util.ContractException;
 
 /**
  * A context provides basic access to the nucleus engine and published data.

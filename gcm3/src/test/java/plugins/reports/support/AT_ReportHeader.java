@@ -13,10 +13,10 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import util.ContractException;
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
+import nucleus.util.ContractException;
 import util.SeedProvider;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = ReportHeader.class)
 public class AT_ReportHeader {

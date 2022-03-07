@@ -2,7 +2,7 @@ package plugins.reports.support;
 
 
 import nucleus.ActorContext;
-import util.ContractException;
+import nucleus.util.ContractException;
 
 /**
  * The abstract base class for reports that aggregate reporting aligned to a

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.NotThreadSafe;
-import util.ContractException;
+import nucleus.util.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;

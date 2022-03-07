@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import util.TypeMap;
+import nucleus.util.TypeMap;
 
 public class Dimension {
 

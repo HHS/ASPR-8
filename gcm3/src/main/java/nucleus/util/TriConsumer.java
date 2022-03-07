@@ -1,4 +1,4 @@
-package util;
+package nucleus.util;
 
 import java.util.Objects;
 

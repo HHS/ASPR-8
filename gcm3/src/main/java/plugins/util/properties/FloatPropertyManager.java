@@ -1,8 +1,8 @@
 package plugins.util.properties;
 
 import nucleus.SimulationContext;
-import util.ContractException;
-import util.arraycontainers.FloatValueContainer;
+import nucleus.util.ContractException;
+import plugins.util.properties.arraycontainers.FloatValueContainer;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Float property values

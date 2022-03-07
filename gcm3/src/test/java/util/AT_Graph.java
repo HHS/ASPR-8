@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 import util.graph.Graph;
 import util.graph.MutableGraph;
 

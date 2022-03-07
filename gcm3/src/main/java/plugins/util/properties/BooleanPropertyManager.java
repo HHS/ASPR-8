@@ -1,8 +1,8 @@
 package plugins.util.properties;
 
 import nucleus.SimulationContext;
-import util.ContractException;
-import util.arraycontainers.BooleanContainer;
+import nucleus.util.ContractException;
+import plugins.util.properties.arraycontainers.BooleanContainer;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Boolean property values

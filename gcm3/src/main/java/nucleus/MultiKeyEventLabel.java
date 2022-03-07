@@ -1,7 +1,7 @@
 package nucleus;
 
 import net.jcip.annotations.NotThreadSafe;
-import util.ContractException;
+import nucleus.util.ContractException;
 import util.MultiKey;
 
 /**

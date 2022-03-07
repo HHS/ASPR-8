@@ -1,4 +1,4 @@
-package util;
+package plugins.util.properties.arraycontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,11 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.arraycontainers.IntValueContainer;
-import util.arraycontainers.IntValueContainer.IntValueType;
+import annotations.UnitTest;
+import annotations.UnitTestConstructor;
+import annotations.UnitTestMethod;
+import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
 
 /**
  * Test class for {@link IntValueContainer}

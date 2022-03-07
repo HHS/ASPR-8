@@ -9,8 +9,8 @@ import net.jcip.annotations.Immutable;
 import nucleus.ActorContext;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import nucleus.util.ContractException;
 import plugins.reports.support.ReportError;
-import util.ContractException;
 
 /**
  * An immutable container of the initial state reports. It contains: <BR>

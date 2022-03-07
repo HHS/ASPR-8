@@ -9,7 +9,7 @@ import java.util.Optional;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import util.ContractException;
+import nucleus.util.ContractException;
 
 @ThreadSafe
 public class TestPluginData implements PluginData {

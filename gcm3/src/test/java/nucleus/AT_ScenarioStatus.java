@@ -2,7 +2,7 @@ package nucleus;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTest;
+import annotations.UnitTest;
 
 @UnitTest(target = ScenarioStatus.class)
 public class AT_ScenarioStatus {

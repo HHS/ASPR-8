@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import net.jcip.annotations.ThreadSafe;
-import util.ContractException;
+import nucleus.util.ContractException;
 
 @ThreadSafe
 public final class Plugin {

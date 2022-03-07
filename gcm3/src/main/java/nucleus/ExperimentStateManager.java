@@ -22,9 +22,9 @@ import java.util.function.Consumer;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
-import util.ContractException;
+import nucleus.util.ContractException;
+import nucleus.util.TriConsumer;
 import util.TimeElapser;
-import util.TriConsumer;
 
 /**
  * A utility class used by the experiment to manage experiment context consumers

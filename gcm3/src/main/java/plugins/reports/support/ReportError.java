@@ -1,6 +1,6 @@
 package plugins.reports.support;
 
-import util.ContractError;
+import nucleus.util.ContractError;
 
 public enum ReportError implements ContractError{
 	NULL_CONSUMER("Supplier of Consumer of ActorContext supplied a null consumer"),

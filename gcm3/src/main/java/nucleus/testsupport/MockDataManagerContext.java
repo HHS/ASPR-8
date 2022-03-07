@@ -15,7 +15,7 @@ import nucleus.DataManagerContext;
 import nucleus.DataManagerId;
 import nucleus.Event;
 import nucleus.EventLabeler;
-import util.TriConsumer;
+import nucleus.util.TriConsumer;
 
 /**
  * A mock implementation of the {@link DataManagerContext} interface that allows

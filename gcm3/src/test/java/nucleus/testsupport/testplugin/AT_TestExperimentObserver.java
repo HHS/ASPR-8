@@ -14,12 +14,12 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import annotations.UnitTest;
+import annotations.UnitTestMethod;
 import nucleus.ExperimentContext;
 import nucleus.ScenarioStatus;
+import nucleus.util.TriConsumer;
 import util.SeedProvider;
-import util.TriConsumer;
-import util.annotations.UnitTest;
-import util.annotations.UnitTestMethod;
 
 @UnitTest(target = ExperimentPlanCompletionObserver.class)
 public class AT_TestExperimentObserver {

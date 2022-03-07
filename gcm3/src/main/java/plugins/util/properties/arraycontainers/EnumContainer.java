@@ -1,4 +1,4 @@
-package util.arraycontainers;
+package plugins.util.properties.arraycontainers;
 
 /**
  * A container for retaining enum values from a single enumeration class indexed
