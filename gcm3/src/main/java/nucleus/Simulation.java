@@ -755,7 +755,7 @@ public class Simulation {
 			DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 			dataManager.init(dataManagerContext);
 			if(!dataManager.isInitialized()) {
-				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE);
+				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE,dataManager.getClass().getSimpleName());
 			}
 		}
 

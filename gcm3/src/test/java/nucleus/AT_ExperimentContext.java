@@ -67,6 +67,8 @@ public class AT_ExperimentContext {
 		Dimension dimension2 = Dimension.builder().addMetaDatum("C").addMetaDatum("D").build();
 
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addOutputHandler(c -> {
@@ -99,6 +101,8 @@ public class AT_ExperimentContext {
 		expectedMetaData.add("B");
 
 		Experiment	.builder()//
+					.setExperimentProgressConsole(false)//
+					.setReportScenarioFailureToConsole(false)//
 					.addDimension(dimension2)//
 					.addDimension(dimension1)//
 					.addOutputHandler(c -> {
@@ -671,7 +675,10 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder	.build()//
+		builder//
+				.setExperimentProgressConsole(false)//
+				.setReportScenarioFailureToConsole(false)//
+				.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation

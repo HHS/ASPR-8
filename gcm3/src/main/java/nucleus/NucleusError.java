@@ -50,7 +50,9 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_EVENT_LABELER("The labeler id an event label does not match a registered event labeler"),
 	UNKNOWN_SCENARIO_ID("Unknown scenario id"),
 	SCENARIO_CANNOT_BE_EXECUTED("scenario cannot be executed"),
+	NON_EXISTANT_SCEANARIO_PROGRESS("The scenario progress file does not exist, but is required when continuation from progress file is chosen"),
 	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
+	INCOMPATIBLE_SCEANARIO_PROGRESS("The scenario progress file is incompatible with the current experiment"),
 	;
 
 	private final String description;

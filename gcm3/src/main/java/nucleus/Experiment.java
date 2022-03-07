@@ -95,6 +95,16 @@ public final class Experiment {
 		}
 
 		/**
+		 * Instructs the experiment to continue experiment progress from the
+		 * experiment progress log. Defaults to false;
+		 * 
+		 */
+		public Builder setContinueFromProgressLog(boolean continueFromProgressLog) {
+			data.continueFromProgressLog = continueFromProgressLog;
+			return this;
+		}
+
+		/**
 		 * Sets the number of scenarios that may run concurrently. Generally
 		 * this should be set to one less than the number of virtual processors
 		 * on the machine that is running the experiment. Setting the thread
@@ -116,7 +126,7 @@ public final class Experiment {
 		}
 
 		/**
-		 * Sets the policy on reporting scenario failures.  Defaults to true.
+		 * Sets the policy on reporting scenario failures. Defaults to true.
 		 */
 		public Builder setReportScenarioFailureToConsole(final boolean reportScenarioFailureToConsole) {
 			data.reportScenarioFailureToConsole = reportScenarioFailureToConsole;
@@ -136,6 +146,8 @@ public final class Experiment {
 		private boolean reportScenarioFailureToConsole = true;
 		private boolean reportExperimentProgessToConsole = true;
 		private Path experimentProgressLogPath;
+		private boolean continueFromProgressLog;
+
 	}
 
 	/*
@@ -239,6 +251,7 @@ public final class Experiment {
 
 		ExperimentStateManager.Builder builder = ExperimentStateManager.builder();
 		builder.setScenarioCount(scenarioCount);
+		builder.setContinueFromProgressLog(data.continueFromProgressLog);
 		builder.setScenarioProgressLogFile(data.experimentProgressLogPath);
 
 		final List<String> experimentMetaData = new ArrayList<>();

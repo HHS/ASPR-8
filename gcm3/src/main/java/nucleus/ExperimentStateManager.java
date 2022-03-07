@@ -146,7 +146,7 @@ public final class ExperimentStateManager {
 
 		if (success && writer != null) {
 			try {
-				writer.write(scenarioId);
+				writer.write(scenarioId.toString());
 				for (String metaDatum : scenarioRecord.metaData) {
 					writer.write("\t");
 					writer.write(metaDatum);
@@ -244,6 +244,7 @@ public final class ExperimentStateManager {
 		private Path progressLogFile;
 		private List<String> experimentMetaData = new ArrayList<>();
 		private List<Consumer<ExperimentContext>> contextConsumers = new ArrayList<>();
+		private boolean continueFromProgressLog;
 	}
 
 	public static Builder builder() {
@@ -282,6 +283,11 @@ public final class ExperimentStateManager {
 
 		public Builder addExperimentContextConsumer(Consumer<ExperimentContext> contextConsumer) {
 			data.contextConsumers.add(contextConsumer);
+			return this;
+		}
+
+		public Builder setContinueFromProgressLog(boolean continueFromProgressLog) {
+			data.continueFromProgressLog = continueFromProgressLog;
 			return this;
 		}
 	}
@@ -336,6 +342,9 @@ public final class ExperimentStateManager {
 		}
 
 		if (!Files.exists(data.progressLogFile)) {
+			if (data.continueFromProgressLog) {
+				throw new ContractException(NucleusError.NON_EXISTANT_SCEANARIO_PROGRESS);
+			}
 			return;
 		}
 
@@ -376,15 +385,17 @@ public final class ExperimentStateManager {
 
 		List<String> actualHeader = Arrays.asList(lines.get(0).split("\t"));
 		if (!expectedHeader.equals(actualHeader)) {
-			return;
+			throw new ContractException(NucleusError.INCOMPATIBLE_SCEANARIO_PROGRESS, "wrong file header");
 		}
 
 		// Load the remaining lines
 		int n = lines.size();
-		for (int i = 0; i < n; i++) {
+		for (int i = 1; i < n; i++) {
 			List<String> entries = Arrays.asList(lines.get(i).split("\t"));
 			if (entries.size() != expectedHeader.size()) {
-				// something is wrong with the line and we stop reading
+				/*
+				 * Potential ungraceful termination of previous experiment
+				 */
 				break;
 			}
 
@@ -393,7 +404,9 @@ public final class ExperimentStateManager {
 			try {
 				scenarioId = Integer.parseInt(entries.get(0));
 			} catch (Exception e) {
-				// the line is corrupt and we stop reading
+				/*
+				 * Potential ungraceful termination of previous experiment
+				 */
 				break;
 			}
 
@@ -403,13 +416,13 @@ public final class ExperimentStateManager {
 			 * if the scenario is not recognized, then
 			 */
 			if (scenarioRecord == null) {
-				break;
+				throw new ContractException(NucleusError.INCOMPATIBLE_SCEANARIO_PROGRESS, "scenario " + scenarioId + " is out of bounds");
 			}
 
 			// record the scenario record
 
 			scenarioRecord.metaData = new ArrayList<>();
-			for (int j = 0; j < entries.size(); j++) {
+			for (int j = 1; j < entries.size(); j++) {
 				scenarioRecord.scenarioStatus = ScenarioStatus.PREVIOUSLY_SUCCEEDED;
 				scenarioRecord.metaData.add(entries.get(j));
 			}
@@ -434,13 +447,19 @@ public final class ExperimentStateManager {
 			throw new RuntimeException(e);
 		}
 		writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
-
 		try {
+			writer.write("scenario");
+			for (String metaDatum : data.experimentMetaData) {
+				writer.write("\t");
+				writer.write(metaDatum);
+			}			
+			writer.write(LINE_SEPARATOR);
+			
 			for (Integer scenarioId : scenarioRecords.keySet()) {
 				ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
 				if (scenarioRecord.scenarioStatus == ScenarioStatus.PREVIOUSLY_SUCCEEDED) {
 
-					writer.write(scenarioId);
+					writer.write(scenarioId.toString());
 					for (String metaDatum : scenarioRecord.metaData) {
 						writer.write("\t");
 						writer.write(metaDatum);
@@ -456,7 +475,9 @@ public final class ExperimentStateManager {
 
 	public synchronized void openExperiment() {
 
-		readProgressFile();
+		if (data.continueFromProgressLog) {
+			readProgressFile();
+		}
 		writeProgressFile();
 
 		// handshake with the consumers

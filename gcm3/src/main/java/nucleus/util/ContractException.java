@@ -19,7 +19,7 @@ public final class ContractException extends RuntimeException {
 	}
 
 	public ContractException(final ContractError contractError, final Object details) {
-		super(contractError.getDescription()+" "+details.toString());
+		super(contractError.getDescription()+": "+details.toString());
 		this.contractError = contractError;
 	}
 
