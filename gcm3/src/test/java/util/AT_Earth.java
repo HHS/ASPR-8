@@ -47,7 +47,7 @@ public class AT_Earth {
 	@Test
 	@UnitTestMethod(name = "fromRadius", args = { double.class })
 	public void testFromRadius() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3373674409757874366L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3373674409757874366L);
 		for (int i = 0; i < 100; i++) {
 			double radius = 10_000_000 * randomGenerator.nextDouble();
 			Earth earth = Earth.fromRadius(radius);
@@ -280,7 +280,7 @@ public class AT_Earth {
 	@UnitTestMethod(name = "getECCFromLatLonAlt", args = { LatLonAlt.class })
 	public void testGetECCFromLatLonAlt() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7867550291868680129L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7867550291868680129L);
 
 		for (int i = 0; i < 1000; i++) {
 			double radius = randomGenerator.nextDouble() * 6_000_000 + 1_000_000;
@@ -314,7 +314,7 @@ public class AT_Earth {
 	@UnitTestMethod(name = "getLatLonAlt", args = { Vector3D.class })
 	public void testGetLatLonAlt() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1462458115304058705L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1462458115304058705L);
 
 		for (int i = 0; i < 1000; i++) {
 			double radius = randomGenerator.nextDouble() * 6_000_000 + 1_000_000;
@@ -343,7 +343,7 @@ public class AT_Earth {
 	@UnitTestMethod(name = "getECCFromLatLon", args = { LatLon.class })
 	public void testGetECCFromLatLon() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4107285998527165778L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4107285998527165778L);
 
 		for (int i = 0; i < 1000; i++) {
 			double radius = randomGenerator.nextDouble() * 6_000_000 + 1_000_000;
@@ -375,7 +375,7 @@ public class AT_Earth {
 	@UnitTestMethod(name = "getGroundDistanceFromECC", args = { Vector3D.class, Vector3D.class })
 	public void testGetGroundDistanceFromECC() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1693567521780632468L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1693567521780632468L);
 
 		for (int i = 0; i < 1000; i++) {
 			double radius = randomGenerator.nextDouble() * 6_000_000 + 1_000_000;

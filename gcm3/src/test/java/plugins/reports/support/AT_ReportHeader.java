@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = ReportHeader.class)
 public class AT_ReportHeader {
@@ -162,7 +162,7 @@ public class AT_ReportHeader {
 	@Test
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2142808365770946523L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2142808365770946523L);
 
 		// show that hash codes are reasonably dispersed
 		Set<Integer> hashCodeValues = new LinkedHashSet<>();

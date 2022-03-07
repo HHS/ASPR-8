@@ -70,7 +70,7 @@ public final class Experiment {
 
 		/**
 		 * Turns on or off the logging of experiment progress to standard out.
-		 * Default value is false.
+		 * Default value is true.
 		 *
 		 * @param produceConsoleOutput
 		 *            turns on/off production of the experiment progress
@@ -134,7 +134,7 @@ public final class Experiment {
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
 		private boolean reportScenarioFailureToConsole = true;
-		private boolean reportExperimentProgessToConsole;
+		private boolean reportExperimentProgessToConsole = true;
 		private Path experimentProgressLogPath;
 	}
 

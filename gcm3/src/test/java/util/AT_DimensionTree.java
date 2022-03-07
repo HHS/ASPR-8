@@ -91,7 +91,7 @@ public class AT_DimensionTree {
 	public void testGetMembersInSphere() {
 
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4720556754557132042L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4720556754557132042L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -147,7 +147,7 @@ public class AT_DimensionTree {
 	@UnitTestMethod(name = "getNearestMember", args = { double[].class })
 	public void testGetNearestMember() {
 		
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1704585910834495981L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1704585910834495981L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -199,7 +199,7 @@ public class AT_DimensionTree {
 	@UnitTestMethod(name = "getMembersInRectanguloid", args = { double[].class, double[].class })
 	public void testGetMembersInRectanguloid() {
 		
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7067981743992714824L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7067981743992714824L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -273,7 +273,7 @@ public class AT_DimensionTree {
 	@Test
 	@UnitTestMethod(name = "add", args = { double[].class, Object.class })
 	public void testAdd() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7699215262915366096L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7699215262915366096L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -318,7 +318,7 @@ public class AT_DimensionTree {
 	@Test
 	@UnitTestMethod(name = "contains", args = { Object.class })
 	public void testContains() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7408475895380756180L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7408475895380756180L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -354,7 +354,7 @@ public class AT_DimensionTree {
 	@Test
 	@UnitTestMethod(name = "remove", args = { Object.class })
 	public void testRemove() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7030760224206012399L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7030760224206012399L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -502,7 +502,7 @@ public class AT_DimensionTree {
 	// @Test
 	public void testPerformance() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3684348766628697684L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3684348766628697684L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//

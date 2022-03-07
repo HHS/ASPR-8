@@ -59,7 +59,7 @@ public class AT_MutableStat {
 	@Test
 	@UnitTestMethod(name = "combineStats", args = { Stat[].class })
 	public void testCombineStats() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5642328443843803200L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5642328443843803200L);
 
 		for (int k = 0; k < 100; k++) {
 			int n = randomGenerator.nextInt(10);
@@ -101,7 +101,7 @@ public class AT_MutableStat {
 	@Test
 	@UnitTestMethod(name = "combineStatsCollection", args = { Collection.class })
 	public void testCombineStatsCollection() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2697343520338303649L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2697343520338303649L);
 
 		for (int k = 0; k < 100; k++) {
 			int n = randomGenerator.nextInt(10);
@@ -147,7 +147,7 @@ public class AT_MutableStat {
 	@Test
 	@UnitTestMethod(name = "add", args = { double.class })
 	public void testAdd() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4090068094278660804L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4090068094278660804L);
 
 		for (int i = 0; i < 1000; i++) {
 			MutableStat mutableStat = new MutableStat();

@@ -69,7 +69,7 @@ public class AT_SphericalPolygon {
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5068048243871963894L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5068048243871963894L);
 
 		// Show that an empty set of vertices will throw a
 		// MalformedSphericalPolygonException
@@ -160,7 +160,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "containsPosition", args = { SphericalPoint.class })
 	public void testContainsPosition() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6065504530416184047L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6065504530416184047L);
 
 		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
 
@@ -220,7 +220,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "getChirality", args = {})
 	public void testGetChirality() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5040370953904598541L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5040370953904598541L);
 
 		for (Chirality chirality : Chirality.values()) {
 			SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, chirality);
@@ -234,7 +234,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "getCentroid", args = {})
 	public void testGetCentroid() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3996062030446397343L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3996062030446397343L);
 
 		for (Chirality chirality : Chirality.values()) {
 			SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, chirality);
@@ -262,7 +262,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "getRadius", args = {})
 	public void testGetRadius() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7740289660333498822L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7740289660333498822L);
 
 		for (Chirality chirality : Chirality.values()) {
 			SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, chirality);
@@ -287,7 +287,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "getSphericalArcs", args = {})
 	public void testGetSphericalArcs() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2507505792488258607L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2507505792488258607L);
 
 		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
 
@@ -401,7 +401,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "getSphericalTriangles", args = {})
 	public void testGetSphericalTriangles() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6353521777153484531L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6353521777153484531L);
 
 		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
 
@@ -449,7 +449,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "intersects", args = { SphericalArc.class })
 	public void testIntersects_Arcs() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2244326004441352995L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2244326004441352995L);
 
 		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
 
@@ -500,7 +500,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "intersects", args = { SphericalTriangle.class })
 	public void testIntersects_Triangles() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5946152543146292840L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5946152543146292840L);
 
 		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
 
@@ -555,7 +555,7 @@ public class AT_SphericalPolygon {
 	@Test
 	@UnitTestMethod(name = "intersects", args = { SphericalPolygon.class })
 	public void testIntersects_Polygons() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7005502162196438809L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7005502162196438809L);
 
 		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
 

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = ReportItem.class)
 public final class AT_ReportItem {
@@ -174,7 +174,7 @@ public final class AT_ReportItem {
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7481311225319288863L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7481311225319288863L);
 		/*
 		 * Show equal report items have equal hash codes. We will focus on the
 		 * values part since other tests should cover the report id and header.
@@ -230,7 +230,7 @@ public final class AT_ReportItem {
 	@UnitTestMethod(name = "equals", args = { Object.class })
 
 	public void testEquals() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7481311225319288863L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7481311225319288863L);
 
 		ReportHeader reportHeader = ReportHeader.builder().build();
 		SimpleReportId reportId = new SimpleReportId("report");

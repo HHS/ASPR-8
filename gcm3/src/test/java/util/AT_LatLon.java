@@ -31,7 +31,7 @@ public class AT_LatLon {
 	@Test
 	@UnitTestMethod(name = "getLatitude", args = {})
 	public void testGetLatitude() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(50223838619731639L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(50223838619731639L);
 		for (int i = 0; i < 100; i++) {
 			double latitude = randomGenerator.nextDouble() * 180 - 90;
 			double longitude = 35;
@@ -47,7 +47,7 @@ public class AT_LatLon {
 	@Test
 	@UnitTestMethod(name = "getLongitude", args = {})
 	public void testGetLongitude() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(62285879847543313L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(62285879847543313L);
 		for (int i = 0; i < 100; i++) {
 			double latitude = 35;
 			double longitude = randomGenerator.nextDouble() * 360 - 180;
@@ -83,7 +83,7 @@ public class AT_LatLon {
 	public void testHashCode() {
 
 		// Show equal objects have equal hash codes
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2874707211911558639L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2874707211911558639L);
 		for (int i = 0; i < 100; i++) {
 			double latitude = randomGenerator.nextDouble() * 180 - 90;
 			double longitude = randomGenerator.nextDouble() * 360 - 180;
@@ -100,7 +100,7 @@ public class AT_LatLon {
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7754088364991626671L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7754088364991626671L);
 		for (int i = 0; i < 100; i++) {
 			double latitude = randomGenerator.nextDouble() * 180 - 90;
 			double longitude = randomGenerator.nextDouble() * 360 - 180;
@@ -128,7 +128,7 @@ public class AT_LatLon {
 	@UnitTestConstructor(args = { double.class, double.class })
 	public void testConstructor_Doubles() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4045297957712951231L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4045297957712951231L);
 		for (int i = 0; i < 100; i++) {
 			double latitude = randomGenerator.nextDouble() * 180 - 90;
 			double longitude = randomGenerator.nextDouble() * 360 - 180;
@@ -156,7 +156,7 @@ public class AT_LatLon {
 	@UnitTestConstructor(args = { LatLonAlt.class })
 	public void testConstructor_LatLonAlt() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5811539292023379121L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5811539292023379121L);
 		for (int i = 0; i < 100; i++) {
 			double latitude = randomGenerator.nextDouble() * 180 - 90;
 			double longitude = randomGenerator.nextDouble() * 360 - 180;

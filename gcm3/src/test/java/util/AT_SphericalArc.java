@@ -35,7 +35,7 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestConstructor(args = { SphericalPoint.class, SphericalPoint.class })
 	public void testConstructor() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1864570857384195815L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1864570857384195815L);
 
 		double x1 = randomGenerator.nextDouble() * 2 - 1;
 		double y1 = randomGenerator.nextDouble() * 2 - 1;
@@ -63,7 +63,7 @@ public class AT_SphericalArc {
 	@UnitTestMethod(name = "getLength", args = {})
 	public void testGetLength() {
 		for (int i = 0; i < 100; i++) {
-			RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(675015272753785672L);
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(675015272753785672L);
 			double x1 = randomGenerator.nextDouble() * 2 - 1;
 			double y1 = randomGenerator.nextDouble() * 2 - 1;
 			double z1 = randomGenerator.nextDouble() * 2 - 1;
@@ -90,7 +90,7 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestMethod(name = "distanceTo", args = { SphericalPoint.class })
 	public void testDistanceTo() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8163625096438805694L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8163625096438805694L);
 
 		double x = randomGenerator.nextDouble() * 2 - 1;
 		double y = randomGenerator.nextDouble() * 2 - 1;
@@ -216,7 +216,7 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestMethod(name = "getInterSection", args = { SphericalArc.class })
 	public void testGetInterSection() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(22569187792469557L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(22569187792469557L);
 
 		double x = randomGenerator.nextDouble() * 2 - 1;
 		double y = randomGenerator.nextDouble() * 2 - 1;
@@ -324,7 +324,7 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestMethod(name = "getSphericalPoint", args = { int.class })
 	public void testGetSphericalPoint() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4795695625801637985L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4795695625801637985L);
 
 		for (int i = 0; i < 100; i++) {
 			double x0 = randomGenerator.nextDouble() * 2 - 1;
@@ -360,7 +360,7 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestMethod(name = "intersectsArc", args = { SphericalArc.class })
 	public void testIntersectsArc() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7924664054024487057L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7924664054024487057L);
 
 		double x = randomGenerator.nextDouble() * 2 - 1;
 		double y = randomGenerator.nextDouble() * 2 - 1;
@@ -459,7 +459,7 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestMethod(name = "getChirality", args = { SphericalPoint.class })
 	public void testGetChirality() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5793327393482219366L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5793327393482219366L);
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 2 - 1;
 			double y1 = randomGenerator.nextDouble() * 2 - 1;
@@ -506,7 +506,7 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8407732758361446047L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8407732758361446047L);
 
 		for (int i = 0; i < 100; i++) {
 			double x0 = randomGenerator.nextDouble() * 2 - 1;

@@ -16,9 +16,10 @@ import annotations.UnitTest;
 import annotations.UnitTestConstructor;
 import annotations.UnitTestMethod;
 import nucleus.testsupport.MockSimulationContext;
+import nucleus.testsupport.testplugin.TestActionSupport;
 import nucleus.util.ContractException;
 import util.MutableDouble;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 /**
  * Common interface to all person property managers. A person property manager
@@ -35,52 +36,53 @@ public class AT_FloatPropertyManager {
 	@Test
 	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6087185710247012204L);
 
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+		TestActionSupport.testConsumer((c) -> {
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
 
-		float defaultValue = 423.645F;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			float defaultValue = 423.645F;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		FloatPropertyManager floatPropertyManager = new FloatPropertyManager(mockContext, propertyDefinition, 0);
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(c, propertyDefinition, 0);
 
-		/*
-		 * We will set the first 300 values multiple times at random
-		 */
-		Map<Integer, Float> expectedValues = new LinkedHashMap<>();
+			/*
+			 * We will set the first 300 values multiple times at random
+			 */
+			Map<Integer, Float> expectedValues = new LinkedHashMap<>();
 
-		for (int i = 0; i < 1000; i++) {
-			int id = randomGenerator.nextInt(300);
-			float value = randomGenerator.nextFloat();
-			expectedValues.put(id, value);
-			floatPropertyManager.setPropertyValue(id, value);
-		}
-
-		/*
-		 * if the value was set above, then it should equal the last value place
-		 * in the expected values, otherwise it will have the default value.
-		 */
-		for (int i = 0; i < 300; i++) {
-			if (expectedValues.containsKey(i)) {
-				assertEquals(expectedValues.get(i), floatPropertyManager.getPropertyValue(i));
-
-			} else {
-				assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(i));
-
+			for (int i = 0; i < 1000; i++) {
+				int id = randomGenerator.nextInt(300);
+				float value = randomGenerator.nextFloat();
+				expectedValues.put(id, value);
+				floatPropertyManager.setPropertyValue(id, value);
 			}
-		}
 
-		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.getPropertyValue(-1));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+			/*
+			 * if the value was set above, then it should equal the last value
+			 * place in the expected values, otherwise it will have the default
+			 * value.
+			 */
+			for (int i = 0; i < 300; i++) {
+				if (expectedValues.containsKey(i)) {
+					assertEquals(expectedValues.get(i), floatPropertyManager.getPropertyValue(i));
 
+				} else {
+					assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(i));
+
+				}
+			}
+
+			// precondition tests
+			ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.getPropertyValue(-1));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6894984813418975068L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6894984813418975068L);
 
 		MutableDouble time = new MutableDouble(0);
 		MockSimulationContext mockContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
@@ -116,7 +118,7 @@ public class AT_FloatPropertyManager {
 	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6087185710247012204L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
 
 		MockSimulationContext mockContext = MockSimulationContext.builder().build();
 
@@ -160,103 +162,106 @@ public class AT_FloatPropertyManager {
 	@Test
 	@UnitTestMethod(name = "removeId", args = { int.class })
 	public void testRemoveId() {
-		/*
-		 * Should have no effect on the value that is stored for the sake of
-		 * efficiency.
-		 */
 
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+		TestActionSupport.testConsumer((c) -> {
+			/*
+			 * Should have no effect on the value that is stored for the sake of
+			 * efficiency.
+			 */
 
-		// we will first test the manager with an initial value of false
-		float defaultValue = 6.2345345F;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			// we will first test the manager with an initial value of false
+			float defaultValue = 6.2345345F;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		FloatPropertyManager floatPropertyManager = new FloatPropertyManager(mockContext, propertyDefinition, 0);
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(c, propertyDefinition, 0);
 
-		// initially, the value should be the default value for the manager
-		assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
+			// initially, the value should be the default value for the manager
+			assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
-		// after setting the value we should be able to retrieve a new value
-		float newValue = 34534.4F;
-		floatPropertyManager.setPropertyValue(5, newValue);
-		assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
+			// after setting the value we should be able to retrieve a new value
+			float newValue = 34534.4F;
+			floatPropertyManager.setPropertyValue(5, newValue);
+			assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
-		// removing the id from the manager should have no effect, since we do
-		// not waste time setting the value back to the default
-		floatPropertyManager.removeId(5);
+			// removing the id from the manager should have no effect, since we
+			// do
+			// not waste time setting the value back to the default
+			floatPropertyManager.removeId(5);
 
-		assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
+			assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
-		// we will next test the manager with an initial value of true
-		propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			// we will next test the manager with an initial value of true
+			propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		floatPropertyManager = new FloatPropertyManager(mockContext, propertyDefinition, 0);
+			floatPropertyManager = new FloatPropertyManager(c, propertyDefinition, 0);
 
-		// initially, the value should be the default value for the manager
-		assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
+			// initially, the value should be the default value for the manager
+			assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
-		// after setting the value we should be able to retrieve the new value
-		floatPropertyManager.setPropertyValue(5, newValue);
-		assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
+			// after setting the value we should be able to retrieve the new
+			// value
+			floatPropertyManager.setPropertyValue(5, newValue);
+			assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
-		// removing the id from the manager should have no effect, since we do
-		// not waste time setting the value back to the default
-		floatPropertyManager.removeId(5);
+			// removing the id from the manager should have no effect, since we
+			// do
+			// not waste time setting the value back to the default
+			floatPropertyManager.removeId(5);
 
-		assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
+			assertEquals(newValue, (Float) floatPropertyManager.getPropertyValue(5), 0);
 
-		// precondition tests
-		PropertyDefinition def = PropertyDefinition.builder().setType(Float.class).setDefaultValue(4.5F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-		FloatPropertyManager fpm = new FloatPropertyManager(mockContext, def, 0);
+			// precondition tests
+			PropertyDefinition def = PropertyDefinition.builder().setType(Float.class).setDefaultValue(4.5F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			FloatPropertyManager fpm = new FloatPropertyManager(c, def, 0);
 
-		ContractException contractException = assertThrows(ContractException.class, () -> fpm.removeId(-1));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-
+			ContractException contractException = assertThrows(ContractException.class, () -> fpm.removeId(-1));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
 	}
 
 	@Test
 	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+		TestActionSupport.testConsumer((c) -> {
 
-		PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.3F).build();
-		PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-		PropertyDefinition badFloatPropertyDefinition = PropertyDefinition.builder().setType(Float.class).build();
+			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.3F).build();
+			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PropertyDefinition badFloatPropertyDefinition = PropertyDefinition.builder().setType(Float.class).build();
 
-		// if the property definition is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(mockContext, null, 0));
-		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+			// if the property definition is null
+			ContractException contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, null, 0));
+			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
-		// if the property definition does not have a type of Float.class
-		contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(mockContext, badPropertyDefinition, 0));
-		assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
+			// if the property definition does not have a type of Float.class
+			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, badPropertyDefinition, 0));
+			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
-		// if the property definition does not contain a default value
-		contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(mockContext, badFloatPropertyDefinition, 0));
-		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+			// if the property definition does not contain a default value
+			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, badFloatPropertyDefinition, 0));
+			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
-		// if the initial size is negative
-		contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(mockContext, goodPropertyDefinition, -1));
-		assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
+			// if the initial size is negative
+			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, goodPropertyDefinition, -1));
+			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-		FloatPropertyManager doublePropertyManager = new FloatPropertyManager(mockContext, goodPropertyDefinition, 0);
-		assertNotNull(doublePropertyManager);
-
+			FloatPropertyManager doublePropertyManager = new FloatPropertyManager(c, goodPropertyDefinition, 0);
+			assertNotNull(doublePropertyManager);
+		});
 	}
-	
+
 	@Test
 	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
-		MutableDouble time = new MutableDouble(0);
-		MockSimulationContext mockContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		TestActionSupport.testConsumer((c) -> {
 
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(234.42F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(234.42F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		FloatPropertyManager floatPropertyManager = new FloatPropertyManager(mockContext, propertyDefinition, 0);
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(c, propertyDefinition, 0);
 
-		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.incrementCapacity(-1));
-		assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
+			// precondition tests
+			ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.incrementCapacity(-1));
+			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
+		});
 	}
 
 }

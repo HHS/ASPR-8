@@ -19,7 +19,7 @@ import annotations.UnitTestMethod;
 import nucleus.ExperimentContext;
 import nucleus.ScenarioStatus;
 import nucleus.util.TriConsumer;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = ExperimentPlanCompletionObserver.class)
 public class AT_TestExperimentObserver {
@@ -120,7 +120,7 @@ public class AT_TestExperimentObserver {
 	@Test
 	@UnitTestMethod(name = "getActionCompletionReport", args = { Integer.class })
 	public void getActionCompletionReport() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7048252990105726149L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7048252990105726149L);
 
 		//create a mock experiment that has the minimal capability
 		MockExperimentContext mockExperimentContext = new MockExperimentContext();

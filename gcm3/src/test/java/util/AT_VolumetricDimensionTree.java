@@ -78,7 +78,7 @@ public class AT_VolumetricDimensionTree {
 	@Test
 	@UnitTestMethod(name = "getMembersInSphere", args = { double.class, double[].class })
 	public void testGetMembersInSphere() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6999798233863944694L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6999798233863944694L);
 
 		VolumetricDimensionTree<Record> tree = //
 				VolumetricDimensionTree	.builder()//
@@ -126,7 +126,7 @@ public class AT_VolumetricDimensionTree {
 	@Test
 	@UnitTestMethod(name = "getAll", args = {})
 	public void testGetAll() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7850509241104624831L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7850509241104624831L);
 
 		VolumetricDimensionTree<Record> tree = //
 				VolumetricDimensionTree	.builder()//
@@ -161,7 +161,7 @@ public class AT_VolumetricDimensionTree {
 	@UnitTestMethod(name = "add", args = { double[].class, double.class, Object.class })
 	public void testAdd() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8144068492710937714L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8144068492710937714L);
 
 		VolumetricDimensionTree<Record> tree = //
 				VolumetricDimensionTree	.builder()//
@@ -212,7 +212,7 @@ public class AT_VolumetricDimensionTree {
 	@Test
 	@UnitTestMethod(name = "contains", args = { Object.class })
 	public void testContains() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7101516806363352895L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7101516806363352895L);
 
 		VolumetricDimensionTree<Record> tree = //
 				VolumetricDimensionTree	.builder()//
@@ -252,7 +252,7 @@ public class AT_VolumetricDimensionTree {
 	@UnitTestMethod(name = "remove", args = { Object.class })
 	public void testRemove_Object() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5635646758825222227L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5635646758825222227L);
 
 		VolumetricDimensionTree<Record> tree = //
 				VolumetricDimensionTree	.builder()//
@@ -292,7 +292,7 @@ public class AT_VolumetricDimensionTree {
 	@UnitTestMethod(name = "remove", args = { double.class, Object.class })
 	public void testRemove() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4986556383522453940L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4986556383522453940L);
 
 		VolumetricDimensionTree<Record> tree = //
 				VolumetricDimensionTree	.builder()//

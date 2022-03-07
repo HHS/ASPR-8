@@ -21,7 +21,7 @@ import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
 import plugins.globals.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = GlobalPluginData.class)
 
@@ -127,7 +127,7 @@ public class AT_GlobalPluginData {
 	@Test
 	@UnitTestMethod(target = GlobalPluginData.Builder.class, name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testSetGlobalPropertyValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(170390875787254562L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(170390875787254562L);
 
 		GlobalPluginData.Builder builder = GlobalPluginData.builder();
 
@@ -253,7 +253,7 @@ public class AT_GlobalPluginData {
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4250048639082754761L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250048639082754761L);
 
 		GlobalPluginData.Builder builder = GlobalPluginData.builder();
 

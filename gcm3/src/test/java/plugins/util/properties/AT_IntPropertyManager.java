@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import javax.naming.Context;
 
@@ -15,10 +16,13 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestConstructor;
 import annotations.UnitTestMethod;
-import nucleus.testsupport.MockSimulationContext;
+import nucleus.DataManagerContext;
+import nucleus.testsupport.testplugin.TestActionSupport;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestDataManager;
+import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import util.MutableDouble;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 /**
  * Common interface to all person property managers. A person property manager
@@ -34,225 +38,245 @@ public class AT_IntPropertyManager {
 	@Test
 	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5297426971018191882L);
+		TestActionSupport.testConsumer((c) -> {
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5297426971018191882L);
 
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+			int defaultValue = 423;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		int defaultValue = 423;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+			/*
+			 * We will set the first 300 values multiple times at random
+			 */
+			Map<Integer, Integer> expectedValues = new LinkedHashMap<>();
 
-		/*
-		 * We will set the first 300 values multiple times at random
-		 */
-		Map<Integer, Integer> expectedValues = new LinkedHashMap<>();
-
-		for (int i = 0; i < 1000; i++) {
-			int id = randomGenerator.nextInt(300);
-			int value = randomGenerator.nextInt();
-			expectedValues.put(id, value);
-			intPropertyManager.setPropertyValue(id, value);
-		}
-
-		/*
-		 * if the value was set above, then it should equal the last value place
-		 * in the expected values, otherwise it will have the default value.
-		 */
-		for (int i = 0; i < 300; i++) {
-			if (expectedValues.containsKey(i)) {
-				assertEquals(expectedValues.get(i), intPropertyManager.getPropertyValue(i));
-
-			} else {
-				assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(i)).intValue());
+			for (int i = 0; i < 1000; i++) {
+				int id = randomGenerator.nextInt(300);
+				int value = randomGenerator.nextInt();
+				expectedValues.put(id, value);
+				intPropertyManager.setPropertyValue(id, value);
 			}
+
+			/*
+			 * if the value was set above, then it should equal the last value
+			 * place in the expected values, otherwise it will have the default
+			 * value.
+			 */
+			for (int i = 0; i < 300; i++) {
+				if (expectedValues.containsKey(i)) {
+					assertEquals(expectedValues.get(i), intPropertyManager.getPropertyValue(i));
+
+				} else {
+					assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(i)).intValue());
+				}
+			}
+
+			// precondition tests
+			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.getPropertyValue(-1));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
+	}
+
+	/*
+	 * Local data manager used to properly initialize an ObjectPropertyManager
+	 * for use in time sensitive tests
+	 */
+	public static class LocalDM extends TestDataManager {
+		public IntPropertyManager intPropertyManager;
+
+		@Override
+		public void init(DataManagerContext dataManagerContext) {
+			super.init(dataManagerContext);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			intPropertyManager = new IntPropertyManager(dataManagerContext, propertyDefinition, 0);
 		}
-
-		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.getPropertyValue(-1));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7115872240650739867L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7115872240650739867L);
 
-		MutableDouble time = new MutableDouble(0);
-		MockSimulationContext mockContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).build();
+		// Plan 1000 changes
+		IntStream.range(0, 1000).forEach((i -> {
+			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				LocalDM localDM = c.getDataManager(LocalDM.class).get();
+				int id = randomGenerator.nextInt(300);
+				int value = randomGenerator.nextInt();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
-		assertThrows(RuntimeException.class, () -> intPropertyManager.getPropertyTime(0));
+				IntPropertyManager intPropertyManager = localDM.intPropertyManager;
 
-		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-
-		IntPropertyManager intPropertyManager2 = new IntPropertyManager(mockContext, propertyDefinition, 0);
-		for (int i = 0; i < 1000; i++) {
-			int id = randomGenerator.nextInt(300);
-			time.setValue(randomGenerator.nextDouble() * 1000);
-			int value = randomGenerator.nextInt();
-			intPropertyManager2.setPropertyValue(id, value);
-			assertEquals(time.getValue(), intPropertyManager2.getPropertyTime(id), 0);
-		}
+				intPropertyManager.setPropertyValue(id, value);
+				// show that the property time for the id was properly set
+				assertEquals(c.getTime(), intPropertyManager.getPropertyTime(id), 0);
+			}));
+		}));
 
 		// precondition tests:
-		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
-		IntPropertyManager ipm = new IntPropertyManager(mockContext, propertyDefinition, 0);
-		ContractException contractException = assertThrows(ContractException.class, () -> ipm.getPropertyTime(0));
-		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
+		TestActionSupport.testConsumer((c) -> {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
+			IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
+			ContractException contractException = assertThrows(ContractException.class, () -> ipm.getPropertyTime(0));
+			assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
+		});
 
-		contractException = assertThrows(ContractException.class, () -> ipm.getPropertyTime(-1));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-
+		TestActionSupport.testConsumer((c) -> {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			IntPropertyManager ipm = new IntPropertyManager(c, propertyDefinition, 0);
+			ContractException contractException = assertThrows(ContractException.class, () -> ipm.getPropertyTime(-1));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
 	}
 
 	@Test
 	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
+		TestActionSupport.testConsumer((c) -> {
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5297426971018191882L);
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5297426971018191882L);
+			int defaultValue = 423;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
 
-		int defaultValue = 423;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			/*
+			 * We will set the first 300 values multiple times at random
+			 */
+			Map<Integer, Integer> expectedValues = new LinkedHashMap<>();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
-
-		/*
-		 * We will set the first 300 values multiple times at random
-		 */
-		Map<Integer, Integer> expectedValues = new LinkedHashMap<>();
-
-		for (int i = 0; i < 1000; i++) {
-			int id = randomGenerator.nextInt(300);
-			int value = randomGenerator.nextInt();
-			expectedValues.put(id, value);
-			intPropertyManager.setPropertyValue(id, value);
-		}
-
-		/*
-		 * if the value was set above, then it should equal the last value place
-		 * in the expected values, otherwise it will have the default value.
-		 */
-		for (int i = 0; i < 300; i++) {
-			if (expectedValues.containsKey(i)) {
-				assertEquals(expectedValues.get(i), intPropertyManager.getPropertyValue(i));
-
-			} else {
-				assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(i)).intValue());
+			for (int i = 0; i < 1000; i++) {
+				int id = randomGenerator.nextInt(300);
+				int value = randomGenerator.nextInt();
+				expectedValues.put(id, value);
+				intPropertyManager.setPropertyValue(id, value);
 			}
-		}
 
-		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.setPropertyValue(-1, 23));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+			/*
+			 * if the value was set above, then it should equal the last value
+			 * place in the expected values, otherwise it will have the default
+			 * value.
+			 */
+			for (int i = 0; i < 300; i++) {
+				if (expectedValues.containsKey(i)) {
+					assertEquals(expectedValues.get(i), intPropertyManager.getPropertyValue(i));
 
+				} else {
+					assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(i)).intValue());
+				}
+			}
+
+			// precondition tests
+			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.setPropertyValue(-1, 23));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
 	}
 
 	@Test
 	@UnitTestMethod(name = "removeId", args = { int.class })
 	public void testRemoveId() {
-		/*
-		 * Should have no effect on the value that is stored for the sake of
-		 * efficiency.
-		 */
+		TestActionSupport.testConsumer((c) -> {
+			/*
+			 * Should have no effect on the value that is stored for the sake of
+			 * efficiency.
+			 */
 
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+			// we will first test the manager with an initial value of 6
+			int defaultValue = 6;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		// we will first test the manager with an initial value of 6
-		int defaultValue = 6;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+			// initially, the value should be the default value for the manager
+			assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
 
-		// initially, the value should be the default value for the manager
-		assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
+			// after setting the value we should be able to retrieve a new value
+			int newValue = 34534;
+			intPropertyManager.setPropertyValue(5, newValue);
+			assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
 
-		// after setting the value we should be able to retrieve a new value
-		int newValue = 34534;
-		intPropertyManager.setPropertyValue(5, newValue);
-		assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
+			// removing the id from the manager should have no effect, since we
+			// do
+			// not waste time setting the value back to the default
+			intPropertyManager.removeId(5);
 
-		// removing the id from the manager should have no effect, since we do
-		// not waste time setting the value back to the default
-		intPropertyManager.removeId(5);
+			assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
 
-		assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
+			// we will next test the manager with an initial value of true
+			propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		// we will next test the manager with an initial value of true
-		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
 
-		intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+			// initially, the value should be the default value for the manager
+			assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
 
-		// initially, the value should be the default value for the manager
-		assertEquals(defaultValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue());
+			// after setting the value we should be able to retrieve the new
+			// value
+			intPropertyManager.setPropertyValue(5, newValue);
+			assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue(), 0);
 
-		// after setting the value we should be able to retrieve the new value
-		intPropertyManager.setPropertyValue(5, newValue);
-		assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue(), 0);
+			// removing the id from the manager should have no effect, since we
+			// do
+			// not waste time setting the value back to the default
+			intPropertyManager.removeId(5);
 
-		// removing the id from the manager should have no effect, since we do
-		// not waste time setting the value back to the default
-		intPropertyManager.removeId(5);
+			assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue(), 0);
 
-		assertEquals(newValue, ((Integer) intPropertyManager.getPropertyValue(5)).intValue(), 0);
+			// precondition tests
+			PropertyDefinition def = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			IntPropertyManager ipm = new IntPropertyManager(c, def, 0);
 
-		// precondition tests
-		PropertyDefinition def = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
-		IntPropertyManager ipm = new IntPropertyManager(mockContext, def, 0);
-
-		ContractException contractException = assertThrows(ContractException.class, () -> ipm.removeId(-1));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+			ContractException contractException = assertThrows(ContractException.class, () -> ipm.removeId(-1));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
 	}
 
 	@Test
 	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+		TestActionSupport.testConsumer((c) -> {
 
-		PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
-		PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-		PropertyDefinition badIntPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
+			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
+			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
+			PropertyDefinition badIntPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
-		// if the property definition is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, null, 0));
-		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+			// if the property definition is null
+			ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, null, 0));
+			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
-		// if the property definition does not have a type of Double.class
-		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, badPropertyDefinition, 0));
-		assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
+			// if the property definition does not have a type of Double.class
+			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, badPropertyDefinition, 0));
+			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
 
-		// if the property definition does not contain a default value
-		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, badIntPropertyDefinition, 0));
-		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+			// if the property definition does not contain a default value
+			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, badIntPropertyDefinition, 0));
+			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
-		// if the initial size is negative
-		contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(mockContext, goodPropertyDefinition, -1));
-		assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
+			// if the initial size is negative
+			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, goodPropertyDefinition, -1));
+			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
 
-		IntPropertyManager doublePropertyManager = new IntPropertyManager(mockContext, goodPropertyDefinition, 0);
-		assertNotNull(doublePropertyManager);
-
+			IntPropertyManager doublePropertyManager = new IntPropertyManager(c, goodPropertyDefinition, 0);
+			assertNotNull(doublePropertyManager);
+		});
 	}
-	
+
 	@Test
 	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
-		MutableDouble time = new MutableDouble(0);
-		MockSimulationContext mockContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		TestActionSupport.testConsumer((c) -> {
 
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		IntPropertyManager intPropertyManager = new IntPropertyManager(mockContext, propertyDefinition, 0);
+			IntPropertyManager intPropertyManager = new IntPropertyManager(c, propertyDefinition, 0);
 
-		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.incrementCapacity(-1));
-		assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
+			// precondition tests
+			ContractException contractException = assertThrows(ContractException.class, () -> intPropertyManager.incrementCapacity(-1));
+			assertEquals(PropertyError.NEGATIVE_CAPACITY_INCREMENT, contractException.getErrorType());
+		});
 	}
 
 }

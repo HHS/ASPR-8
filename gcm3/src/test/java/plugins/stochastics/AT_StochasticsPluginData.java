@@ -18,7 +18,7 @@ import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = StochasticsPluginData.class)
 public class AT_StochasticsPluginData {
@@ -48,7 +48,7 @@ public class AT_StochasticsPluginData {
 	@Test
 	@UnitTestMethod(name = "getSeed", args = {})
 	public void testGetSeed() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4970625656919510170L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4970625656919510170L);
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(seed).build();

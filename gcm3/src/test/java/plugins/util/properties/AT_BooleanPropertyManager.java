@@ -20,7 +20,7 @@ import annotations.UnitTestMethod;
 import nucleus.testsupport.MockSimulationContext;
 import nucleus.util.ContractException;
 import util.MutableDouble;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 /**
  * Common interface to all person property managers. A person property manager
@@ -38,7 +38,7 @@ public class AT_BooleanPropertyManager {
 	@Test
 	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4879223247393954289L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4879223247393954289L);
 
 		MockSimulationContext mockContext = MockSimulationContext.builder().build();
 
@@ -81,7 +81,7 @@ public class AT_BooleanPropertyManager {
 	@Test
 	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6779797760333524552L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6779797760333524552L);
 
 		MutableDouble time = new MutableDouble(0);
 		MockSimulationContext mockContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
@@ -112,7 +112,7 @@ public class AT_BooleanPropertyManager {
 	@Test
 	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4827517950755837724L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4827517950755837724L);
 
 		MockSimulationContext mockContext = MockSimulationContext.builder().build();
 

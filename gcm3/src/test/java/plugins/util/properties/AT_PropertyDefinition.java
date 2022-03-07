@@ -16,7 +16,7 @@ import annotations.UnitTest;
 import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
 import plugins.util.properties.PropertyDefinition.Builder;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = PropertyDefinition.class)
 public class AT_PropertyDefinition {
@@ -120,7 +120,7 @@ public class AT_PropertyDefinition {
 	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2790643065916150473L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2790643065916150473L);
 
 		/*
 		 * Show that the toString returns a non-empty string. This is an
@@ -137,7 +137,7 @@ public class AT_PropertyDefinition {
 	@Test
 	@UnitTestMethod(name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5344086660090478893L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5344086660090478893L);
 
 		// Show that a property definition that has a null default value (value
 		// is set to null or was not set at all)
@@ -350,7 +350,7 @@ public class AT_PropertyDefinition {
 		assertNotEquals(propertyDefinition1, propertyDefinition5);
 		assertNotEquals(propertyDefinition1, propertyDefinition6);
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3951851825163960855L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3951851825163960855L);
 
 		/*
 		 * Show that two Property Definitions are equal if and only if their

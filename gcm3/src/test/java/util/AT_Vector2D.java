@@ -34,7 +34,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "add", args = { Vector2D.class })
 	public void testAdd_Vector2D() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7048654979720366561L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7048654979720366561L);
 
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -63,7 +63,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "add", args = { double.class, double.class })
 	public void testAdd_Doubles() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7043233391431344104L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7043233391431344104L);
 
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -100,7 +100,7 @@ public class AT_Vector2D {
 	@UnitTestConstructor(args = { MutableVector2D.class })
 	public void testConstructors_MutableVector2D() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7256970997578026212L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7256970997578026212L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
@@ -122,7 +122,7 @@ public class AT_Vector2D {
 	@UnitTestConstructor(args = { Vector2D.class })
 	public void testConstructors_Vector2D() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2499300329261423411L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2499300329261423411L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
@@ -144,7 +144,7 @@ public class AT_Vector2D {
 	@UnitTestConstructor(args = { double.class, double.class })
 	public void testConstructors_Doubles() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6200717978363268201L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6200717978363268201L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
@@ -165,7 +165,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "addScaled", args = { Vector2D.class, double.class })
 	public void testAddScaled() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5477630435621881354L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5477630435621881354L);
 
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -195,7 +195,7 @@ public class AT_Vector2D {
 	@Test
 	@UnitTestMethod(name = "angle", args = { Vector2D.class })
 	public void testAngle() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5443394431789515021L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5443394431789515021L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -229,7 +229,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "cross", args = { Vector2D.class })
 	public void testCross() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2072134709060069627L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2072134709060069627L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -263,7 +263,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "distanceTo", args = { Vector2D.class })
 	public void testDistanceTo() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8108866891186001273L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8108866891186001273L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -294,7 +294,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "dot", args = { Vector2D.class })
 	public void testDot() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5455897510253329686L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5455897510253329686L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -324,7 +324,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "get", args = { int.class })
 	public void testGet() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1280663175219265421L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1280663175219265421L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -346,7 +346,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "getX", args = {})
 	public void testGetX() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5972054182695362046L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5972054182695362046L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -366,7 +366,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "getY", args = {})
 	public void testGetY() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7269151178334818715L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7269151178334818715L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -386,7 +386,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "scale", args = { double.class })
 	public void testScale() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6482923353153373662L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6482923353153373662L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -410,7 +410,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "sub", args = { Vector2D.class })
 	public void testSub_Vector2D() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2615726850696406829L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2615726850696406829L);
 
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -437,7 +437,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "sub", args = { double.class, double.class })
 	public void testSub_Doubles() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(594158034033440503L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(594158034033440503L);
 
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -463,7 +463,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "isInfinite", args = {})
 	public void testIsInfinite() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2322202277366389607L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2322202277366389607L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
@@ -500,7 +500,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "isNaN", args = {})
 	public void testIsNaN() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4021866300032499888L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4021866300032499888L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
@@ -529,7 +529,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "isFinite", args = {})
 	public void testIsFinite() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2864965851085774662L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2864965851085774662L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
@@ -592,7 +592,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "squareDistanceTo", args = { Vector2D.class })
 	public void testSquareDistanceTo() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(972530617533616033L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(972530617533616033L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -621,7 +621,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "reverse", args = {})
 	public void testReverse() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2281430038941666208L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2281430038941666208L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -643,7 +643,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "length", args = {})
 	public void testLength() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4831419001108209090L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4831419001108209090L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -665,7 +665,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "squareLength", args = {})
 	public void testSquareLength() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1646469899835942461L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1646469899835942461L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -687,7 +687,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "toArray", args = {})
 	public void testToArray() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8359854340367149037L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8359854340367149037L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -709,7 +709,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "normalize", args = {})
 	public void testNormalize() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2056526750467808604L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2056526750467808604L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -731,7 +731,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1772313867718129269L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1772313867718129269L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -766,7 +766,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4728150157129004474L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4728150157129004474L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -789,7 +789,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(6250827979384795121L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6250827979384795121L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -813,7 +813,7 @@ public class AT_Vector2D {
 	@Test
 	@UnitTestMethod(name = "rotate", args = { double.class })
 	public void testRotate() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3324225447982087438L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3324225447982087438L);
 
 		for (int i = 0; i < 100; i++) {
 			// ensure that v1 is not too close to a zero vector
@@ -864,7 +864,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "rotateToward", args = { Vector2D.class, double.class })
 	public void testRotateToward() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4005002637954997121L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4005002637954997121L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -913,7 +913,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "perpendicularRotation", args = { Chirality.class })
 	public void testPerpendicularRotation() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4389418071564368339L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4389418071564368339L);
 
 		for (int i = 0; i < 100; i++) {
 
@@ -948,7 +948,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "isNormal", args = {})
 	public void testIsNormal() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3582310914345350872L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3582310914345350872L);
 
 		int activeTestCount = 0;
 		for (int i = 0; i < 100; i++) {
@@ -979,7 +979,7 @@ public class AT_Vector2D {
 	@UnitTestMethod(name = "isPerpendicularTo", args = { Vector2D.class })
 	public void testIsPerpendicularTo() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(8574565110919873045L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8574565110919873045L);
 
 		for (int i = 0; i < 100; i++) {
 

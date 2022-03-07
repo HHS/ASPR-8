@@ -11,7 +11,7 @@ import nucleus.DataManager;
 import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 /**
  * Published data manager for the Stochastics plugin.
@@ -105,7 +105,7 @@ public final class StochasticsDataManager extends DataManager {
 			addRandomGenerator(randomNumberGeneratorId);
 		}
 		// finally, set up the standard RandomGenerator
-		randomGenerator = SeedProvider.getRandomGenerator(seed);
+		randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 	}
 	
@@ -115,7 +115,7 @@ public final class StochasticsDataManager extends DataManager {
 	private RandomGenerator addRandomGenerator(RandomNumberGeneratorId randomNumberGeneratorId) {
 		String name = randomNumberGeneratorId.toString();
 		long seedForId = name.hashCode() + seed;
-		RandomGenerator randomGeneratorForID = SeedProvider.getRandomGenerator(seedForId);
+		RandomGenerator randomGeneratorForID = RandomGeneratorProvider.getRandomGenerator(seedForId);
 		this.randomGeneratorMap.put(randomNumberGeneratorId, randomGeneratorForID);
 		return randomGeneratorForID;
 	}

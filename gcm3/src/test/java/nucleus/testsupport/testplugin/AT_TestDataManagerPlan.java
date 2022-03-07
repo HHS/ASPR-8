@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestConstructor;
 import annotations.UnitTestMethod;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = TestDataManagerPlan.class)
 public class AT_TestDataManagerPlan {
@@ -44,7 +44,7 @@ public class AT_TestDataManagerPlan {
 	@Test
 	@UnitTestConstructor(args = { TestDataManagerPlan.class })
 	public void testConstructor_fromExistingPlan() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7814286176804755234L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7814286176804755234L);
 
 		for (int i = 0; i < 100; i++) {
 			double scheduledTime = randomGenerator.nextDouble();
@@ -126,7 +126,7 @@ public class AT_TestDataManagerPlan {
 	@UnitTestMethod(name = "getScheduledTime", args = {})
 	public void testGetScheduledTime() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(9009925072863118451L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9009925072863118451L);
 
 		// use the various constructors
 		for (int i = 0; i < 300; i++) {

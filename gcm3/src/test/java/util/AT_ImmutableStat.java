@@ -27,7 +27,7 @@ public class AT_ImmutableStat {
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7777875192439812269L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7777875192439812269L);
 
 		ImmutableStat immutableStat = ImmutableStat	.builder().setMax(0)//
 													.setMin(0)//

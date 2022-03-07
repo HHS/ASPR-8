@@ -3,9 +3,9 @@ package util;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well44497b;
 
-public class SeedProvider {
+public class RandomGeneratorProvider {
 	
-	private SeedProvider() {
+	private RandomGeneratorProvider() {
 	}
 
 	public static RandomGenerator getRandomGenerator(long seed) {

@@ -44,7 +44,7 @@ import plugins.reports.ReportsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.MultiKey;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = GlobalDataManager.class)
 
@@ -168,7 +168,7 @@ public final class AT_GlobalDataManager {
 	@UnitTestMethod(name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testSetGlobalPropertyValue() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(7837412421821851663L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7837412421821851663L);
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 		TestGlobalPropertyId globalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE;
@@ -266,7 +266,7 @@ public final class AT_GlobalDataManager {
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyValue() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1059537118783693383L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1059537118783693383L);
 
 		// show that values can be retrieved
 		GlobalsActionSupport.testConsumer((c) -> {
@@ -303,7 +303,7 @@ public final class AT_GlobalDataManager {
 	@UnitTestMethod(name = "getGlobalPropertyTime", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyTime() {
 
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5323616867741088481L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5323616867741088481L);
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 		

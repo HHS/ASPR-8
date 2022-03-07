@@ -335,6 +335,10 @@ public final class ExperimentStateManager {
 			return;
 		}
 
+		if (!Files.exists(data.progressLogFile)) {
+			return;
+		}
+
 		if (!Files.isRegularFile(data.progressLogFile)) {
 			throw new ContractException(NucleusError.UNREADABLE_SCEANARIO_PROGRESS);
 		}
@@ -393,17 +397,16 @@ public final class ExperimentStateManager {
 				break;
 			}
 
+			ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
+
 			/*
-			 * if the scenario was previously encountered, then the whole file
-			 * is corrupt and we remove all scenario records
+			 * if the scenario is not recognized, then
 			 */
-			if (scenarioRecords.containsKey(scenarioId)) {
-				scenarioRecords.clear();
+			if (scenarioRecord == null) {
 				break;
 			}
 
 			// record the scenario record
-			ScenarioRecord scenarioRecord = new ScenarioRecord();
 
 			scenarioRecord.metaData = new ArrayList<>();
 			for (int j = 0; j < entries.size(); j++) {
@@ -434,13 +437,16 @@ public final class ExperimentStateManager {
 
 		try {
 			for (Integer scenarioId : scenarioRecords.keySet()) {
-				writer.write(scenarioId);
 				ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
-				for (String metaDatum : scenarioRecord.metaData) {
-					writer.write("\t");
-					writer.write(metaDatum);
+				if (scenarioRecord.scenarioStatus == ScenarioStatus.PREVIOUSLY_SUCCEEDED) {
+
+					writer.write(scenarioId);
+					for (String metaDatum : scenarioRecord.metaData) {
+						writer.write("\t");
+						writer.write(metaDatum);
+					}
+					writer.write(LINE_SEPARATOR);
 				}
-				writer.write(LINE_SEPARATOR);
 			}
 			writer.flush();
 		} catch (final IOException e) {

@@ -33,7 +33,7 @@ public class AT_SphericalPoint {
 	@Test
 	@UnitTestConstructor(args = { MutableVector3D.class })
 	public void testConstructors_MutableVector3D() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1115082964305662816L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1115082964305662816L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 2 - 1;
@@ -57,7 +57,7 @@ public class AT_SphericalPoint {
 	@Test
 	@UnitTestConstructor(args = { Vector3D.class })
 	public void testConstructors_Vector3D() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1115082964305662816L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1115082964305662816L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 2 - 1;
@@ -86,7 +86,7 @@ public class AT_SphericalPoint {
 	@Test
 	@UnitTestMethod(name = "getPosition", args = {})
 	public void testGetPosition() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4303335398336843747L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4303335398336843747L);
 		for (int i = 0; i < 100; i++) {
 			
 			double x = randomGenerator.nextDouble() * 2 - 1;
@@ -108,7 +108,7 @@ public class AT_SphericalPoint {
 	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4890458493568164342L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4890458493568164342L);
 		for (int i = 0; i < 100; i++) {
 			
 			double x = randomGenerator.nextDouble() * 2 - 1;

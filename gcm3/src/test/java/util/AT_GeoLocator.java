@@ -71,7 +71,7 @@ public class AT_GeoLocator {
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(2026864228657861590L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2026864228657861590L);
 		List<LatLon> locations = generateLocations(randomGenerator, 35, 128, 50, 100);
 		generateGeoLocator(locations);
 	}
@@ -82,7 +82,7 @@ public class AT_GeoLocator {
 	@Test
 	@UnitTestMethod(name = "getLocations", args = { double.class, double.class, double.class })
 	public void testGetLocations() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1240444416174704003L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1240444416174704003L);
 
 		// Generate 100 random locations in a 50 kilometer radius region
 		double lat = 35;
@@ -121,7 +121,7 @@ public class AT_GeoLocator {
 	@Test
 	@UnitTestMethod(name = "getNearestLocation", args = { double.class, double.class })
 	public void testGetNearestLocation() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(4915853160875930674L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4915853160875930674L);
 
 		// Generate 100 random locations in a 50 kilometer radius region
 		double lat = 35;
@@ -168,7 +168,7 @@ public class AT_GeoLocator {
 	@Test
 	@UnitTestMethod(name = "getPrioritizedLocations", args = { double.class, double.class, double.class })
 	public void testGetPrioritizedLocations() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(3451435198166238489L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3451435198166238489L);
 
 		// Generate 100 random locations in a 50 kilometer radius region
 		double lat = 35;

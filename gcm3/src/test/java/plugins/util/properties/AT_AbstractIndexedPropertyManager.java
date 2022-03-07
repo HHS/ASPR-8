@@ -14,7 +14,7 @@ import nucleus.SimulationContext;
 import nucleus.testsupport.MockSimulationContext;
 import nucleus.util.ContractException;
 import util.MutableDouble;
-import util.SeedProvider;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = AbstractIndexedPropertyManager.class)
 
@@ -74,7 +74,7 @@ public class AT_AbstractIndexedPropertyManager {
 	@Test
 	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
-		RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(1003433950467196390L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1003433950467196390L);
 
 		MutableDouble time = new MutableDouble(0);
 		MockSimulationContext mockContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
