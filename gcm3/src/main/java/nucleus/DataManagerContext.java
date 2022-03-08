@@ -119,14 +119,7 @@ public interface DataManagerContext extends SimulationContext {
 	 */
 	public List<Object> getPlanKeys();
 
-	/**
-	 * Adds the given event to the event queue for eventual resolution and
-	 * distribution.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
-	 */
-	public void resolveEvent(Event event);
+	
 
 	
 

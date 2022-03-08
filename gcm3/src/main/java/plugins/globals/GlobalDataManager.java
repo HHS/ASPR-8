@@ -244,7 +244,7 @@ public final class GlobalDataManager extends DataManager {
 		validateValueCompatibility(dataManagerContext, globalPropertyId, propertyDefinition, globalPropertyValue);
 		final Object oldPropertyValue = getGlobalPropertyValue(globalPropertyId);
 		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
-		dataManagerContext.resolveEvent(new GlobalPropertyChangeObservationEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+		dataManagerContext.releaseEvent(new GlobalPropertyChangeObservationEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
 	}
 
 	/**

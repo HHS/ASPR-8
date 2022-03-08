@@ -178,7 +178,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void resolveEvent(final Event event) {
+		public void releaseEvent(final Event event) {
 			Simulation.this.resolveEvent(event);
 
 		}
@@ -408,7 +408,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void resolveEvent(final Event event) {
+		public void releaseEvent(final Event event) {
 			simulation.resolveEvent(event);
 
 		}

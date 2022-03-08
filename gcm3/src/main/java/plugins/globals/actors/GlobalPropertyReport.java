@@ -40,9 +40,9 @@ public final class GlobalPropertyReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			reportHeader = ReportHeader	.builder()//
-										.add("Time")//
-										.add("Property")//
-										.add("Value")//
+										.add("time")//
+										.add("property")//
+										.add("value")//
 										.build();//
 		}
 		return reportHeader;

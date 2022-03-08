@@ -771,8 +771,8 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "resolveEvent", args = { Event.class })
-	public void testResolveEvent() {
+	@UnitTestMethod(name = "releaseEvent", args = { Event.class })
+	public void testReleaseEvent() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		MutableBoolean eventResolved = new MutableBoolean();
@@ -789,12 +789,12 @@ public class AT_DataManagerContext {
 		// have another data manager resolve a test event
 		pluginDataBuilder.addTestDataManager("dm2", TestDataManager2.class);
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
-			context.resolveEvent(new TestEvent());
+			context.releaseEvent(new TestEvent());
 		}));
 
 		// precondition tests
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(1, (context) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> context.resolveEvent(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> context.releaseEvent(null));
 			assertEquals(NucleusError.NULL_EVENT, contractException.getErrorType());
 		}));
 
@@ -1085,7 +1085,7 @@ public class AT_DataManagerContext {
 		// create an agent that will generate a test event
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			c.resolveEvent(new TestEvent());
+			c.releaseEvent(new TestEvent());
 		}));
 
 		// build the plugin
@@ -1156,7 +1156,7 @@ public class AT_DataManagerContext {
 
 		// create an agent that will produce a test event
 		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
-			c.resolveEvent(new TestEvent());
+			c.releaseEvent(new TestEvent());
 		}));
 
 		/*
@@ -1174,7 +1174,7 @@ public class AT_DataManagerContext {
 
 		// have the agent generate another test event
 		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(4, (c) -> {
-			c.resolveEvent(new TestEvent());
+			c.releaseEvent(new TestEvent());
 		}));
 
 		/*
@@ -1297,7 +1297,7 @@ public class AT_DataManagerContext {
 
 		// have the actor create a test event for the agent to observe
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			c.resolveEvent(new TestEvent());
+			c.releaseEvent(new TestEvent());
 		}));
 
 		// build the plugin

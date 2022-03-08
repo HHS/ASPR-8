@@ -196,15 +196,15 @@ public class AT_PeriodicReport {
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 		List<String> headerStrings = reportHeader.getHeaderStrings();
 		assertEquals(2, headerStrings.size());
-		assertEquals("Day", headerStrings.get(0));
-		assertEquals("Hour", headerStrings.get(1));
+		assertEquals("day", headerStrings.get(0));
+		assertEquals("hour", headerStrings.get(1));
 
 		testReport = new TestReport(reportId, ReportPeriod.DAILY);
 		testReport.addTimeFieldHeaders(reportHeaderBuilder);
 		reportHeader = reportHeaderBuilder.build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertEquals(1, headerStrings.size());
-		assertEquals("Day", headerStrings.get(0));
+		assertEquals("day", headerStrings.get(0));
 
 		testReport = new TestReport(reportId, ReportPeriod.END_OF_SIMULATION);
 		testReport.addTimeFieldHeaders(reportHeaderBuilder);

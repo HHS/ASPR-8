@@ -136,7 +136,7 @@ public interface ActorContext extends SimulationContext {
 	 */
 	public ActorId getActorId();
 	
-	public void resolveEvent(final Event event);
+	
 
 	/**
 	 * Subscribes the current actor to the given event label. Events of the type

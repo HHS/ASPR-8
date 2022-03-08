@@ -169,5 +169,5 @@ public class AT_GlobalPropertyReport {
 
 	private static final ReportId REPORT_ID = new SimpleReportId("global property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Property").add("Value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("property").add("value").build();
 }

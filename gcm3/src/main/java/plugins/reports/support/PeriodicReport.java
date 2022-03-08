@@ -65,14 +65,14 @@ public abstract class PeriodicReport {
 	protected ReportHeader.Builder addTimeFieldHeaders(ReportHeader.Builder reportHeaderBuilder) {
 		switch (reportPeriod) {
 		case DAILY:
-			reportHeaderBuilder.add("Day");
+			reportHeaderBuilder.add("day");
 			break;
 		case END_OF_SIMULATION:
 			// do nothing
 			break;
 		case HOURLY:
-			reportHeaderBuilder.add("Day");
-			reportHeaderBuilder.add("Hour");
+			reportHeaderBuilder.add("day");
+			reportHeaderBuilder.add("hour");
 			break;
 		default:
 			throw new RuntimeException("unknown report period " + reportPeriod);

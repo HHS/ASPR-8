@@ -426,7 +426,7 @@ public class AT_ActorContext {
 
 		// have the actor create a test event for the agent to observe
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			c.resolveEvent(new TestEvent());
+			c.releaseEvent(new TestEvent());
 		}));
 
 		// build the plugin
@@ -1286,11 +1286,11 @@ public class AT_ActorContext {
 	}
 
 	/**
-	 * Tests {@link AgentContext#resolveEvent(Event)
+	 * Tests {@link AgentContext#releaseEvent(Event)
 	 */
 	@Test
-	@UnitTestMethod(name = "resolveEvent", args = { Event.class })
-	public void testResolveEvent() {
+	@UnitTestMethod(name = "releaseEvent", args = { Event.class })
+	public void testReleaseEvent() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		MutableBoolean eventResolved = new MutableBoolean();
@@ -1305,12 +1305,12 @@ public class AT_ActorContext {
 
 		// have another actor resolve a test event
 		pluginDataBuilder.addTestActorPlan("beta", new TestActorPlan(1, (context) -> {
-			context.resolveEvent(new TestEvent());
+			context.releaseEvent(new TestEvent());
 		}));
 
 		// precondition tests
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> context.resolveEvent(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> context.releaseEvent(null));
 			assertEquals(NucleusError.NULL_EVENT, contractException.getErrorType());
 		}));
 
@@ -1362,19 +1362,19 @@ public class AT_ActorContext {
 		 * with differing types and values.
 		 */
 		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
 
 		}));
 
 		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(3, (c) -> {
 
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
 		}));
 
 		// build the plugin
@@ -1473,14 +1473,14 @@ public class AT_ActorContext {
 		 * with differing types and values.
 		 */
 		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
-			c.resolveEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
+			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
 		}));
 
 		// build the plugin
@@ -1568,7 +1568,7 @@ public class AT_ActorContext {
 
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					c2.resolveEvent(new TestEvent());
+					c2.releaseEvent(new TestEvent());
 				}, time);
 			}
 		}));
@@ -1702,7 +1702,7 @@ public class AT_ActorContext {
 
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					c2.resolveEvent(new TestEvent());
+					c2.releaseEvent(new TestEvent());
 				}, time);
 			}
 		}));
