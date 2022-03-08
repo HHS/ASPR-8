@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import javax.naming.Context;
 
@@ -15,10 +16,14 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestConstructor;
 import annotations.UnitTestMethod;
-import nucleus.testsupport.MockSimulationContext;
+import nucleus.DataManagerContext;
+import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActionSupport;
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestDataManager;
+import nucleus.testsupport.testplugin.TestPlugin;
+import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import util.MutableDouble;
 import util.RandomGeneratorProvider;
 
 /**
@@ -78,85 +83,108 @@ public class AT_FloatPropertyManager {
 		});
 	}
 
+	/*
+	 * Local data manager used to properly initialize an ObjectPropertyManager
+	 * for use in time sensitive tests
+	 */
+	public static class LocalDM extends TestDataManager {
+		public FloatPropertyManager floatPropertyManager;
+
+		@Override
+		public void init(DataManagerContext dataManagerContext) {
+			super.init(dataManagerContext);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(342.4234F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			floatPropertyManager = new FloatPropertyManager(dataManagerContext, propertyDefinition, 0);
+		}
+	}
+
 	@Test
 	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6894984813418975068L);
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		MutableDouble time = new MutableDouble(0);
-		MockSimulationContext mockContext = MockSimulationContext.builder().setTimeSupplier(() -> time.getValue()).build();
+		IntStream.range(0, 1000).forEach((i -> {
+			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				LocalDM localDM = c.getDataManager(LocalDM.class).get();
+				int id = randomGenerator.nextInt(300);
+				float value = randomGenerator.nextFloat();
+				FloatPropertyManager floatPropertyManager = localDM.floatPropertyManager;
+				floatPropertyManager.setPropertyValue(id, value);
+				// show that the property time for the id was properly set
+				assertEquals(c.getTime(), floatPropertyManager.getPropertyTime(id), 0);
+			}));
+		}));
 
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(234.432F).build();
+		// add the local data manager
+		pluginDataBuilder.addTestDataManager("dm", LocalDM.class);
 
-		FloatPropertyManager floatPropertyManager = new FloatPropertyManager(mockContext, propertyDefinition, 0);
-		assertThrows(RuntimeException.class, () -> floatPropertyManager.getPropertyTime(0));
+		// build and run the simulation
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		TestActionSupport.testConsumers(plugin);
 
-		propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(342.4234F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+		// precondition test: if time tracking is not engaged
+		TestActionSupport.testConsumer((c) -> {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.2F).build();
+			FloatPropertyManager fpm = new FloatPropertyManager(c, propertyDefinition, 0);
+			ContractException contractException = assertThrows(ContractException.class, () -> fpm.getPropertyTime(0));
+			assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
+		});
 
-		FloatPropertyManager doublePropertyManager2 = new FloatPropertyManager(mockContext, propertyDefinition, 0);
-		for (int i = 0; i < 1000; i++) {
-			int id = randomGenerator.nextInt(300);
-			time.setValue(randomGenerator.nextDouble() * 1000);
-			float value = randomGenerator.nextFloat();
-			doublePropertyManager2.setPropertyValue(id, value);
-			assertEquals(time.getValue(), doublePropertyManager2.getPropertyTime(id), 0);
-		}
-
-		// precondition tests:
-		propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.2F).build();
-		FloatPropertyManager fpm = new FloatPropertyManager(mockContext, propertyDefinition, 0);
-		ContractException contractException = assertThrows(ContractException.class, () -> fpm.getPropertyTime(0));
-		assertEquals(PropertyError.TIME_TRACKING_OFF, contractException.getErrorType());
-
-		contractException = assertThrows(ContractException.class, () -> fpm.getPropertyTime(-1));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
-
+		// precondition test: if a property time is retrieved for a negative
+		// index
+		TestActionSupport.testConsumer((c) -> {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.2F).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			FloatPropertyManager fpm = new FloatPropertyManager(c, propertyDefinition, 0);
+			ContractException contractException = assertThrows(ContractException.class, () -> fpm.getPropertyTime(-1));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
 	}
 
 	@Test
 	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
+		TestActionSupport.testConsumer((c) -> {
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
 
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
+			float defaultValue = 423.645F;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 
-		MockSimulationContext mockContext = MockSimulationContext.builder().build();
+			FloatPropertyManager floatPropertyManager = new FloatPropertyManager(c, propertyDefinition, 0);
 
-		float defaultValue = 423.645F;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
+			/*
+			 * We will set the first 300 values multiple times at random
+			 */
+			Map<Integer, Float> expectedValues = new LinkedHashMap<>();
 
-		FloatPropertyManager floatPropertyManager = new FloatPropertyManager(mockContext, propertyDefinition, 0);
-
-		/*
-		 * We will set the first 300 values multiple times at random
-		 */
-		Map<Integer, Float> expectedValues = new LinkedHashMap<>();
-
-		for (int i = 0; i < 1000; i++) {
-			int id = randomGenerator.nextInt(300);
-			float value = randomGenerator.nextFloat();
-			expectedValues.put(id, value);
-			floatPropertyManager.setPropertyValue(id, value);
-		}
-
-		/*
-		 * if the value was set above, then it should equal the last value place
-		 * in the expected values, otherwise it will have the default value.
-		 */
-		for (int i = 0; i < 300; i++) {
-			if (expectedValues.containsKey(i)) {
-				assertEquals(expectedValues.get(i), floatPropertyManager.getPropertyValue(i));
-
-			} else {
-				assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(i));
-
+			for (int i = 0; i < 1000; i++) {
+				int id = randomGenerator.nextInt(300);
+				float value = randomGenerator.nextFloat();
+				expectedValues.put(id, value);
+				floatPropertyManager.setPropertyValue(id, value);
 			}
-		}
 
-		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.setPropertyValue(-1, 3.4F));
-		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+			/*
+			 * if the value was set above, then it should equal the last value
+			 * place in the expected values, otherwise it will have the default
+			 * value.
+			 */
+			for (int i = 0; i < 300; i++) {
+				if (expectedValues.containsKey(i)) {
+					assertEquals(expectedValues.get(i), floatPropertyManager.getPropertyValue(i));
 
+				} else {
+					assertEquals(defaultValue, (Float) floatPropertyManager.getPropertyValue(i));
+
+				}
+			}
+
+			// precondition tests
+			ContractException contractException = assertThrows(ContractException.class, () -> floatPropertyManager.setPropertyValue(-1, 3.4F));
+			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		});
 	}
 
 	@Test
