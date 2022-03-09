@@ -58,6 +58,9 @@ public class TestActorPlan {
 		this(scheduledTime, action, true);
 	}
 
+	/**
+	 * Boilerplate implementation of hashCode consistent with equals()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -71,6 +74,10 @@ public class TestActorPlan {
 		return result;
 	}
 
+	/**
+	 * Boilerplate implementation of equals. TestActorPlans are equal if and
+	 * only if all fields are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -99,6 +106,9 @@ public class TestActorPlan {
 		return true;
 	}
 
+	/**
+	 * Constructs an test actor plan from another test actor plan.
+	 */
 	public TestActorPlan(TestActorPlan testActorPlan) {
 		scheduledTime = testActorPlan.scheduledTime;
 		key = testActorPlan.key;

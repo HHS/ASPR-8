@@ -30,6 +30,9 @@ public class TestDataManagerPlan {
 
 	private final Consumer<DataManagerContext> action;
 
+	/**
+	 * Constructs an test actor plan from another test actor plan.
+	 */
 	public TestDataManagerPlan(TestDataManagerPlan testDataManagerPlan) {
 		scheduledTime = testDataManagerPlan.scheduledTime;
 		key = testDataManagerPlan.key;
@@ -37,7 +40,10 @@ public class TestDataManagerPlan {
 		executed = testDataManagerPlan.executed;
 		action = testDataManagerPlan.action;
 	}
-
+	/**
+	 * Constructs an data manager action plan. If assignKey is false, then this actor
+	 * action plan will return an empty optional key.
+	 */
 	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> action, boolean assignKey) {
 		if (scheduledTime < 0) {
 			throw new RuntimeException("negative scheduled time");
@@ -51,11 +57,15 @@ public class TestDataManagerPlan {
 		this.releaseKey = assignKey;
 		this.action = action;
 	}
-
+	/**
+	 * Constructs an data manager action plan. A key value will be generated.
+	 */
 	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> action) {
 		this(scheduledTime, action, true);
 	}
-
+	/**
+	 * Returns true if an only if this data manager action plan was executed
+	 */
 	public boolean executed() {
 		return executed;
 	}
@@ -72,6 +82,9 @@ public class TestDataManagerPlan {
 		}
 	}
 
+	/**
+	 * Boilerplate implementation of hashCode consistent with equals()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -84,7 +97,10 @@ public class TestDataManagerPlan {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
-
+	/**
+	 * Boilerplate implementation of equals. TestDataMangerPlans are equal if and
+	 * only if all fields are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

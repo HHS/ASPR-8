@@ -23,6 +23,9 @@ public enum TestError implements ContractError {
 		this.description = description;
 	}
 
+	/**
+	 * Returns the text description of the error
+	 */
 	@Override
 	public String getDescription() {
 		return description;

@@ -11,6 +11,13 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.DataManagerId;
 
+/**
+ * A data manager used by test actors and test data managers to retrieve plans by alias ids.
+ * 
+ * @author Shawn Hatch
+ *
+ */
+
 public class TestPlanDataManager extends DataManager {
 
 	private Map<ActorId, Object> actorAliasMap = new LinkedHashMap<>();
