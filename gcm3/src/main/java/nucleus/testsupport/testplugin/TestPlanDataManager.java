@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import nucleus.ActorId;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.DataManagerId;
 
 /**
  * A data manager used by test actors and test data managers to retrieve plans by alias ids.
@@ -20,9 +17,6 @@ import nucleus.DataManagerId;
 
 public class TestPlanDataManager extends DataManager {
 
-	private Map<ActorId, Object> actorAliasMap = new LinkedHashMap<>();
-
-	private Map<DataManagerId, Object> dataManagerAliasMap = new LinkedHashMap<>();
 
 	private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
 
@@ -99,26 +93,6 @@ public class TestPlanDataManager extends DataManager {
 
 		return planCount > 0;
 
-	}
-
-	public Optional<Object> getActorAlias(ActorId actorId) {
-		return Optional.ofNullable(actorAliasMap.get(actorId));
-	}
-
-	public void setActorAlias(ActorId actorId, Object alias) {
-		if ((actorId != null) && (alias != null)) {
-			actorAliasMap.put(actorId, alias);
-		}
-	}
-
-	public Optional<Object> getDataManagerAlias(DataManagerId dataManagerId) {
-		return Optional.ofNullable(dataManagerAliasMap.get(dataManagerId));
-	}
-
-	public void setDataManagerAlias(DataManagerId dataManagerId, Object alias) {
-		if ((dataManagerId != null) & (alias != null)) {
-			dataManagerAliasMap.put(dataManagerId, alias);
-		}
 	}
 
 }

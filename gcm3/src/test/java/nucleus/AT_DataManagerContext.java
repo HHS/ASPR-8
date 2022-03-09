@@ -22,7 +22,6 @@ import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestDataManagerPlan;
-import nucleus.testsupport.testplugin.TestPlanDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
@@ -272,19 +271,17 @@ public class AT_DataManagerContext {
 	@UnitTestMethod(name = "getDataManagerId", args = {})
 	public void testGetDataManagerId() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		
+		Set<DataManagerId> observedDataManagerIds = new LinkedHashSet<>();
 
 		pluginDataBuilder.addTestDataManager("dm1", ()->new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (context) -> {
-			TestPlanDataManager testPlanDataManager = context.getDataManager(TestPlanDataManager.class).get();
-			Object alias = testPlanDataManager.getDataManagerAlias(context.getDataManagerId()).get();
-			assertEquals("dm1", alias);
+			observedDataManagerIds.add(context.getDataManagerId());			
 		}));
 
 		pluginDataBuilder.addTestDataManager("dm2",()->new  TestDataManager2());
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
-			TestPlanDataManager testPlanDataManager = context.getDataManager(TestPlanDataManager.class).get();
-			Object alias = testPlanDataManager.getDataManagerAlias(context.getDataManagerId()).get();
-			assertEquals("dm2", alias);
+			observedDataManagerIds.add(context.getDataManagerId());
 		}));
 
 		// build the plugin
@@ -301,6 +298,9 @@ public class AT_DataManagerContext {
 
 		// show that the action plans got executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		
+		//show that each data manger has a distinct id
+		assertEquals(2, observedDataManagerIds.size());
 	}
 
 	@Test

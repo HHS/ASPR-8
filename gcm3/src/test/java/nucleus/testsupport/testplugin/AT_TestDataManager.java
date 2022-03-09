@@ -60,9 +60,7 @@ public class AT_TestDataManager {
 			Object expectedAlias = multiKey.getKey(0);
 			Double expectedTime = multiKey.getKey(1);
 			pluginDataBuilder.addTestDataManagerPlan(expectedAlias, new TestDataManagerPlan(expectedTime, (c) -> {
-				TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
-				Object alias = testPlanDataManager.getDataManagerAlias(c.getDataManagerId()).get();
-				actualObservations.add(new MultiKey(alias, c.getTime()));
+				actualObservations.add(new MultiKey(expectedAlias, c.getTime()));
 			}));
 		}
 

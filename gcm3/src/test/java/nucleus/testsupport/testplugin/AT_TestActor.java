@@ -49,10 +49,8 @@ public class AT_TestActor {
 		for (MultiKey multiKey : expectedObservations) {
 			Object expectedAlias = multiKey.getKey(0);
 			Double expectedTime = multiKey.getKey(1);
-			pluginDataBuilder.addTestActorPlan(expectedAlias, new TestActorPlan(expectedTime, (c) -> {
-				TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
-				Object alias = testPlanDataManager.getActorAlias(c.getActorId()).get();
-				actualObservations.add(new MultiKey(alias, c.getTime()));
+			pluginDataBuilder.addTestActorPlan(expectedAlias, new TestActorPlan(expectedTime, (c) -> {								
+				actualObservations.add(new MultiKey(expectedAlias, c.getTime()));
 			}));
 		}
 

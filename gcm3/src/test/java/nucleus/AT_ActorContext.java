@@ -22,7 +22,6 @@ import annotations.UnitTestMethod;
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
-import nucleus.testsupport.testplugin.TestPlanDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
@@ -745,6 +744,8 @@ public class AT_ActorContext {
 		double testTime = 1;
 		// there are no precondition tests
 
+		Set<ActorId> observedActorIds = new LinkedHashSet<>();
+		
 		/*
 		 * Have actors get their own actor ids and show that these ids match the
 		 * expected values established duing the initialization of the
@@ -752,26 +753,23 @@ public class AT_ActorContext {
 		 */
 		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
+			observedActorIds.add(actorId);
 			assertNotNull(actorId);
-			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
-			Object alias = testPlanDataManager.getActorAlias(actorId).get();
-			assertEquals("Alpha", alias);
+			
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
+			observedActorIds.add(actorId);
 			assertNotNull(actorId);
-			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
-			Object alias = testPlanDataManager.getActorAlias(actorId).get();
-			assertEquals("Beta", alias);
+			
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
+			observedActorIds.add(actorId);
 			assertNotNull(actorId);
-			TestPlanDataManager testPlanDataManager = c.getDataManager(TestPlanDataManager.class).get();
-			Object alias = testPlanDataManager.getActorAlias(actorId).get();
-			assertEquals("Gamma", alias);
+			
 		}));
 
 		// build the plugin
@@ -788,6 +786,9 @@ public class AT_ActorContext {
 
 		// show that all action plans were executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+		
+		//show that the number of actor ids matches the number of actor aliases
+		assertEquals(3, observedActorIds.size());
 	}
 
 	@Test

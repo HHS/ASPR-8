@@ -35,7 +35,7 @@ public final class TestActor {
 	 */
 	public void init(ActorContext actorContext) {
 		TestPlanDataManager testPlanDataManager = actorContext.getDataManager(TestPlanDataManager.class).get();
-		testPlanDataManager.setActorAlias(actorContext.getActorId(), alias);
+		
 		List<TestActorPlan> testActorPlans = testPlanDataManager.getTestActorPlans(alias);
 		for (final TestActorPlan testActorPlan : testActorPlans) {
 			if (testActorPlan.getKey() != null) {
