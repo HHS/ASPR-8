@@ -28,7 +28,7 @@ import util.MutableBoolean;
 @UnitTest(target = PluginContext.class)
 public class AT_PluginContext {
 
-	public static class TestDataManager1 extends TestDataManager {
+	private static class TestDataManager1 extends TestDataManager {
 
 		@Override
 		public void init(final DataManagerContext dataManagerContext) {
@@ -36,7 +36,7 @@ public class AT_PluginContext {
 		}
 	}
 
-	public static class TestDataManager2 extends TestDataManager {
+	private static class TestDataManager2 extends TestDataManager {
 
 		@Override
 		public void init(final DataManagerContext dataManagerContext) {
@@ -44,7 +44,7 @@ public class AT_PluginContext {
 		}
 	}
 
-	public static class TestDataManager3 extends TestDataManager {
+	private static class TestDataManager3 extends TestDataManager {
 
 		@Override
 		public void init(final DataManagerContext dataManagerContext) {
@@ -105,9 +105,9 @@ public class AT_PluginContext {
 
 		// add the actors to the action plugin
 		final TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager("A", TestDataManager1.class);
-		pluginDataBuilder.addTestDataManager("B", TestDataManager2.class);
-		pluginDataBuilder.addTestDataManager("C", TestDataManager3.class);
+		pluginDataBuilder.addTestDataManager("A", ()->new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("B", ()->new TestDataManager2());
+		pluginDataBuilder.addTestDataManager("C", ()->new TestDataManager3());
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			assertTrue(c.getDataManager(TestDataManager1.class).isPresent());
 			assertTrue(c.getDataManager(TestDataManager2.class).isPresent());

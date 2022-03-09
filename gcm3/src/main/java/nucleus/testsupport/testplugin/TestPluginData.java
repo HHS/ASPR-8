@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
@@ -33,7 +34,7 @@ public class TestPluginData implements PluginData {
 			
 			
 
-			testDataManagerTypeMap.putAll(data.testDataManagerTypeMap);
+			testDataManagerSuppliers.putAll(data.testDataManagerSuppliers);
 			
 			for(Object alias : data.testDataManagerPlanMap.keySet()) {
 				List<TestDataManagerPlan> oldPlans = data.testDataManagerPlanMap.get(alias);
@@ -47,15 +48,14 @@ public class TestPluginData implements PluginData {
 
 		}
 
-		
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((testDataManagerTypeMap == null) ? 0 : testDataManagerTypeMap.hashCode());
 			result = prime * result + ((testActorPlanMap == null) ? 0 : testActorPlanMap.hashCode());
 			result = prime * result + ((testDataManagerPlanMap == null) ? 0 : testDataManagerPlanMap.hashCode());
+			result = prime * result + ((testDataManagerSuppliers == null) ? 0 : testDataManagerSuppliers.hashCode());
 			return result;
 		}
 
@@ -68,13 +68,6 @@ public class TestPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (testDataManagerTypeMap == null) {
-				if (other.testDataManagerTypeMap != null) {
-					return false;
-				}
-			} else if (!testDataManagerTypeMap.equals(other.testDataManagerTypeMap)) {
-				return false;
-			}
 			if (testActorPlanMap == null) {
 				if (other.testActorPlanMap != null) {
 					return false;
@@ -89,9 +82,15 @@ public class TestPluginData implements PluginData {
 			} else if (!testDataManagerPlanMap.equals(other.testDataManagerPlanMap)) {
 				return false;
 			}
+			if (testDataManagerSuppliers == null) {
+				if (other.testDataManagerSuppliers != null) {
+					return false;
+				}
+			} else if (!testDataManagerSuppliers.equals(other.testDataManagerSuppliers)) {
+				return false;
+			}
 			return true;
 		}
-
 
 
 		/*
@@ -99,7 +98,7 @@ public class TestPluginData implements PluginData {
 		 */
 		private final Map<Object, List<TestActorPlan>> testActorPlanMap = new LinkedHashMap<>();
 
-		private Map<Object, Class<? extends TestDataManager>> testDataManagerTypeMap = new LinkedHashMap<>();
+		private Map<Object, Supplier<TestDataManager>> testDataManagerSuppliers = new LinkedHashMap<>();
 
 		private final Map<Object, List<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
 
@@ -134,7 +133,7 @@ public class TestPluginData implements PluginData {
 		private void validate() {
 			
 			for(Object alias : data.testDataManagerPlanMap.keySet()) {
-				if(!data.testDataManagerTypeMap.containsKey(alias)) {
+				if(!data.testDataManagerSuppliers.containsKey(alias)) {
 					throw new ContractException(TestError.UNKNOWN_DATA_MANAGER_ALIAS,alias);
 				}
 			}
@@ -169,14 +168,14 @@ public class TestPluginData implements PluginData {
 		}
 
 
-		public Builder addTestDataManager(Object alias, Class<? extends TestDataManager> testDataManagerClass) {
+		public Builder addTestDataManager(Object alias, Supplier<TestDataManager> supplier) {
 			if (alias == null) {
 				throw new RuntimeException("null alias");
 			}
-			if (testDataManagerClass == null) {
-				throw new RuntimeException("null action data manager class");
+			if (supplier == null) {
+				throw new RuntimeException("null data manager supplier");
 			}
-			data.testDataManagerTypeMap.put(alias, testDataManagerClass);			
+			data.testDataManagerSuppliers.put(alias, supplier);			
 			return this;
 		}
 
@@ -232,9 +231,15 @@ public class TestPluginData implements PluginData {
 		return result;
 	}
 
-	public Optional<Class<? extends TestDataManager>> getTestDataManagerType(Object alias) {
-		Class<? extends TestDataManager> c = data.testDataManagerTypeMap.get(alias);
-		return Optional.ofNullable(c);		
+	@SuppressWarnings("unchecked")
+	public <T extends TestDataManager> Optional<T> getTestDataManager(Object alias) {
+		TestDataManager result = null;
+		Supplier<TestDataManager> supplier = data.testDataManagerSuppliers.get(alias);
+		if(supplier != null) {
+			result = supplier.get();
+			result.setAlias(alias);
+		}		
+		return Optional.ofNullable((T)result);		
 	}
 
 	public List<TestDataManagerPlan> getTestDataManagerPlans(Object alias) {		
@@ -247,7 +252,7 @@ public class TestPluginData implements PluginData {
 	}
 	
 	public List<Object> getTestDataManagerAliases(){
-		return new ArrayList<>(data.testDataManagerTypeMap.keySet());
+		return new ArrayList<>(data.testDataManagerSuppliers.keySet());
 	}
 
 	@Override

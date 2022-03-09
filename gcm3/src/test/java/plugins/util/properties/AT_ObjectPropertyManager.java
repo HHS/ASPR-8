@@ -85,7 +85,7 @@ public class AT_ObjectPropertyManager {
 	 * Local data manager used to properly initialize an ObjectPropertyManager
 	 * for use in time sensitive tests
 	 */
-	public static class LocalDM extends TestDataManager {
+	private static class LocalDM extends TestDataManager {
 		public ObjectPropertyManager objectPropertyManager;
 
 		@Override
@@ -121,7 +121,7 @@ public class AT_ObjectPropertyManager {
 		}));
 
 		// add the local data manager
-		pluginDataBuilder.addTestDataManager("dm", LocalDM.class);
+		pluginDataBuilder.addTestDataManager("dm",()-> new LocalDM());
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();

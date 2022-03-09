@@ -87,7 +87,7 @@ public class AT_FloatPropertyManager {
 	 * Local data manager used to properly initialize an ObjectPropertyManager
 	 * for use in time sensitive tests
 	 */
-	public static class LocalDM extends TestDataManager {
+	private static class LocalDM extends TestDataManager {
 		public FloatPropertyManager floatPropertyManager;
 
 		@Override
@@ -118,7 +118,7 @@ public class AT_FloatPropertyManager {
 		}));
 
 		// add the local data manager
-		pluginDataBuilder.addTestDataManager("dm", LocalDM.class);
+		pluginDataBuilder.addTestDataManager("dm", ()->new LocalDM());
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();

@@ -53,7 +53,7 @@ public class AT_DataManagerContext {
 		 * Have the data manager build plans to check the time in the simulation
 		 * against the planning time
 		 */
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (context1) -> {
 			for (Double planTime : planTimes) {
 				context1.addPlan((context2) -> {
@@ -95,7 +95,7 @@ public class AT_DataManagerContext {
 		expectedOutput.add(45.34513453);
 
 		// have the data manager release the output
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
 			for (Object outputValue : expectedOutput) {
 				c.releaseOutput(outputValue);
@@ -135,7 +135,7 @@ public class AT_DataManagerContext {
 
 		// have a data manager schedule a few events and subscribe to simulation
 		// close
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 			c.addPlan((c2) -> {
 			}, 1);
@@ -169,10 +169,10 @@ public class AT_DataManagerContext {
 
 		// create a data manager for the actor to find
 
-		pluginDataBuilder.addTestDataManager("dm1", TestDataManager1.class);
-		pluginDataBuilder.addTestDataManager("dm3A", TestDataManager3A.class);
-		pluginDataBuilder.addTestDataManager("dm3B", TestDataManager3B.class);
-		pluginDataBuilder.addTestDataManager("dm4A", TestDataManager4A.class);
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
+		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
+		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
 		/*
 		 * Have the agent search for the data manager that was added to the
 		 * simulation. Show that there is no instance of the second type of data
@@ -217,8 +217,8 @@ public class AT_DataManagerContext {
 
 		// Precondition test 1
 
-		pluginDataBuilder.addTestDataManager("dm3A", TestDataManager3A.class);
-		pluginDataBuilder.addTestDataManager("dm3B", TestDataManager3B.class);
+		pluginDataBuilder.addTestDataManager("dm3A",()->new  TestDataManager3A());
+		pluginDataBuilder.addTestDataManager("dm3B",()->new  TestDataManager3B());
 
 		pluginDataBuilder.addTestDataManagerPlan("dm3A", new TestDataManagerPlan(4, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.getDataManager(TestDataManager3.class));
@@ -242,8 +242,8 @@ public class AT_DataManagerContext {
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 
 		// Precondition test 2
-		
-		pluginDataBuilder.addTestDataManager("dm3B", TestDataManager3B.class);
+
+		pluginDataBuilder.addTestDataManager("dm3B",()->new  TestDataManager3B());
 
 		pluginDataBuilder.addTestDataManagerPlan("dm3B", new TestDataManagerPlan(4, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.getDataManager(null));
@@ -273,14 +273,14 @@ public class AT_DataManagerContext {
 	public void testGetDataManagerId() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		pluginDataBuilder.addTestDataManager("dm1", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm1", ()->new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (context) -> {
 			TestPlanDataManager testPlanDataManager = context.getDataManager(TestPlanDataManager.class).get();
 			Object alias = testPlanDataManager.getDataManagerAlias(context.getDataManagerId()).get();
 			assertEquals("dm1", alias);
 		}));
 
-		pluginDataBuilder.addTestDataManager("dm2", TestDataManager2.class);
+		pluginDataBuilder.addTestDataManager("dm2",()->new  TestDataManager2());
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
 			TestPlanDataManager testPlanDataManager = context.getDataManager(TestPlanDataManager.class).get();
 			Object alias = testPlanDataManager.getDataManagerAlias(context.getDataManagerId()).get();
@@ -310,7 +310,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", ()->new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			double scheduledTime = context.getTime() + 1;
 
@@ -357,7 +357,7 @@ public class AT_DataManagerContext {
 	@UnitTestMethod(name = "addPassivePlan", args = { Consumer.class, double.class })
 	public void testAddPassivePlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
 
 		// test preconditions
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
@@ -432,7 +432,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			Object key = new Object();
 
@@ -533,7 +533,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			Object key = new Object();
 
@@ -595,7 +595,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
@@ -638,7 +638,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlanTime(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
@@ -682,7 +682,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.removePlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
@@ -742,7 +742,7 @@ public class AT_DataManagerContext {
 		}
 
 		// have the test agent add some plans
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", ()->new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			for (Object key : expectedKeys) {
 				context.addKeyedPlan((c) -> {
@@ -779,7 +779,7 @@ public class AT_DataManagerContext {
 
 		// Have the data manager subscribe to test event and then set the
 		// eventResolved to true
-		pluginDataBuilder.addTestDataManager("dm1", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm1",()->new  TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
 			c.subscribe(TestEvent.class, (c2, e) -> {
 				eventResolved.setValue(true);
@@ -787,7 +787,7 @@ public class AT_DataManagerContext {
 		}));
 
 		// have another data manager resolve a test event
-		pluginDataBuilder.addTestDataManager("dm2", TestDataManager2.class);
+		pluginDataBuilder.addTestDataManager("dm2",()->new  TestDataManager2());
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
 			context.releaseEvent(new TestEvent());
 		}));
@@ -817,33 +817,29 @@ public class AT_DataManagerContext {
 
 	}
 
-	public static class TestDataManager1 extends TestDataManager {
+	private static class TestDataManager1 extends TestDataManager {
 	}
 
-	public static class TestDataManager2 extends TestDataManager {
+	private static class TestDataManager2 extends TestDataManager {
 	}
 
-	public static class TestDataManager3 extends TestDataManager {
-
-	}
-
-	public static class TestDataManager3A extends TestDataManager3 {
+	private static class TestDataManager3 extends TestDataManager {
 
 	}
 
-	public static class TestDataManager3B extends TestDataManager3 {
+	private static class TestDataManager3A extends TestDataManager3 {
 
 	}
 
-	public static class TestDataManager4 extends TestDataManager {
+	private static class TestDataManager3B extends TestDataManager3 {
 
 	}
 
-	public static class TestDataManager4A extends TestDataManager4 {
+	private static class TestDataManager4 extends TestDataManager {
 
 	}
 
-	public static class TestDataManager4B extends TestDataManager4 {
+	private static class TestDataManager4A extends TestDataManager4 {
 
 	}
 
@@ -856,7 +852,7 @@ public class AT_DataManagerContext {
 		double testTime = 1;
 		// there are no precondition tests
 
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 
 		// have the test agent show it exists and that other agents do not
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(testTime++, (context) -> {
@@ -902,7 +898,7 @@ public class AT_DataManagerContext {
 		// there are no precondition tests
 
 		// have the test agent show it exists and that other agents do not
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
 			c.addActor((c2) -> actorWasAdded.setValue(true));
 		}));
@@ -929,7 +925,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have the resolver execute the precondition tests
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> c.removeActor(null));
@@ -985,7 +981,7 @@ public class AT_DataManagerContext {
 
 		// there are no precondition tests
 
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 
 		// have the test agent execute several tasks, with one of the tasks
 		// halting the simulation
@@ -1051,7 +1047,7 @@ public class AT_DataManagerContext {
 		expectedPhases.add("post-action");
 
 		// have the resolver test preconditions for all the phases
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 
 			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribe(null, (c2, e) -> {
@@ -1125,7 +1121,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have the resolver test preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.unSubscribe(null));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
@@ -1239,7 +1235,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have the actor test the preconditions
-		pluginDataBuilder.addTestDataManager("dm", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 			EventLabelerId eventLabelerId = new EventLabelerId() {
 			};
@@ -1349,7 +1345,7 @@ public class AT_DataManagerContext {
 		 * Have the test resolver show that there are initially no subscribers
 		 * to test events.
 		 */
-		pluginDataBuilder.addTestDataManager("dm1", TestDataManager1.class);
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
 			assertFalse(c.subscribersExist(TestEvent.class));
 
@@ -1384,7 +1380,7 @@ public class AT_DataManagerContext {
 
 		// add a second data manager
 
-		pluginDataBuilder.addTestDataManager("dm2", TestDataManager2.class);
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(5, (c) -> {
 			c.subscribe(TestEvent.class, (c2, e) -> {

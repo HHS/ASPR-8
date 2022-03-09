@@ -20,17 +20,15 @@ import nucleus.DataManagerId;
 
 @UnitTest(target = TestPlanDataManager.class)
 public class AT_TestPluginDataManager {
-	public static class TestDataManager1 extends TestDataManager {
+	private static class TestDataManager1 extends TestDataManager {
 
 	}
 
-	public static class TestDataManager2 extends TestDataManager {
+	private static class TestDataManager2 extends TestDataManager {
 
 	}
 
-	public static class TestDataManager3 extends TestDataManager {
-
-	}
+	
 
 	
 	@Test
@@ -139,8 +137,9 @@ public class AT_TestPluginDataManager {
 				builder.addTestDataManagerPlan(alias, testDataManagerPlan);
 			}
 		}
-		builder.addTestDataManager("A", TestDataManager1.class);
-		builder.addTestDataManager("B", TestDataManager2.class);
+		builder.addTestDataManager("A", ()-> new TestDataManager1());
+		
+		builder.addTestDataManager("B", ()-> new TestDataManager2());
 		
 		TestPluginData testPluginData = builder.build();
 

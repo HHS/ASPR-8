@@ -1,6 +1,7 @@
 package nucleus.testsupport.testplugin;
 
 import java.util.List;
+import java.util.Optional;
 
 import nucleus.Plugin;
 import nucleus.PluginContext;
@@ -16,8 +17,9 @@ import nucleus.PluginData;
  *
  */
 public class TestPlugin {
-	
-	private TestPlugin() {}
+
+	private TestPlugin() {
+	}
 
 	/*
 	 * Initializes a simulation via the given context. Using an ActionPluginData
@@ -26,8 +28,7 @@ public class TestPlugin {
 	 * ActionPluginDataManager that is used internally to this plugin to help
 	 * manage data for the aforementioned actors and data managers.
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if the pluginContext is null</li>
+	 * @throws RuntimeException <li>if the pluginContext is null</li>
 	 */
 	private static void init(PluginContext pluginContext) {
 		if (pluginContext == null) {
@@ -41,16 +42,10 @@ public class TestPlugin {
 
 		List<Object> dataManagerAliases = testPluginData.getTestDataManagerAliases();
 		for (Object alias : dataManagerAliases) {
-			Class<? extends TestDataManager> c = testPluginData.getTestDataManagerType(alias).get();
-			TestDataManager testDataManager;
-			try {
-				testDataManager = c.newInstance();
-				testDataManager.setAlias(alias);
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
+			Optional<TestDataManager> optional = testPluginData.getTestDataManager(alias);
+			if (optional.isPresent()) {
+				pluginContext.addDataManager(optional.get());
 			}
-			pluginContext.addDataManager(testDataManager);
 		}
 
 		for (Object alias : testPluginData.getTestActorAliases()) {

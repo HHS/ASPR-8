@@ -19,11 +19,11 @@ import util.MultiKey;
 @UnitTest(target = TestActor.class)
 public class AT_TestDataManager {
 
-	public static class TestDataManagerType1 extends TestDataManager {
+	private static class TestDataManagerType1 extends TestDataManager {
 
 	}
 
-	public static class TestDataManagerType2 extends TestDataManager {
+	private static class TestDataManagerType2 extends TestDataManager {
 
 	}
 
@@ -49,8 +49,8 @@ public class AT_TestDataManager {
 
 		// add the actors to the action plugin
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager(alias1, TestDataManagerType1.class);
-		pluginDataBuilder.addTestDataManager(alias2, TestDataManagerType2.class);
+		pluginDataBuilder.addTestDataManager(alias1, ()->new TestDataManagerType1());
+		pluginDataBuilder.addTestDataManager(alias2, ()->new TestDataManagerType2());
 
 		/*
 		 * Create ActorActionPlans from the expected observations. Each action
