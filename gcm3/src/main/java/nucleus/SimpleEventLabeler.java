@@ -12,11 +12,15 @@ import net.jcip.annotations.NotThreadSafe;
  */
 @NotThreadSafe
 public class SimpleEventLabeler<T extends Event> implements EventLabeler<T> {
-	private final Class<T> eventClass;	
+	private final Class<T> eventClass;
 	private final BiFunction<SimulationContext, T, EventLabel<T>> labelMaker;
 	private final EventLabelerId id;
 
-	public SimpleEventLabeler(final EventLabelerId id, final Class<T> eventClass, BiFunction<SimulationContext, T, EventLabel<T>> labelMaker) {		
+	/**
+	 * Constructs the event labeler from the given labeler id, event class and
+	 * function for producing a label from an event.
+	 */
+	public SimpleEventLabeler(final EventLabelerId id, final Class<T> eventClass, BiFunction<SimulationContext, T, EventLabel<T>> labelMaker) {
 		this.eventClass = eventClass;
 		this.labelMaker = labelMaker;
 		this.id = id;

@@ -1,19 +1,32 @@
 package nucleus;
 
+/**
+ * The unique identifier for data managers. DataManagerId values are constructed
+ * dynamically and are distributed contiguously from 0.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public final class DataManagerId {
 	private final int id;
 
+	/**
+	 * Creates a DataManagerId having the value id
+	 */
 	public DataManagerId(int id) {
 		this.id = id;
 	}
-	
+
 	/**
-	 * Returns the int id of this ActorId
+	 * Returns the int id of this DataManagerId
 	 */
 	public final int getValue() {
 		return id;
 	}
-	
+
+	/**
+	 * Standard hash code implementation
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -22,6 +35,9 @@ public final class DataManagerId {
 		return result;
 	}
 
+	/**
+	 * DataManagerId instances are equal if and only if their values are equal
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -37,6 +53,10 @@ public final class DataManagerId {
 		return true;
 	}
 
+	/**
+	 * Returns string of the form "DataManager[X]" where the value of the data
+	 * manager id is X
+	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

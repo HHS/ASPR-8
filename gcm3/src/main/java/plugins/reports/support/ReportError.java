@@ -6,6 +6,8 @@ public enum ReportError implements ContractError{
 	NULL_CONSUMER("Supplier of Consumer of ActorContext supplied a null consumer"),
 	NULL_SUPPLIER("Supplier of Consumer of ActorContext is null"),
 	NULL_REPORT_ID("Null report id"),
+	NULL_REPORT_PATH("Null report path"),
+	PATH_COLLISION("Report path shared between multiple reports"),
 	UNKNOWN_REPORT_ID("Unknown report id"),
 	NULL_REPORT_INITIAL_DATA("Null report initial data"),
 	DUPLICATE_REPORT("Duplicate report id"),

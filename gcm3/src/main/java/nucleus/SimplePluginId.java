@@ -1,7 +1,9 @@
 package nucleus;
 
+import nucleus.util.ContractException;
+
 /**
- * A convenience class for representing a class reference as a PluginId
+ * A convenience class for representing PluginId as a wrapped object.
  * 
  * @author Shawn Hatch
  *
@@ -13,16 +15,18 @@ public class SimplePluginId implements PluginId {
 	private final Object value;
 
 	/**
-	 * Constructs a SimplePluginId from the given value
+	 * Constructs a SimplePluginId from the given value. The value class must
+	 * implement a proper equals contract.
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if the value is null
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#NULL_PLUGIN_ID} if the value is
+	 *             null</li>
 	 * 
 	 * 
 	 */
 	public SimplePluginId(Object value) {
 		if (value == null) {
-			throw new RuntimeException("null value");
+			throw new ContractException(NucleusError.NULL_PLUGIN_ID);
 		}
 		this.value = value;
 	}

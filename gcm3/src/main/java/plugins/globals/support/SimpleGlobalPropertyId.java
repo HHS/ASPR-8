@@ -1,17 +1,20 @@
 package plugins.globals.support;
 
+import nucleus.util.ContractException;
+
 public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 	private final Object value;
 
 	/**
 	 * Creates a compartment id from the given value
 	 * 
-	 * @throws RuntimeException
-	 *             if the value is null
+	 * @throws ContractException
+	 *             <li>{@linkplain GlobalError#NULL_GLOBAL_PROPERTY_VALUE} if
+	 *             the value is null</li>
 	 */
 	public SimpleGlobalPropertyId(Object value) {
 		if (value == null) {
-			throw new RuntimeException("null value");
+			throw new ContractException(GlobalError.NULL_GLOBAL_PROPERTY_VALUE);
 		}
 		this.value = value;
 	}
@@ -28,8 +31,8 @@ public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 	}
 
 	/**
-	 * Two {@link SimpleGlobalPropertyId} instances are equal if and only if their
-	 * inputs are equal.
+	 * Two {@link SimpleGlobalPropertyId} instances are equal if and only if
+	 * their inputs are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {

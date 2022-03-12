@@ -35,7 +35,8 @@ public class AT_NucleusError {
 		// show that each description is unique (ignoring case as well)
 		Set<String> descriptions = new LinkedHashSet<>();
 		for (NucleusError nucleusError : NucleusError.values()) {
-			assertTrue(descriptions.add(nucleusError.getDescription().toLowerCase()), nucleusError+": "+"Duplicate ErrorType description: " + nucleusError.getDescription());
+			boolean isUnique = descriptions.add(nucleusError.getDescription().toLowerCase());
+			assertTrue(isUnique, nucleusError+" duplicates the description of another member");
 		}
 	}
 

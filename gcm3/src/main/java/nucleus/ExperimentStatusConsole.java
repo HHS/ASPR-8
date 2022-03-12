@@ -5,8 +5,8 @@ import java.util.List;
 import net.jcip.annotations.ThreadSafe;
 
 /**
- * Utility class for reporting the execution progress of an experiment to the
- * console.
+ * Utility class used by the Experiment for reporting the execution progress of
+ * an experiment to the console.
  * 
  * @author Shawn Hatch
  *
@@ -110,6 +110,10 @@ public final class ExperimentStatusConsole {
 
 	}
 
+	/**
+	 * Initializes this ExperimentStatusConsole, which registers for simulation
+	 * and experiment close events.
+	 */
 	public void init(ExperimentContext experimentContext) {
 		experimentContext.subscribeToSimulationClose(this::handleSimulationClose);
 		experimentContext.subscribeToExperimentClose(this::handleExperimentClose);

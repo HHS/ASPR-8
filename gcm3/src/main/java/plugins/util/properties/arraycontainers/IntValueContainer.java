@@ -2,6 +2,9 @@ package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
 
+import nucleus.util.ContractException;
+import plugins.util.properties.PropertyError;
+
 /**
  * A container that maps non-negative int index values to bytes, shorts, ints or
  * longs. Values are stored internally as whatever int-type that logically
@@ -515,14 +518,17 @@ public final class IntValueContainer {
 	 * 
 	 * @param index
 	 * @return
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li> 
+	 * 
 	 * @throws RuntimeException
 	 *             <li>if index < 0
 	 *             <li>if the value to return is not compatible with byte
 	 * 
 	 */
 	public byte getValueAsByte(int index) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long result;
 		if (index < subTypeArray.size()) {
@@ -541,14 +547,17 @@ public final class IntValueContainer {
 	 * 
 	 * @param index
 	 * @return
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li> 
 	 * @throws RuntimeException
 	 *             <li>if index < 0
 	 *             <li>if the value to return is not compatible with short
 	 * 
 	 */
 	public short getValueAsShort(int index) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long result;
 		if (index < subTypeArray.size()) {
@@ -568,8 +577,8 @@ public final class IntValueContainer {
 	 * 
 	 * @param index
 	 * @return
-	 * @throws IndexOutOfBoundsException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 * @throws RuntimeException
 	 *             <li>if the value to return is not compatible with long
 	 * 
@@ -592,13 +601,13 @@ public final class IntValueContainer {
 	 * 
 	 * @param index
 	 * @return
-	 * @throws RuntimeException
-	 *             if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 * 
 	 */
 	public long getValueAsLong(int index) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long result;
 		if (index < subTypeArray.size()) {
@@ -613,13 +622,13 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given byte
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void setByteValue(int index, byte value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		subTypeArray.setValue(index, value);
 	}
@@ -627,14 +636,14 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given short
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 * 
 	 * 
 	 */
 	public void setShortValue(int index, short value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		if (!subTypeArray.getIntValueType().isCompatibleValue(value)) {
 			subTypeArray = rebuildSubTypeArray(value);
@@ -645,14 +654,14 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given int
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 * 
 	 * 
 	 */
 	public void setIntValue(int index, int value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		if (!subTypeArray.getIntValueType().isCompatibleValue(value)) {
 			subTypeArray = rebuildSubTypeArray(value);
@@ -663,13 +672,13 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given long
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 * 
 	 */
 	public void setLongValue(int index, long value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		if (!subTypeArray.getIntValueType().isCompatibleValue(value)) {
 			subTypeArray = rebuildSubTypeArray(value);
@@ -705,13 +714,13 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given byte
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void incrementByteValue(int index, byte value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
@@ -721,13 +730,13 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given short
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void incrementShortValue(int index, short value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
@@ -736,13 +745,13 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given int
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void incrementIntValue(int index, int value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
@@ -751,13 +760,13 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given long
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void incrementLongValue(int index, long value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
@@ -766,13 +775,13 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given byte
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void decrementByteValue(int index, byte value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
@@ -782,13 +791,13 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given short
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void decrementShortValue(int index, short value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
@@ -797,13 +806,13 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given int
 	 *
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 *
 	 */
 	public void decrementIntValue(int index, int value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
@@ -812,14 +821,17 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given long
 	 *
+	 	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
+	 *
 	 * @throws RuntimeException
 	 *             <li>if index is negative</li>
 	 *             <li>if the value causes an overflow</li>
 	 *
 	 */
 	public void decrementLongValue(int index, long value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);

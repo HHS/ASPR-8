@@ -2,6 +2,9 @@ package plugins.util.properties.arraycontainers;
 
 import java.util.BitSet;
 
+import nucleus.util.ContractException;
+import plugins.util.properties.PropertyError;
+
 /**
  * A container that maps non-negative int index values to booleans by storing
  * each boolean as a single bit in a BitSet. Returns a default boolean value for
@@ -31,14 +34,14 @@ public final class BooleanContainer {
 
 	/**
 	 * 
-	 * @throws RuntimeException
+	 * @throws ContractException
 	 * 
-	 *             <li>if the capacity is negative
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the capacity is negative</li>
 	 */
 	public BooleanContainer(boolean defaultValue, int capacity) {
 		this.defaultValue = defaultValue;
 		if (capacity < 0) {
-			throw new RuntimeException("negative initial capacity");
+			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
 		}
 		boundingIndex = capacity;
 		bitSet = new BitSet(boundingIndex);

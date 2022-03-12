@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import nucleus.DataManagerContext;
+import nucleus.util.ContractException;
 
 /**
  * Test Support class that describes an action for a data manager as a scheduled
@@ -28,7 +29,7 @@ public class TestDataManagerPlan {
 
 	private boolean executed;
 
-	private final Consumer<DataManagerContext> action;
+	private final Consumer<DataManagerContext> plan;
 
 	/**
 	 * Constructs an test actor plan from another test actor plan.
@@ -38,31 +39,39 @@ public class TestDataManagerPlan {
 		key = testDataManagerPlan.key;
 		releaseKey = testDataManagerPlan.releaseKey;
 		executed = testDataManagerPlan.executed;
-		action = testDataManagerPlan.action;
+		plan = testDataManagerPlan.plan;
 	}
+
 	/**
-	 * Constructs an data manager action plan. If assignKey is false, then this actor
-	 * action plan will return an empty optional key.
+	 * Constructs an data manager action plan. If assignKey is false, then this
+	 * actor action plan will return an empty optional key.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain TestError#NEGATIVE_PLANNING_TIME} if the
+	 *             scheduled plan time is negative</li>
+	 *             <li>{@linkplain TestError#NULL_PLAN} if the plan is null</li>
 	 */
-	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> action, boolean assignKey) {
+	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> plan, boolean assignKey) {
 		if (scheduledTime < 0) {
-			throw new RuntimeException("negative scheduled time");
+			throw new ContractException(TestError.NEGATIVE_PLANNING_TIME);
 		}
 
-		if (action == null) {
-			throw new RuntimeException("null action plan");
+		if (plan == null) {
+			throw new ContractException(TestError.NULL_PLAN);
 		}
 		this.scheduledTime = scheduledTime;
 		this.key = getNextKey();
 		this.releaseKey = assignKey;
-		this.action = action;
+		this.plan = plan;
 	}
+
 	/**
 	 * Constructs an data manager action plan. A key value will be generated.
 	 */
 	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> action) {
 		this(scheduledTime, action, true);
 	}
+
 	/**
 	 * Returns true if an only if this data manager action plan was executed
 	 */
@@ -76,7 +85,7 @@ public class TestDataManagerPlan {
 	 */
 	void executeAction(final DataManagerContext dataManagerContext) {
 		try {
-			action.accept(dataManagerContext);
+			plan.accept(dataManagerContext);
 		} finally {
 			executed = true;
 		}
@@ -97,9 +106,10 @@ public class TestDataManagerPlan {
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
+
 	/**
-	 * Boilerplate implementation of equals. TestDataMangerPlans are equal if and
-	 * only if all fields are equal.
+	 * Boilerplate implementation of equals. TestDataMangerPlans are equal if
+	 * and only if all fields are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {

@@ -12,6 +12,13 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import nucleus.util.ContractException;
 
+/**
+ * Thread safe plugin data container for associating plans with actor and data
+ * manager aliases.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @ThreadSafe
 public class TestPluginData implements PluginData {
 
@@ -21,33 +28,30 @@ public class TestPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-			
-			for(Object alias : data.testActorPlanMap.keySet()) {
+
+			for (Object alias : data.testActorPlanMap.keySet()) {
 				List<TestActorPlan> oldPlans = data.testActorPlanMap.get(alias);
 				List<TestActorPlan> newPlans = new ArrayList<>();
 				testActorPlanMap.put(alias, newPlans);
-				for(TestActorPlan oldPlan : oldPlans) {
+				for (TestActorPlan oldPlan : oldPlans) {
 					TestActorPlan newPlan = new TestActorPlan(oldPlan);
 					newPlans.add(newPlan);
-				}				
+				}
 			}
-			
-			
 
 			testDataManagerSuppliers.putAll(data.testDataManagerSuppliers);
-			
-			for(Object alias : data.testDataManagerPlanMap.keySet()) {
+
+			for (Object alias : data.testDataManagerPlanMap.keySet()) {
 				List<TestDataManagerPlan> oldPlans = data.testDataManagerPlanMap.get(alias);
 				List<TestDataManagerPlan> newPlans = new ArrayList<>();
 				testDataManagerPlanMap.put(alias, newPlans);
-				for(TestDataManagerPlan oldPlan : oldPlans) {
+				for (TestDataManagerPlan oldPlan : oldPlans) {
 					TestDataManagerPlan newPlan = new TestDataManagerPlan(oldPlan);
 					newPlans.add(newPlan);
-				}				
-			}			
+				}
+			}
 
 		}
-
 
 		@Override
 		public int hashCode() {
@@ -92,7 +96,6 @@ public class TestPluginData implements PluginData {
 			return true;
 		}
 
-
 		/*
 		 * Map of action plans key by actor aliases
 		 */
@@ -109,6 +112,9 @@ public class TestPluginData implements PluginData {
 
 	}
 
+	/**
+	 * Returns a builder for TestPluginData
+	 */
 	public static Builder builder() {
 		return new Builder(new Data());
 	}
@@ -129,12 +135,12 @@ public class TestPluginData implements PluginData {
 				data = new Data();
 			}
 		}
-		
+
 		private void validate() {
-			
-			for(Object alias : data.testDataManagerPlanMap.keySet()) {
-				if(!data.testDataManagerSuppliers.containsKey(alias)) {
-					throw new ContractException(TestError.UNKNOWN_DATA_MANAGER_ALIAS,alias);
+
+			for (Object alias : data.testDataManagerPlanMap.keySet()) {
+				if (!data.testDataManagerSuppliers.containsKey(alias)) {
+					throw new ContractException(TestError.UNKNOWN_DATA_MANAGER_ALIAS, alias);
 				}
 			}
 		}
@@ -142,16 +148,18 @@ public class TestPluginData implements PluginData {
 		/**
 		 * Adds an actor action plan associated with the alias
 		 * 
-		 * @throws RuntimeException
-		 *             <li>if the alias is null</li>
-		 *             <li>if the actor action plan is null</li>
+		 * @throws ContractException
+		 *             <li>{@linkplain TestError#NULL_ALIAS} if the alias is
+		 *             null</li>
+		 *             <li>{@linkplain TestError#NULL_PLAN}if the actor action
+		 *             plan is null</li>
 		 */
 		public Builder addTestActorPlan(final Object alias, TestActorPlan testActorPlan) {
 			if (alias == null) {
-				throw new RuntimeException("null alias");
+				throw new ContractException(TestError.NULL_ALIAS);
 			}
 			if (testActorPlan == null) {
-				throw new RuntimeException("null action plan");
+				throw new ContractException(TestError.NULL_PLAN);
 			}
 
 			List<TestActorPlan> list = data.testActorPlanMap.get(alias);
@@ -167,33 +175,41 @@ public class TestPluginData implements PluginData {
 
 		}
 
-
+		/**
+		 * Adds a test data manager to the test plugin via a supplier of
+		 * TestDataManager. The supplier must be threadsafe.
+		 * 
+		 * @throws ContractException
+		 * 
+		 */
 		public Builder addTestDataManager(Object alias, Supplier<TestDataManager> supplier) {
 			if (alias == null) {
-				throw new RuntimeException("null alias");
+				throw new ContractException(TestError.NULL_ALIAS);
 			}
 			if (supplier == null) {
-				throw new RuntimeException("null data manager supplier");
+				throw new ContractException(TestError.NULL_DATA_MANAGER_SUPPLIER);
 			}
-			data.testDataManagerSuppliers.put(alias, supplier);			
+			data.testDataManagerSuppliers.put(alias, supplier);
 			return this;
 		}
 
 		/**
 		 * Adds an data manager action plan associated with the alias
 		 * 
-		 * @throws RuntimeException
-		 *             <li>if the alias is null</li>
-		 *             <li>if the actor action plan is null</li>
+		 * @throws ContractException
+		 *             <li>{@linkplain TestError#NULL_ALIAS} if the alias is
+		 *             null</li>
+		 *             <li>{@linkplain TestError#NULL_PLAN}if the actor action
+		 *             plan is null</li>
 		 */
 		public Builder addTestDataManagerPlan(final Object alias, TestDataManagerPlan testDataManagerPlan) {
+
 			if (alias == null) {
-				throw new RuntimeException("null alias");
+				throw new ContractException(TestError.NULL_ALIAS);
 			}
 			if (testDataManagerPlan == null) {
-				throw new RuntimeException("null action plan");
+				throw new ContractException(TestError.NULL_PLAN);
 			}
-
 			List<TestDataManagerPlan> list = data.testDataManagerPlanMap.get(alias);
 
 			if (list == null) {
@@ -209,6 +225,10 @@ public class TestPluginData implements PluginData {
 
 	}
 
+	/**
+	 * Returns a Builder that is initialized to contain the plans and suppliers
+	 * of data managers contained in this TestPluginData.
+	 */
 	@Override
 	public Builder getCloneBuilder() {
 		return new Builder(new Data(data));
@@ -216,12 +236,16 @@ public class TestPluginData implements PluginData {
 
 	private final Data data;
 
+	/**
+	 * Returns a list of the test actor aliases
+	 */
 	public List<Object> getTestActorAliases() {
 		return new ArrayList<>(data.testActorPlanMap.keySet());
 	}
 
-	
-
+	/**
+	 * Returns the test actor plans associated with the actor alias
+	 */
 	public List<TestActorPlan> getTestActorPlans(Object alias) {
 		List<TestActorPlan> result = new ArrayList<>();
 		List<TestActorPlan> list = data.testActorPlanMap.get(alias);
@@ -231,18 +255,24 @@ public class TestPluginData implements PluginData {
 		return result;
 	}
 
+	/**
+	 * Returns a test data manager instance from the given alias.
+	 */
 	@SuppressWarnings("unchecked")
 	public <T extends TestDataManager> Optional<T> getTestDataManager(Object alias) {
 		TestDataManager result = null;
 		Supplier<TestDataManager> supplier = data.testDataManagerSuppliers.get(alias);
-		if(supplier != null) {
+		if (supplier != null) {
 			result = supplier.get();
 			result.setAlias(alias);
-		}		
-		return Optional.ofNullable((T)result);		
+		}
+		return Optional.ofNullable((T) result);
 	}
 
-	public List<TestDataManagerPlan> getTestDataManagerPlans(Object alias) {		
+	/**
+	 * Returns the test data manager plans associated with the actor alias
+	 */
+	public List<TestDataManagerPlan> getTestDataManagerPlans(Object alias) {
 		List<TestDataManagerPlan> list = data.testDataManagerPlanMap.get(alias);
 		List<TestDataManagerPlan> result = new ArrayList<>();
 		if (list != null) {
@@ -250,11 +280,17 @@ public class TestPluginData implements PluginData {
 		}
 		return result;
 	}
-	
-	public List<Object> getTestDataManagerAliases(){
+
+	/**
+	 * Returns a list of the test data manager aliases
+	 */
+	public List<Object> getTestDataManagerAliases() {
 		return new ArrayList<>(data.testDataManagerSuppliers.keySet());
 	}
 
+	/**
+	 * Hash code implementation consistent with equals()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -263,6 +299,10 @@ public class TestPluginData implements PluginData {
 		return result;
 	}
 
+	/**
+	 * TestPluginData instances are equal if and only if they contain identical
+	 * plans and suppliers of test data managers.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

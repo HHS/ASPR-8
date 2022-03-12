@@ -2,6 +2,9 @@ package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
 
+import nucleus.util.ContractException;
+import plugins.util.properties.PropertyError;
+
 /**
  * A container that maps non-negative int index values to floats by storing each
  * float in an array. Returns a default float value for every non-negative int
@@ -48,13 +51,14 @@ public final class FloatValueContainer {
 	 * 
 	 * @param index
 	 * @return
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is
+	 *             negative</li>
 	 * 
 	 */
 	public float getValue(int index) {
 		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 
 		float result;
@@ -130,12 +134,12 @@ public final class FloatValueContainer {
 	/**
 	 * Sets the value at the index to the given value
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 */
 	public void setValue(int index, float value) {
-		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		if (index >= values.length) {
 			grow(index + 1);

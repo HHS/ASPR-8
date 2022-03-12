@@ -1,6 +1,7 @@
 package plugins.reports.support;
 
 import net.jcip.annotations.Immutable;
+import nucleus.util.ContractException;
 
 /**
  * A convenience class for representing a class reference as a ReportId
@@ -13,9 +14,16 @@ public final class SimpleReportId implements ReportId {
 
 	private final Object value;
 
+	/**
+	 * Creates a ReportId from a value
+	 * 
+	 * 
+	 * @throws ContractException
+	 * <li>{@linkplain ReportError#NULL_REPORT_ID} if the value is null</li>
+	 */
 	public SimpleReportId(Object value) {
 		if (value == null) {
-			throw new RuntimeException("null value");
+			throw new ContractException(ReportError.NULL_REPORT_ID);
 		}
 		this.value = value;
 	}

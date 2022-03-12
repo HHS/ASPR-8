@@ -20,37 +20,104 @@ import nucleus.util.TriConsumer;
 @ThreadSafe
 public interface ExperimentContext {
 
+	/**
+	 * Subscribes to the open of simulations
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER} if
+	 *             the consumer is null</li>
+	 */
 	public void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer);
+
+	/**
+	 * Subscribes to the close of simulations
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER} if
+	 *             the consumer is null</li>
+	 */
 
 	public void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer);
 
+	/**
+	 * Subscribes to the open of the experiment
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER} if
+	 *             the consumer is null</li>
+	 */
 	public void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer);
 
+	/**
+	 * Subscribes to the close of the experiment
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER} if
+	 *             the consumer is null</li>
+	 */
 	public void subscribeToExperimentClose(Consumer<ExperimentContext> consumer);
 
 	/**
 	 * Subscribes the output handler to output of the given type.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
+	 * 
+	 * 
+	 *             <li>{@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER} if
+	 *             the consumer is null</li>
+	 *             <li>{@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER} if
+	 *             the consumer is null</li>
+	 * 
+	 * 
+	 * 
 	 */
 	public <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer);
 
+	/**
+	 * 
+	 * Returns the current status for the given scenario id if the scenario
+	 * exists.
+	 * 
+	 */
 	public Optional<ScenarioStatus> getScenarioStatus(int scenarioId);
 
+	/**
+	 * 
+	 * Returns the current number of scenarios with the given status
+	 * 
+	 */
 	public int getStatusCount(ScenarioStatus scenarioStatus);
 
+	/**
+	 * Returns the number of seconds that have elapsed since the start of the
+	 * experimnet
+	 */
 	public double getElapsedSeconds();
 
+	/**
+	 * Returns the list of meta data for the given scenario if it is available.
+	 */
 	public Optional<List<String>> getScenarioMetaData(int scenarioId);
 
+	/**
+	 * Returns the list of meta data for the experiment. These meta data are
+	 * descriptors of the scenario meta data produced by each execution of the
+	 * simulation.
+	 */
 	public List<String> getExperimentMetaData();
 
+	/**
+	 * Returns the number of scenarios in the experiment
+	 */
 	public int getScenarioCount();
 
+	/**
+	 * Returns the current list of scenario ids for the given scenario status
+	 */
 	public List<Integer> getScenarios(ScenarioStatus scenarioStatus);
 
 }

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import nucleus.ActorContext;
+import nucleus.util.ContractException;
 
 /**
  * Test Support class that describes an action for an actor as a scheduled plan
@@ -28,27 +29,33 @@ public class TestActorPlan {
 
 	private boolean executed;
 
-	private final Consumer<ActorContext> action;
+	private final Consumer<ActorContext> plan;
 
 	/**
 	 * Constructs an actor action plan. If assignKey is false, then this actor
 	 * action plan will return an empty optional key.
+	 * 
+	 * @throws ContractException
+	 * <li>{@linkplain TestError#NEGATIVE_PLANNING_TIME} if the scheduled plan time is negative</li>
+	 * <li>{@linkplain TestError#NULL_PLAN} if the plan is null </li>
+	 * 
 	 */
-	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> action, boolean assignKey) {
+	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> plan, boolean assignKey) {
 		if (scheduledTime < 0) {
-			throw new RuntimeException("negative scheduled time");
+			throw new ContractException(TestError.NEGATIVE_PLANNING_TIME);
 		}
 
-		if (action == null) {
-			throw new RuntimeException("null action plan");
+		if (plan == null) {
+			throw new ContractException(TestError.NULL_PLAN);
 		}
+		
 		this.scheduledTime = scheduledTime;
 
 		this.key = getNextKey();
 
 		releaseKey = assignKey;
 
-		this.action = action;
+		this.plan = plan;
 	}
 
 	/**
@@ -114,7 +121,7 @@ public class TestActorPlan {
 		key = testActorPlan.key;
 		releaseKey = testActorPlan.releaseKey;
 		executed = testActorPlan.executed;
-		action = testActorPlan.action;
+		plan = testActorPlan.plan;
 	}
 
 	/**
@@ -130,7 +137,7 @@ public class TestActorPlan {
 	 */
 	void executeAction(final ActorContext actorContext) {
 		try {
-			action.accept(actorContext);
+			plan.accept(actorContext);
 		} finally {
 			executed = true;
 		}

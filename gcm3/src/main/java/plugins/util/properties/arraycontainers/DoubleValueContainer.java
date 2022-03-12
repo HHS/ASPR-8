@@ -2,6 +2,9 @@ package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
 
+import nucleus.util.ContractException;
+import plugins.util.properties.PropertyError;
+
 /**
  * A container that maps non-negative int index values to doubles by storing
  * each double in an array. Returns a default double value for every
@@ -51,13 +54,17 @@ public final class DoubleValueContainer {
 	 * 
 	 * @param index
 	 * @return
-	 * @throws IndexOutOfBoundsException
-	 *             <li>if index is negative
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is negative</li>
 	 * 
 	 */
 	public double getValue(int index) {
 		double result;
 
+		if(index<0) {
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
+		}
+		
 		if (index < values.length) {
 			result = values[index];
 		} else {
@@ -130,12 +137,13 @@ public final class DoubleValueContainer {
 	/**
 	 * Sets the value at the index to the given value
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if index < 0
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if index is
+	 *             negative</li>
 	 */
 	public void setValue(int index, double value) {
 		if (index < 0) {
-			throw new RuntimeException("index out of bounds " + index);
+			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		if (index >= values.length) {
 			grow(index + 1);

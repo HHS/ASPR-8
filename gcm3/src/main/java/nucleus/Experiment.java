@@ -16,10 +16,24 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
+import nucleus.util.ContractException;
 import nucleus.util.TypeMap;
 
 /**
- * Multi-threaded executor of an experiment
+ * An experiment provides a means for executing the simulation over variants of
+ * plugin data. Each such variant is referred to as a scenario. The scenarios
+ * correspond to the cross product of a finite number of dimensions, with each
+ * dimension having a finite number of variant points.
+ * 
+ * For example: An experiment contains several plugins and correspondingly
+ * several plugin data objects. The experiment has two dimensions. The first
+ * dimension varies one of the plugin data objects with 5 new values. The second
+ * dimension varies two values in two separate plugin data objects with 3 new
+ * values each. There will be 15 resulting scenarios numbered 0 to 14
+ * corresponding to each combination of altered inputs.
+ * 
+ * The experiment then executes the scenarios concurrently based on the number
+ * of threads chosen for the execution.
  *
  * @author Shawn Hatch
  *
@@ -33,33 +47,42 @@ public final class Experiment {
 		private Builder() {
 		}
 
+		/**
+		 * Adds a dimension to the experiment
+		 */
 		public Builder addDimension(final Dimension dimension) {
 			data.dimensions.add(dimension);
 			return this;
 		}
 
 		/**
-		 * Add the output item handler to the experiment run.
-		 *
-		 * @param outputItemHandler
-		 *            the {@link OutputItemHandler} to add
-		 *
-		 * @throws RuntimeException
-		 *             if the output item handler is null
+		 * Adds the output item handler to the experiment. Consumers of
+		 * experiment context must be thread safe.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER} if the
+		 *             output item handler is null</li>
 		 */
 		public Builder addOutputHandler(final Consumer<ExperimentContext> experimentContextConsumer) {
 			if (experimentContextConsumer == null) {
-				throw new RuntimeException("null output item handler");
+				throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER);
 			}
 			data.experimentContextConsumers.add(experimentContextConsumer);
 			return this;
 		}
 
+		/**
+		 * Adds a plugin to the experiment.
+		 */
 		public Builder addPlugin(final Plugin plugin) {
 			data.plugins.add(plugin);
 			return this;
 		}
 
+		/**
+		 * Builds an experiment from the collected plugins, dimensions and
+		 * output handlers.
+		 */
 		public Experiment build() {
 			try {
 				return new Experiment(data);
@@ -72,9 +95,6 @@ public final class Experiment {
 		 * Turns on or off the logging of experiment progress to standard out.
 		 * Default value is true.
 		 *
-		 * @param produceConsoleOutput
-		 *            turns on/off production of the experiment progress
-		 *            reporting
 		 */
 		public Builder setExperimentProgressConsole(final boolean reportExperimentProgessToConsole) {
 			data.reportExperimentProgessToConsole = reportExperimentProgessToConsole;
@@ -84,10 +104,6 @@ public final class Experiment {
 		/**
 		 * Sets the path for experiment progress log. A null path turns off
 		 * logging and run resumption. Default value is null.
-		 *
-		 * @param path
-		 *            the {@link Path} where the experiment progress will be
-		 *            recorded
 		 */
 		public Builder setExperimentProgressLog(final Path path) {
 			data.experimentProgressLogPath = path;
@@ -110,16 +126,15 @@ public final class Experiment {
 		 * on the machine that is running the experiment. Setting the thread
 		 * count to zero causes the simulations to execute in the main thread.
 		 *
-		 * @param threadCount
-		 *            -- The number of threads to use to run the experiment.
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NEGATIVE_THREAD_COUNT} if
+		 *             the thread count is negative</li>
 		 *
-		 * @throws RuntimeException
-		 *             if the thread count is negative
-		 *
+		 * 
 		 */
 		public Builder setThreadCount(final int threadCount) {
 			if (threadCount < 0) {
-				throw new RuntimeException("negative thread count");
+				throw new ContractException(NucleusError.NEGATIVE_THREAD_COUNT);
 			}
 			data.threadCount = threadCount;
 			return this;
@@ -222,6 +237,9 @@ public final class Experiment {
 
 	}
 
+	/**
+	 * Returns a builder for Experiment
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -235,12 +253,8 @@ public final class Experiment {
 	}
 
 	/**
-	 * Executes the experiment using the information supplied via the various
-	 * mutation methods. Clears all collected data upon completion. Thus this
-	 * ExperimentExecutor returns to an empty and idle state.
-	 *
-	 * @throws RuntimeException
-	 *             if the experiment was not set
+	 * Executes the experiment using the information collected by the builder.
+	 * 
 	 */
 	public void execute() {
 

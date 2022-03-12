@@ -9,7 +9,8 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 
 /**
- * A data manager used by test actors and test data managers to retrieve plans by alias ids.
+ * A data manager used by test actors and test data managers to retrieve plans
+ * by alias ids.
  * 
  * @author Shawn Hatch
  *
@@ -17,11 +18,13 @@ import nucleus.DataManagerContext;
 
 public class TestPlanDataManager extends DataManager {
 
-
 	private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
 
 	private final Map<Object, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
 
+	/**
+	 * Constructs this data manager from the given test plugin data
+	 */
 	public TestPlanDataManager(TestPluginData testPluginData) {
 
 		for (Object alias : testPluginData.getTestActorAliases()) {
@@ -29,18 +32,26 @@ public class TestPlanDataManager extends DataManager {
 			actorActionPlanMap.put(alias, testActorPlans);
 		}
 
-		for (Object alias : testPluginData.getTestDataManagerAliases()) {			
+		for (Object alias : testPluginData.getTestDataManagerAliases()) {
 			List<TestDataManagerPlan> testDataManagerPlans = testPluginData.getTestDataManagerPlans(alias);
 			dataManagerActionPlanMap.put(alias, testDataManagerPlans);
 		}
 	}
 
+	/**
+	 * Initializes this data manager by subscribing to simulation close. On
+	 * close it releases a single TestScenarioReport that indicates success if
+	 * there was at least one plan and all plans were executed.
+	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		dataManagerContext.subscribeToSimulationClose(this::sendActionCompletionReport);
 	}
 
+	/**
+	 * Returns all plans associated with the given actor alias
+	 */
 	public List<TestActorPlan> getTestActorPlans(Object alias) {
 		List<TestActorPlan> result = new ArrayList<>();
 		List<TestActorPlan> list = actorActionPlanMap.get(alias);
@@ -50,6 +61,9 @@ public class TestPlanDataManager extends DataManager {
 		return result;
 	}
 
+	/**
+	 * Returns all plans associated with the given data manager alias
+	 */
 	public List<TestDataManagerPlan> getTestDataManagerPlans(Object alias) {
 		List<TestDataManagerPlan> result = new ArrayList<>();
 

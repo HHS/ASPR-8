@@ -11,7 +11,10 @@ import nucleus.util.ContractException;
  *
  */
 public enum TestError implements ContractError {
-
+	NULL_ALIAS("Null alias value"),
+	NULL_DATA_MANAGER_SUPPLIER("Null data manager supplier"),
+	NEGATIVE_PLANNING_TIME("Negative test planning time"),
+	NULL_PLAN("Null plan"),
 	TEST_EXECUTION_FAILURE("Not all action plans were executed or no action plans were added to the action plugin"),
 	UNKNOWN_DATA_MANAGER_ALIAS("A data manager test plan was submitted under an alias that does not have a test data manager class type"),
 	

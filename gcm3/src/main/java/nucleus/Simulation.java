@@ -26,14 +26,22 @@ import util.graph.Graphs;
 import util.graph.MutableGraph;
 
 /**
- * An instance of the Engine orchestrates the execution of a simulation instance
- * from a set of contributed plugins. Plugins are loaded from the included
- * builder class and organized based upon their dependency requirementsF. Each
- * plugin contributes zero to many initialization behaviors that 1) start the
- * simulation, 2)initialize and publish data views, 3)create actors, 4) generate
- * initial events(mutations to data views), 5) register for event observation
- * and 6)schedule future plans. Time moves forward via planning and the
- * simulation halts once all plans are complete.
+ * An instance of the Simulation orchestrates the execution of a scenario from a
+ * set of contributed plugins.
+ * 
+ * Plugins are loaded primarily based on the directed acyclic graph implied by
+ * their dependencies and then secondarily on the order in which the plugins
+ * were added to the experiment or simulation.
+ * 
+ * Each plugin contributes an initialization behavior that adds actors and data
+ * managers to the simulation at simulation startup. The data managers are
+ * initialized in the order they are added to the simulation. Actor
+ * initialization then follows in a similar order.
+ * 
+ * After initialization is over, time flows based on the execution of planning.
+ * Plans are collected from both actors and data managers. When no more plans
+ * remain, the simulation halts.
+ * 
  * 
  * @author Shawn Hatch
  *
@@ -86,7 +94,7 @@ public class Simulation {
 			actorContentRec.actorId = actorId;
 			actorContentRec.plan = consumer;
 			actorQueue.add(actorContentRec);
-			
+
 			return actorId;
 
 		}
@@ -94,7 +102,24 @@ public class Simulation {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
-			return Optional.ofNullable((T) pluginDataMap.get(pluginDataClass));
+			PluginData pluginData = workingPluginDataMap.get(pluginDataClass);
+			if (pluginData == null) {
+				List<Class<?>> candidates = new ArrayList<>();
+				for (Class<?> c : basePluginDataMap.keySet()) {
+					if (pluginDataClass.isAssignableFrom(c)) {
+						candidates.add(c);
+					}
+				}
+				if (candidates.size() > 1) {
+					throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
+				}
+				if (candidates.size() == 1) {
+					pluginData = basePluginDataMap.get(candidates.get(0));
+					workingPluginDataMap.put(pluginDataClass, pluginData);
+				}
+			}
+
+			return Optional.ofNullable((T) pluginData);
 		}
 
 	}
@@ -511,7 +536,8 @@ public class Simulation {
 
 	private PluginId focalPluginId;
 
-	private final Map<Class<?>, PluginData> pluginDataMap = new LinkedHashMap<>();
+	private final Map<Class<?>, PluginData> basePluginDataMap = new LinkedHashMap<>();
+	private final Map<Class<?>, PluginData> workingPluginDataMap = new LinkedHashMap<>();
 
 	private final Data data;
 
@@ -626,18 +652,64 @@ public class Simulation {
 	}
 
 	private List<Plugin> getOrderedPlugins() {
+
+		MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
+
 		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
 
 		for (Plugin plugin : data.plugins) {
+			System.out.println(plugin.getPluginId());
+		}
+
+		/*
+		 * Add the nodes to the graph, check for duplicate ids, build the
+		 * mapping from plugin id back to plugin
+		 */
+		for (Plugin plugin : data.plugins) {
 			focalPluginId = plugin.getPluginId();
 			pluginMap.put(focalPluginId, plugin);
+			// ensure that there are no duplicate plugins
+			if (pluginDependencyGraph.containsNode(focalPluginId)) {
+				throw new ContractException(NucleusError.DUPLICATE_PLUGIN, focalPluginId);
+			}
 			pluginDependencyGraph.addNode(focalPluginId);
+			focalPluginId = null;
+		}
+
+		// Add the edges to the graph
+		for (Plugin plugin : data.plugins) {
+			focalPluginId = plugin.getPluginId();
 			for (PluginId pluginId : plugin.getPluginDependencies()) {
 				pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
 			}
+			focalPluginId = null;
 		}
 
-		
+		/*
+		 * Check for missing plugins from the plugin dependencies that were
+		 * collected from the known plugins.
+		 */
+		for (PluginId pluginId : pluginDependencyGraph.getNodes()) {
+			if (!pluginMap.containsKey(pluginId)) {
+				List<Object> inboundEdges = pluginDependencyGraph.getInboundEdges(pluginId);
+				StringBuilder sb = new StringBuilder();
+				sb.append("cannot locate instance of ");
+				sb.append(pluginId);
+				sb.append(" needed for ");
+				boolean first = true;
+				for (Object edge : inboundEdges) {
+					if (first) {
+						first = false;
+					} else {
+						sb.append(", ");
+					}
+					PluginId dependentPluginId = pluginDependencyGraph.getOriginNode(edge);
+					sb.append(dependentPluginId);
+				}
+				throw new ContractException(NucleusError.MISSING_PLUGIN, sb.toString());
+			}
+		}
+
 		/*
 		 * Determine whether the graph is acyclic and generate a graph depth
 		 * evaluator for the graph so that we can determine the order of
@@ -691,7 +763,7 @@ public class Simulation {
 		GraphDepthEvaluator<PluginId> graphDepthEvaluator = optional.get();
 
 		List<PluginId> orderedPluginIds = graphDepthEvaluator.getNodesInRankOrder();
-		
+
 		List<Plugin> orderedPlugins = new ArrayList<>();
 		for (PluginId pluginId : orderedPluginIds) {
 			orderedPlugins.add(pluginMap.get(pluginId));
@@ -709,10 +781,16 @@ public class Simulation {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#REPEATED_EXECUTION} if execute is
 	 *             invoked more than once
+	 *
+	 *             <li>{@link NucleusError#MISSING_PLUGIN} if the contributed
+	 *             plugins contain dependencies on plugins that have not been
+	 *             added to the simulation
+	 * 
+	 *             <li>{@link NucleusError#MISSING_PLUGIN} if the contributed
+	 *             plugins contain duplicate plugin ids
 	 * 
 	 *             <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES} if the
-	 *             contributed plugin initializers form a circular chain of
-	 *             dependencies
+	 *             contributed plugins form a circular chain of dependencies
 	 * 
 	 */
 	public void execute() {
@@ -727,21 +805,20 @@ public class Simulation {
 
 		/*
 		 * Get the plugins listed in dependency order
-		 */		
+		 */
 		List<Plugin> orderedPlugins = getOrderedPlugins();
 
 		// Make the plugin data available
 		for (Plugin plugin : orderedPlugins) {
 			focalPluginId = plugin.getPluginId();
 			for (PluginData pluginData : plugin.getPluginDatas()) {
-				pluginDataMap.put(pluginData.getClass(), pluginData);
+				basePluginDataMap.put(pluginData.getClass(), pluginData);
 			}
 		}
 
 		// Have each plugin contribute data managers and actors
 		for (Plugin plugin : orderedPlugins) {
 			focalPluginId = plugin.getPluginId();
-			pluginDependencyGraph.addNode(focalPluginId);
 			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
 			if (optionalInitializer.isPresent()) {
 				optionalInitializer.get().accept(pluginContext);
@@ -754,8 +831,8 @@ public class Simulation {
 			DataManager dataManager = dataManagerIdToDataManagerMap.get(dataManagerId);
 			DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 			dataManager.init(dataManagerContext);
-			if(!dataManager.isInitialized()) {
-				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE,dataManager.getClass().getSimpleName());
+			if (!dataManager.isInitialized()) {
+				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
 			}
 		}
 
@@ -1275,14 +1352,14 @@ public class Simulation {
 
 	private void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
-			throw new RuntimeException("null close handler");
+			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
 		simulationCloseActorCallbacks.put(focalActorId, consumer);
 	}
 
 	private void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
 		if (consumer == null) {
-			throw new RuntimeException("null close handler");
+			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CONTEXT_CONSUMER);
 		}
 		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
 	}
@@ -1451,8 +1528,8 @@ public class Simulation {
 
 	@SuppressWarnings("unchecked")
 	private <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
-		
-		if(dataManagerClass == null) {
+
+		if (dataManagerClass == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
 		}
 
@@ -1470,7 +1547,7 @@ public class Simulation {
 		 */
 		if (dataManager == null) {
 			List<Class<?>> candidates = new ArrayList<>();
-			for (Class<?> c : baseClassToDataManagerMap.keySet()) {				
+			for (Class<?> c : baseClassToDataManagerMap.keySet()) {
 				if (dataManagerClass.isAssignableFrom(c)) {
 					candidates.add(c);
 				}
@@ -1490,7 +1567,6 @@ public class Simulation {
 	/////////////////////////////////
 	// data manager support
 	/////////////////////////////////
-	private MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
 
 	private int masterDataManagerIndex;
 

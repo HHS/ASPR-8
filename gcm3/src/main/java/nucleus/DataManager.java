@@ -2,6 +2,13 @@ package nucleus;
 
 import nucleus.util.ContractException;
 
+/**
+ * Base class for all data managers.
+ * 
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public class DataManager {
 	/**
 	 * Package access used by the simulation to help ensure that init() is
@@ -19,6 +26,8 @@ public class DataManager {
 	 * must invoke the super.
 	 * 
 	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
+	 *             if init() is invoked more than once</li>
 	 * 
 	 */
 	public void init(DataManagerContext dataManagerContext) {

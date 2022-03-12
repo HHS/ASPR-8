@@ -5,8 +5,10 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import nucleus.EventLabel;
+import nucleus.util.ContractException;
 import plugins.globals.GlobalDataManager;
 import plugins.globals.events.GlobalPropertyChangeObservationEvent;
+import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -82,7 +84,7 @@ public final class GlobalPropertyReport {
 		final Set<GlobalPropertyId> validPropertyIds = globalDataManager.getGlobalPropertyIds();
 		for (final GlobalPropertyId globalPropertyId : globalPropertyIds) {
 			if (!validPropertyIds.contains(globalPropertyId)) {
-				throw new RuntimeException("invalid property id " + globalPropertyId);
+				throw new ContractException(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
 			}
 		}
 

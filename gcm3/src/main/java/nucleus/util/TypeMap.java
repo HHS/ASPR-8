@@ -8,6 +8,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * 
+ * A generics-based object container that retrieves instances from class
+ * references.
+ * 
+ * @author Shawn Hatch
+ *
+ * @param <K>
+ */
 public final class TypeMap<K> {
 	public static enum TypeMapError implements ContractError {
 
@@ -33,7 +42,11 @@ public final class TypeMap<K> {
 	private Map<Class<?>, K> workingMap = new LinkedHashMap<>();
 
 	/**
-	 * Returns the optional contain the instance stored for the given class
+	 * Returns the stored item matching the given class reference.
+	 * 
+	 * @throws RuntimeException
+	 *             <li>if more than one item matches the given class
+	 *             reference</li>
 	 * 
 	 * 
 	 */
@@ -106,6 +119,9 @@ public final class TypeMap<K> {
 		}
 	}
 
+	/**
+	 * Returns the set of items stored in this container.
+	 */
 	public Set<K> getContents() {
 		Set<K> result = new LinkedHashSet<>();
 		for (K value : baseMap.values()) {

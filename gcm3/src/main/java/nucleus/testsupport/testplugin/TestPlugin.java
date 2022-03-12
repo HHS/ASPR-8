@@ -8,10 +8,9 @@ import nucleus.PluginContext;
 import nucleus.PluginData;
 
 /**
- * Test Support plugin that is designed to work with a unit testing framework.
- * It provides for 1)the injection of behavior into actors to test various
- * simulation behaviors in a function/system setting and 2) the collection of
- * observed events for comparison to expectations.
+ * Static test support plugin that is designed to work with a unit testing
+ * framework. It provides for the injection of behavior into actors and data
+ * managers to test various simulation behaviors in a function/system setting.
  * 
  * @author Shawn Hatch
  *
@@ -22,11 +21,11 @@ public class TestPlugin {
 	}
 
 	/*
-	 * Initializes a simulation via the given context. Using an ActionPluginData
-	 * retrieved from the context, this initializer adds ActionActor and
-	 * ActionDataManager instances that are used in testing. It also creates an
-	 * ActionPluginDataManager that is used internally to this plugin to help
-	 * manage data for the aforementioned actors and data managers.
+	 * Initializes a simulation via the given context. Using a TestPluginData
+	 * retrieved from the context, this initializer adds test actor and
+	 * test data manager instances that are used in testing. It also creates an
+	 * TestPlanDataManager that is used internally to this plugin to help
+	 * manage plan distribution for the aforementioned actors and data managers.
 	 * 
 	 * @throws RuntimeException <li>if the pluginContext is null</li>
 	 */
