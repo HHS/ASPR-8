@@ -67,6 +67,9 @@ public final class GlobalPropertyReport {
 		}
 	}
 
+	/**
+	 * Initialization of the report.  Subscribes to GlobalPropertyChangeObservationEvents.
+	 */
 	public void init(final ActorContext actorContext) {
 
 		GlobalDataManager globalDataManager = actorContext.getDataManager(GlobalDataManager.class).get();

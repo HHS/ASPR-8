@@ -19,9 +19,12 @@ import nucleus.ExperimentContext;
 import nucleus.ScenarioStatus;
 
 /**
- * An {@link OutputItemHandler} implementor that supports tab delimited text
- * based files that have a header. Supports continuation of experiment progress
- * across multiple experiment runs.
+ * A thread-safe utility that supports tab delimited text based files that have
+ * a header. This utility manages the writing of report items to a single file.
+ * It assumes that all such items share a uniform header and establishes the
+ * header of the output file on the first report item. If the writer is resuming
+ * from a previous experiment, the header remains at originally written.
+ * Supports continuation of experiment progress across multiple experiment runs.
  * 
  * @author Shawn Hatch
  *
@@ -41,11 +44,11 @@ public final class LineWriter {
 	 * Creates this {@link NIOHeaderedOutputItemHandler} The path to the file
 	 * that may or may not exist and may contain some complete or partial
 	 * content from a previous execution of the experiment. If not empty, this
-	 * file must have a header, be tab delimited and have as its first two
-	 * columns the scenario and replication id values. Partial lines at the end
-	 * of the file due to an ungraceful halt to the previous execution are
-	 * tolerated. If the file does not exist, then its parent directory must
-	 * exist.
+	 * file must have a header, be tab delimited and have as its first column be
+	 * the scenario id. Partial lines at the end of the file due to an
+	 * ungraceful halt to the previous execution are tolerated. If the file does
+	 * not exist, then its parent directory must exist.
+	 * 
 	 */
 
 	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports) {
@@ -115,6 +118,9 @@ public final class LineWriter {
 		}
 	}
 
+	/**
+	 * Closes the writer, flushing all buffered outputs.
+	 */
 	public void close() {
 
 		try {
@@ -124,6 +130,9 @@ public final class LineWriter {
 		}
 	}
 
+	/**
+	 * Writes the report item to file recorded under the given scenario.
+	 */
 	public void write(ExperimentContext experimentContext, int scenarioId, ReportItem reportItem) {
 
 		try {
@@ -174,6 +183,10 @@ public final class LineWriter {
 		}
 	}
 
+	/**
+	 * Flushes buffered output. Generally used to force the last the full
+	 * reporting of a closed scenario.
+	 */
 	public void flush() {
 		try {
 			writer.flush();

@@ -1,8 +1,16 @@
 package plugins.reports.support;
 
 import nucleus.util.ContractError;
+import nucleus.util.ContractException;
 
-public enum ReportError implements ContractError{
+/**
+ * An enumeration supporting {@link ContractException} that acts as a general
+ * description of the exception.
+ * 
+ * @author Shawn Hatch
+ *
+ */
+public enum ReportError implements ContractError {
 	NULL_CONSUMER("Supplier of Consumer of ActorContext supplied a null consumer"),
 	NULL_SUPPLIER("Supplier of Consumer of ActorContext is null"),
 	NULL_REPORT_ID("Null report id"),
@@ -15,15 +23,15 @@ public enum ReportError implements ContractError{
 	NULL_REPORT_PERIOD("Null report period"),
 	NULL_REPORT_HEADER_STRING("Null report header string"),
 	NULL_REPORT_HEADER("Null report header"),
-	NULL_REPORT_ITEM_ENTRY("Null report item entry"),
-	;
+	NULL_REPORT_ITEM_ENTRY("Null report item entry"),;
 
 	@Override
-	public String getDescription() {		
+	public String getDescription() {
 		return description;
 	}
-	
+
 	private final String description;
+
 	private ReportError(String description) {
 		this.description = description;
 	}

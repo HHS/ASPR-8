@@ -13,7 +13,8 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 
 /**
- * Output management utility for writing report items to multiple files
+ * An experiment-level output management utility for writing report items to
+ * multiple files.
  * 
  * @author Shawn Hatch
  *
@@ -155,6 +156,18 @@ public final class NIOReportItemHandler {
 		}
 	}
 
+	/**
+	 * Initializes this report item handler. It subscribes to the following
+	 * experiment level events:
+	 * <ul>
+	 * <li>Experiment Open : reads and initializes all report files</li>
+	 * <li>Simulation Output : directs report items to the appropriate file
+	 * writer</li>
+	 * <li>Simulation Close : ensures all files are flushed so that the content
+	 * of each file is complete for each closed scenario</li>
+	 * <li>Experiment Close : closes all file writers</li>
+	 * </ul>
+	 */
 	public void init(ExperimentContext experimentContext) {
 		experimentContext.subscribeToExperimentOpen(this::openExperiment);
 		experimentContext.subscribeToExperimentClose(this::closeExperiment);

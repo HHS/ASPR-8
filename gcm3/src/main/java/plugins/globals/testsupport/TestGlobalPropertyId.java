@@ -7,7 +7,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
 /**
- * Enumeration that identifies global property definitions
+ * Enumeration that provides a variety of global property definitions for testing purposes
  */
 public enum TestGlobalPropertyId implements GlobalPropertyId {
 

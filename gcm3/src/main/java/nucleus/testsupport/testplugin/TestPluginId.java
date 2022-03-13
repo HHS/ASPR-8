@@ -4,6 +4,7 @@ import nucleus.PluginId;
 import nucleus.SimplePluginId;
 /**
  * Static plugin id implementation for the TestPlugin
+ * 
  * @author Shawn Hatch
  *
  */

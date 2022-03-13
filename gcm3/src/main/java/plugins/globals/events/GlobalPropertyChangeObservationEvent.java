@@ -13,6 +13,15 @@ import plugins.globals.GlobalDataManager;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 
+/**
+ * 
+ * An event released by the global data manager whenever a global property is
+ * changed.
+ * 
+ * @author Shawn Hatch
+ *
+ */
+
 @Immutable
 public class GlobalPropertyChangeObservationEvent implements Event {
 	private final GlobalPropertyId globalPropertyId;

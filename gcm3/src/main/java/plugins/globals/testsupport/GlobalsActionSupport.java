@@ -16,7 +16,24 @@ import plugins.globals.GlobalPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 
+/**
+ * A static test support class for the globals plugin. Provides convenience
+ * methods for integrating a test plugin into a global-properties simulation
+ * test harness.
+ * 
+ * 
+ * @author Shawn Hatch
+ *
+ */
+
 public class GlobalsActionSupport {
+
+	/**
+	 * Creates the test plugin containing a test actor initialized by the given
+	 * consumer. Executes the simulation via the
+	 * {@linkplain GlobalsActionSupport#testConsumers(Plugin)} method
+	 *
+	 */
 
 	public static void testConsumer(Consumer<ActorContext> consumer) {
 
@@ -28,6 +45,10 @@ public class GlobalsActionSupport {
 		testConsumers(plugin);
 	}
 
+	/**
+	 * Executes a simulation composed of the given test plugin and the global
+	 * plugin initialized with the {@linkplain TestGlobalPropertyId} properties.
+	 */
 	public static void testConsumers(Plugin testPlugin) {
 
 		GlobalPluginData.Builder globalsPluginBuilder = GlobalPluginData.builder();

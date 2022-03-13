@@ -657,9 +657,7 @@ public class Simulation {
 
 		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
 
-		for (Plugin plugin : data.plugins) {
-			System.out.println(plugin.getPluginId());
-		}
+		
 
 		/*
 		 * Add the nodes to the graph, check for duplicate ids, build the

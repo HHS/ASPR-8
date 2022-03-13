@@ -17,18 +17,15 @@ import plugins.util.properties.PropertyDefinition;
  * An immutable container of the initial state of global components and global
  * properties. It contains: <BR>
  * <ul>
- * <li>global component ids</li>
- * <li>suppliers of consumers of {@linkplain AgentContext} for global component
- * initialization</li>
  * <li>global property definitions</li>
- * <li>global property values</li> *
+ * <li>global property values</li>
  * </ul>
  * 
  * @author Shawn Hatch
  *
  */
 @Immutable
-public final class GlobalPluginData  implements PluginData{
+public final class GlobalPluginData implements PluginData {
 
 	private static void validateGlobalPropertyIsNotDefined(final Data data, final GlobalPropertyId globalPropertyId) {
 		final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
@@ -43,15 +40,13 @@ public final class GlobalPluginData  implements PluginData{
 		}
 	}
 
-	
-
 	/**
 	 * Builder class for GloblaInitialData
 	 * 
 	 * @author Shawn Hatch
 	 *
 	 */
-	public static class Builder implements PluginDataBuilder{
+	public static class Builder implements PluginDataBuilder {
 		private Data data;
 
 		private Builder(Data data) {
@@ -111,8 +106,6 @@ public final class GlobalPluginData  implements PluginData{
 			return this;
 		}
 
-		
-
 		/**
 		 * Sets the global property value that overrides the default value of
 		 * the corresponding property definition
@@ -145,9 +138,10 @@ public final class GlobalPluginData  implements PluginData{
 		private final Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
 
 		private final Map<GlobalPropertyId, Object> globalPropertyValues = new LinkedHashMap<>();
-		
-		private Data() {}
-		
+
+		private Data() {
+		}
+
 		private Data(Data data) {
 			globalPropertyDefinitions.putAll(data.globalPropertyDefinitions);
 			globalPropertyValues.putAll(globalPropertyValues);
@@ -160,8 +154,6 @@ public final class GlobalPluginData  implements PluginData{
 	public static Builder builder() {
 		return new Builder(new Data());
 	}
-
-	
 
 	private static void validateData(final Data data) {
 		for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
@@ -202,8 +194,6 @@ public final class GlobalPluginData  implements PluginData{
 		}
 	}
 
-	
-
 	private static void validateGlobalPropertyDefinitionNotNull(final PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
 			throw new ContractException(GlobalError.NULL_GLOBAL_PROPERTY_DEFINITION);
@@ -227,8 +217,6 @@ public final class GlobalPluginData  implements PluginData{
 	private GlobalPluginData(final Data data) {
 		this.data = data;
 	}
-
-	
 
 	/**
 	 * Returns the {@link PropertyDefinition} for the given

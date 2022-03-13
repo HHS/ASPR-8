@@ -16,83 +16,7 @@ import plugins.util.properties.PropertyError;
 import plugins.util.properties.PropertyValueRecord;
 
 /**
- * 
- * Provides event resolution for the {@linkplain GlobalPlugin}.
- * <P>
- * Creates, publishes and maintains the {@linkplain GlobalDataView}. Initializes
- * the data view from the {@linkplain GlobalInitialData} instance provided to
- * the plugin.
- * </P>
- * <P>
- * Creates dynamic global components.
- * </P>
- * 
- * <P>
- * Initializes all event labelers defined by
- * {@linkplain GlobalPropertyChangeObservationEvent}
- * </P>
- * 
- * 
- * <P>
- * Resolves the following events:
- * <ul>
- * 
- * 
- * 
- * <li>{@linkplain GlobalComponentConstructionEvent} <blockquote> Creates a
- * global component agent.  <BR>
- * <BR>
- * Throws {@link ContractException}
- *
- * <ul>
- * <li>{@link GlobalError.NULL_GLOBAL_COMPONENT_ID} if the global component id
- * is null
- * <li>{@link GlobalError.DUPLICATE_GLOBAL_COMPONENT_ID} if the global component
- * was previously asssigned to an agent
- * <li>{@link NucleusError.NULL_AGENT_CONTEXT_CONSUMER} if the agent context
- * consumers is null
- * 
- * </ul>
- * </blockquote></li>
- * 
- * 
- * 
- * <li>{@linkplain GlobalPropertyValueAssignmentEvent} <blockquote>Updates the
- * global property value and time in the {@linkplain GlobalDataView} and
- * generates a corresponding {@linkplain GlobalPropertyChangeObservationEvent}
- * 
- * <BR>
- * <BR>
- * Throws {@link ContractException}
- *
- * <li>{@link GlobalError.NULL_GLOBAL_PROPERTY_ID} if the global property id is
- * null
- * <li>{@link GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID} if the global property id
- * is unknown
- * <li>{@link GlobalError.NULL_GLOBAL_PROPERTY_VALUE} if the property value is
- * null
- * <li>{@link PropertyError.IMMUTABLE_VALUE} if the global property definition
- * indicates the property is not mutable
- * <li>{@link PropertyError.INCOMPATIBLE_VALUE} if the property value is
- * incompatible with the property definition </blockquote></li>
- * 
- *
- * <ul>
- * </p>
- * 
- * 
- * 
- * @author Shawn Hatch
- *
- */
-
-/**
- * Mutable data manager that backs the {@linkplain GlobalDataView}. This data
- * manager is for internal use by the {@link CompartmentPlugin} and should not
- * be published.
- * 
- * Manages global components and global properties.Limited validation of inputs
- * are performed and mutation methods have invocation ordering requirements.
+ * A mutable data manager for global properties.
  * 
  * @author Shawn Hatch
  *
@@ -151,14 +75,15 @@ public final class GlobalDataManager extends DataManager {
 	 * Constructs the data manager
 	 * 
 	 * @throws ContractException
-	 * <li>{@linkplain GlobalError#NULL_GLOBAL_PLUGIN_DATA} if the global plugin data is null</li>
+	 *             <li>{@linkplain GlobalError#NULL_GLOBAL_PLUGIN_DATA} if the
+	 *             global plugin data is null</li>
 	 */
 	public GlobalDataManager(GlobalPluginData globalPluginData) {
-		if(globalPluginData == null) {
+		if (globalPluginData == null) {
 			throw new ContractException(GlobalError.NULL_GLOBAL_PLUGIN_DATA);
 		}
 		this.globalPluginData = globalPluginData;
-		
+
 	}
 
 	/**

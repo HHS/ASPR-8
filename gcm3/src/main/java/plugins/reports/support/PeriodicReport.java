@@ -1,16 +1,16 @@
 package plugins.reports.support;
 
-
 import nucleus.ActorContext;
 import nucleus.util.ContractException;
 
 /**
  * The abstract base class for reports that aggregate reporting aligned to a
- * {@link ReportPeriod}. At the end of each reporting period this report invokes
- * the flush method, allowing descendant implementors to release collected data.
- * This report registers via the context to be alerted when the simulation
- * terminates and will perform a final flush invocation. This can result in the
- * duplication of time values for last data released.
+ * {@link ReportPeriod}. The periodic report continually schedules reporting on
+ * a regular cycle, invoking the flush method and allowing descendant
+ * implementors to release collected data. This report registers via the context
+ * to be alerted when the simulation terminates and will perform a final flush
+ * invocation. This can result in the duplication of time values for last data
+ * released.
  *
  * @author Shawn Hatch
  *
@@ -28,7 +28,7 @@ public abstract class PeriodicReport {
 			throw new ContractException(ReportError.NULL_REPORT_PERIOD);
 		}
 		this.reportPeriod = reportPeriod;
-		
+
 		if (reportId == null) {
 			throw new ContractException(ReportError.NULL_REPORT_ID);
 		}
@@ -39,7 +39,7 @@ public abstract class PeriodicReport {
 	 * Assume a daily report period and let it be overridden
 	 */
 	private ReportPeriod reportPeriod = ReportPeriod.DAILY;
-	
+
 	private ReportId reportId;
 
 	/*
@@ -56,7 +56,7 @@ public abstract class PeriodicReport {
 	 * Adds the time field column(s) to the given {@link ReportHeaderBuilder} as
 	 * appropriate to the {@link ReportPeriod} specified during construction.
 	 * 
-	 * DAILY :  Day
+	 * DAILY : Day
 	 * 
 	 * HOURLY : Day, Hour
 	 * 
@@ -79,7 +79,7 @@ public abstract class PeriodicReport {
 		}
 		return reportHeaderBuilder;
 	}
-	
+
 	protected final ReportId getReportId() {
 		return reportId;
 	}
@@ -113,17 +113,17 @@ public abstract class PeriodicReport {
 	 * simulation start.
 	 * 
 	 * @throws ContractException
-	 * <li>if the report context is null</li>
+	 *             <li>if the report context is null</li>
 	 * 
 	 */
 	public void init(ActorContext actorContext) {
-		
-		if(actorContext == null) {
+
+		if (actorContext == null) {
 			throw new ContractException(ReportError.NULL_CONTEXT);
 		}
-		
+
 		actorContext.subscribeToSimulationClose(this::close);
-		
+
 		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
 			actorContext.addPassivePlan(this::executePlan, getNextPlanTime());
 		}
@@ -136,7 +136,7 @@ public abstract class PeriodicReport {
 	/**
 	 * Provides descendant implementors the opportunity to releases report items
 	 * from the data stored during the time since the last invocation of
-	 * flush(); Flush is invoked
+	 * flush().
 	 */
 	protected abstract void flush(final ActorContext actorContext);
 
@@ -145,7 +145,7 @@ public abstract class PeriodicReport {
 		case DAILY:
 			return (reportingDay + 1);
 		case HOURLY:
-			return reportingDay + (double)(reportingHour + 1) / 24;
+			return reportingDay + (double) (reportingHour + 1) / 24;
 		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
