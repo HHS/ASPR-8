@@ -109,6 +109,11 @@ public class AT_TestExperimentObserver {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
+		public Optional<Exception> getSceanarioFailureCause(int scenarioId) {
+			return Optional.empty();
+		}
+
 	}
 
 	@Test

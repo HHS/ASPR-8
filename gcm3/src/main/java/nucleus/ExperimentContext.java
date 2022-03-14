@@ -119,5 +119,10 @@ public interface ExperimentContext {
 	 * Returns the current list of scenario ids for the given scenario status
 	 */
 	public List<Integer> getScenarios(ScenarioStatus scenarioStatus);
+	
+	/**
+	 * Returns the exception associated with a failed sceario
+	 */
+	public Optional<Exception> getSceanarioFailureCause(int scenarioId);
 
 }

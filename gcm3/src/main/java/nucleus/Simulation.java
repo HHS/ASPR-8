@@ -792,6 +792,7 @@ public class Simulation {
 	 * 
 	 */
 	public void execute() {
+		
 		// start the simulation
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);

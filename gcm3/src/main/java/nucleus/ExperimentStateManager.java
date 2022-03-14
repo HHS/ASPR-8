@@ -107,6 +107,11 @@ public final class ExperimentStateManager {
 			return ExperimentStateManager.this.getScenarios(scenarioStatus);
 		}
 
+		@Override
+		public Optional<Exception> getSceanarioFailureCause(int scenarioId) {
+			return ExperimentStateManager.this.getSceanarioFailureCause(scenarioId);
+		}
+
 	}
 
 	private TimeElapser timeElapser = new TimeElapser();
@@ -172,8 +177,8 @@ public final class ExperimentStateManager {
 	 *             <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID} if the
 	 *             scenario id is not in the range [0,scenario count)</li>
 	 */
-	public synchronized void closeScenario(Integer scenarioId, boolean success) {
-		
+	public synchronized void closeScenarioAsSuccess(Integer scenarioId) {
+
 		if (scenarioId == null) {
 			throw new ContractException(NucleusError.NULL_SCENARIO_ID);
 		}
@@ -184,17 +189,13 @@ public final class ExperimentStateManager {
 			throw new ContractException(NucleusError.UNKNOWN_SCENARIO_ID);
 		}
 
-		if (success) {
-			scenarioRecord.scenarioStatus = ScenarioStatus.SUCCEDED;
-		} else {
-			scenarioRecord.scenarioStatus = ScenarioStatus.FAILED;
-		}
+		scenarioRecord.scenarioStatus = ScenarioStatus.SUCCEDED;
 
 		for (BiConsumer<ExperimentContext, Integer> consumer : simCloseConsumers) {
 			consumer.accept(experimentContext, scenarioId);
 		}
 
-		if (success && writer != null) {
+		if (writer != null) {
 			try {
 				writer.write(scenarioId.toString());
 				for (String metaDatum : scenarioRecord.metaData) {
@@ -210,6 +211,40 @@ public final class ExperimentStateManager {
 	}
 
 	/**
+	 * Announces the closure of the scenario to subscribed experiment context
+	 * consumers. Records the scenario in the scenario progress file if the file
+	 * is active and the scenario was successful(i.e. the simulation executed
+	 * without throwing an exception).
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if the
+	 *             scenario id is null</li>
+	 *             <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID} if the
+	 *             scenario id is not in the range [0,scenario count)</li>
+	 */
+	public synchronized void closeScenarioAsFailure(Integer scenarioId, Exception exception) {
+
+		if (scenarioId == null) {
+			throw new ContractException(NucleusError.NULL_SCENARIO_ID);
+		}
+
+		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
+
+		if (scenarioRecord == null) {
+			throw new ContractException(NucleusError.UNKNOWN_SCENARIO_ID);
+		}
+
+		scenarioRecord.scenarioStatus = ScenarioStatus.FAILED;
+		scenarioRecord.failureCause = exception;
+
+		for (BiConsumer<ExperimentContext, Integer> consumer : simCloseConsumers) {
+			consumer.accept(experimentContext, scenarioId);
+		}
+
+		
+	}
+
+	/**
 	 * 
 	 * Returns the current status for the given scenario id if the scenario
 	 * exists.
@@ -220,6 +255,15 @@ public final class ExperimentStateManager {
 		ScenarioStatus result = null;
 		if (scenarioRecord != null) {
 			result = scenarioRecord.scenarioStatus;
+		}
+		return Optional.ofNullable(result);
+	}
+
+	public synchronized Optional<Exception> getSceanarioFailureCause(int scenarioId) {
+		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
+		Exception result = null;
+		if (scenarioRecord != null) {
+			result = scenarioRecord.failureCause;
 		}
 		return Optional.ofNullable(result);
 	}
@@ -316,6 +360,7 @@ public final class ExperimentStateManager {
 	private static class ScenarioRecord {
 		private ScenarioStatus scenarioStatus;
 		private List<String> metaData = new ArrayList<>();
+		private Exception failureCause;
 	}
 
 	private static class Data {

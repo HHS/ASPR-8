@@ -172,10 +172,12 @@ public final class Experiment {
 	private static class SimResult {
 		private final boolean success;
 		private final int scenarioId;
+		private final Exception failureCause;
 
-		public SimResult(final int scenarioId, final boolean success) {
+		public SimResult(final int scenarioId, final boolean success, Exception failureCause) {
 			this.scenarioId = scenarioId;
 			this.success = success;
+			this.failureCause = failureCause;
 		}
 	}
 
@@ -223,16 +225,18 @@ public final class Experiment {
 
 			// run the simulation
 			boolean success = false;
+			Exception failureCause = null;
 			try {
 				simulation.execute();
 				success = true;
 			} catch (final Exception e) {
+				failureCause = e;
 				if (reportScenarioFailureToConsole) {
 					System.err.println("Simulation failure for scenario " + scenarioId);
 					e.printStackTrace();
 				}
 			}
-			return new SimResult(scenarioId, success);
+			return new SimResult(scenarioId, success, failureCause);
 		}
 
 	}
@@ -366,7 +370,11 @@ public final class Experiment {
 			 */
 			try {
 				final SimResult simResult = completionService.take().get();
-				experimentStateManager.closeScenario(simResult.scenarioId, simResult.success);
+				if (simResult.success) {
+					experimentStateManager.closeScenarioAsSuccess(simResult.scenarioId);
+				} else {
+					experimentStateManager.closeScenarioAsFailure(simResult.scenarioId, simResult.failureCause);
+				}
 			} catch (final InterruptedException | ExecutionException e) {
 				// Note that this is the completion service failing and
 				// not the simulation
@@ -421,17 +429,23 @@ public final class Experiment {
 
 			// run the simulation
 			boolean success = false;
+			Exception failureCause = null;
 			try {
 				simulation.execute();
 				success = true;
 			} catch (final Exception e) {
+				failureCause = e;
 				if (data.reportScenarioFailureToConsole) {
 					System.err.println("Simulation failure for scenario " + scenarioId);
 					e.printStackTrace();
 				}
 			}
 
-			experimentStateManager.closeScenario(scenarioId, success);
+			if (success) {
+				experimentStateManager.closeScenarioAsSuccess(scenarioId);
+			}else {
+				experimentStateManager.closeScenarioAsFailure(scenarioId, failureCause);
+			}
 
 		}
 	}

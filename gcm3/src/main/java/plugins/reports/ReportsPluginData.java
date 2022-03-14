@@ -13,7 +13,7 @@ import nucleus.util.ContractException;
 import plugins.reports.support.ReportError;
 
 /**
- * An immutable container of the initial state reports. It contains: <BR>
+ * An immutable container of the initial state of report actors. It contains: <BR>
  * <ul>
  * <li>report ids</li>
  * <li>suppliers of consumers of {@linkplain ReportContext} for report

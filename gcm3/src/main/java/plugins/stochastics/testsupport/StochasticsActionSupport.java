@@ -14,6 +14,16 @@ import nucleus.util.ContractException;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 
+/**
+ * A static test support class for the stochastics plugin. Provides convenience
+ * methods for integrating a test plugin into a stochastic simulation
+ * test harness.
+ * 
+ * 
+ * @author Shawn Hatch
+ *
+ */
+
 public class StochasticsActionSupport {
 	
 	public static void testConsumer(long seed, Consumer<ActorContext> consumer) {
