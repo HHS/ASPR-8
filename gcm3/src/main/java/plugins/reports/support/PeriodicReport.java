@@ -1,6 +1,9 @@
 package plugins.reports.support;
 
+import java.util.function.BiConsumer;
+
 import nucleus.ActorContext;
+import nucleus.Event;
 import nucleus.util.ContractException;
 
 /**
@@ -110,7 +113,8 @@ public abstract class PeriodicReport {
 	/**
 	 * Subscribes to simulation close. Initializes periodic flushing of report
 	 * contents with the first flush scheduled for one time period from
-	 * simulation start.
+	 * simulation start. Descendant implementors of PeriodicReport must invoke
+	 * super.init().
 	 * 
 	 * @throws ContractException
 	 *             <li>if the report context is null</li>
@@ -125,12 +129,16 @@ public abstract class PeriodicReport {
 		actorContext.subscribeToSimulationClose(this::close);
 
 		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
-			actorContext.addPassivePlan(this::executePlan, getNextPlanTime());
+			setNextPlanTime();
+			actorContext.addPassivePlan(this::executePlan, nextPlanTime);
 		}
 	}
 
 	private void close(final ActorContext actorContext) {
-		flush(actorContext);
+		if (lastFlushTime == null || actorContext.getTime() > lastFlushTime) {
+			lastFlushTime = actorContext.getTime();
+			flush(actorContext);
+		}
 	}
 
 	/**
@@ -140,20 +148,43 @@ public abstract class PeriodicReport {
 	 */
 	protected abstract void flush(final ActorContext actorContext);
 
-	private double getNextPlanTime() {
+	private double nextPlanTime;
+	private Double lastFlushTime;
+
+	private void setNextPlanTime() {
 		switch (reportPeriod) {
 		case DAILY:
-			return (reportingDay + 1);
+			nextPlanTime = (reportingDay + 1);
+			break;
 		case HOURLY:
-			return reportingDay + (double) (reportingHour + 1) / 24;
+			nextPlanTime = reportingDay + (double) (reportingHour + 1) / 24;
+			break;
 		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
 	}
 
-	private void executePlan(final ActorContext actorContext) {
+	/**
+	 * Returns a wrapped version of the given consumer that will ensure proper
+	 * flushing when events are received at the same time as a flushing plan,
+	 * but happen to execute before the plan. Descendant implementors of
+	 * PeriodicReport should use this wrapper when subscribing to events.
+	 */
+	public final <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
+		return (c, t) -> {
+			if (c.getTime() >= nextPlanTime) {
+				lastFlushTime = c.getTime();
+				flush(c);
+			}
+			eventConsumer.accept(c, t);
+		};
+	}
 
-		flush(actorContext);
+	private void executePlan(final ActorContext actorContext) {
+		if (lastFlushTime == null || actorContext.getTime() > lastFlushTime) {
+			lastFlushTime = actorContext.getTime();
+			flush(actorContext);
+		}
 
 		switch (reportPeriod) {
 		case DAILY:
@@ -170,7 +201,8 @@ public abstract class PeriodicReport {
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
 
-		actorContext.addPassivePlan(this::executePlan, getNextPlanTime());
+		setNextPlanTime();
+		actorContext.addPassivePlan(this::executePlan, nextPlanTime);
 
 	}
 }
