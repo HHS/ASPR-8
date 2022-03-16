@@ -123,6 +123,6 @@ public interface ExperimentContext {
 	/**
 	 * Returns the exception associated with a failed sceario
 	 */
-	public Optional<Exception> getSceanarioFailureCause(int scenarioId);
+	public Optional<Exception> getScenarioFailureCause(int scenarioId);
 
 }

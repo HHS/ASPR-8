@@ -110,9 +110,10 @@ public class AT_TestExperimentObserver {
 		}
 
 		@Override
-		public Optional<Exception> getSceanarioFailureCause(int scenarioId) {
+		public Optional<Exception> getScenarioFailureCause(int scenarioId) {
 			return Optional.empty();
 		}
+
 
 	}
 

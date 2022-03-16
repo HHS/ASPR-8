@@ -108,8 +108,8 @@ public final class ExperimentStateManager {
 		}
 
 		@Override
-		public Optional<Exception> getSceanarioFailureCause(int scenarioId) {
-			return ExperimentStateManager.this.getSceanarioFailureCause(scenarioId);
+		public Optional<Exception> getScenarioFailureCause(int scenarioId) {
+			return ExperimentStateManager.this.getScenarioFailureCause(scenarioId);
 		}
 
 	}
@@ -259,7 +259,7 @@ public final class ExperimentStateManager {
 		return Optional.ofNullable(result);
 	}
 
-	public synchronized Optional<Exception> getSceanarioFailureCause(int scenarioId) {
+	public synchronized Optional<Exception> getScenarioFailureCause(int scenarioId) {
 		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
 		Exception result = null;
 		if (scenarioRecord != null) {

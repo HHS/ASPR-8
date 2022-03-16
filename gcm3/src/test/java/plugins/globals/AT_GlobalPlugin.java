@@ -19,7 +19,7 @@ public class AT_GlobalPlugin {
 
 	@Test
 	@UnitTestMethod(name = "getPlugin", args = { GlobalPluginData.class })
-	public void testInit() {
+	public void testGetPlugin() {
 		/*
 		 *Show that the plugin contains the plugin data and has the property id and dependencies 
 		 */

@@ -173,8 +173,10 @@ public abstract class PeriodicReport {
 	public final <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
 		return (c, t) -> {
 			if (c.getTime() >= nextPlanTime) {
-				lastFlushTime = c.getTime();
-				flush(c);
+				if (lastFlushTime == null || c.getTime() > lastFlushTime) {
+					lastFlushTime = c.getTime();
+					flush(c);
+				}
 			}
 			eventConsumer.accept(c, t);
 		};
