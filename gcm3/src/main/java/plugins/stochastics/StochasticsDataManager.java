@@ -14,23 +14,9 @@ import plugins.stochastics.support.StochasticsError;
 import util.RandomGeneratorProvider;
 
 /**
- * Published data manager for the Stochastics plugin.
+ * A mutable data manager for random number generators.
  * 
  * @author Shawn Hatch
- *
- */
-
-/**
- * <P>
- * Creates and publishes the {@linkplain StochasticsDataManager}. Initializes
- * the data views from the {@linkplain StochasticsInitialData} and a plugin
- * provided seed value.
- * </P>
- * 
- * 
- * 
- * @author Shawn Hatch
- *
  */
 public final class StochasticsDataManager extends DataManager {
 
@@ -40,16 +26,18 @@ public final class StochasticsDataManager extends DataManager {
 
 	/**
 	 * Returns the general, non-identified, random number generator was
-	 * initialized with the initial seed value of the stochastics plugin
+	 * initialized with the current base seed value that was initialized from
+	 * the {@linkplain StochasticsPluginData} or reset via
+	 * {@linkplain StochasticsDataManager#resetSeeds(long)}
 	 */
 	public RandomGenerator getRandomGenerator() {
 		return randomGenerator;
 	}
 
 	/**
-	 * Returns the random generator associated with the given id. The returned
-	 * random generator is seeded using the seed of the stochastics plugin and
-	 * the id.
+	 * Returns the random generator associated with the given id. If the random
+	 * generator does not exit, a new one is created and seeded using the
+	 * current base seed and the id.
 	 * 
 	 * RNG seed = seed + id.toString().hashcode()
 	 * 
@@ -62,7 +50,7 @@ public final class StochasticsDataManager extends DataManager {
 	public RandomGenerator getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		validateRandomNumberGeneratorId(randomNumberGeneratorId);
 		RandomGenerator result = randomGeneratorMap.get(randomNumberGeneratorId);
-		if(result == null) {
+		if (result == null) {
 			result = addRandomGenerator(randomNumberGeneratorId);
 		}
 		return result;
@@ -70,7 +58,9 @@ public final class StochasticsDataManager extends DataManager {
 
 	/**
 	 * Returns the random number generator ids that were contained in the
-	 * initial data of the stochastics plugin
+	 * initial data of the {@linkplain StochasticsPluginData} or that have been
+	 * added via
+	 * {@linkplain StochasticsDataManager#getRandomGeneratorFromId(RandomNumberGeneratorId)}.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds() {
@@ -86,13 +76,18 @@ public final class StochasticsDataManager extends DataManager {
 	private void validateRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		if (randomNumberGeneratorId == null) {
 			throw new ContractException(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID);
-		}		
+		}
 	}
 
 	private long seed;
 
 	/**
-	 * Creates the data view for the plugin
+	 * Creates the StochasticsDataManager from the given
+	 * {@linkplain StochasticsPluginData} Random generators associated with
+	 * predefined ids in the StochasticsPluginData are generated in the same
+	 * manner as the method
+	 * {@linkplain StochasticsDataManager#getRandomGeneratorFromId(RandomNumberGeneratorId)}
+	 * 
 	 * 
 	 */
 	public StochasticsDataManager(StochasticsPluginData stochasticsPluginData) {
@@ -108,7 +103,7 @@ public final class StochasticsDataManager extends DataManager {
 		randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 	}
-	
+
 	/*
 	 * The random generator should not already exist
 	 */

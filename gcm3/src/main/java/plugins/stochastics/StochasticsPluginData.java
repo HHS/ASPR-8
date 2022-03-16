@@ -6,94 +6,43 @@ import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractError;
 import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 
 /**
- *
- * <p>
- * <b>Summary</b> A nucleus plugin for managing random number generators. The
- * plugin provides a general random generator as well as fixed set of random
- * generators mapped to a set of identifiers provided as initialization data.
- * All random generators are implemented by
- * org.apache.commons.math3.random.Well44497b
- * </p>
- *
- * <p>
- * <b>Events </b> The plugin supports no events.
- *
- * <p>
- * <b>Resolvers</b>
- * <ul>
- * <li><b>StochasticsEventResolver</b>: Initializes and publishes the
- * stochastics data view
- * </ul>
- * </p>
- *
- * <p>
- * <b>Data Views</b> Supplies a single data view
- * <ul>
- * <li><b>Stochastics Data View</b>: Supplies random generators</li>
- * </ul>
- * </p>
- *
- * <p>
- * <b>Reports</b> The plugin defines no reports
- * </p>
- *
- * <p>
- * <b>Agents: </b>This plugin does not provide any agent implementations.
- * </p>
- *
- * <p>
- * <b>Initializing data:</b> An immutable container of the initial state of
- * random generator id values.
- * </p>
- *
- * <p>
- * <b>Support classes</b>
- * <ul>
- * <li><b>StochasticsError: </b></li>Enumeration implementing
- * {@linkplain ContractError} for this plugin.
- * <li><b>RandomNumberGeneratorId: </b></li>Marker interface for generator id
- * values
- * </ul>
- * </p>
- *
- * <p>
- * <b>Required Plugins</b> This plugin has no plugin dependencies
- * </p>
+ * A thread-safe container for the initial state of random generators.
  *
  * @author Shawn Hatch
  *
  */
 @ThreadSafe
-public final class StochasticsPluginData implements PluginData{
-	
+public final class StochasticsPluginData implements PluginData {
+
 	/**
 	 * Constructs this plugin from the initial data and seed
 	 */
 	private StochasticsPluginData(Data data) {
 		this.data = data;
 	}
-	
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(new Data(data));
 	}
-	
+
 	/*
 	 * State container class for collecting random number generator ids.
 	 */
 	private static class Data {
-		public Data() {}
+		public Data() {
+		}
+
 		public Data(Data data) {
 			this.seed = data.seed;
 			randomNumberGeneratorIds.addAll(data.randomNumberGeneratorIds);
 		}
+
 		private Long seed;
 		private Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
 	}
@@ -106,29 +55,32 @@ public final class StochasticsPluginData implements PluginData{
 	}
 
 	/**
-	 * Builder class for StochasticsInitialData
+	 * Builder class for StochasticsPluginData
 	 * 
 	 * @author Shawn Hatch
 	 *
 	 */
-	public static class Builder implements PluginDataBuilder{
+	public static class Builder implements PluginDataBuilder {
 		private Data data;
 
 		private Builder(Data data) {
 			this.data = data;
 
 		}
+
 		private void validate() {
-			if(data.seed == null) {
+			if (data.seed == null) {
 				throw new ContractException(StochasticsError.NULL_SEED);
 			}
 		}
+
 		/**
 		 * Returns the StochasticsInitialData formed from the collected
 		 * RandomNumberGeneratorId values. Clears the builder's state.
 		 * 
 		 * @throws ContractException
-		 * <li>{@linkplain StochasticsError#NULL_SEED} if the seed was not set</li>
+		 *             <li>{@linkplain StochasticsError#NULL_SEED} if the seed
+		 *             was not set</li>
 		 * 
 		 */
 		public StochasticsPluginData build() {
@@ -155,7 +107,7 @@ public final class StochasticsPluginData implements PluginData{
 			data.randomNumberGeneratorIds.add(randomNumberGeneratorId);
 			return this;
 		}
-		
+
 		/**
 		 * Sets the seed value.
 		 */
@@ -163,7 +115,7 @@ public final class StochasticsPluginData implements PluginData{
 			data.seed = seed;
 			return this;
 		}
-		
+
 	}
 
 	private static void validateRandomNumberGeneratorIdNotNull(final Object value) {
@@ -181,10 +133,9 @@ public final class StochasticsPluginData implements PluginData{
 
 	private final Data data;
 
-	
-
 	/**
-	 * Returns the RandomNumberGeneratorId values contained in this {@link StochasticsInitialData}
+	 * Returns the RandomNumberGeneratorId values contained in this container
+	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds() {
@@ -194,10 +145,10 @@ public final class StochasticsPluginData implements PluginData{
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns the seed.
-	 */	
+	 * Returns the base seed.
+	 */
 	public long getSeed() {
 		return data.seed;
 	}
