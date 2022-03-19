@@ -24,7 +24,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PersonDataManager;
 import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonContructionData;
+import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 
 @UnitTest(target = PeopleLoader.class)
@@ -41,9 +41,9 @@ public final class AT_PeopleLoader {
 		BulkPersonConstructionData.Builder	bulkBuilder =	BulkPersonConstructionData.builder();
 		for (int i = 0; i < personCount; i++) {
 			expectedPersonIds.add(new PersonId(i));
-			bulkBuilder.add(PersonContructionData.builder().build());
+			bulkBuilder.add(PersonConstructionData.builder().build());
 		}
-		peopleDataBuilder.addBulkPersonContructionData(bulkBuilder.build());
+		peopleDataBuilder.addBulkPersonConstructionData(bulkBuilder.build());
 		PeoplePluginData peoplePluginData = peopleDataBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 

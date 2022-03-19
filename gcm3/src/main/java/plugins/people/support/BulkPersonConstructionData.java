@@ -10,7 +10,7 @@ import nucleus.util.ContractException;
 
 
 /**
- * A collection of {@link PersonContructionData} that represents multiple person
+ * A collection of {@link PersonConstructionData} that represents multiple person
  * additions combined with a collection of unspecified data types that can be
  * used as auxiliary data about those people.
  *
@@ -19,7 +19,7 @@ import nucleus.util.ContractException;
 public final class BulkPersonConstructionData {
 
 	private static class Data {
-		private List<PersonContructionData> personContructionDatas = new ArrayList<>();
+		private List<PersonConstructionData> personConstructionDatas = new ArrayList<>();
 		private List<Object> values = new ArrayList<>();
 	}
 
@@ -59,15 +59,15 @@ public final class BulkPersonConstructionData {
 		 * Adds the construction data for a single person
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_BULK_PERSON_CONTRUCTION_DATA}
+		 *             <li>{@linkplain PersonError#NULL_BULK_PERSON_CONSTRUCTION_DATA}
 		 *             if the person construction data is null</li>
 		 * 
 		 */
-		public Builder add(PersonContructionData personContructionData) {
-			if (personContructionData == null) {
-				throw new ContractException(PersonError.NULL_PERSON_CONTRUCTION_DATA);
+		public Builder add(PersonConstructionData personConstructionData) {
+			if (personConstructionData == null) {
+				throw new ContractException(PersonError.NULL_PERSON_CONSTRUCTION_DATA);
 			}
-			data.personContructionDatas.add(personContructionData);
+			data.personConstructionDatas.add(personConstructionData);
 			return this;
 		}
 
@@ -90,11 +90,11 @@ public final class BulkPersonConstructionData {
 	}
 
 	/**
-	 * Returns the PersonContructionData in the order of their addition to the
+	 * Returns the PersonConstructionData in the order of their addition to the
 	 * builder
 	 */
-	public List<PersonContructionData> getPersonContructionDatas() {
-		return Collections.unmodifiableList(data.personContructionDatas);
+	public List<PersonConstructionData> getPersonConstructionDatas() {
+		return Collections.unmodifiableList(data.personConstructionDatas);
 	}
 
 	/**

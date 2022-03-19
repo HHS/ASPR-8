@@ -66,21 +66,21 @@ public final class PeoplePluginData implements PluginData {
 		 * Adds a person.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_BULK_PERSON_CONTRUCTION_DATA}
+		 *             <li>{@linkplain PersonError#NULL_BULK_PERSON_CONSTRUCTION_DATA}
 		 *             if the bulk person construction data is null</li>
 		 *            
 		 * 
 		 */
-		public Builder addBulkPersonContructionData(BulkPersonConstructionData bulkPersonConstructionData) {
-			validateBulkPersonContructionDataNotNull(bulkPersonConstructionData);			
+		public Builder addBulkPersonConstructionData(BulkPersonConstructionData bulkPersonConstructionData) {
+			validateBulkPersonConstructionDataNotNull(bulkPersonConstructionData);			
 			data.bulkPersonConstructionDatas.add(bulkPersonConstructionData);
 			return this;
 		}
 	}
 	
-	private static void validateBulkPersonContructionDataNotNull(BulkPersonConstructionData bulkPersonConstructionData) {
+	private static void validateBulkPersonConstructionDataNotNull(BulkPersonConstructionData bulkPersonConstructionData) {
 		if (bulkPersonConstructionData == null) {
-			throw new ContractException(PersonError.NULL_BULK_PERSON_CONTRUCTION_DATA);
+			throw new ContractException(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA);
 		}
 	}
 

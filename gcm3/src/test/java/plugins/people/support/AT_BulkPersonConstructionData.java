@@ -18,7 +18,7 @@ import annotations.UnitTestMethod;
 import nucleus.Event;
 
 @UnitTest(target = BulkPersonConstructionData.class)
-public final class AT_BulkPersonContructionData implements Event {
+public final class AT_BulkPersonConstructionData implements Event {
 
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
@@ -33,22 +33,22 @@ public final class AT_BulkPersonContructionData implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(target = BulkPersonConstructionData.Builder.class, name = "add", args = { PersonContructionData.class })
+	@UnitTestMethod(target = BulkPersonConstructionData.Builder.class, name = "add", args = { PersonConstructionData.class })
 	public void testAdd() {
 		BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
 
-		List<PersonContructionData> expectedPersonConstructionData = new ArrayList<>();
+		List<PersonConstructionData> expectedPersonConstructionData = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
-			expectedPersonConstructionData.add(PersonContructionData.builder().add(i).build());
+			expectedPersonConstructionData.add(PersonConstructionData.builder().add(i).build());
 		}
 
-		for (PersonContructionData personContructionData : expectedPersonConstructionData) {
-			builder.add(personContructionData);
+		for (PersonConstructionData personConstructionData : expectedPersonConstructionData) {
+			builder.add(personConstructionData);
 		}
 
 		// show the person construction data returned match the ones contributed
 		// in the correct order
-		assertEquals(expectedPersonConstructionData, builder.build().getPersonContructionDatas());
+		assertEquals(expectedPersonConstructionData, builder.build().getPersonConstructionDatas());
 	}
 
 	@Test
@@ -95,22 +95,22 @@ public final class AT_BulkPersonContructionData implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonContructionDatas", args = {})
-	public void testGetPersonContructionDatas() {
+	@UnitTestMethod(name = "getPersonConstructionDatas", args = {})
+	public void testGetPersonConstructionDatas() {
 		BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
 
-		List<PersonContructionData> expectedPersonConstructionData = new ArrayList<>();
+		List<PersonConstructionData> expectedPersonConstructionData = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
-			expectedPersonConstructionData.add(PersonContructionData.builder().add(i).build());
+			expectedPersonConstructionData.add(PersonConstructionData.builder().add(i).build());
 		}
 
-		for (PersonContructionData personContructionData : expectedPersonConstructionData) {
-			builder.add(personContructionData);
+		for (PersonConstructionData personConstructionData : expectedPersonConstructionData) {
+			builder.add(personConstructionData);
 		}
 
 		// show the person construction data returned match the ones contributed
 		// in the correct order
-		assertEquals(expectedPersonConstructionData, builder.build().getPersonContructionDatas());
+		assertEquals(expectedPersonConstructionData, builder.build().getPersonConstructionDatas());
 	}
 
 	@Test

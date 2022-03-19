@@ -12,7 +12,7 @@ import plugins.people.events.BulkPersonCreationObservationEvent;
 import plugins.people.events.PersonCreationObservationEvent;
 import plugins.people.events.PersonImminentRemovalObservationEvent;
 import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonContructionData;
+import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
@@ -48,16 +48,16 @@ public final class PersonDataManager extends DataManager {
 	 * getPersonIdLimit() just prior to invoking this method.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_CONTRUCTION_DATA} if
+	 *             <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA} if
 	 *             the person construction data is null</li>
 	 *
 	 */
 	public Optional<PersonId> addBulkPeople(final BulkPersonConstructionData bulkPersonConstructionData) {
-		validateBulkPersonContructionData(bulkPersonConstructionData);
+		validateBulkPersonConstructionData(bulkPersonConstructionData);
 
-		final List<PersonContructionData> personContructionDatas = bulkPersonConstructionData.getPersonContructionDatas();
+		final List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 		PersonId result = null;
-		final int count = personContructionDatas.size();
+		final int count = personConstructionDatas.size();
 		for (int i = 0; i < count; i++) {
 			final PersonId personId = addPersonId();
 			if (result == null) {
@@ -79,16 +79,16 @@ public final class PersonDataManager extends DataManager {
 	 * getPersonIdLimit() just prior to invoking this method.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_CONTRUCTION_DATA} if
+	 *             <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA} if
 	 *             the person construction data is null</li>
 	 *
 	 */
-	public PersonId addPerson(final PersonContructionData personContructionData) {
-		validatePersonContructionDataNotNull(personContructionData);
+	public PersonId addPerson(final PersonConstructionData personConstructionData) {
+		validatePersonConstructionDataNotNull(personConstructionData);
 
 		final PersonId personId = addPersonId();
 
-		final PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(personId, personContructionData);
+		final PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(personId, personConstructionData);
 		dataManagerContext.releaseEvent(personCreationObservationEvent);
 
 		return personId;
@@ -262,15 +262,15 @@ public final class PersonDataManager extends DataManager {
 
 	}
 
-	private void validateBulkPersonContructionData(final BulkPersonConstructionData bulkPersonConstructionData) {
+	private void validateBulkPersonConstructionData(final BulkPersonConstructionData bulkPersonConstructionData) {
 		if (bulkPersonConstructionData == null) {
-			throw new ContractException(PersonError.NULL_BULK_PERSON_CONTRUCTION_DATA);
+			throw new ContractException(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA);
 		}
 	}
 
-	private void validatePersonContructionDataNotNull(final PersonContructionData personContructionData) {
-		if (personContructionData == null) {
-			throw new ContractException(PersonError.NULL_PERSON_CONTRUCTION_DATA);
+	private void validatePersonConstructionDataNotNull(final PersonConstructionData personConstructionData) {
+		if (personConstructionData == null) {
+			throw new ContractException(PersonError.NULL_PERSON_CONSTRUCTION_DATA);
 		}
 	}
 

@@ -32,7 +32,7 @@ public class AT_BulkPersonCreationObservationEvent implements Event {
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		contractException = assertThrows(ContractException.class, () -> new BulkPersonCreationObservationEvent(personId, null));
-		assertEquals(PersonError.NULL_BULK_PERSON_CONTRUCTION_DATA, contractException.getErrorType());
+		assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 
 	}
 
@@ -51,12 +51,12 @@ public class AT_BulkPersonCreationObservationEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBulkPersonContructionData", args = {})
-	public void testGetBulkPersonContructionData() {
+	@UnitTestMethod(name = "getBulkPersonConstructionData", args = {})
+	public void testGetBulkPersonConstructionData() {
 		PersonId personId = new PersonId(45);
 		BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().build();
 		BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent = new BulkPersonCreationObservationEvent(personId, bulkPersonConstructionData);
-		assertEquals(bulkPersonConstructionData, bulkPersonCreationObservationEvent.getBulkPersonContructionData());
+		assertEquals(bulkPersonConstructionData, bulkPersonCreationObservationEvent.getBulkPersonConstructionData());
 	}
 
 	

@@ -16,23 +16,23 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
 
-@UnitTest(target = PersonContructionData.class)
-public final class AT_PersonContructionData {
+@UnitTest(target = PersonConstructionData.class)
+public final class AT_PersonConstructionData {
 
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		assertNotNull(PersonContructionData.builder());
+		assertNotNull(PersonConstructionData.builder());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonContructionData.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = PersonConstructionData.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		assertNotNull(PersonContructionData.builder().build());
+		assertNotNull(PersonConstructionData.builder().build());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonContructionData.Builder.class, name = "add", args = { Object.class })
+	@UnitTestMethod(target = PersonConstructionData.Builder.class, name = "add", args = { Object.class })
 	public void testAdd() {
 		Map<Class<?>, List<Object>> expectedValues = new LinkedHashMap<>();
 
@@ -48,7 +48,7 @@ public final class AT_PersonContructionData {
 		/*
 		 * Fill the builder and add to the expected values map
 		 */
-		PersonContructionData.Builder builder = PersonContructionData.builder();
+		PersonConstructionData.Builder builder = PersonConstructionData.builder();
 		for (Object value : values) {
 			builder.add(value);
 			List<Object> list = expectedValues.get(value.getClass());
@@ -63,15 +63,15 @@ public final class AT_PersonContructionData {
 		 * Show that the person construction data returns the auxiliary data by type
 		 * and in the correct order
 		 */
-	   PersonContructionData personContructionData = builder.build();
+	   PersonConstructionData personConstructionData = builder.build();
 		for (Class<?> c : expectedValues.keySet()) {
 			List<Object> expectedList = expectedValues.get(c);
-			List<?> actualList = personContructionData.getValues(c);
+			List<?> actualList = personConstructionData.getValues(c);
 			assertEquals(expectedList, actualList);
 		}
 		
 		//show that types that have no values return an empty list
-		assertTrue(personContructionData.getValues(Double.class).isEmpty());
+		assertTrue(personConstructionData.getValues(Double.class).isEmpty());
 
 	}
 
@@ -92,7 +92,7 @@ public final class AT_PersonContructionData {
 		/*
 		 * Fill the builder and add to the expected values map
 		 */
-		PersonContructionData.Builder builder = PersonContructionData.builder();
+		PersonConstructionData.Builder builder = PersonConstructionData.builder();
 		for (Object value : values) {
 			builder.add(value);
 			List<Object> list = expectedValues.get(value.getClass());
@@ -107,10 +107,10 @@ public final class AT_PersonContructionData {
 		 * Show that the bulk construction data returns the first auxiliary data by type
 		 * 
 		 */
-		PersonContructionData personContructionData = builder.build();
+		PersonConstructionData personConstructionData = builder.build();
 		for (Class<?> c : expectedValues.keySet()) {
 			Object expectedValue = expectedValues.get(c).get(0);
-			Optional<?> optional = personContructionData.getValue(c);
+			Optional<?> optional = personConstructionData.getValue(c);
 			assertTrue(optional.isPresent());
 			Object actualValue = optional.get(); 
 			assertEquals(expectedValue, actualValue);
@@ -118,7 +118,7 @@ public final class AT_PersonContructionData {
 		
 		//show that types not contained return 
 		
-		Optional<Double> optional = personContructionData.getValue(Double.class);
+		Optional<Double> optional = personConstructionData.getValue(Double.class);
 		assertFalse(optional.isPresent());
 	}
 
@@ -140,7 +140,7 @@ public final class AT_PersonContructionData {
 		/*
 		 * Fill the builder and add to the expected values map
 		 */
-		PersonContructionData.Builder builder = PersonContructionData.builder();
+		PersonConstructionData.Builder builder = PersonConstructionData.builder();
 		for (Object value : values) {
 			builder.add(value);
 			List<Object> list = expectedValues.get(value.getClass());
@@ -155,15 +155,15 @@ public final class AT_PersonContructionData {
 		 * Show that the construction data returns the auxiliary data by type
 		 * and in the correct order
 		 */
-		PersonContructionData personContructionData = builder.build();
+		PersonConstructionData personConstructionData = builder.build();
 		for (Class<?> c : expectedValues.keySet()) {
 			List<Object> expectedList = expectedValues.get(c);
-			List<?> actualList = personContructionData.getValues(c);
+			List<?> actualList = personConstructionData.getValues(c);
 			assertEquals(expectedList, actualList);
 		}
 		
 		//show that types that have no values return an empty list
-		assertTrue(personContructionData.getValues(Double.class).isEmpty());
+		assertTrue(personConstructionData.getValues(Double.class).isEmpty());
 	}
 
 }

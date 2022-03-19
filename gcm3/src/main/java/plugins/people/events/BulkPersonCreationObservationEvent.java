@@ -27,7 +27,7 @@ public class BulkPersonCreationObservationEvent implements Event {
 	/**
 	 * Constructs the event from the given person and bulk person construction
 	 * data. The person id will correspond to the first person created from the
-	 * BulkPersonContructionData.
+	 * BulkPersonConstructionData.
 	 * 
 	 */
 	public BulkPersonCreationObservationEvent(final PersonId personId, BulkPersonConstructionData bulkPersonConstructionData) {
@@ -35,7 +35,7 @@ public class BulkPersonCreationObservationEvent implements Event {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
 		if (bulkPersonConstructionData == null) {
-			throw new ContractException(PersonError.NULL_BULK_PERSON_CONTRUCTION_DATA);
+			throw new ContractException(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA);
 		}
 
 		this.personId = personId;
@@ -44,17 +44,17 @@ public class BulkPersonCreationObservationEvent implements Event {
 
 	/**
 	 * Returns the person id for the first person that was created from the
-	 * BulkPersonContructionData. People are constructed contiguously in the
-	 * order contained in the BulkPersonContructionData.
+	 * BulkPersonConstructionData. People are constructed contiguously in the
+	 * order contained in the BulkPersonConstructionData.
 	 */
 	public PersonId getPersonId() {
 		return personId;
 	}
 
 	/**
-	 * Returns the BulkPersonContructionData used to create this event.
+	 * Returns the BulkPersonConstructionData used to create this event.
 	 */
-	public BulkPersonConstructionData getBulkPersonContructionData() {
+	public BulkPersonConstructionData getBulkPersonConstructionData() {
 		return bulkPersonConstructionData;
 	}
 

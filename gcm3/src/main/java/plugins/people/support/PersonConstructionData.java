@@ -13,11 +13,11 @@ import nucleus.util.ContractException;
  *
  */
 @Immutable
-public final class PersonContructionData {
+public final class PersonConstructionData {
 
 	private final List<Object> values;
 
-	private PersonContructionData(List<Object> auxiliaryData) {
+	private PersonConstructionData(List<Object> auxiliaryData) {
 		this.values = auxiliaryData;
 	}
 
@@ -26,7 +26,7 @@ public final class PersonContructionData {
 	}
 
 	/**
-	 * Builder class for {@link PersonContructionData}
+	 * Builder class for {@link PersonConstructionData}
 	 * 
 	 * @author Shawn Hatch
 	 *
@@ -39,12 +39,12 @@ public final class PersonContructionData {
 		}
 
 		/**
-		 * Returns the {@link PersonContructionData} formed from the inputs to
+		 * Returns the {@link PersonConstructionData} formed from the inputs to
 		 * this builder.
 		 */
-		public PersonContructionData build() {
+		public PersonConstructionData build() {
 			try {
-				return new PersonContructionData(values);
+				return new PersonConstructionData(values);
 			} finally {
 				values = new ArrayList<>();
 			}

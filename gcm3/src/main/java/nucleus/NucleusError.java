@@ -11,7 +11,7 @@ import nucleus.util.ContractException;
  *
  */
 public enum NucleusError implements ContractError {
-
+	ACCESS_VIOLATION("A contributed behavior is accessing locked state during a state change"),
 	AMBIGUOUS_DATA_MANAGER_CLASS("Multiple data manager matches found"),
 	AMBIGUOUS_PLUGIN_DATA_CLASS("Multiple plugin data object matches found"),
 	DATA_MANAGER_DUPLICATE_INITIALIZATION("Data manager was already initialized"),
@@ -28,6 +28,7 @@ public enum NucleusError implements ContractError {
 	NULL_META_DATA("Null meta data"),
 	NEGATIVE_THREAD_COUNT("Negative thread count"),
 	NULL_EXPERIMENT_CONTEXT_CONSUMER("Null experiment context consumer"),
+	NULL_SIMULATION_CONTEXT("Null simulation context"),
 	NULL_ACTOR_CONTEXT_CONSUMER("Null actor context consumer"),
 	NULL_ACTOR_ID("Null actor id"),
 	NULL_DATA_MANAGER("Null data manager"),

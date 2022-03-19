@@ -8,14 +8,14 @@ import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
 import nucleus.SimpleEventLabeler;
 import nucleus.util.ContractException;
-import plugins.people.support.PersonContructionData;
+import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
 @Immutable
 public class PersonCreationObservationEvent implements Event {
 	private final PersonId personId;
-	private final PersonContructionData personContructionData;
+	private final PersonConstructionData personConstructionData;
 
 	/**
 	 * Constructs the event from the given person id and person construction
@@ -24,19 +24,19 @@ public class PersonCreationObservationEvent implements Event {
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
 	 *             is null</li>
-	 *             <li>{@linkplain PersonError#NULL_PERSON_CONTRUCTION_DATA} if
+	 *             <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA} if
 	 *             the person construction data is null</li>
 	 */
-	public PersonCreationObservationEvent(final PersonId personId, PersonContructionData personContructionData) {
+	public PersonCreationObservationEvent(final PersonId personId, PersonConstructionData personConstructionData) {
 
 		if(personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if(personContructionData == null) {
-			throw new ContractException(PersonError.NULL_PERSON_CONTRUCTION_DATA);
+		if(personConstructionData == null) {
+			throw new ContractException(PersonError.NULL_PERSON_CONSTRUCTION_DATA);
 		}
 		this.personId = personId;
-		this.personContructionData = personContructionData;
+		this.personConstructionData = personConstructionData;
 	}
 
 	/**
@@ -49,8 +49,8 @@ public class PersonCreationObservationEvent implements Event {
 	/**
 	 * Returns the person construction data used to create this event
 	 */
-	public PersonContructionData getPersonContructionData() {
-		return personContructionData;
+	public PersonConstructionData getPersonConstructionData() {
+		return personConstructionData;
 	}
 	
 	/**

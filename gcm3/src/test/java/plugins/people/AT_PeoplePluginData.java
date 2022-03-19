@@ -14,7 +14,7 @@ import annotations.UnitTest;
 import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
 import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonContructionData;
+import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 
 @UnitTest(target = PeoplePluginData.class)
@@ -36,16 +36,16 @@ public final class AT_PeoplePluginData {
 		for (int i = 0; i < 10; i++) {
 
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData	.builder()//
-										.add(PersonContructionData.builder().build())//
-										.add(PersonContructionData.builder().build())//
-										.add(PersonContructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
 										.build();//
 
 			expectedBulkPersonConstructionDatas.add(bulkPersonConstructionData);
 		}
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
 		for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionDatas) {
-			builder.addBulkPersonContructionData(bulkPersonConstructionData);
+			builder.addBulkPersonConstructionData(bulkPersonConstructionData);
 		}
 
 		peoplePluginData = builder.build();
@@ -53,8 +53,8 @@ public final class AT_PeoplePluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "addBulkPersonContructionData", args = { BulkPersonConstructionData.class })
-	public void testAddBulkPersonContructionData() {
+	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "addBulkPersonConstructionData", args = { BulkPersonConstructionData.class })
+	public void testAddBulkPersonConstructionData() {
 		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
 		assertTrue(peoplePluginData.getBulkPersonConstructionDatas().isEmpty());
 
@@ -62,16 +62,16 @@ public final class AT_PeoplePluginData {
 		for (int i = 0; i < 10; i++) {
 
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData	.builder()//
-										.add(PersonContructionData.builder().build())//
-										.add(PersonContructionData.builder().build())//
-										.add(PersonContructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
 										.build();//
 
 			expectedBulkPersonConstructionDatas.add(bulkPersonConstructionData);
 		}
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
 		for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionDatas) {
-			builder.addBulkPersonContructionData(bulkPersonConstructionData);
+			builder.addBulkPersonConstructionData(bulkPersonConstructionData);
 		}
 
 		peoplePluginData = builder.build();
@@ -79,8 +79,8 @@ public final class AT_PeoplePluginData {
 
 		// precondition tests
 		
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.addBulkPersonContructionData(null));
-		assertEquals(PersonError.NULL_BULK_PERSON_CONTRUCTION_DATA, contractException.getErrorType());
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.addBulkPersonConstructionData(null));
+		assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 
 	}
 
@@ -94,16 +94,16 @@ public final class AT_PeoplePluginData {
 		for (int i = 0; i < 10; i++) {
 
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData	.builder()//
-										.add(PersonContructionData.builder().build())//
-										.add(PersonContructionData.builder().build())//
-										.add(PersonContructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
+										.add(PersonConstructionData.builder().build())//
 										.build();//
 
 			expectedBulkPersonConstructionDatas.add(bulkPersonConstructionData);
 		}
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
 		for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionDatas) {
-			builder.addBulkPersonContructionData(bulkPersonConstructionData);
+			builder.addBulkPersonConstructionData(bulkPersonConstructionData);
 		}
 
 		peoplePluginData = builder.build();
