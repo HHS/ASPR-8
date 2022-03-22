@@ -145,7 +145,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PeopleActionSupport.testConsumers(plugin);
 
@@ -201,7 +201,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PeopleActionSupport.testConsumers(plugin);
 
@@ -279,7 +279,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PeopleActionSupport.testConsumers(testPlugin);
 	}
@@ -332,7 +332,7 @@ public final class AT_PersonDataManager {
 
 		}));
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PeopleActionSupport.testConsumers(testPlugin);
 
@@ -457,7 +457,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PeopleActionSupport.testConsumers(testPlugin);
 	}

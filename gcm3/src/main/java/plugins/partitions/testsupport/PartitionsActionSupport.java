@@ -33,7 +33,7 @@ public class PartitionsActionSupport {
 		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(0, consumer));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		testConsumers(initialPopulation, seed, testPlugin);
 	}

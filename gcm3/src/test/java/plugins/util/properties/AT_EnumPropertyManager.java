@@ -131,7 +131,7 @@ public class AT_EnumPropertyManager {
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		TestActionSupport.testConsumers(plugin);
 
 		// precondition tests:

@@ -13,7 +13,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
 @Immutable
-public class PersonCreationObservationEvent implements Event {
+public final class PersonCreationObservationEvent implements Event {
 	private final PersonId personId;
 	private final PersonConstructionData personConstructionData;
 

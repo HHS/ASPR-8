@@ -39,7 +39,7 @@ public class PeopleActionSupport {
 														.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
 														.build();
 
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		testConsumers(plugin);
 	}
 

@@ -657,8 +657,6 @@ public class Simulation {
 
 		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
 
-		
-
 		/*
 		 * Add the nodes to the graph, check for duplicate ids, build the
 		 * mapping from plugin id back to plugin
@@ -789,10 +787,15 @@ public class Simulation {
 	 * 
 	 *             <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES} if the
 	 *             contributed plugins form a circular chain of dependencies
+	 *             <li>{@link NucleusError#DATA_MANAGER_INITIALIZATION_FAILURE}
+	 *             if a data manager does not invoke
+	 *             {@linkplain DataManager#init(DataManagerContext)} in its
+	 *             override of init().
+	 * 
 	 * 
 	 */
 	public void execute() {
-		
+
 		// start the simulation
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);

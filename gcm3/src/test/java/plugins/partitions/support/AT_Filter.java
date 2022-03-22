@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-import org.omg.CORBA.Environment;
 
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
@@ -21,25 +20,7 @@ import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonId;
 
-/**
- * Test unit for {@link Filter}. The AT_Environment covers adding population
- * indexes generally and these tests could be added to that unit, but would not
- * adhere to its test method nomenclature. Rather than make some of those tests
- * extremely long, we break up the tests into numerous sub-tests, limiting the
- * scope to adding population indexes using the filter-style and custom filters
- * only.
- *
- * Tests each of the static filter constructions, sometimes in compositions, and
- * their corresponding constructions via the FilterBuilder. Tests are executed
- * through an instance of the simulation. Rather than invoking the filter for
- * each person, we will use {@link Environment#getIndexedPeople(Object)}.
- * 
- * Seed cases for creating TestPlanExecutors range from 1000 to 1999
- *
- *
- * @author Shawn Hatch
- *
- */
+
 @UnitTest(target = Filter.class)
 public class AT_Filter {
 	

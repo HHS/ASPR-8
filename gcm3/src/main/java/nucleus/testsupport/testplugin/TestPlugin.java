@@ -53,7 +53,7 @@ public class TestPlugin {
 
 	}
 
-	public static Plugin getPlugin(PluginData pluginData) {
+	public static Plugin getTestPlugin(PluginData pluginData) {
 		return Plugin	.builder()//
 						.setInitializer(TestPlugin::init)//
 						.addPluginData(pluginData)//

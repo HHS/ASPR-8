@@ -120,7 +120,7 @@ public final class AT_GlobalDataManager {
 		}));
 
 		TestPluginData testPluginData = testPluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		Simulation	.builder()//
@@ -214,7 +214,7 @@ public final class AT_GlobalDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		GlobalsActionSupport.testConsumers(testPlugin);
 
 		
@@ -319,7 +319,7 @@ public final class AT_GlobalDataManager {
 			}));
 		});
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		GlobalsActionSupport.testConsumers(testPlugin);
 
 		GlobalsActionSupport.testConsumer((c) -> {

@@ -44,7 +44,7 @@ public class AT_StochasticsPlugin {
 			assertTrue(optionalDataManager.isPresent());
 		}));
 		TestPluginData testPluginData = testPluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		Simulation	.builder()//
 					.addPlugin(testPlugin)//

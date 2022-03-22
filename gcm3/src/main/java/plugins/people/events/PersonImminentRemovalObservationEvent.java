@@ -21,7 +21,7 @@ import plugins.people.support.PersonId;
  *
  */
 @Immutable
-public class PersonImminentRemovalObservationEvent implements Event {
+public final class PersonImminentRemovalObservationEvent implements Event {
 	private final PersonId personId;
 
 	/**

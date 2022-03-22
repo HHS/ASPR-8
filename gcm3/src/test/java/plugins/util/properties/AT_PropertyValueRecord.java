@@ -41,7 +41,7 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		TestActionSupport.testConsumers(plugin);
 	}
 
@@ -68,7 +68,7 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		TestActionSupport.testConsumers(plugin);
 	}
 
@@ -91,7 +91,7 @@ public class AT_PropertyValueRecord {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		TestActionSupport.testConsumers(plugin);
 
 	}

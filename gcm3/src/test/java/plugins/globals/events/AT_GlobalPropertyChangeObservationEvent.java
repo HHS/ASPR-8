@@ -179,7 +179,7 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, consumer));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		builder.addPlugin(testPlugin);
 
 		// build and execute the engine

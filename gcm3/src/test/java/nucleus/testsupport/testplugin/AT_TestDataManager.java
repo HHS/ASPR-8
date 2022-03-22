@@ -75,7 +75,7 @@ public class AT_TestDataManager {
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 

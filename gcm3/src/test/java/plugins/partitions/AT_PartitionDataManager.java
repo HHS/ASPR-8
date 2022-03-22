@@ -1671,7 +1671,7 @@ public final class AT_PartitionDataManager {
 
 		// build and add the action plugin to the engine
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		PartitionsActionSupport.testConsumers(100, 6406306513403641718L, testPlugin);
 	}
 

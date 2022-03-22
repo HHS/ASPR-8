@@ -238,7 +238,7 @@ public class AT_PeriodicReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		builder.addPlugin(testPlugin);
 
 		// build and execute the simulation
@@ -275,7 +275,7 @@ public class AT_PeriodicReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		builder.addPlugin(testPlugin);
 
 		// build and execute the engine
@@ -313,7 +313,7 @@ public class AT_PeriodicReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		builder.addPlugin(testPlugin);
 
 		// build and execute the engine
@@ -358,7 +358,7 @@ public class AT_PeriodicReport {
 			}));
 
 			TestPluginData testPluginData = pluginBuilder.build();
-			Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 			builder.addPlugin(testPlugin);
 
 			// build and execute the engine

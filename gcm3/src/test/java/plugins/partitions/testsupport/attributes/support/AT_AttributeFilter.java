@@ -155,7 +155,7 @@ public final class AT_AttributeFilter {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		builder.addPlugin(TestPlugin.getPlugin(testPluginData));
+		builder.addPlugin(TestPlugin.getTestPlugin(testPluginData));
 
 		// build and execute the engine
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();

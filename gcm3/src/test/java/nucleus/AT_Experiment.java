@@ -131,7 +131,7 @@ public class AT_Experiment {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		Set<MultiKey> actualOutput = new LinkedHashSet<>();
 

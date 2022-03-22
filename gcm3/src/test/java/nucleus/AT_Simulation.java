@@ -146,7 +146,7 @@ public class AT_Simulation {
 		LocalOutputConsumer localOutputConsumer2 = new LocalOutputConsumer();
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// run the simulation
 		Simulation	.builder()//

@@ -106,7 +106,7 @@ public class AT_AttributesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PartitionsActionSupport.testConsumers(expectedPersonIds.size(), 5241628071704306523L, testPlugin);
 

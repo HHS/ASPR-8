@@ -65,7 +65,7 @@ public class AT_AttributesPlugin {
 			assertTrue(optional.isPresent());
 		}));
 		TestPluginData testPluginData = testPluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 

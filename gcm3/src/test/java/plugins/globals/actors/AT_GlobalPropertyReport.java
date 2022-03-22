@@ -119,7 +119,7 @@ public class AT_GlobalPropertyReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		builder.addPlugin(testPlugin);
 
 		// build and execute the experiment

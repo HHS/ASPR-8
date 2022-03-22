@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
 import nucleus.Plugin;
-import nucleus.PluginContext;
 import nucleus.PluginId;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.PeoplePluginId;
@@ -21,8 +20,8 @@ import plugins.stochastics.StochasticsPluginId;
 public final class AT_PartitionsPlugin {
 
 	@Test
-	@UnitTestMethod(name = "init", args = { PluginContext.class })
-	public void testInit() {
+	@UnitTestMethod(name = "getPartitionsPlugin", args = {})
+	public void testGetPartitionsPlugin() {
 		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin();
 
 		assertTrue(partitionsPlugin.getPluginDatas().isEmpty());

@@ -120,7 +120,7 @@ public class AT_AbstractIndexedPropertyManager {
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getPlugin(testPluginData);
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		TestActionSupport.testConsumers(plugin);
 
 		// precondition test: if time tracking is no engaged

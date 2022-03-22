@@ -117,7 +117,7 @@ public class AT_PluginContext {
 
 		// build the action plugin
 		final TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		
 
 		// build and execute the engine

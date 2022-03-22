@@ -122,7 +122,7 @@ public final class AT_AttributeLabeler {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getPlugin(testPluginData);
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		PartitionsActionSupport.testConsumers(10, 4676319446289433016L, testPlugin);
 
 	}

@@ -20,7 +20,7 @@ import plugins.people.support.PersonId;
  *
  */
 @Immutable
-public class BulkPersonCreationObservationEvent implements Event {
+public final class BulkPersonCreationObservationEvent implements Event {
 	private final PersonId personId;
 	private final BulkPersonConstructionData bulkPersonConstructionData;
 
