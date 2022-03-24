@@ -385,8 +385,13 @@ public class RegionPluginData implements PluginData {
 	 * data. Each region id will correspond to a region agent that is
 	 * automatically added to the simulation during initialization.
 	 */
-	public Set<RegionId> getRegionIds() {
-		return new LinkedHashSet<>(data.regionIds);
+	@SuppressWarnings("unchecked")
+	public <T extends RegionId> Set<T> getRegionIds() {
+		Set<T> result = new LinkedHashSet<>();
+		for(RegionId regionId : data.regionIds) {
+			result.add((T)regionId);
+		}
+		return result;
 	}
 
 	/**
