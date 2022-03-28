@@ -36,7 +36,7 @@ public final class StochasticsDataManager extends DataManager {
 
 	/**
 	 * Returns the random generator associated with the given id. If the random
-	 * generator does not exit, a new one is created and seeded using the
+	 * generator does not exist, a new one is created and seeded using the
 	 * current base seed and the id.
 	 * 
 	 * RNG seed = seed + id.toString().hashcode()

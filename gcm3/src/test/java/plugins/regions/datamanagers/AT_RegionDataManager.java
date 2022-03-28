@@ -1187,7 +1187,7 @@ public class AT_RegionDataManager {
 		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.getPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
 
 		// add the partitions plugin
 		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());

@@ -56,7 +56,7 @@ public class StochasticsActionSupport {
 		}
 		builder.setSeed(seed);
 
-		Plugin stochasticPlugin = StochasticsPlugin.getPlugin(builder.build());
+		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(builder.build());
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPlugin(testPlugin)//

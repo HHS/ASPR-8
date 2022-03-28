@@ -72,7 +72,7 @@ public final class StochasticsPlugin {
 	 * Returns a plugin that will add a StochasticsDataManager to the simulation
 	 * at initialization
 	 */
-	public static Plugin getPlugin(StochasticsPluginData stochasticsPluginData) {
+	public static Plugin getStochasticsPlugin(StochasticsPluginData stochasticsPluginData) {
 
 		return Plugin	.builder()//
 						.addPluginData(stochasticsPluginData)//

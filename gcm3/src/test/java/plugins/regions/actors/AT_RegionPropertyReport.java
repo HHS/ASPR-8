@@ -98,7 +98,7 @@ public class AT_RegionPropertyReport {
 
 		// add remaining plugins
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-		builder.addPlugin(StochasticsPlugin.getPlugin(StochasticsPluginData.builder().setSeed(8833508541323194123L).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(8833508541323194123L).build()));
 		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();

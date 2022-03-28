@@ -71,7 +71,7 @@ public class AT_AttributesPlugin {
 
 		Simulation	.builder()//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(StochasticsPlugin.getPlugin(StochasticsPluginData.builder().setSeed(435346454564566L).build()))//
+					.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(435346454564566L).build()))//
 					.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()))//
 					.addPlugin(PartitionsPlugin.getPartitionsPlugin())
 					.addPlugin(attributesPlugin)//

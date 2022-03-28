@@ -68,7 +68,7 @@ public class PartitionsActionSupport {
 		Plugin reportPlugin = ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build());
 		builder.addPlugin(reportPlugin);
 
-		Plugin stochasticsPlugin = StochasticsPlugin.getPlugin(StochasticsPluginData.builder().setSeed(seed).build());
+		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build());
 		builder.addPlugin(stochasticsPlugin);
 
 		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin();

@@ -586,7 +586,7 @@ public final class AT_PersonPropertyDataManager {
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
-		Plugin stochasticsPlugin = StochasticsPlugin.getPlugin(stochasticsPluginData);
+		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		builder.addPlugin(stochasticsPlugin);
 
 		// add the action plugin

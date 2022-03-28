@@ -22,7 +22,7 @@ public class AT_PersonPropertiesPlugin {
 
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyPlugin", args = {PersonPropertiesPluginData.class})
-	public void testGetRegionPlugin() {
+	public void testgetPersonPropertyPlugin() {
 		PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder().build();
 		Plugin personPropertiesPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
 

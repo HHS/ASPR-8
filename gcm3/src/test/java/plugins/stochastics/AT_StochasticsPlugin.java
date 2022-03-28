@@ -24,7 +24,7 @@ public class AT_StochasticsPlugin {
 	public void testGetPlugin() {
 
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(34534).build();
-		Plugin stochasticsPlugin = StochasticsPlugin.getPlugin(stochasticsPluginData);
+		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// show the plugin is not null
 		assertNotNull(stochasticsPlugin);

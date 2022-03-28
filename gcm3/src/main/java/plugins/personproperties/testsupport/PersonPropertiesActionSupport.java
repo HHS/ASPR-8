@@ -75,7 +75,7 @@ public class PersonPropertiesActionSupport {
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(seed).build();
-		Plugin stochasticPlugin = StochasticsPlugin.getPlugin(stochasticsPluginData);
+		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		builder.addPlugin(stochasticPlugin);
 
 		// add the people plugin

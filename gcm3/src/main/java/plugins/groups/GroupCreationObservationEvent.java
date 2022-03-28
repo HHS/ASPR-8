@@ -1,0 +1,102 @@
+package plugins.groups;
+
+import net.jcip.annotations.Immutable;
+import nucleus.Event;
+import nucleus.EventLabel;
+import nucleus.EventLabeler;
+import nucleus.EventLabelerId;
+import nucleus.MultiKeyEventLabel;
+import nucleus.SimpleEventLabeler;
+import nucleus.SimulationContext;
+import nucleus.util.ContractException;
+import plugins.groups.support.GroupError;
+import plugins.groups.support.GroupId;
+import plugins.groups.support.GroupTypeId;
+
+/**
+ * An event indicating that a group has been created
+ * 
+ * @author Shawn Hatch
+ *
+ */
+@Immutable
+public class GroupCreationObservationEvent implements Event {
+
+	private final GroupId groupId;
+
+	/**
+	 * Constructs this event from the group id
+	 * 
+	 */
+	public GroupCreationObservationEvent(final GroupId groupId) {
+		this.groupId = groupId;
+	}
+
+	/**
+	 * Returns the group id used to create this event
+	 */
+	public GroupId getGroupId() {
+		return groupId;
+	}
+
+	private static enum LabelerId implements EventLabelerId {
+		TYPE, ALL
+	}
+
+	/**
+	 * Returns an event label used to subscribe to
+	 * {@link GroupCreationObservationEvent} events. Matches on group type id.
+	 *
+	 * Preconditions : The context cannot be null
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is not known</li>
+	 * 
+	 */
+	public static EventLabel<GroupCreationObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+		if (groupTypeId == null) {
+			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+		}
+		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
+			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
+		}
+		return new MultiKeyEventLabel<>(GroupCreationObservationEvent.class, LabelerId.TYPE, GroupCreationObservationEvent.class, groupTypeId);
+	}
+
+	/**
+	 * Returns an event labeler for {@link GroupCreationObservationEvent} events
+	 * that uses group type id. Automatically added at initialization.
+	 */
+	public static EventLabeler<GroupCreationObservationEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupCreationObservationEvent.class, (context, event) -> {
+			GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
+			return new MultiKeyEventLabel<>(GroupCreationObservationEvent.class, LabelerId.TYPE, GroupCreationObservationEvent.class, groupTypeId);
+		});
+	}
+
+	/**
+	 * Returns an event label used to subscribe to
+	 * {@link GroupCreationObservationEvent} events. Matches on all events.
+	 *
+	 *
+	 */
+	public static EventLabel<GroupCreationObservationEvent> getEventLabelByAll() {
+		return ALL_EVENT_LABEL_INSTANCE;
+	}
+
+	private final static EventLabel<GroupCreationObservationEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupCreationObservationEvent.class, LabelerId.ALL,
+			GroupCreationObservationEvent.class);
+
+	/**
+	 * Returns an event labeler for {@link GroupCreationObservationEvent} events
+	 * that matches all events. Automatically added at initialization.
+	 */
+	public static EventLabeler<GroupCreationObservationEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, GroupCreationObservationEvent.class, (context, event) -> ALL_EVENT_LABEL_INSTANCE);
+	}
+}

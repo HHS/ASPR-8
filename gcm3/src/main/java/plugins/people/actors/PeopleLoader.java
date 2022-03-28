@@ -16,7 +16,6 @@ public class PeopleLoader {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 		}
 		this.peoplePluginData = peoplePluginData;
-
 	}
 
 	public void init(ActorContext actorContext) {

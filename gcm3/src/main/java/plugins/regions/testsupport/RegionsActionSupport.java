@@ -67,7 +67,7 @@ public final class RegionsActionSupport {
 		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.getPlugin(StochasticsPluginData.builder().setSeed(seed).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build()));
 
 		// add the partitions plugin
 		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());

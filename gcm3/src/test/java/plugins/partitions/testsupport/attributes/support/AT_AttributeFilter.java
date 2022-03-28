@@ -121,7 +121,7 @@ public final class AT_AttributeFilter {
 
 		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
 
-		builder.addPlugin(StochasticsPlugin.getPlugin(StochasticsPluginData.builder().setSeed(7698506335486677498L).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(7698506335486677498L).build()));
 
 		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
