@@ -317,7 +317,7 @@ public final class GroupDataManager extends DataManager {
 	 * 
 	 * 
 	 */
-	public void addPersonToGroup(final GroupId groupId, final PersonId personId) {
+	public void addPersonToGroup(final PersonId personId, final GroupId groupId) {
 
 		validatePersonExists(personId);
 		validateGroupExists(groupId);
@@ -1148,7 +1148,7 @@ public final class GroupDataManager extends DataManager {
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is unknown</li>
 	 */
-	public boolean isGroupMember(final GroupId groupId, final PersonId personId) {
+	public boolean isPersonInGroup(final PersonId personId,final GroupId groupId) {
 		validatePersonExists(personId);
 		validateGroupExists(groupId);
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
@@ -1228,7 +1228,7 @@ public final class GroupDataManager extends DataManager {
 	 * 
 	 * 
 	 */
-	public void removePersonFromGroup(final GroupId groupId, final PersonId personId) {
+	public void removePersonFromGroup(final PersonId personId,final GroupId groupId) {
 
 		validatePersonExists(personId);
 		validateGroupExists(groupId);
@@ -1306,7 +1306,7 @@ public final class GroupDataManager extends DataManager {
 		final GroupWeightingFunction groupWeightingFunction = groupSampler.getWeightingFunction().orElse(null);
 		final PersonId excludedPersonId = groupSampler.getExcludedPerson().orElse(null);
 
-		final boolean exclude = (excludedPersonId != null) && isGroupMember(groupId, excludedPersonId);
+		final boolean exclude = (excludedPersonId != null) && isPersonInGroup(excludedPersonId,groupId);
 		PersonId selectedPersonId = null;
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 

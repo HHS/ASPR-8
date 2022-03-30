@@ -331,7 +331,7 @@ public class AT_PeriodicReport {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { ActorContext.class })
-	public void testInit_Daily() {
+	public void testInit() {
 
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
 

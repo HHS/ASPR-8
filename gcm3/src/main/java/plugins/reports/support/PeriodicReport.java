@@ -170,7 +170,7 @@ public abstract class PeriodicReport {
 	 * but happen to execute before the plan. Descendant implementors of
 	 * PeriodicReport should use this wrapper when subscribing to events.
 	 */
-	public final <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
+	protected final <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
 		return (c, t) -> {
 			if (c.getTime() >= nextPlanTime) {
 				if (lastFlushTime == null || c.getTime() > lastFlushTime) {

@@ -65,7 +65,7 @@ public class GroupMemberFilter extends Filter {
 		if (groupDataManager == null) {
 			groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
 		}
-		return groupDataManager.isGroupMember(groupId, personId);
+		return groupDataManager.isPersonInGroup(personId,groupId);
 	}
 
 }

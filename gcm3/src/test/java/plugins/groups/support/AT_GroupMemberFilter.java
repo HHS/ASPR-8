@@ -96,12 +96,12 @@ public class AT_GroupMemberFilter {
 			
 			for (PersonId personId : personDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
-					groupDataManager.addPersonToGroup(groupId, personId);					
+					groupDataManager.addPersonToGroup(personId,groupId);					
 				}
 			}
 
 			for (PersonId personId : personDataManager.getPeople()) {
-				boolean expected = groupDataManager.isGroupMember(groupId, personId);
+				boolean expected = groupDataManager.isPersonInGroup(personId,groupId);
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);
 			}

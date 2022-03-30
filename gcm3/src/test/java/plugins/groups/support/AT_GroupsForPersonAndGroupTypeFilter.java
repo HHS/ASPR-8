@@ -110,16 +110,16 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 				case 0:
 					break;
 				case 1:
-					groupDataManager.addPersonToGroup(groupId1, personId);										
+					groupDataManager.addPersonToGroup(personId,groupId1);										
 					break;
 				case 2:
-					groupDataManager.addPersonToGroup(groupId1, personId);
-					groupDataManager.addPersonToGroup(groupId2, personId);					
+					groupDataManager.addPersonToGroup(personId,groupId1);
+					groupDataManager.addPersonToGroup(personId,groupId2);					
 					break;
 				default:
-					groupDataManager.addPersonToGroup(groupId1, personId);
-					groupDataManager.addPersonToGroup(groupId2, personId);
-					groupDataManager.addPersonToGroup(groupId3, personId);					
+					groupDataManager.addPersonToGroup(personId,groupId1);
+					groupDataManager.addPersonToGroup(personId,groupId2);
+					groupDataManager.addPersonToGroup(personId,groupId3);					
 					break;
 				}
 
