@@ -279,7 +279,7 @@ public final class GroupDataManager extends DataManager {
 	private void loadGroupMembership() {
 		for (final GroupId groupId : groupPluginData.getGroupIds()) {
 			for (final PersonId personId : groupPluginData.getGroupMembers(groupId)) {
-				addPersonToGroup(groupId, personId);
+
 
 				List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 				if (people == null) {
@@ -345,20 +345,22 @@ public final class GroupDataManager extends DataManager {
 	 */
 	private void validatePersonNotInGroup(final PersonId personId, final GroupId groupId) {
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
-		if (groups == null || !groups.contains(groupId)) {
+		if (groups != null && groups.contains(groupId)) {
 			throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP, "Person " + personId + " is already a member of group " + groupId);
 		}
 	}
 
 	private void loadGroupPropertyValues() {
-		for (final GroupId scenarioGroupId : groupPluginData.getGroupIds()) {
-			final GroupTypeId groupTypeId = groupPluginData.getGroupTypeId(scenarioGroupId);
+		for (final GroupId groupId : groupPluginData.getGroupIds()) {
+			final GroupTypeId groupTypeId = groupPluginData.getGroupTypeId(groupId);
 			for (final GroupPropertyId groupPropertyId : groupPluginData.getGroupPropertyIds(groupTypeId)) {
-				final Object groupPropertyValue = groupPluginData.getGroupPropertyValue(scenarioGroupId, groupPropertyId);
+				final Object groupPropertyValue = groupPluginData.getGroupPropertyValue(groupId, groupPropertyId);
 				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
 				Object defaultValue = propertyDefinition.getDefaultValue().get();
 				if (!groupPropertyValue.equals(defaultValue)) {
-					setGroupPropertyValue(scenarioGroupId, groupPropertyId, groupPropertyValue);
+					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+					final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+					indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 				}
 			}
 		}
@@ -415,6 +417,7 @@ public final class GroupDataManager extends DataManager {
 	}
 
 	private void loadGroups() {
+		masterGroupId = -1;
 		for (final GroupId groupId : groupPluginData.getGroupIds()) {
 			final GroupTypeId groupTypeId = groupPluginData.getGroupTypeId(groupId);
 			final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
@@ -427,6 +430,7 @@ public final class GroupDataManager extends DataManager {
 			masterGroupId = FastMath.max(masterGroupId, groupId.getValue());
 			groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
 		}
+		masterGroupId++;
 	}
 
 	/**
@@ -830,7 +834,7 @@ public final class GroupDataManager extends DataManager {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
 
-		if (groupId.getValue() < 0 || groupsToTypesMap.getValueAsLong(groupId.getValue()) == 0) {
+		if (groupId.getValue() < 0 || groupsToTypesMap.getValueAsLong(groupId.getValue()) < 0) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 		}
 	}
@@ -1217,7 +1221,7 @@ public final class GroupDataManager extends DataManager {
 	 *             unknown</li>
 	 *             <li>{@link GroupError#NULL_GROUP_ID} if the group id is
 	 *             null</li>
-	 *             <li>{@link GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the group
+	 *             <li>{@link GroupError#UNKNOWN_GROUP_ID} if the group
 	 *             id is unknown</li>
 	 *             <li>{@link GroupError#NON_GROUP_MEMBERSHIP} if the person is
 	 *             not a member of the group</li>
@@ -1409,9 +1413,9 @@ public final class GroupDataManager extends DataManager {
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonCreationObservationEvent.getBulkPersonConstructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonConstructionData.getValue(BulkGroupMembershipData.class);
 		if (optional.isPresent()) {
-			int personCount = bulkPersonConstructionData.getPersonConstructionDatas().size();
-			PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
-			int basePersonIndex = personId.getValue();
+			int personCount = bulkPersonConstructionData.getPersonConstructionDatas().size();			
+			int basePersonIndex = bulkPersonCreationObservationEvent.getPersonId().getValue();
+
 			for (int i = 0; i < personCount; i++) {
 				validatePersonIndexExists(i + basePersonIndex);
 			}
@@ -1462,15 +1466,14 @@ public final class GroupDataManager extends DataManager {
 						people = new ArrayList<>();
 						groupsToPeopleMap.setValue(groupId.getValue(), people);
 					}
-					people.add(personId);
+					people.add(boxedPersonId);
 
-					List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
+					List<GroupId> groups = peopleToGroupsMap.getValue(boxedPersonId.getValue());
 					if (groups == null) {
 						groups = new ArrayList<>(1);
-						peopleToGroupsMap.setValue(personId.getValue(), groups);
+						peopleToGroupsMap.setValue(boxedPersonId.getValue(), groups);
 					}
 					groups.add(groupId);
-
 				}
 			}
 

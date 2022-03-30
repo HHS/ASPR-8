@@ -64,7 +64,7 @@ public class AT_PersonImminentRemovalObservationEvent implements Event {
 	@Test
 	@UnitTestMethod(name = "getEventLabeler", args = {})
 	public void testGetEventLabeler() {
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
 			EventLabeler<PersonImminentRemovalObservationEvent> eventLabeler = PersonImminentRemovalObservationEvent.getEventLabeler();

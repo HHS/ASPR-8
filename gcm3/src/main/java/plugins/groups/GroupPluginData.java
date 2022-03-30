@@ -46,7 +46,7 @@ public final class GroupPluginData implements PluginData {
 
 		private final Map<GroupId, GroupTypeId> groupTypes;
 
-		private final Map<GroupId, Set<PersonId>> groupMemberships = new LinkedHashMap<>();
+		private final Map<GroupId, Set<PersonId>> groupMemberships;
 		
 		
 		public Data() {
@@ -55,6 +55,7 @@ public final class GroupPluginData implements PluginData {
 			groupTypeIds = new LinkedHashSet<>();
 			groupIds = new LinkedHashSet<>();
 			groupTypes = new LinkedHashMap<>();
+			groupMemberships = new LinkedHashMap<>();
 		}
 		
 		public Data(Data data) {
@@ -75,6 +76,14 @@ public final class GroupPluginData implements PluginData {
 			groupTypeIds = new LinkedHashSet<>(data.groupTypeIds);
 			groupIds = new LinkedHashSet<>(data.groupIds);
 			groupTypes = new LinkedHashMap<>(data.groupTypes);
+			
+			groupMemberships = new LinkedHashMap<>();
+			for(GroupId groupId : data.groupMemberships.keySet()) {
+				Set<PersonId> set = data.groupMemberships.get(groupId);
+				Set<PersonId> newSet = new LinkedHashSet<>(set);
+				groupMemberships.put(groupId, newSet);
+			}
+			
 		}
 
 	}

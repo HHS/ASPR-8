@@ -25,8 +25,6 @@ import plugins.groups.support.GroupId;
 import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
@@ -136,12 +134,9 @@ public class GroupsActionSupport {
 		
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-		for (int i = 0; i < initialPopulation; i++) {
-			bulkBuilder.add(PersonConstructionData.builder().build());			
+		for (PersonId personId : people) {
+			peopleBuilder.addPersonId(personId);			
 		}
-		peopleBuilder.addBulkPersonConstructionData(bulkBuilder.build());
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);

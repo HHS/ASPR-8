@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestConstructor;
 import annotations.UnitTestMethod;
+import nucleus.DataManagerContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
@@ -1143,10 +1144,14 @@ public class AT_RegionDataManager {
 	
 	
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testRegionPluginData() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4454658950052475227L);
 		int initialPopulation = 30;
+		List<PersonId> people = new ArrayList<>();
+		for(int i = 0;i<initialPopulation;i++) {
+			people.add(new PersonId(i));
+		}
 
 		Builder builder = Simulation.builder();
 
@@ -1167,20 +1172,22 @@ public class AT_RegionDataManager {
 				}
 			}
 		}
+		TestRegionId testRegionId = TestRegionId.REGION_1;
+		for(PersonId personId : people) {
+			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			testRegionId = testRegionId.next();
+		}
 
 		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		RegionPluginData regionPluginData = regionPluginBuilder.build();
 		builder.addPlugin(RegionPlugin.getRegionPlugin(regionPluginData));
 
 		// add the people plugin
-		TestRegionId testRegionId = TestRegionId.REGION_1;
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-		for (int i = 0; i < initialPopulation; i++) {
-			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(testRegionId).build();
-			testRegionId = testRegionId.next();
-			bulkBuilder.add(personConstructionData);
+		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();		
+		for(PersonId personId : people) {
+			peopleBuilder.addPersonId(personId);			
 		}
-		PeoplePluginData peoplePluginData = PeoplePluginData.builder().addBulkPersonConstructionData(bulkBuilder.build()).build();
+		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
 
 		// add the report plugin
@@ -1240,7 +1247,7 @@ public class AT_RegionDataManager {
 	 * labelers are created
 	 */
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testPersonRegionChangeObservationEventLabelers() {
 		RegionsActionSupport.testConsumer(0, 2734071676096451334L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			EventLabeler<PersonRegionChangeObservationEvent> eventLabelerForArrivalRegion = PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion();
@@ -1266,7 +1273,7 @@ public class AT_RegionDataManager {
 	 * labelers are created
 	 */
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})	
 	public void testRegionPropertyChangeObservationEventLabelers() {
 
 		RegionsActionSupport.testConsumer(0, 4228466028646070532L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
@@ -1283,9 +1290,87 @@ public class AT_RegionDataManager {
 		});
 
 	}
+	
+	@Test
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
+	public void testPluginDataLoaded() {
+
+		long seed = 4228466028646070532L;
+		
+		int initialPopulation = 100;
+		
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < initialPopulation; i++) {
+			people.add(new PersonId(i));
+		}
+		Builder builder = Simulation.builder();
+
+		// add the region plugin
+		RegionPluginData.Builder regionPluginBuilder = RegionPluginData.builder();
+		for (TestRegionId regionId : TestRegionId.values()) {
+			regionPluginBuilder.addRegion(regionId);
+		}
+		
+		for(TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
+		}
+		TestRegionId testRegionId = TestRegionId.REGION_1;
+		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		for(PersonId personId : people) {
+			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			testRegionId = testRegionId.next();
+		}
+		RegionPluginData regionPluginData = regionPluginBuilder.build();
+		builder.addPlugin(RegionPlugin.getRegionPlugin(regionPluginData));
+
+		// add the people plugin
+		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
+		for(PersonId personId : people) {
+			peopleBuilder.addPersonId(personId);
+		}		
+		PeoplePluginData peoplePluginData = peopleBuilder.build();		
+		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
+
+		// add the report plugin
+		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
+
+		// add the stochastics plugin
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build()));
+
+		// add the partitions plugin
+		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
+
+		// add the test plugin
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0,(c)->{
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			for(PersonId personId : people) {
+				RegionId actualRegionId = regionDataManager.getPersonRegion(personId);
+				RegionId expectedRegionId = regionPluginData.getPersonRegion(personId);
+				assertEquals(actualRegionId, expectedRegionId);
+			}
+			
+		}));
+		TestPluginData testPluginData = pluginBuilder.build();						
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		builder.addPlugin(testPlugin);
+
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// build and execute the engine
+		builder.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput);
+		builder.build().execute();
+
+		// show that all actions were executed
+		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
+			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
+		}
+
+
+	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testPersonCreationObservationEvent() {
 		/*
 		 * Have the agent create some people over time and show that each person
@@ -1369,7 +1454,7 @@ public class AT_RegionDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testBulkPersonCreationObservationEvent() {
 
 		/*
@@ -1475,7 +1560,7 @@ public class AT_RegionDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testPersonImminentRemovalObservationEvent() {
 
 		MutableInteger pId = new MutableInteger();

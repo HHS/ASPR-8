@@ -198,6 +198,19 @@ public final class RegionDataManager extends DataManager {
 				map.put(regionPropertyId,propertyValueRecord);
 			}
 		}
+		
+		List<PersonId> people = personDataManager.getPeople();
+		for (PersonId personId : people) {
+			RegionId regionId = regionPluginData.getPersonRegion(personId);
+			final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
+			populationRecord.populationCount++;
+			Integer regionIndex = regionToIndexMap.get(regionId).intValue();
+			regionValues.setIntValue(personId.getValue(), regionIndex);
+		}
+		
+		if(regionPluginData.getPersonIds().size()>people.size()) {		
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID,"There are people in the region plugin data that are not contained in the person data manager");
+		}
 
 		dataManagerContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
 		dataManagerContext.subscribe(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);

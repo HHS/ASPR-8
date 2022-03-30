@@ -55,13 +55,22 @@ public final class PersonPropertiesDataManager extends DataManager {
 		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForPersonAndProperty());
 		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForProperty());
 
-		for (final PersonPropertyId personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
+		Set<PersonPropertyId> personPropertyIds = personPropertiesPluginData.getPersonPropertyIds();
+		for (final PersonPropertyId personPropertyId : personPropertyIds) {
 			PropertyDefinition personPropertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
 			personPropertyDefinitions.put(personPropertyId, personPropertyDefinition);
 			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, personPropertyDefinition, 0);
 			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 		}
-
+		List<PersonId> people = personDataManager.getPeople();
+		for (PersonId personId : people) {
+			for (PersonPropertyId personPropertyId : personPropertyIds) {
+				Object personPropertyValue = personPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
+				int pId = personId.getValue();
+				IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);				
+				propertyManager.setPropertyValue(pId, personPropertyValue);				
+			}
+		}
 		dataManagerContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
 		dataManagerContext.subscribe(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
 		dataManagerContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);

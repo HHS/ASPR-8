@@ -37,8 +37,6 @@ import plugins.partitions.testsupport.attributes.events.AttributeChangeObservati
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PersonDataManager;
-import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
@@ -108,13 +106,11 @@ public final class AT_AttributeFilter {
 
 		builder.addPlugin(attributesPlugin);
 
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-
-		for (int i = 0; i < initialPopulation; i++) {
-			bulkBuilder.add(PersonConstructionData.builder().build());
-		}
 		final PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		peopleBuilder.addBulkPersonConstructionData(bulkBuilder.build());
+		for (int i = 0; i < initialPopulation; i++) {
+			peopleBuilder.addPersonId(new PersonId(i));			
+		}
+		
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);

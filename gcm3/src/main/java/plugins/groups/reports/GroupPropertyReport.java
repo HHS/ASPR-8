@@ -177,10 +177,10 @@ public final class GroupPropertyReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
-																	.add("GroupType")//
-																	.add("Property")//
-																	.add("Value")//
-																	.add("GroupCount")//
+																	.add("group_type")//
+																	.add("property")//
+																	.add("value")//
+																	.add("group_count")//
 																	.build();//
 		}
 		return reportHeader;

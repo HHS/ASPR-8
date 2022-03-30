@@ -9,6 +9,8 @@ import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import nucleus.util.ContractException;
+import plugins.people.support.PersonError;
+import plugins.people.support.PersonId;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -45,6 +47,8 @@ public class RegionPluginData implements PluginData {
 		private TimeTrackingPolicy regionArrivalTimeTrackingPolicy;
 
 		private final Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyValues = new LinkedHashMap<>();
+		
+		private final Map<PersonId, RegionId> personRegions = new LinkedHashMap<>();
 
 		public Data() {
 		}
@@ -57,6 +61,8 @@ public class RegionPluginData implements PluginData {
 				Map<RegionPropertyId, Object> map = new LinkedHashMap<>(data.regionPropertyValues.get(regionId));
 				regionPropertyValues.put(regionId, map);
 			}
+			personRegions.putAll(data.personRegions);
+			
 		}
 	}
 
@@ -75,7 +81,13 @@ public class RegionPluginData implements PluginData {
 
 	private static void validateData(Data data) {
 
-
+		for (PersonId personId : data.personRegions.keySet()) {
+			RegionId regionId = data.personRegions.get(personId);
+			if (!data.regionIds.contains(regionId)) {
+				throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in person region assignments");
+			}
+		}
+		
 		for (RegionId regionId : data.regionPropertyValues.keySet()) {
 			if (!data.regionIds.contains(regionId)) {
 				throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in region property values");
@@ -245,6 +257,30 @@ public class RegionPluginData implements PluginData {
 			propertyMap.put(regionPropertyId, regionPropertyValue);
 			return this;
 		}
+		
+		/**
+		 * Sets the person's region
+		 * 
+		 * @throws ContractException
+		 * 
+		 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li>if the
+		 *             person id is null
+		 * 
+		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li>if the
+		 *             region id is null
+		 * 
+		 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_REGION_ASSIGNMENT}
+		 *             </li>if the person's region was previously defined
+		 * 
+		 */
+		public Builder setPersonRegion(final PersonId personId, final RegionId regionId) {
+			validatePersonIdNotNull(personId);
+			validateRegionIdNotNull(regionId);
+			validatePersonRegionNotAssigned(data, personId);
+			data.personRegions.put(personId, regionId);
+			return this;
+		}
+
 
 		/**
 		 * Sets the tracking policy for region arrival times
@@ -407,4 +443,50 @@ public class RegionPluginData implements PluginData {
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(new Data(data));
 	}
+	
+	private static void validatePersonIdNotNull(PersonId personId) {
+		if (personId == null) {
+			throw new ContractException(PersonError.NULL_PERSON_ID);
+		}
+	}
+	
+	private static void validatePersonRegionNotAssigned(Data data, PersonId personId) {
+		if (data.personRegions.containsKey(personId)) {
+			throw new ContractException(RegionError.DUPLICATE_PERSON_REGION_ASSIGNMENT, personId);
+		}
+
+	}
+	
+	/**
+	 * Returns the set of {@link PersonId} collected by the builder.
+	 */
+	public Set<PersonId> getPersonIds() {
+		return new LinkedHashSet<>(data.personRegions.keySet());
+	}
+	
+	/**
+	 * Returns the {@link RegionId} for the given {@link PersonId}.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
+	 *             person id is null
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}</li> if the
+	 *             person id is unknown
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends RegionId> T getPersonRegion(final PersonId personId) {
+		validatePersonExists(data, personId);
+		return (T) data.personRegions.get(personId);
+	}
+	
+	private static void validatePersonExists(final Data data, final PersonId personId) {
+		if (personId == null) {
+			throw new ContractException(PersonError.NULL_PERSON_ID);
+		}
+		if (!data.personRegions.containsKey(personId)) {
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID, personId);
+		}
+	}
+
 }

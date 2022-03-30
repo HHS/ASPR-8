@@ -1,7 +1,7 @@
 package plugins.people;
 
 import nucleus.Plugin;
-import plugins.people.actors.PeopleLoader;
+
 
 /**
  * A nucleus plugin for representing people, dealing only with their existence.
@@ -49,8 +49,7 @@ public final class PeoplePlugin {
 						.setPluginId(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class).get();
-							c.addDataManager(new PersonDataManager());
-							c.addActor(new PeopleLoader(pluginData)::init);
+							c.addDataManager(new PersonDataManager(pluginData));							
 						})//
 						.build();
 	}

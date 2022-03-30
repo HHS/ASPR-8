@@ -33,20 +33,20 @@ public class PeopleActionSupport {
 	 *
 	 */
 
-	public static void testConsumer(Consumer<ActorContext> consumer) {
+	public static void testConsumer(int initialPopulationSize, Consumer<ActorContext> consumer) {
 
 		TestPluginData testPluginData = TestPluginData	.builder()//
 														.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
 														.build();
 
 		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-		testConsumers(plugin);
+		testConsumers(initialPopulationSize,plugin);
 	}
 
 	/**
 	 * Executes a simulation composed of the given test plugin.
 	 */
-	public static void testConsumers(Plugin testPlugin) {
+	public static void testConsumers(int initialPopulationSize,Plugin testPlugin) {
 
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build());
 

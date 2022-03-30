@@ -18,8 +18,7 @@ import plugins.partitions.testsupport.attributes.AttributesPluginData;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonConstructionData;
+import plugins.people.support.PersonId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsPlugin;
@@ -50,27 +49,30 @@ public class PartitionsActionSupport {
 		}
 		AttributesPluginData attributesPluginData = attributesBuilder.build();
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesPluginData);
-
 		builder.addPlugin(attributesPlugin);
+		
+		
 
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-		for (int i = 0; i < initialPopulation; i++) {
-			bulkBuilder.add(PersonConstructionData.builder().build());
-		}
-		BulkPersonConstructionData bulkPersonConstructionData = bulkBuilder.build();
+		//add the people plugin
 
 		final PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		peopleBuilder.addBulkPersonConstructionData(bulkPersonConstructionData);
+		for (int i = 0; i < initialPopulation; i++) {
+			peopleBuilder.addPersonId(new PersonId(i));
+		}
+		
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
 
+		//add the report plugin
 		Plugin reportPlugin = ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build());
 		builder.addPlugin(reportPlugin);
 
+		//add the stochastics plugin
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build());
 		builder.addPlugin(stochasticsPlugin);
 
+		//add the partitions plugin
 		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin();
 		builder.addPlugin(partitionsPlugin);
 

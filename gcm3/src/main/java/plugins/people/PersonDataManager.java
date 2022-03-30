@@ -24,6 +24,13 @@ import plugins.people.support.PersonId;
  */
 public final class PersonDataManager extends DataManager {
 
+	private final PeoplePluginData peoplePluginData;
+
+	public PersonDataManager(PeoplePluginData peoplePluginData) {
+		this.peoplePluginData = peoplePluginData;
+
+	}
+
 	private static class PopulationRecord {
 		private int projectedPopulationCount;
 		private int populationCount;
@@ -39,8 +46,6 @@ public final class PersonDataManager extends DataManager {
 	private DataManagerContext dataManagerContext;
 
 	private final PopulationRecord globalPopulationRecord = new PopulationRecord();
-
-	
 
 	/**
 	 * Returns a new person id that has been added to the simulation. The
@@ -127,13 +132,13 @@ public final class PersonDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns the PersonId that corresponds to the given int value.	  
+	 * Returns the PersonId that corresponds to the given int value.
 	 */
 	public Optional<PersonId> getBoxedPersonId(final int personId) {
 		PersonId result = null;
 		if ((personId >= 0) && (personIds.size() > personId)) {
 			result = personIds.get(personId);
-		}		
+		}
 		return Optional.ofNullable(result);
 	}
 
@@ -211,6 +216,12 @@ public final class PersonDataManager extends DataManager {
 
 		dataManagerContext.addEventLabeler(PersonImminentRemovalObservationEvent.getEventLabeler());
 
+		for (PersonId personId : peoplePluginData.getPersonIds()) {
+			personIds.add(personId);
+		}		
+		globalPopulationRecord.projectedPopulationCount = personIds.size();		
+		globalPopulationRecord.populationCount = personIds.size();
+		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 	}
 
 	/**

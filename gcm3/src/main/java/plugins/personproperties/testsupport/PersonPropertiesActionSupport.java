@@ -1,5 +1,7 @@
 package plugins.personproperties.testsupport;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -17,11 +19,9 @@ import nucleus.util.ContractException;
 import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonConstructionData;
+import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
 import plugins.regions.testsupport.TestRegionId;
@@ -44,12 +44,25 @@ public class PersonPropertiesActionSupport {
 
 	public static void testConsumers(int initialPopulation, long seed, Plugin testPlugin) {
 
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < initialPopulation; i++) {
+			people.add(new PersonId(i));
+
+		}
 		Builder builder = Simulation.builder();
 
 		// add the person property plugin
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+		}
+		for (PersonId personId : people) {
+			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+				Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);				
+				personPropertyBuilder.setPersonPropertyValue(personId,testPersonPropertyId, randomPropertyValue);
+			}
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
 		Plugin personPropertyPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
@@ -63,6 +76,10 @@ public class PersonPropertiesActionSupport {
 		// add the regions
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionBuilder.addRegion(testRegionId);
+		}
+		for (PersonId personId : people) {
+			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
+			regionBuilder.setPersonRegion(personId, randomRegionId);
 		}
 		RegionPluginData regionPluginData = regionBuilder.build();
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
@@ -80,24 +97,9 @@ public class PersonPropertiesActionSupport {
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-		for (int i = 0; i < initialPopulation; i++) {
-			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
-			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-			personBuilder.add(randomRegionId);
-			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
-				PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(testPersonPropertyId,randomPropertyValue);
-				personBuilder.add(personPropertyInitialization);
-			}
-			PersonConstructionData personConstructionData = personBuilder.build();
-			bulkBuilder.add(personConstructionData);
-		}
-		BulkPersonConstructionData bulkPersonConstructionData = bulkBuilder.build();
-		peopleBuilder.addBulkPersonConstructionData(bulkPersonConstructionData);
+		for (PersonId personId : people) {
+			peopleBuilder.addPersonId(personId);
+		}		
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);

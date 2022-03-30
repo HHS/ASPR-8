@@ -50,9 +50,9 @@ public final class GroupPopulationReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
-																	.add("GroupType")//
-																	.add("PersonCount")//
-																	.add("GroupCount")//
+																	.add("group_type")//
+																	.add("person_count")//
+																	.add("group_count")//
 																	.build();//
 		}
 		return reportHeader;

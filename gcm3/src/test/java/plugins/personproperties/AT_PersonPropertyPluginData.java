@@ -3,19 +3,26 @@ package plugins.personproperties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.EnumSet;
+import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
+import nucleus.PluginData;
+import nucleus.PluginDataBuilder;
 import nucleus.util.ContractException;
+import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
+import util.RandomGeneratorProvider;
 
 @UnitTest(target = PersonPropertiesPluginData.class)
 public class AT_PersonPropertyPluginData {
@@ -29,9 +36,7 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
-
 		assertNotNull(PersonPropertiesPluginData.builder().build());
-		
 	}
 
 	@Test
@@ -159,5 +164,61 @@ public class AT_PersonPropertyPluginData {
 		 */
 		assertEquals(EnumSet.allOf(TestPersonPropertyId.class), personPropertyInitialData.getPersonPropertyIds());
 
+	}
+
+	@Test
+	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	public void testGetCloneBuilder() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3666595741799189966L);
+		PersonPropertiesPluginData.Builder pluginBuilder = PersonPropertiesPluginData.builder();
+
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			pluginBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+		}
+		int personCount = 100;
+		for (int i = 0; i < personCount; i++) {
+			PersonId personId = new PersonId(i);
+			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+					pluginBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
+				}
+			}
+		}
+
+		PersonPropertiesPluginData personPropertiesPluginData = pluginBuilder.build();
+
+		PluginDataBuilder cloneBuilder = personPropertiesPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		PluginData pluginData = cloneBuilder.build();
+		assertTrue(pluginData instanceof PersonPropertiesPluginData);
+		PersonPropertiesPluginData clonePersonPropertiesPluginData = (PersonPropertiesPluginData) pluginData;
+
+		// show that the two plugin datas have the same property ids
+		Set<PersonPropertyId> expectedPersonPropertyIds = personPropertiesPluginData.getPersonPropertyIds();
+		Set<PersonPropertyId> actualPersonPropertyIds = clonePersonPropertiesPluginData.getPersonPropertyIds();
+		assertEquals(expectedPersonPropertyIds, actualPersonPropertyIds);
+
+		// show that the two plugin datas have the same property definitions
+		for (PersonPropertyId personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
+			PropertyDefinition expectedPropertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
+			PropertyDefinition actualPropertyDefinition = clonePersonPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
+			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+		}
+		
+		// show that the two plugin datas have the same people
+		Set<PersonId> expectedPersonIds = personPropertiesPluginData.getPersonIds();
+		Set<PersonId> actualPersonIds = clonePersonPropertiesPluginData.getPersonIds();
+		assertEquals(expectedPersonIds, actualPersonIds);
+
+
+		for(PersonId personId : personPropertiesPluginData.getPersonIds()) {
+			for(PersonPropertyId  personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
+				Object expectedPropertyValue = personPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
+				Object actualPropertyValue = clonePersonPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
+				assertEquals(expectedPropertyValue,actualPropertyValue);
+			}
+		}
+		
 	}
 }

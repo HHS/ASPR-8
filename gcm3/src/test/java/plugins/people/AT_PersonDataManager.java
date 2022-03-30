@@ -41,7 +41,7 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "personIndexExists", args = { int.class })
 	public void testPersonIndexExists() {
 
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 
 			// initially there are no people despite the initial size
@@ -69,7 +69,7 @@ public final class AT_PersonDataManager {
 	@Test
 	@UnitTestMethod(name = "getPersonIdLimit", args = {})
 	public void testGetPersonIdLimit() {
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			/*
 			 * Initially there are no people despite the initial size, so we
@@ -90,7 +90,7 @@ public final class AT_PersonDataManager {
 	@Test
 	@UnitTestMethod(name = "getBoxedPersonId", args = { int.class })
 	public void testGetBoxedPersonId() {
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			// show that the boxed person id is correct
 			for (int i = 0; i < 10; i++) {
@@ -147,7 +147,7 @@ public final class AT_PersonDataManager {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(plugin);
+		PeopleActionSupport.testConsumers(0,plugin);
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedPersonIds, observedPersonIds);
@@ -203,7 +203,7 @@ public final class AT_PersonDataManager {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(plugin);
+		PeopleActionSupport.testConsumers(0,plugin);
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedBulkPersonConstructionData, observedBulkPersonConstructionData);
@@ -213,7 +213,7 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "personExists", args = { PersonId.class })
 	public void testPersonExists() {
 
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 
 			for (int i = 0; i < 10; i++) {
@@ -281,7 +281,7 @@ public final class AT_PersonDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(testPlugin);
+		PeopleActionSupport.testConsumers(0,testPlugin);
 	}
 
 	@Test
@@ -334,7 +334,7 @@ public final class AT_PersonDataManager {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(testPlugin);
+		PeopleActionSupport.testConsumers(0,testPlugin);
 
 		// show that the observed removals match the expected removals
 		assertEquals(expectedRemovals, observedRemovals);
@@ -349,7 +349,7 @@ public final class AT_PersonDataManager {
 	@Test
 	@UnitTestMethod(name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			// show that a negative growth causes an exception
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.expandCapacity(-1));
@@ -363,7 +363,7 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "getPopulationCount", args = {})
 	public void testGetPopulationCount() {
 
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			// show the population count grows as we add people
 			for (int i = 0; i < 10; i++) {
@@ -379,7 +379,7 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "getProjectedPopulationCount", args = {})
 	public void testGetProjectedPopulationCount() {
 
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 
@@ -459,14 +459,14 @@ public final class AT_PersonDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(testPlugin);
+		PeopleActionSupport.testConsumers(0,testPlugin);
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonCreationObservationEventLabelers() {
 		EventLabeler<PersonCreationObservationEvent> eventLabeler = PersonCreationObservationEvent.getEventLabeler();
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		});
@@ -476,7 +476,7 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonImminentRemovalObservationEventLabelers() {
 		EventLabeler<PersonImminentRemovalObservationEvent> eventLabeler = PersonImminentRemovalObservationEvent.getEventLabeler();
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		});
@@ -486,7 +486,7 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonCreationObservationEventLabelers() {
 		EventLabeler<BulkPersonCreationObservationEvent> eventLabeler = BulkPersonCreationObservationEvent.getEventLabeler();
-		PeopleActionSupport.testConsumer((c) -> {
+		PeopleActionSupport.testConsumer(0,(c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		});

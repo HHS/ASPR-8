@@ -1,5 +1,7 @@
 package plugins.regions.testsupport;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import nucleus.ActorContext;
@@ -15,8 +17,7 @@ import nucleus.util.ContractException;
 import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonConstructionData;
+import plugins.people.support.PersonId;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
 import plugins.reports.ReportsPlugin;
@@ -36,7 +37,10 @@ public final class RegionsActionSupport {
 	}
 
 	public static void testConsumers(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Plugin testPlugin) {
-
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < initialPopulation; i++) {
+			people.add(new PersonId(i));
+		}
 		Builder builder = Simulation.builder();
 
 		// add the region plugin
@@ -48,19 +52,20 @@ public final class RegionsActionSupport {
 		for(TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
 		}
-		
+		TestRegionId testRegionId = TestRegionId.REGION_1;
 		regionPluginBuilder.setPersonRegionArrivalTracking(timeTrackingPolicy);
+		for(PersonId personId : people) {
+			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			testRegionId = testRegionId.next();
+		}
 		builder.addPlugin(RegionPlugin.getRegionPlugin(regionPluginBuilder.build()));
 
 		// add the people plugin
-		TestRegionId testRegionId = TestRegionId.REGION_1;
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-		for (int i = 0; i < initialPopulation; i++) {
-			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(testRegionId).build();
-			testRegionId = testRegionId.next();
-			bulkBuilder.add(personConstructionData);
-		}
-		PeoplePluginData peoplePluginData = PeoplePluginData.builder().addBulkPersonConstructionData(bulkBuilder.build()).build();
+		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
+		for(PersonId personId : people) {
+			peopleBuilder.addPersonId(personId);
+		}		
+		PeoplePluginData peoplePluginData = peopleBuilder.build();		
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
 
 		// add the report plugin

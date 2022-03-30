@@ -10,7 +10,7 @@ public final class MutableObject<T> {
 	public MutableObject() {
 				
 	}
-	
+		
 	public void setValue(T value) {
 		this.value = value;
 	}

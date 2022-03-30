@@ -1,7 +1,6 @@
 package plugins.groups.support;
 
 import net.jcip.annotations.Immutable;
-import plugins.people.support.PersonId;
 
 
 /**
@@ -38,7 +37,7 @@ public final class GroupId implements Comparable<GroupId>{
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonId)) {
+		if (!(obj instanceof GroupId)) {
 			return false;
 		}
 		GroupId other = (GroupId) obj;

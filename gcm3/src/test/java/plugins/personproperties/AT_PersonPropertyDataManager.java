@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -535,6 +536,11 @@ public final class AT_PersonPropertyDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonPropertyDataManagerInitialization() {
 
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			people.add(new PersonId(i));
+		}
+
 		// create a random generator
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2693836950854697940L);
 
@@ -543,17 +549,12 @@ public final class AT_PersonPropertyDataManager {
 		// add the partitions plugin
 		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
-		// add the people plugin with 10 people
+		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-		PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
-		for (int i = 0; i < 10; i++) {
-			personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
-			bulkBuilder.add(personBuilder.build());
+		for (PersonId personId : people) {
+			peopleBuilder.addPersonId(personId);
 		}
-		BulkPersonConstructionData bulkPersonConstructionData = bulkBuilder.build();
-		peopleBuilder.addBulkPersonConstructionData(bulkPersonConstructionData);
+
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
@@ -562,6 +563,14 @@ public final class AT_PersonPropertyDataManager {
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+		}
+		for (PersonId personId : people) {
+			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+				if(randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
+				}
+			}
 		}
 		PersonPropertiesPluginData personPropertiesPluginData = personPropertyBuilder.build();
 		Plugin personPropertyPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
@@ -573,6 +582,10 @@ public final class AT_PersonPropertyDataManager {
 		// add the regions
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionBuilder.addRegion(testRegionId);
+		}
+		for (PersonId personId : people) {
+			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
+			regionBuilder.setPersonRegion(personId, randomRegionId);
 		}
 		RegionPluginData regionPluginData = regionBuilder.build();
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
@@ -614,11 +627,11 @@ public final class AT_PersonPropertyDataManager {
 
 			// show that the person property values are set to the default
 			// values
-			List<PersonId> people = personDataManager.getPeople();
-			assertTrue(people.size() > 0);
+			List<PersonId> personIds = personDataManager.getPeople();
+			assertTrue(personIds.size() > 0);
 			for (PersonId personId : people) {
 				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-					Object expectedValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().get();
+					Object expectedValue = personPropertiesPluginData.getPersonPropertyValue(personId, testPersonPropertyId);
 					Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, testPersonPropertyId);
 					assertEquals(expectedValue, actualValue);
 

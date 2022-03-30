@@ -9,9 +9,12 @@ import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import nucleus.util.ContractException;
+import plugins.people.support.PersonError;
+import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 
 /**
  * An immutable container of the initial state of person properties. Contains:
@@ -30,11 +33,18 @@ public class PersonPropertiesPluginData implements PluginData {
 	private static class Data {
 		private Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
 
+		private Map<PersonId, Map<PersonPropertyId, Object>> personPropertyValues = new LinkedHashMap<>();
+		
 		private Data() {
 		}
 
 		private Data(Data data) {
 			personPropertyDefinitions.putAll(data.personPropertyDefinitions);
+			for(PersonId personId : data.personPropertyValues.keySet()) {
+				Map<PersonPropertyId, Object> map = data.personPropertyValues.get(personId);
+				Map<PersonPropertyId, Object> newMap = new LinkedHashMap<>(map);
+				personPropertyValues.put(personId, newMap);
+			}
 		}
 	}
 
@@ -65,6 +75,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		 */
 		public PersonPropertiesPluginData build() {
 			try {
+				validateData(data);
 				return new PersonPropertiesPluginData(data);
 			} finally {
 				data = new Data();
@@ -95,7 +106,32 @@ public class PersonPropertiesPluginData implements PluginData {
 			data.personPropertyDefinitions.put(personPropertyId, propertyDefinition);
 			return this;
 		}
-
+		/**
+		 * Sets the person's property value
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
+		 *             id is null</li>
+		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+		 *             if the person property id is null</li>
+		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
+		 *             if the person property value is null</li>
+		 *             <li>{@linkplain PersonPropertyError#DUPLICATE_PERSON_PROPERTY_VALUE_ASSIGNMENT}
+		 *             if the person property value is already assigned</li>
+		 */
+		public Builder setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+			validatePersonIdNotNull(personId);
+			validatePersonPropertyIdNotNull(personPropertyId);
+			validatePersonPropertyValueNotNull(personPropertyValue);
+			validatePersonPropertyNotAssigned(data, personId, personPropertyId);
+			Map<PersonPropertyId, Object> map = data.personPropertyValues.get(personId);
+			if (map == null) {
+				map = new LinkedHashMap<>();
+				data.personPropertyValues.put(personId, map);
+			}
+			map.put(personPropertyId, personPropertyValue);
+			return this;
+		}
 	}
 
 	private static void validatePersonPropertyIsNotDefined(final Data data, final PersonPropertyId personPropertyId) {
@@ -168,4 +204,87 @@ public class PersonPropertiesPluginData implements PluginData {
 
 		return new Builder(new Data(data));
 	}
+	
+	private static void validatePersonIdNotNull(PersonId personId) {
+		if (personId == null) {
+			throw new ContractException(PersonError.NULL_PERSON_ID);
+		}
+	}
+	
+	private static void validatePersonPropertyValueNotNull(Object personPropertyValue) {
+		if (personPropertyValue == null) {
+			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
+		}
+	}
+	
+	private static void validatePersonPropertyNotAssigned(final Data data, final PersonId personId, final PersonPropertyId personPropertyId) {
+		final Map<PersonPropertyId, Object> propertyMap = data.personPropertyValues.get(personId);
+		if (propertyMap != null) {
+			if (propertyMap.containsKey(personPropertyId)) {
+				throw new ContractException(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_VALUE_ASSIGNMENT, personPropertyId + " = " + personId);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the set of {@link PersonId} ids collected by the builder
+	 */
+	public Set<PersonId> getPersonIds() {
+		return new LinkedHashSet<>(data.personPropertyValues.keySet());
+	}
+	
+	/**
+	 * Returns the property value for the given {@link PersonId} and
+	 * {@link PersonPropertyId}.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
+	 *             person id is null             
+	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             </li> if the person property id is null
+	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             </li> if the person property id is known
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId) {
+		validatePersonIdNotNull(personId);
+		validatePersonPropertyIdNotNull(personPropertyId);
+		validatePersonPropertyDefinitionIsDefined(data,personPropertyId);		
+		Object result = null;
+		final Map<PersonPropertyId, Object> map = data.personPropertyValues.get(personId);
+		if (map != null) {
+			result = map.get(personPropertyId);
+		}
+		if (result == null) {
+			final PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
+			result = propertyDefinition.getDefaultValue().get();
+		}
+		return (T) result;
+	}
+	
+	private static void validatePersonPropertyDefinitionIsDefined(Data data, PersonPropertyId personPropertyId) {
+		if (!data.personPropertyDefinitions.containsKey(personPropertyId)) {
+			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+		}
+	}
+	
+	private static void validateData(Data data) {
+
+		for (PersonId personId : data.personPropertyValues.keySet()) {
+			Map<PersonPropertyId, Object> map = data.personPropertyValues.get(personId);
+			for (PersonPropertyId personPropertyId : map.keySet()) {
+				PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
+				if (propertyDefinition == null) {
+					throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+				}
+				Object propertyValue = map.get(personPropertyId);
+				if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
+					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, personPropertyId + " = " + propertyValue);
+				}
+			}
+		}
+
+	}
+	
 }

@@ -1,14 +1,14 @@
 package plugins.people;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import nucleus.util.ContractException;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
+import plugins.people.support.PersonId;
 
 /**
  * An immutable container of the initial state of people containing person ids.
@@ -20,13 +20,14 @@ import plugins.people.support.PersonError;
 @Immutable
 public final class PeoplePluginData implements PluginData {
 	private static class Data {
-		private List<BulkPersonConstructionData> bulkPersonConstructionDatas = new ArrayList<>();
+		private Set<PersonId> personIds = new LinkedHashSet<>();
+		
 
 		public Data() {
 		}
 
 		public Data(Data data) {
-			this.bulkPersonConstructionDatas.addAll(data.bulkPersonConstructionDatas);
+			this.personIds.addAll(data.personIds);
 		}
 	}
 
@@ -66,23 +67,20 @@ public final class PeoplePluginData implements PluginData {
 		 * Adds a person.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_BULK_PERSON_CONSTRUCTION_DATA}
-		 *             if the bulk person construction data is null</li>
-		 *            
+		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
+		 *             id is null</li>
+		 *             <li>{@linkplain PersonError#DUPLICATE_PERSON_ID} if the
+		 *             person id is already contained</li>
 		 * 
 		 */
-		public Builder addBulkPersonConstructionData(BulkPersonConstructionData bulkPersonConstructionData) {
-			validateBulkPersonConstructionDataNotNull(bulkPersonConstructionData);			
-			data.bulkPersonConstructionDatas.add(bulkPersonConstructionData);
+		public Builder addPersonId(PersonId personId) {
+			validatePersonIdNotNull(personId);
+			validatePersonDoesNotExist(data, personId);
+			data.personIds.add(personId);
 			return this;
 		}
 	}
 	
-	private static void validateBulkPersonConstructionDataNotNull(BulkPersonConstructionData bulkPersonConstructionData) {
-		if (bulkPersonConstructionData == null) {
-			throw new ContractException(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA);
-		}
-	}
 
 	private PeoplePluginData(Data data) {
 		this.data = data;
@@ -91,8 +89,8 @@ public final class PeoplePluginData implements PluginData {
 	/**
 	 * Returns the set of person ids stored in this container
 	 */
-	public List<BulkPersonConstructionData> getBulkPersonConstructionDatas() {
-		return new ArrayList<>(data.bulkPersonConstructionDatas);
+	public Set<PersonId> getPersonIds() {
+		return new LinkedHashSet<>(data.personIds);
 	}
 
 	@Override
@@ -100,4 +98,15 @@ public final class PeoplePluginData implements PluginData {
 		return new Builder(new Data(data));
 	}
 
+	private static void validatePersonDoesNotExist(final Data data, final PersonId personId) {
+		if (data.personIds.contains(personId)) {
+			throw new ContractException(PersonError.DUPLICATE_PERSON_ID, personId);
+		}
+	}
+
+	private static void validatePersonIdNotNull(PersonId personId) {
+		if (personId == null) {
+			throw new ContractException(PersonError.NULL_PERSON_ID);
+		}
+	}
 }

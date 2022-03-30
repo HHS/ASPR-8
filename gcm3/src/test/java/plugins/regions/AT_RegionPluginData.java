@@ -3,17 +3,22 @@ package plugins.regions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
+import nucleus.PluginData;
 import nucleus.util.ContractException;
+import plugins.people.support.PersonError;
+import plugins.people.support.PersonId;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -22,6 +27,7 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
+import util.RandomGeneratorProvider;
 
 /**
  * Test unit for {@linkplain RegionPluginData}. Tests for
@@ -62,8 +68,6 @@ public class AT_RegionPluginData {
 		Set<RegionId> actualRegionIds = regionPluginData.getRegionIds();
 		assertEquals(expectedRegionIds, actualRegionIds);
 	}
-
-	
 
 	@Test
 	@UnitTestMethod(name = "getRegionPropertyDefinition", args = { RegionId.class, RegionPropertyId.class })
@@ -129,15 +133,14 @@ public class AT_RegionPluginData {
 		Set<RegionPropertyId> expectedPropertyIds = new LinkedHashSet<>();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			builder.addRegion(testRegionId);
-			
+
 		}
-		
-		for (TestRegionPropertyId  testRegionPropertyId : TestRegionPropertyId.values()) {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();			
+
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
 			builder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
 			expectedPropertyIds.add(testRegionPropertyId);
 		}
-
 
 		// build the region initial data
 		RegionPluginData regionPluginData = builder.build();
@@ -147,7 +150,6 @@ public class AT_RegionPluginData {
 		 * place them in a map for comparison.
 		 */
 		Set<RegionPropertyId> actualPropertyIds = regionPluginData.getRegionPropertyIds();
-		
 
 		// show that the two sets are equal
 		assertEquals(expectedPropertyIds, actualPropertyIds);
@@ -165,28 +167,27 @@ public class AT_RegionPluginData {
 		 * the builder and associate them with distinct property values. Each
 		 * property value will be unique.
 		 */
-		
+
 		Map<RegionId, Map<RegionPropertyId, Object>> expectedPropertyValues = new LinkedHashMap<>();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			builder.addRegion(testRegionId);
 			Map<RegionPropertyId, Object> map = new LinkedHashMap<>();
 			expectedPropertyValues.put(testRegionId, map);
 		}
-		
-		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {				
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();			
-			builder.defineRegionProperty(testRegionPropertyId, propertyDefinition);			
+
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
+			builder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
 		}
-		
+
 		int propertyValue = 0;
 		for (TestRegionId testRegionId : TestRegionId.values()) {
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {				
-				expectedPropertyValues.get(testRegionId).put(testRegionPropertyId,propertyValue);
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+				expectedPropertyValues.get(testRegionId).put(testRegionPropertyId, propertyValue);
 				builder.setRegionPropertyValue(testRegionId, testRegionPropertyId, propertyValue);
 				propertyValue++;
 			}
 		}
-		
 
 		// build the region initial data
 		RegionPluginData regionPluginData = builder.build();
@@ -232,7 +233,6 @@ public class AT_RegionPluginData {
 		assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
 	}
 
-
 	@Test
 	@UnitTestMethod(name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
@@ -245,7 +245,6 @@ public class AT_RegionPluginData {
 			assertEquals(timeTrackingPolicy, regionPluginData.getPersonRegionArrivalTrackingPolicy());
 		}
 	}
-
 
 	@Test
 	@UnitTestMethod(target = RegionPluginData.Builder.class, name = "build", args = {})
@@ -261,7 +260,7 @@ public class AT_RegionPluginData {
 		 * not properly added with an initial agent behavior.
 		 */
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();		
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
 		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
 		builder.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, 5);
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.build());
@@ -302,10 +301,9 @@ public class AT_RegionPluginData {
 	@UnitTestMethod(target = RegionPluginData.Builder.class, name = "defineRegionProperty", args = { RegionId.class, RegionPropertyId.class, PropertyDefinition.class })
 	public void testDefineRegionProperty() {
 		RegionPluginData.Builder builder = RegionPluginData.builder();
-		
+
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(9).setType(Integer.class).build();
-
 
 		// if the region property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineRegionProperty(null, propertyDefinition));
@@ -340,7 +338,7 @@ public class AT_RegionPluginData {
 		RegionPluginData.Builder builder = RegionPluginData.builder();
 
 		RegionId regionId = TestRegionId.REGION_1;
-		
+
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
 		Object validValue = 5;
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
@@ -365,7 +363,6 @@ public class AT_RegionPluginData {
 		// during the build invocation.
 	}
 
-
 	@Test
 	@UnitTestMethod(target = RegionPluginData.Builder.class, name = "setPersonRegionArrivalTracking", args = { TimeTrackingPolicy.class })
 	public void testSetPersonRegionArrivalTracking() {
@@ -379,6 +376,104 @@ public class AT_RegionPluginData {
 		builder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		contractException = assertThrows(ContractException.class, () -> builder.setPersonRegionArrivalTracking(TimeTrackingPolicy.DO_NOT_TRACK_TIME));
 		assertEquals(RegionError.DUPLICATE_TIME_TRACKING_POLICY, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionPluginData.Builder.class, name = "setPersonRegion", args = { PersonId.class, RegionId.class })
+	public void testSetPersonRegion() {
+		RegionPluginData.Builder builder = RegionPluginData.builder();
+
+		PersonId personId = new PersonId(45);
+		RegionId regionId = TestRegionId.REGION_1;
+
+		// if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(null, regionId));
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+
+		// if the region id is null
+		contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(personId, null));
+		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+
+		// if the person's region was previously defined
+		builder.setPersonRegion(personId, regionId);
+		contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(personId, regionId));
+		assertEquals(RegionError.DUPLICATE_PERSON_REGION_ASSIGNMENT, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	public void testGetCloneBuilder() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6712645837048772782L);
+		RegionPluginData.Builder regionPluginDataBuilder = RegionPluginData.builder();
+		regionPluginDataBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			regionPluginDataBuilder.addRegion(testRegionId);
+		}
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
+		}
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+					regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId, randomPropertyValue);
+				}
+			}
+		}
+		int personCount = 100;
+		for (int i = 0; i < personCount; i++) {
+			PersonId personId = new PersonId(i);
+			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
+			regionPluginDataBuilder.setPersonRegion(personId, randomRegionId);
+		}
+
+		RegionPluginData regionPluginData = regionPluginDataBuilder.build();
+
+		PluginData pluginData = regionPluginData.getCloneBuilder().build();
+
+		// show that the clone plugin data has the correct type
+		assertTrue(pluginData instanceof RegionPluginData);
+		RegionPluginData cloneRegionPluginData = (RegionPluginData) pluginData;
+
+		// show that the two plugin datas have the same arrival tracking policy
+		assertEquals(regionPluginData.getPersonRegionArrivalTrackingPolicy(), cloneRegionPluginData.getPersonRegionArrivalTrackingPolicy());
+
+		// show that the two plugin datas have the same region ids
+		assertEquals(regionPluginData.getRegionIds(), cloneRegionPluginData.getRegionIds());
+
+		// show that the two plugin datas have the same region property ids
+		assertEquals(regionPluginData.getRegionPropertyIds(), cloneRegionPluginData.getRegionPropertyIds());
+
+		// show that the two plugin datas have the same region property
+		// definitions
+		for (RegionPropertyId regionPropertyId : regionPluginData.getRegionPropertyIds()) {
+			PropertyDefinition expectedPropertyDefinition = regionPluginData.getRegionPropertyDefinition(regionPropertyId);
+			PropertyDefinition actualPropertyDefinition = cloneRegionPluginData.getRegionPropertyDefinition(regionPropertyId);
+			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+		}
+
+		// show that the two plugin datas have the same region property values
+		for (RegionId regionId : regionPluginData.getRegionIds()) {
+			for (RegionPropertyId regionPropertyId : regionPluginData.getRegionPropertyIds()) {
+				Object expectedPropertyValue = regionPluginData.getRegionPropertyValue(regionId, regionPropertyId);
+				Object actualPropertyValue = cloneRegionPluginData.getRegionPropertyValue(regionId, regionPropertyId);
+				assertEquals(expectedPropertyValue, actualPropertyValue);
+			}
+		}
+
+		// show that the two plugin datas have the same people
+		Set<PersonId> expectedPersonIds = regionPluginData.getPersonIds();
+		Set<PersonId> actualPersonIds = cloneRegionPluginData.getPersonIds();
+		assertEquals(expectedPersonIds, actualPersonIds);
+		// show that the two plugin datas have assigned the people to the same
+		// regions
+		for (PersonId personId : expectedPersonIds) {
+			RegionId expectedRegionId = regionPluginData.getPersonRegion(personId);
+			RegionId actualRegionId = cloneRegionPluginData.getPersonRegion(personId);
+			assertEquals(expectedRegionId, actualRegionId);
+		}
 
 	}
 

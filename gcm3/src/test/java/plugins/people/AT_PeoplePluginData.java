@@ -13,13 +13,11 @@ import org.junit.jupiter.api.Test;
 import annotations.UnitTest;
 import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
-import plugins.people.support.BulkPersonConstructionData;
-import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
+import plugins.people.support.PersonId;
 
 @UnitTest(target = PeoplePluginData.class)
 public final class AT_PeoplePluginData {
-
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
@@ -30,87 +28,89 @@ public final class AT_PeoplePluginData {
 	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
-		assertTrue(peoplePluginData.getBulkPersonConstructionDatas().isEmpty());
-
-		Set<BulkPersonConstructionData> expectedBulkPersonConstructionDatas = new LinkedHashSet<>();
-		for (int i = 0; i < 10; i++) {
-
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData	.builder()//
-										.add(PersonConstructionData.builder().build())//
-										.add(PersonConstructionData.builder().build())//
-										.add(PersonConstructionData.builder().build())//
-										.build();//
-
-			expectedBulkPersonConstructionDatas.add(bulkPersonConstructionData);
-		}
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionDatas) {
-			builder.addBulkPersonConstructionData(bulkPersonConstructionData);
-		}
-
-		peoplePluginData = builder.build();
-		assertEquals(expectedBulkPersonConstructionDatas, new LinkedHashSet<>(peoplePluginData.getBulkPersonConstructionDatas()));
-	}
-
-	@Test
-	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "addBulkPersonConstructionData", args = { BulkPersonConstructionData.class })
-	public void testAddBulkPersonConstructionData() {
-		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
-		assertTrue(peoplePluginData.getBulkPersonConstructionDatas().isEmpty());
-
-		Set<BulkPersonConstructionData> expectedBulkPersonConstructionDatas = new LinkedHashSet<>();
-		for (int i = 0; i < 10; i++) {
-
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData	.builder()//
-										.add(PersonConstructionData.builder().build())//
-										.add(PersonConstructionData.builder().build())//
-										.add(PersonConstructionData.builder().build())//
-										.build();//
-
-			expectedBulkPersonConstructionDatas.add(bulkPersonConstructionData);
-		}
-		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionDatas) {
-			builder.addBulkPersonConstructionData(bulkPersonConstructionData);
-		}
-
-		peoplePluginData = builder.build();
-		assertEquals(expectedBulkPersonConstructionDatas, new LinkedHashSet<>(peoplePluginData.getBulkPersonConstructionDatas()));
-
-		// precondition tests
+		assertTrue(peoplePluginData.getPersonIds().isEmpty());
 		
-		ContractException contractException = assertThrows(ContractException.class, () -> builder.addBulkPersonConstructionData(null));
-		assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
-
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+		for(int i = 0;i<10;i++) {
+			expectedPersonIds.add(new PersonId(3*1+5));
+		}
+		PeoplePluginData.Builder builder = PeoplePluginData.builder();
+		for(PersonId personId : expectedPersonIds) {
+			builder.addPersonId(personId);
+		}
+		
+		peoplePluginData = builder.build();
+		assertEquals(expectedPersonIds, peoplePluginData.getPersonIds());
+		
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBulkPersonConstructionDatas", args = {})
-	public void testGetBulkPersonConstructionDatas() {
+	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "addPersonId", args = { PersonId.class })
+	public void testAddPersonId() {
 		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
-		assertTrue(peoplePluginData.getBulkPersonConstructionDatas().isEmpty());
-
-		Set<BulkPersonConstructionData> expectedBulkPersonConstructionDatas = new LinkedHashSet<>();
-		for (int i = 0; i < 10; i++) {
-
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData	.builder()//
-										.add(PersonConstructionData.builder().build())//
-										.add(PersonConstructionData.builder().build())//
-										.add(PersonConstructionData.builder().build())//
-										.build();//
-
-			expectedBulkPersonConstructionDatas.add(bulkPersonConstructionData);
+		assertTrue(peoplePluginData.getPersonIds().isEmpty());
+		
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+		for(int i = 0;i<10;i++) {
+			expectedPersonIds.add(new PersonId(3*1+5));
 		}
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
-		for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionDatas) {
-			builder.addBulkPersonConstructionData(bulkPersonConstructionData);
+		for(PersonId personId : expectedPersonIds) {
+			builder.addPersonId(personId);
 		}
-
+		
 		peoplePluginData = builder.build();
-		assertEquals(expectedBulkPersonConstructionDatas, new LinkedHashSet<>(peoplePluginData.getBulkPersonConstructionDatas()));
+		assertEquals(expectedPersonIds, peoplePluginData.getPersonIds());
 
+		//precondition tests
+		builder.addPersonId(new PersonId(5));
+		
+		ContractException contractException = assertThrows(ContractException.class,()->builder.addPersonId(new PersonId(5)));
+		assertEquals(PersonError.DUPLICATE_PERSON_ID, contractException.getErrorType());
+		
+		contractException = assertThrows(ContractException.class,()->builder.addPersonId(null));
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		
+	}
 
+	@Test
+	@UnitTestMethod(name = "getPersonIds", args = {})
+	public void testGetPersonIds() {
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
+		assertTrue(peoplePluginData.getPersonIds().isEmpty());
+		
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+		for(int i = 0;i<10;i++) {
+			expectedPersonIds.add(new PersonId(3*1+5));
+		}
+		PeoplePluginData.Builder builder = PeoplePluginData.builder();
+		for(PersonId personId : expectedPersonIds) {
+			builder.addPersonId(personId);
+		}
+		
+		peoplePluginData = builder.build();
+		assertEquals(expectedPersonIds, peoplePluginData.getPersonIds());
 
 	}
+	
+	@Test
+	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	public void testGetCloneBuilder() {
+		
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+		for(int i = 0;i<10;i++) {
+			expectedPersonIds.add(new PersonId(3*1+5));
+		}
+		PeoplePluginData.Builder builder = PeoplePluginData.builder();
+		for(PersonId personId : expectedPersonIds) {
+			builder.addPersonId(personId);
+		}
+		
+		PeoplePluginData peoplePluginData = builder.build();
+		PeoplePluginData peoplePluginData2 = (PeoplePluginData)peoplePluginData.getCloneBuilder().build();
+		
+		assertEquals(expectedPersonIds, peoplePluginData2.getPersonIds());
+	}
+	
 
 }
