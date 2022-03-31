@@ -65,7 +65,7 @@ public abstract class PeriodicReport {
 	 * 
 	 * END_OF_SIMULATION has no header additions
 	 */
-	protected ReportHeader.Builder addTimeFieldHeaders(ReportHeader.Builder reportHeaderBuilder) {
+	protected final ReportHeader.Builder addTimeFieldHeaders(ReportHeader.Builder reportHeaderBuilder) {
 		switch (reportPeriod) {
 		case DAILY:
 			reportHeaderBuilder.add("day");
