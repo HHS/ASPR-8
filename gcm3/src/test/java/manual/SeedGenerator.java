@@ -16,7 +16,7 @@ public final class SeedGenerator {
 
 	public static void main(String[] args) {
 		Random random = new Random();
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 1; i++) {
 			System.out.println(FastMath.abs(random.nextLong())+"L");
 		}
 	}

@@ -620,7 +620,7 @@ public class AT_GroupPluginData {
 	@UnitTestMethod(name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9130589441333999144L);
-		Random random = new Random(randomGenerator.nextLong());
+		
 		GroupPluginData.Builder groupPluginDataBuilder = GroupPluginData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
@@ -647,7 +647,7 @@ public class AT_GroupPluginData {
 
 		for (int i = 0; i < personCount; i++) {
 			PersonId personId = new PersonId(i);
-			int numberOfGroups = random.nextInt(5);
+			int numberOfGroups = randomGenerator.nextInt(5);
 			Collections.sort(groups);
 			for (int j = 0; j < numberOfGroups; j++) {
 				GroupId groupId = groups.get(j);

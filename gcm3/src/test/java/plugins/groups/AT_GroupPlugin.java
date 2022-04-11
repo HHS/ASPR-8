@@ -24,7 +24,7 @@ public class AT_GroupPlugin {
 
 	@Test
 	@UnitTestMethod(name = "getGroupPlugin", args = { GroupPluginData.class })
-	public void testInit() {
+	public void testGetGroupPlugin() {
 
 		GroupPluginData groupPluginData = GroupPluginData.builder().build();
 		Plugin groupPlugin = GroupPlugin.getGroupPlugin(groupPluginData);
