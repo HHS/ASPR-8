@@ -78,7 +78,8 @@ public final class StochasticsPlugin {
 						.addPluginData(stochasticsPluginData)//
 						.setPluginId(StochasticsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							c.addDataManager(new StochasticsDataManager(stochasticsPluginData));
+							StochasticsPluginData pluginData = c.getPluginData(StochasticsPluginData.class).get();
+							c.addDataManager(new StochasticsDataManager(pluginData));
 						}).build();//
 	}
 }

@@ -127,11 +127,11 @@ public final class AT_MaterialsProducerResourceReport {
 
 	private static ReportHeader getReportHeader() {
 		return ReportHeader	.builder()//
-							.add("Time")//
-							.add("Resource")//
-							.add("MaterialsProducer")//
-							.add("Action")//
-							.add("Amount")//
+							.add("time")//
+							.add("resource")//
+							.add("materials_producer")//
+							.add("action")//
+							.add("amount")//
 							.build();
 
 	}

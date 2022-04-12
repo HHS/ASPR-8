@@ -105,10 +105,10 @@ public final class AT_MaterialsProducerPropertyReport {
 
 	private static ReportHeader getReportHeader() {
 		ReportHeader.Builder builder = ReportHeader	.builder()//
-													.add("Time")//
-													.add("MaterialsProducer")//
-													.add("Property")//
-													.add("Value");//
+													.add("time")//
+													.add("materials_producer")//
+													.add("property")//
+													.add("value");//
 		return builder.build();
 	}
 

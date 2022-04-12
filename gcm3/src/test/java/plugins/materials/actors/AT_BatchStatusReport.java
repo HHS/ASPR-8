@@ -199,7 +199,7 @@ public final class AT_BatchStatusReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(8914112012010329946L, testPlugin, new BatchStatusReport(REPORT_ID)::init);
-
+		
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 
@@ -220,12 +220,12 @@ public final class AT_BatchStatusReport {
 	private static ReportHeader getReportHeader() {
 
 		ReportHeader.Builder builder = ReportHeader	.builder()//
-													.add("Time")//
-													.add("Batch")//
-													.add("MaterialsProducer")//
-													.add("Stage")//
-													.add("Material")//
-													.add("Amount");//
+													.add("time")//
+													.add("batch")//
+													.add("materials_producer")//
+													.add("stage")//
+													.add("material")//
+													.add("amount");//
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {

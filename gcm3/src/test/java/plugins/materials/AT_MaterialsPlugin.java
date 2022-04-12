@@ -12,7 +12,6 @@ import annotations.UnitTest;
 import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.regions.RegionPluginId;

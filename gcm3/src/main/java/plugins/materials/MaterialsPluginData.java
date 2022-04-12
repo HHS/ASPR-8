@@ -77,6 +77,7 @@ public final class MaterialsPluginData implements PluginData {
 		 */
 		public Builder addBatch(final BatchId batchId, final MaterialId materialId, final double amount, final MaterialsProducerId materialsProducerId) {
 			validateBatchIdNotNull(batchId);
+			validateBatchDoesNotExist(data, batchId);			
 			validateMaterialIdNotNull(materialId);
 			validateBatchAmount(amount);
 			validateMaterialsProducerIdNotNull(materialsProducerId);
@@ -514,11 +515,17 @@ public final class MaterialsPluginData implements PluginData {
 		}
 
 	}
+	
+	
+	private static void validateBatchDoesNotExist(final Data data, final Object batchId) {
+		
+		if (data.batchIds.contains(batchId)) {
+			throw new ContractException(MaterialsError.DUPLICATE_BATCH_ID, batchId);
+		}
+	}
 
 	private static void validateBatchExists(final Data data, final Object batchId) {
-		if (batchId == null) {
-			throw new ContractException(MaterialsError.NULL_BATCH_ID);
-		}
+		
 		if (!data.batchIds.contains(batchId)) {
 			throw new ContractException(MaterialsError.UNKNOWN_BATCH_ID, batchId);
 		}
@@ -859,6 +866,7 @@ public final class MaterialsPluginData implements PluginData {
 	 *             id is unknown</li>
 	 */
 	public Double getBatchAmount(final BatchId batchId) {
+		validateBatchIdNotNull(batchId);
 		validateBatchExists(data, batchId);
 		return data.batchAmounts.get(batchId);
 	}
@@ -882,6 +890,7 @@ public final class MaterialsPluginData implements PluginData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getBatchMaterial(final BatchId batchId) {
+		validateBatchIdNotNull(batchId);
 		validateBatchExists(data, batchId);
 		return (T) data.batchMaterials.get(batchId);
 	}
@@ -897,6 +906,7 @@ public final class MaterialsPluginData implements PluginData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends MaterialsProducerId> T getBatchMaterialsProducer(final BatchId batchId) {
+		validateBatchIdNotNull(batchId);
 		validateBatchExists(data, batchId);
 		return (T) data.batchMaterialsProducers.get(batchId);
 	}
@@ -963,6 +973,7 @@ public final class MaterialsPluginData implements PluginData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId) {
+		validateBatchIdNotNull(batchId);
 		validateBatchExists(data, batchId);
 
 		final MaterialId materialId = data.batchMaterials.get(batchId);

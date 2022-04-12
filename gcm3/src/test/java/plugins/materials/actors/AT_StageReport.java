@@ -186,11 +186,11 @@ public final class AT_StageReport {
 
 	private static ReportHeader getReportHeader() {
 		return ReportHeader	.builder()//
-							.add("Time")//
-							.add("Stage")//
-							.add("MaterialsProducer")//
-							.add("Action")//
-							.add("Offered")//
+							.add("time")//
+							.add("stage")//
+							.add("materials_producer")//
+							.add("action")//
+							.add("offered")//
 							.build();
 
 	}

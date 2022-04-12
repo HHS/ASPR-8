@@ -50,6 +50,7 @@ public enum MaterialsError implements ContractError {
 	UNOFFERED_STAGE_NOT_TRANSFERABLE("Unoffered stages are not transferable"),
 	INSUFFICIENT_MATERIALS_PRODUCER_PROPERTY_VALUE_ASSIGNMENT("A materials producer property definition default value is null and not replaced with sufficient property value assignments"),
 	DUPLICATE_BATCH_PROPERTY_DEFINITION("Duplicate batch property definition"),
+	DUPLICATE_BATCH_ID("Duplicate batch id"),
 	DUPLICATE_MATERIALS_PRODUCER_PROPERTY_DEFINITION("Duplicate materials producer property definition"),
 	PROPERTY_DEFINITION_REQUIRES_DEFAULT("Batch property definition does not have an assigned default value"),
 	INCOMPATIBLE_MATERIALS_PRODUCER_PROPERTY_VALUE("Materials producer property value is incompatible with the property definition"),
