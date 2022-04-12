@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import plugins.materials.support.MaterialId;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = TestMaterialId.class)
 public class AT_TestMaterialId {

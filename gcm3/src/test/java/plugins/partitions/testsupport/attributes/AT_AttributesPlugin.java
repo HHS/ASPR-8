@@ -10,8 +10,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.PluginId;
@@ -28,6 +26,8 @@ import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = AttributesPlugin.class)
 public class AT_AttributesPlugin {

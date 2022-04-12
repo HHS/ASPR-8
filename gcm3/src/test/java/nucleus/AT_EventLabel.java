@@ -2,7 +2,7 @@ package nucleus;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = EventLabel.class)
 public class AT_EventLabel {

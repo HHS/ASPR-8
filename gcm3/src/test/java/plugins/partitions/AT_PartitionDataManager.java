@@ -22,8 +22,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.Plugin;
@@ -50,8 +48,10 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import util.MutableInteger;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MutableInteger;
 
 @UnitTest(target = PartitionDataManager.class)
 public final class AT_PartitionDataManager {

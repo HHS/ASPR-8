@@ -14,9 +14,6 @@ import java.util.Set;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.DataManagerContext;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
@@ -33,6 +30,9 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.people.testsupport.PeopleActionSupport;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonDataManager.class)
 public final class AT_PersonDataManager {

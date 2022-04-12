@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.SimulationContext;
@@ -14,6 +11,9 @@ import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = StageOfferChangeObservationEvent.class)
 public class AT_StageOfferChangeObservationEvent {

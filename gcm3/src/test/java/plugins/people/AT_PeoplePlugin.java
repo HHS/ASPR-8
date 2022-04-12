@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import plugins.globals.GlobalPluginData;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PeoplePlugin.class)
 public class AT_PeoplePlugin {

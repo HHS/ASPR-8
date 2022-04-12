@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -15,6 +12,9 @@ import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.people.testsupport.PeopleActionSupport;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonImminentRemovalObservationEvent.class)
 public class AT_PersonImminentRemovalObservationEvent implements Event {

@@ -1,4 +1,4 @@
-package util;
+package util.wrappers;
 
 public final class MutableInteger {
 	private int value;

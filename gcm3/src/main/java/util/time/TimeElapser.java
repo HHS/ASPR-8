@@ -1,4 +1,4 @@
-package util;
+package util.time;
 
 /**
  * A debug-convenience class for measuring elapsed time via System.nanoTime()

@@ -9,9 +9,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import plugins.globals.support.GlobalPropertyId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = TestGlobalPropertyId.class)
 public class AT_TestGlobalPropertyId {

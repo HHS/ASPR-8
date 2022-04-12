@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.SimulationContext;
@@ -16,6 +13,9 @@ import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.util.properties.TimeTrackingPolicy;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = RegionPropertyChangeObservationEvent.class)
 public class AT_RegionPropertyChangeObservationEvent {

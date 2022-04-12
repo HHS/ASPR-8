@@ -9,8 +9,8 @@ import java.util.List;
 import org.apache.commons.math3.util.MathArrays.Function;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = Dimension.class)
 public class AT_Dimension {

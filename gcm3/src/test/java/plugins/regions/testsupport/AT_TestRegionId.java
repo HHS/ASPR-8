@@ -13,11 +13,11 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import plugins.regions.support.RegionId;
-import util.MutableInteger;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MutableInteger;
 
 @UnitTest(target = TestRegionId.class)
 public class AT_TestRegionId {

@@ -10,9 +10,6 @@ import java.util.List;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
@@ -22,8 +19,11 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import util.MutableDouble;
-import util.MutableInteger;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.wrappers.MutableDouble;
+import util.wrappers.MutableInteger;
 
 @UnitTest(target = PeriodicReport.class)
 public class AT_PeriodicReport {

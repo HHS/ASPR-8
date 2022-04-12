@@ -14,9 +14,6 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
 import plugins.groups.events.GroupMembershipAdditionObservationEvent;
@@ -29,6 +26,9 @@ import plugins.people.PersonDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GroupMemberFilter.class)
 public class AT_GroupMemberFilter {

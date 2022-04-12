@@ -8,14 +8,14 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.regions.RegionPluginId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonPropertiesPlugin.class)
 public class AT_PersonPropertiesPlugin {

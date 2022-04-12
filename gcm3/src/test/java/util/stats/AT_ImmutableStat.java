@@ -1,4 +1,4 @@
-package util;
+package util.stats;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
-import util.stats.ImmutableStat;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 /**
  * Test class for {@link ImmutableStat}

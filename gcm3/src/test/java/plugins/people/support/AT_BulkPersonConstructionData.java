@@ -13,9 +13,9 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Event;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = BulkPersonConstructionData.class)
 public final class AT_BulkPersonConstructionData implements Event {

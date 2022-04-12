@@ -24,7 +24,7 @@ import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.util.ContractException;
 import nucleus.util.TriConsumer;
-import util.TimeElapser;
+import util.time.TimeElapser;
 
 /**
  * A utility class used by the experiment to manage experiment context consumers

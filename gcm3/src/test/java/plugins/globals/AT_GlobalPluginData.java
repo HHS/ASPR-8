@@ -13,15 +13,15 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
 import plugins.globals.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = GlobalPluginData.class)
 

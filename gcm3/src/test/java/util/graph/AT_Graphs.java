@@ -1,4 +1,4 @@
-package util;
+package util.graph;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,13 +9,10 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
-import util.graph.Graph;
-import util.graph.Graphs;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 import util.graph.Graphs.GraphConnectedness;
 import util.graph.Graphs.GraphCyclisity;
-import util.graph.MutableGraph;
 
 /**
  * Test class for {@link Graphs}

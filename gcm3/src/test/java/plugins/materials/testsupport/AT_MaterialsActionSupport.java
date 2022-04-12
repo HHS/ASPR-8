@@ -1,6 +1,6 @@
 package plugins.materials.testsupport;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = MaterialsActionSupport.class)
 public class AT_MaterialsActionSupport {

@@ -2,7 +2,7 @@ package plugins.resources;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = ResourcesPluginId.class)
 public class AT_ResourcesPluginId {

@@ -11,11 +11,11 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import plugins.materials.support.BatchPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = TestBatchPropertyId.class)
 public class AT_TestBatchPropertyId {

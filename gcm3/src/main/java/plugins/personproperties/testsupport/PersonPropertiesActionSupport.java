@@ -29,7 +29,7 @@ import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
-import util.RandomGeneratorProvider;
+import util.random.RandomGeneratorProvider;
 
 public class PersonPropertiesActionSupport {
 

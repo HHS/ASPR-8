@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link Equality}

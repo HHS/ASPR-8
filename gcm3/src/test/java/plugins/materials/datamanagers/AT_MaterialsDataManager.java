@@ -22,8 +22,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.DataManagerContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -88,10 +86,12 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import util.MultiKey;
-import util.MutableDouble;
-import util.MutableLong;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MultiKey;
+import util.wrappers.MutableDouble;
+import util.wrappers.MutableLong;
 
 public class AT_MaterialsDataManager {
 

@@ -1,4 +1,4 @@
-package util;
+package util.dimensiontree;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
-import util.dimensiontree.VolumetricDimensionTree;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 import util.vector.Vector2D;
 
 /**

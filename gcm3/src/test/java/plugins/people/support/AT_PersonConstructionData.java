@@ -13,8 +13,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonConstructionData.class)
 public final class AT_PersonConstructionData {

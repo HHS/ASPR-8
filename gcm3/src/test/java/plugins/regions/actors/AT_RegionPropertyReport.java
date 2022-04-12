@@ -8,8 +8,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
@@ -36,6 +34,8 @@ import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = RegionPropertyReport.class)
 public class AT_RegionPropertyReport {

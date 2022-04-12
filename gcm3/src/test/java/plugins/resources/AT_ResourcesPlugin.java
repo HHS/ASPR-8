@@ -8,8 +8,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.partitions.PartitionsPluginId;
@@ -18,6 +16,8 @@ import plugins.regions.RegionPluginId;
 import plugins.reports.ReportsPluginId;
 import plugins.resources.datamanagers.ResourceDataManager;
 import plugins.resources.testsupport.ResourcesActionSupport;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = ResourcesPlugin.class)
 public class AT_ResourcesPlugin {

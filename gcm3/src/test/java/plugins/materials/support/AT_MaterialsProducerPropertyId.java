@@ -2,7 +2,7 @@ package plugins.materials.support;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = MaterialsProducerPropertyId.class)
 public class AT_MaterialsProducerPropertyId {

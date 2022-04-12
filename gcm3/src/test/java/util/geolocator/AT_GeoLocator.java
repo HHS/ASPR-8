@@ -1,4 +1,4 @@
-package util;
+package util.geolocator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,13 +17,13 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 import util.earth.Earth;
 import util.earth.LatLon;
 import util.earth.LatLonAlt;
-import util.geolocator.GeoLocator;
 import util.geolocator.GeoLocator.Builder;
+import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
 
 /**

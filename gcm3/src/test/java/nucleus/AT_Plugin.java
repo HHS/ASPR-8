@@ -3,7 +3,7 @@ package nucleus;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = Plugin.class)
 @Disabled

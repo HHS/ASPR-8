@@ -5,7 +5,7 @@ import java.util.Map;
 
 import nucleus.ExperimentContext;
 import plugins.reports.support.ReportItem;
-import util.MutableInteger;
+import util.wrappers.MutableInteger;
 
 /**
  * Output consumer of report items that counts the number of times each report

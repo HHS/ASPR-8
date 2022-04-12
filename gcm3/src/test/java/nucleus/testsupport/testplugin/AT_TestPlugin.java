@@ -3,7 +3,7 @@ package nucleus.testsupport.testplugin;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = TestPlugin.class)
 @Disabled

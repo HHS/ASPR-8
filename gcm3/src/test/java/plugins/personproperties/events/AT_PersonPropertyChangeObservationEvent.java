@@ -9,9 +9,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -24,6 +21,9 @@ import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.datamanagers.RegionDataManager;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonPropertyChangeObservationEvent.class)
 public class AT_PersonPropertyChangeObservationEvent implements Event {

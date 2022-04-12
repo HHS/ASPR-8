@@ -7,9 +7,6 @@ import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import plugins.people.PersonDataManager;
@@ -19,6 +16,9 @@ import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.util.properties.TimeTrackingPolicy;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonRegionChangeObservationEvent.class)
 public class AT_PersonRegionChangeObservationEvent {

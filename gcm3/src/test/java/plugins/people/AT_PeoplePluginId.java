@@ -2,7 +2,7 @@ package plugins.people;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = PeoplePluginId.class)
 public class AT_PeoplePluginId {

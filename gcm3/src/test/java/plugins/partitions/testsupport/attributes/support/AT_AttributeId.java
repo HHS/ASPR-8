@@ -1,6 +1,6 @@
 package plugins.partitions.testsupport.attributes.support;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = AttributeId.class)
 public class AT_AttributeId {

@@ -8,11 +8,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.reports.ReportsPluginId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GlobalPlugin.class)
 public class AT_GlobalPlugin {

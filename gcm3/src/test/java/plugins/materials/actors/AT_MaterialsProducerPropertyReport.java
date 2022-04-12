@@ -8,8 +8,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -27,6 +25,8 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
 import plugins.stochastics.StochasticsDataManager;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = MaterialsProducerPropertyReport.class)
 public final class AT_MaterialsProducerPropertyReport {

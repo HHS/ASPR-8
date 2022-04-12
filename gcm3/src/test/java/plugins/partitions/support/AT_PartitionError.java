@@ -8,9 +8,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general

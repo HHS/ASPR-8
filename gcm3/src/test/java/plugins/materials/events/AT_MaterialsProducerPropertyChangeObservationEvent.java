@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.SimulationContext;
@@ -15,6 +12,9 @@ import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = MaterialsProducerPropertyChangeObservationEvent.class)
 public class AT_MaterialsProducerPropertyChangeObservationEvent {

@@ -10,11 +10,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PeoplePluginData.class)
 public final class AT_PeoplePluginData {

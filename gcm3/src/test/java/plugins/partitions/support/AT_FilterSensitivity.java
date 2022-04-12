@@ -10,12 +10,12 @@ import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.Event;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.support.PersonId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = FilterSensitivity.class)
 public class AT_FilterSensitivity {

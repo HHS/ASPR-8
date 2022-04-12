@@ -30,7 +30,7 @@ import plugins.resources.ResourcesPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
-import util.RandomGeneratorProvider;
+import util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the resources plugin. Provides convenience

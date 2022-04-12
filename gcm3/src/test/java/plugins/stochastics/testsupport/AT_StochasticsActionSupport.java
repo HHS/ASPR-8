@@ -3,7 +3,7 @@ package plugins.stochastics.testsupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = StochasticsActionSupport.class)
 @Disabled

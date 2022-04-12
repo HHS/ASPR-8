@@ -16,9 +16,6 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.Event;
 import nucleus.Plugin;
 import nucleus.SimulationContext;
@@ -37,6 +34,9 @@ import plugins.resources.events.PersonResourceChangeObservationEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = ResourceLabeler.class)
 public final class AT_ResourceLabeler {

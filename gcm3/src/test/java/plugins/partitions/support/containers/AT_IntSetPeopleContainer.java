@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.support.PartitionError;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 
 @UnitTest(target = IntSetPeopleContainer.class)

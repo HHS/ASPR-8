@@ -1,4 +1,4 @@
-package util;
+package util.path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,9 +11,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
-import util.path.Path;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link Path}

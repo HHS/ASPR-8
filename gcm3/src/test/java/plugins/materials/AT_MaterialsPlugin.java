@@ -8,8 +8,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -17,6 +15,8 @@ import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.regions.RegionPluginId;
 import plugins.reports.ReportsPluginId;
 import plugins.resources.ResourcesPluginId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = MaterialsPlugin.class)
 public class AT_MaterialsPlugin {

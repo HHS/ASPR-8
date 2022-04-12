@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = StageImminentRemovalObservationEvent.class)
 

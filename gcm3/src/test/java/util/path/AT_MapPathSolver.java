@@ -1,4 +1,4 @@
-package util;
+package util.path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,13 +11,10 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.graph.Graph;
-import util.path.MapPathSolver;
-import util.path.Path;
-import util.path.PathSolver;
 import util.path.Paths.EdgeCostEvaluator;
 import util.path.Paths.TravelCostEvaluator;
 import util.vector.Vector2D;

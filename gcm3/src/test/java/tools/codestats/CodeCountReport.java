@@ -1,4 +1,4 @@
-package manual.codestats;
+package tools.codestats;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

@@ -1,6 +1,6 @@
 package plugins.partitions.support;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 /**
  * A partition labeler creates an object label for a person. The labeler has an

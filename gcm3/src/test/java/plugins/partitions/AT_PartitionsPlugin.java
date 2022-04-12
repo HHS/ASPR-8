@@ -8,13 +8,13 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPluginId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PartitionsPlugin.class)
 public final class AT_PartitionsPlugin {

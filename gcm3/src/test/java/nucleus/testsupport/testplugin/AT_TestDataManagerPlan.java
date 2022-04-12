@@ -12,10 +12,10 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = TestDataManagerPlan.class)
 public class AT_TestDataManagerPlan {

@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.Event;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.support.PersonId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = AttributeChangeObservationEvent.class)
 public class AT_AttributeChangeObservationEvent implements Event {

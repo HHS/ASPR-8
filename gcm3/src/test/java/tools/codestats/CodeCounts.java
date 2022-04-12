@@ -1,4 +1,4 @@
-package manual.codestats;
+package tools.codestats;
 
 public class CodeCounts {
 	public static void main(String[] args) {

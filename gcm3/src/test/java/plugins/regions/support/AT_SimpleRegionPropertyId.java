@@ -11,8 +11,8 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 
 public class AT_SimpleRegionPropertyId{

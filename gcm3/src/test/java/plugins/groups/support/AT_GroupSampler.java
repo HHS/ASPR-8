@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import plugins.people.support.PersonId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link GroupSamplerInfo}

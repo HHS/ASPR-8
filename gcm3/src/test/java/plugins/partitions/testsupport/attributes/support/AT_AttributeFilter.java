@@ -11,9 +11,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
@@ -43,6 +40,9 @@ import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = AttributeFilter.class)
 public final class AT_AttributeFilter {

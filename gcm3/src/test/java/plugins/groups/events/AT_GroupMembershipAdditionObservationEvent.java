@@ -12,9 +12,6 @@ import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.util.ContractException;
@@ -27,6 +24,9 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GroupMembershipAdditionObservationEvent.class)
 public class AT_GroupMembershipAdditionObservationEvent {

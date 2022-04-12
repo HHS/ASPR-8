@@ -2,7 +2,7 @@ package plugins.personproperties;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = PersonPropertiesPluginId.class)
 public class AT_PersonPropertiesPluginId {

@@ -11,9 +11,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
@@ -29,6 +26,9 @@ import plugins.partitions.support.PartitionError;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 
 @UnitTest(target = GroupsForPersonFilter.class)

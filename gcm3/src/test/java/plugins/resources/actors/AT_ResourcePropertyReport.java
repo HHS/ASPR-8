@@ -11,8 +11,6 @@ import java.util.Map;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
@@ -41,7 +39,9 @@ import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = ResourcePropertyReport.class)
 public class AT_ResourcePropertyReport {

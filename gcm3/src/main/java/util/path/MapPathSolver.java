@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import util.MultiKey;
 import util.graph.Graph;
 import util.path.Paths.EdgeCostEvaluator;
 import util.path.Paths.TravelCostEvaluator;
+import util.wrappers.MultiKey;
 
 /**
  * Manages shortest path solutions for a given graph with reasonable efficiency

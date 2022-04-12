@@ -2,7 +2,7 @@ package plugins.partitions.support;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = EventPredicate.class)
 public class AT_EventPredicate {

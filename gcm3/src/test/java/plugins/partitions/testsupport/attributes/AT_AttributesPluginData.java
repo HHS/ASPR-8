@@ -8,13 +8,13 @@ import java.util.EnumSet;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.util.ContractException;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = AttributesPluginData.class)
 public class AT_AttributesPluginData {

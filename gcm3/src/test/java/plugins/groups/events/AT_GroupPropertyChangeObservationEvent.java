@@ -12,9 +12,6 @@ import javax.naming.Context;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.util.ContractException;
@@ -26,6 +23,9 @@ import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GroupPropertyChangeObservationEvent.class)
 public class AT_GroupPropertyChangeObservationEvent {

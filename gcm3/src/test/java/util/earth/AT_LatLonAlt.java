@@ -1,4 +1,4 @@
-package util;
+package util.earth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -6,11 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
-import util.earth.LatLon;
-import util.earth.LatLonAlt;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
 
 /**

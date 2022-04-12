@@ -21,8 +21,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
@@ -66,11 +64,13 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import util.MultiKey;
-import util.MutableDouble;
-import util.MutableInteger;
-import util.MutableObject;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MultiKey;
+import util.wrappers.MutableDouble;
+import util.wrappers.MutableInteger;
+import util.wrappers.MutableObject;
 
 @UnitTest(target = GroupDataManager.class)
 public class AT_GroupDataManager {

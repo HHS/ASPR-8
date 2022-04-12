@@ -2,7 +2,7 @@ package plugins.personproperties.support;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = PersonPropertyId.class)
 public class AT_PersonPropertyId {

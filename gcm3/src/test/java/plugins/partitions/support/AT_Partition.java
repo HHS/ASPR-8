@@ -10,10 +10,10 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link PartitionInfo}

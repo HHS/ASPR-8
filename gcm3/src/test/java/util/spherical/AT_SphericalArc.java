@@ -1,4 +1,4 @@
-package util;
+package util.spherical;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,13 +9,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
-import util.spherical.Chirality;
-import util.spherical.MalformedSphericalArcException;
-import util.spherical.SphericalArc;
-import util.spherical.SphericalPoint;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
 
 /**

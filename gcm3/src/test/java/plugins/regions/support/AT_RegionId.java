@@ -2,7 +2,7 @@ package plugins.regions.support;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = RegionId.class)
 public class AT_RegionId {

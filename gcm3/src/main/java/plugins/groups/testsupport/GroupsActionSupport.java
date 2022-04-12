@@ -30,8 +30,8 @@ import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
-import util.MultiKey;
-import util.RandomGeneratorProvider;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MultiKey;
 
 /**
  * A static test support class for the groups plugin. Provides convenience

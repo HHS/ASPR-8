@@ -1,4 +1,4 @@
-package meta;
+package tools.meta;
 
 //import java.io.File;
 //import java.io.IOException;

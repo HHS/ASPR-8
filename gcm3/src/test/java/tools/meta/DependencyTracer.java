@@ -1,4 +1,4 @@
-package meta;
+package tools.meta;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

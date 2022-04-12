@@ -2,7 +2,7 @@ package plugins.globals;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = GlobalsPluginId.class)
 public class AT_GlobalsPluginId {

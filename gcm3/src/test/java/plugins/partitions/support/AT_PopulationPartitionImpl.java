@@ -20,9 +20,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
@@ -35,7 +32,10 @@ import plugins.people.PersonDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = PopulationPartitionImpl.class)
 public class AT_PopulationPartitionImpl {

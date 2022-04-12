@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.Event;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.testsupport.TestBatchPropertyId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = BatchPropertyChangeObservationEvent.class)
 public class AT_BatchPropertyChangeObservationEvent implements Event {

@@ -19,8 +19,6 @@ import java.util.function.Supplier;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import nucleus.util.ContractException;
@@ -41,8 +39,10 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import util.MultiKey;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MultiKey;
 
 @UnitTest(target = MaterialsPluginData.class)
 public class AT_MaterialsPluginData {

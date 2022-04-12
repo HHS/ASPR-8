@@ -11,8 +11,6 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
@@ -39,6 +37,8 @@ import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GroupPopulationReport.class)
 public class AT_GroupPopulationReport {

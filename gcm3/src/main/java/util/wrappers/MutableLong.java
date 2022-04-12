@@ -1,4 +1,4 @@
-package util;
+package util.wrappers;
 
 public final class MutableLong {
 	private long value;

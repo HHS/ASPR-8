@@ -13,8 +13,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.PluginData;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
@@ -27,7 +25,9 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 /**
  * Test unit for {@linkplain RegionPluginData}. Tests for

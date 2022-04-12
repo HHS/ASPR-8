@@ -10,9 +10,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import plugins.regions.support.RegionPropertyId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = TestRegionPropertyId.class)
 public class AT_TestRegionPropertyId {

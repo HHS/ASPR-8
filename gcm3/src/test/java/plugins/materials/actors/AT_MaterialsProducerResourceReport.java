@@ -11,8 +11,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -32,7 +30,9 @@ import plugins.reports.support.SimpleReportId;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = MaterialsProducerResourceReport.class)
 public final class AT_MaterialsProducerResourceReport {

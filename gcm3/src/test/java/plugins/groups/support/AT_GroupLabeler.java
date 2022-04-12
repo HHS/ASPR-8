@@ -12,9 +12,6 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -26,6 +23,9 @@ import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GroupLabeler.class)
 public final class AT_GroupLabeler {

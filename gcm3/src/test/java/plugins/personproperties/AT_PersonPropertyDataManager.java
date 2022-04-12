@@ -19,9 +19,6 @@ import javax.naming.Context;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.DataManagerContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -60,9 +57,12 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import util.MultiKey;
-import util.MutableInteger;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MultiKey;
+import util.wrappers.MutableInteger;
 
 @UnitTest(target = PersonPropertiesDataManager.class)
 public final class AT_PersonPropertyDataManager {

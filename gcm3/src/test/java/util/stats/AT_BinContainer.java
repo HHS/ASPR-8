@@ -1,4 +1,4 @@
-package util;
+package util.stats;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -9,10 +9,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
-import util.stats.BinContainer;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.stats.BinContainer.Bin;
 import util.stats.BinContainer.Builder;
 

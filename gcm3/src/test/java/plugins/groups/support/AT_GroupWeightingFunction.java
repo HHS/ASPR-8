@@ -1,6 +1,6 @@
 package plugins.groups.support;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 
 @UnitTest(target = GroupWeightingFunction.class)

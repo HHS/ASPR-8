@@ -9,9 +9,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
@@ -28,6 +25,9 @@ import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.PropertyError;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 /**
  * Test unit for {@link PropertyFilter}.

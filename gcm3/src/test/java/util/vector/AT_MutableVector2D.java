@@ -1,4 +1,4 @@
-package util;
+package util.vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,13 +8,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
 import util.spherical.Chirality;
-import util.vector.MutableVector2D;
-import util.vector.MutableVector3D;
-import util.vector.Vector2D;
 
 /**
  * Test class for {@link MutableVector2D}

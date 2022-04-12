@@ -2,7 +2,7 @@ package nucleus;
 
 import net.jcip.annotations.NotThreadSafe;
 import nucleus.util.ContractException;
-import util.MultiKey;
+import util.wrappers.MultiKey;
 
 /**
  * A utility class that implements an event label over an ordered tuple of

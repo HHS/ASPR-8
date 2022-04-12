@@ -2,7 +2,7 @@ package plugins.stochastics.support;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
+import tools.annotations.UnitTest;
 
 @UnitTest(target = RandomNumberGeneratorId.class)
 public class AT_RandomNumberGeneratorId {

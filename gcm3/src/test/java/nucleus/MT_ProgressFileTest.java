@@ -1,14 +1,11 @@
-package manual;
+package nucleus;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import nucleus.Dimension;
-import nucleus.Experiment;
-
-public class ProgressFileTest {
+public class MT_ProgressFileTest {
 	public static void main(String[] args) {
 
 		Path experimentProgressPath = Paths.get(args[0]);

@@ -8,8 +8,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestMethod;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
@@ -29,6 +27,8 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.util.properties.PropertyDefinition;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GlobalPropertyReport.class)
 public class AT_GlobalPropertyReport {

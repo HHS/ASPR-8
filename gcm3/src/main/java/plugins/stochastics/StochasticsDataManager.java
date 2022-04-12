@@ -11,7 +11,7 @@ import nucleus.DataManager;
 import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
-import util.RandomGeneratorProvider;
+import util.random.RandomGeneratorProvider;
 
 /**
  * A mutable data manager for random number generators.

@@ -18,9 +18,6 @@ import java.util.stream.IntStream;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import annotations.UnitTest;
-import annotations.UnitTestConstructor;
-import annotations.UnitTestMethod;
 import nucleus.DataManagerContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
@@ -43,8 +40,11 @@ import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import util.MultiKey;
-import util.RandomGeneratorProvider;
+import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
+import util.random.RandomGeneratorProvider;
+import util.wrappers.MultiKey;
 
 @UnitTest(target = GlobalDataManager.class)
 
