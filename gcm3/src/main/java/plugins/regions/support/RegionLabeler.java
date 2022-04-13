@@ -12,8 +12,8 @@ import nucleus.util.ContractException;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.PersonRegionChangeObservationEvent;
 import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.events.PersonRegionChangeObservationEvent;
 
 /**
  * A labeler for regions. The dimension of the labeler is the

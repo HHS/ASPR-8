@@ -21,6 +21,8 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
+import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.RegionPropertyChangeObservationEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;

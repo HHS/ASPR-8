@@ -6,7 +6,7 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.datamanagers.RegionPropertyChangeObservationEvent;
+import plugins.regions.events.RegionPropertyChangeObservationEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.reports.support.ReportHeader;

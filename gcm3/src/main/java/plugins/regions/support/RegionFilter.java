@@ -10,8 +10,8 @@ import nucleus.util.ContractException;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.PersonRegionChangeObservationEvent;
 import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.events.PersonRegionChangeObservationEvent;
 
 public final class RegionFilter extends Filter {
 
