@@ -12,17 +12,17 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
-import plugins.regions.events.RegionPropertyChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
+import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -68,8 +68,8 @@ public final class RegionDataManager extends DataManager {
 	 * 
 	 * <P>
 	 * Initializes all event labelers defined by
-	 * {@linkplain RegionPropertyChangeObservationEvent} and
-	 * {@linkplain PersonRegionChangeObservationEvent}
+	 * {@linkplain RegionPropertyUpdateEvent} and
+	 * {@linkplain PersonRegionUpdateEvent}
 	 * </P>
 	 * 
 	 * 
@@ -77,7 +77,7 @@ public final class RegionDataManager extends DataManager {
 	 * Subscribes the following events:
 	 * <ul>
 	 * 
-	 * <li>{@linkplain PersonCreationObservationEvent}<blockquote> Sets the
+	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the
 	 * person's initial region in the {@linkplain RegionLocationDataView} from
 	 * the region reference in the auxiliary data of the event.
 	 * 
@@ -97,7 +97,7 @@ public final class RegionDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * 
-	 * <li>{@linkplain BulkPersonCreationObservationEvent}<blockquote> Sets each
+	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each
 	 * person's initial region in the {@linkplain RegionLocationDataView} from
 	 * the region references in the auxiliary data of the event.
 	 * 
@@ -121,7 +121,7 @@ public final class RegionDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * 
-	 * <li>{@linkplain PersonImminentRemovalObservationEvent}<blockquote>
+	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote>
 	 * Removes the region assignment data for the person from the
 	 * {@linkplain RegionDataView} <BR>
 	 * <BR>
@@ -214,15 +214,15 @@ public final class RegionDataManager extends DataManager {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID,"There are people in the region plugin data that are not contained in the person data manager");
 		}
 
-		dataManagerContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
-		dataManagerContext.subscribe(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
+		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
-		dataManagerContext.addEventLabeler(RegionPropertyChangeObservationEvent.getEventLabelerForProperty());
-		dataManagerContext.addEventLabeler(RegionPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty());
-		dataManagerContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion());
-		dataManagerContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForDepartureRegion());
-		dataManagerContext.addEventLabeler(PersonRegionChangeObservationEvent.getEventLabelerForPerson());
+		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForProperty());
+		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty());
+		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForArrivalRegion());
+		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForDepartureRegion());
+		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForPerson());
 	}
 
 	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
@@ -317,7 +317,7 @@ public final class RegionDataManager extends DataManager {
 
 	/**
 	 * Updates the region's property value and time. Generates a corresponding
-	 * {@linkplain RegionPropertyChangeObservationEvent}
+	 * {@linkplain RegionPropertyUpdateEvent}
 	 * 
 	 * Throws {@link ContractException}
 	 *
@@ -347,7 +347,7 @@ public final class RegionDataManager extends DataManager {
 
 		final Object previousPropertyValue = getRegionPropertyValue(regionId, regionPropertyId);
 		regionPropertyMap.get(regionId).get(regionPropertyId).setPropertyValue(regionPropertyValue);
-		dataManagerContext.releaseEvent(new RegionPropertyChangeObservationEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
+		dataManagerContext.releaseEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
 
 	}
 
@@ -551,7 +551,7 @@ public final class RegionDataManager extends DataManager {
 	/**
 	 * 
 	 * Updates the person's current region and region arrival time. Generates a
-	 * corresponding {@linkplain PersonRegionChangeObservationEvent}
+	 * corresponding {@linkplain PersonRegionUpdateEvent}
 	 * 
 	 * Throws {@link ContractException}
 	 *
@@ -606,7 +606,7 @@ public final class RegionDataManager extends DataManager {
 			regionArrivalTimes.setValue(personId.getValue(), dataManagerContext.getTime());
 		}
 
-		dataManagerContext.releaseEvent(new PersonRegionChangeObservationEvent(personId, oldRegionId, regionId));
+		dataManagerContext.releaseEvent(new PersonRegionUpdateEvent(personId, oldRegionId, regionId));
 
 	}
 
@@ -662,11 +662,11 @@ public final class RegionDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonCreationObservationEvent(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
-		PersonConstructionData personConstructionData = personCreationObservationEvent.getPersonConstructionData();
+	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
+		PersonConstructionData personConstructionData = personAdditionEvent.getPersonConstructionData();
 		RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
 		validateRegionId(regionId);
-		PersonId personId = personCreationObservationEvent.getPersonId();
+		PersonId personId = personAdditionEvent.getPersonId();
 
 		validatePersonExists(personId);
 		validateRegionId(regionId);
@@ -688,15 +688,15 @@ public final class RegionDataManager extends DataManager {
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEvent(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonCreationObservationEvent.getBulkPersonConstructionData();
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {
 			RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
 			validateRegionId(regionId);
 		}
 
-		PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
+		PersonId personId = bulkPersonAdditionEvent.getPersonId();
 		validatePersonExists(personId);
 		int pId = personId.getValue();
 
@@ -733,8 +733,8 @@ public final class RegionDataManager extends DataManager {
 	 * if the person id is unknown</li>
 	 * 
 	 */
-	private void handlePersonImminentRemovalObservationEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		PersonId personId = personImminentRemovalObservationEvent.getPersonId();
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
+		PersonId personId = personImminentRemovalEvent.getPersonId();
 		validatePersonExists(personId);
 		dataManagerContext.addPlan((context) -> removePerson(personId), dataManagerContext.getTime());
 	}

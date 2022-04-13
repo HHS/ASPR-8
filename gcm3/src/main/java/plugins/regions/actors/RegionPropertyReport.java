@@ -6,7 +6,7 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.RegionPropertyChangeObservationEvent;
+import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.reports.support.ReportHeader;
@@ -52,10 +52,10 @@ public final class RegionPropertyReport {
 		return reportHeader;
 	}
 
-	private void handleRegionPropertyChangeObservationEvent(ActorContext actorContext, RegionPropertyChangeObservationEvent regionPropertyChangeObservationEvent) {
-		RegionId regionId = regionPropertyChangeObservationEvent.getRegionId();
-		RegionPropertyId regionPropertyId = regionPropertyChangeObservationEvent.getRegionPropertyId();
-		Object propertyValue = regionPropertyChangeObservationEvent.getCurrentPropertyValue();
+	private void handleRegionPropertyUpdateEvent(ActorContext actorContext, RegionPropertyUpdateEvent regionPropertyUpdateEvent) {
+		RegionId regionId = regionPropertyUpdateEvent.getRegionId();
+		RegionPropertyId regionPropertyId = regionPropertyUpdateEvent.getRegionPropertyId();
+		Object propertyValue = regionPropertyUpdateEvent.getCurrentPropertyValue();
 		if (regionPropertyIds.contains(regionPropertyId)) {
 			writeProperty(actorContext, regionId, regionPropertyId, propertyValue);
 		}
@@ -72,7 +72,7 @@ public final class RegionPropertyReport {
 
 	/**
 	 * Initial behavior for this report. The report subscribes to
-	 * {@linkplain RegionPropertyChangeObservationEvent} and releases a
+	 * {@linkplain RegionPropertyUpdateEvent} and releases a
 	 * {@link ReportItem} for each region property's initial value.
 	 */
 	public void init(final ActorContext actorContext) {
@@ -96,11 +96,11 @@ public final class RegionPropertyReport {
 		}
 
 		if (regionPropertyIds.equals(regionDataManager.getRegionPropertyIds())) {
-			actorContext.subscribe(RegionPropertyChangeObservationEvent.class, this::handleRegionPropertyChangeObservationEvent);
+			actorContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
 		} else {
 			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
-				EventLabel<RegionPropertyChangeObservationEvent> eventLabelByProperty = RegionPropertyChangeObservationEvent.getEventLabelByProperty(actorContext, regionPropertyId);
-				actorContext.subscribe(eventLabelByProperty, this::handleRegionPropertyChangeObservationEvent);
+				EventLabel<RegionPropertyUpdateEvent> eventLabelByProperty = RegionPropertyUpdateEvent.getEventLabelByProperty(actorContext, regionPropertyId);
+				actorContext.subscribe(eventLabelByProperty, this::handleRegionPropertyUpdateEvent);
 			}
 		}
 

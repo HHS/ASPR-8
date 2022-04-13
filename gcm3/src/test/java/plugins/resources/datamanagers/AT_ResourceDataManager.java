@@ -46,9 +46,9 @@ import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
-import plugins.resources.events.PersonResourceChangeObservationEvent;
-import plugins.resources.events.RegionResourceChangeObservationEvent;
-import plugins.resources.events.ResourcePropertyChangeObservationEvent;
+import plugins.resources.events.PersonResourceUpdateEvent;
+import plugins.resources.events.RegionResourceUpdateEvent;
+import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
@@ -75,7 +75,7 @@ import util.wrappers.MutableObject;
 public final class AT_ResourceDataManager {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
-	public void testPersonImminentRemovalObservationEvent() {
+	public void testPersonImminentRemovalEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// Have an actor add a person with resources and then remove that person
@@ -1074,7 +1074,7 @@ public final class AT_ResourceDataManager {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 				for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
-					c.subscribe(ResourcePropertyChangeObservationEvent.getEventLabel(c, testResourceId, testResourcePropertyId), (c2, e) -> {
+					c.subscribe(ResourcePropertyUpdateEvent.getEventLabel(c, testResourceId, testResourcePropertyId), (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getResourceId(), e.getResourcePropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
 					});
 				}
@@ -1196,7 +1196,7 @@ public final class AT_ResourceDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
-	public void testPersonResourceChangeObservationEventLabelers() {
+	public void testPersonResourceUpdateEventLabelers() {
 
 		// Have the actor attempt to add the event labelers and show that a
 		// contract exception is thrown, indicating that the labelers were
@@ -1204,16 +1204,16 @@ public final class AT_ResourceDataManager {
 
 		ResourcesActionSupport.testConsumer(100, 4062799122381184575L, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			testEventLabeler(c, PersonResourceChangeObservationEvent.getEventLabelerForPersonAndResource());
-			testEventLabeler(c, PersonResourceChangeObservationEvent.getEventLabelerForRegionAndResource(regionDataManager));
-			testEventLabeler(c, PersonResourceChangeObservationEvent.getEventLabelerForResource());
+			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForPersonAndResource());
+			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager));
+			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForResource());
 		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
-	public void testRegionResourceChangeObservationEventLabelers() {
+	public void testRegionResourceUpdateEventLabelers() {
 
 		//
 		// Have the actor attempt to add the event labelers and show that a
@@ -1221,21 +1221,21 @@ public final class AT_ResourceDataManager {
 		// previously added by the resolver.
 
 		ResourcesActionSupport.testConsumer(100, 8290874716343051269L, (c) -> {
-			testEventLabeler(c, RegionResourceChangeObservationEvent.getEventLabelerForRegionAndResource());
+			testEventLabeler(c, RegionResourceUpdateEvent.getEventLabelerForRegionAndResource());
 		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
-	public void testResourcePropertyChangeObservationEventLabelers() {
+	public void testResourcePropertyUpdateEventLabelers() {
 
 		// Have the actor attempt to add the event labelers and show that a
 		// contract exception is thrown, indicating that the labelers were
 		// previously added by the resolver.
 
 		ResourcesActionSupport.testConsumer(100, 3611119165176896462L, (c) -> {
-			testEventLabeler(c, ResourcePropertyChangeObservationEvent.getEventLabeler());
+			testEventLabeler(c, ResourcePropertyUpdateEvent.getEventLabeler());
 		});
 
 	}
@@ -1270,7 +1270,7 @@ public final class AT_ResourceDataManager {
 		// have an actor observe the changes to person resources
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(PersonResourceChangeObservationEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				c.subscribe(PersonResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 				});
 			}
@@ -1455,7 +1455,7 @@ public final class AT_ResourceDataManager {
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					c.subscribe(RegionResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
+					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
 				}
@@ -1579,7 +1579,7 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					c.subscribe(RegionResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
+					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
 				}
@@ -1869,13 +1869,13 @@ public final class AT_ResourceDataManager {
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					c.subscribe(RegionResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
+					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
 				}
 			}
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(PersonResourceChangeObservationEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				c.subscribe(PersonResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 
 				});
@@ -2040,13 +2040,13 @@ public final class AT_ResourceDataManager {
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					c.subscribe(RegionResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
+					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
 				}
 			}
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(PersonResourceChangeObservationEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				c.subscribe(PersonResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 
 				});
@@ -2253,7 +2253,7 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					c.subscribe(RegionResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
+					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
 				}
@@ -2364,7 +2364,7 @@ public final class AT_ResourceDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
-	public void testPersonCreationObservationEvent() {
+	public void testPersonAdditionEvent() {
 
 		// Have an actor create a few people with random resource levels
 		ResourcesActionSupport.testConsumer(0, 5441878385875188805L, (c) -> {
@@ -2394,7 +2394,7 @@ public final class AT_ResourceDataManager {
 				}
 
 				// create the person which will in turn generate the
-				// PersonCreationObservationEvent
+				// PersonAdditionEvent
 				PersonId personId = personDataManager.addPerson(builder.build());
 
 				// show that the person has the correct resource levels
@@ -2476,7 +2476,7 @@ public final class AT_ResourceDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
-	public void testBulkPersonCreationObservationEvent() {
+	public void testBulkPersonAdditionEvent() {
 
 		// Have an actor create a few people with random resource levels in a
 		// bulk construction request
@@ -2517,7 +2517,7 @@ public final class AT_ResourceDataManager {
 			}
 
 			// create the people which will in turn generate the
-			// BulkPersonCreationObservationEvent
+			// BulkPersonAdditionEvent
 			int personIdOffset = personDataManager.addBulkPeople(bulkBuilder.build()).get().getValue();
 
 			// show that each person has the correct resource levels

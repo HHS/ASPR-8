@@ -22,7 +22,7 @@ import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
 import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.events.PersonResourceChangeObservationEvent;
+import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
@@ -50,7 +50,7 @@ public class AT_ResourceFilter {
 			assertEquals(filterSensitivities.size(), 1);
 
 			FilterSensitivity<?> filterSensitivity = filterSensitivities.iterator().next();
-			assertEquals(PersonResourceChangeObservationEvent.class, filterSensitivity.getEventClass());
+			assertEquals(PersonResourceUpdateEvent.class, filterSensitivity.getEventClass());
 
 		});
 

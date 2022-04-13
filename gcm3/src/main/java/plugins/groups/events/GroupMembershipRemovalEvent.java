@@ -24,7 +24,7 @@ import plugins.people.support.PersonId;
  *
  */
 @Immutable
-public class GroupMembershipRemovalObservationEvent implements Event {
+public class GroupMembershipRemovalEvent implements Event {
 	private final PersonId personId;
 	private final GroupId groupId;
 
@@ -32,7 +32,7 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 	 * Constructs this event from the given person id and group id
 	 * 
 	 */
-	public GroupMembershipRemovalObservationEvent(final PersonId personId, final GroupId groupId) {
+	public GroupMembershipRemovalEvent(final PersonId personId, final GroupId groupId) {
 		super();
 		this.personId = personId;
 		this.groupId = groupId;
@@ -85,7 +85,7 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalObservationEvent} events. Matches on group
+	 * {@link GroupMembershipRemovalEvent} events. Matches on group
 	 * id and person id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -102,25 +102,25 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 	 *             id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipRemovalObservationEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
+	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
 		validateGroupId(simulationContext, groupId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.GROUP_PERSON, GroupMembershipRemovalObservationEvent.class, groupId, personId);
+		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP_PERSON, GroupMembershipRemovalEvent.class, groupId, personId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalObservationEvent} events that uses group id
+	 * {@link GroupMembershipRemovalEvent} events that uses group id
 	 * and person id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipRemovalObservationEvent> getEventLabelerForGroupAndPerson() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP_PERSON, GroupMembershipRemovalObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class,
-				LabelerId.GROUP_PERSON, GroupMembershipRemovalObservationEvent.class, event.getGroupId(), event.getPersonId()));
+	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroupAndPerson() {
+		return new SimpleEventLabeler<>(LabelerId.GROUP_PERSON, GroupMembershipRemovalEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class,
+				LabelerId.GROUP_PERSON, GroupMembershipRemovalEvent.class, event.getGroupId(), event.getPersonId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalObservationEvent} events. Matches on group
+	 * {@link GroupMembershipRemovalEvent} events. Matches on group
 	 * id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -133,24 +133,24 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 	 *             is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipRemovalObservationEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
+	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.GROUP, GroupMembershipRemovalObservationEvent.class, groupId);
+		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP, GroupMembershipRemovalEvent.class, groupId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalObservationEvent} events that uses group id.
+	 * {@link GroupMembershipRemovalEvent} events that uses group id.
 	 * Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipRemovalObservationEvent> getEventLabelerForGroup() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupMembershipRemovalObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.GROUP, GroupMembershipRemovalObservationEvent.class, event.getGroupId()));
+	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroup() {
+		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupMembershipRemovalEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP, GroupMembershipRemovalEvent.class, event.getGroupId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalObservationEvent} events. Matches on person
+	 * {@link GroupMembershipRemovalEvent} events. Matches on person
 	 * id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -163,24 +163,24 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 	 *             id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipRemovalObservationEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
+	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.PERSON, GroupMembershipRemovalObservationEvent.class, personId);
+		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.PERSON, GroupMembershipRemovalEvent.class, personId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalObservationEvent} events that uses person
+	 * {@link GroupMembershipRemovalEvent} events that uses person
 	 * id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipRemovalObservationEvent> getEventLabelerForPerson() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON, GroupMembershipRemovalObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.PERSON, GroupMembershipRemovalObservationEvent.class, event.getPersonId()));
+	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForPerson() {
+		return new SimpleEventLabeler<>(LabelerId.PERSON, GroupMembershipRemovalEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.PERSON, GroupMembershipRemovalEvent.class, event.getPersonId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalObservationEvent} events. Matches on person
+	 * {@link GroupMembershipRemovalEvent} events. Matches on person
 	 * id and group type id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -196,22 +196,22 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is not known</li>
 	 */
-	public static EventLabel<GroupMembershipRemovalObservationEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
+	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.TYPE_PERSON, GroupMembershipRemovalObservationEvent.class, groupTypeId, personId);
+		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE_PERSON, GroupMembershipRemovalEvent.class, groupTypeId, personId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalObservationEvent} events that uses group
+	 * {@link GroupMembershipRemovalEvent} events that uses group
 	 * type id and person id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipRemovalObservationEvent> getEventLabelerForGroupTypeAndPerson(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE_PERSON, GroupMembershipRemovalObservationEvent.class, (context, event) -> {
+	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroupTypeAndPerson(GroupDataManager groupDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.TYPE_PERSON, GroupMembershipRemovalEvent.class, (context, event) -> {
 			GroupId groupId = event.getGroupId();
 			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.TYPE_PERSON, GroupMembershipRemovalObservationEvent.class, groupTypeId, event.getPersonId());
+			return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE_PERSON, GroupMembershipRemovalEvent.class, groupTypeId, event.getPersonId());
 		});
 
 	}
@@ -222,7 +222,7 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalObservationEvent} events. Matches on group
+	 * {@link GroupMembershipRemovalEvent} events. Matches on group
 	 * type id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -234,44 +234,44 @@ public class GroupMembershipRemovalObservationEvent implements Event {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is not known</li>
 	 */
-	public static EventLabel<GroupMembershipRemovalObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.TYPE, GroupMembershipRemovalObservationEvent.class, groupTypeId);
+		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE, GroupMembershipRemovalEvent.class, groupTypeId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalObservationEvent} Matches on group type id.
+	 * {@link GroupMembershipRemovalEvent} Matches on group type id.
 	 * Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipRemovalObservationEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupMembershipRemovalObservationEvent.class, (context, event) -> {
+	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupMembershipRemovalEvent.class, (context, event) -> {
 			GroupId groupId = event.getGroupId();
 			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.TYPE, GroupMembershipRemovalObservationEvent.class, groupTypeId);
+			return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE, GroupMembershipRemovalEvent.class, groupTypeId);
 		});
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalObservationEvent} events. Matches on all
+	 * {@link GroupMembershipRemovalEvent} events. Matches on all
 	 * events.
 	 *
 	 */
-	public static EventLabel<GroupMembershipRemovalObservationEvent> getEventLabelByAll() {
+	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByAll() {
 		return ALL_EVENT_LABEL_INSTANCE;
 	}
 
-	private static EventLabel<GroupMembershipRemovalObservationEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupMembershipRemovalObservationEvent.class, LabelerId.ALL,
-			GroupMembershipRemovalObservationEvent.class);
+	private static EventLabel<GroupMembershipRemovalEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.ALL,
+			GroupMembershipRemovalEvent.class);
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalObservationEvent} all events. Automatically
+	 * {@link GroupMembershipRemovalEvent} all events. Automatically
 	 * added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipRemovalObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupMembershipRemovalObservationEvent.class, (context, event) -> ALL_EVENT_LABEL_INSTANCE);
+	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, GroupMembershipRemovalEvent.class, (context, event) -> ALL_EVENT_LABEL_INSTANCE);
 	}
 
 }

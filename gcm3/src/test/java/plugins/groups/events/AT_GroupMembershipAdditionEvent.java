@@ -28,8 +28,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GroupMembershipAdditionObservationEvent.class)
-public class AT_GroupMembershipAdditionObservationEvent {
+@UnitTest(target = GroupMembershipAdditionEvent.class)
+public class AT_GroupMembershipAdditionEvent {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, GroupId.class })
@@ -42,8 +42,8 @@ public class AT_GroupMembershipAdditionObservationEvent {
 	public void testGetGroupId() {
 		PersonId personId = new PersonId(12);
 		GroupId groupId = new GroupId(23);
-		GroupMembershipAdditionObservationEvent groupMembershipAdditionObservationEvent = new GroupMembershipAdditionObservationEvent(personId, groupId);
-		assertEquals(groupId, groupMembershipAdditionObservationEvent.getGroupId());
+		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
+		assertEquals(groupId, groupMembershipAdditionEvent.getGroupId());
 	}
 
 	@Test
@@ -51,8 +51,8 @@ public class AT_GroupMembershipAdditionObservationEvent {
 	public void testGetPersonId() {
 		PersonId personId = new PersonId(12);
 		GroupId groupId = new GroupId(23);
-		GroupMembershipAdditionObservationEvent groupMembershipAdditionObservationEvent = new GroupMembershipAdditionObservationEvent(personId, groupId);
-		assertEquals(personId, groupMembershipAdditionObservationEvent.getPersonId());
+		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
+		assertEquals(personId, groupMembershipAdditionEvent.getPersonId());
 	}
 
 	@Test
@@ -64,27 +64,27 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
-			Set<EventLabel<GroupMembershipAdditionObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
 			PersonId personId = new PersonId(0);
 
 			for (GroupId groupId : groupIds) {
 
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel = GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroupAndPerson();
+				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel2 = GroupMembershipAdditionObservationEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -98,19 +98,19 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			// precondition tests
 
 			// if the group id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupAndPerson(c, null, personId));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, null, personId));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 			// if the group id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupAndPerson(c, new GroupId(100000), personId));
+			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, new GroupId(100000), personId));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupAndPerson(c, new GroupId(0), null));
+			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, new GroupId(0), null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the group id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupAndPerson(c, new GroupId(0), new PersonId(10000)));
+			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, new GroupId(0), new PersonId(10000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
@@ -126,10 +126,10 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroupAndPerson();
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -137,18 +137,18 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			for (GroupId groupId : groupIds) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupMembershipAdditionObservationEvent> expectedEventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
+				EventLabel<GroupMembershipAdditionEvent> expectedEventLabel = GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
 
 				// show that the event label and event labeler have equal id
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				GroupMembershipAdditionObservationEvent event = new GroupMembershipAdditionObservationEvent(personId, groupId);
+				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupMembershipAdditionObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupMembershipAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -164,28 +164,28 @@ public class AT_GroupMembershipAdditionObservationEvent {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 8484038291544974628L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			Set<EventLabel<GroupMembershipAdditionObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0; i < 10; i++) {
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 
 				testGroupTypeId = testGroupTypeId.next();
 
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel = GroupMembershipAdditionEvent.getEventLabelByGroup(c, groupId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroup();
+				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroup();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel2 = GroupMembershipAdditionObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroup(c, groupId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -199,11 +199,11 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroup(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroup(c, null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroup(c, new GroupId(10000)));
+			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroup(c, new GroupId(10000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		});
@@ -219,10 +219,10 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroup();
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroup();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -233,7 +233,7 @@ public class AT_GroupMembershipAdditionObservationEvent {
 				testGroupTypeId = testGroupTypeId.next();
 
 				// derive the expected event label for this event
-				EventLabel<GroupMembershipAdditionObservationEvent> expectedEventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupMembershipAdditionEvent> expectedEventLabel = GroupMembershipAdditionEvent.getEventLabelByGroup(c, groupId);
 
 				// show that the event label and event labeler have equal id
 				// values
@@ -241,11 +241,11 @@ public class AT_GroupMembershipAdditionObservationEvent {
 
 				// create an event
 				PersonId personId = new PersonId(0);
-				GroupMembershipAdditionObservationEvent event = new GroupMembershipAdditionObservationEvent(personId, groupId);
+				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupMembershipAdditionObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupMembershipAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -262,25 +262,25 @@ public class AT_GroupMembershipAdditionObservationEvent {
 		GroupsActionSupport.testConsumer(10, 3, 5, 5181120908681821960L, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			List<PersonId> people = personDataManager.getPeople();
-			Set<EventLabel<GroupMembershipAdditionObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (PersonId personId : people) {
 
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByPerson(c, personId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel = GroupMembershipAdditionEvent.getEventLabelByPerson(c, personId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForPerson();
+				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForPerson();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel2 = GroupMembershipAdditionObservationEvent.getEventLabelByPerson(c, personId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByPerson(c, personId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -294,11 +294,11 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByPerson(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByPerson(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByPerson(c, new PersonId(10000)));
+			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByPerson(c, new PersonId(10000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
@@ -314,10 +314,10 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForPerson();
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForPerson();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -325,18 +325,18 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			for (GroupId groupId : groupIds) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupMembershipAdditionObservationEvent> expectedEventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByPerson(c, personId);
+				EventLabel<GroupMembershipAdditionEvent> expectedEventLabel = GroupMembershipAdditionEvent.getEventLabelByPerson(c, personId);
 
 				// show that the event label and event labeler have equal id
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				GroupMembershipAdditionObservationEvent event = new GroupMembershipAdditionObservationEvent(personId, groupId);
+				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupMembershipAdditionObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupMembershipAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -353,26 +353,26 @@ public class AT_GroupMembershipAdditionObservationEvent {
 		GroupsActionSupport.testConsumer(10, 3, 5, 2396297410749360025L, (c) -> {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			Set<EventLabel<GroupMembershipAdditionObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
 			PersonId personId = new PersonId(0);
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroupTypeAndPerson(c, testGroupTypeId, personId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel = GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, testGroupTypeId, personId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
+				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel2 = GroupMembershipAdditionObservationEvent.getEventLabelByGroupTypeAndPerson(c, testGroupTypeId, personId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, testGroupTypeId, personId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -386,21 +386,21 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupTypeAndPerson(c, null, new PersonId(0)));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, null, new PersonId(0)));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupTypeAndPerson(c, TestGroupTypeId.getUnknownGroupTypeId(), new PersonId(0)));
+					() -> GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, TestGroupTypeId.getUnknownGroupTypeId(), new PersonId(0)));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 			
 			// if the person id is null
-			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupTypeAndPerson(c, TestGroupTypeId.GROUP_TYPE_1, null));
+			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, TestGroupTypeId.GROUP_TYPE_1, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupTypeAndPerson(c, TestGroupTypeId.GROUP_TYPE_1, new PersonId(1000000)));
+					() -> GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, TestGroupTypeId.GROUP_TYPE_1, new PersonId(1000000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 
@@ -417,10 +417,10 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -430,18 +430,18 @@ public class AT_GroupMembershipAdditionObservationEvent {
 				GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
 
 				// derive the expected event label for this event
-				EventLabel<GroupMembershipAdditionObservationEvent> expectedEventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroupTypeAndPerson(c, groupTypeId, personId);
+				EventLabel<GroupMembershipAdditionEvent> expectedEventLabel = GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, groupTypeId, personId);
 
 				// show that the event label and event labeler have equal id
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				GroupMembershipAdditionObservationEvent event = new GroupMembershipAdditionObservationEvent(personId, groupId);
+				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupMembershipAdditionObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupMembershipAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -457,25 +457,25 @@ public class AT_GroupMembershipAdditionObservationEvent {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4360946626249599442L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			Set<EventLabel<GroupMembershipAdditionObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroupType(c, testGroupTypeId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel = GroupMembershipAdditionEvent.getEventLabelByGroupType(c, testGroupTypeId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroupType(groupDataManager);
+				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupDataManager);
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupMembershipAdditionObservationEvent> eventLabel2 = GroupMembershipAdditionObservationEvent.getEventLabelByGroupType(c, testGroupTypeId);
+				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroupType(c, testGroupTypeId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -489,11 +489,11 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupType(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupType(c, null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionObservationEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
+			contractException = assertThrows(ContractException.class, () -> GroupMembershipAdditionEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		});
@@ -509,17 +509,17 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForGroupType(groupDataManager);
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupDataManager);
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupMembershipAdditionObservationEvent> expectedEventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByGroupType(c, testGroupTypeId);
+				EventLabel<GroupMembershipAdditionEvent> expectedEventLabel = GroupMembershipAdditionEvent.getEventLabelByGroupType(c, testGroupTypeId);
 
 				// show that the event label and event labeler have equal id
 				// values
@@ -529,11 +529,11 @@ public class AT_GroupMembershipAdditionObservationEvent {
 
 				PersonId personId = new PersonId(0);
 				// create an event
-				GroupMembershipAdditionObservationEvent event = new GroupMembershipAdditionObservationEvent(personId, groupId);
+				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupMembershipAdditionObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupMembershipAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -549,23 +549,23 @@ public class AT_GroupMembershipAdditionObservationEvent {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4764889447042956281L, (c) -> {
 
-			Set<EventLabel<GroupMembershipAdditionObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
-			EventLabel<GroupMembershipAdditionObservationEvent> eventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByAll();
+			EventLabel<GroupMembershipAdditionEvent> eventLabel = GroupMembershipAdditionEvent.getEventLabelByAll();
 
 			// show that the event label has the correct event class
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getEventClass());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getEventClass());
 
 			// show that the event label has the correct primary key
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabel.getPrimaryKeyValue());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabel.getPrimaryKeyValue());
 
 			// show that the event label has the same id as its
 			// associated labeler
-			EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForAll();
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForAll();
 			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
-			EventLabel<GroupMembershipAdditionObservationEvent> eventLabel2 = GroupMembershipAdditionObservationEvent.getEventLabelByAll();
+			EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByAll();
 			assertEquals(eventLabel, eventLabel2);
 
 			// show that equal event labels have equal hash codes
@@ -588,17 +588,17 @@ public class AT_GroupMembershipAdditionObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionObservationEvent> eventLabeler = GroupMembershipAdditionObservationEvent.getEventLabelerForAll();
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForAll();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupMembershipAdditionObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupMembershipAdditionObservationEvent> expectedEventLabel = GroupMembershipAdditionObservationEvent.getEventLabelByAll();
+				EventLabel<GroupMembershipAdditionEvent> expectedEventLabel = GroupMembershipAdditionEvent.getEventLabelByAll();
 
 				// show that the event label and event labeler have equal id
 				// values
@@ -608,11 +608,11 @@ public class AT_GroupMembershipAdditionObservationEvent {
 
 				// create an event
 				PersonId personId = new PersonId(0);
-				GroupMembershipAdditionObservationEvent event = new GroupMembershipAdditionObservationEvent(personId, groupId);
+				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupMembershipAdditionObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupMembershipAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 

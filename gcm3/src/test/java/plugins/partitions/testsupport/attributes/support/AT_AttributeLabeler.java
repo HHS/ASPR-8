@@ -20,7 +20,7 @@ import nucleus.util.ContractException;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -53,15 +53,15 @@ public final class AT_AttributeLabeler {
 		assertEquals(1, labelerSensitivities.size());
 
 		// show that the sensitivity is associated with
-		// AttributeChangeObservationEvent
+		// AttributeUpdateEvent
 		LabelerSensitivity<?> labelerSensitivity = labelerSensitivities.iterator().next();
-		assertEquals(AttributeChangeObservationEvent.class, labelerSensitivity.getEventClass());
+		assertEquals(AttributeUpdateEvent.class, labelerSensitivity.getEventClass());
 
 		// show that the sensitivity will return the person id from a
-		// AttributeChangeObservationEvent
+		// AttributeUpdateEvent
 		PersonId personId = new PersonId(56);
-		AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
-		Optional<PersonId> optional = labelerSensitivity.getPersonId(attributeChangeObservationEvent);
+		AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
+		Optional<PersonId> optional = labelerSensitivity.getPersonId(attributeUpdateEvent);
 		assertTrue(optional.isPresent());
 		assertEquals(personId, optional.get());
 

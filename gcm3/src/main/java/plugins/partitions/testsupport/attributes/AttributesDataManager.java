@@ -8,12 +8,12 @@ import java.util.Set;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.util.ContractException;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.people.PersonDataManager;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
@@ -132,22 +132,22 @@ public final class AttributesDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
 
-		dataManagerContext.addEventLabeler(AttributeChangeObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(AttributeUpdateEvent.getEventLabeler());
 
 		for (AttributeId attributeId : attributesPluginData.getAttributeIds()) {
 			AttributeDefinition attributeDefinition = attributesPluginData.getAttributeDefinition(attributeId);
 			addAttribute(attributeId, attributeDefinition);
 		}
 
-		dataManagerContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
+		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(dataManagerContext, personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
+		validatePersonExists(dataManagerContext, personImminentRemovalEvent.getPersonId());
 		dataManagerContext.addPlan((c) -> {
 			for (AttributeId attributeId : attributeValues.keySet()) {
-				attributeValues.get(attributeId).remove(personImminentRemovalObservationEvent.getPersonId());
+				attributeValues.get(attributeId).remove(personImminentRemovalEvent.getPersonId());
 			}
 		}, dataManagerContext.getTime());
 	}
@@ -182,7 +182,7 @@ public final class AttributesDataManager extends DataManager {
 
 	/**
 	 * Updates the person's current attribute value. Generates a corresponding
-	 * {@linkplain AttributeChangeObservationEvent}
+	 * {@linkplain AttributeUpdateEvent}
 	 * 
 	 * 
 	 * Throws {@link ContractException}
@@ -209,7 +209,7 @@ public final class AttributesDataManager extends DataManager {
 		validateValueCompatibility(dataManagerContext, attributeId, attributeDefinition, value);
 		Object previousValue = getAttributeValue(personId, attributeId);
 		attributeValues.get(attributeId).put(personId, value);
-		dataManagerContext.releaseEvent(new AttributeChangeObservationEvent(personId, attributeId, previousValue, value));
+		dataManagerContext.releaseEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
 	}
 
 	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {

@@ -20,7 +20,7 @@ import plugins.people.PersonDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyChangeObservationEvent;
+import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.stochastics.StochasticsDataManager;
@@ -95,7 +95,7 @@ public class AT_PropertyFilter {
 		assertEquals(filterSensitivities.size(), 1);
 
 		FilterSensitivity<?> filterSensitivity = filterSensitivities.iterator().next();
-		assertEquals(PersonPropertyChangeObservationEvent.class, filterSensitivity.getEventClass());
+		assertEquals(PersonPropertyUpdateEvent.class, filterSensitivity.getEventClass());
 	}
 
 	/**

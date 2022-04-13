@@ -22,13 +22,13 @@ import plugins.groups.support.GroupTypeId;
  */
 
 @Immutable
-public class GroupImminentRemovalObservationEvent implements Event {
+public class GroupImminentRemovalEvent implements Event {
 	private final GroupId groupId;
 	/**
 	 * Constructs this event from the group id
 	 * 
 	 */
-	public GroupImminentRemovalObservationEvent(final GroupId groupId) {
+	public GroupImminentRemovalEvent(final GroupId groupId) {
 		super();
 		this.groupId = groupId;
 	}
@@ -66,7 +66,7 @@ public class GroupImminentRemovalObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupImminentRemovalObservationEvent} events. Matches on group id.
+	 * {@link GroupImminentRemovalEvent} events. Matches on group id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -78,22 +78,22 @@ public class GroupImminentRemovalObservationEvent implements Event {
 	 *             group id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupImminentRemovalObservationEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
+	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new MultiKeyEventLabel<>(GroupImminentRemovalObservationEvent.class, LabelerId.GROUP, GroupImminentRemovalObservationEvent.class, groupId);
+		return new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUP, GroupImminentRemovalEvent.class, groupId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupImminentRemovalObservationEvent} events
+	 * Returns an event labeler for {@link GroupImminentRemovalEvent} events
 	 * that uses group id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupImminentRemovalObservationEvent> getEventLabelerForGroup() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupImminentRemovalObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupImminentRemovalObservationEvent.class, LabelerId.GROUP, GroupImminentRemovalObservationEvent.class, event.getGroupId()));
+	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForGroup() {
+		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupImminentRemovalEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUP, GroupImminentRemovalEvent.class, event.getGroupId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupImminentRemovalObservationEvent} events. Matches on group type id.
+	 * {@link GroupImminentRemovalEvent} events. Matches on group type id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -105,40 +105,40 @@ public class GroupImminentRemovalObservationEvent implements Event {
 	 *             group type id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupImminentRemovalObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new MultiKeyEventLabel<>(GroupImminentRemovalObservationEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalObservationEvent.class, groupTypeId);
+		return new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalEvent.class, groupTypeId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupImminentRemovalObservationEvent} events
+	 * Returns an event labeler for {@link GroupImminentRemovalEvent} events
 	 * that uses group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupImminentRemovalObservationEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.GROUPTYPE, GroupImminentRemovalObservationEvent.class, (context, event) -> {
+	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.GROUPTYPE, GroupImminentRemovalEvent.class, (context, event) -> {
 			GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-			return new MultiKeyEventLabel<>(GroupImminentRemovalObservationEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalObservationEvent.class, groupTypeId);
+			return new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalEvent.class, groupTypeId);
 		});
 	}
 
-	private static EventLabel<GroupImminentRemovalObservationEvent> ALL_EVENTS_LABEL = new MultiKeyEventLabel<>(GroupImminentRemovalObservationEvent.class, LabelerId.ALL, GroupImminentRemovalObservationEvent.class);
+	private static EventLabel<GroupImminentRemovalEvent> ALL_EVENTS_LABEL = new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.ALL, GroupImminentRemovalEvent.class);
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupImminentRemovalObservationEvent} events. Matches on all events.
+	 * {@link GroupImminentRemovalEvent} events. Matches on all events.
 	 *
 	 * 
 	 */
-	public static EventLabel<GroupImminentRemovalObservationEvent> getEventLabelByAll() {
+	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByAll() {
 		return ALL_EVENTS_LABEL;
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupImminentRemovalObservationEvent} events
+	 * Returns an event labeler for {@link GroupImminentRemovalEvent} events
 	 * that uses group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupImminentRemovalObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupImminentRemovalObservationEvent.class, (context, event) -> ALL_EVENTS_LABEL);
+	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, GroupImminentRemovalEvent.class, (context, event) -> ALL_EVENTS_LABEL);
 	}
 
 }

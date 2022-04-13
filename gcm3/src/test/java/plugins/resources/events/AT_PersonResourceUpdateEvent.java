@@ -35,8 +35,8 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 
-@UnitTest(target = PersonResourceChangeObservationEvent.class)
-public class AT_PersonResourceChangeObservationEvent implements Event {
+@UnitTest(target = PersonResourceUpdateEvent.class)
+public class AT_PersonResourceUpdateEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, ResourceId.class, long.class, long.class })
@@ -51,8 +51,8 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 		ResourceId resourceId = TestResourceId.RESOURCE_2;
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
-		PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, personResourceChangeObservationEvent.getResourceId());
+		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
+		assertEquals(resourceId, personResourceUpdateEvent.getResourceId());
 	}
 
 	@Test
@@ -62,8 +62,8 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 		ResourceId resourceId = TestResourceId.RESOURCE_2;
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
-		PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, personResourceChangeObservationEvent.getCurrentResourceLevel());
+		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
+		assertEquals(currentResourceLevel, personResourceUpdateEvent.getCurrentResourceLevel());
 	}
 
 	@Test
@@ -73,8 +73,8 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 		ResourceId resourceId = TestResourceId.RESOURCE_2;
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
-		PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(personId, personResourceChangeObservationEvent.getPersonId());
+		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
+		assertEquals(personId, personResourceUpdateEvent.getPersonId());
 	}
 
 	@Test
@@ -84,8 +84,8 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 		ResourceId resourceId = TestResourceId.RESOURCE_2;
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
-		PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, personResourceChangeObservationEvent.getPreviousResourceLevel());
+		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
+		assertEquals(previousResourceLevel, personResourceUpdateEvent.getPreviousResourceLevel());
 	}
 
 	@Test
@@ -99,26 +99,26 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			Set<RegionId> regionIds = regionDataManager.getRegionIds();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
-			Set<EventLabel<PersonResourceChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<PersonResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (RegionId regionId : regionIds) {
 				for (ResourceId resourceId : resourceIds) {
 
-					EventLabel<PersonResourceChangeObservationEvent> eventLabel = PersonResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
+					EventLabel<PersonResourceUpdateEvent> eventLabel = PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
 
 					// show that the event label has the correct event class
-					assertEquals(PersonResourceChangeObservationEvent.class, eventLabel.getEventClass());
+					assertEquals(PersonResourceUpdateEvent.class, eventLabel.getEventClass());
 
 					// show that the event label has the correct primary key
 					assertEquals(resourceId, eventLabel.getPrimaryKeyValue());
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForRegionAndResource(regionDataManager);
+					EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager);
 					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
-					EventLabel<PersonResourceChangeObservationEvent> eventLabel2 = PersonResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
+					EventLabel<PersonResourceUpdateEvent> eventLabel2 = PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
 					assertEquals(eventLabel, eventLabel2);
 
 					// show that equal event labels have equal hash codes
@@ -134,21 +134,21 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 
 			// if the region id is null
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> PersonResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, null, TestResourceId.RESOURCE_1));
+					() -> PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, null, TestResourceId.RESOURCE_1));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 			// if the region id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> PersonResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, TestRegionId.getUnknownRegionId(), TestResourceId.RESOURCE_1));
+					() -> PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, TestRegionId.getUnknownRegionId(), TestResourceId.RESOURCE_1));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 			// if the resource id is null
-			contractException = assertThrows(ContractException.class, () -> PersonResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, TestRegionId.REGION_1, null));
+			contractException = assertThrows(ContractException.class, () -> PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, TestRegionId.REGION_1, null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 			// if the resource id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> PersonResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, TestRegionId.REGION_1, TestResourceId.getUnknownResourceId()));
+					() -> PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, TestRegionId.REGION_1, TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		});
@@ -167,10 +167,10 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler
-			EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForRegionAndResource(regionDataManager);
+			EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager);
 
 			// show that the event labeler has the correct event class
-			assertEquals(PersonResourceChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(PersonResourceUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -181,7 +181,7 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 						PersonId personId = peopleInRegion.get(randomGenerator.nextInt(peopleInRegion.size()));
 
 						// derive the expected event label for this event
-						EventLabel<PersonResourceChangeObservationEvent> expectedEventLabel = PersonResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
+						EventLabel<PersonResourceUpdateEvent> expectedEventLabel = PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
 
 						// show that the event label and event labeler have
 						// equal id
@@ -189,12 +189,12 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 						assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 						// create an event
-						PersonResourceChangeObservationEvent event = new PersonResourceChangeObservationEvent(personId, resourceId, 10L, 30L);
+						PersonResourceUpdateEvent event = new PersonResourceUpdateEvent(personId, resourceId, 10L, 30L);
 
 						// show that the event labeler produces the correct
 						// event
 						// label
-						EventLabel<PersonResourceChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+						EventLabel<PersonResourceUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 						assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -216,26 +216,26 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			List<PersonId> people = personDataManager.getPeople();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
-			Set<EventLabel<PersonResourceChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<PersonResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (PersonId personId : people) {
 				for (ResourceId resourceId : resourceIds) {
 
-					EventLabel<PersonResourceChangeObservationEvent> eventLabel = PersonResourceChangeObservationEvent.getEventLabelByPersonAndResource(c, personId, resourceId);
+					EventLabel<PersonResourceUpdateEvent> eventLabel = PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, personId, resourceId);
 
 					// show that the event label has the correct event class
-					assertEquals(PersonResourceChangeObservationEvent.class, eventLabel.getEventClass());
+					assertEquals(PersonResourceUpdateEvent.class, eventLabel.getEventClass());
 
 					// show that the event label has the correct primary key
 					assertEquals(resourceId, eventLabel.getPrimaryKeyValue());
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForPersonAndResource();
+					EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForPersonAndResource();
 					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
-					EventLabel<PersonResourceChangeObservationEvent> eventLabel2 = PersonResourceChangeObservationEvent.getEventLabelByPersonAndResource(c, personId, resourceId);
+					EventLabel<PersonResourceUpdateEvent> eventLabel2 = PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, personId, resourceId);
 					assertEquals(eventLabel, eventLabel2);
 
 					// show that equal event labels have equal hash codes
@@ -251,20 +251,20 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 
 			// if the person id is null
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> PersonResourceChangeObservationEvent.getEventLabelByPersonAndResource(c, null, TestResourceId.RESOURCE_1));
+					() -> PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, null, TestResourceId.RESOURCE_1));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is unknown
-			contractException = assertThrows(ContractException.class, () -> PersonResourceChangeObservationEvent.getEventLabelByPersonAndResource(c, new PersonId(11110), TestResourceId.RESOURCE_1));
+			contractException = assertThrows(ContractException.class, () -> PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, new PersonId(11110), TestResourceId.RESOURCE_1));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the resource id is null
-			contractException = assertThrows(ContractException.class, () -> PersonResourceChangeObservationEvent.getEventLabelByPersonAndResource(c, new PersonId(0), null));
+			contractException = assertThrows(ContractException.class, () -> PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, new PersonId(0), null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 			// if the resource id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> PersonResourceChangeObservationEvent.getEventLabelByPersonAndResource(c, new PersonId(0), TestResourceId.getUnknownResourceId()));
+					() -> PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, new PersonId(0), TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		});
@@ -280,10 +280,10 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
 			// create an event labeler
-			EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForPersonAndResource();
+			EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForPersonAndResource();
 
 			// show that the event labeler has the correct event class
-			assertEquals(PersonResourceChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(PersonResourceUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -292,7 +292,7 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 				for (ResourceId resourceId : resourceIds) {
 
 					// derive the expected event label for this event
-					EventLabel<PersonResourceChangeObservationEvent> expectedEventLabel = PersonResourceChangeObservationEvent.getEventLabelByPersonAndResource(c, personId, resourceId);
+					EventLabel<PersonResourceUpdateEvent> expectedEventLabel = PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, personId, resourceId);
 
 					// show that the event label and event labeler have
 					// equal id
@@ -300,12 +300,12 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 					// create an event
-					PersonResourceChangeObservationEvent event = new PersonResourceChangeObservationEvent(personId, resourceId, 10L, 30L);
+					PersonResourceUpdateEvent event = new PersonResourceUpdateEvent(personId, resourceId, 10L, 30L);
 
 					// show that the event labeler produces the correct
 					// event
 					// label
-					EventLabel<PersonResourceChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<PersonResourceUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 					assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -324,25 +324,25 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
-			Set<EventLabel<PersonResourceChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<PersonResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (ResourceId resourceId : resourceIds) {
 
-				EventLabel<PersonResourceChangeObservationEvent> eventLabel = PersonResourceChangeObservationEvent.getEventLabelByResource(c, resourceId);
+				EventLabel<PersonResourceUpdateEvent> eventLabel = PersonResourceUpdateEvent.getEventLabelByResource(c, resourceId);
 
 				// show that the event label has the correct event class
-				assertEquals(PersonResourceChangeObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(PersonResourceUpdateEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
 				assertEquals(resourceId, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForResource();
+				EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForResource();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<PersonResourceChangeObservationEvent> eventLabel2 = PersonResourceChangeObservationEvent.getEventLabelByResource(c, resourceId);
+				EventLabel<PersonResourceUpdateEvent> eventLabel2 = PersonResourceUpdateEvent.getEventLabelByResource(c, resourceId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -356,11 +356,11 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			// precondition tests
 
 			// if the resource id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> PersonResourceChangeObservationEvent.getEventLabelByResource(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> PersonResourceUpdateEvent.getEventLabelByResource(c, null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 			// if the resource id is unknown
-			contractException = assertThrows(ContractException.class, () -> PersonResourceChangeObservationEvent.getEventLabelByResource(c, TestResourceId.getUnknownResourceId()));
+			contractException = assertThrows(ContractException.class, () -> PersonResourceUpdateEvent.getEventLabelByResource(c, TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 		});
@@ -374,17 +374,17 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
 			// create an event labeler
-			EventLabeler<PersonResourceChangeObservationEvent> eventLabeler = PersonResourceChangeObservationEvent.getEventLabelerForResource();
+			EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForResource();
 
 			// show that the event labeler has the correct event class
-			assertEquals(PersonResourceChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(PersonResourceUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
 			for (ResourceId resourceId : resourceIds) {
 
 				// derive the expected event label for this event
-				EventLabel<PersonResourceChangeObservationEvent> expectedEventLabel = PersonResourceChangeObservationEvent.getEventLabelByResource(c, resourceId);
+				EventLabel<PersonResourceUpdateEvent> expectedEventLabel = PersonResourceUpdateEvent.getEventLabelByResource(c, resourceId);
 
 				// show that the event label and event labeler have
 				// equal id
@@ -392,12 +392,12 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				PersonResourceChangeObservationEvent event = new PersonResourceChangeObservationEvent(new PersonId(0), resourceId, 10L, 30L);
+				PersonResourceUpdateEvent event = new PersonResourceUpdateEvent(new PersonId(0), resourceId, 10L, 30L);
 
 				// show that the event labeler produces the correct
 				// event
 				// label
-				EventLabel<PersonResourceChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<PersonResourceUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -414,8 +414,8 @@ public class AT_PersonResourceChangeObservationEvent implements Event {
 			PersonId personId = new PersonId(7645);
 			long previousResourceLevel = 45L;
 			long currentResourceLevel = 398L;
-			PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, testResourceId, previousResourceLevel, currentResourceLevel);
-			assertEquals(testResourceId, personResourceChangeObservationEvent.getPrimaryKeyValue());
+			PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, testResourceId, previousResourceLevel, currentResourceLevel);
+			assertEquals(testResourceId, personResourceUpdateEvent.getPrimaryKeyValue());
 		}
 	}
 

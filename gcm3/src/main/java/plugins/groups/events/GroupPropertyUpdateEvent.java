@@ -22,7 +22,7 @@ import plugins.groups.support.GroupTypeId;
  *
  */
 @Immutable
-public class GroupPropertyChangeObservationEvent implements Event {
+public class GroupPropertyUpdateEvent implements Event {
 	private final GroupId groupId;
 	private final GroupPropertyId groupPropertyId;
 	private final Object previousPropertyValue;
@@ -33,7 +33,7 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 * previous property value and current property value.
 	 * 
 	 */
-	public GroupPropertyChangeObservationEvent(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object previousPropertyValue, final Object currentPropertyValue) {
+	public GroupPropertyUpdateEvent(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object previousPropertyValue, final Object currentPropertyValue) {
 		super();
 		this.groupId = groupId;
 		this.groupPropertyId = groupPropertyId;
@@ -117,7 +117,7 @@ public class GroupPropertyChangeObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyChangeObservationEvent} events. Matches on group id
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group id
 	 * and group property id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -134,25 +134,25 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             group property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupAndProperty(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
+	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupAndProperty(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
 		validateGroupId(simulationContext, groupId);
 		validateGroupPropertyId(simulationContext, groupId, groupPropertyId);
-		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.GROUP_PROPERTY, GroupPropertyChangeObservationEvent.class, groupId, groupPropertyId);
+		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, groupId, groupPropertyId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
 	 * events that uses group id and group property id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<GroupPropertyChangeObservationEvent> getEventLabelerForGroupAndProperty() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP_PROPERTY, GroupPropertyChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class,
-				LabelerId.GROUP_PROPERTY, GroupPropertyChangeObservationEvent.class, event.getGroupId(), event.getGroupPropertyId()));
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupAndProperty() {
+		return new SimpleEventLabeler<>(LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class,
+				LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, event.getGroupId(), event.getGroupPropertyId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyChangeObservationEvent} events. Matches on group id.
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -164,23 +164,23 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
+	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.GROUP, GroupPropertyChangeObservationEvent.class, groupId);
+		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP, GroupPropertyUpdateEvent.class, groupId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
 	 * events that uses group id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupPropertyChangeObservationEvent> getEventLabelerForGroup() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupPropertyChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.GROUP, GroupPropertyChangeObservationEvent.class, event.getGroupId()));
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroup() {
+		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupPropertyUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP, GroupPropertyUpdateEvent.class, event.getGroupId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyChangeObservationEvent} events. Matches on group type
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group type
 	 * id and group property id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -197,26 +197,26 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             group type id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupTypeAndProperty(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupTypeAndProperty(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validateGroupPropertyId(simulationContext, groupTypeId, groupPropertyId);
-		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyChangeObservationEvent.class, groupTypeId, groupPropertyId);
+		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, groupTypeId, groupPropertyId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
 	 * events that uses group id and group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupPropertyChangeObservationEvent> getEventLabelerForGroupTypeAndProperty(GroupDataManager groupDataManager ) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE_PROPERTY, GroupPropertyChangeObservationEvent.class, (context, event) -> {
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupTypeAndProperty(GroupDataManager groupDataManager ) {
+		return new SimpleEventLabeler<>(LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, (context, event) -> {
 			GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-			return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyChangeObservationEvent.class, groupTypeId, event.getGroupPropertyId());
+			return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, groupTypeId, event.getGroupPropertyId());
 		});
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyChangeObservationEvent} events. Matches on group type
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group type
 	 * id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -230,40 +230,40 @@ public class GroupPropertyChangeObservationEvent implements Event {
 	 *             group type id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.TYPE, GroupPropertyChangeObservationEvent.class, groupTypeId);
+		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE, GroupPropertyUpdateEvent.class, groupTypeId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
 	 * events that uses group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupPropertyChangeObservationEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupPropertyChangeObservationEvent.class, (context, event) -> {
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupPropertyUpdateEvent.class, (context, event) -> {
 			GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-			return new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.TYPE, GroupPropertyChangeObservationEvent.class, groupTypeId);
+			return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE, GroupPropertyUpdateEvent.class, groupTypeId);
 		});
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyChangeObservationEvent} events. Matches on all
+	 * {@link GroupPropertyUpdateEvent} events. Matches on all
 	 * events.
 	 */
-	public static EventLabel<GroupPropertyChangeObservationEvent> getEventLabelByAll() {
+	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	private final static EventLabel<GroupPropertyChangeObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(GroupPropertyChangeObservationEvent.class, LabelerId.ALL,
-			GroupPropertyChangeObservationEvent.class);
+	private final static EventLabel<GroupPropertyUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.ALL,
+			GroupPropertyUpdateEvent.class);
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
 	 * events matches all events. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupPropertyChangeObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupPropertyChangeObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, GroupPropertyUpdateEvent.class, (context, event) -> ALL_LABEL);
 	}
 
 }

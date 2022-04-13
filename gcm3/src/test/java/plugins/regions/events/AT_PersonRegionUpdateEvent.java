@@ -20,8 +20,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PersonRegionChangeObservationEvent.class)
-public class AT_PersonRegionChangeObservationEvent {
+@UnitTest(target = PersonRegionUpdateEvent.class)
+public class AT_PersonRegionUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, RegionId.class, RegionId.class })
@@ -29,7 +29,7 @@ public class AT_PersonRegionChangeObservationEvent {
 		PersonId personId = new PersonId(456);
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(personId, previousRegionId, currentRegionId);
+		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
 		assertNotNull(event);
 	}
 
@@ -39,7 +39,7 @@ public class AT_PersonRegionChangeObservationEvent {
 		PersonId personId = new PersonId(456);
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(personId, previousRegionId, currentRegionId);
+		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
 		assertEquals(currentRegionId, event.getCurrentRegionId());
 	}
 
@@ -49,7 +49,7 @@ public class AT_PersonRegionChangeObservationEvent {
 		PersonId personId = new PersonId(456);
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(personId, previousRegionId, currentRegionId);
+		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
 		assertEquals(previousRegionId, event.getPreviousRegionId());
 	}
 
@@ -59,7 +59,7 @@ public class AT_PersonRegionChangeObservationEvent {
 		PersonId personId = new PersonId(456);
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(personId, previousRegionId, currentRegionId);
+		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
 		assertEquals(personId, event.getPersonId());
 	}
 
@@ -70,10 +70,10 @@ public class AT_PersonRegionChangeObservationEvent {
 		PersonId personId = new PersonId(456);
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(personId, previousRegionId, currentRegionId);
+		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
 
 		String actualValue = event.toString();
-		String expectedValue = "PersonRegionChangeObservationEvent [personId=456, previousRegionId=REGION_1, currentRegionId=REGION_2]";
+		String expectedValue = "PersonRegionUpdateEvent [personId=456, previousRegionId=REGION_1, currentRegionId=REGION_2]";
 		assertEquals(expectedValue, actualValue);
 	}
 
@@ -82,10 +82,10 @@ public class AT_PersonRegionChangeObservationEvent {
 	public void testGetEventLabelByArrivalRegion() {
 		RegionsActionSupport.testConsumer(0, 1834330681874393158L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				EventLabel<PersonRegionChangeObservationEvent> eventLabel = PersonRegionChangeObservationEvent.getEventLabelByArrivalRegion(c, testRegionId);
-				assertEquals(PersonRegionChangeObservationEvent.class, eventLabel.getEventClass());
-				assertEquals(PersonRegionChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion().getId(), eventLabel.getLabelerId());
+				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, testRegionId);
+				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getEventClass());
+				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelerForArrivalRegion().getId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -96,10 +96,10 @@ public class AT_PersonRegionChangeObservationEvent {
 
 		RegionsActionSupport.testConsumer(0, 1200361918333577992L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				EventLabel<PersonRegionChangeObservationEvent> eventLabel = PersonRegionChangeObservationEvent.getEventLabelByDepartureRegion(c, testRegionId);
-				assertEquals(PersonRegionChangeObservationEvent.class, eventLabel.getEventClass());
-				assertEquals(PersonRegionChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(PersonRegionChangeObservationEvent.getEventLabelerForDepartureRegion().getId(), eventLabel.getLabelerId());
+				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByDepartureRegion(c, testRegionId);
+				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getEventClass());
+				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelerForDepartureRegion().getId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -114,10 +114,10 @@ public class AT_PersonRegionChangeObservationEvent {
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(testRegionId).build();
 				PersonId personId = personDataManager.addPerson(personConstructionData);
 
-				EventLabel<PersonRegionChangeObservationEvent> eventLabel = PersonRegionChangeObservationEvent.getEventLabelByPerson(c, personId);
-				assertEquals(PersonRegionChangeObservationEvent.class, eventLabel.getEventClass());
-				assertEquals(PersonRegionChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(PersonRegionChangeObservationEvent.getEventLabelerForPerson().getId(), eventLabel.getLabelerId());
+				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByPerson(c, personId);
+				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getEventClass());
+				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelerForPerson().getId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -128,24 +128,24 @@ public class AT_PersonRegionChangeObservationEvent {
 		RegionsActionSupport.testConsumer(0, 6696076014058054790L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<PersonRegionChangeObservationEvent> eventLabeler = PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion();
-			assertEquals(PersonRegionChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<PersonRegionUpdateEvent> eventLabeler = PersonRegionUpdateEvent.getEventLabelerForArrivalRegion();
+			assertEquals(PersonRegionUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(PersonRegionChangeObservationEvent.getEventLabelByArrivalRegion(c, testRegionId).getLabelerId(), eventLabeler.getId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, testRegionId).getLabelerId(), eventLabeler.getId());
 
 				// show that the event labeler produces the expected event
 				// label
 
 				// create an event
-				PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(new PersonId(0), TestRegionId.REGION_1, TestRegionId.REGION_2);
+				PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(new PersonId(0), TestRegionId.REGION_1, TestRegionId.REGION_2);
 
 				// derive the expected event label for this event
-				EventLabel<PersonRegionChangeObservationEvent> expectedEventLabel = PersonRegionChangeObservationEvent.getEventLabelByArrivalRegion(c, TestRegionId.REGION_2);
+				EventLabel<PersonRegionUpdateEvent> expectedEventLabel = PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, TestRegionId.REGION_2);
 
 				// have the event labeler produce an event label and show it
 				// is equal to the expected event label
-				EventLabel<PersonRegionChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<PersonRegionUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 				assertEquals(expectedEventLabel, actualEventLabel);
 
 			}
@@ -159,24 +159,24 @@ public class AT_PersonRegionChangeObservationEvent {
 		RegionsActionSupport.testConsumer(0, 5507742922324601760L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<PersonRegionChangeObservationEvent> eventLabeler = PersonRegionChangeObservationEvent.getEventLabelerForDepartureRegion();
-			assertEquals(PersonRegionChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<PersonRegionUpdateEvent> eventLabeler = PersonRegionUpdateEvent.getEventLabelerForDepartureRegion();
+			assertEquals(PersonRegionUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(PersonRegionChangeObservationEvent.getEventLabelByDepartureRegion(c, testRegionId).getLabelerId(), eventLabeler.getId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelByDepartureRegion(c, testRegionId).getLabelerId(), eventLabeler.getId());
 
 				// show that the event labeler produces the expected event
 				// label
 
 				// create an event
-				PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(new PersonId(0), TestRegionId.REGION_1, TestRegionId.REGION_2);
+				PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(new PersonId(0), TestRegionId.REGION_1, TestRegionId.REGION_2);
 
 				// derive the expected event label for this event
-				EventLabel<PersonRegionChangeObservationEvent> expectedEventLabel = PersonRegionChangeObservationEvent.getEventLabelByDepartureRegion(c, TestRegionId.REGION_1);
+				EventLabel<PersonRegionUpdateEvent> expectedEventLabel = PersonRegionUpdateEvent.getEventLabelByDepartureRegion(c, TestRegionId.REGION_1);
 
 				// have the event labeler produce an event label and show it
 				// is equal to the expected event label
-				EventLabel<PersonRegionChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<PersonRegionUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 				assertEquals(expectedEventLabel, actualEventLabel);
 
 			}
@@ -190,28 +190,28 @@ public class AT_PersonRegionChangeObservationEvent {
 		RegionsActionSupport.testConsumer(0, 6570752422605720457L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<PersonRegionChangeObservationEvent> eventLabeler = PersonRegionChangeObservationEvent.getEventLabelerForPerson();
-			assertEquals(PersonRegionChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<PersonRegionUpdateEvent> eventLabeler = PersonRegionUpdateEvent.getEventLabelerForPerson();
+			assertEquals(PersonRegionUpdateEvent.class, eventLabeler.getEventClass());
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
 
 			for (TestRegionId regionId : TestRegionId.values()) {
 				TestRegionId nextRegionId = regionId.next();
 
-				assertEquals(PersonRegionChangeObservationEvent.getEventLabelByPerson(c, personId).getLabelerId(), eventLabeler.getId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelByPerson(c, personId).getLabelerId(), eventLabeler.getId());
 
 				// show that the event labeler produces the expected event
 				// label
 
 				// create an event
-				PersonRegionChangeObservationEvent event = new PersonRegionChangeObservationEvent(personId, regionId, nextRegionId);
+				PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, regionId, nextRegionId);
 
 				// derive the expected event label for this event
-				EventLabel<PersonRegionChangeObservationEvent> expectedEventLabel = PersonRegionChangeObservationEvent.getEventLabelByPerson(c, personId);
+				EventLabel<PersonRegionUpdateEvent> expectedEventLabel = PersonRegionUpdateEvent.getEventLabelByPerson(c, personId);
 
 				// have the event labeler produce an event label and show it
 				// is equal to the expected event label
-				EventLabel<PersonRegionChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<PersonRegionUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 				assertEquals(expectedEventLabel, actualEventLabel);
 
 			}
@@ -221,8 +221,8 @@ public class AT_PersonRegionChangeObservationEvent {
 	@Test
 	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
 	public void testGetPrimaryKeyValue() {
-		PersonRegionChangeObservationEvent personRegionChangeObservationEvent = new PersonRegionChangeObservationEvent(new PersonId(12), TestRegionId.REGION_2, TestRegionId.REGION_4);
-		assertEquals(PersonRegionChangeObservationEvent.class, personRegionChangeObservationEvent.getPrimaryKeyValue());
+		PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(new PersonId(12), TestRegionId.REGION_2, TestRegionId.REGION_4);
+		assertEquals(PersonRegionUpdateEvent.class, personRegionUpdateEvent.getPrimaryKeyValue());
 	}
 
 }

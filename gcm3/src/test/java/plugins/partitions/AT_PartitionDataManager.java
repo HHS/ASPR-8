@@ -42,7 +42,7 @@ import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PersonDataManager;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -1506,7 +1506,7 @@ public final class AT_PartitionDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonCreationObservationEvent() {
+	public void testPersonAdditionEvent() {
 		PartitionsActionSupport.testConsumer(100, 6964380012813498875L, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
@@ -1543,7 +1543,7 @@ public final class AT_PartitionDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonImminentRemovalObservationEvent() {
+	public void testPersonImminentRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1594,7 +1594,7 @@ public final class AT_PartitionDataManager {
 
 		/*
 		 * Create an observer that subscribes to the
-		 * PersonImminentRemovalObservationEvent. This will be used to show that
+		 * PersonImminentRemovalEvent. This will be used to show that
 		 * a report or any other observer can still see a person and their
 		 * membership in a partition even though the removal of the person is
 		 * already underway.
@@ -1605,7 +1605,7 @@ public final class AT_PartitionDataManager {
 		List<PersonId> peopleVerifiedByReport = new ArrayList<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(PersonImminentRemovalObservationEvent.class, (c2, e) -> {
+			c.subscribe(PersonImminentRemovalEvent.class, (c2, e) -> {
 
 				PersonId personId = e.getPersonId();
 
@@ -1677,7 +1677,7 @@ public final class AT_PartitionDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBulkPersonCreationObservationEvent() {
+	public void testBulkPersonAdditionEvent() {		
 		PartitionsActionSupport.testConsumer(100, 2561425586247460069L, (c) -> {
 			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();

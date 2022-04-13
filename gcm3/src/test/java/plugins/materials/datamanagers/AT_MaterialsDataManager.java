@@ -38,18 +38,18 @@ import nucleus.util.ContractException;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.BatchAmountChangeObservationEvent;
-import plugins.materials.events.BatchCreationObservationEvent;
-import plugins.materials.events.BatchImminentRemovalObservationEvent;
-import plugins.materials.events.BatchPropertyChangeObservationEvent;
-import plugins.materials.events.MaterialsProducerPropertyChangeObservationEvent;
-import plugins.materials.events.MaterialsProducerResourceChangeObservationEvent;
-import plugins.materials.events.StageCreationObservationEvent;
-import plugins.materials.events.StageImminentRemovalObservationEvent;
-import plugins.materials.events.StageMaterialsProducerChangeObservationEvent;
-import plugins.materials.events.StageMembershipAdditionObservationEvent;
-import plugins.materials.events.StageMembershipRemovalObservationEvent;
-import plugins.materials.events.StageOfferChangeObservationEvent;
+import plugins.materials.events.BatchAmountUpdateEvent;
+import plugins.materials.events.BatchAdditionEvent;
+import plugins.materials.events.BatchImminentRemovalEvent;
+import plugins.materials.events.BatchPropertyUpdateEvent;
+import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
+import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
+import plugins.materials.events.StageAdditionEvent;
+import plugins.materials.events.StageImminentRemovalEvent;
+import plugins.materials.events.StageMaterialsProducerUpdateEvent;
+import plugins.materials.events.StageMembershipAdditionEvent;
+import plugins.materials.events.StageMembershipRemovalEvent;
+import plugins.materials.events.StageOfferUpdateEvent;
 import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
@@ -76,7 +76,7 @@ import plugins.reports.ReportsPluginData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.events.RegionResourceChangeObservationEvent;
+import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
@@ -116,7 +116,7 @@ public class AT_MaterialsDataManager {
 		/* create an observer actor that will observe the batch creations */
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BatchCreationObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualBatchObservations.add(e.getBatchId());
 			});
 		}));
@@ -358,7 +358,7 @@ public class AT_MaterialsDataManager {
 
 		/* create an observer actor that will observe the batch creations */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BatchCreationObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualBatchObservations.add(e.getBatchId());
 			});
 		}));
@@ -469,7 +469,7 @@ public class AT_MaterialsDataManager {
 		// have a actor observe stage creations
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageCreationObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 		}));
@@ -610,15 +610,15 @@ public class AT_MaterialsDataManager {
 		// have an actor observe
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 
-			c.subscribe(BatchImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), "removal"));
 			});
 
-			c.subscribe(BatchCreationObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), "creation"));
 			});
 
-			c.subscribe(StageImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 
@@ -775,17 +775,17 @@ public class AT_MaterialsDataManager {
 		// have an actor observe
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 
-			c.subscribe(BatchImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId()));
 			});
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(MaterialsProducerResourceChangeObservationEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				c.subscribe(MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
 					actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialsProducerId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 				});
 			}
 
-			c.subscribe(StageImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 
@@ -2546,7 +2546,7 @@ public class AT_MaterialsDataManager {
 
 		// have an observer record batches being removed from stages
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageMembershipRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageMembershipRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId());
 				actualObservations.add(multiKey);
 			});
@@ -2670,7 +2670,7 @@ public class AT_MaterialsDataManager {
 		// have an observer record observations of batches being assigned to
 		// stages
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageMembershipAdditionObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageMembershipAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId());
 				actualObservations.add(multiKey);
 			});
@@ -2808,7 +2808,7 @@ public class AT_MaterialsDataManager {
 		Set<BatchId> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(BatchImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(e.getBatchId());
 			});
 		}));
@@ -2903,15 +2903,15 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 
-			c.subscribe(StageImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 
-			c.subscribe(StageMembershipRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageMembershipRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId()));
 			});
 
-			c.subscribe(BatchImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId()));
 			});
 		}));
@@ -3039,7 +3039,7 @@ public class AT_MaterialsDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(BatchPropertyChangeObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchPropertyUpdateEvent.getEventLabelByAll(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getBatchPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue());
 				actualObservations.add(multiKey);
 			});
@@ -3198,7 +3198,7 @@ public class AT_MaterialsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-					EventLabel<MaterialsProducerPropertyChangeObservationEvent> eventLabel = MaterialsProducerPropertyChangeObservationEvent.getEventLabelByMaterialsProducerAndProperty(c,
+					EventLabel<MaterialsProducerPropertyUpdateEvent> eventLabel = MaterialsProducerPropertyUpdateEvent.getEventLabelByMaterialsProducerAndProperty(c,
 							testMaterialsProducerId, testMaterialsProducerPropertyId);
 					c.subscribe(eventLabel, (c2, e) -> {
 						MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialsProducerId(), e.getMaterialsProducerPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue());
@@ -3327,7 +3327,7 @@ public class AT_MaterialsDataManager {
 
 		// have a agent observe stage creations
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageOfferChangeObservationEvent.getEventLabelByAll(c), (c2, e) -> {
+			c.subscribe(StageOfferUpdateEvent.getEventLabelByAll(c), (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId(), e.isPreviousOfferState(), e.isCurrentOfferState()));
 			});
 		}));
@@ -3404,7 +3404,7 @@ public class AT_MaterialsDataManager {
 
 		// have an agent observe the movement of materials between batches
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(BatchAmountChangeObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAmountUpdateEvent.getEventLabelByAll(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(e.getBatchId(), e.getPreviousAmount(), e.getCurrentAmount());
 				actualObservations.add(multiKey);
 			});
@@ -3655,12 +3655,12 @@ public class AT_MaterialsDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageMaterialsProducerChangeObservationEvent.getEventLabelByAll(c), (c2, e) -> {
+			c.subscribe(StageMaterialsProducerUpdateEvent.getEventLabelByAll(c), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId(), e.getPreviousMaterialsProducerId(), e.getCurrentMaterialsProducerId());
 				actualObservations.add(multiKey);
 			});
 
-			c.subscribe(StageOfferChangeObservationEvent.getEventLabelByAll(c), (c2, e) -> {
+			c.subscribe(StageOfferUpdateEvent.getEventLabelByAll(c), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId());
 				actualObservations.add(multiKey);
 
@@ -3824,12 +3824,12 @@ public class AT_MaterialsDataManager {
 			 * processed by the resources package. To assess that this event is
 			 * indeed generated we could add a custom resolver, but choose
 			 * instead to have the observer agent subscribe to the resulting
-			 * RegionResourceChangeObservationEvent
+			 * RegionResourceUpdateEvent
 			 */
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					c.subscribe(RegionResourceChangeObservationEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
+					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
 						MultiKey multiKey = new MultiKey(c.getTime(), e.getResourceId(), e.getRegionId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel());
 						actualObservations.add(multiKey);
 					});
@@ -3837,7 +3837,7 @@ public class AT_MaterialsDataManager {
 			}
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(MaterialsProducerResourceChangeObservationEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				c.subscribe(MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
 					MultiKey multiKey = new MultiKey(c.getTime(), e.getResourceId(), e.getMaterialsProducerId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel());
 					actualObservations.add(multiKey);
 				});
@@ -4053,14 +4053,14 @@ public class AT_MaterialsDataManager {
 	}
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageOfferChangeObservationEventLabelers() {
+	public void testStageOfferUpdateEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageOfferChangeObservationEvent> eventLabeler1 = StageOfferChangeObservationEvent.getEventLabelerForStage();
+			EventLabeler<StageOfferUpdateEvent> eventLabeler1 = StageOfferUpdateEvent.getEventLabelerForStage();
 			assertNotNull(eventLabeler1);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<StageOfferChangeObservationEvent> eventLabeler2 = StageOfferChangeObservationEvent.getEventLabelerForAll();
+			EventLabeler<StageOfferUpdateEvent> eventLabeler2 = StageOfferUpdateEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler2);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4071,9 +4071,9 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageCreationObservationEventLabelers() {
+	public void testStageAdditionEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageCreationObservationEvent> eventLabeler = StageCreationObservationEvent.getEventLabelerForAll();
+			EventLabeler<StageAdditionEvent> eventLabeler = StageAdditionEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4082,9 +4082,9 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchAmountChangeObservationEventLabelers() {
+	public void testBatchAmountUpdateEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<BatchAmountChangeObservationEvent> eventLabeler = BatchAmountChangeObservationEvent.getEventLabelerForAll();
+			EventLabeler<BatchAmountUpdateEvent> eventLabeler = BatchAmountUpdateEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4093,10 +4093,10 @@ public class AT_MaterialsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchCreationObservationEventLabelers() {
+	public void testBatchAdditionEventLabelers() {
 
 		MaterialsActionSupport.testConsumer(6871307284439549691L, (c) -> {
-			EventLabeler<BatchCreationObservationEvent> eventLabeler = BatchCreationObservationEvent.getEventLabelerForAll();
+			EventLabeler<BatchAdditionEvent> eventLabeler = BatchAdditionEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4105,9 +4105,9 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchImminentRemovalObservationEventLabelers() {
+	public void testBatchImminentRemovalEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<BatchImminentRemovalObservationEvent> eventLabeler = BatchImminentRemovalObservationEvent.getEventLabelerForAll();
+			EventLabeler<BatchImminentRemovalEvent> eventLabeler = BatchImminentRemovalEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4116,9 +4116,9 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchPropertyChangeObservationEventLabelers() {
+	public void testBatchPropertyUpdateEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<BatchPropertyChangeObservationEvent> eventLabeler = BatchPropertyChangeObservationEvent.getEventLabelerForAll();
+			EventLabeler<BatchPropertyUpdateEvent> eventLabeler = BatchPropertyUpdateEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4127,14 +4127,14 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testMaterialsProducerPropertyChangeObservationEventLabelers() {
+	public void testMaterialsProducerPropertyUpdateEventLabelers() {
 		/*
 		 * Have the agent attempt to add the event labeler and show that a
 		 * contract exception is thrown, indicating that the labeler was
 		 * previously added by the resolver.
 		 */
 		MaterialsActionSupport.testConsumer(301724267100798742L, (c) -> {
-			EventLabeler<MaterialsProducerPropertyChangeObservationEvent> eventLabeler = MaterialsProducerPropertyChangeObservationEvent.getEventLabelerForMaterialsProducerAndProperty();
+			EventLabeler<MaterialsProducerPropertyUpdateEvent> eventLabeler = MaterialsProducerPropertyUpdateEvent.getEventLabelerForMaterialsProducerAndProperty();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4144,7 +4144,7 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testMaterialsProducerResourceChangeObservationEventLabelers() {
+	public void testMaterialsProducerResourceUpdateEventLabelers() {
 
 		/*
 		 * Have the agent attempt to add the event labeler and show that a
@@ -4152,12 +4152,12 @@ public class AT_MaterialsDataManager {
 		 * previously added by the resolver.
 		 */
 		MaterialsActionSupport.testConsumer(13119761810425715L, (c) -> {
-			EventLabeler<MaterialsProducerResourceChangeObservationEvent> eventLabeler1 = MaterialsProducerResourceChangeObservationEvent.getEventLabelerForMaterialsProducerAndResource();
+			EventLabeler<MaterialsProducerResourceUpdateEvent> eventLabeler1 = MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource();
 			assertNotNull(eventLabeler1);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<MaterialsProducerResourceChangeObservationEvent> eventLabeler2 = MaterialsProducerResourceChangeObservationEvent.getEventLabelerForResource();
+			EventLabeler<MaterialsProducerResourceUpdateEvent> eventLabeler2 = MaterialsProducerResourceUpdateEvent.getEventLabelerForResource();
 			assertNotNull(eventLabeler2);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4166,9 +4166,9 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageImminentRemovalObservationEventLabelers() {
+	public void testStageImminentRemovalEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageImminentRemovalObservationEvent> eventLabeler = StageImminentRemovalObservationEvent.getEventLabelerForAll();
+			EventLabeler<StageImminentRemovalEvent> eventLabeler = StageImminentRemovalEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4177,25 +4177,25 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageMaterialsProducerChangeObservationEventLabelers() {
+	public void testStageMaterialsProducerUpdateEventLabelers() {
 
 		MaterialsActionSupport.testConsumer(6871307284439549691L, (c) -> {
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler1 = StageMaterialsProducerChangeObservationEvent.getEventLabelerForAll();
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler1 = StageMaterialsProducerUpdateEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler1);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler2 = StageMaterialsProducerChangeObservationEvent.getEventLabelerForDestination();
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler2 = StageMaterialsProducerUpdateEvent.getEventLabelerForDestination();
 			assertNotNull(eventLabeler2);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler3 = StageMaterialsProducerChangeObservationEvent.getEventLabelerForSource();
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler3 = StageMaterialsProducerUpdateEvent.getEventLabelerForSource();
 			assertNotNull(eventLabeler3);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler3));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler4 = StageMaterialsProducerChangeObservationEvent.getEventLabelerForStage();
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler4 = StageMaterialsProducerUpdateEvent.getEventLabelerForStage();
 			assertNotNull(eventLabeler4);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler4));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4205,9 +4205,9 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageMembershipAdditionObservationEventLabelers() {
+	public void testStageMembershipAdditionEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageMembershipAdditionObservationEvent> eventLabeler = StageMembershipAdditionObservationEvent.getEventLabelerForAll();
+			EventLabeler<StageMembershipAdditionEvent> eventLabeler = StageMembershipAdditionEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -4216,9 +4216,9 @@ public class AT_MaterialsDataManager {
 	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageMembershipRemovalObservationEventLabelers() {
+	public void testStageMembershipRemovalEventLabelers() {
 		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageMembershipRemovalObservationEvent> eventLabeler = StageMembershipRemovalObservationEvent.getEventLabelerForAll();
+			EventLabeler<StageMembershipRemovalEvent> eventLabeler = StageMembershipRemovalEvent.getEventLabelerForAll();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());

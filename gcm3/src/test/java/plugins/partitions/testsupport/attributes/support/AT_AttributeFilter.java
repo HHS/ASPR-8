@@ -30,7 +30,7 @@ import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PersonDataManager;
@@ -226,30 +226,30 @@ public final class AT_AttributeFilter {
 
 			/*
 			 * show that this sensitivity is associated with
-			 * AttributeChangeObservationEvent events.
+			 * AttributeUpdateEvent events.
 			 */
 			FilterSensitivity<?> filterSensitivity = filterSensitivities.iterator().next();
-			assertEquals(AttributeChangeObservationEvent.class, filterSensitivity.getEventClass());
+			assertEquals(AttributeUpdateEvent.class, filterSensitivity.getEventClass());
 
 			/*
 			 * Show that the sensitivity requires refresh for
-			 * AttributeChangeObservationEvent events if and only if the
+			 * AttributeUpdateEvent events if and only if the
 			 * attribute ids are equal and the event has different previous and
 			 * current values.
 			 */
 			PersonId personId = new PersonId(0);
 
-			AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
+			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
 
-			assertTrue(filterSensitivity.requiresRefresh(c, attributeChangeObservationEvent).isPresent());
+			assertTrue(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
 
-			attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, false, false);
+			attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, false);
 
-			assertFalse(filterSensitivity.requiresRefresh(c, attributeChangeObservationEvent).isPresent());
+			assertFalse(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
 
-			attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_1, false, true);
+			attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_1, false, true);
 
-			assertFalse(filterSensitivity.requiresRefresh(c, attributeChangeObservationEvent).isPresent());
+			assertFalse(filterSensitivity.requiresRefresh(c, attributeUpdateEvent).isPresent());
 
 		});
 

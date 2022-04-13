@@ -25,7 +25,7 @@ import plugins.people.support.PersonId;
  */
 
 @Immutable
-public class GroupMembershipAdditionObservationEvent implements Event {
+public class GroupMembershipAdditionEvent implements Event {
 	private final PersonId personId;
 	private final GroupId groupId;
 
@@ -33,7 +33,7 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 * Constructs this event from the given person id and group id
 	 * 
 	 */
-	public GroupMembershipAdditionObservationEvent(final PersonId personId, final GroupId groupId) {
+	public GroupMembershipAdditionEvent(final PersonId personId, final GroupId groupId) {
 		super();
 		this.personId = personId;
 		this.groupId = groupId;
@@ -90,7 +90,7 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionObservationEvent} events. Matches on group
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group
 	 * id and person id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -107,26 +107,26 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
+	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
 		validateGroupId(simulationContext, groupId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.GROUP_PERSON, GroupMembershipAdditionObservationEvent.class, groupId, personId);
+		return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP_PERSON, GroupMembershipAdditionEvent.class, groupId, personId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionObservationEvent} events that uses group id
+	 * {@link GroupMembershipAdditionEvent} events that uses group id
 	 * and person id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionObservationEvent> getEventLabelerForGroupAndPerson() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP_PERSON, GroupMembershipAdditionObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.GROUP_PERSON, GroupMembershipAdditionObservationEvent.class, event.getGroupId(),
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupAndPerson() {
+		return new SimpleEventLabeler<>(LabelerId.GROUP_PERSON, GroupMembershipAdditionEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP_PERSON, GroupMembershipAdditionEvent.class, event.getGroupId(),
 						event.getPersonId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionObservationEvent} events. Matches on group
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group
 	 * id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -139,24 +139,24 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
+	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.GROUP, GroupMembershipAdditionObservationEvent.class, groupId);
+		return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP, GroupMembershipAdditionEvent.class, groupId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionObservationEvent} events that uses group
+	 * {@link GroupMembershipAdditionEvent} events that uses group
 	 * id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionObservationEvent> getEventLabelerForGroup() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupMembershipAdditionObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.GROUP, GroupMembershipAdditionObservationEvent.class, event.getGroupId()));
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroup() {
+		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupMembershipAdditionEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP, GroupMembershipAdditionEvent.class, event.getGroupId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionObservationEvent} events. Matches on person
+	 * {@link GroupMembershipAdditionEvent} events. Matches on person
 	 * id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -169,24 +169,24 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             id is not known</li>
 	 * 
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
+	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.PERSON, GroupMembershipAdditionObservationEvent.class, personId);
+		return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.PERSON, GroupMembershipAdditionEvent.class, personId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionObservationEvent} events that uses person
+	 * {@link GroupMembershipAdditionEvent} events that uses person
 	 * id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionObservationEvent> getEventLabelerForPerson() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON, GroupMembershipAdditionObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.PERSON, GroupMembershipAdditionObservationEvent.class, event.getPersonId()));
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForPerson() {
+		return new SimpleEventLabeler<>(LabelerId.PERSON, GroupMembershipAdditionEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.PERSON, GroupMembershipAdditionEvent.class, event.getPersonId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionObservationEvent} events. Matches on person
+	 * {@link GroupMembershipAdditionEvent} events. Matches on person
 	 * id and group type id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -202,28 +202,28 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is not known</li>
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
+	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.TYPE_PERSON, GroupMembershipAdditionObservationEvent.class, groupTypeId, personId);
+		return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE_PERSON, GroupMembershipAdditionEvent.class, groupTypeId, personId);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionObservationEvent} events that uses group
+	 * {@link GroupMembershipAdditionEvent} events that uses group
 	 * type id and person id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionObservationEvent> getEventLabelerForGroupTypeAndPerson(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE_PERSON, GroupMembershipAdditionObservationEvent.class, (context, event) -> {
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupTypeAndPerson(GroupDataManager groupDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.TYPE_PERSON, GroupMembershipAdditionEvent.class, (context, event) -> {
 			GroupId groupId = event.getGroupId();
 			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.TYPE_PERSON, GroupMembershipAdditionObservationEvent.class, groupTypeId, event.getPersonId());
+			return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE_PERSON, GroupMembershipAdditionEvent.class, groupTypeId, event.getPersonId());
 		});
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionObservationEvent} events. Matches on group
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group
 	 * type id.
 	 *
 	 * Preconditions : The context cannot be null
@@ -235,41 +235,41 @@ public class GroupMembershipAdditionObservationEvent implements Event {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is not known</li>
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
+	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.TYPE, GroupMembershipAdditionObservationEvent.class, groupTypeId);
+		return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE, GroupMembershipAdditionEvent.class, groupTypeId);
 	}
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionObservationEvent} Matches on group type id. Automatically
+	 * {@link GroupMembershipAdditionEvent} Matches on group type id. Automatically
 	 * added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionObservationEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupMembershipAdditionObservationEvent.class, (context, event) -> {
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupMembershipAdditionEvent.class, (context, event) -> {
 			GroupId groupId = event.getGroupId();
 			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.TYPE, GroupMembershipAdditionObservationEvent.class, groupTypeId);
+			return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE, GroupMembershipAdditionEvent.class, groupTypeId);
 		});
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionObservationEvent} events. Matches on all
+	 * {@link GroupMembershipAdditionEvent} events. Matches on all
 	 * events.
 	 *
 	 */
-	public static EventLabel<GroupMembershipAdditionObservationEvent> getEventLabelByAll() {
-		return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.ALL, GroupMembershipAdditionObservationEvent.class);
+	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByAll() {
+		return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.ALL, GroupMembershipAdditionEvent.class);
 	}
 
 	/**
 	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionObservationEvent} all events. Automatically
+	 * {@link GroupMembershipAdditionEvent} all events. Automatically
 	 * added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupMembershipAdditionObservationEvent.class, (context, event) -> {
-			return new MultiKeyEventLabel<>(GroupMembershipAdditionObservationEvent.class, LabelerId.ALL, GroupMembershipAdditionObservationEvent.class);
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, GroupMembershipAdditionEvent.class, (context, event) -> {
+			return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.ALL, GroupMembershipAdditionEvent.class);
 		});
 	}
 }

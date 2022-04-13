@@ -10,8 +10,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = StageMembershipAdditionObservationEvent.class)
-public class AT_StageMembershipAdditionObservationEvent {
+@UnitTest(target = StageMembershipAdditionEvent.class)
+public class AT_StageMembershipAdditionEvent {
 	
 
 	@Test
@@ -25,8 +25,8 @@ public class AT_StageMembershipAdditionObservationEvent {
 	public void testGetPrimaryKeyValue() {
 		BatchId batchId = new BatchId(6);
 		StageId stageId = new StageId(252);
-		StageMembershipAdditionObservationEvent stageMembershipAdditionObservationEvent = new StageMembershipAdditionObservationEvent(batchId, stageId);
-		assertEquals(StageMembershipAdditionObservationEvent.class, stageMembershipAdditionObservationEvent.getPrimaryKeyValue());
+		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
+		assertEquals(StageMembershipAdditionEvent.class, stageMembershipAdditionEvent.getPrimaryKeyValue());
 	}
 
 	@Test
@@ -34,8 +34,8 @@ public class AT_StageMembershipAdditionObservationEvent {
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(6);
 		StageId stageId = new StageId(252);
-		StageMembershipAdditionObservationEvent stageMembershipAdditionObservationEvent = new StageMembershipAdditionObservationEvent(batchId, stageId);
-		assertEquals(batchId, stageMembershipAdditionObservationEvent.getBatchId());
+		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
+		assertEquals(batchId, stageMembershipAdditionEvent.getBatchId());
 	}
 
 	@Test
@@ -43,8 +43,8 @@ public class AT_StageMembershipAdditionObservationEvent {
 	public void testGetStageId() {
 		BatchId batchId = new BatchId(6);
 		StageId stageId = new StageId(252);
-		StageMembershipAdditionObservationEvent stageMembershipAdditionObservationEvent = new StageMembershipAdditionObservationEvent(batchId, stageId);
-		assertEquals(stageId, stageMembershipAdditionObservationEvent.getStageId());
+		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
+		assertEquals(stageId, stageMembershipAdditionEvent.getStageId());
 	}
 
 	@Test
@@ -52,8 +52,8 @@ public class AT_StageMembershipAdditionObservationEvent {
 	public void testToString() {
 		BatchId batchId = new BatchId(6);
 		StageId stageId = new StageId(252);
-		StageMembershipAdditionObservationEvent stageMembershipAdditionObservationEvent = new StageMembershipAdditionObservationEvent(batchId, stageId);
-		assertEquals("StageMembershipAdditionObservationEvent [batchId=6, stageId=252]", stageMembershipAdditionObservationEvent.toString());
+		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
+		assertEquals("StageMembershipAdditionEvent [batchId=6, stageId=252]", stageMembershipAdditionEvent.toString());
 	}
 
 }

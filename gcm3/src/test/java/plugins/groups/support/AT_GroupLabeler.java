@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
-import plugins.groups.events.GroupMembershipAdditionObservationEvent;
-import plugins.groups.events.GroupMembershipRemovalObservationEvent;
+import plugins.groups.events.GroupMembershipAdditionEvent;
+import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.LabelerSensitivity;
@@ -48,23 +48,23 @@ public final class AT_GroupLabeler {
 		// we expect exactly two
 		assertEquals(2, labelerSensitivities.size());
 
-		boolean groupMembershipAdditionObservationEventSensitivityFound = false;
-		boolean groupMembershipRemovalObservationEventSensitivityFound = false;
+		boolean groupMembershipAdditionEventSensitivityFound = false;
+		boolean groupMembershipRemovalEventSensitivityFound = false;
 		for (LabelerSensitivity<?> labelerSensitivity : labelerSensitivities) {
-			if (labelerSensitivity.getEventClass() == GroupMembershipAdditionObservationEvent.class) {
-				groupMembershipAdditionObservationEventSensitivityFound = true;
+			if (labelerSensitivity.getEventClass() == GroupMembershipAdditionEvent.class) {
+				groupMembershipAdditionEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipAdditionObservationEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipAdditionEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
 
-			} else if (labelerSensitivity.getEventClass() == GroupMembershipRemovalObservationEvent.class) {
-				groupMembershipRemovalObservationEventSensitivityFound = true;
+			} else if (labelerSensitivity.getEventClass() == GroupMembershipRemovalEvent.class) {
+				groupMembershipRemovalEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipRemovalObservationEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipRemovalEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
@@ -75,8 +75,8 @@ public final class AT_GroupLabeler {
 		}
 
 		// show that we found both labeler sensitivities
-		assertTrue(groupMembershipAdditionObservationEventSensitivityFound);
-		assertTrue(groupMembershipRemovalObservationEventSensitivityFound);
+		assertTrue(groupMembershipAdditionEventSensitivityFound);
+		assertTrue(groupMembershipRemovalEventSensitivityFound);
 
 	}
 

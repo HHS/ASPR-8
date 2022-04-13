@@ -15,13 +15,13 @@ import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.people.support.PersonId;
 
 @Immutable
-public class AttributeChangeObservationEvent implements Event {
+public class AttributeUpdateEvent implements Event {
 	private final PersonId personId;
 	private final AttributeId attributeId;
 	private final Object previousValue;
 	private final Object currentValue;
 
-	public AttributeChangeObservationEvent(final PersonId personId, final AttributeId attributeId, final Object previousValue, final Object currentValue) {
+	public AttributeUpdateEvent(final PersonId personId, final AttributeId attributeId, final Object previousValue, final Object currentValue) {
 		super();
 		this.personId = personId;
 		this.attributeId = attributeId;
@@ -56,7 +56,7 @@ public class AttributeChangeObservationEvent implements Event {
 	
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link AttributeChangeObservationEvent} events. Matches on attribute id.
+	 * {@link AttributeUpdateEvent} events. Matches on attribute id.
 	 *
 	 *
 	 * @throws ContractException
@@ -66,19 +66,19 @@ public class AttributeChangeObservationEvent implements Event {
 	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the attribute
 	 *             id is not known</li>
 	 */
-	public static EventLabel<AttributeChangeObservationEvent> getEventLabel(final SimulationContext simulationContext, final AttributeId attributeId) {
+	public static EventLabel<AttributeUpdateEvent> getEventLabel(final SimulationContext simulationContext, final AttributeId attributeId) {
 		validateAttributed(simulationContext, attributeId);
-		return new MultiKeyEventLabel<>(attributeId, LabelerId.ATTRIBUTE, AttributeChangeObservationEvent.class, attributeId);
+		return new MultiKeyEventLabel<>(attributeId, LabelerId.ATTRIBUTE, AttributeUpdateEvent.class, attributeId);
 	}
 	
 	/**
 	 * Returns an event labeler for
-	 * {@link AttributeChangeObservationEvent} events that uses only
+	 * {@link AttributeUpdateEvent} events that uses only
 	 * the attribute id. Automatically added at initialization.
 	 */
-	public static EventLabeler<AttributeChangeObservationEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.ATTRIBUTE, AttributeChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getAttributeId(), LabelerId.ATTRIBUTE, AttributeChangeObservationEvent.class, event.getAttributeId()));
+	public static EventLabeler<AttributeUpdateEvent> getEventLabeler() {
+		return new SimpleEventLabeler<>(LabelerId.ATTRIBUTE, AttributeUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(event.getAttributeId(), LabelerId.ATTRIBUTE, AttributeUpdateEvent.class, event.getAttributeId()));
 	}
 
 	

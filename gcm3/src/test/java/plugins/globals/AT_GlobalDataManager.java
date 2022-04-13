@@ -30,7 +30,7 @@ import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import plugins.globals.events.GlobalPropertyChangeObservationEvent;
+import plugins.globals.events.GlobalPropertyUpdateEvent;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.globals.support.SimpleGlobalPropertyId;
@@ -65,11 +65,11 @@ public final class AT_GlobalDataManager {
 	public void testInit() {
 
 		/*
-		 * show that the event labelers for GlobalPropertyChangeObservationEvent
+		 * show that the event labelers for GlobalPropertyUpdateEvent
 		 * were added
 		 */
 		GlobalsActionSupport.testConsumer((c) -> {
-			EventLabeler<GlobalPropertyChangeObservationEvent> eventLabeler = GlobalPropertyChangeObservationEvent.getEventLabeler();
+			EventLabeler<GlobalPropertyUpdateEvent> eventLabeler = GlobalPropertyUpdateEvent.getEventLabeler();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -179,7 +179,7 @@ public final class AT_GlobalDataManager {
 
 		// have an observer record changes to the property
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			EventLabel<GlobalPropertyChangeObservationEvent> eventLabel = GlobalPropertyChangeObservationEvent.getEventLabel(c, globalPropertyId);
+			EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(c, globalPropertyId);
 			c.subscribe(eventLabel, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGlobalPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue());
 				actualObservations.add(multiKey);

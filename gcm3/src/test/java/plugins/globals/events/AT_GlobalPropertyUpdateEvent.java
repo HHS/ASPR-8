@@ -31,9 +31,9 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GlobalPropertyChangeObservationEvent.class)
+@UnitTest(target = GlobalPropertyUpdateEvent.class)
 
-public class AT_GlobalPropertyChangeObservationEvent {
+public class AT_GlobalPropertyUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { GlobalPropertyId.class, Object.class, Object.class })
@@ -41,9 +41,9 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;
 		Integer currentValue = 13;
-		GlobalPropertyChangeObservationEvent globalPropertyChangeObservationEvent = new GlobalPropertyChangeObservationEvent(globalPropertyId, previousValue, currentValue);
+		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
 
-		assertNotNull(globalPropertyChangeObservationEvent);
+		assertNotNull(globalPropertyUpdateEvent);
 
 	}
 
@@ -53,9 +53,9 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;
 		Integer currentValue = 13;
-		GlobalPropertyChangeObservationEvent globalPropertyChangeObservationEvent = new GlobalPropertyChangeObservationEvent(globalPropertyId, previousValue, currentValue);
+		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
 
-		assertEquals(globalPropertyId, globalPropertyChangeObservationEvent.getGlobalPropertyId());
+		assertEquals(globalPropertyId, globalPropertyUpdateEvent.getGlobalPropertyId());
 
 	}
 
@@ -65,9 +65,9 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;
 		Integer currentValue = 13;
-		GlobalPropertyChangeObservationEvent globalPropertyChangeObservationEvent = new GlobalPropertyChangeObservationEvent(globalPropertyId, previousValue, currentValue);
+		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
 
-		assertEquals(previousValue, globalPropertyChangeObservationEvent.getPreviousPropertyValue());
+		assertEquals(previousValue, globalPropertyUpdateEvent.getPreviousPropertyValue());
 	}
 
 	@Test
@@ -76,9 +76,9 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;
 		Integer currentValue = 13;
-		GlobalPropertyChangeObservationEvent globalPropertyChangeObservationEvent = new GlobalPropertyChangeObservationEvent(globalPropertyId, previousValue, currentValue);
+		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
 
-		assertEquals(currentValue, globalPropertyChangeObservationEvent.getCurrentPropertyValue());
+		assertEquals(currentValue, globalPropertyUpdateEvent.getCurrentPropertyValue());
 	}
 
 	@Test
@@ -87,9 +87,9 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;
 		Integer currentValue = 13;
-		GlobalPropertyChangeObservationEvent globalPropertyChangeObservationEvent = new GlobalPropertyChangeObservationEvent(globalPropertyId, previousValue, currentValue);
-		String expectedValue = "GlobalPropertyChangeObservationEvent [globalPropertyId=id, previousPropertyValue=12, currentPropertyValue=13]";
-		String actualValue = globalPropertyChangeObservationEvent.toString();
+		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
+		String expectedValue = "GlobalPropertyUpdateEvent [globalPropertyId=id, previousPropertyValue=12, currentPropertyValue=13]";
+		String actualValue = globalPropertyUpdateEvent.toString();
 
 		assertEquals(expectedValue, actualValue);
 
@@ -100,10 +100,10 @@ public class AT_GlobalPropertyChangeObservationEvent {
 	public void testGetEventLabel() {
 		testConsumer((c) -> {
 			for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-				EventLabel<GlobalPropertyChangeObservationEvent> eventLabel = GlobalPropertyChangeObservationEvent.getEventLabel(c, testGlobalPropertyId);
-				assertEquals(GlobalPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+				EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(c, testGlobalPropertyId);
+				assertEquals(GlobalPropertyUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(testGlobalPropertyId, eventLabel.getPrimaryKeyValue());
-				assertEquals(GlobalPropertyChangeObservationEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+				assertEquals(GlobalPropertyUpdateEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -113,29 +113,29 @@ public class AT_GlobalPropertyChangeObservationEvent {
 	public void testGetEventLabeler() {
 		testConsumer((c) -> {
 
-			EventLabeler<GlobalPropertyChangeObservationEvent> eventLabeler = GlobalPropertyChangeObservationEvent.getEventLabeler();
+			EventLabeler<GlobalPropertyUpdateEvent> eventLabeler = GlobalPropertyUpdateEvent.getEventLabeler();
 
 			// show that the event labeler has the expected event class
-			assertEquals(GlobalPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GlobalPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 				// show that the event labeler id matches the labeler id
 				// associated with the corresponding event label
-				EventLabel<GlobalPropertyChangeObservationEvent> eventLabel = GlobalPropertyChangeObservationEvent.getEventLabel(c, testGlobalPropertyId);
+				EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(c, testGlobalPropertyId);
 				assertEquals(eventLabel.getLabelerId(), eventLabeler.getId());
 
 				// show that the event labeler produces the expected event
 				// label
 
 				// create an event
-				GlobalPropertyChangeObservationEvent event = new GlobalPropertyChangeObservationEvent(testGlobalPropertyId, 30, 40);
+				GlobalPropertyUpdateEvent event = new GlobalPropertyUpdateEvent(testGlobalPropertyId, 30, 40);
 
 				// derive the expected event label for this event
-				EventLabel<GlobalPropertyChangeObservationEvent> expectedEventLabel = GlobalPropertyChangeObservationEvent.getEventLabel(c, testGlobalPropertyId);
+				EventLabel<GlobalPropertyUpdateEvent> expectedEventLabel = GlobalPropertyUpdateEvent.getEventLabel(c, testGlobalPropertyId);
 
 				// have the event labeler produce an event label and show it
 				// is equal to the expected event label
-				EventLabel<GlobalPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GlobalPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 				assertEquals(expectedEventLabel, actualEventLabel);
 
 			}
@@ -148,8 +148,8 @@ public class AT_GlobalPropertyChangeObservationEvent {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;
 		Integer currentValue = 13;
-		GlobalPropertyChangeObservationEvent globalPropertyChangeObservationEvent = new GlobalPropertyChangeObservationEvent(globalPropertyId, previousValue, currentValue);
-		assertEquals(globalPropertyId, globalPropertyChangeObservationEvent.getPrimaryKeyValue());
+		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
+		assertEquals(globalPropertyId, globalPropertyUpdateEvent.getPrimaryKeyValue());
 	}
 
 	/*

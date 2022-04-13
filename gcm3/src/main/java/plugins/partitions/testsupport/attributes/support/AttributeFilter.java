@@ -12,7 +12,7 @@ import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.support.PersonId;
 
 public final class AttributeFilter extends Filter {
@@ -144,7 +144,7 @@ public final class AttributeFilter extends Filter {
 		}
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, AttributeChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, AttributeUpdateEvent event) {
 		if (event.getAttributeId().equals(attributeId)) {
 			if (evaluate(event.getPreviousValue()) != evaluate(event.getCurrentValue())) {
 				return Optional.of(event.getPersonId());
@@ -154,7 +154,7 @@ public final class AttributeFilter extends Filter {
 	}
 
 	/**
-	 * Returns a single filter sensitivity for AttributeChangeObservationEvent
+	 * Returns a single filter sensitivity for AttributeUpdateEvent
 	 * events. This sensitivity will require refreshes for events with the same
 	 * attribute id and where the event where the event has different previous
 	 * and current values.
@@ -162,7 +162,7 @@ public final class AttributeFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<AttributeChangeObservationEvent>(AttributeChangeObservationEvent.class, this::requiresRefresh));
+		result.add(new FilterSensitivity<AttributeUpdateEvent>(AttributeUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
 

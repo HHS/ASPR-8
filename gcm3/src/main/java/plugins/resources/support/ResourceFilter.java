@@ -13,7 +13,7 @@ import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.people.support.PersonId;
 import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.events.PersonResourceChangeObservationEvent;
+import plugins.resources.events.PersonResourceUpdateEvent;
 
 public final class ResourceFilter extends Filter {
 	private final ResourceId resourceId;
@@ -71,7 +71,7 @@ public final class ResourceFilter extends Filter {
 		return equality.isCompatibleComparisonValue(Long.compare(level, resourceValue));
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonResourceChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonResourceUpdateEvent event) {
 		if (event.getResourceId().equals(resourceId)) {
 			long previousResourceLevel = event.getPreviousResourceLevel();
 			long currentResourceLevel = event.getCurrentResourceLevel();
@@ -85,7 +85,7 @@ public final class ResourceFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<PersonResourceChangeObservationEvent>(PersonResourceChangeObservationEvent.class, this::requiresRefresh));
+		result.add(new FilterSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
 

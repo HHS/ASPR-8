@@ -21,7 +21,7 @@ import plugins.people.support.PersonId;
  *
  */
 @Immutable
-public final class PersonImminentRemovalObservationEvent implements Event {
+public final class PersonImminentRemovalEvent implements Event {
 	private final PersonId personId;
 
 	/**
@@ -30,7 +30,7 @@ public final class PersonImminentRemovalObservationEvent implements Event {
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li>
 	 */
-	public PersonImminentRemovalObservationEvent(PersonId personId) {
+	public PersonImminentRemovalEvent(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
@@ -48,12 +48,12 @@ public final class PersonImminentRemovalObservationEvent implements Event {
 	/**
 	 * Returns this event as a string in the form:
 	 * 
-	 * PersonRemovalObservationEvent [personId="+i+"]
+	 * PersonImminentRemovalEvent [personId="+i+"]
 	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("PersonRemovalObservationEvent [personId=");
+		builder.append("PersonImminentRemovalEvent [personId=");
 		builder.append(personId);
 		builder.append("]");
 		return builder.toString();
@@ -63,21 +63,21 @@ public final class PersonImminentRemovalObservationEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<PersonImminentRemovalObservationEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(PersonImminentRemovalObservationEvent.class, LabelerId.ALL,
-			PersonImminentRemovalObservationEvent.class);
+	private final static EventLabel<PersonImminentRemovalEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(PersonImminentRemovalEvent.class, LabelerId.ALL,
+			PersonImminentRemovalEvent.class);
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonImminentRemovalObservationEvent} events. Matches all such
+	 * {@link PersonImminentRemovalEvent} events. Matches all such
 	 * events.
 	 */
-	public static EventLabel<PersonImminentRemovalObservationEvent> getEventLabel() {
+	public static EventLabel<PersonImminentRemovalEvent> getEventLabel() {
 		return EVENT_LABEL_INSTANCE;
 	}
 	/**
-	 * Returns an event labeler for {@link PersonImminentRemovalObservationEvent}
+	 * Returns an event labeler for {@link PersonImminentRemovalEvent}
 	 */
-	public static EventLabeler<PersonImminentRemovalObservationEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, PersonImminentRemovalObservationEvent.class, (context, event) -> EVENT_LABEL_INSTANCE);
+	public static EventLabeler<PersonImminentRemovalEvent> getEventLabeler() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, PersonImminentRemovalEvent.class, (context, event) -> EVENT_LABEL_INSTANCE);
 	}
 }

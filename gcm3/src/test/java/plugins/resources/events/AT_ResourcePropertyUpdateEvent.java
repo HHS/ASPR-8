@@ -27,9 +27,9 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ResourcePropertyChangeObservationEvent.class)
+@UnitTest(target = ResourcePropertyUpdateEvent.class)
 
-public class AT_ResourcePropertyChangeObservationEvent implements Event {
+public class AT_ResourcePropertyUpdateEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { ResourceId.class, ResourcePropertyId.class, Object.class, Object.class })
@@ -44,8 +44,8 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		ResourcePropertyChangeObservationEvent resourcePropertyChangeObservationEvent = new ResourcePropertyChangeObservationEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(resourceId, resourcePropertyChangeObservationEvent.getResourceId());
+		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
+		assertEquals(resourceId, resourcePropertyUpdateEvent.getResourceId());
 	}
 
 	@Test
@@ -55,8 +55,8 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		ResourcePropertyChangeObservationEvent resourcePropertyChangeObservationEvent = new ResourcePropertyChangeObservationEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(resourcePropertyId, resourcePropertyChangeObservationEvent.getResourcePropertyId());
+		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
+		assertEquals(resourcePropertyId, resourcePropertyUpdateEvent.getResourcePropertyId());
 	}
 
 	@Test
@@ -66,8 +66,8 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		ResourcePropertyChangeObservationEvent resourcePropertyChangeObservationEvent = new ResourcePropertyChangeObservationEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(previousValue, resourcePropertyChangeObservationEvent.getPreviousPropertyValue());
+		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
+		assertEquals(previousValue, resourcePropertyUpdateEvent.getPreviousPropertyValue());
 	}
 
 	@Test
@@ -77,8 +77,8 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 		ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		ResourcePropertyChangeObservationEvent resourcePropertyChangeObservationEvent = new ResourcePropertyChangeObservationEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(currentValue, resourcePropertyChangeObservationEvent.getCurrentPropertyValue());
+		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
+		assertEquals(currentValue, resourcePropertyUpdateEvent.getCurrentPropertyValue());
 	}
 
 	@Test
@@ -86,26 +86,26 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 	public void testGetEventLabel() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			Set<EventLabel<ResourcePropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<ResourcePropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
 				ResourceId resourceId = testResourcePropertyId.getTestResourceId();
 
-				EventLabel<ResourcePropertyChangeObservationEvent> eventLabel = ResourcePropertyChangeObservationEvent.getEventLabel(c, resourceId, testResourcePropertyId);
+				EventLabel<ResourcePropertyUpdateEvent> eventLabel = ResourcePropertyUpdateEvent.getEventLabel(c, resourceId, testResourcePropertyId);
 
 				// show that the event label has the correct event class
-				assertEquals(ResourcePropertyChangeObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(ResourcePropertyUpdateEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
 				assertEquals(testResourcePropertyId, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<ResourcePropertyChangeObservationEvent> eventLabeler = ResourcePropertyChangeObservationEvent.getEventLabeler();
+				EventLabeler<ResourcePropertyUpdateEvent> eventLabeler = ResourcePropertyUpdateEvent.getEventLabeler();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<ResourcePropertyChangeObservationEvent> eventLabel2 = ResourcePropertyChangeObservationEvent.getEventLabel(c, resourceId, testResourcePropertyId);
+				EventLabel<ResourcePropertyUpdateEvent> eventLabel2 = ResourcePropertyUpdateEvent.getEventLabel(c, resourceId, testResourcePropertyId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -120,22 +120,22 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 
 			// if the resource id is null
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> ResourcePropertyChangeObservationEvent.getEventLabel(c, null, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE));
+					() -> ResourcePropertyUpdateEvent.getEventLabel(c, null, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 
 			// if the resource id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> ResourcePropertyChangeObservationEvent.getEventLabel(c, TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE));
+					() -> ResourcePropertyUpdateEvent.getEventLabel(c, TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 			// if the resource property id is null
 			contractException = assertThrows(ContractException.class,
-					() -> ResourcePropertyChangeObservationEvent.getEventLabel(c, TestResourceId.RESOURCE_1, null));
+					() -> ResourcePropertyUpdateEvent.getEventLabel(c, TestResourceId.RESOURCE_1, null));
 			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
 
 			// if the resource property id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> ResourcePropertyChangeObservationEvent.getEventLabel(c, TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
+					() -> ResourcePropertyUpdateEvent.getEventLabel(c, TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
 
 		});
@@ -149,10 +149,10 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler
-			EventLabeler<ResourcePropertyChangeObservationEvent> eventLabeler = ResourcePropertyChangeObservationEvent.getEventLabeler();
+			EventLabeler<ResourcePropertyUpdateEvent> eventLabeler = ResourcePropertyUpdateEvent.getEventLabeler();
 
 			// show that the event labeler has the correct event class
-			assertEquals(ResourcePropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(ResourcePropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -160,7 +160,7 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 				ResourceId resourceId = testResourcePropertyId.getTestResourceId();
 
 				// derive the expected event label for this event
-				EventLabel<ResourcePropertyChangeObservationEvent> expectedEventLabel = ResourcePropertyChangeObservationEvent.getEventLabel(c, resourceId, testResourcePropertyId);
+				EventLabel<ResourcePropertyUpdateEvent> expectedEventLabel = ResourcePropertyUpdateEvent.getEventLabel(c, resourceId, testResourcePropertyId);
 
 				/*
 				 * show that the event label and event labeler have equal id
@@ -171,12 +171,12 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 				// create an event
 				Object previousValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
 				Object currentValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-				ResourcePropertyChangeObservationEvent event = new ResourcePropertyChangeObservationEvent(resourceId, testResourcePropertyId, previousValue, currentValue);
+				ResourcePropertyUpdateEvent event = new ResourcePropertyUpdateEvent(resourceId, testResourcePropertyId, previousValue, currentValue);
 
 				/*
 				 * show that the event labeler produces the correct event label
 				 */
-				EventLabel<ResourcePropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<ResourcePropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -192,8 +192,8 @@ public class AT_ResourcePropertyChangeObservationEvent implements Event {
 			ResourceId resourceId = testResourcePropertyId.getTestResourceId();
 			Object previousValue = "previous";
 			Object currentValue = "current";
-			ResourcePropertyChangeObservationEvent resourcePropertyChangeObservationEvent = new ResourcePropertyChangeObservationEvent(resourceId, testResourcePropertyId, previousValue, currentValue);
-			assertEquals(testResourcePropertyId, resourcePropertyChangeObservationEvent.getPrimaryKeyValue());
+			ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, testResourcePropertyId, previousValue, currentValue);
+			assertEquals(testResourcePropertyId, resourcePropertyUpdateEvent.getPrimaryKeyValue());
 		}
 	}
 

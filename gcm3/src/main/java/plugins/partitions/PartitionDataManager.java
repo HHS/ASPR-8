@@ -25,9 +25,9 @@ import plugins.partitions.support.PartitionSampler;
 import plugins.partitions.support.PopulationPartition;
 import plugins.partitions.support.PopulationPartitionImpl;
 import plugins.people.PersonDataManager;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -42,17 +42,17 @@ import plugins.stochastics.support.StochasticsError;
  * Subscribes to the following events for all partitions:
  * </P>
  * <ul>
- * <li>{@linkplain PersonCreationObservationEvent} <blockquote>Adds the person
+ * <li>{@linkplain PersonAdditionEvent} <blockquote>Adds the person
  * to all relevant population partitions after event validation and execution
  * phases are complete. </blockquote></li>
  *
  *
- * <li>{@linkplain BulkPersonCreationObservationEvent} <blockquote>Adds the
+ * <li>{@linkplain BulkPersonAdditionEvent} <blockquote>Adds the
  * people to the relevant population partitions after event validation and
  * execution phases are complete. </blockquote></li>
  *
  *
- * <li>{@linkplain PersonImminentRemovalObservationEvent} <blockquote>Removes
+ * <li>{@linkplain PersonImminentRemovalEvent} <blockquote>Removes
  * the person from all population partitions by scheduling the removal for the
  * current time. This allows references and partition memberships to remain long
  * enough for resolvers, agents and reports to have final reference to the
@@ -378,11 +378,11 @@ public final class PartitionDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
 
-		dataManagerContext.subscribePostOrder(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
+		dataManagerContext.subscribePostOrder(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
-		dataManagerContext.subscribePostOrder(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
+		dataManagerContext.subscribePostOrder(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 
-		dataManagerContext.subscribePostOrder(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
+		dataManagerContext.subscribePostOrder(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
 	}
 
@@ -421,8 +421,8 @@ public final class PartitionDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonCreationObservationEvent(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
-		final PersonId personId = personCreationObservationEvent.getPersonId();
+	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
+		final PersonId personId = personAdditionEvent.getPersonId();
 		for (final Object key : getKeys()) {
 			final PopulationPartition populationPartition = getPopulationPartition(key);
 			populationPartition.attemptPersonAddition(personId);
@@ -437,13 +437,13 @@ public final class PartitionDataManager extends DataManager {
 		return keyToPopulationPartitionMap.isEmpty();
 	}
 
-	private void handleBulkPersonCreationObservationEvent(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
 		if (isEmpty()) {
 			return;
 		}
-		final PersonId basePersonId = bulkPersonCreationObservationEvent.getPersonId();
+		final PersonId basePersonId = bulkPersonAdditionEvent.getPersonId();
 		final int lowId = basePersonId.getValue();
-		final BulkPersonConstructionData bulkPersonConstructionData = bulkPersonCreationObservationEvent.getBulkPersonConstructionData();
+		final BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
 		int highId = bulkPersonConstructionData.getPersonConstructionDatas().size();
 		highId += lowId;
 		final List<PersonId> personIds = new ArrayList<>();
@@ -461,11 +461,11 @@ public final class PartitionDataManager extends DataManager {
 
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
 		dataManagerContext.addPlan((context) -> {
 			for (final Object key : getKeys()) {
 				final PopulationPartition populationPartition = getPopulationPartition(key);
-				populationPartition.attemptPersonRemoval(personImminentRemovalObservationEvent.getPersonId());
+				populationPartition.attemptPersonRemoval(personImminentRemovalEvent.getPersonId());
 			}
 		}, dataManagerContext.getTime());
 	}

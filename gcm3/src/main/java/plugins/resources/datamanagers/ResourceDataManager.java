@@ -13,9 +13,9 @@ import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -25,9 +25,9 @@ import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
-import plugins.resources.events.PersonResourceChangeObservationEvent;
-import plugins.resources.events.RegionResourceChangeObservationEvent;
-import plugins.resources.events.ResourcePropertyChangeObservationEvent;
+import plugins.resources.events.PersonResourceUpdateEvent;
+import plugins.resources.events.RegionResourceUpdateEvent;
+import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
@@ -547,9 +547,9 @@ public final class ResourceDataManager extends DataManager {
 	 * <ul>
 	 * <li>Adds all event labelers defined by the following events <blockquote>
 	 * <ul>
-	 * <li>{@linkplain PersonResourceChangeObservationEvent}</li>
-	 * <li>{@linkplain RegionResourceChangeObservationEvent}</li>
-	 * <li>{@linkplain ResourcePropertyChangeObservationEvent}</li>
+	 * <li>{@linkplain PersonResourceUpdateEvent}</li>
+	 * <li>{@linkplain RegionResourceUpdateEvent}</li>
+	 * <li>{@linkplain ResourcePropertyUpdateEvent}</li>
 	 * </ul>
 	 * </blockquote></li>
 	 * 
@@ -568,7 +568,7 @@ public final class ResourceDataManager extends DataManager {
 	 * <ul>
 	 *
 	 *
-	 * <li>{@linkplain PersonCreationObservationEvent}<blockquote> Sets the
+	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the
 	 * person's initial resource levels in the {@linkplain ResourceDataManager}
 	 * from the ResourceInitialization references in the auxiliary data of the
 	 * event.
@@ -592,7 +592,7 @@ public final class ResourceDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain BulkPersonCreationObservationEvent}<blockquote> Sets each
+	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each
 	 * person's initial resource levels in the {@linkplain ResourceDataManager}
 	 * from the ResourceInitialization references in the auxiliary data of the
 	 * event.
@@ -615,7 +615,7 @@ public final class ResourceDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain PersonImminentRemovalObservationEvent}<blockquote>
+	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote>
 	 * Removes the resource assignment data for the person from the
 	 * {@linkplain ResourceDataManager} by scheduling the removal for the
 	 * current time. This allows the person and their resource levels to remain
@@ -640,11 +640,11 @@ public final class ResourceDataManager extends DataManager {
 		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
 		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class).get();
 
-		dataManagerContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForRegionAndResource(regionDataManager));
-		dataManagerContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForPersonAndResource());
-		dataManagerContext.addEventLabeler(PersonResourceChangeObservationEvent.getEventLabelerForResource());
-		dataManagerContext.addEventLabeler(ResourcePropertyChangeObservationEvent.getEventLabeler());
-		dataManagerContext.addEventLabeler(RegionResourceChangeObservationEvent.getEventLabelerForRegionAndResource());
+		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager));
+		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForPersonAndResource());
+		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForResource());
+		dataManagerContext.addEventLabeler(ResourcePropertyUpdateEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(RegionResourceUpdateEvent.getEventLabelerForRegionAndResource());
 
 		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class).get();
 
@@ -755,9 +755,9 @@ public final class ResourceDataManager extends DataManager {
 			}
 		}
 
-		dataManagerContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
-		dataManagerContext.subscribe(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
+		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 	}
 
 	/**
@@ -846,7 +846,7 @@ public final class ResourceDataManager extends DataManager {
 
 	/**
 	 * Transfers resources from one region to another. Generates the
-	 * corresponding {@linkplain RegionResourceChangeObservationEvent} events
+	 * corresponding {@linkplain RegionResourceUpdateEvent} events
 	 * for each region.
 	 * 
 	 * @throws ContractException
@@ -898,8 +898,8 @@ public final class ResourceDataManager extends DataManager {
 		long currentSourceRegionResourceLevel = sourceRecord.getAmount();
 		long currentDestinationRegionResourceLevel = destinationRecord.getAmount();
 
-		dataManagerContext.releaseEvent(new RegionResourceChangeObservationEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
-		dataManagerContext.releaseEvent(new RegionResourceChangeObservationEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
+		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
+		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
 
 	}
 
@@ -936,7 +936,7 @@ public final class ResourceDataManager extends DataManager {
 
 	/**
 	 * Expends an amount of resource from a person. Generates the corresponding
-	 * {@linkplain PersonResourceChangeObservationEvent} event
+	 * {@linkplain PersonResourceUpdateEvent} event
 	 * 
 	 * @throws ContractException
 	 * 
@@ -965,7 +965,7 @@ public final class ResourceDataManager extends DataManager {
 		final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 		decrementPersonResourceLevel(resourceId, personId, amount);
 		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-		dataManagerContext.releaseEvent(new PersonResourceChangeObservationEvent(personId, resourceId, oldLevel, newLevel));
+		dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
 	}
 
 	/*
@@ -980,7 +980,7 @@ public final class ResourceDataManager extends DataManager {
 
 	/**
 	 * Adds an amount of resource to a region. Generates the corresponding
-	 * {@linkplain RegionResourceChangeObservationEvent} event.
+	 * {@linkplain RegionResourceUpdateEvent} event.
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1008,12 +1008,12 @@ public final class ResourceDataManager extends DataManager {
 		validateResourceAdditionValue(previousResourceLevel, amount);
 		incrementRegionResourceLevel(regionId, resourceId, amount);
 		long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		dataManagerContext.releaseEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 	}
 
 	/**
 	 * Removes an amount of resource from a region.Generates the corresponding
-	 * {@linkplain RegionResourceChangeObservationEvent} event<
+	 * {@linkplain RegionResourceUpdateEvent} event<
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1041,12 +1041,12 @@ public final class ResourceDataManager extends DataManager {
 		final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 		decrementRegionResourceLevel(regionId, resourceId, amount);
 		long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		dataManagerContext.releaseEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 	}
 
 	/**
 	 * Assigns a value to a resource property. Generates the corresponding
-	 * {@linkplain ResourcePropertyChangeObservationEvent} event
+	 * {@linkplain ResourcePropertyUpdateEvent} event
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1078,7 +1078,7 @@ public final class ResourceDataManager extends DataManager {
 		validatePropertyMutability(propertyDefinition);
 		final Object oldPropertyValue = resourcePropertyMap.get(resourceId).get(resourcePropertyId).getValue();
 		resourcePropertyMap.get(resourceId).get(resourcePropertyId).setPropertyValue(resourcePropertyValue);
-		dataManagerContext.releaseEvent(new ResourcePropertyChangeObservationEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
+		dataManagerContext.releaseEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
 	}
 
 	private void validateResourcePropertyValueNotNull(final Object propertyValue) {
@@ -1103,8 +1103,8 @@ public final class ResourceDataManager extends DataManager {
 	/**
 	 * Transfers an amount of resource from a person to the person's current
 	 * region. Generates the corresponding
-	 * {@linkplain RegionResourceChangeObservationEvent} and
-	 * {@linkplain PersonResourceChangeObservationEvent} events
+	 * {@linkplain RegionResourceUpdateEvent} and
+	 * {@linkplain PersonResourceUpdateEvent} events
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1138,15 +1138,15 @@ public final class ResourceDataManager extends DataManager {
 		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 		incrementRegionResourceLevel(regionId, resourceId, amount);
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		dataManagerContext.releaseEvent(new PersonResourceChangeObservationEvent(personId, resourceId, oldLevel, newLevel));
-		dataManagerContext.releaseEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+		dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 	}
 
 	/**
 	 * Transfers an amount of resource to a person from the person's current
 	 * region. Generates the corresponding
-	 * {@linkplain RegionResourceChangeObservationEvent} and
-	 * {@linkplain PersonResourceChangeObservationEvent} events
+	 * {@linkplain RegionResourceUpdateEvent} and
+	 * {@linkplain PersonResourceUpdateEvent} events
 	 * 
 	 * 
 	 * 
@@ -1186,15 +1186,15 @@ public final class ResourceDataManager extends DataManager {
 		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 
-		dataManagerContext.releaseEvent(new RegionResourceChangeObservationEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 
-		dataManagerContext.releaseEvent(new PersonResourceChangeObservationEvent(personId, resourceId, personResourceLevel, newLevel));
+		dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, personResourceLevel, newLevel));
 
 	}
 
-	private void handlePersonCreationObservationEvent(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
-		PersonId personId = personCreationObservationEvent.getPersonId();
-		PersonConstructionData personConstructionData = personCreationObservationEvent.getPersonConstructionData();
+	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
+		PersonId personId = personAdditionEvent.getPersonId();
+		PersonConstructionData personConstructionData = personAdditionEvent.getPersonConstructionData();
 		validatePersonExists(personId);
 		List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);
 		for (final ResourceInitialization resourceAssignment : resourceAssignments) {
@@ -1209,9 +1209,9 @@ public final class ResourceDataManager extends DataManager {
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEvent(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
-		PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonCreationObservationEvent.getBulkPersonConstructionData();
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		PersonId personId = bulkPersonAdditionEvent.getPersonId();
+		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {
 			List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);
@@ -1236,11 +1236,11 @@ public final class ResourceDataManager extends DataManager {
 
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
+		validatePersonExists(personImminentRemovalEvent.getPersonId());
 
 		dataManagerContext.addPlan((context) -> {
-			PersonId personId = personImminentRemovalObservationEvent.getPersonId();
+			PersonId personId = personImminentRemovalEvent.getPersonId();
 			for (final IntValueContainer intValueContainer : personResourceValues.values()) {
 				intValueContainer.setLongValue(personId.getValue(), 0);
 			}

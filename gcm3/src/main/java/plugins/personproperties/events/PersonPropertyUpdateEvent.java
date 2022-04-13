@@ -28,7 +28,7 @@ import plugins.regions.support.RegionId;
  */
 
 @Immutable
-public class PersonPropertyChangeObservationEvent implements Event {
+public class PersonPropertyUpdateEvent implements Event {
 	
 		
 	
@@ -41,7 +41,7 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 * Creates this event from valid, non-null inputs
 	 * 
 	 */
-	public PersonPropertyChangeObservationEvent(final PersonId personId, final PersonPropertyId personPropertyId, final Object previousPropertyValue, final Object currentPropertyValue) {
+	public PersonPropertyUpdateEvent(final PersonId personId, final PersonPropertyId personPropertyId, final Object previousPropertyValue, final Object currentPropertyValue) {
 		super();
 		this.personId = personId;
 		this.personPropertyId = personPropertyId;
@@ -80,14 +80,14 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	/**
 	 * Returns this event in the form:
 	 * 
-	 * "PersonPropertyChangeObservationEvent [personId=" + personId + ",
+	 * "PersonPropertyUpdateEvent [personId=" + personId + ",
 	 * personPropertyId=" + personPropertyId + ", previousPropertyValue=" +
 	 * previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue
 	 * + "]";
 	 */
 	@Override
 	public String toString() {
-		return "PersonPropertyChangeObservationEvent [personId=" + personId + ", personPropertyId=" + personPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue="
+		return "PersonPropertyUpdateEvent [personId=" + personId + ", personPropertyId=" + personPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue="
 				+ currentPropertyValue + "]";
 	}
 
@@ -100,7 +100,7 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonPropertyChangeObservationEvent} events. Matches on person id
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person id
 	 * and person property id.
 	 *
 	 *
@@ -116,25 +116,25 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 *             if the person property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByPersonAndProperty(SimulationContext simulationContext, PersonId personId, PersonPropertyId personPropertyId) {
+	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByPersonAndProperty(SimulationContext simulationContext, PersonId personId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PERSON_PROPERTY, PersonPropertyChangeObservationEvent.class, personId, personPropertyId);
+		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, personId, personPropertyId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link PersonPropertyUpdateEvent}
 	 * events that uses person id and person property id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<PersonPropertyChangeObservationEvent> getEventLabelerForPersonAndProperty() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON_PROPERTY, PersonPropertyChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getPersonPropertyId(),
-				LabelerId.PERSON_PROPERTY, PersonPropertyChangeObservationEvent.class, event.getPersonId(), event.getPersonPropertyId()));
+	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForPersonAndProperty() {
+		return new SimpleEventLabeler<>(LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getPersonPropertyId(),
+				LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, event.getPersonId(), event.getPersonPropertyId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonPropertyChangeObservationEvent} events. Matches on person
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person
 	 * property id.
 	 *
 	 *
@@ -146,24 +146,24 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 *             if the person property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByProperty(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
+	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
-		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PROPERTY, PersonPropertyChangeObservationEvent.class, personPropertyId);
+		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PROPERTY, PersonPropertyUpdateEvent.class, personPropertyId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link PersonPropertyUpdateEvent}
 	 * events that uses only the person property id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<PersonPropertyChangeObservationEvent> getEventLabelerForProperty() {
-		return new SimpleEventLabeler<>(LabelerId.PROPERTY, PersonPropertyChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getPersonPropertyId(), LabelerId.PROPERTY, PersonPropertyChangeObservationEvent.class, event.getPersonPropertyId()));
+	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForProperty() {
+		return new SimpleEventLabeler<>(LabelerId.PROPERTY, PersonPropertyUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(event.getPersonPropertyId(), LabelerId.PROPERTY, PersonPropertyUpdateEvent.class, event.getPersonPropertyId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonPropertyChangeObservationEvent} events. Matches on region id
+	 * {@link PersonPropertyUpdateEvent} events. Matches on region id
 	 * and person property id.
 	 *
 	 *
@@ -179,21 +179,21 @@ public class PersonPropertyChangeObservationEvent implements Event {
 	 *             if the person property id is not known</li>
 	 * 
 	 */
-	public static EventLabel<PersonPropertyChangeObservationEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, PersonPropertyId personPropertyId) {
+	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
 		validateRegionId(simulationContext, regionId);
-		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.REGION_PROPERTY, PersonPropertyChangeObservationEvent.class, regionId, personPropertyId);
+		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, regionId, personPropertyId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link PersonPropertyUpdateEvent}
 	 * events that uses the region id and person property id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<PersonPropertyChangeObservationEvent> getEventLabelerForRegionAndProperty(RegionDataManager regionDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.REGION_PROPERTY, PersonPropertyChangeObservationEvent.class, (context, event) -> {
+	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForRegionAndProperty(RegionDataManager regionDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, (context, event) -> {
 			RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
-			return new MultiKeyEventLabel<>(event.getPersonPropertyId(), LabelerId.REGION_PROPERTY, PersonPropertyChangeObservationEvent.class, regionId, event.getPersonPropertyId());
+			return new MultiKeyEventLabel<>(event.getPersonPropertyId(), LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, regionId, event.getPersonPropertyId());
 		});
 	}
 

@@ -8,7 +8,7 @@ import java.util.Set;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.util.ContractException;
-import plugins.globals.events.GlobalPropertyChangeObservationEvent;
+import plugins.globals.events.GlobalPropertyUpdateEvent;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -169,7 +169,7 @@ public final class GlobalDataManager extends DataManager {
 		validateValueCompatibility(dataManagerContext, globalPropertyId, propertyDefinition, globalPropertyValue);
 		final Object oldPropertyValue = getGlobalPropertyValue(globalPropertyId);
 		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
-		dataManagerContext.releaseEvent(new GlobalPropertyChangeObservationEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+		dataManagerContext.releaseEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
 	}
 
 	/**
@@ -185,7 +185,7 @@ public final class GlobalDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
-		dataManagerContext.addEventLabeler(GlobalPropertyChangeObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(GlobalPropertyUpdateEvent.getEventLabeler());
 
 		for (GlobalPropertyId globalPropertyId : globalPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition globalPropertyDefinition = globalPluginData.getGlobalPropertyDefinition(globalPropertyId);

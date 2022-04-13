@@ -12,8 +12,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = BatchPropertyChangeObservationEvent.class)
-public class AT_BatchPropertyChangeObservationEvent implements Event {
+@UnitTest(target = BatchPropertyUpdateEvent.class)
+public class AT_BatchPropertyUpdateEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { BatchId.class, BatchPropertyId.class, Object.class, Object.class })
@@ -28,8 +28,8 @@ public class AT_BatchPropertyChangeObservationEvent implements Event {
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
-		BatchPropertyChangeObservationEvent batchPropertyChangeObservationEvent = new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(BatchPropertyChangeObservationEvent.class, batchPropertyChangeObservationEvent.getPrimaryKeyValue());
+		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
+		assertEquals(BatchPropertyUpdateEvent.class, batchPropertyUpdateEvent.getPrimaryKeyValue());
 	}
 
 	@Test
@@ -39,8 +39,8 @@ public class AT_BatchPropertyChangeObservationEvent implements Event {
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
-		BatchPropertyChangeObservationEvent batchPropertyChangeObservationEvent = new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(batchId, batchPropertyChangeObservationEvent.getBatchId());
+		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
+		assertEquals(batchId, batchPropertyUpdateEvent.getBatchId());
 	}
 
 	@Test
@@ -50,8 +50,8 @@ public class AT_BatchPropertyChangeObservationEvent implements Event {
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
-		BatchPropertyChangeObservationEvent batchPropertyChangeObservationEvent = new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(batchPropertyId, batchPropertyChangeObservationEvent.getBatchPropertyId());
+		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
+		assertEquals(batchPropertyId, batchPropertyUpdateEvent.getBatchPropertyId());
 	}
 
 	@Test
@@ -61,8 +61,8 @@ public class AT_BatchPropertyChangeObservationEvent implements Event {
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
-		BatchPropertyChangeObservationEvent batchPropertyChangeObservationEvent = new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(previousPropertyValue, batchPropertyChangeObservationEvent.getPreviousPropertyValue());
+		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
+		assertEquals(previousPropertyValue, batchPropertyUpdateEvent.getPreviousPropertyValue());
 	}
 
 	@Test
@@ -72,8 +72,8 @@ public class AT_BatchPropertyChangeObservationEvent implements Event {
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
-		BatchPropertyChangeObservationEvent batchPropertyChangeObservationEvent = new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(currentPropertyValue, batchPropertyChangeObservationEvent.getCurrentPropertyValue());
+		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
+		assertEquals(currentPropertyValue, batchPropertyUpdateEvent.getCurrentPropertyValue());
 	}
 
 	@Test
@@ -83,9 +83,9 @@ public class AT_BatchPropertyChangeObservationEvent implements Event {
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
-		BatchPropertyChangeObservationEvent batchPropertyChangeObservationEvent = new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		String expectedValue = "BatchPropertyChangeObservationEvent [batchId=5348, batchPropertyId=BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, previousPropertyValue=45, currentPropertyValue=643]";
-		String actualValue = batchPropertyChangeObservationEvent.toString();
+		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
+		String expectedValue = "BatchPropertyUpdateEvent [batchId=5348, batchPropertyId=BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, previousPropertyValue=45, currentPropertyValue=643]";
+		String actualValue = batchPropertyUpdateEvent.toString();
 		assertEquals(expectedValue, actualValue);
 	}
 

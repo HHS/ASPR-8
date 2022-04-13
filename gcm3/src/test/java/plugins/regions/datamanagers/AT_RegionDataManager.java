@@ -33,17 +33,17 @@ import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PersonDataManager;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
-import plugins.regions.events.RegionPropertyChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
+import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -801,7 +801,7 @@ public class AT_RegionDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				EventLabel<PersonRegionChangeObservationEvent> eventLabel = PersonRegionChangeObservationEvent.getEventLabelByArrivalRegion(c, testRegionId);
+				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, testRegionId);
 				c.subscribe(eventLabel, (c2, e) -> {
 					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
 				});
@@ -965,13 +965,13 @@ public class AT_RegionDataManager {
 		// Have the observer agent start observations record them
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 
-			EventLabel<RegionPropertyChangeObservationEvent> eventLabel = RegionPropertyChangeObservationEvent.getEventLabelByRegionAndProperty(c, TestRegionId.REGION_1,
+			EventLabel<RegionPropertyUpdateEvent> eventLabel = RegionPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, TestRegionId.REGION_1,
 					TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 			c.subscribe(eventLabel, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
 			});
 
-			eventLabel = RegionPropertyChangeObservationEvent.getEventLabelByRegionAndProperty(c, TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
+			eventLabel = RegionPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
 			c.subscribe(eventLabel, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
 			});
@@ -1222,24 +1222,24 @@ public class AT_RegionDataManager {
 	}
 
 	/**
-	 * Shows that all event {@linkplain PersonRegionChangeObservationEvent}
+	 * Shows that all event {@linkplain PersonRegionUpdateEvent}
 	 * labelers are created
 	 */
 	@Test
 	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
-	public void testPersonRegionChangeObservationEventLabelers() {
+	public void testPersonRegionUpdateEventLabelers() {
 		RegionsActionSupport.testConsumer(0, 2734071676096451334L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
-			EventLabeler<PersonRegionChangeObservationEvent> eventLabelerForArrivalRegion = PersonRegionChangeObservationEvent.getEventLabelerForArrivalRegion();
+			EventLabeler<PersonRegionUpdateEvent> eventLabelerForArrivalRegion = PersonRegionUpdateEvent.getEventLabelerForArrivalRegion();
 			assertNotNull(eventLabelerForArrivalRegion);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForArrivalRegion));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<PersonRegionChangeObservationEvent> eventLabelerForDepartureRegion = PersonRegionChangeObservationEvent.getEventLabelerForDepartureRegion();
+			EventLabeler<PersonRegionUpdateEvent> eventLabelerForDepartureRegion = PersonRegionUpdateEvent.getEventLabelerForDepartureRegion();
 			assertNotNull(eventLabelerForDepartureRegion);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForDepartureRegion));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<PersonRegionChangeObservationEvent> eventLabelerForPerson = PersonRegionChangeObservationEvent.getEventLabelerForPerson();
+			EventLabeler<PersonRegionUpdateEvent> eventLabelerForPerson = PersonRegionUpdateEvent.getEventLabelerForPerson();
 			assertNotNull(eventLabelerForPerson);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForPerson));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -1248,20 +1248,20 @@ public class AT_RegionDataManager {
 	}
 
 	/**
-	 * Shows that all event {@linkplain RegionPropertyChangeObservationEvent}
+	 * Shows that all event {@linkplain RegionPropertyUpdateEvent}
 	 * labelers are created
 	 */
 	@Test
 	@UnitTestMethod(name = "init", args = {DataManagerContext.class})	
-	public void testRegionPropertyChangeObservationEventLabelers() {
+	public void testRegionPropertyUpdateEventLabelers() {
 
 		RegionsActionSupport.testConsumer(0, 4228466028646070532L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
-			EventLabeler<RegionPropertyChangeObservationEvent> eventLabeler1 = RegionPropertyChangeObservationEvent.getEventLabelerForProperty();
+			EventLabeler<RegionPropertyUpdateEvent> eventLabeler1 = RegionPropertyUpdateEvent.getEventLabelerForProperty();
 			assertNotNull(eventLabeler1);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<RegionPropertyChangeObservationEvent> eventLabeler2 = RegionPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty();
+			EventLabeler<RegionPropertyUpdateEvent> eventLabeler2 = RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty();
 			assertNotNull(eventLabeler2);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -1350,7 +1350,7 @@ public class AT_RegionDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
-	public void testPersonCreationObservationEvent() {
+	public void testPersonAdditionEvent() {
 		/*
 		 * Have the agent create some people over time and show that each person
 		 * is in the correct region at the correct time
@@ -1409,8 +1409,8 @@ public class AT_RegionDataManager {
 			 * release such an event, so we release it from an actor
 			 */
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
-			PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(new PersonId(10000), personConstructionData);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personCreationObservationEvent));
+			PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(new PersonId(10000), personConstructionData);
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personAdditionEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -1424,9 +1424,9 @@ public class AT_RegionDataManager {
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			PersonId personId = personDataManager.addPerson(personConstructionData);
 
-			PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(personId, personConstructionData);
+			PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personCreationObservationEvent));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personAdditionEvent));
 			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
 		});
 
@@ -1434,7 +1434,7 @@ public class AT_RegionDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
-	public void testBulkPersonCreationObservationEvent() {
+	public void testBulkPersonAdditionEvent() {
 
 		/*
 		 * Have the agent create some people over time and show that each person
@@ -1515,8 +1515,8 @@ public class AT_RegionDataManager {
 			 */
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent = new BulkPersonCreationObservationEvent(new PersonId(45), bulkPersonConstructionData);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonCreationObservationEvent));
+			BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(new PersonId(45), bulkPersonConstructionData);
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonAdditionEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -1531,16 +1531,16 @@ public class AT_RegionDataManager {
 			PersonId personId = personDataManager.addPerson(personConstructionData);
 
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent = new BulkPersonCreationObservationEvent(personId, bulkPersonConstructionData);
+			BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(personId, bulkPersonConstructionData);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonCreationObservationEvent));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonAdditionEvent));
 			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
 		});
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
-	public void testPersonImminentRemovalObservationEvent() {
+	public void testPersonImminentRemovalEvent() {
 
 		MutableInteger pId = new MutableInteger();
 
@@ -1587,8 +1587,8 @@ public class AT_RegionDataManager {
 
 		// precondition test: if the person id is unknown
 		RegionsActionSupport.testConsumer(0, 2314376445339268382L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent = new PersonImminentRemovalObservationEvent(new PersonId(1000));
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personImminentRemovalObservationEvent));
+			PersonImminentRemovalEvent personImminentRemovalEvent = new PersonImminentRemovalEvent(new PersonId(1000));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personImminentRemovalEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -1603,8 +1603,8 @@ public class AT_RegionDataManager {
 				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 				PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
 				personDataManager.removePerson(personId);
-				PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent = new PersonImminentRemovalObservationEvent(personId);
-				c.releaseEvent(personImminentRemovalObservationEvent);
+				PersonImminentRemovalEvent personImminentRemovalEvent = new PersonImminentRemovalEvent(personId);
+				c.releaseEvent(personImminentRemovalEvent);
 			});
 		});
 		assertEquals(RegionError.DUPLICATE_PERSON_REMOVAL, contractException.getErrorType());

@@ -8,11 +8,11 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.people.PersonDataManager;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
@@ -20,7 +20,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.events.PersonResourceChangeObservationEvent;
+import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.support.ResourceId;
 
 /**
@@ -149,8 +149,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonCreationObservationEvent(ActorContext actorContext, PersonCreationObservationEvent personCreationObservationEvent) {
-		PersonId personId = personCreationObservationEvent.getPersonId();
+	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
+		PersonId personId = personAdditionEvent.getPersonId();
 		final RegionId regionId = regionDataManager.getPersonRegion(personId);
 
 		for (final ResourceId resourceId : resourceIds) {
@@ -165,9 +165,9 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(ActorContext actorContext, PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
+	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 
-		PersonId personId = personImminentRemovalObservationEvent.getPersonId();
+		PersonId personId = personImminentRemovalEvent.getPersonId();
 
 		RegionId regionId = regionDataManager.getPersonRegion(personId);
 
@@ -183,14 +183,14 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonResourceChangeObservationEvent(ActorContext actorContext, PersonResourceChangeObservationEvent personResourceChangeObservationEvent) {
-		ResourceId resourceId = personResourceChangeObservationEvent.getResourceId();
+	private void handlePersonResourceUpdateEvent(ActorContext actorContext, PersonResourceUpdateEvent personResourceUpdateEvent) {
+		ResourceId resourceId = personResourceUpdateEvent.getResourceId();
 		if (!resourceIds.contains(resourceId)) {
 			return;
 		}
-		PersonId personId = personResourceChangeObservationEvent.getPersonId();
-		long currentLevel = personResourceChangeObservationEvent.getCurrentResourceLevel();
-		long previousLevel = personResourceChangeObservationEvent.getPreviousResourceLevel();
+		PersonId personId = personResourceUpdateEvent.getPersonId();
+		long currentLevel = personResourceUpdateEvent.getCurrentResourceLevel();
+		long previousLevel = personResourceUpdateEvent.getPreviousResourceLevel();
 		long amount = currentLevel - previousLevel;
 
 		if (amount == 0) {
@@ -220,10 +220,10 @@ public final class PersonResourceReport extends PeriodicReport {
 
 	}
 
-	private void handlePersonRegionChangeObservationEvent(ActorContext actorContext, PersonRegionChangeObservationEvent personRegionChangeObservationEvent) {
-		PersonId personId = personRegionChangeObservationEvent.getPersonId();
-		RegionId previousRegionId = personRegionChangeObservationEvent.getPreviousRegionId();
-		RegionId currentRegionId = personRegionChangeObservationEvent.getCurrentRegionId();
+	private void handlePersonRegionUpdateEvent(ActorContext actorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+		PersonId personId = personRegionUpdateEvent.getPersonId();
+		RegionId previousRegionId = personRegionUpdateEvent.getPreviousRegionId();
+		RegionId currentRegionId = personRegionUpdateEvent.getCurrentRegionId();
 
 		for (final ResourceId resourceId : resourceIds) {
 			final long personResourceLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
@@ -246,9 +246,9 @@ public final class PersonResourceReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
-		actorContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
-		actorContext.subscribe(PersonRegionChangeObservationEvent.class, this::handlePersonRegionChangeObservationEvent);
+		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class).get();
 		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class).get();
@@ -275,11 +275,11 @@ public final class PersonResourceReport extends PeriodicReport {
 		// If all resources are covered by this report, then subscribe to the
 		// event, otherwise subscribe to each resource id
 		if (resourceIds.equals(resourceDataManager.getResourceIds())) {
-			actorContext.subscribe(PersonResourceChangeObservationEvent.class, this::handlePersonResourceChangeObservationEvent);
+			actorContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
 		} else {
 			for (ResourceId resourceId : resourceIds) {
-				EventLabel<PersonResourceChangeObservationEvent> eventLabelByResource = PersonResourceChangeObservationEvent.getEventLabelByResource(actorContext, resourceId);
-				actorContext.subscribe(eventLabelByResource, this::handlePersonResourceChangeObservationEvent);
+				EventLabel<PersonResourceUpdateEvent> eventLabelByResource = PersonResourceUpdateEvent.getEventLabelByResource(actorContext, resourceId);
+				actorContext.subscribe(eventLabelByResource, this::handlePersonResourceUpdateEvent);
 			}
 		}
 

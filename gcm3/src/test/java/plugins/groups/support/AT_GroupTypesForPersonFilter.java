@@ -15,8 +15,8 @@ import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
-import plugins.groups.events.GroupMembershipAdditionObservationEvent;
-import plugins.groups.events.GroupMembershipRemovalObservationEvent;
+import plugins.groups.events.GroupMembershipAdditionEvent;
+import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.Equality;
@@ -61,8 +61,8 @@ public class AT_GroupTypesForPersonFilter {
 			Filter filter = new GroupTypesForPersonFilter(Equality.EQUAL, 5);
 
 			Set<Class<?>> expected = new LinkedHashSet<>();
-			expected.add(GroupMembershipAdditionObservationEvent.class);
-			expected.add(GroupMembershipRemovalObservationEvent.class);
+			expected.add(GroupMembershipAdditionEvent.class);
+			expected.add(GroupMembershipRemovalEvent.class);
 
 			Set<FilterSensitivity<?>> filterSensitivities = filter.getFilterSensitivities();
 			assertNotNull(filterSensitivities);

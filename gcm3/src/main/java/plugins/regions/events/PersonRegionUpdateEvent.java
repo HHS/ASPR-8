@@ -17,13 +17,13 @@ import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 
 @Immutable
-public final class PersonRegionChangeObservationEvent implements Event {
+public final class PersonRegionUpdateEvent implements Event {
 	private final PersonId personId;
 	private final RegionId previousRegionId;
 	private final RegionId currentRegionId;
 
 
-	public PersonRegionChangeObservationEvent(final PersonId personId, final RegionId previousRegionId, final RegionId currentRegionId) {
+	public PersonRegionUpdateEvent(final PersonId personId, final RegionId previousRegionId, final RegionId currentRegionId) {
 		super();
 		this.personId = personId;
 		this.previousRegionId = previousRegionId;
@@ -45,7 +45,7 @@ public final class PersonRegionChangeObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "PersonRegionChangeObservationEvent [personId=" + personId + ", previousRegionId=" + previousRegionId + ", currentRegionId=" + currentRegionId + "]";
+		return "PersonRegionUpdateEvent [personId=" + personId + ", previousRegionId=" + previousRegionId + ", currentRegionId=" + currentRegionId + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -72,31 +72,31 @@ public final class PersonRegionChangeObservationEvent implements Event {
 		}
 	}
 
-	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByArrivalRegion(SimulationContext simulationContext, RegionId regionId) {
+	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByArrivalRegion(SimulationContext simulationContext, RegionId regionId) {
 		validateRegionId(simulationContext, regionId);
-		return new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.ARRIVAL, PersonRegionChangeObservationEvent.class, regionId);
+		return new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.ARRIVAL, PersonRegionUpdateEvent.class, regionId);
 	}
 
-	public static EventLabeler<PersonRegionChangeObservationEvent> getEventLabelerForArrivalRegion() {
-		return new SimpleEventLabeler<>(LabelerId.ARRIVAL, PersonRegionChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.ARRIVAL, PersonRegionChangeObservationEvent.class, event.getCurrentRegionId()));
+	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForArrivalRegion() {
+		return new SimpleEventLabeler<>(LabelerId.ARRIVAL, PersonRegionUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.ARRIVAL, PersonRegionUpdateEvent.class, event.getCurrentRegionId()));
 	}
 
-	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByDepartureRegion(SimulationContext simulationContext, RegionId regionId) {
+	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByDepartureRegion(SimulationContext simulationContext, RegionId regionId) {
 		validateRegionId(simulationContext, regionId);
-		return new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.DEPARTURE, PersonRegionChangeObservationEvent.class, regionId);
+		return new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.DEPARTURE, PersonRegionUpdateEvent.class, regionId);
 	}
 
-	public static EventLabeler<PersonRegionChangeObservationEvent> getEventLabelerForDepartureRegion() {
-		return new SimpleEventLabeler<>(LabelerId.DEPARTURE, PersonRegionChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.DEPARTURE, PersonRegionChangeObservationEvent.class, event.getPreviousRegionId()));
+	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForDepartureRegion() {
+		return new SimpleEventLabeler<>(LabelerId.DEPARTURE, PersonRegionUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.DEPARTURE, PersonRegionUpdateEvent.class, event.getPreviousRegionId()));
 	}
 
-	public static EventLabel<PersonRegionChangeObservationEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
+	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.PERSON, PersonRegionChangeObservationEvent.class, personId);
+		return new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.PERSON, PersonRegionUpdateEvent.class, personId);
 	}
 
-	public static EventLabeler<PersonRegionChangeObservationEvent> getEventLabelerForPerson() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON, PersonRegionChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionChangeObservationEvent.class, LabelerId.PERSON, PersonRegionChangeObservationEvent.class, event.getPersonId()));
+	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForPerson() {
+		return new SimpleEventLabeler<>(LabelerId.PERSON, PersonRegionUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.PERSON, PersonRegionUpdateEvent.class, event.getPersonId()));
 	}
 
 }

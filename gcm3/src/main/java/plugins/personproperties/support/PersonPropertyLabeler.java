@@ -13,12 +13,12 @@ import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyChangeObservationEvent;
+import plugins.personproperties.events.PersonPropertyUpdateEvent;
 
 /**
  * A labeler for person properties. The dimension of the labeler is the given
  * {@linkplain PersonPropertyId}, the event that stimulates a label update is
- * {@linkplain PersonPropertyChangeObservationEvent} and the labeling function
+ * {@linkplain PersonPropertyUpdateEvent} and the labeling function
  * is composed from the given Function.
  * 
  * @author Shawn Hatch
@@ -35,10 +35,10 @@ public final class PersonPropertyLabeler implements Labeler {
 		this.personPropertyValueLabelingFunction = personPropertyValueLabelingFunction;
 	}
 
-	private Optional<PersonId> getPersonId(PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent) {
+	private Optional<PersonId> getPersonId(PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonId result = null;
-		if (personPropertyChangeObservationEvent.getPersonPropertyId().equals(personPropertyId)) {
-			result = personPropertyChangeObservationEvent.getPersonId();
+		if (personPropertyUpdateEvent.getPersonPropertyId().equals(personPropertyId)) {
+			result = personPropertyUpdateEvent.getPersonId();
 		}
 		return Optional.ofNullable(result);
 	}
@@ -46,7 +46,7 @@ public final class PersonPropertyLabeler implements Labeler {
 	@Override
 	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new LabelerSensitivity<PersonPropertyChangeObservationEvent>(PersonPropertyChangeObservationEvent.class, this::getPersonId));
+		result.add(new LabelerSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
@@ -69,8 +69,8 @@ public final class PersonPropertyLabeler implements Labeler {
 
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
-		PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent =(PersonPropertyChangeObservationEvent)event;
-		return personPropertyValueLabelingFunction.apply(personPropertyChangeObservationEvent.getPreviousPropertyValue());
+		PersonPropertyUpdateEvent personPropertyUpdateEvent =(PersonPropertyUpdateEvent)event;
+		return personPropertyValueLabelingFunction.apply(personPropertyUpdateEvent.getPreviousPropertyValue());
 	}
 
 }

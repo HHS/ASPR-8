@@ -7,10 +7,10 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import nucleus.EventLabel;
-import plugins.groups.GroupCreationObservationEvent;
 import plugins.groups.GroupDataManager;
-import plugins.groups.events.GroupImminentRemovalObservationEvent;
-import plugins.groups.events.GroupPropertyChangeObservationEvent;
+import plugins.groups.events.GroupAdditionEvent;
+import plugins.groups.events.GroupImminentRemovalEvent;
+import plugins.groups.events.GroupPropertyUpdateEvent;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
@@ -272,21 +272,21 @@ public final class GroupPropertyReport extends PeriodicReport {
 		// determine the subscriptions for group creation
 		if (clientPropertyMap.keySet().equals(groupDataManager.getGroupTypeIds())) {
 			
-			actorContext.subscribe(GroupCreationObservationEvent.class, getFlushingConsumer(this::handleGroupCreationObservationEvent));
+			actorContext.subscribe(GroupAdditionEvent.class, getFlushingConsumer(this::handleGroupAdditionEvent));
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				EventLabel<GroupCreationObservationEvent> eventLabelByGroupType = GroupCreationObservationEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-				actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupCreationObservationEvent));
+				EventLabel<GroupAdditionEvent> eventLabelByGroupType = GroupAdditionEvent.getEventLabelByGroupType(actorContext, groupTypeId);
+				actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupAdditionEvent));
 			}
 		}
 
 		//determine the subscriptions for group removal observations
 		if (clientPropertyMap.keySet().equals(groupDataManager.getGroupTypeIds())) {
-			actorContext.subscribe(GroupImminentRemovalObservationEvent.class, getFlushingConsumer(this::handleGroupDestructionObservationEvent));
+			actorContext.subscribe(GroupImminentRemovalEvent.class, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				EventLabel<GroupImminentRemovalObservationEvent> eventLabelByGroupType = GroupImminentRemovalObservationEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-				actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupDestructionObservationEvent));
+				EventLabel<GroupImminentRemovalEvent> eventLabelByGroupType = GroupImminentRemovalEvent.getEventLabelByGroupType(actorContext, groupTypeId);
+				actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
 			}
 		}
 		
@@ -303,16 +303,16 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 		
 		if(allPropertiesRequired) {
-			actorContext.subscribe(GroupPropertyChangeObservationEvent.class, getFlushingConsumer(this::handleGroupPropertyChangeObservationEvent));	
+			actorContext.subscribe(GroupPropertyUpdateEvent.class, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));	
 		}else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
 				if(clientPropertyMap.get(groupTypeId).equals(groupDataManager.getGroupPropertyIds(groupTypeId))) {
-					EventLabel<GroupPropertyChangeObservationEvent> eventLabelByGroupType = GroupPropertyChangeObservationEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-					actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupPropertyChangeObservationEvent));
+					EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupType = GroupPropertyUpdateEvent.getEventLabelByGroupType(actorContext, groupTypeId);
+					actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
 				}else {
 					for(GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-						EventLabel<GroupPropertyChangeObservationEvent> eventLabelByGroupTypeAndProperty = GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(actorContext, groupTypeId, groupPropertyId);
-						actorContext.subscribe(eventLabelByGroupTypeAndProperty, getFlushingConsumer(this::handleGroupPropertyChangeObservationEvent));
+						EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupTypeAndProperty = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(actorContext, groupTypeId, groupPropertyId);
+						actorContext.subscribe(eventLabelByGroupTypeAndProperty, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
 					}
 				}
 			}
@@ -346,15 +346,15 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handleGroupPropertyChangeObservationEvent(ActorContext actorContext, GroupPropertyChangeObservationEvent groupPropertyChangeObservationEvent) {
-		GroupId groupId = groupPropertyChangeObservationEvent.getGroupId();
+	private void handleGroupPropertyUpdateEvent(ActorContext actorContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
+		GroupId groupId = groupPropertyUpdateEvent.getGroupId();
 
 		final GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 
-			GroupPropertyId groupPropertyId = groupPropertyChangeObservationEvent.getGroupPropertyId();
-			Object previousPropertyValue = groupPropertyChangeObservationEvent.getPreviousPropertyValue();
-			Object currentPropertyValue = groupPropertyChangeObservationEvent.getCurrentPropertyValue();
+			GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.getGroupPropertyId();
+			Object previousPropertyValue = groupPropertyUpdateEvent.getPreviousPropertyValue();
+			Object currentPropertyValue = groupPropertyUpdateEvent.getCurrentPropertyValue();
 
 			if (clientPropertyMap.get(groupTypeId).contains(groupPropertyId)) {
 
@@ -365,8 +365,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 	}
 
-	private void handleGroupCreationObservationEvent(ActorContext actorContext, GroupCreationObservationEvent groupCreationObservationEvent) {
-		GroupId groupId = groupCreationObservationEvent.getGroupId();
+	private void handleGroupAdditionEvent(ActorContext actorContext, GroupAdditionEvent groupAdditionEvent) {
+		GroupId groupId = groupAdditionEvent.getGroupId();
 		final GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 			for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
@@ -376,8 +376,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handleGroupDestructionObservationEvent(ActorContext actorContext, GroupImminentRemovalObservationEvent groupImminentRemovalObservationEvent) {
-		GroupId groupId = groupImminentRemovalObservationEvent.getGroupId();
+	private void handleGroupImminentRemovalEvent(ActorContext actorContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
+		GroupId groupId = groupImminentRemovalEvent.getGroupId();
 		final GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 			Set<GroupPropertyId> groupPropertyIds = groupDataManager.getGroupPropertyIds(groupTypeId);

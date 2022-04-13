@@ -9,8 +9,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = BatchCreationObservationEvent.class)
-public class AT_BatchCreationObservationEvent {
+@UnitTest(target = BatchAdditionEvent.class)
+public class AT_BatchAdditionEvent {
 
 	@Test
 	@UnitTestConstructor(args = { BatchId.class })
@@ -22,24 +22,24 @@ public class AT_BatchCreationObservationEvent {
 	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
 	public void testGetPrimaryKeyValue() {
 		BatchId batchId = new BatchId(56456);
-		BatchCreationObservationEvent batchCreationObservationEvent = new BatchCreationObservationEvent(batchId);
-		assertEquals(BatchCreationObservationEvent.class, batchCreationObservationEvent.getPrimaryKeyValue());
+		BatchAdditionEvent batchAdditionEvent = new BatchAdditionEvent(batchId);
+		assertEquals(BatchAdditionEvent.class, batchAdditionEvent.getPrimaryKeyValue());
 	}
 
 	@Test
 	@UnitTestMethod(name = "getBatchId", args = {})
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(56456);
-		BatchCreationObservationEvent batchCreationObservationEvent = new BatchCreationObservationEvent(batchId);
-		assertEquals(batchId, batchCreationObservationEvent.getBatchId());
+		BatchAdditionEvent batchAdditionEvent = new BatchAdditionEvent(batchId);
+		assertEquals(batchId, batchAdditionEvent.getBatchId());
 	}
 
 	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		BatchId batchId = new BatchId(56456);
-		BatchCreationObservationEvent batchCreationObservationEvent = new BatchCreationObservationEvent(batchId);
-		assertEquals("BatchCreationObservationEvent [batchId=56456]", batchCreationObservationEvent.toString());
+		BatchAdditionEvent batchAdditionEvent = new BatchAdditionEvent(batchId);
+		assertEquals("BatchAdditionEvent [batchId=56456]", batchAdditionEvent.toString());
 	}
 
 }

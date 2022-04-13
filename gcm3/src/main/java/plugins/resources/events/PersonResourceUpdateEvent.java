@@ -26,7 +26,7 @@ import plugins.resources.support.ResourceId;
  *
  */
 @Immutable
-public class PersonResourceChangeObservationEvent implements Event {
+public class PersonResourceUpdateEvent implements Event {
 	private final PersonId personId;
 	private final ResourceId resourceId;
 	private final long previousResourceLevel;
@@ -35,7 +35,7 @@ public class PersonResourceChangeObservationEvent implements Event {
 	/**
 	 * Constructs the event
 	 */
-	public PersonResourceChangeObservationEvent(final PersonId personId, final ResourceId resourceId, final long previousResourceLevel, final long currentResourceLevel) {
+	public PersonResourceUpdateEvent(final PersonId personId, final ResourceId resourceId, final long previousResourceLevel, final long currentResourceLevel) {
 		this.personId = personId;
 		this.resourceId = resourceId;
 		this.previousResourceLevel = previousResourceLevel;
@@ -108,7 +108,7 @@ public class PersonResourceChangeObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonResourceChangeObservationEvent} events. Matches on region id
+	 * {@link PersonResourceUpdateEvent} events. Matches on region id
 	 * and resource id.
 	 * 
 	 *
@@ -125,27 +125,27 @@ public class PersonResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
+	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
 		validateRegionId(simulationContext, regionId);
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.REGION_RESOURCE, PersonResourceChangeObservationEvent.class, regionId, resourceId);
+		return new MultiKeyEventLabel<>(resourceId, LabelerId.REGION_RESOURCE, PersonResourceUpdateEvent.class, regionId, resourceId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonResourceChangeObservationEvent}
+	 * Returns an event labeler for {@link PersonResourceUpdateEvent}
 	 * events that uses region id and resource id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<PersonResourceChangeObservationEvent> getEventLabelerForRegionAndResource(RegionDataManager regionDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.REGION_RESOURCE, PersonResourceChangeObservationEvent.class, (context, event) -> {
+	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForRegionAndResource(RegionDataManager regionDataManager) {
+		return new SimpleEventLabeler<>(LabelerId.REGION_RESOURCE, PersonResourceUpdateEvent.class, (context, event) -> {
 			RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
-			return new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.REGION_RESOURCE, PersonResourceChangeObservationEvent.class, regionId, event.getResourceId());
+			return new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.REGION_RESOURCE, PersonResourceUpdateEvent.class, regionId, event.getResourceId());
 		});
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonResourceChangeObservationEvent} events. Matches on person id
+	 * {@link PersonResourceUpdateEvent} events. Matches on person id
 	 * and resource id.
 	 * 
 	 *
@@ -162,25 +162,25 @@ public class PersonResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByPersonAndResource(SimulationContext simulationContext, PersonId personId, ResourceId resourceId) {
+	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByPersonAndResource(SimulationContext simulationContext, PersonId personId, ResourceId resourceId) {
 		validatePersonId(simulationContext, personId);
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.PERSON_RESOURCE, PersonResourceChangeObservationEvent.class, personId, resourceId);
+		return new MultiKeyEventLabel<>(resourceId, LabelerId.PERSON_RESOURCE, PersonResourceUpdateEvent.class, personId, resourceId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonResourceChangeObservationEvent}
+	 * Returns an event labeler for {@link PersonResourceUpdateEvent}
 	 * events that uses person id and resource id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<PersonResourceChangeObservationEvent> getEventLabelerForPersonAndResource() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON_RESOURCE, PersonResourceChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.PERSON_RESOURCE, PersonResourceChangeObservationEvent.class, event.getPersonId(), event.getResourceId()));
+	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForPersonAndResource() {
+		return new SimpleEventLabeler<>(LabelerId.PERSON_RESOURCE, PersonResourceUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.PERSON_RESOURCE, PersonResourceUpdateEvent.class, event.getPersonId(), event.getResourceId()));
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonResourceChangeObservationEvent} events. Matches on resource
+	 * {@link PersonResourceUpdateEvent} events. Matches on resource
 	 * id.
 	 * 
 	 *
@@ -193,19 +193,19 @@ public class PersonResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<PersonResourceChangeObservationEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
+	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, PersonResourceChangeObservationEvent.class, resourceId);
+		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, PersonResourceUpdateEvent.class, resourceId);
 	}
 	/**
-	 * Returns an event labeler for {@link PersonResourceChangeObservationEvent}
+	 * Returns an event labeler for {@link PersonResourceUpdateEvent}
 	 * events that uses resource id. Automatically added at
 	 * initialization.
 	 */
 
-	public static EventLabeler<PersonResourceChangeObservationEvent> getEventLabelerForResource() {
-		return new SimpleEventLabeler<>(LabelerId.RESOURCE, PersonResourceChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.RESOURCE, PersonResourceChangeObservationEvent.class, event.getResourceId()));
+	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForResource() {
+		return new SimpleEventLabeler<>(LabelerId.RESOURCE, PersonResourceUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.RESOURCE, PersonResourceUpdateEvent.class, event.getResourceId()));
 	}
 
 	/**

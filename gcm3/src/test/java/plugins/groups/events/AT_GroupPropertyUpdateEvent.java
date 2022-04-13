@@ -27,8 +27,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GroupPropertyChangeObservationEvent.class)
-public class AT_GroupPropertyChangeObservationEvent {
+@UnitTest(target = GroupPropertyUpdateEvent.class)
+public class AT_GroupPropertyUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { GroupId.class, GroupPropertyId.class, Object.class, Object.class })
@@ -43,8 +43,8 @@ public class AT_GroupPropertyChangeObservationEvent {
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		GroupPropertyChangeObservationEvent groupPropertyChangeObservationEvent = new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(currentValue, groupPropertyChangeObservationEvent.getCurrentPropertyValue());
+		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
+		assertEquals(currentValue, groupPropertyUpdateEvent.getCurrentPropertyValue());
 	}
 
 	@Test
@@ -54,8 +54,8 @@ public class AT_GroupPropertyChangeObservationEvent {
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		GroupPropertyChangeObservationEvent groupPropertyChangeObservationEvent = new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(groupId, groupPropertyChangeObservationEvent.getGroupId());
+		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
+		assertEquals(groupId, groupPropertyUpdateEvent.getGroupId());
 	}
 
 	@Test
@@ -65,8 +65,8 @@ public class AT_GroupPropertyChangeObservationEvent {
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		GroupPropertyChangeObservationEvent groupPropertyChangeObservationEvent = new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(groupPropertyId, groupPropertyChangeObservationEvent.getGroupPropertyId());
+		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
+		assertEquals(groupPropertyId, groupPropertyUpdateEvent.getGroupPropertyId());
 	}
 
 	@Test
@@ -76,8 +76,8 @@ public class AT_GroupPropertyChangeObservationEvent {
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 		Object previousValue = "previous";
 		Object currentValue = "current";
-		GroupPropertyChangeObservationEvent groupPropertyChangeObservationEvent = new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(previousValue, groupPropertyChangeObservationEvent.getPreviousPropertyValue());
+		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
+		assertEquals(previousValue, groupPropertyUpdateEvent.getPreviousPropertyValue());
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class AT_GroupPropertyChangeObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
-			Set<EventLabel<GroupPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupId groupId : groupIds) {
 				GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
@@ -97,21 +97,21 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 
-					EventLabel<GroupPropertyChangeObservationEvent> eventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, groupId, groupPropertyId);
+					EventLabel<GroupPropertyUpdateEvent> eventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, groupId, groupPropertyId);
 
 					// show that the event label has the correct event class
-					assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+					assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 					// show that the event label has the correct primary key
-					assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
+					assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getPrimaryKeyValue());
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroupAndProperty();
+					EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty();
 					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
-					EventLabel<GroupPropertyChangeObservationEvent> eventLabel2 = GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, groupId, groupPropertyId);
+					EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, groupId, groupPropertyId);
 					assertEquals(eventLabel, eventLabel2);
 
 					// show that equal event labels have equal hash codes
@@ -127,26 +127,26 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 			// if the group id is null
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 			// if the group id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, new GroupId(100000), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, new GroupId(100000), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 			// if the group property id is null
-			contractException = assertThrows(ContractException.class, () -> GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), null));
+			contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), null));
 			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), TestGroupPropertyId.getUnknownGroupPropertyId()));
+					() -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), TestGroupPropertyId.getUnknownGroupPropertyId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
+					() -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
 
 		});
@@ -162,10 +162,10 @@ public class AT_GroupPropertyChangeObservationEvent {
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
-			EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroupAndProperty();
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -175,18 +175,18 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 					// derive the expected event label for this event
-					EventLabel<GroupPropertyChangeObservationEvent> expectedEventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroupAndProperty(c, groupId, groupPropertyId);
+					EventLabel<GroupPropertyUpdateEvent> expectedEventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, groupId, groupPropertyId);
 
 					// show that the event label and event labeler have equal id
 					// values
 					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 					// create an event
-					GroupPropertyChangeObservationEvent event = new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, "previous", "current");
+					GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, groupPropertyId, "previous", "current");
 
 					// show that the event labeler produces the correct event
 					// label
-					EventLabel<GroupPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<GroupPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 					assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -205,25 +205,25 @@ public class AT_GroupPropertyChangeObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
-			Set<EventLabel<GroupPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupId groupId : groupIds) {
 
-				EventLabel<GroupPropertyChangeObservationEvent> eventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupPropertyUpdateEvent> eventLabel = GroupPropertyUpdateEvent.getEventLabelByGroup(c, groupId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroup();
+				EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroup();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupPropertyChangeObservationEvent> eventLabel2 = GroupPropertyChangeObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroup(c, groupId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -237,11 +237,11 @@ public class AT_GroupPropertyChangeObservationEvent {
 			// precondition tests
 
 			// if the group id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupPropertyChangeObservationEvent.getEventLabelByGroup(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroup(c, null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 			// if the group id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupPropertyChangeObservationEvent.getEventLabelByGroup(c, new GroupId(100000)));
+			contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroup(c, new GroupId(100000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		});
@@ -258,28 +258,28 @@ public class AT_GroupPropertyChangeObservationEvent {
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
-			EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroup();
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroup();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
 			for (GroupId groupId : groupIds) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupPropertyChangeObservationEvent> expectedEventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupPropertyUpdateEvent> expectedEventLabel = GroupPropertyUpdateEvent.getEventLabelByGroup(c, groupId);
 
 				// show that the event label and event labeler have equal id
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				GroupPropertyChangeObservationEvent event = new GroupPropertyChangeObservationEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
+				GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -297,27 +297,27 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			Set<EventLabel<GroupPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupTypeId groupTypeId : TestGroupTypeId.values()) {
 				Set<GroupPropertyId> groupPropertyIds = groupDataManager.getGroupPropertyIds(groupTypeId);
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 
-					EventLabel<GroupPropertyChangeObservationEvent> eventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
+					EventLabel<GroupPropertyUpdateEvent> eventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
 
 					// show that the event label has the correct event class
-					assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+					assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 					// show that the event label has the correct primary key
-					assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
+					assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getPrimaryKeyValue());
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
+					EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
 					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
-					EventLabel<GroupPropertyChangeObservationEvent> eventLabel2 = GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
+					EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
 					assertEquals(eventLabel, eventLabel2);
 
 					// show that equal event labels have equal hash codes
@@ -333,26 +333,26 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 			// if the group id is null
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.getUnknownGroupTypeId(),
+			contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.getUnknownGroupTypeId(),
 					TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group property id is null
-			contractException = assertThrows(ContractException.class, () -> GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, null));
+			contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, null));
 			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
+					() -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
+					() -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
 
 		});
@@ -367,10 +367,10 @@ public class AT_GroupPropertyChangeObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -380,18 +380,18 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 					// derive the expected event label for this event
-					EventLabel<GroupPropertyChangeObservationEvent> expectedEventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
+					EventLabel<GroupPropertyUpdateEvent> expectedEventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
 
 					// show that the event label and event labeler have equal id
 					// values
 					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 					// create an event
-					GroupPropertyChangeObservationEvent event = new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, "previous", "current");
+					GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, groupPropertyId, "previous", "current");
 
 					// show that the event labeler produces the correct event
 					// label
-					EventLabel<GroupPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<GroupPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 					assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -407,25 +407,25 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 676016189463079696L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			Set<EventLabel<GroupPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupTypeId groupTypeId : TestGroupTypeId.values()) {
 
-				EventLabel<GroupPropertyChangeObservationEvent> eventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroupType(c, groupTypeId);
+				EventLabel<GroupPropertyUpdateEvent> eventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupType(c, groupTypeId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroupType(groupDataManager);
+				EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager);
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupPropertyChangeObservationEvent> eventLabel2 = GroupPropertyChangeObservationEvent.getEventLabelByGroupType(c, groupTypeId);
+				EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroupType(c, groupTypeId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -440,11 +440,11 @@ public class AT_GroupPropertyChangeObservationEvent {
 			// precondition tests
 
 			// if the group id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupPropertyChangeObservationEvent.getEventLabelByGroupType(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroupType(c, null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupPropertyChangeObservationEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
+			contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		});
@@ -460,10 +460,10 @@ public class AT_GroupPropertyChangeObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForGroupType(groupDataManager);
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager);
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -472,18 +472,18 @@ public class AT_GroupPropertyChangeObservationEvent {
 				GroupId groupId = groupDataManager.getGroupsForGroupType(groupTypeId).get(0);
 
 				// derive the expected event label for this event
-				EventLabel<GroupPropertyChangeObservationEvent> expectedEventLabel = GroupPropertyChangeObservationEvent.getEventLabelByGroupType(c, groupTypeId);
+				EventLabel<GroupPropertyUpdateEvent> expectedEventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupType(c, groupTypeId);
 
 				// show that the event label and event labeler have equal id
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				GroupPropertyChangeObservationEvent event = new GroupPropertyChangeObservationEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
+				GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -498,23 +498,23 @@ public class AT_GroupPropertyChangeObservationEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 6107267895624819992L, (c) -> {
 
-			Set<EventLabel<GroupPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
-			EventLabel<GroupPropertyChangeObservationEvent> eventLabel = GroupPropertyChangeObservationEvent.getEventLabelByAll();
+			EventLabel<GroupPropertyUpdateEvent> eventLabel = GroupPropertyUpdateEvent.getEventLabelByAll();
 
 			// show that the event label has the correct event class
-			assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+			assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 			// show that the event label has the correct primary key
-			assertEquals(GroupPropertyChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
+			assertEquals(GroupPropertyUpdateEvent.class, eventLabel.getPrimaryKeyValue());
 
 			// show that the event label has the same id as its
 			// associated labeler
-			EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForAll();
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForAll();
 			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
-			EventLabel<GroupPropertyChangeObservationEvent> eventLabel2 = GroupPropertyChangeObservationEvent.getEventLabelByAll();
+			EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByAll();
 			assertEquals(eventLabel, eventLabel2);
 
 			// show that equal event labels have equal hash codes
@@ -537,28 +537,28 @@ public class AT_GroupPropertyChangeObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupPropertyChangeObservationEvent> eventLabeler = GroupPropertyChangeObservationEvent.getEventLabelerForAll();
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForAll();
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 			// show that the event labeler has the correct event class
-			assertEquals(GroupPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
 			for (GroupId groupId : groupIds) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupPropertyChangeObservationEvent> expectedEventLabel = GroupPropertyChangeObservationEvent.getEventLabelByAll();
+				EventLabel<GroupPropertyUpdateEvent> expectedEventLabel = GroupPropertyUpdateEvent.getEventLabelByAll();
 
 				// show that the event label and event labeler have equal id
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				GroupPropertyChangeObservationEvent event = new GroupPropertyChangeObservationEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
+				GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 

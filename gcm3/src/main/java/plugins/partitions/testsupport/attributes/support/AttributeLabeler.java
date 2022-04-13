@@ -10,14 +10,14 @@ import nucleus.SimulationContext;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
 /**
  * A labeler for attributes. The dimension of the labeler is the given
  * {@linkplain AttributeId}, the event that stimulates a label update is
- * {@linkplain AttributeChangeObservationEvent} and the labeling function is
+ * {@linkplain AttributeUpdateEvent} and the labeling function is
  * composed from the given Function.
  * 
  * @author Shawn Hatch
@@ -34,21 +34,21 @@ public final class AttributeLabeler implements Labeler {
 		this.attributeValueLabelingFunction = attributeValueLabelingFunction;
 	}
 
-	private Optional<PersonId> getPersonId(AttributeChangeObservationEvent attributeChangeObservationEvent) {
+	private Optional<PersonId> getPersonId(AttributeUpdateEvent attributeUpdateEvent) {
 		PersonId result = null;
-		if (attributeChangeObservationEvent.getAttributeId().equals(attributeId)) {
-			result = attributeChangeObservationEvent.getPersonId();
+		if (attributeUpdateEvent.getAttributeId().equals(attributeId)) {
+			result = attributeUpdateEvent.getPersonId();
 		}
 		return Optional.ofNullable(result);
 	}
 
 	/**
-	 * Returns one LabelerSensitivity of AttributeChangeObservationEvent
+	 * Returns one LabelerSensitivity of AttributeUpdateEvent
 	 */
 	@Override
 	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new LabelerSensitivity<AttributeChangeObservationEvent>(AttributeChangeObservationEvent.class, this::getPersonId));
+		result.add(new LabelerSensitivity<AttributeUpdateEvent>(AttributeUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
@@ -82,8 +82,8 @@ public final class AttributeLabeler implements Labeler {
 
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
-		AttributeChangeObservationEvent attributeChangeObservationEvent = (AttributeChangeObservationEvent)event;
-		return attributeValueLabelingFunction.apply(attributeChangeObservationEvent.getPreviousValue());
+		AttributeUpdateEvent attributeUpdateEvent = (AttributeUpdateEvent)event;
+		return attributeValueLabelingFunction.apply(attributeUpdateEvent.getPreviousValue());
 	}
 
 }

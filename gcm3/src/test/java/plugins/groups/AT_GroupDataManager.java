@@ -33,10 +33,11 @@ import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import plugins.groups.events.GroupImminentRemovalObservationEvent;
-import plugins.groups.events.GroupMembershipAdditionObservationEvent;
-import plugins.groups.events.GroupMembershipRemovalObservationEvent;
-import plugins.groups.events.GroupPropertyChangeObservationEvent;
+import plugins.groups.events.GroupAdditionEvent;
+import plugins.groups.events.GroupImminentRemovalEvent;
+import plugins.groups.events.GroupMembershipAdditionEvent;
+import plugins.groups.events.GroupMembershipRemovalEvent;
+import plugins.groups.events.GroupPropertyUpdateEvent;
 import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
@@ -148,7 +149,7 @@ public class AT_GroupDataManager {
 		// add an agent to observe the group membership additions
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupMembershipAdditionObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupMembershipAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
 			});
 
@@ -258,7 +259,7 @@ public class AT_GroupDataManager {
 
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupCreationObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualGroupObservations.add(e.getGroupId());
 			});
 
@@ -378,7 +379,7 @@ public class AT_GroupDataManager {
 
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupCreationObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(e.getGroupId());
 			});
 
@@ -438,7 +439,7 @@ public class AT_GroupDataManager {
 
 		// add an agent to observe the group membership additions
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupMembershipAdditionObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupMembershipAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
 			});
 
@@ -539,7 +540,7 @@ public class AT_GroupDataManager {
 
 		// add an agent to observe the group removals
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupImminentRemovalObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(e.getGroupId());
 			});
 
@@ -787,7 +788,7 @@ public class AT_GroupDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupPropertyChangeObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupPropertyUpdateEvent.getEventLabelByAll(), (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
 
 			});
@@ -2295,7 +2296,7 @@ public class AT_GroupDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupPluginData.class })
-	public void testGroupCreationObservationEventLabelers() {
+	public void testGroupAdditionEventLabelers() {
 
 		// Have the agent attempt to add the event labelers and show that a
 		// contract exception is thrown, indicating that the labelers were
@@ -2305,15 +2306,15 @@ public class AT_GroupDataManager {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupCreationObservationEvent.getEventLabelerForAll());
-			testEventLabeler(c, GroupCreationObservationEvent.getEventLabelerForGroupType(groupDataManager));
+			testEventLabeler(c, GroupAdditionEvent.getEventLabelerForAll());
+			testEventLabeler(c, GroupAdditionEvent.getEventLabelerForGroupType(groupDataManager));
 		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupPluginData.class })
-	public void testGroupImminentRemovalObservationEventLabelers() {
+	public void testGroupImminentRemovalEventLabelers() {
 
 		// Have the agent attempt to add the event labelers and show that a
 		// contract exception is thrown, indicating that the labelers were
@@ -2323,16 +2324,16 @@ public class AT_GroupDataManager {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupImminentRemovalObservationEvent.getEventLabelerForAll());
-			testEventLabeler(c, GroupImminentRemovalObservationEvent.getEventLabelerForGroup());
-			testEventLabeler(c, GroupImminentRemovalObservationEvent.getEventLabelerForGroupType(groupDataManager));
+			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForAll());
+			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroup());
+			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager));
 		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupPluginData.class })
-	public void testGroupPropertyChangeObservationEventLabelers() {
+	public void testGroupPropertyUpdateEventLabelers() {
 
 		// Have the agent attempt to add the event labelers and show that a
 		// contract exception is thrown, indicating that the labelers were
@@ -2341,18 +2342,18 @@ public class AT_GroupDataManager {
 		GroupsActionSupport.testConsumer(100, 3, 5, 4869845127685024578L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupPropertyChangeObservationEvent.getEventLabelerForAll());
-			testEventLabeler(c, GroupPropertyChangeObservationEvent.getEventLabelerForGroup());
-			testEventLabeler(c, GroupPropertyChangeObservationEvent.getEventLabelerForGroupAndProperty());
-			testEventLabeler(c, GroupPropertyChangeObservationEvent.getEventLabelerForGroupType(groupDataManager));
-			testEventLabeler(c, GroupPropertyChangeObservationEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager));
+			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForAll());
+			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroup());
+			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
+			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager));
+			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager));
 		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupPluginData.class })
-	public void testGroupMembershipAdditionObservationEventLabelers() {
+	public void testGroupMembershipAdditionEventLabelers() {
 		// Have the agent attempt to add the event labelers and show that a
 		// contract exception is thrown, indicating that the labelers were
 		// previously added by the resolver.
@@ -2360,19 +2361,19 @@ public class AT_GroupDataManager {
 		GroupsActionSupport.testConsumer(100, 3, 5, 5331119358636307434L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupMembershipAdditionObservationEvent.getEventLabelerForAll());
-			testEventLabeler(c, GroupMembershipAdditionObservationEvent.getEventLabelerForGroup());
-			testEventLabeler(c, GroupMembershipAdditionObservationEvent.getEventLabelerForGroupAndPerson());
-			testEventLabeler(c, GroupMembershipAdditionObservationEvent.getEventLabelerForGroupType(groupDataManager));
-			testEventLabeler(c, GroupMembershipAdditionObservationEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager));
-			testEventLabeler(c, GroupMembershipAdditionObservationEvent.getEventLabelerForPerson());
+			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForAll());
+			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroup());
+			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson());
+			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupDataManager));
+			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager));
+			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForPerson());
 		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupPluginData.class })
-	public void testGroupMembershipRemovalObservationEventLabelers() {
+	public void testGroupMembershipRemovalEventLabelers() {
 
 		// Have the agent attempt to add the event labelers and show that a
 		// contract exception is thrown, indicating that the labelers were
@@ -2382,19 +2383,20 @@ public class AT_GroupDataManager {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupMembershipRemovalObservationEvent.getEventLabelerForAll());
-			testEventLabeler(c, GroupMembershipRemovalObservationEvent.getEventLabelerForGroup());
-			testEventLabeler(c, GroupMembershipRemovalObservationEvent.getEventLabelerForGroupAndPerson());
-			testEventLabeler(c, GroupMembershipRemovalObservationEvent.getEventLabelerForGroupType(groupDataManager));
-			testEventLabeler(c, GroupMembershipRemovalObservationEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager));
-			testEventLabeler(c, GroupMembershipRemovalObservationEvent.getEventLabelerForPerson());
+			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForAll());
+			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroup());
+			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroupAndPerson());
+			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroupType(groupDataManager));
+			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager));
+			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForPerson());
 		});
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupPluginData.class })
-	public void testBulkPersonCreationObservationEvent() {
+	public void testBulkPersonAdditionEvent() {
+		
 		// create structures to hold observations
 		Set<GroupId> expectedGroupObservations = new LinkedHashSet<>();
 		Set<GroupId> actualGroupObservations = new LinkedHashSet<>();
@@ -2405,7 +2407,7 @@ public class AT_GroupDataManager {
 		// well as the people being added to the groups
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupCreationObservationEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupAdditionEvent.getEventLabelByAll(), (c2, e) -> {
 				actualGroupObservations.add(e.getGroupId());
 			});
 
@@ -2417,7 +2419,7 @@ public class AT_GroupDataManager {
 		 *
 		 * Show that groups were added and the people are in the new groups and
 		 * thus the resolver must have handled the corresponding
-		 * BulkPersonCreationObservationEvent.
+		 * BulkPersonAdditionEvent.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			// establish data views and how many people and groups already exist
@@ -2549,7 +2551,7 @@ public class AT_GroupDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupPluginData.class })
-	public void testPersonImminentRemovalObservationEvent() {
+	public void testPersonImminentRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		MutableObject<PersonId> pId = new MutableObject<>();

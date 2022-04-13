@@ -15,14 +15,14 @@ import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 
 @Immutable
-public final class RegionPropertyChangeObservationEvent implements Event {
+public final class RegionPropertyUpdateEvent implements Event {
 	private final RegionId regionId;
 	private final RegionPropertyId regionPropertyId;
 	private final Object previousPropertyValue;
 	private final Object currentPropertyValue;
 
 
-	public RegionPropertyChangeObservationEvent(RegionId regionId, RegionPropertyId regionPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
+	public RegionPropertyUpdateEvent(RegionId regionId, RegionPropertyId regionPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
 		super();
 		this.regionId = regionId;
 		this.regionPropertyId = regionPropertyId;
@@ -48,7 +48,7 @@ public final class RegionPropertyChangeObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "RegionPropertyChangeObservationEvent [regionId=" + regionId + ", regionPropertyId=" + regionPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue="
+		return "RegionPropertyUpdateEvent [regionId=" + regionId + ", regionPropertyId=" + regionPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue="
 				+ currentPropertyValue + "]";
 	}
 
@@ -71,25 +71,25 @@ public final class RegionPropertyChangeObservationEvent implements Event {
 		}
 	}
 
-	public static EventLabel<RegionPropertyChangeObservationEvent> getEventLabelByProperty(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
+	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
 		validateRegionPropertyId(simulationContext, regionPropertyId);
-		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.PROPERTY, RegionPropertyChangeObservationEvent.class, regionPropertyId);
+		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.PROPERTY, RegionPropertyUpdateEvent.class, regionPropertyId);
 	}
 
-	public static EventLabel<RegionPropertyChangeObservationEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, RegionPropertyId regionPropertyId) {
+	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, RegionPropertyId regionPropertyId) {
 		validateRegionId(simulationContext, regionId);
 		validateRegionPropertyId(simulationContext, regionPropertyId);
-		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.REGION_PROPERTY, RegionPropertyChangeObservationEvent.class, regionId, regionPropertyId);
+		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.REGION_PROPERTY, RegionPropertyUpdateEvent.class, regionId, regionPropertyId);
 	}
 
-	public static EventLabeler<RegionPropertyChangeObservationEvent> getEventLabelerForRegionAndProperty() {
-		return new SimpleEventLabeler<>(LabelerId.REGION_PROPERTY, RegionPropertyChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getRegionPropertyId(),
-				LabelerId.REGION_PROPERTY, RegionPropertyChangeObservationEvent.class, event.getRegionId(), event.getRegionPropertyId()));
+	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForRegionAndProperty() {
+		return new SimpleEventLabeler<>(LabelerId.REGION_PROPERTY, RegionPropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getRegionPropertyId(),
+				LabelerId.REGION_PROPERTY, RegionPropertyUpdateEvent.class, event.getRegionId(), event.getRegionPropertyId()));
 	}
 
-	public static EventLabeler<RegionPropertyChangeObservationEvent> getEventLabelerForProperty() {
-		return new SimpleEventLabeler<>(LabelerId.PROPERTY, RegionPropertyChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getRegionPropertyId(), LabelerId.PROPERTY, RegionPropertyChangeObservationEvent.class, event.getRegionPropertyId()));
+	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForProperty() {
+		return new SimpleEventLabeler<>(LabelerId.PROPERTY, RegionPropertyUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(event.getRegionPropertyId(), LabelerId.PROPERTY, RegionPropertyUpdateEvent.class, event.getRegionPropertyId()));
 	}
 
 	@Override

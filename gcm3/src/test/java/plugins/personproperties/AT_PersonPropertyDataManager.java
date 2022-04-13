@@ -39,7 +39,7 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.events.PersonPropertyChangeObservationEvent;
+import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
@@ -387,7 +387,7 @@ public final class AT_PersonPropertyDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				EventLabel<PersonPropertyChangeObservationEvent> eventLabel = PersonPropertyChangeObservationEvent.getEventLabelByProperty(c, testPersonPropertyId);
+				EventLabel<PersonPropertyUpdateEvent> eventLabel = PersonPropertyUpdateEvent.getEventLabelByProperty(c, testPersonPropertyId);
 				c.subscribe(eventLabel, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getPersonId(), e.getPersonPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
 				});
@@ -500,7 +500,7 @@ public final class AT_PersonPropertyDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonPropertyChangeObservationEventLabelers() {
+	public void testPersonPropertyUpdateEventLabelers() {
 
 		/*
 		 * For each labeler, show that the labeler was previously added,
@@ -509,21 +509,21 @@ public final class AT_PersonPropertyDataManager {
 
 		PersonPropertiesActionSupport.testConsumer(100, 4585617051924828596L, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			EventLabeler<PersonPropertyChangeObservationEvent> eventLabelerForRegionAndProperty = PersonPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty(regionDataManager);
+			EventLabeler<PersonPropertyUpdateEvent> eventLabelerForRegionAndProperty = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);
 			assertNotNull(eventLabelerForRegionAndProperty);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForRegionAndProperty));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		});
 
 		PersonPropertiesActionSupport.testConsumer(100, 3679887899361025474L, (c) -> {
-			EventLabeler<PersonPropertyChangeObservationEvent> eventLabelerForPersonAndProperty = PersonPropertyChangeObservationEvent.getEventLabelerForPersonAndProperty();
+			EventLabeler<PersonPropertyUpdateEvent> eventLabelerForPersonAndProperty = PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty();
 			assertNotNull(eventLabelerForPersonAndProperty);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForPersonAndProperty));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		});
 
 		PersonPropertiesActionSupport.testConsumer(100, 7374053088167649497L, (c) -> {
-			EventLabeler<PersonPropertyChangeObservationEvent> eventLabelerForProperty = PersonPropertyChangeObservationEvent.getEventLabelerForProperty();
+			EventLabeler<PersonPropertyUpdateEvent> eventLabelerForProperty = PersonPropertyUpdateEvent.getEventLabelerForProperty();
 			assertNotNull(eventLabelerForProperty);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForProperty));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -658,7 +658,7 @@ public final class AT_PersonPropertyDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonCreationObservationEvent() {
+	public void testPersonAdditionEvent() {
 
 		PersonPropertiesActionSupport.testConsumer(100, 4771130331997762252L, (c) -> {
 			// establish data views
@@ -798,7 +798,7 @@ public final class AT_PersonPropertyDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBulkPersonCreationObservationEvent() {
+	public void testBulkPersonAdditionEvent() {
 		PersonPropertiesActionSupport.testConsumer(0, 2547218192811543040L, (c) -> {
 			// establish data views
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
@@ -933,7 +933,7 @@ public final class AT_PersonPropertyDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonImminentRemovalObservationEvent() {
+	public void testPersonImminentRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

@@ -30,7 +30,7 @@ import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
 import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.events.PersonResourceChangeObservationEvent;
+import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
@@ -62,24 +62,24 @@ public final class AT_ResourceLabeler {
 		assertEquals(1, labelerSensitivities.size());
 
 		// show that the sensitivity is associated with
-		// PersonResourceChangeObservationEvent
+		// PersonResourceUpdateEvent
 		LabelerSensitivity<?> labelerSensitivity = labelerSensitivities.iterator().next();
-		assertEquals(PersonResourceChangeObservationEvent.class, labelerSensitivity.getEventClass());
+		assertEquals(PersonResourceUpdateEvent.class, labelerSensitivity.getEventClass());
 
 		// show that the sensitivity will return the person id from a
-		// PersonCompartmentChangeObservationEvent
+		// PersonResourceUpdateEvent
 		PersonId personId = new PersonId(56);
 
 		// show that an event that does not match the resource type will not
 		// return a person id
-		PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, TestResourceId.RESOURCE_4, 25L, 17L);
-		Optional<PersonId> optional = labelerSensitivity.getPersonId(personResourceChangeObservationEvent);
+		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, TestResourceId.RESOURCE_4, 25L, 17L);
+		Optional<PersonId> optional = labelerSensitivity.getPersonId(personResourceUpdateEvent);
 		assertFalse(optional.isPresent());
 
 		// show that an event that matches the resource type will return the
 		// correct person id
-		personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, TestResourceId.RESOURCE_1, 25L, 17L);
-		optional = labelerSensitivity.getPersonId(personResourceChangeObservationEvent);
+		personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, TestResourceId.RESOURCE_1, 25L, 17L);
+		optional = labelerSensitivity.getPersonId(personResourceUpdateEvent);
 		assertTrue(optional.isPresent());
 
 		assertEquals(personId, optional.get());
@@ -191,8 +191,8 @@ public final class AT_ResourceLabeler {
 			for (int i = 0; i < 10; i++) {
 				previousResourceLevel = i;
 				Object expectedLabel = function.apply(previousResourceLevel);
-				PersonResourceChangeObservationEvent personResourceChangeObservationEvent = new PersonResourceChangeObservationEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-				Object actualLabel = resourceLabeler.getPastLabel(c, personResourceChangeObservationEvent);
+				PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
+				Object actualLabel = resourceLabeler.getPastLabel(c, personResourceUpdateEvent);
 				assertEquals(expectedLabel, actualLabel);
 			}
 		});

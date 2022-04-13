@@ -20,7 +20,7 @@ import plugins.resources.support.ResourcePropertyId;
  *
  */
 @Immutable
-public class ResourcePropertyChangeObservationEvent implements Event {
+public class ResourcePropertyUpdateEvent implements Event {
 	private final ResourceId resourceId;
 	private final ResourcePropertyId resourcePropertyId;
 	private final Object previousPropertyValue;
@@ -29,7 +29,7 @@ public class ResourcePropertyChangeObservationEvent implements Event {
 	/**
 	 * Constructs the event
 	 */
-	public ResourcePropertyChangeObservationEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId, Object previousPropertyValue, Object currentPropertyValue) {
+	public ResourcePropertyUpdateEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId, Object previousPropertyValue, Object currentPropertyValue) {
 		super();
 		this.resourceId = resourceId;
 		this.resourcePropertyId = resourcePropertyId;
@@ -91,7 +91,7 @@ public class ResourcePropertyChangeObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link ResourcePropertyChangeObservationEvent} events. Matches on
+	 * {@link ResourcePropertyUpdateEvent} events. Matches on
 	 * resource id and resource property id.
 	 * 
 	 *
@@ -109,19 +109,19 @@ public class ResourcePropertyChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID} if
 	 *             the resource property id is unknown</li>	 *             
 	 */
-	public static EventLabel<ResourcePropertyChangeObservationEvent> getEventLabel(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
+	public static EventLabel<ResourcePropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
 		validateResourceId(simulationContext, resourceId);
 		validateResourcePropertyId(simulationContext, resourceId, resourcePropertyId);
-		return new MultiKeyEventLabel<>(resourcePropertyId, LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyChangeObservationEvent.class, resourceId, resourcePropertyId);
+		return new MultiKeyEventLabel<>(resourcePropertyId, LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyUpdateEvent.class, resourceId, resourcePropertyId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link ResourcePropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link ResourcePropertyUpdateEvent}
 	 * events that uses resource id and resource property id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<ResourcePropertyChangeObservationEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourcePropertyId(), LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyChangeObservationEvent.class, event.getResourceId(), event.getResourcePropertyId()));
+	public static EventLabeler<ResourcePropertyUpdateEvent> getEventLabeler() {
+		return new SimpleEventLabeler<>(LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourcePropertyId(), LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyUpdateEvent.class, event.getResourceId(), event.getResourcePropertyId()));
 	}
 	/**
 	 * Returns the resource property id used to create this event

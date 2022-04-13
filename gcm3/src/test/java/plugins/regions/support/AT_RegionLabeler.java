@@ -22,7 +22,7 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -149,16 +149,16 @@ public class AT_RegionLabeler {
 		assertEquals(1, labelerSensitivities.size());
 
 		// show that the sensitivity is associated with
-		// PersonRegionChangeObservationEvent
+		// PersonRegionUpdateEvent
 		LabelerSensitivity<?> labelerSensitivity = labelerSensitivities.iterator().next();
-		assertEquals(PersonRegionChangeObservationEvent.class, labelerSensitivity.getEventClass());
+		assertEquals(PersonRegionUpdateEvent.class, labelerSensitivity.getEventClass());
 
 		// show that the sensitivity will return the person id from a
-		// PersonRegionChangeObservationEvent
+		// PersonRegionUpdateEvent
 		PersonId personId = new PersonId(56);
-		PersonRegionChangeObservationEvent personRegionChangeObservationEvent = new PersonRegionChangeObservationEvent(personId, TestRegionId.REGION_1,
+		PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId, TestRegionId.REGION_1,
 				TestRegionId.REGION_2);
-		labelerSensitivity.getPersonId(personRegionChangeObservationEvent);
+		labelerSensitivity.getPersonId(personRegionUpdateEvent);
 
 	}
 	

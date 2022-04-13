@@ -8,8 +8,8 @@ import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
-import plugins.groups.events.GroupMembershipAdditionObservationEvent;
-import plugins.groups.events.GroupMembershipRemovalObservationEvent;
+import plugins.groups.events.GroupMembershipAdditionEvent;
+import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.people.support.PersonId;
@@ -33,14 +33,14 @@ public class GroupMemberFilter extends Filter {
 		validateGroupIdNotNull(simulationContext, groupId);
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionObservationEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionEvent event) {
 		if (event.getGroupId().equals(groupId)) {
 			return Optional.of(event.getPersonId());
 		}
 		return Optional.empty();
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalObservationEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalEvent event) {
 		if (event.getGroupId().equals(groupId)) {
 			return Optional.of(event.getPersonId());
 		}
@@ -51,8 +51,8 @@ public class GroupMemberFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<GroupMembershipAdditionObservationEvent>(GroupMembershipAdditionObservationEvent.class, this::additionRequiresRefresh));
-		result.add(new FilterSensitivity<GroupMembershipRemovalObservationEvent>(GroupMembershipRemovalObservationEvent.class, this::removalRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class, this::additionRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class, this::removalRequiresRefresh));
 
 		return result;
 	}

@@ -11,10 +11,10 @@ import plugins.materials.support.StageId;
 
 @Immutable
 
-public class StageImminentRemovalObservationEvent implements Event {
+public class StageImminentRemovalEvent implements Event {
 	private final StageId stageId;
 
-	public StageImminentRemovalObservationEvent(StageId stageId) {
+	public StageImminentRemovalEvent(StageId stageId) {
 		super();
 		this.stageId = stageId;
 	}
@@ -26,7 +26,7 @@ public class StageImminentRemovalObservationEvent implements Event {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("StageImminentRemovalObservationEvent [stageId=");
+		builder.append("StageImminentRemovalEvent [stageId=");
 		builder.append(stageId);
 		builder.append("]");
 		return builder.toString();
@@ -36,14 +36,14 @@ public class StageImminentRemovalObservationEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<StageImminentRemovalObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageImminentRemovalObservationEvent.class, LabelerId.ALL, StageImminentRemovalObservationEvent.class);
+	private final static EventLabel<StageImminentRemovalEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageImminentRemovalEvent.class, LabelerId.ALL, StageImminentRemovalEvent.class);
 
-	public static EventLabel<StageImminentRemovalObservationEvent> getEventLabelByAll() {
+	public static EventLabel<StageImminentRemovalEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<StageImminentRemovalObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageImminentRemovalObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<StageImminentRemovalEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, StageImminentRemovalEvent.class, (context, event) -> ALL_LABEL);
 	}
 
 }

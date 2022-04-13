@@ -20,7 +20,7 @@ import plugins.people.support.PersonId;
  *
  */
 @Immutable
-public final class BulkPersonCreationObservationEvent implements Event {
+public final class BulkPersonAdditionEvent implements Event {
 	private final PersonId personId;
 	private final BulkPersonConstructionData bulkPersonConstructionData;
 
@@ -30,7 +30,7 @@ public final class BulkPersonCreationObservationEvent implements Event {
 	 * BulkPersonConstructionData.
 	 * 
 	 */
-	public BulkPersonCreationObservationEvent(final PersonId personId, BulkPersonConstructionData bulkPersonConstructionData) {
+	public BulkPersonAdditionEvent(final PersonId personId, BulkPersonConstructionData bulkPersonConstructionData) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
@@ -60,10 +60,10 @@ public final class BulkPersonCreationObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link BulkPersonCreationObservationEvent} events. Matches all such
+	 * {@link BulkPersonAdditionEvent} events. Matches all such
 	 * events.
 	 */
-	public static EventLabel<BulkPersonCreationObservationEvent> getEventLabel() {
+	public static EventLabel<BulkPersonAdditionEvent> getEventLabel() {
 		return EVENT_LABEL_INSTANCE;
 	}
 
@@ -71,16 +71,16 @@ public final class BulkPersonCreationObservationEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<BulkPersonCreationObservationEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(BulkPersonCreationObservationEvent.class, LabelerId.ALL,
-			BulkPersonCreationObservationEvent.class);
+	private final static EventLabel<BulkPersonAdditionEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(BulkPersonAdditionEvent.class, LabelerId.ALL,
+			BulkPersonAdditionEvent.class);
 
 	/**
-	 * Returns an event labeler for {@link BulkPersonCreationObservationEvent}
+	 * Returns an event labeler for {@link BulkPersonAdditionEvent}
 	 */
-	public static EventLabeler<BulkPersonCreationObservationEvent> getEventLabeler() {
+	public static EventLabeler<BulkPersonAdditionEvent> getEventLabeler() {
 		return new SimpleEventLabeler<>(
 				LabelerId.ALL,
-				BulkPersonCreationObservationEvent.class,
+				BulkPersonAdditionEvent.class,
 				(context, event) -> EVENT_LABEL_INSTANCE);
 	}
 }

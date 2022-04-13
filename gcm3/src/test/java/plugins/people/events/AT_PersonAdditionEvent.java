@@ -17,8 +17,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PersonCreationObservationEvent.class)
-public class AT_PersonCreationObservationEvent implements Event {
+@UnitTest(target = PersonAdditionEvent.class)
+public class AT_PersonAdditionEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, PersonConstructionData.class })
@@ -26,10 +26,10 @@ public class AT_PersonCreationObservationEvent implements Event {
 		PersonId personId = new PersonId(0);
 		PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
 
-		ContractException contractException = assertThrows(ContractException.class, () -> new PersonCreationObservationEvent(null, personConstructionData));
+		ContractException contractException = assertThrows(ContractException.class, () -> new PersonAdditionEvent(null, personConstructionData));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new PersonCreationObservationEvent(personId, null));
+		contractException = assertThrows(ContractException.class, () -> new PersonAdditionEvent(personId, null));
 		assertEquals(PersonError.NULL_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 	}
 
@@ -39,9 +39,9 @@ public class AT_PersonCreationObservationEvent implements Event {
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
-			PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(personId, personConstructionData);
+			PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
 
-			assertEquals(personId, personCreationObservationEvent.getPersonId());
+			assertEquals(personId, personAdditionEvent.getPersonId());
 		}
 	}
 
@@ -50,18 +50,18 @@ public class AT_PersonCreationObservationEvent implements Event {
 	public void testGetPersonConstructionData() {
 		PersonId personId = new PersonId(0);
 		PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
-		PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(personId, personConstructionData);
+		PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
 
-		assertEquals(personConstructionData, personCreationObservationEvent.getPersonConstructionData());
+		assertEquals(personConstructionData, personAdditionEvent.getPersonConstructionData());
 	}
 
 	@Test
 	@UnitTestMethod(name = "getEventLabel", args = {})
 	public void testGetEventLabel() {
-		EventLabel<PersonCreationObservationEvent> eventLabel = PersonCreationObservationEvent.getEventLabel();
-		assertEquals(PersonCreationObservationEvent.class, eventLabel.getEventClass());
-		assertEquals(PersonCreationObservationEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(PersonCreationObservationEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+		EventLabel<PersonAdditionEvent> eventLabel = PersonAdditionEvent.getEventLabel();
+		assertEquals(PersonAdditionEvent.class, eventLabel.getEventClass());
+		assertEquals(PersonAdditionEvent.class, eventLabel.getPrimaryKeyValue());
+		assertEquals(PersonAdditionEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
 	}
 	
 
@@ -71,23 +71,23 @@ public class AT_PersonCreationObservationEvent implements Event {
 		PeopleActionSupport.testConsumer(0,(c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<PersonCreationObservationEvent> eventLabeler = PersonCreationObservationEvent.getEventLabeler();
-			assertEquals(PersonCreationObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<PersonAdditionEvent> eventLabeler = PersonAdditionEvent.getEventLabeler();
+			assertEquals(PersonAdditionEvent.class, eventLabeler.getEventClass());
 
-			assertEquals(PersonCreationObservationEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
+			assertEquals(PersonAdditionEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
 
 			// show that the event labeler produces the expected event
 			// label
 
 			// create an event			
-			PersonCreationObservationEvent event = new PersonCreationObservationEvent(new PersonId(0), PersonConstructionData.builder().build());
+			PersonAdditionEvent event = new PersonAdditionEvent(new PersonId(0), PersonConstructionData.builder().build());
 
 			// derive the expected event label for this event
-			EventLabel<PersonCreationObservationEvent> expectedEventLabel = PersonCreationObservationEvent.getEventLabel();
+			EventLabel<PersonAdditionEvent> expectedEventLabel = PersonAdditionEvent.getEventLabel();
 
 			// have the event labeler produce an event label and show it
 			// is equal to the expected event label
-			EventLabel<PersonCreationObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+			EventLabel<PersonAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 			assertEquals(expectedEventLabel, actualEventLabel);
 
 		});

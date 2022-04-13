@@ -5,10 +5,10 @@ import java.util.Map;
 
 import nucleus.ActorContext;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.StageCreationObservationEvent;
-import plugins.materials.events.StageImminentRemovalObservationEvent;
-import plugins.materials.events.StageMaterialsProducerChangeObservationEvent;
-import plugins.materials.events.StageOfferChangeObservationEvent;
+import plugins.materials.events.StageAdditionEvent;
+import plugins.materials.events.StageImminentRemovalEvent;
+import plugins.materials.events.StageMaterialsProducerUpdateEvent;
+import plugins.materials.events.StageOfferUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.reports.support.ReportHeader;
@@ -93,10 +93,10 @@ public final class StageReport {
 		return reportHeader;
 	}
 
-	private void handleStageCreationObservationEvent(ActorContext actorContext, StageCreationObservationEvent stageCreationObservationEvent) {
+	private void handleStageAdditionEvent(ActorContext actorContext, StageAdditionEvent stageAdditionEvent) {
 
 		StageRecord stageRecord = new StageRecord();
-		stageRecord.stageId = stageCreationObservationEvent.getStageId();
+		stageRecord.stageId = stageAdditionEvent.getStageId();
 		stageRecord.isOffered = materialsDataManager.isStageOffered(stageRecord.stageId);
 		stageRecord.materialsProducerId = materialsDataManager.getStageProducer(stageRecord.stageId);
 		stageRecord.lastAction = Action.CREATED;
@@ -104,25 +104,25 @@ public final class StageReport {
 		writeReportItem(actorContext, stageRecord);
 	}
 
-	private void handleStageDestructionObservationEvent(ActorContext actorContext, StageImminentRemovalObservationEvent stageImminentRemovalObservationEvent) {
-		StageId stageId = stageImminentRemovalObservationEvent.getStageId();
+	private void handleStageImminentRemovalEvent(ActorContext actorContext, StageImminentRemovalEvent stageImminentRemovalEvent) {
+		StageId stageId = stageImminentRemovalEvent.getStageId();
 		StageRecord stageRecord = stageRecords.remove(stageId);
 		stageRecord.lastAction = Action.DESTROYED;
 		writeReportItem(actorContext, stageRecord);
 	}
 
-	private void handleStageOfferChangeObservationEvent(ActorContext actorContext, StageOfferChangeObservationEvent stageOfferChangeObservationEvent) {
-		StageId stageId = stageOfferChangeObservationEvent.getStageId();
+	private void handleStageOfferUpdateEvent(ActorContext actorContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
+		StageId stageId = stageOfferUpdateEvent.getStageId();
 		StageRecord stageRecord = stageRecords.get(stageId);
-		stageRecord.isOffered = stageOfferChangeObservationEvent.isCurrentOfferState();
+		stageRecord.isOffered = stageOfferUpdateEvent.isCurrentOfferState();
 		stageRecord.lastAction = Action.OFFERED;
 		writeReportItem(actorContext, stageRecord);
 	}
 
-	private void handleStageMaterialsProducerChangeObservationEvent(ActorContext actorContext, StageMaterialsProducerChangeObservationEvent stageMaterialsProducerChangeObservationEvent) {
-		StageId stageId = stageMaterialsProducerChangeObservationEvent.getStageId();
+	private void handleStageMaterialsProducerUpdateEvent(ActorContext actorContext, StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
+		StageId stageId = stageMaterialsProducerUpdateEvent.getStageId();
 		StageRecord stageRecord = stageRecords.get(stageId);
-		stageRecord.materialsProducerId = stageMaterialsProducerChangeObservationEvent.getCurrentMaterialsProducerId();
+		stageRecord.materialsProducerId = stageMaterialsProducerUpdateEvent.getCurrentMaterialsProducerId();
 		stageRecord.lastAction = Action.TRANSFERRED;
 		writeReportItem(actorContext, stageRecord);
 	}
@@ -143,10 +143,10 @@ public final class StageReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(StageOfferChangeObservationEvent.class, this::handleStageOfferChangeObservationEvent);
-		actorContext.subscribe(StageCreationObservationEvent.class, this::handleStageCreationObservationEvent);
-		actorContext.subscribe(StageImminentRemovalObservationEvent.class, this::handleStageDestructionObservationEvent);
-		actorContext.subscribe(StageMaterialsProducerChangeObservationEvent.class, this::handleStageMaterialsProducerChangeObservationEvent);
+		actorContext.subscribe(StageOfferUpdateEvent.class, this::handleStageOfferUpdateEvent);
+		actorContext.subscribe(StageAdditionEvent.class, this::handleStageAdditionEvent);
+		actorContext.subscribe(StageImminentRemovalEvent.class, this::handleStageImminentRemovalEvent);
+		actorContext.subscribe(StageMaterialsProducerUpdateEvent.class, this::handleStageMaterialsProducerUpdateEvent);
 
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();
 

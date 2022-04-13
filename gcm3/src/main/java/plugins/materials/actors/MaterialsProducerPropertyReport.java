@@ -2,7 +2,7 @@ package plugins.materials.actors;
 
 import nucleus.ActorContext;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.MaterialsProducerPropertyChangeObservationEvent;
+import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.reports.support.ReportHeader;
@@ -48,16 +48,16 @@ public final class MaterialsProducerPropertyReport {
 		return reportHeader;
 	}
 
-	private void handleMaterialsProducerPropertyChangeObservationEvent(ActorContext actorContext, MaterialsProducerPropertyChangeObservationEvent materialsProducerPropertyChangeObservationEvent) {
-		MaterialsProducerId materialsProducerId = materialsProducerPropertyChangeObservationEvent.getMaterialsProducerId();
-		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyChangeObservationEvent.getMaterialsProducerPropertyId();
-		Object currentPropertyValue = materialsProducerPropertyChangeObservationEvent.getCurrentPropertyValue();
+	private void handleMaterialsProducerPropertyUpdateEvent(ActorContext actorContext, MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent) {
+		MaterialsProducerId materialsProducerId = materialsProducerPropertyUpdateEvent.getMaterialsProducerId();
+		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyUpdateEvent.getMaterialsProducerPropertyId();
+		Object currentPropertyValue = materialsProducerPropertyUpdateEvent.getCurrentPropertyValue();
 		writeProperty(actorContext, materialsProducerId, materialsProducerPropertyId, currentPropertyValue);
 	}
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(MaterialsProducerPropertyChangeObservationEvent.class, this::handleMaterialsProducerPropertyChangeObservationEvent);
+		actorContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
 
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();
 

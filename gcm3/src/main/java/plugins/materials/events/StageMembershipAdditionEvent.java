@@ -11,11 +11,11 @@ import plugins.materials.support.BatchId;
 import plugins.materials.support.StageId;
 
 @Immutable
-public class StageMembershipAdditionObservationEvent implements Event {
+public class StageMembershipAdditionEvent implements Event {
 	private final BatchId batchId;
 	private final StageId stageId;
 
-	public StageMembershipAdditionObservationEvent(BatchId batchId, StageId stageId) {
+	public StageMembershipAdditionEvent(BatchId batchId, StageId stageId) {
 		super();
 		this.batchId = batchId;
 		this.stageId = stageId;
@@ -31,21 +31,21 @@ public class StageMembershipAdditionObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "StageMembershipAdditionObservationEvent [batchId=" + batchId + ", stageId=" + stageId + "]";
+		return "StageMembershipAdditionEvent [batchId=" + batchId + ", stageId=" + stageId + "]";
 	}
 	
 	private static enum LabelerId implements EventLabelerId {
 		ALL
 	}
 
-	private final static EventLabel<StageMembershipAdditionObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMembershipAdditionObservationEvent.class, LabelerId.ALL, StageMembershipAdditionObservationEvent.class);
+	private final static EventLabel<StageMembershipAdditionEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMembershipAdditionEvent.class, LabelerId.ALL, StageMembershipAdditionEvent.class);
 
-	public static EventLabel<StageMembershipAdditionObservationEvent> getEventLabelByAll() {
+	public static EventLabel<StageMembershipAdditionEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<StageMembershipAdditionObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageMembershipAdditionObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<StageMembershipAdditionEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, StageMembershipAdditionEvent.class, (context, event) -> ALL_LABEL);
 	}
 
 }

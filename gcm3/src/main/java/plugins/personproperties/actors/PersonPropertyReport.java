@@ -8,14 +8,14 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.people.PersonDataManager;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyChangeObservationEvent;
+import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
@@ -142,8 +142,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	}
 
-	private void handlePersonCreationObservationEvent(ActorContext context, PersonCreationObservationEvent personCreationObservationEvent) {
-		PersonId personId = personCreationObservationEvent.getPersonId();
+	private void handlePersonAdditionEvent(ActorContext context, PersonAdditionEvent personAdditionEvent) {
+		PersonId personId = personAdditionEvent.getPersonId();
 		final RegionId regionId = regionDataManager.getPersonRegion(personId);
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
@@ -151,11 +151,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonPropertyChangeObservationEvent(ActorContext context, PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent) {
-		PersonPropertyId personPropertyId = personPropertyChangeObservationEvent.getPersonPropertyId();
+	private void handlePersonPropertyUpdateEvent(ActorContext context, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+		PersonPropertyId personPropertyId = personPropertyUpdateEvent.getPersonPropertyId();
 		if (personPropertyIds.contains(personPropertyId)) {
-			PersonId personId = personPropertyChangeObservationEvent.getPersonId();
-			Object previousPropertyValue = personPropertyChangeObservationEvent.getPreviousPropertyValue();
+			PersonId personId = personPropertyUpdateEvent.getPersonId();
+			Object previousPropertyValue = personPropertyUpdateEvent.getPreviousPropertyValue();
 			final RegionId regionId = regionDataManager.getPersonRegion(personId);
 			final Object currentValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, currentValue);
@@ -163,8 +163,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(ActorContext context, PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		PersonId personId = personImminentRemovalObservationEvent.getPersonId();
+	private void handlePersonImminentRemovalEvent(ActorContext context, PersonImminentRemovalEvent personImminentRemovalEvent) {
+		PersonId personId = personImminentRemovalEvent.getPersonId();
 		RegionId regionId = regionDataManager.getPersonRegion(personId);
 		for (PersonPropertyId personPropertyId : personPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
@@ -172,10 +172,10 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonRegionChangeObservationEvent(ActorContext context, PersonRegionChangeObservationEvent personRegionChangeObservationEvent) {
-		PersonId personId = personRegionChangeObservationEvent.getPersonId();
-		RegionId previousRegionId = personRegionChangeObservationEvent.getPreviousRegionId();
-		RegionId regionId = personRegionChangeObservationEvent.getCurrentRegionId();
+	private void handlePersonRegionUpdateEvent(ActorContext context, PersonRegionUpdateEvent personRegionUpdateEvent) {
+		PersonId personId = personRegionUpdateEvent.getPersonId();
+		RegionId previousRegionId = personRegionUpdateEvent.getPreviousRegionId();
+		RegionId regionId = personRegionUpdateEvent.getCurrentRegionId();
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
@@ -198,9 +198,9 @@ public final class PersonPropertyReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
-		actorContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
-		actorContext.subscribe(PersonRegionChangeObservationEvent.class, this::handlePersonRegionChangeObservationEvent);
+		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		regionDataManager = actorContext.getDataManager(RegionDataManager.class).get();
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class).get();
@@ -226,11 +226,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 		// If all person properties are included, then subscribe to the event
 		// class, otherwise subscribe to the individual property values
 		if (personPropertyIds.equals(personPropertiesDataManager.getPersonPropertyIds())) {
-			actorContext.subscribe(PersonPropertyChangeObservationEvent.class, this::handlePersonPropertyChangeObservationEvent);
+			actorContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
 		} else {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
-				EventLabel<PersonPropertyChangeObservationEvent> eventLabelByProperty = PersonPropertyChangeObservationEvent.getEventLabelByProperty(actorContext, personPropertyId);
-				actorContext.subscribe(eventLabelByProperty, this::handlePersonPropertyChangeObservationEvent);
+				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
+				actorContext.subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
 			}
 		}
 

@@ -20,7 +20,7 @@ import plugins.people.PersonDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyChangeObservationEvent;
+import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.stochastics.StochasticsDataManager;
@@ -55,30 +55,30 @@ public class AT_PersonPropertyLabeler {
 		assertEquals(1, labelerSensitivities.size());
 
 		// show that the sensitivity is associated with
-		// PersonPropertyChangeObservationEvent
+		// PersonPropertyUpdateEvent
 		LabelerSensitivity<?> labelerSensitivity = labelerSensitivities.iterator().next();
-		assertEquals(PersonPropertyChangeObservationEvent.class, labelerSensitivity.getEventClass());
+		assertEquals(PersonPropertyUpdateEvent.class, labelerSensitivity.getEventClass());
 
 		/*
 		 * Show that the sensitivity will return the person id from a
-		 * PersonCompartmentChangeObservationEvent if the event matches the
+		 * PersonPropertyUpdateEvent if the event matches the
 		 * person property id.
 		 */
 		PersonId personId = new PersonId(56);
-		PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, personPropertyId, false, true);
-		Optional<PersonId> optional = labelerSensitivity.getPersonId(personPropertyChangeObservationEvent);
+		PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, false, true);
+		Optional<PersonId> optional = labelerSensitivity.getPersonId(personPropertyUpdateEvent);
 		assertTrue(optional.isPresent());
 		assertEquals(personId, optional.get());
 
 		/*
 		 * Show that the sensitivity will return an empty optional of person id
-		 * from a PersonCompartmentChangeObservationEvent if the event does not
+		 * from a PersonPropertyUpdateEvent if the event does not
 		 * match the person property id.
 		 */
 
 		personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-		personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, personPropertyId, false, true);
-		optional = labelerSensitivity.getPersonId(personPropertyChangeObservationEvent);
+		personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, false, true);
+		optional = labelerSensitivity.getPersonId(personPropertyUpdateEvent);
 		assertFalse(optional.isPresent());
 
 	}

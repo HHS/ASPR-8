@@ -15,12 +15,12 @@ import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 
 @Immutable
-public class StageMaterialsProducerChangeObservationEvent implements Event {
+public class StageMaterialsProducerUpdateEvent implements Event {
 	private final StageId stageId;
 	private final MaterialsProducerId previousMaterialsProducerId;
 	private final MaterialsProducerId currentMaterialsProducerId;
 
-	public StageMaterialsProducerChangeObservationEvent(StageId stageId, MaterialsProducerId previousMaterialsProducerId, MaterialsProducerId currentMaterialsProducerId) {
+	public StageMaterialsProducerUpdateEvent(StageId stageId, MaterialsProducerId previousMaterialsProducerId, MaterialsProducerId currentMaterialsProducerId) {
 		super();
 		this.stageId = stageId;
 		this.previousMaterialsProducerId = previousMaterialsProducerId;
@@ -41,7 +41,7 @@ public class StageMaterialsProducerChangeObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "StageMaterialsProducerChangeObservationEvent [stageId=" + stageId + ", previousMaterialsProducerId=" + previousMaterialsProducerId + ", currentMaterialsProducerId=" + currentMaterialsProducerId + "]";
+		return "StageMaterialsProducerUpdateEvent [stageId=" + stageId + ", previousMaterialsProducerId=" + previousMaterialsProducerId + ", currentMaterialsProducerId=" + currentMaterialsProducerId + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -68,41 +68,41 @@ public class StageMaterialsProducerChangeObservationEvent implements Event {
 		}
 	}
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByDestination(SimulationContext simulationContext, MaterialsProducerId destinationMaterialsProducerId) {
+	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByDestination(SimulationContext simulationContext, MaterialsProducerId destinationMaterialsProducerId) {
 		validateMaterialsProducerId(simulationContext, destinationMaterialsProducerId);
-		return new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.DESTINATION, StageMaterialsProducerChangeObservationEvent.class, destinationMaterialsProducerId);
+		return new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.DESTINATION, StageMaterialsProducerUpdateEvent.class, destinationMaterialsProducerId);
 	}
 
-	public static EventLabeler<StageMaterialsProducerChangeObservationEvent> getEventLabelerForDestination() {
-		return new SimpleEventLabeler<>(LabelerId.DESTINATION, StageMaterialsProducerChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.DESTINATION, StageMaterialsProducerChangeObservationEvent.class, event.getCurrentMaterialsProducerId()));
+	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForDestination() {
+		return new SimpleEventLabeler<>(LabelerId.DESTINATION, StageMaterialsProducerUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.DESTINATION, StageMaterialsProducerUpdateEvent.class, event.getCurrentMaterialsProducerId()));
 	}
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelBySource(SimulationContext simulationContext, MaterialsProducerId sourceMaterialsProducerId) {
+	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelBySource(SimulationContext simulationContext, MaterialsProducerId sourceMaterialsProducerId) {
 		validateMaterialsProducerId(simulationContext, sourceMaterialsProducerId);
-		return new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.SOURCE, StageMaterialsProducerChangeObservationEvent.class, sourceMaterialsProducerId);
+		return new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.SOURCE, StageMaterialsProducerUpdateEvent.class, sourceMaterialsProducerId);
 	}
 
-	public static EventLabeler<StageMaterialsProducerChangeObservationEvent> getEventLabelerForSource() {
-		return new SimpleEventLabeler<>(LabelerId.SOURCE, StageMaterialsProducerChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.SOURCE, StageMaterialsProducerChangeObservationEvent.class, event.getPreviousMaterialsProducerId()));
+	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForSource() {
+		return new SimpleEventLabeler<>(LabelerId.SOURCE, StageMaterialsProducerUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.SOURCE, StageMaterialsProducerUpdateEvent.class, event.getPreviousMaterialsProducerId()));
 	}
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
+	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
 		validateStageId(simulationContext, stageId);
-		return new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.STAGE, StageMaterialsProducerChangeObservationEvent.class, stageId);
+		return new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.STAGE, StageMaterialsProducerUpdateEvent.class, stageId);
 	}
 
-	public static EventLabeler<StageMaterialsProducerChangeObservationEvent> getEventLabelerForStage() {
-		return new SimpleEventLabeler<>(LabelerId.STAGE, StageMaterialsProducerChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.STAGE, StageMaterialsProducerChangeObservationEvent.class, event.getStageId()));
+	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForStage() {
+		return new SimpleEventLabeler<>(LabelerId.STAGE, StageMaterialsProducerUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.STAGE, StageMaterialsProducerUpdateEvent.class, event.getStageId()));
 	}
 
-	private final static EventLabel<StageMaterialsProducerChangeObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMaterialsProducerChangeObservationEvent.class, LabelerId.ALL, StageMaterialsProducerChangeObservationEvent.class);
+	private final static EventLabel<StageMaterialsProducerUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.ALL, StageMaterialsProducerUpdateEvent.class);
 
-	public static EventLabel<StageMaterialsProducerChangeObservationEvent> getEventLabelByAll(SimulationContext simulationContext) {
+	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByAll(SimulationContext simulationContext) {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<StageMaterialsProducerChangeObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageMaterialsProducerChangeObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, StageMaterialsProducerUpdateEvent.class, (context, event) -> ALL_LABEL);
 	}
 
 }

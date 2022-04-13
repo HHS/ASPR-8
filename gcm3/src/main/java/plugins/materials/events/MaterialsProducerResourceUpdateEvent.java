@@ -17,13 +17,13 @@ import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 
 @Immutable
-public class MaterialsProducerResourceChangeObservationEvent implements Event {
+public class MaterialsProducerResourceUpdateEvent implements Event {
 	private final MaterialsProducerId materialsProducerId;
 	private final ResourceId resourceId;
 	private final long previousResourceLevel;
 	private final long currentResourceLevel;
 
-	public MaterialsProducerResourceChangeObservationEvent(MaterialsProducerId materialsProducerId, ResourceId resourceId, long previousResourceLevel, long currentResourceLevel) {
+	public MaterialsProducerResourceUpdateEvent(MaterialsProducerId materialsProducerId, ResourceId resourceId, long previousResourceLevel, long currentResourceLevel) {
 		super();
 		this.materialsProducerId = materialsProducerId;
 		this.resourceId = resourceId;
@@ -49,7 +49,7 @@ public class MaterialsProducerResourceChangeObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "MaterialsProducerResourceChangeObservationEvent [materialsProducerId=" + materialsProducerId + ", resourceId=" + resourceId + ", previousResourceLevel=" + previousResourceLevel + ", currentResourceLevel=" + currentResourceLevel + "]";
+		return "MaterialsProducerResourceUpdateEvent [materialsProducerId=" + materialsProducerId + ", resourceId=" + resourceId + ", previousResourceLevel=" + previousResourceLevel + ", currentResourceLevel=" + currentResourceLevel + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -76,23 +76,23 @@ public class MaterialsProducerResourceChangeObservationEvent implements Event {
 		}
 	}
 
-	public static EventLabel<MaterialsProducerResourceChangeObservationEvent> getEventLabelByMaterialsProducerAndResource(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, ResourceId resourceId) {
+	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByMaterialsProducerAndResource(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, ResourceId resourceId) {
 		validateMaterialProducerId(simulationContext, materialsProducerId);
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, materialsProducerId, resourceId);
+		return new MultiKeyEventLabel<>(resourceId, LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, materialsProducerId, resourceId);
 	}
 
-	public static EventLabeler<MaterialsProducerResourceChangeObservationEvent> getEventLabelerForMaterialsProducerAndResource() {
-		return new SimpleEventLabeler<>(LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, event.getMaterialsProducerId(), event.getResourceId()));
+	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForMaterialsProducerAndResource() {
+		return new SimpleEventLabeler<>(LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, event.getMaterialsProducerId(), event.getResourceId()));
 	}
 
-	public static EventLabel<MaterialsProducerResourceChangeObservationEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
+	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, resourceId);
+		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, resourceId);
 	}
 
-	public static EventLabeler<MaterialsProducerResourceChangeObservationEvent> getEventLabelerForResource() {
-		return new SimpleEventLabeler<>(LabelerId.RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.RESOURCE, MaterialsProducerResourceChangeObservationEvent.class, event.getResourceId()));
+	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForResource() {
+		return new SimpleEventLabeler<>(LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, event.getResourceId()));
 	}
 
 	@Override

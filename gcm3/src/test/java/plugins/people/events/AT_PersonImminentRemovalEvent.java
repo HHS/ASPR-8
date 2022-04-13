@@ -16,15 +16,15 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PersonImminentRemovalObservationEvent.class)
-public class AT_PersonImminentRemovalObservationEvent implements Event {
+@UnitTest(target = PersonImminentRemovalEvent.class)
+public class AT_PersonImminentRemovalEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class })
 	public void testConstructor() {
 
 		// precondition tests
-		ContractException contractException = assertThrows(ContractException.class, () -> new PersonImminentRemovalObservationEvent(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> new PersonImminentRemovalEvent(null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 	}
@@ -34,8 +34,8 @@ public class AT_PersonImminentRemovalObservationEvent implements Event {
 	public void testGetPersonId() {
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
-			PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent = new PersonImminentRemovalObservationEvent(personId);
-			assertEquals(personId, personImminentRemovalObservationEvent.getPersonId());
+			PersonImminentRemovalEvent personImminentRemovalEvent = new PersonImminentRemovalEvent(personId);
+			assertEquals(personId, personImminentRemovalEvent.getPersonId());
 		}
 	}
 
@@ -44,9 +44,9 @@ public class AT_PersonImminentRemovalObservationEvent implements Event {
 	public void testToString() {
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
-			PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent = new PersonImminentRemovalObservationEvent(personId);
-			String expectedValue = "PersonRemovalObservationEvent [personId="+i+"]";
-			String actualValue =personImminentRemovalObservationEvent.toString();
+			PersonImminentRemovalEvent personImminentRemovalEvent = new PersonImminentRemovalEvent(personId);
+			String expectedValue = "PersonImminentRemovalEvent [personId="+i+"]";
+			String actualValue =personImminentRemovalEvent.toString();
 			assertEquals(expectedValue, actualValue);
 		}
 		
@@ -55,10 +55,10 @@ public class AT_PersonImminentRemovalObservationEvent implements Event {
 	@Test
 	@UnitTestMethod(name = "getEventLabel", args = {})
 	public void testGetEventLabel() {
-		EventLabel<PersonImminentRemovalObservationEvent> eventLabel = PersonImminentRemovalObservationEvent.getEventLabel();
-		assertEquals(PersonImminentRemovalObservationEvent.class, eventLabel.getEventClass());
-		assertEquals(PersonImminentRemovalObservationEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(PersonImminentRemovalObservationEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+		EventLabel<PersonImminentRemovalEvent> eventLabel = PersonImminentRemovalEvent.getEventLabel();
+		assertEquals(PersonImminentRemovalEvent.class, eventLabel.getEventClass());
+		assertEquals(PersonImminentRemovalEvent.class, eventLabel.getPrimaryKeyValue());
+		assertEquals(PersonImminentRemovalEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
 	}
 	
 	@Test
@@ -67,23 +67,23 @@ public class AT_PersonImminentRemovalObservationEvent implements Event {
 		PeopleActionSupport.testConsumer(0,(c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<PersonImminentRemovalObservationEvent> eventLabeler = PersonImminentRemovalObservationEvent.getEventLabeler();
-			assertEquals(PersonImminentRemovalObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<PersonImminentRemovalEvent> eventLabeler = PersonImminentRemovalEvent.getEventLabeler();
+			assertEquals(PersonImminentRemovalEvent.class, eventLabeler.getEventClass());
 
-			assertEquals(PersonImminentRemovalObservationEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
+			assertEquals(PersonImminentRemovalEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
 
 			// show that the event labeler produces the expected event
 			// label
 
 			// create an event			
-			PersonImminentRemovalObservationEvent event = new PersonImminentRemovalObservationEvent(new PersonId(0));
+			PersonImminentRemovalEvent event = new PersonImminentRemovalEvent(new PersonId(0));
 
 			// derive the expected event label for this event
-			EventLabel<PersonImminentRemovalObservationEvent> expectedEventLabel = PersonImminentRemovalObservationEvent.getEventLabel();
+			EventLabel<PersonImminentRemovalEvent> expectedEventLabel = PersonImminentRemovalEvent.getEventLabel();
 
 			// have the event labeler produce an event label and show it
 			// is equal to the expected event label
-			EventLabel<PersonImminentRemovalObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+			EventLabel<PersonImminentRemovalEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 			assertEquals(expectedEventLabel, actualEventLabel);
 
 		});

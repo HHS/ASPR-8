@@ -10,8 +10,8 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 
-@UnitTest(target = BatchAmountChangeObservationEvent.class)
-public class AT_BatchAmountChangeObservationEvent {
+@UnitTest(target = BatchAmountUpdateEvent.class)
+public class AT_BatchAmountUpdateEvent {
 	
 	@Test
 	@UnitTestConstructor(args = {BatchId.class, double.class, double.class})
@@ -25,8 +25,8 @@ public class AT_BatchAmountChangeObservationEvent {
 		BatchId batchId = new BatchId(23423);
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
-		BatchAmountChangeObservationEvent batchAmountChangeObservationEvent = new BatchAmountChangeObservationEvent(batchId, previousAmount, currentAmount);
-		assertEquals(BatchAmountChangeObservationEvent.class, batchAmountChangeObservationEvent.getPrimaryKeyValue());
+		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
+		assertEquals(BatchAmountUpdateEvent.class, batchAmountUpdateEvent.getPrimaryKeyValue());
 	}
 
 	@Test
@@ -35,8 +35,8 @@ public class AT_BatchAmountChangeObservationEvent {
 		BatchId batchId = new BatchId(23423);
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
-		BatchAmountChangeObservationEvent batchAmountChangeObservationEvent = new BatchAmountChangeObservationEvent(batchId, previousAmount, currentAmount);
-		assertEquals(batchId, batchAmountChangeObservationEvent.getBatchId());
+		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
+		assertEquals(batchId, batchAmountUpdateEvent.getBatchId());
 	}
 
 	@Test
@@ -45,8 +45,8 @@ public class AT_BatchAmountChangeObservationEvent {
 		BatchId batchId = new BatchId(23423);
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
-		BatchAmountChangeObservationEvent batchAmountChangeObservationEvent = new BatchAmountChangeObservationEvent(batchId, previousAmount, currentAmount);
-		assertEquals(previousAmount, batchAmountChangeObservationEvent.getPreviousAmount());
+		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
+		assertEquals(previousAmount, batchAmountUpdateEvent.getPreviousAmount());
 	}
 
 	@Test
@@ -55,8 +55,8 @@ public class AT_BatchAmountChangeObservationEvent {
 		BatchId batchId = new BatchId(23423);
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
-		BatchAmountChangeObservationEvent batchAmountChangeObservationEvent = new BatchAmountChangeObservationEvent(batchId, previousAmount, currentAmount);
-		assertEquals(currentAmount, batchAmountChangeObservationEvent.getCurrentAmount());
+		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
+		assertEquals(currentAmount, batchAmountUpdateEvent.getCurrentAmount());
 	}
 	
 	@Test
@@ -65,8 +65,8 @@ public class AT_BatchAmountChangeObservationEvent {
 		BatchId batchId = new BatchId(23423);
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
-		BatchAmountChangeObservationEvent batchAmountChangeObservationEvent = new BatchAmountChangeObservationEvent(batchId, previousAmount, currentAmount);
-		assertEquals("BathAmountChangeObservationEvent [batchId=23423, previousAmount=14.5, currentAmount=44.7]", batchAmountChangeObservationEvent.toString());
+		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
+		assertEquals("BatchAmountUpdateEvent [batchId=23423, previousAmount=14.5, currentAmount=44.7]", batchAmountUpdateEvent.toString());
 	}
 
 }

@@ -14,12 +14,12 @@ import plugins.materials.support.MaterialsError;
 import plugins.materials.support.StageId;
 
 @Immutable
-public class StageOfferChangeObservationEvent implements Event {
+public class StageOfferUpdateEvent implements Event {
 	private final StageId stageId;
 	private final boolean previousOfferState;
 	private final boolean currentOfferState;
 
-	public StageOfferChangeObservationEvent(StageId stageId, boolean previousOfferState, boolean currentOfferState) {
+	public StageOfferUpdateEvent(StageId stageId, boolean previousOfferState, boolean currentOfferState) {
 		super();
 		this.stageId = stageId;
 		this.previousOfferState = previousOfferState;
@@ -40,7 +40,7 @@ public class StageOfferChangeObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "StageOfferChangeObservationEvent [stageId=" + stageId + ", previousOfferState=" + previousOfferState + ", currentOfferState=" + currentOfferState + "]";
+		return "StageOfferUpdateEvent [stageId=" + stageId + ", previousOfferState=" + previousOfferState + ", currentOfferState=" + currentOfferState + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -57,23 +57,23 @@ public class StageOfferChangeObservationEvent implements Event {
 		} 
 	}
 
-	public static EventLabel<StageOfferChangeObservationEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
+	public static EventLabel<StageOfferUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
 		validateStageId(simulationContext, stageId);
-		return new MultiKeyEventLabel<>(StageOfferChangeObservationEvent.class, LabelerId.STAGE, StageOfferChangeObservationEvent.class, stageId);
+		return new MultiKeyEventLabel<>(StageOfferUpdateEvent.class, LabelerId.STAGE, StageOfferUpdateEvent.class, stageId);
 	}
 
-	public static EventLabeler<StageOfferChangeObservationEvent> getEventLabelerForStage() {
-		return new SimpleEventLabeler<>(LabelerId.STAGE, StageOfferChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageOfferChangeObservationEvent.class, LabelerId.STAGE, StageOfferChangeObservationEvent.class, event.getStageId()));
+	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForStage() {
+		return new SimpleEventLabeler<>(LabelerId.STAGE, StageOfferUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageOfferUpdateEvent.class, LabelerId.STAGE, StageOfferUpdateEvent.class, event.getStageId()));
 	}
 
-	private final static EventLabel<StageOfferChangeObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageOfferChangeObservationEvent.class, LabelerId.ALL, StageOfferChangeObservationEvent.class);
+	private final static EventLabel<StageOfferUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageOfferUpdateEvent.class, LabelerId.ALL, StageOfferUpdateEvent.class);
 
-	public static EventLabel<StageOfferChangeObservationEvent> getEventLabelByAll(SimulationContext simulationContext) {
+	public static EventLabel<StageOfferUpdateEvent> getEventLabelByAll(SimulationContext simulationContext) {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<StageOfferChangeObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageOfferChangeObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, StageOfferUpdateEvent.class, (context, event) -> ALL_LABEL);
 	}
 
 }

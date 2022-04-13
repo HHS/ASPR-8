@@ -15,13 +15,13 @@ import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 
 @Immutable
-public class MaterialsProducerPropertyChangeObservationEvent implements Event {
+public class MaterialsProducerPropertyUpdateEvent implements Event {
 	private final MaterialsProducerId materialsProducerId;
 	private final MaterialsProducerPropertyId materialsProducerPropertyId;
 	private final Object previousPropertyValue;
 	private final Object currentPropertyValue;
 
-	public MaterialsProducerPropertyChangeObservationEvent(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
+	public MaterialsProducerPropertyUpdateEvent(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
 		super();
 		this.materialsProducerId = materialsProducerId;
 		this.materialsProducerPropertyId = materialsProducerPropertyId;
@@ -47,7 +47,7 @@ public class MaterialsProducerPropertyChangeObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "MaterialsProducerPropertyChangeObservationEvent [materialsProducerId=" + materialsProducerId + ", materialsProducerPropertyId=" + materialsProducerPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
+		return "MaterialsProducerPropertyUpdateEvent [materialsProducerId=" + materialsProducerId + ", materialsProducerPropertyId=" + materialsProducerPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -74,18 +74,18 @@ public class MaterialsProducerPropertyChangeObservationEvent implements Event {
 		}
 	}
 
-	public static EventLabel<MaterialsProducerPropertyChangeObservationEvent> getEventLabelByMaterialsProducerAndProperty(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public static EventLabel<MaterialsProducerPropertyUpdateEvent> getEventLabelByMaterialsProducerAndProperty(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
 		validateMaterialsProducerId(simulationContext, materialsProducerId);
 		validateMaterialsProducerPropertyId(simulationContext, materialsProducerPropertyId);
 
-		return new MultiKeyEventLabel<>(materialsProducerPropertyId, LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyChangeObservationEvent.class, materialsProducerId, materialsProducerPropertyId);
+		return new MultiKeyEventLabel<>(materialsProducerPropertyId, LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyUpdateEvent.class, materialsProducerId, materialsProducerPropertyId);
 	}
 
-	public static EventLabeler<MaterialsProducerPropertyChangeObservationEvent> getEventLabelerForMaterialsProducerAndProperty() {
+	public static EventLabeler<MaterialsProducerPropertyUpdateEvent> getEventLabelerForMaterialsProducerAndProperty() {
 		return new SimpleEventLabeler<>(
 				LabelerId.PRODUCER_PROPERTY,
-				MaterialsProducerPropertyChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getMaterialsProducerPropertyId(), LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyChangeObservationEvent.class, event.getMaterialsProducerId(), event.getMaterialsProducerPropertyId()));
+				MaterialsProducerPropertyUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(event.getMaterialsProducerPropertyId(), LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyUpdateEvent.class, event.getMaterialsProducerId(), event.getMaterialsProducerPropertyId()));
 	}
 
 	@Override

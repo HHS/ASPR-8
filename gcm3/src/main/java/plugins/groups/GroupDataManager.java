@@ -17,10 +17,11 @@ import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.events.GroupImminentRemovalObservationEvent;
-import plugins.groups.events.GroupMembershipAdditionObservationEvent;
-import plugins.groups.events.GroupMembershipRemovalObservationEvent;
-import plugins.groups.events.GroupPropertyChangeObservationEvent;
+import plugins.groups.events.GroupAdditionEvent;
+import plugins.groups.events.GroupImminentRemovalEvent;
+import plugins.groups.events.GroupMembershipAdditionEvent;
+import plugins.groups.events.GroupMembershipRemovalEvent;
+import plugins.groups.events.GroupPropertyUpdateEvent;
 import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
@@ -30,8 +31,8 @@ import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
 import plugins.people.PersonDataManager;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -147,11 +148,11 @@ public final class GroupDataManager extends DataManager {
 	 * 
 	 * <li>Adds all event labelers defined by the following events</li>
 	 * <ul>
-	 * <li>{@linkplain GroupMembershipAdditionObservationEvent}</li>
-	 * <li>{@linkplain GroupMembershipRemovalObservationEvent}</li>
-	 * <li>{@linkplain GroupCreationObservationEvent}</li>
-	 * <li>{@linkplain GroupImminentRemovalObservationEvent}</li>
-	 * <li>{@linkplain GroupPropertyChangeObservationEvent}</li>
+	 * <li>{@linkplain GroupMembershipAdditionEvent}</li>
+	 * <li>{@linkplain GroupMembershipRemovalEvent}</li>
+	 * <li>{@linkplain GroupAdditionEvent}</li>
+	 * <li>{@linkplain GroupImminentRemovalEvent}</li>
+	 * <li>{@linkplain GroupPropertyUpdateEvent}</li>
 	 * </ul>
 	 * 
 	 * <li>Adds groups, group memberships, group properties from the
@@ -161,11 +162,11 @@ public final class GroupDataManager extends DataManager {
 	 * <li>Subscribes to the following events:
 	 * <ul>
 	 * 
-	 * {@linkplain BulkPersonCreationObservationEvent} Assigns the newly created
+	 * {@linkplain BulkPersonAdditionEvent} Assigns the newly created
 	 * people into newly created groups on the basis of auxiliary data carried
 	 * in the event as a BulkGroupMembershipData. Publishes the groups to the
 	 * person group data view. Generates the corresponding
-	 * {@linkplain GroupCreationObservationEvent} events. <BR>
+	 * {@linkplain GroupAdditionEvent} events. <BR>
 	 * <BR>
 	 * Throws {@link ContractException}
 	 * <ul>
@@ -178,7 +179,7 @@ public final class GroupDataManager extends DataManager {
 	 * exists and contains an unknown group type id</li>
 	 * </ul>
 	 * 
-	 * {@linkplain PersonImminentRemovalObservationEvent} Removes the person
+	 * {@linkplain PersonImminentRemovalEvent} Removes the person
 	 * from all groups by scheduling the removal for the current time. This
 	 * allows references and group memberships to remain long enough for
 	 * resolvers, agents and reports to have final reference to the person while
@@ -214,32 +215,32 @@ public final class GroupDataManager extends DataManager {
 		 * contained in the groups plugin.
 		 */
 
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroup());
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupAndPerson());
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupType(this));
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForGroupTypeAndPerson(this));
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionObservationEvent.getEventLabelerForPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupType(this));
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(this));
+		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForPerson());
 
-		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroup());
-		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupAndPerson());
-		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupType(this));
-		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForGroupTypeAndPerson(this));
-		dataManagerContext.addEventLabeler(GroupMembershipRemovalObservationEvent.getEventLabelerForPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupAndPerson());
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupType(this));
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupTypeAndPerson(this));
+		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForPerson());
 
-		dataManagerContext.addEventLabeler(GroupCreationObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(GroupCreationObservationEvent.getEventLabelerForGroupType(this));
+		dataManagerContext.addEventLabeler(GroupAdditionEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupAdditionEvent.getEventLabelerForGroupType(this));
 
-		dataManagerContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForGroup());
-		dataManagerContext.addEventLabeler(GroupImminentRemovalObservationEvent.getEventLabelerForGroupType(this));
+		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForGroupType(this));
 
-		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroup());
-		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupAndProperty());
-		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupType(this));
-		dataManagerContext.addEventLabeler(GroupPropertyChangeObservationEvent.getEventLabelerForGroupTypeAndProperty(this));
+		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroup());
+		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
+		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupType(this));
+		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(this));
 
 		loadGroupTypes();
 		loadGroupPropertyDefinitions();
@@ -247,8 +248,8 @@ public final class GroupDataManager extends DataManager {
 		loadGroupMembership();
 		loadGroupPropertyValues();
 
-		dataManagerContext.subscribe(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
+		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
 	}
 
@@ -300,7 +301,7 @@ public final class GroupDataManager extends DataManager {
 
 	/**
 	 * Adds a person to a group. Generates the corresponding
-	 * {@linkplain GroupMembershipAdditionObservationEvent}
+	 * {@linkplain GroupMembershipAdditionEvent}
 	 * 
 	 * @throws ContractException
 	 * 
@@ -337,7 +338,7 @@ public final class GroupDataManager extends DataManager {
 		}
 		groups.add(groupId);
 
-		dataManagerContext.releaseEvent(new GroupMembershipAdditionObservationEvent(personId, groupId));
+		dataManagerContext.releaseEvent(new GroupMembershipAdditionEvent(personId, groupId));
 	}
 
 	/*
@@ -368,7 +369,7 @@ public final class GroupDataManager extends DataManager {
 
 	/**
 	 * Sets a property value for a group. Generates the corresponding
-	 * {@linkplain GroupPropertyChangeObservationEvent} event.
+	 * {@linkplain GroupPropertyUpdateEvent} event.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain GroupError.NULL_GROUP_ID } if the group id is
@@ -401,7 +402,7 @@ public final class GroupDataManager extends DataManager {
 		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
 		Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
 		indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-		dataManagerContext.releaseEvent(new GroupPropertyChangeObservationEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
+		dataManagerContext.releaseEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 	}
 
 	private static void validateGroupPropertyValueNotNull(Object groupPropertyValue) {
@@ -436,7 +437,7 @@ public final class GroupDataManager extends DataManager {
 	/**
 	 * Adds groups with any group property initialization that is contained in
 	 * the events's auxiliary data. Generates the corresponding
-	 * {@linkplain GroupCreationObservationEvent} event. Returns the id of the
+	 * {@linkplain GroupAdditionEvent} event. Returns the id of the
 	 * first group added.
 	 * 
 	 * 
@@ -493,7 +494,7 @@ public final class GroupDataManager extends DataManager {
 			final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
-		dataManagerContext.releaseEvent(new GroupCreationObservationEvent(groupId));
+		dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
 		return groupId;
 	}
 
@@ -549,7 +550,7 @@ public final class GroupDataManager extends DataManager {
 
 	/**
 	 * Adds a group. Generates the corresponding
-	 * {@linkplain GroupCreationObservationEvent} event. Returns the id of the
+	 * {@linkplain GroupAdditionEvent} event. Returns the id of the
 	 * new group.
 	 * 
 	 * @throws {@link
@@ -576,7 +577,7 @@ public final class GroupDataManager extends DataManager {
 		groups.add(result);
 		groupsToTypesMap.setIntValue(result.getValue(), typeIndex);
 
-		dataManagerContext.releaseEvent(new GroupCreationObservationEvent(result));
+		dataManagerContext.releaseEvent(new GroupAdditionEvent(result));
 
 		return result;
 	}
@@ -1167,7 +1168,7 @@ public final class GroupDataManager extends DataManager {
 
 	/**
 	 * Removes the group. Generates the corresponding
-	 * {@linkplain GroupImminentRemovalObservationEvent} event.
+	 * {@linkplain GroupImminentRemovalEvent} event.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
@@ -1179,7 +1180,7 @@ public final class GroupDataManager extends DataManager {
 	public void removeGroup(final GroupId groupId) {
 
 		validateGroupExists(groupId);
-		dataManagerContext.releaseEvent(new GroupImminentRemovalObservationEvent(groupId));
+		dataManagerContext.releaseEvent(new GroupImminentRemovalEvent(groupId));
 		dataManagerContext.addPlan((context) -> {
 
 			final GroupTypeId groupTypeId = getGroupType(groupId);
@@ -1211,7 +1212,7 @@ public final class GroupDataManager extends DataManager {
 
 	/**
 	 * Removes the person from the group. Generates the corresponding
-	 * {@linkplain GroupMembershipRemovalObservationEvent} event.
+	 * {@linkplain GroupMembershipRemovalEvent} event.
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1246,7 +1247,7 @@ public final class GroupDataManager extends DataManager {
 			groups.remove(groupId);
 		}
 
-		dataManagerContext.releaseEvent(new GroupMembershipRemovalObservationEvent(personId, groupId));
+		dataManagerContext.releaseEvent(new GroupMembershipRemovalEvent(personId, groupId));
 	}
 
 	/*
@@ -1409,12 +1410,12 @@ public final class GroupDataManager extends DataManager {
 		}
 	}
 
-	private void handleBulkPersonCreationObservationEvent(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonCreationObservationEvent.getBulkPersonConstructionData();
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonConstructionData.getValue(BulkGroupMembershipData.class);
 		if (optional.isPresent()) {
 			int personCount = bulkPersonConstructionData.getPersonConstructionDatas().size();			
-			int basePersonIndex = bulkPersonCreationObservationEvent.getPersonId().getValue();
+			int basePersonIndex = bulkPersonAdditionEvent.getPersonId().getValue();
 
 			for (int i = 0; i < personCount; i++) {
 				validatePersonIndexExists(i + basePersonIndex);
@@ -1429,7 +1430,7 @@ public final class GroupDataManager extends DataManager {
 				validatePersonIndexExists(personIndex + basePersonIndex);
 			}
 
-			boolean groupCreationSubscribersExist = dataManagerContext.subscribersExist(GroupCreationObservationEvent.class);
+			boolean groupCreationSubscribersExist = dataManagerContext.subscribersExist(GroupAdditionEvent.class);
 
 			List<GroupId> newGroups = new ArrayList<>();
 
@@ -1450,7 +1451,7 @@ public final class GroupDataManager extends DataManager {
 				newGroups.add(groupId);
 
 				if (groupCreationSubscribersExist) {
-					dataManagerContext.releaseEvent(new GroupCreationObservationEvent(groupId));
+					dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
 				}
 			}
 
@@ -1480,10 +1481,10 @@ public final class GroupDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(final DataManagerContext dataManagerContext, PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		validatePersonExists(personImminentRemovalObservationEvent.getPersonId());
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+		validatePersonExists(personImminentRemovalEvent.getPersonId());
 		dataManagerContext.addPlan((context) -> {
-			removePerson(personImminentRemovalObservationEvent.getPersonId());
+			removePerson(personImminentRemovalEvent.getPersonId());
 		}, dataManagerContext.getTime());
 	}
 

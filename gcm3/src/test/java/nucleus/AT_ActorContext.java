@@ -72,11 +72,11 @@ public class AT_ActorContext {
 
 	}
 
-	private static class DataChangeObservationEvent implements Event {
+	private static class DataChangeEvent implements Event {
 		private final DatumType datumType;
 		private final int value;
 
-		public DataChangeObservationEvent(final DatumType datumType, final int value) {
+		public DataChangeEvent(final DatumType datumType, final int value) {
 			super();
 			this.datumType = datumType;
 			this.value = value;
@@ -87,10 +87,10 @@ public class AT_ActorContext {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof DataChangeObservationEvent)) {
+			if (!(obj instanceof DataChangeEvent)) {
 				return false;
 			}
-			final DataChangeObservationEvent other = (DataChangeObservationEvent) obj;
+			final DataChangeEvent other = (DataChangeEvent) obj;
 			if ((datumType != other.datumType) || (value != other.value)) {
 				return false;
 			}
@@ -122,7 +122,7 @@ public class AT_ActorContext {
 		@Override
 		public String toString() {
 			final StringBuilder builder = new StringBuilder();
-			builder.append("DataChangeObservationEvent [datumType=");
+			builder.append("DataChangeEvent [datumType=");
 			builder.append(datumType);
 			builder.append(", value=");
 			builder.append(value);
@@ -139,25 +139,93 @@ public class AT_ActorContext {
 		TEST_LABELER_ID, OBSERVATION_TEST_LABELER_ID, DATA_CHANGE
 	}
 
-	private static class NullEventClass_TestEventLabel extends TestEventLabel {
+	private static class NullEventClass_TestEventLabel extends BaseEventLabel {
 		@Override
-		public Class<TestEvent> getEventClass() {
+		public Class<BaseEvent> getEventClass() {
 			return null;
 		}
 	}
 
-	private static class NullLabelerId_TestEventLabel extends TestEventLabel {
+	private static class NullLabelerId_TestEventLabel extends BaseEventLabel {
 		@Override
 		public EventLabelerId getLabelerId() {
 			return null;
 		}
 	}
 
-	private static class NullPrimaryKey_TestEventLabel extends TestEventLabel {
+	private static class NullPrimaryKey_TestEventLabel extends BaseEventLabel {
 		@Override
 		public Object getPrimaryKeyValue() {
 			return null;
 		}
+	}
+
+	private static class BaseEvent implements Event {
+
+	}
+
+	private static class BaseEventLabel implements EventLabel<BaseEvent> {
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof TestEventLabel)) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public Class<BaseEvent> getEventClass() {
+			return BaseEvent.class;
+		}
+
+		@Override
+		public EventLabelerId getLabelerId() {
+			return Local_Labeler_ID.TEST_LABELER_ID;
+		}
+
+		@Override
+		public Object getPrimaryKeyValue() {
+			return BaseEvent.class;
+		}
+
+		@Override
+		public int hashCode() {
+			return 0;
+		}
+	}
+
+	/*
+	 * Event labeler class designed to possibly not comply with preconditions
+	 * required for the adding of event labelers
+	 */
+	private static class TestEventLabeler implements EventLabeler<BaseEvent> {
+		private final Class<BaseEvent> eventClass;
+		private final EventLabelerId eventLabelerId;
+
+		public TestEventLabeler(final Class<BaseEvent> eventClass, final EventLabelerId eventLabelerId) {
+			this.eventClass = eventClass;
+			this.eventLabelerId = eventLabelerId;
+		}
+
+		@Override
+		public Class<BaseEvent> getEventClass() {
+			return eventClass;
+		}
+
+		@Override
+		public EventLabel<BaseEvent> getEventLabel(final SimulationContext context, final BaseEvent event) {
+			return new MultiKeyEventLabel<>(BaseEvent.class, eventLabelerId, BaseEvent.class);
+		}
+
+		@Override
+		public EventLabelerId getId() {
+			return eventLabelerId;
+		}
+
 	}
 
 	private static class TestEvent implements Event {
@@ -171,7 +239,7 @@ public class AT_ActorContext {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof TestObservationEventLabel)) {
+			if (!(obj instanceof TestEventLabel)) {
 				return false;
 			}
 			return true;
@@ -180,74 +248,6 @@ public class AT_ActorContext {
 		@Override
 		public Class<TestEvent> getEventClass() {
 			return TestEvent.class;
-		}
-
-		@Override
-		public EventLabelerId getLabelerId() {
-			return Local_Labeler_ID.TEST_LABELER_ID;
-		}
-
-		@Override
-		public Object getPrimaryKeyValue() {
-			return TestEvent.class;
-		}
-
-		@Override
-		public int hashCode() {
-			return 0;
-		}
-	}
-
-	/*
-	 * Event labeler class designed to possibly not comply with preconditions
-	 * required for the adding of event labelers
-	 */
-	private static class TestEventLabeler implements EventLabeler<TestEvent> {
-		private final Class<TestEvent> eventClass;
-		private final EventLabelerId eventLabelerId;
-
-		public TestEventLabeler(final Class<TestEvent> eventClass, final EventLabelerId eventLabelerId) {
-			this.eventClass = eventClass;
-			this.eventLabelerId = eventLabelerId;
-		}
-
-		@Override
-		public Class<TestEvent> getEventClass() {
-			return eventClass;
-		}
-
-		@Override
-		public EventLabel<TestEvent> getEventLabel(final SimulationContext context, final TestEvent event) {
-			return new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
-		}
-
-		@Override
-		public EventLabelerId getId() {
-			return eventLabelerId;
-		}
-
-	}
-
-	private static class TestObservationEvent implements Event {
-
-	}
-
-	private static class TestObservationEventLabel implements EventLabel<TestObservationEvent> {
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (!(obj instanceof TestObservationEventLabel)) {
-				return false;
-			}
-			return true;
-		}
-
-		@Override
-		public Class<TestObservationEvent> getEventClass() {
-			return TestObservationEvent.class;
 		}
 
 		@Override
@@ -257,7 +257,7 @@ public class AT_ActorContext {
 
 		@Override
 		public Object getPrimaryKeyValue() {
-			return TestObservationEvent.class;
+			return TestEvent.class;
 		}
 
 		@Override
@@ -267,7 +267,7 @@ public class AT_ActorContext {
 
 	}
 
-	private static class UnknownLabeler_TestEventLabel extends TestEventLabel {
+	private static class UnknownLabeler_TestEventLabel extends BaseEventLabel {
 		@Override
 		public EventLabelerId getLabelerId() {
 			return new EventLabelerId() {
@@ -279,17 +279,17 @@ public class AT_ActorContext {
 		HIGH, LOW
 	}
 
-	private static EventLabel<DataChangeObservationEvent> getEventLabelByDatumAndValue(final DatumType datumType, final ValueType valueType) {
-		return new MultiKeyEventLabel<>(datumType, Local_Labeler_ID.DATA_CHANGE, DataChangeObservationEvent.class, datumType, valueType);
+	private static EventLabel<DataChangeEvent> getEventLabelByDatumAndValue(final DatumType datumType, final ValueType valueType) {
+		return new MultiKeyEventLabel<>(datumType, Local_Labeler_ID.DATA_CHANGE, DataChangeEvent.class, datumType, valueType);
 	}
 
-	private static EventLabeler<DataChangeObservationEvent> getEventLabelerForDataChangeObservation() {
-		return new SimpleEventLabeler<>(Local_Labeler_ID.DATA_CHANGE, DataChangeObservationEvent.class, (context, event) -> {
+	private static EventLabeler<DataChangeEvent> getEventLabelerForDataChangeObservation() {
+		return new SimpleEventLabeler<>(Local_Labeler_ID.DATA_CHANGE, DataChangeEvent.class, (context, event) -> {
 			ValueType valueType = ValueType.LOW;
 			if (event.getValue() > 10) {
 				valueType = ValueType.HIGH;
 			}
-			return new MultiKeyEventLabel<>(event.getDatumType(), Local_Labeler_ID.DATA_CHANGE, DataChangeObservationEvent.class, event.getDatumType(), valueType);
+			return new MultiKeyEventLabel<>(event.getDatumType(), Local_Labeler_ID.DATA_CHANGE, DataChangeEvent.class, event.getDatumType(), valueType);
 		});
 	}
 
@@ -377,15 +377,15 @@ public class AT_ActorContext {
 			assertEquals(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER, contractException.getErrorType());
 
 			// if the event labeler contains a null labeler id
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(TestEvent.class, null)));
+			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(BaseEvent.class, null)));
 			assertEquals(NucleusError.NULL_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
 			/*
 			 * if the event labeler contains a labeler id that is the id of a
 			 * previously added event labeler
 			 */
-			c.addEventLabeler(new TestEventLabeler(TestEvent.class, eventLabelerId));
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(TestEvent.class, eventLabelerId)));
+			c.addEventLabeler(new TestEventLabeler(BaseEvent.class, eventLabelerId));
+			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(BaseEvent.class, eventLabelerId)));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
 		}));
@@ -397,7 +397,7 @@ public class AT_ActorContext {
 		EventLabelerId id = new EventLabelerId() {
 		};
 
-		EventLabeler<TestEvent> eventLabeler = new TestEventLabeler(TestEvent.class, id);
+		EventLabeler<BaseEvent> eventLabeler = new TestEventLabeler(BaseEvent.class, id);
 
 		// have the actor add the event labeler
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
@@ -414,14 +414,14 @@ public class AT_ActorContext {
 		// have the agent observe the test event
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
-			c.subscribe(new MultiKeyEventLabel<>(TestEvent.class, id, TestEvent.class), (c2, e) -> {
+			c.subscribe(new MultiKeyEventLabel<>(BaseEvent.class, id, BaseEvent.class), (c2, e) -> {
 				eventObserved.setValue(true);
 			});
 		}));
 
 		// have the actor create a test event for the agent to observe
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			c.releaseEvent(new TestEvent());
+			c.releaseEvent(new BaseEvent());
 		}));
 
 		// build the plugin
@@ -1294,14 +1294,14 @@ public class AT_ActorContext {
 		// Have the actor subscribe to test event and then set the
 		// eventResolved to true
 		pluginDataBuilder.addTestActorPlan("alpha", new TestActorPlan(0, (c) -> {
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(BaseEvent.class, (c2, e) -> {
 				eventResolved.setValue(true);
 			});
 		}));
 
 		// have another actor resolve a test event
 		pluginDataBuilder.addTestActorPlan("beta", new TestActorPlan(1, (context) -> {
-			context.releaseEvent(new TestEvent());
+			context.releaseEvent(new BaseEvent());
 		}));
 
 		// precondition tests
@@ -1336,7 +1336,7 @@ public class AT_ActorContext {
 			}));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> context.subscribe(TestEvent.class, null));
+			contractException = assertThrows(ContractException.class, () -> context.subscribe(BaseEvent.class, null));
 			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
 		}));
 
@@ -1348,7 +1348,7 @@ public class AT_ActorContext {
 		 */
 
 		pluginDataBuilder.addTestActorPlan("subscriber", new TestActorPlan(1, (context) -> {
-			context.subscribe(DataChangeObservationEvent.class, (c, e) -> {
+			context.subscribe(DataChangeEvent.class, (c, e) -> {
 				receivedEvents.add(new MultiKey(c.getTime(), e));
 			});
 		}));
@@ -1358,19 +1358,19 @@ public class AT_ActorContext {
 		 * with differing types and values.
 		 */
 		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 20));
 
 		}));
 
 		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(3, (c) -> {
 
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 0));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 5));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 25));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 38));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 234));
 		}));
 
 		// build the plugin
@@ -1392,14 +1392,14 @@ public class AT_ActorContext {
 		// subscribed event label were delivered to the subscriber actor
 		Set<MultiKey> expectedEvents = new LinkedHashSet<>();
 
-		expectedEvents.add(new MultiKey(2.0, new DataChangeObservationEvent(DatumType.TYPE_1, 0)));
-		expectedEvents.add(new MultiKey(2.0, new DataChangeObservationEvent(DatumType.TYPE_2, 5)));
-		expectedEvents.add(new MultiKey(2.0, new DataChangeObservationEvent(DatumType.TYPE_1, 20)));
-		expectedEvents.add(new MultiKey(3.0, new DataChangeObservationEvent(DatumType.TYPE_2, 0)));
-		expectedEvents.add(new MultiKey(3.0, new DataChangeObservationEvent(DatumType.TYPE_1, 5)));
-		expectedEvents.add(new MultiKey(3.0, new DataChangeObservationEvent(DatumType.TYPE_2, 25)));
-		expectedEvents.add(new MultiKey(3.0, new DataChangeObservationEvent(DatumType.TYPE_1, 38)));
-		expectedEvents.add(new MultiKey(3.0, new DataChangeObservationEvent(DatumType.TYPE_2, 234)));
+		expectedEvents.add(new MultiKey(2.0, new DataChangeEvent(DatumType.TYPE_1, 0)));
+		expectedEvents.add(new MultiKey(2.0, new DataChangeEvent(DatumType.TYPE_2, 5)));
+		expectedEvents.add(new MultiKey(2.0, new DataChangeEvent(DatumType.TYPE_1, 20)));
+		expectedEvents.add(new MultiKey(3.0, new DataChangeEvent(DatumType.TYPE_2, 0)));
+		expectedEvents.add(new MultiKey(3.0, new DataChangeEvent(DatumType.TYPE_1, 5)));
+		expectedEvents.add(new MultiKey(3.0, new DataChangeEvent(DatumType.TYPE_2, 25)));
+		expectedEvents.add(new MultiKey(3.0, new DataChangeEvent(DatumType.TYPE_1, 38)));
+		expectedEvents.add(new MultiKey(3.0, new DataChangeEvent(DatumType.TYPE_2, 234)));
 
 		assertEquals(expectedEvents, receivedEvents);
 
@@ -1417,16 +1417,16 @@ public class AT_ActorContext {
 		// have an actor perform precondition tests
 		pluginDataBuilder.addTestActorPlan("precondition checker", new TestActorPlan(0, (context) -> {
 
-			context.addEventLabeler(new SimpleEventLabeler<TestEvent>(Local_Labeler_ID.TEST_LABELER_ID, TestEvent.class, (c, e) -> {
-				return new TestEventLabel();
+			context.addEventLabeler(new SimpleEventLabeler<BaseEvent>(Local_Labeler_ID.TEST_LABELER_ID, BaseEvent.class, (c, e) -> {
+				return new BaseEventLabel();
 			}));
 
-			TestEventLabel testEventLabel = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> context.subscribe(testEventLabel, (c, e) -> {
+			BaseEventLabel baseEventLabel = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> context.subscribe(baseEventLabel, (c, e) -> {
 			}));
 			assertEquals(NucleusError.NULL_EVENT_LABEL, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> context.subscribe(new TestEventLabel(), null));
+			contractException = assertThrows(ContractException.class, () -> context.subscribe(new BaseEventLabel(), null));
 			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
 
 			contractException = assertThrows(ContractException.class, () -> context.subscribe(new NullEventClass_TestEventLabel(), (c, e) -> {
@@ -1469,14 +1469,14 @@ public class AT_ActorContext {
 		 * with differing types and values.
 		 */
 		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 0));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 5));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 20));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 0));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 5));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 25));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_1, 38));
-			c.releaseEvent(new DataChangeObservationEvent(DatumType.TYPE_2, 234));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 20));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 0));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 5));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 25));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 38));
+			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 234));
 		}));
 
 		// build the plugin
@@ -1498,8 +1498,8 @@ public class AT_ActorContext {
 		// show that all and only the observations corresponding to the
 		// subscribed event label were delivered to the subscriber actor
 		Set<MultiKey> expectedEvents = new LinkedHashSet<>();
-		expectedEvents.add(new MultiKey(2.0, new DataChangeObservationEvent(DatumType.TYPE_1, 20)));
-		expectedEvents.add(new MultiKey(2.0, new DataChangeObservationEvent(DatumType.TYPE_1, 38)));
+		expectedEvents.add(new MultiKey(2.0, new DataChangeEvent(DatumType.TYPE_1, 20)));
+		expectedEvents.add(new MultiKey(2.0, new DataChangeEvent(DatumType.TYPE_1, 38)));
 
 		assertEquals(expectedEvents, receivedEvents);
 
@@ -1564,7 +1564,7 @@ public class AT_ActorContext {
 
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					c2.releaseEvent(new TestEvent());
+					c2.releaseEvent(new BaseEvent());
 				}, time);
 			}
 		}));
@@ -1588,19 +1588,19 @@ public class AT_ActorContext {
 
 		// have the Alpha actor subscribe to the Test Event at time 0
 		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(0.1, (context) -> {
-			context.subscribe(TestEvent.class, (c, e) -> {
+			context.subscribe(BaseEvent.class, (c, e) -> {
 				recievedEvents.add(new MultiKey("Alpha", c.getTime()));
 			});
 		}));
 
 		// have the Alpha actor unsubscribe to the Test Event at time 5
 		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(5.1, (context) -> {
-			context.unsubscribe(TestEvent.class);
+			context.unsubscribe(BaseEvent.class);
 		}));
 
 		// have the Beta actor subscribe to the Test Event at time 4
 		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(4.1, (context) -> {
-			context.subscribe(TestEvent.class, (c, e) -> {
+			context.subscribe(BaseEvent.class, (c, e) -> {
 				recievedEvents.add(new MultiKey("Beta", c.getTime()));
 			});
 		}));
@@ -1608,12 +1608,12 @@ public class AT_ActorContext {
 		// have the Beta actor unsubscribe to the Test Event at time 8
 		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {
 
-			context.unsubscribe(TestEvent.class);
+			context.unsubscribe(BaseEvent.class);
 		}));
 
 		// have the Gamma actor subscribe to the Test Event at time 6
 		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(6.1, (context) -> {
-			context.subscribe(TestEvent.class, (c, e) -> {
+			context.subscribe(BaseEvent.class, (c, e) -> {
 				recievedEvents.add(new MultiKey("Gamma", c.getTime()));
 			});
 		}));
@@ -1666,7 +1666,7 @@ public class AT_ActorContext {
 		 * Generate an event label that will match all TestEvents. This will be
 		 * used throughout.
 		 */
-		MultiKeyEventLabel<TestEvent> eventLabel = new MultiKeyEventLabel<>(TestEvent.class, Local_Labeler_ID.TEST_LABELER_ID, TestEvent.class);
+		MultiKeyEventLabel<BaseEvent> eventLabel = new MultiKeyEventLabel<>(BaseEvent.class, Local_Labeler_ID.TEST_LABELER_ID, BaseEvent.class);
 
 		// create some times for the resolver to generate events
 		List<Double> eventGenerationTimes = new ArrayList<>();
@@ -1691,14 +1691,14 @@ public class AT_ActorContext {
 			 * passed to all actor subscribers so that we can demonstrate that
 			 * unsubscribing works without complicating the test with filtering
 			 */
-			EventLabeler<TestEvent> eventLabeler = new SimpleEventLabeler<TestEvent>(Local_Labeler_ID.TEST_LABELER_ID, TestEvent.class, (c2, e) -> {
+			EventLabeler<BaseEvent> eventLabeler = new SimpleEventLabeler<BaseEvent>(Local_Labeler_ID.TEST_LABELER_ID, BaseEvent.class, (c2, e) -> {
 				return eventLabel;
 			});
 			c.addEventLabeler(eventLabeler);
 
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
-					c2.releaseEvent(new TestEvent());
+					c2.releaseEvent(new BaseEvent());
 				}, time);
 			}
 		}));
@@ -1710,7 +1710,7 @@ public class AT_ActorContext {
 		pluginDataBuilder.addTestActorPlan("precondition tester", new TestActorPlan(0, (context) -> {
 
 			// if the EventLabel is null
-			EventLabel<TestEvent> nullEventLabel = null;
+			EventLabel<BaseEvent> nullEventLabel = null;
 			ContractException contractException = assertThrows(ContractException.class, () -> context.unsubscribe(nullEventLabel));
 			assertEquals(NucleusError.NULL_EVENT_LABEL, contractException.getErrorType());
 

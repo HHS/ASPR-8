@@ -12,14 +12,14 @@ import nucleus.DataManagerContext;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.events.PersonPropertyChangeObservationEvent;
+import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
@@ -51,9 +51,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
 		RegionDataManager regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class).get();
 
-		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty(regionDataManager));
-		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForPersonAndProperty());
-		dataManagerContext.addEventLabeler(PersonPropertyChangeObservationEvent.getEventLabelerForProperty());
+		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager));
+		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty());
+		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForProperty());
 
 		Set<PersonPropertyId> personPropertyIds = personPropertiesPluginData.getPersonPropertyIds();
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {
@@ -71,9 +71,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 				propertyManager.setPropertyValue(pId, personPropertyValue);				
 			}
 		}
-		dataManagerContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
-		dataManagerContext.subscribe(BulkPersonCreationObservationEvent.class, this::handleBulkPersonCreationObservationEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalObservationEvent.class, this::handlePersonImminentRemovalObservationEvent);
+		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
 	}
 
@@ -382,7 +382,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	/**
 	 * Updates the value of a person's property. Generates a corresponding
-	 * {@linkplain PersonPropertyChangeObservationEvent}
+	 * {@linkplain PersonPropertyUpdateEvent}
 	 * 
 	 * 
 	 * Throws {@link ContractException}
@@ -414,7 +414,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
 		Object oldValue = propertyManager.getPropertyValue(pId);
 		propertyManager.setPropertyValue(pId, personPropertyValue);
-		dataManagerContext.releaseEvent(new PersonPropertyChangeObservationEvent(personId, personPropertyId, oldValue, personPropertyValue));
+		dataManagerContext.releaseEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
 	}
 
 	private static void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
@@ -423,10 +423,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonCreationObservationEvent(final DataManagerContext dataManagerContext, final PersonCreationObservationEvent personCreationObservationEvent) {
-		PersonConstructionData personConstructionData = personCreationObservationEvent.getPersonConstructionData();
+	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
+		PersonConstructionData personConstructionData = personAdditionEvent.getPersonConstructionData();
 
-		PersonId personId = personCreationObservationEvent.getPersonId();
+		PersonId personId = personAdditionEvent.getPersonId();
 
 		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
 		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
@@ -443,11 +443,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	}
 
-	private void handleBulkPersonCreationObservationEvent(final DataManagerContext dataManagerContext, final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent) {
-		PersonId personId = bulkPersonCreationObservationEvent.getPersonId();
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		PersonId personId = bulkPersonAdditionEvent.getPersonId();
 		int pId = personId.getValue();
 
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonCreationObservationEvent.getBulkPersonConstructionData();
+		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
 
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {
@@ -467,8 +467,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	}
 
-	private void handlePersonImminentRemovalObservationEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalObservationEvent personImminentRemovalObservationEvent) {
-		PersonId personId = personImminentRemovalObservationEvent.getPersonId();
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
+		PersonId personId = personImminentRemovalEvent.getPersonId();
 		validatePersonExists(personId);
 		dataManagerContext.addPlan((context) -> {
 			for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {

@@ -10,10 +10,10 @@ import nucleus.SimpleEventLabeler;
 import plugins.materials.support.BatchId;
 
 @Immutable
-public class BatchCreationObservationEvent implements Event {
+public class BatchAdditionEvent implements Event {
 	private final BatchId batchId;
 
-	public BatchCreationObservationEvent(final BatchId batchId) {
+	public BatchAdditionEvent(final BatchId batchId) {
 		super();
 		this.batchId = batchId;
 	}
@@ -24,21 +24,21 @@ public class BatchCreationObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "BatchCreationObservationEvent [batchId=" + batchId + "]";
+		return "BatchAdditionEvent [batchId=" + batchId + "]";
 	}
 	
 	private static enum LabelerId implements EventLabelerId {
 		ALL
 	}
 
-	private final static EventLabel<BatchCreationObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchCreationObservationEvent.class, LabelerId.ALL, BatchCreationObservationEvent.class);
+	private final static EventLabel<BatchAdditionEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchAdditionEvent.class, LabelerId.ALL, BatchAdditionEvent.class);
 
-	public static EventLabel<BatchCreationObservationEvent> getEventLabelByAll() {
+	public static EventLabel<BatchAdditionEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<BatchCreationObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, BatchCreationObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<BatchAdditionEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, BatchAdditionEvent.class, (context, event) -> ALL_LABEL);
 	}
 
 }

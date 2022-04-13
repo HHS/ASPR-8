@@ -16,18 +16,18 @@ import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.MaterialsPluginData;
-import plugins.materials.events.BatchAmountChangeObservationEvent;
-import plugins.materials.events.BatchCreationObservationEvent;
-import plugins.materials.events.BatchImminentRemovalObservationEvent;
-import plugins.materials.events.BatchPropertyChangeObservationEvent;
-import plugins.materials.events.MaterialsProducerPropertyChangeObservationEvent;
-import plugins.materials.events.MaterialsProducerResourceChangeObservationEvent;
-import plugins.materials.events.StageCreationObservationEvent;
-import plugins.materials.events.StageImminentRemovalObservationEvent;
-import plugins.materials.events.StageMaterialsProducerChangeObservationEvent;
-import plugins.materials.events.StageMembershipAdditionObservationEvent;
-import plugins.materials.events.StageMembershipRemovalObservationEvent;
-import plugins.materials.events.StageOfferChangeObservationEvent;
+import plugins.materials.events.BatchAmountUpdateEvent;
+import plugins.materials.events.BatchAdditionEvent;
+import plugins.materials.events.BatchImminentRemovalEvent;
+import plugins.materials.events.BatchPropertyUpdateEvent;
+import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
+import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
+import plugins.materials.events.StageAdditionEvent;
+import plugins.materials.events.StageImminentRemovalEvent;
+import plugins.materials.events.StageMaterialsProducerUpdateEvent;
+import plugins.materials.events.StageMembershipAdditionEvent;
+import plugins.materials.events.StageMembershipRemovalEvent;
+import plugins.materials.events.StageOfferUpdateEvent;
 import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
@@ -243,23 +243,23 @@ public final class MaterialsDataManager extends DataManager {
 
 		this.dataManagerContext = dataManagerContext;
 
-		dataManagerContext.addEventLabeler(StageOfferChangeObservationEvent.getEventLabelerForStage());
-		dataManagerContext.addEventLabeler(StageOfferChangeObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForDestination());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForSource());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerChangeObservationEvent.getEventLabelerForStage());
-		dataManagerContext.addEventLabeler(MaterialsProducerPropertyChangeObservationEvent.getEventLabelerForMaterialsProducerAndProperty());
-		dataManagerContext.addEventLabeler(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForMaterialsProducerAndResource());
-		dataManagerContext.addEventLabeler(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForResource());
-		dataManagerContext.addEventLabeler(BatchCreationObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(BatchAmountChangeObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(BatchImminentRemovalObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(BatchPropertyChangeObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageMembershipRemovalObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageMembershipAdditionObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageCreationObservationEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageImminentRemovalObservationEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageOfferUpdateEvent.getEventLabelerForStage());
+		dataManagerContext.addEventLabeler(StageOfferUpdateEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForDestination());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForSource());
+		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForStage());
+		dataManagerContext.addEventLabeler(MaterialsProducerPropertyUpdateEvent.getEventLabelerForMaterialsProducerAndProperty());
+		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource());
+		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource());
+		dataManagerContext.addEventLabeler(BatchAdditionEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(BatchAmountUpdateEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(BatchImminentRemovalEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(BatchPropertyUpdateEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMembershipRemovalEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageMembershipAdditionEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageAdditionEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(StageImminentRemovalEvent.getEventLabelerForAll());
 
 		for (final MaterialId materialId : materialsPluginData.getMaterialIds()) {
 			materialIds.add(materialId);
@@ -1024,7 +1024,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Creates a batch from the {@linkplain BatchConstructionInfo} contained in
 	 * the event. Sets batch properties found in the batch construction info.
-	 * Generates a corresponding {@linkplain BatchCreationObservationEvent}
+	 * Generates a corresponding {@linkplain BatchAdditionEvent}
 	 * event
 	 * 
 	 * @throws ContractException
@@ -1099,7 +1099,7 @@ public final class MaterialsDataManager extends DataManager {
 		}
 		batchPropertyMap.put(batchRecord.batchId, map);
 		BatchId result = batchRecord.batchId;
-		dataManagerContext.releaseEvent(new BatchCreationObservationEvent(batchRecord.batchId));
+		dataManagerContext.releaseEvent(new BatchAdditionEvent(batchRecord.batchId));
 		return result;
 	}
 
@@ -1133,7 +1133,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Creates a batch. Generates a corresponding
-	 * {@linkplain BatchCreationObservationEvent} event
+	 * {@linkplain BatchAdditionEvent} event
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1176,14 +1176,14 @@ public final class MaterialsDataManager extends DataManager {
 		batchPropertyMap.put(batchRecord.batchId, map);
 
 		BatchId batchId = batchRecord.batchId;
-		dataManagerContext.releaseEvent(new BatchCreationObservationEvent(batchId));
+		dataManagerContext.releaseEvent(new BatchAdditionEvent(batchId));
 		return batchId;
 	}
 
 	/**
 	 * Transfers an amount of material from one batch to another batch of the
 	 * same material type and material producer. Generates a corresponding
-	 * {@linkplain BatchAmountChangeObservationEvent} for each batch.
+	 * {@linkplain BatchAmountUpdateEvent} for each batch.
 	 * 
 	 * @throws ContractException
 	 *
@@ -1246,8 +1246,8 @@ public final class MaterialsDataManager extends DataManager {
 		double currentSourceAmount = sourceBatchRecord.amount;
 		double currentDestinationAmount = destinationBatchRecord.amount;
 
-		dataManagerContext.releaseEvent(new BatchAmountChangeObservationEvent(sourceBatchId, previousSourceAmount, currentSourceAmount));
-		dataManagerContext.releaseEvent(new BatchAmountChangeObservationEvent(destinationBatchId, previousDestinationAmount, currentDestinationAmount));
+		dataManagerContext.releaseEvent(new BatchAmountUpdateEvent(sourceBatchId, previousSourceAmount, currentSourceAmount));
+		dataManagerContext.releaseEvent(new BatchAmountUpdateEvent(destinationBatchId, previousDestinationAmount, currentDestinationAmount));
 	}
 
 	private void validateBatchHasSufficientUllage(BatchId batchId, double amount) {
@@ -1311,7 +1311,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Removes the given batch. Generates a corresponding
-	 * {@linkplain BatchImminentRemovalObservationEvent}
+	 * {@linkplain BatchImminentRemovalEvent}
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1329,7 +1329,7 @@ public final class MaterialsDataManager extends DataManager {
 		validateBatchId(batchId);
 		validateBatchIsNotOnOfferedStage(batchId);
 		dataManagerContext.addPlan((context) -> destroyBatch(batchId), dataManagerContext.getTime());
-		dataManagerContext.releaseEvent(new BatchImminentRemovalObservationEvent(batchId));
+		dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchId));
 	}
 
 	private void destroyBatch(final BatchId batchId) {
@@ -1348,7 +1348,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * 
 	 * Set a batch's property value. Generates a corresponding
-	 * {@linkplain BatchPropertyChangeObservationEvent}
+	 * {@linkplain BatchPropertyUpdateEvent}
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1389,7 +1389,7 @@ public final class MaterialsDataManager extends DataManager {
 		final PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
 		Object previousPropertyValue = propertyValueRecord.getValue();
 		propertyValueRecord.setPropertyValue(batchPropertyValue);
-		dataManagerContext.releaseEvent(new BatchPropertyChangeObservationEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
+		dataManagerContext.releaseEvent(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
 	}
 
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
@@ -1401,7 +1401,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Assigns a property value to a materials producer. Generates a
 	 * corresponding
-	 * {@linkplain MaterialsProducerPropertyChangeObservationEvent}
+	 * {@linkplain MaterialsProducerPropertyUpdateEvent}
 	 * 
 	 * @throws ContractException
 	 *
@@ -1434,7 +1434,7 @@ public final class MaterialsDataManager extends DataManager {
 		PropertyValueRecord propertyValueRecord = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
 		Object oldPropertyValue = propertyValueRecord.getValue();
 		propertyValueRecord.setPropertyValue(materialsProducerPropertyValue);
-		dataManagerContext.releaseEvent(new MaterialsProducerPropertyChangeObservationEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
+		dataManagerContext.releaseEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
 	}
 
 	private void validateMaterialProducerPropertyValueNotNull(final Object propertyValue) {
@@ -1446,7 +1446,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * <li>Removes a batch from a non-offered stage, placing it into the
 	 * materials producer's inventory. Generates a corresponding
-	 * {@linkplain StageMembershipRemovalObservationEvent}
+	 * {@linkplain StageMembershipRemovalEvent}
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1471,7 +1471,7 @@ public final class MaterialsDataManager extends DataManager {
 		batchRecord.stageRecord.batchRecords.remove(batchRecord);
 		batchRecord.stageRecord = null;
 		batchRecord.materialsProducerRecord.inventory.add(batchRecord);
-		dataManagerContext.releaseEvent(new StageMembershipRemovalObservationEvent(batchId, stageId));
+		dataManagerContext.releaseEvent(new StageMembershipRemovalEvent(batchId, stageId));
 	}
 
 	private void validateStageIsNotOffered(final StageId stageId) {
@@ -1492,7 +1492,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Removes a batch frominventory, placing it on a stage. Generates a
-	 * corresponding {@linkplain StageMembershipAdditionObservationEvent}
+	 * corresponding {@linkplain StageMembershipAdditionEvent}
 	 * 
 	 * @throws ContractException
 	 *
@@ -1530,7 +1530,7 @@ public final class MaterialsDataManager extends DataManager {
 		batchRecord.stageRecord = stageRecord;
 		stageRecord.batchRecords.add(batchRecord);
 		batchRecord.materialsProducerRecord.inventory.remove(batchRecord);
-		dataManagerContext.releaseEvent(new StageMembershipAdditionObservationEvent(batchId, stageId));
+		dataManagerContext.releaseEvent(new StageMembershipAdditionEvent(batchId, stageId));
 	}
 
 	private void validateBatchAndStageOwnersMatch(final BatchId batchId, final StageId stageId) {
@@ -1552,8 +1552,8 @@ public final class MaterialsDataManager extends DataManager {
 	 * 
 	 * Transfers an offered stage from the current owning materials producer to
 	 * another and marks the stage as not offered. Generates the corresponding
-	 * {@linkplain StageMaterialsProducerChangeObservationEvent}
-	 * {@linkplain StageOfferChangeObservationEvent}
+	 * {@linkplain StageMaterialsProducerUpdateEvent}
+	 * {@linkplain StageOfferUpdateEvent}
 	 * 
 	 * @throws ContractException
 	 *
@@ -1590,8 +1590,8 @@ public final class MaterialsDataManager extends DataManager {
 			batchRecord.materialsProducerRecord = newMaterialsProducerRecord;
 		}
 		stageRecord.offered = false;
-		dataManagerContext.releaseEvent(new StageMaterialsProducerChangeObservationEvent(stageId, stageProducer, materialsProducerId));
-		dataManagerContext.releaseEvent(new StageOfferChangeObservationEvent(stageId, true, false));
+		dataManagerContext.releaseEvent(new StageMaterialsProducerUpdateEvent(stageId, stageProducer, materialsProducerId));
+		dataManagerContext.releaseEvent(new StageOfferUpdateEvent(stageId, true, false));
 	}
 
 	private void validateStageNotOwnedByReceivingMaterialsProducer(final StageId stageId, final MaterialsProducerId materialsProducerId) {
@@ -1613,7 +1613,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * 
 	 * Transfers a resource amount from a materials producer to a region.
 	 * Generates a corresponding {@linkplain RegionResourceAdditionEvent} and
-	 * {@linkplain MaterialsProducerResourceChangeObservationEvent}
+	 * {@linkplain MaterialsProducerResourceUpdateEvent}
 	 * 
 	 * @throws ContractException
 	 *             *
@@ -1659,7 +1659,7 @@ public final class MaterialsDataManager extends DataManager {
 		long currentMaterialsProducerResourceLevel = componentResourceRecord.getAmount();
 		resourceDataManager.addResourceToRegion(resourceId, regionId, amount);
 		dataManagerContext.releaseEvent(
-				new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
+				new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
 	}
 
 	private void validateResourceAdditionValue(final long currentResourceLevel, final long amount) {
@@ -1697,7 +1697,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Creates a stage. Generates a corresponding
-	 * {@linkplain StageCreationObservationEvent}
+	 * {@linkplain StageAdditionEvent}
 	 * 
 	 * @throws ContractException
 	 * 
@@ -1715,7 +1715,7 @@ public final class MaterialsDataManager extends DataManager {
 		stageRecord.materialsProducerRecord = materialsProducerRecord;
 		materialsProducerRecord.stageRecords.add(stageRecord);
 		stageRecords.put(stageRecord.stageId, stageRecord);
-		dataManagerContext.releaseEvent(new StageCreationObservationEvent(stageRecord.stageId));
+		dataManagerContext.releaseEvent(new StageAdditionEvent(stageRecord.stageId));
 		return stageRecord.stageId;
 	}
 
@@ -1723,8 +1723,8 @@ public final class MaterialsDataManager extends DataManager {
 	 * 
 	 * Destroys a non-offered stage and optionally destroys any associated
 	 * batches. Generates the corresponding
-	 * {@linkplain BatchImminentRemovalObservationEvent} and
-	 * {@linkplain StageImminentRemovalObservationEvent} events.
+	 * {@linkplain BatchImminentRemovalEvent} and
+	 * {@linkplain StageImminentRemovalEvent} events.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
@@ -1751,9 +1751,9 @@ public final class MaterialsDataManager extends DataManager {
 			}, dataManagerContext.getTime());
 
 			for (BatchRecord batchRecord : stageRecord.batchRecords) {
-				dataManagerContext.releaseEvent(new BatchImminentRemovalObservationEvent(batchRecord.batchId));
+				dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
 			}
-			dataManagerContext.releaseEvent(new StageImminentRemovalObservationEvent(stageId));
+			dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
 		} else {
 			// plan for the removal of the stage and return of the batches to
 			// inventory
@@ -1766,13 +1766,13 @@ public final class MaterialsDataManager extends DataManager {
 				stageRecords.remove(stageId);
 			}, dataManagerContext.getTime());
 
-			dataManagerContext.releaseEvent(new StageImminentRemovalObservationEvent(stageId));
+			dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
 		}
 	}
 
 	/**
 	 * Sets the offer state of a stage. Generates a corresponding
-	 * {@linkplain StageOfferChangeObservationEvent}
+	 * {@linkplain StageOfferUpdateEvent}
 	 * 
 	 * @throws ContractException
 	 *
@@ -1788,7 +1788,7 @@ public final class MaterialsDataManager extends DataManager {
 		final StageRecord stageRecord = stageRecords.get(stageId);
 		boolean previousState = stageRecord.offered;
 		stageRecord.offered = offer;
-		dataManagerContext.releaseEvent(new StageOfferChangeObservationEvent(stageId, previousState, offer));
+		dataManagerContext.releaseEvent(new StageOfferUpdateEvent(stageId, previousState, offer));
 	}
 
 	/**
@@ -1796,9 +1796,9 @@ public final class MaterialsDataManager extends DataManager {
 	 * Converts a non-offered stage, including its associated batches, into a
 	 * new batch of the given material. The new batch is placed into inventory.
 	 * Generates a corresponding
-	 * {@linkplain BatchImminentRemovalObservationEvent},
-	 * {@linkplain BatchCreationObservationEvent} and
-	 * {@linkplain StageImminentRemovalObservationEvent} events
+	 * {@linkplain BatchImminentRemovalEvent},
+	 * {@linkplain BatchAdditionEvent} and
+	 * {@linkplain StageImminentRemovalEvent} events
 	 * 
 	 * @throws ContractException
 	 *
@@ -1864,11 +1864,11 @@ public final class MaterialsDataManager extends DataManager {
 
 		}, dataManagerContext.getTime());
 
-		dataManagerContext.releaseEvent(new BatchCreationObservationEvent(batchId));
+		dataManagerContext.releaseEvent(new BatchAdditionEvent(batchId));
 		for (BatchRecord batchRec : stageRecord.batchRecords) {
-			dataManagerContext.releaseEvent(new BatchImminentRemovalObservationEvent(batchRec.batchId));
+			dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRec.batchId));
 		}
-		dataManagerContext.releaseEvent(new StageImminentRemovalObservationEvent(stageId));
+		dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
 		return batchId;
 	}
 
@@ -1877,9 +1877,9 @@ public final class MaterialsDataManager extends DataManager {
 	 * Converts a non-offered stage, including its associated batches, into an
 	 * amount of resource. The resulting resource is owned by the associated
 	 * material producer. Generates the corresponding
-	 * {@linkplain BatchImminentRemovalObservationEvent},
-	 * {@linkplain MaterialsProducerResourceChangeObservationEvent} and
-	 * {@linkplain StageImminentRemovalObservationEvent} events.
+	 * {@linkplain BatchImminentRemovalEvent},
+	 * {@linkplain MaterialsProducerResourceUpdateEvent} and
+	 * {@linkplain StageImminentRemovalEvent} events.
 	 * 
 	 * 
 	 * @throws ContractException
@@ -1930,12 +1930,12 @@ public final class MaterialsDataManager extends DataManager {
 		componentResourceRecord.incrementAmount(amount);
 		
 		long currentResourceLevel = componentResourceRecord.getAmount();
-		dataManagerContext.releaseEvent(new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId, previousResourceLevel, currentResourceLevel));		
+		dataManagerContext.releaseEvent(new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousResourceLevel, currentResourceLevel));		
 		
 		for (BatchRecord batchRecord : stageRecord.batchRecords) {
-			dataManagerContext.releaseEvent(new BatchImminentRemovalObservationEvent(batchRecord.batchId));
+			dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
 		}
-		dataManagerContext.releaseEvent(new StageImminentRemovalObservationEvent(stageId));
+		dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
 		
 		
 	}

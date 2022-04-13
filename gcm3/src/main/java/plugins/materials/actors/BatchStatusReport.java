@@ -7,12 +7,12 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.BatchAmountChangeObservationEvent;
-import plugins.materials.events.BatchCreationObservationEvent;
-import plugins.materials.events.BatchImminentRemovalObservationEvent;
-import plugins.materials.events.BatchPropertyChangeObservationEvent;
-import plugins.materials.events.StageMembershipAdditionObservationEvent;
-import plugins.materials.events.StageMembershipRemovalObservationEvent;
+import plugins.materials.events.BatchAmountUpdateEvent;
+import plugins.materials.events.BatchAdditionEvent;
+import plugins.materials.events.BatchImminentRemovalEvent;
+import plugins.materials.events.BatchPropertyUpdateEvent;
+import plugins.materials.events.StageMembershipAdditionEvent;
+import plugins.materials.events.StageMembershipRemovalEvent;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
@@ -160,47 +160,47 @@ public final class BatchStatusReport {
 		return batchRecord;
 	}
 
-	private void handleBatchCreationObservationEvent(ActorContext actorContext, BatchCreationObservationEvent batchCreationObservationEvent) {
-		BatchId batchId = batchCreationObservationEvent.getBatchId();
+	private void handleBatchAdditionEvent(ActorContext actorContext, BatchAdditionEvent batchAdditionEvent) {
+		BatchId batchId = batchAdditionEvent.getBatchId();
 		BatchRecord batchRecord = createBatchRecord(actorContext, batchId);
 		reportBatch(actorContext, batchRecord);
 	}
 
-	private void handleBatchDestructionObservationEvent(ActorContext actorContext, BatchImminentRemovalObservationEvent batchImminentRemovalObservationEvent) {
-		BatchId batchId = batchImminentRemovalObservationEvent.getBatchId();
+	private void handleBatchImminentRemovalEvent(ActorContext actorContext, BatchImminentRemovalEvent batchImminentRemovalEvent) {
+		BatchId batchId = batchImminentRemovalEvent.getBatchId();
 		BatchRecord batchRecord = batchRecords.remove(batchId);
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
 
-	private void handleBatchAmountChangeObservationEvent(ActorContext actorContext, BatchAmountChangeObservationEvent batchAmountChangeObservationEvent) {
-		BatchId batchId = batchAmountChangeObservationEvent.getBatchId();
+	private void handleBatchAmountUpdateEvent(ActorContext actorContext, BatchAmountUpdateEvent batchAmountUpdateEvent) {
+		BatchId batchId = batchAmountUpdateEvent.getBatchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
-		batchRecord.amount = batchAmountChangeObservationEvent.getCurrentAmount();
+		batchRecord.amount = batchAmountUpdateEvent.getCurrentAmount();
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
 
-	private void handleStageMembershipAdditionObservationEvent(ActorContext actorContext, StageMembershipAdditionObservationEvent stageMembershipAdditionObservationEvent) {
-		BatchId batchId = stageMembershipAdditionObservationEvent.getBatchId();
+	private void handleStageMembershipAdditionEvent(ActorContext actorContext, StageMembershipAdditionEvent stageMembershipAdditionEvent) {
+		BatchId batchId = stageMembershipAdditionEvent.getBatchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
-		batchRecord.stageId = stageMembershipAdditionObservationEvent.getStageId();
+		batchRecord.stageId = stageMembershipAdditionEvent.getStageId();
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
 
-	private void handleStageMembershipRemovalObservationEvent(ActorContext actorContext, StageMembershipRemovalObservationEvent stageMembershipRemovalObservationEvent) {
-		BatchId batchId = stageMembershipRemovalObservationEvent.getBatchId();
+	private void handleStageMembershipRemovalEvent(ActorContext actorContext, StageMembershipRemovalEvent stageMembershipRemovalEvent) {
+		BatchId batchId = stageMembershipRemovalEvent.getBatchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
 		batchRecord.stageId = null;
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
 
-	private void handleBatchPropertyChangeObservationEvent(ActorContext actorContext, BatchPropertyChangeObservationEvent batchPropertyChangeObservationEvent) {
-		BatchId batchId = batchPropertyChangeObservationEvent.getBatchId();
+	private void handleBatchPropertyUpdateEvent(ActorContext actorContext, BatchPropertyUpdateEvent batchPropertyUpdateEvent) {
+		BatchId batchId = batchPropertyUpdateEvent.getBatchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
-		batchRecord.propertyValues.put(batchPropertyChangeObservationEvent.getBatchPropertyId(), batchPropertyChangeObservationEvent.getCurrentPropertyValue());
+		batchRecord.propertyValues.put(batchPropertyUpdateEvent.getBatchPropertyId(), batchPropertyUpdateEvent.getCurrentPropertyValue());
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
@@ -209,12 +209,12 @@ public final class BatchStatusReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(BatchCreationObservationEvent.class, this::handleBatchCreationObservationEvent);
-		actorContext.subscribe(BatchImminentRemovalObservationEvent.class, this::handleBatchDestructionObservationEvent);
-		actorContext.subscribe(BatchAmountChangeObservationEvent.class, this::handleBatchAmountChangeObservationEvent);
-		actorContext.subscribe(BatchPropertyChangeObservationEvent.class, this::handleBatchPropertyChangeObservationEvent);
-		actorContext.subscribe(StageMembershipAdditionObservationEvent.class, this::handleStageMembershipAdditionObservationEvent);
-		actorContext.subscribe(StageMembershipRemovalObservationEvent.class, this::handleStageMembershipRemovalObservationEvent);
+		actorContext.subscribe(BatchAdditionEvent.class, this::handleBatchAdditionEvent);
+		actorContext.subscribe(BatchImminentRemovalEvent.class, this::handleBatchImminentRemovalEvent);
+		actorContext.subscribe(BatchAmountUpdateEvent.class, this::handleBatchAmountUpdateEvent);
+		actorContext.subscribe(BatchPropertyUpdateEvent.class, this::handleBatchPropertyUpdateEvent);
+		actorContext.subscribe(StageMembershipAdditionEvent.class, this::handleStageMembershipAdditionEvent);
+		actorContext.subscribe(StageMembershipRemovalEvent.class, this::handleStageMembershipRemovalEvent);
 
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();
 

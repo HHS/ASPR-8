@@ -23,7 +23,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
 import plugins.partitions.testsupport.PartitionsActionSupport;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
@@ -57,9 +57,9 @@ public class AT_AttributesDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testAttributeChangeObservationEventLabelers() {
+	public void testAttributeUpdateEventLabelers() {
 		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
-			EventLabeler<AttributeChangeObservationEvent> eventLabeler = AttributeChangeObservationEvent.getEventLabeler();
+			EventLabeler<AttributeUpdateEvent> eventLabeler = AttributeUpdateEvent.getEventLabeler();
 			assertNotNull(eventLabeler);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -81,7 +81,7 @@ public class AT_AttributesDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(AttributeChangeObservationEvent.getEventLabel(c, TestAttributeId.BOOLEAN_0), (c2, e) -> {
+			c.subscribe(AttributeUpdateEvent.getEventLabel(c, TestAttributeId.BOOLEAN_0), (c2, e) -> {
 				peopleObserved.add(e.getPersonId());
 			});
 		}));

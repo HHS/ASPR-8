@@ -13,7 +13,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
 @Immutable
-public final class PersonCreationObservationEvent implements Event {
+public final class PersonAdditionEvent implements Event {
 	private final PersonId personId;
 	private final PersonConstructionData personConstructionData;
 
@@ -27,7 +27,7 @@ public final class PersonCreationObservationEvent implements Event {
 	 *             <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA} if
 	 *             the person construction data is null</li>
 	 */
-	public PersonCreationObservationEvent(final PersonId personId, PersonConstructionData personConstructionData) {
+	public PersonAdditionEvent(final PersonId personId, PersonConstructionData personConstructionData) {
 
 		if(personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
@@ -55,10 +55,10 @@ public final class PersonCreationObservationEvent implements Event {
 	
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonCreationObservationEvent} events. Matches all such
+	 * {@link PersonAdditionEvent} events. Matches all such
 	 * events.
 	 */
-	public static EventLabel<PersonCreationObservationEvent> getEventLabel() {
+	public static EventLabel<PersonAdditionEvent> getEventLabel() {
 		return EVENT_LABEL_INSTANCE;
 	}
 
@@ -67,12 +67,12 @@ public final class PersonCreationObservationEvent implements Event {
 	}
 
 	
-	private final static EventLabel<PersonCreationObservationEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(PersonCreationObservationEvent.class, LabelerId.ALL,
-			PersonCreationObservationEvent.class);
+	private final static EventLabel<PersonAdditionEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(PersonAdditionEvent.class, LabelerId.ALL,
+			PersonAdditionEvent.class);
 	/**
-	 * Returns an event labeler for {@link PersonCreationObservationEvent}
+	 * Returns an event labeler for {@link PersonAdditionEvent}
 	 */
-	public static EventLabeler<PersonCreationObservationEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, PersonCreationObservationEvent.class, (context, event) -> EVENT_LABEL_INSTANCE);
+	public static EventLabeler<PersonAdditionEvent> getEventLabeler() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, PersonAdditionEvent.class, (context, event) -> EVENT_LABEL_INSTANCE);
 	}
 }

@@ -8,9 +8,9 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.util.ContractException;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -71,8 +71,8 @@ public final class PersonDataManager extends DataManager {
 		}
 
 		if (result != null) {
-			final BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent = new BulkPersonCreationObservationEvent(result, bulkPersonConstructionData);
-			dataManagerContext.releaseEvent(bulkPersonCreationObservationEvent);
+			final BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(result, bulkPersonConstructionData);
+			dataManagerContext.releaseEvent(bulkPersonAdditionEvent);
 		}
 
 		return Optional.ofNullable(result);
@@ -93,8 +93,8 @@ public final class PersonDataManager extends DataManager {
 
 		final PersonId personId = addPersonId();
 
-		final PersonCreationObservationEvent personCreationObservationEvent = new PersonCreationObservationEvent(personId, personConstructionData);
-		dataManagerContext.releaseEvent(personCreationObservationEvent);
+		final PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
+		dataManagerContext.releaseEvent(personAdditionEvent);
 
 		return personId;
 	}
@@ -210,11 +210,11 @@ public final class PersonDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
-		dataManagerContext.addEventLabeler(BulkPersonCreationObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(BulkPersonAdditionEvent.getEventLabeler());
 
-		dataManagerContext.addEventLabeler(PersonCreationObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(PersonAdditionEvent.getEventLabeler());
 
-		dataManagerContext.addEventLabeler(PersonImminentRemovalObservationEvent.getEventLabeler());
+		dataManagerContext.addEventLabeler(PersonImminentRemovalEvent.getEventLabeler());
 
 		for (PersonId personId : peoplePluginData.getPersonIds()) {
 			personIds.add(personId);
@@ -263,7 +263,7 @@ public final class PersonDataManager extends DataManager {
 	public void removePerson(final PersonId personId) {
 		validatePersonExists(personId);
 
-		dataManagerContext.releaseEvent(new PersonImminentRemovalObservationEvent(personId));
+		dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
 
 		dataManagerContext.addPlan((context) -> {
 			globalPopulationRecord.populationCount--;

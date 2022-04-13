@@ -7,7 +7,7 @@ import nucleus.ActorContext;
 import nucleus.EventLabel;
 import nucleus.util.ContractException;
 import plugins.globals.GlobalDataManager;
-import plugins.globals.events.GlobalPropertyChangeObservationEvent;
+import plugins.globals.events.GlobalPropertyUpdateEvent;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
 import plugins.reports.support.ReportHeader;
@@ -50,10 +50,10 @@ public final class GlobalPropertyReport {
 		return reportHeader;
 	}
 
-	private void handleGlobalPropertyChangeObservationEvent(ActorContext actorContext, GlobalPropertyChangeObservationEvent globalPropertyChangeObservationEvent) {
-		GlobalPropertyId globalPropertyId = globalPropertyChangeObservationEvent.getGlobalPropertyId();
+	private void handleGlobalPropertyUpdateEvent(ActorContext actorContext, GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
+		GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.getGlobalPropertyId();
 		if (globalPropertyIds.contains(globalPropertyId)) {
-			writeProperty(actorContext, globalPropertyId,globalPropertyChangeObservationEvent.getCurrentPropertyValue());
+			writeProperty(actorContext, globalPropertyId,globalPropertyUpdateEvent.getCurrentPropertyValue());
 		}
 	}
 
@@ -68,7 +68,7 @@ public final class GlobalPropertyReport {
 	}
 
 	/**
-	 * Initialization of the report.  Subscribes to GlobalPropertyChangeObservationEvents.
+	 * Initialization of the report.  Subscribes to GlobalPropertyUpdateEvent.
 	 */
 	public void init(final ActorContext actorContext) {
 
@@ -92,11 +92,11 @@ public final class GlobalPropertyReport {
 		}
 
 		if (globalPropertyIds.equals(globalDataManager.getGlobalPropertyIds())) {
-			actorContext.subscribe(GlobalPropertyChangeObservationEvent.class, this::handleGlobalPropertyChangeObservationEvent);
+			actorContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
 		} else {
 			for (GlobalPropertyId globalPropertyId : globalPropertyIds) {
-				EventLabel<GlobalPropertyChangeObservationEvent> eventLabel = GlobalPropertyChangeObservationEvent.getEventLabel(actorContext, globalPropertyId);
-				actorContext.subscribe(eventLabel, this::handleGlobalPropertyChangeObservationEvent);
+				EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(actorContext, globalPropertyId);
+				actorContext.subscribe(eventLabel, this::handleGlobalPropertyUpdateEvent);
 			}
 		}
 

@@ -10,10 +10,10 @@ import nucleus.SimpleEventLabeler;
 import plugins.materials.support.BatchId;
 
 @Immutable
-public class BatchImminentRemovalObservationEvent implements Event {
+public class BatchImminentRemovalEvent implements Event {
 	private final BatchId batchId;
 
-	public BatchImminentRemovalObservationEvent(final BatchId batchId) {
+	public BatchImminentRemovalEvent(final BatchId batchId) {
 		super();
 		this.batchId = batchId;
 	}
@@ -25,7 +25,7 @@ public class BatchImminentRemovalObservationEvent implements Event {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("BatchImminentRemovalObservationEvent [batchId=");
+		builder.append("BatchImminentRemovalEvent [batchId=");
 		builder.append(batchId);
 		builder.append("]");
 		return builder.toString();
@@ -35,14 +35,14 @@ public class BatchImminentRemovalObservationEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<BatchImminentRemovalObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchImminentRemovalObservationEvent.class, LabelerId.ALL, BatchImminentRemovalObservationEvent.class);
+	private final static EventLabel<BatchImminentRemovalEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchImminentRemovalEvent.class, LabelerId.ALL, BatchImminentRemovalEvent.class);
 
-	public static EventLabel<BatchImminentRemovalObservationEvent> getEventLabelByAll() {
+	public static EventLabel<BatchImminentRemovalEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<BatchImminentRemovalObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, BatchImminentRemovalObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<BatchImminentRemovalEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, BatchImminentRemovalEvent.class, (context, event) -> ALL_LABEL);
 	}
 
 }

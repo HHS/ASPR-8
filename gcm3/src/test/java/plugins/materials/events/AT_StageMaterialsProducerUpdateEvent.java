@@ -16,8 +16,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = StageMaterialsProducerChangeObservationEvent.class)
-public class AT_StageMaterialsProducerChangeObservationEvent {
+@UnitTest(target = StageMaterialsProducerUpdateEvent.class)
+public class AT_StageMaterialsProducerUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { StageId.class, MaterialsProducerId.class, MaterialsProducerId.class })
@@ -31,9 +31,9 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		StageId stageId = new StageId(344);
 		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerChangeObservationEvent stageMaterialsProducerChangeObservationEvent = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId,
+		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		assertEquals(StageMaterialsProducerChangeObservationEvent.class, stageMaterialsProducerChangeObservationEvent.getPrimaryKeyValue());
+		assertEquals(StageMaterialsProducerUpdateEvent.class, stageMaterialsProducerUpdateEvent.getPrimaryKeyValue());
 	}
 
 	@Test
@@ -42,9 +42,9 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		StageId stageId = new StageId(344);
 		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerChangeObservationEvent stageMaterialsProducerChangeObservationEvent = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId,
+		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		assertEquals(stageId, stageMaterialsProducerChangeObservationEvent.getStageId());
+		assertEquals(stageId, stageMaterialsProducerUpdateEvent.getStageId());
 	}
 
 	@Test
@@ -53,9 +53,9 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		StageId stageId = new StageId(344);
 		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerChangeObservationEvent stageMaterialsProducerChangeObservationEvent = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId,
+		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		assertEquals(previousMaterialsProducerId, stageMaterialsProducerChangeObservationEvent.getPreviousMaterialsProducerId());
+		assertEquals(previousMaterialsProducerId, stageMaterialsProducerUpdateEvent.getPreviousMaterialsProducerId());
 	}
 
 	@Test
@@ -64,9 +64,9 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		StageId stageId = new StageId(344);
 		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerChangeObservationEvent stageMaterialsProducerChangeObservationEvent = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId,
+		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		assertEquals(currentMaterialsProducerId, stageMaterialsProducerChangeObservationEvent.getCurrentMaterialsProducerId());
+		assertEquals(currentMaterialsProducerId, stageMaterialsProducerUpdateEvent.getCurrentMaterialsProducerId());
 	}
 
 	@Test
@@ -75,10 +75,10 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		StageId stageId = new StageId(344);
 		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerChangeObservationEvent stageMaterialsProducerChangeObservationEvent = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId,
+		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		String expectedValue = "StageMaterialsProducerChangeObservationEvent [stageId=344, previousMaterialsProducerId=MATERIALS_PRODUCER_1, currentMaterialsProducerId=MATERIALS_PRODUCER_2]";
-		String actualValue = stageMaterialsProducerChangeObservationEvent.toString();
+		String expectedValue = "StageMaterialsProducerUpdateEvent [stageId=344, previousMaterialsProducerId=MATERIALS_PRODUCER_1, currentMaterialsProducerId=MATERIALS_PRODUCER_2]";
+		String actualValue = stageMaterialsProducerUpdateEvent.toString();
 		assertEquals(expectedValue, actualValue);
 	}
 
@@ -88,10 +88,10 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 
 		MaterialsActionSupport.testConsumer(5070867343126122585L, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				EventLabel<StageMaterialsProducerChangeObservationEvent> eventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelByDestination(c, testMaterialsProducerId);
-				assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getEventClass());
-				assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelByDestination(c, testMaterialsProducerId).getLabelerId(), eventLabel.getLabelerId());
+				EventLabel<StageMaterialsProducerUpdateEvent> eventLabel = StageMaterialsProducerUpdateEvent.getEventLabelByDestination(c, testMaterialsProducerId);
+				assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getEventClass());
+				assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByDestination(c, testMaterialsProducerId).getLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -103,30 +103,30 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		MaterialsActionSupport.testConsumer(1319347369419715424L, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler = StageMaterialsProducerChangeObservationEvent.getEventLabelerForDestination();
-			assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler = StageMaterialsProducerUpdateEvent.getEventLabelerForDestination();
+			assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestMaterialsProducerId previousMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = new StageId(i);
-						assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelByDestination(c, currentMaterialsProducerId).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByDestination(c, currentMaterialsProducerId).getLabelerId(), eventLabeler.getId());
 
 						// show that the event labeler produces the expected
 						// event
 						// label
 
 						// create an event
-						StageMaterialsProducerChangeObservationEvent event = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
+						StageMaterialsProducerUpdateEvent event = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
 
 						// derive the expected event label for this event
-						EventLabel<StageMaterialsProducerChangeObservationEvent> expectedEventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelByDestination(c,
+						EventLabel<StageMaterialsProducerUpdateEvent> expectedEventLabel = StageMaterialsProducerUpdateEvent.getEventLabelByDestination(c,
 								currentMaterialsProducerId);
 
 						// have the event labeler produce an event label and
 						// show it
 						// is equal to the expected event label
-						EventLabel<StageMaterialsProducerChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+						EventLabel<StageMaterialsProducerUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 						assertEquals(expectedEventLabel, actualEventLabel);
 					}
 				}
@@ -141,10 +141,10 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 
 		MaterialsActionSupport.testConsumer(1144625150509891316L, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				EventLabel<StageMaterialsProducerChangeObservationEvent> eventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelBySource(c, testMaterialsProducerId);
-				assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getEventClass());
-				assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelBySource(c, testMaterialsProducerId).getLabelerId(), eventLabel.getLabelerId());
+				EventLabel<StageMaterialsProducerUpdateEvent> eventLabel = StageMaterialsProducerUpdateEvent.getEventLabelBySource(c, testMaterialsProducerId);
+				assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getEventClass());
+				assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelBySource(c, testMaterialsProducerId).getLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 
@@ -157,30 +157,30 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		MaterialsActionSupport.testConsumer(4315809780717887025L, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler = StageMaterialsProducerChangeObservationEvent.getEventLabelerForSource();
-			assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler = StageMaterialsProducerUpdateEvent.getEventLabelerForSource();
+			assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestMaterialsProducerId previousMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = new StageId(i);
-						assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelBySource(c, previousMaterialsProducerId).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelBySource(c, previousMaterialsProducerId).getLabelerId(), eventLabeler.getId());
 
 						// show that the event labeler produces the expected
 						// event
 						// label
 
 						// create an event
-						StageMaterialsProducerChangeObservationEvent event = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
+						StageMaterialsProducerUpdateEvent event = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
 
 						// derive the expected event label for this event
-						EventLabel<StageMaterialsProducerChangeObservationEvent> expectedEventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelBySource(c,
+						EventLabel<StageMaterialsProducerUpdateEvent> expectedEventLabel = StageMaterialsProducerUpdateEvent.getEventLabelBySource(c,
 								previousMaterialsProducerId);
 
 						// have the event labeler produce an event label and
 						// show it
 						// is equal to the expected event label
-						EventLabel<StageMaterialsProducerChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+						EventLabel<StageMaterialsProducerUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 						assertEquals(expectedEventLabel, actualEventLabel);
 					}
 				}
@@ -197,10 +197,10 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-				EventLabel<StageMaterialsProducerChangeObservationEvent> eventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelByStage(c, stageId);
-				assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getEventClass());
-				assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabel.getLabelerId());
+				EventLabel<StageMaterialsProducerUpdateEvent> eventLabel = StageMaterialsProducerUpdateEvent.getEventLabelByStage(c, stageId);
+				assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getEventClass());
+				assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -214,14 +214,14 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler = StageMaterialsProducerChangeObservationEvent.getEventLabelerForStage();
-			assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler = StageMaterialsProducerUpdateEvent.getEventLabelerForStage();
+			assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestMaterialsProducerId previousMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-						assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getId());
 
 						/*
 						 * show that the event labeler produces the expected
@@ -229,15 +229,15 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 						 */
 
 						// create an event
-						StageMaterialsProducerChangeObservationEvent event = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
+						StageMaterialsProducerUpdateEvent event = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
 
 						// derive the expected event label for this event
-						EventLabel<StageMaterialsProducerChangeObservationEvent> expectedEventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelByStage(c, stageId);
+						EventLabel<StageMaterialsProducerUpdateEvent> expectedEventLabel = StageMaterialsProducerUpdateEvent.getEventLabelByStage(c, stageId);
 
 						// have the event labeler produce an event label and
 						// show it
 						// is equal to the expected event label
-						EventLabel<StageMaterialsProducerChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+						EventLabel<StageMaterialsProducerUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 						assertEquals(expectedEventLabel, actualEventLabel);
 					}
 				}
@@ -250,10 +250,10 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 	public void testGetEventLabelByAll() {
 
 		MaterialsActionSupport.testConsumer(147633233074528056L, (c) -> {
-			EventLabel<StageMaterialsProducerChangeObservationEvent> eventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelByAll(c);
-			assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getEventClass());
-			assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-			assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelByAll(c).getLabelerId(), eventLabel.getLabelerId());
+			EventLabel<StageMaterialsProducerUpdateEvent> eventLabel = StageMaterialsProducerUpdateEvent.getEventLabelByAll(c);
+			assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getEventClass());
+			assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+			assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabel.getLabelerId());
 		});
 
 	}
@@ -265,29 +265,29 @@ public class AT_StageMaterialsProducerChangeObservationEvent {
 		MaterialsActionSupport.testConsumer(4336563584188708581L, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<StageMaterialsProducerChangeObservationEvent> eventLabeler = StageMaterialsProducerChangeObservationEvent.getEventLabelerForAll();
-			assertEquals(StageMaterialsProducerChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler = StageMaterialsProducerUpdateEvent.getEventLabelerForAll();
+			assertEquals(StageMaterialsProducerUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestMaterialsProducerId previousMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = new StageId(i);
-						assertEquals(StageMaterialsProducerChangeObservationEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getId());
 
 						// show that the event labeler produces the expected
 						// event
 						// label
 
 						// create an event
-						StageMaterialsProducerChangeObservationEvent event = new StageMaterialsProducerChangeObservationEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
+						StageMaterialsProducerUpdateEvent event = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId, currentMaterialsProducerId);
 
 						// derive the expected event label for this event
-						EventLabel<StageMaterialsProducerChangeObservationEvent> expectedEventLabel = StageMaterialsProducerChangeObservationEvent.getEventLabelByAll(c);
+						EventLabel<StageMaterialsProducerUpdateEvent> expectedEventLabel = StageMaterialsProducerUpdateEvent.getEventLabelByAll(c);
 
 						// have the event labeler produce an event label and
 						// show it
 						// is equal to the expected event label
-						EventLabel<StageMaterialsProducerChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+						EventLabel<StageMaterialsProducerUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 						assertEquals(expectedEventLabel, actualEventLabel);
 					}
 				}

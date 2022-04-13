@@ -2,7 +2,7 @@ package plugins.materials.actors;
 
 import nucleus.ActorContext;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.MaterialsProducerResourceChangeObservationEvent;
+import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -71,12 +71,12 @@ public final class MaterialsProducerResourceReport {
 		return reportHeader;
 	}
 
-	private void handleMaterialsProducerResourceChangeObservationEvent(ActorContext actorContext,MaterialsProducerResourceChangeObservationEvent materialsProducerResourceChangeObservationEvent) {
-		long currentResourceLevel = materialsProducerResourceChangeObservationEvent.getCurrentResourceLevel();
-		long previousResourceLevel = materialsProducerResourceChangeObservationEvent.getPreviousResourceLevel();
+	private void handleMaterialsProducerResourceUpdateEvent(ActorContext actorContext,MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
+		long currentResourceLevel = materialsProducerResourceUpdateEvent.getCurrentResourceLevel();
+		long previousResourceLevel = materialsProducerResourceUpdateEvent.getPreviousResourceLevel();
 		long amount = currentResourceLevel - previousResourceLevel;
-		ResourceId resourceId = materialsProducerResourceChangeObservationEvent.getResourceId();
-		MaterialsProducerId materialsProducerId = materialsProducerResourceChangeObservationEvent.getMaterialsProducerId();
+		ResourceId resourceId = materialsProducerResourceUpdateEvent.getResourceId();
+		MaterialsProducerId materialsProducerId = materialsProducerResourceUpdateEvent.getMaterialsProducerId();
 		if (amount > 0) {
 			writeReportItem(actorContext,resourceId, materialsProducerId, Action.ADDED, amount);
 		} else {
@@ -99,7 +99,7 @@ public final class MaterialsProducerResourceReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(MaterialsProducerResourceChangeObservationEvent.class,this::handleMaterialsProducerResourceChangeObservationEvent);
+		actorContext.subscribe(MaterialsProducerResourceUpdateEvent.class,this::handleMaterialsProducerResourceUpdateEvent);
 
 		ResourceDataManager resourceDataManager = actorContext.getDataManager(ResourceDataManager.class).get();
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();

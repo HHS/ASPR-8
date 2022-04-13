@@ -17,8 +17,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = BulkPersonCreationObservationEvent.class)
-public class AT_BulkPersonCreationObservationEvent implements Event {
+@UnitTest(target = BulkPersonAdditionEvent.class)
+public class AT_BulkPersonAdditionEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, BulkPersonConstructionData.class })
@@ -28,10 +28,10 @@ public class AT_BulkPersonCreationObservationEvent implements Event {
 		PersonId personId = new PersonId(0);
 		BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().build();
 
-		ContractException contractException = assertThrows(ContractException.class, () -> new BulkPersonCreationObservationEvent(null, bulkPersonConstructionData));
+		ContractException contractException = assertThrows(ContractException.class, () -> new BulkPersonAdditionEvent(null, bulkPersonConstructionData));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new BulkPersonCreationObservationEvent(personId, null));
+		contractException = assertThrows(ContractException.class, () -> new BulkPersonAdditionEvent(personId, null));
 		assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 
 	}
@@ -44,8 +44,8 @@ public class AT_BulkPersonCreationObservationEvent implements Event {
 
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
-			BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent = new BulkPersonCreationObservationEvent(personId, bulkPersonConstructionData);
-			assertEquals(personId, bulkPersonCreationObservationEvent.getPersonId());
+			BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(personId, bulkPersonConstructionData);
+			assertEquals(personId, bulkPersonAdditionEvent.getPersonId());
 		}
 
 	}
@@ -55,8 +55,8 @@ public class AT_BulkPersonCreationObservationEvent implements Event {
 	public void testGetBulkPersonConstructionData() {
 		PersonId personId = new PersonId(45);
 		BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().build();
-		BulkPersonCreationObservationEvent bulkPersonCreationObservationEvent = new BulkPersonCreationObservationEvent(personId, bulkPersonConstructionData);
-		assertEquals(bulkPersonConstructionData, bulkPersonCreationObservationEvent.getBulkPersonConstructionData());
+		BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(personId, bulkPersonConstructionData);
+		assertEquals(bulkPersonConstructionData, bulkPersonAdditionEvent.getBulkPersonConstructionData());
 	}
 
 	
@@ -64,10 +64,10 @@ public class AT_BulkPersonCreationObservationEvent implements Event {
 	@Test
 	@UnitTestMethod(name = "getEventLabel", args = {})
 	public void testGetEventLabel() {
-		EventLabel<BulkPersonCreationObservationEvent> eventLabel = BulkPersonCreationObservationEvent.getEventLabel();
-		assertEquals(BulkPersonCreationObservationEvent.class, eventLabel.getEventClass());
-		assertEquals(BulkPersonCreationObservationEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(BulkPersonCreationObservationEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+		EventLabel<BulkPersonAdditionEvent> eventLabel = BulkPersonAdditionEvent.getEventLabel();
+		assertEquals(BulkPersonAdditionEvent.class, eventLabel.getEventClass());
+		assertEquals(BulkPersonAdditionEvent.class, eventLabel.getPrimaryKeyValue());
+		assertEquals(BulkPersonAdditionEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
 	}
 
 	@Test
@@ -76,23 +76,23 @@ public class AT_BulkPersonCreationObservationEvent implements Event {
 		PeopleActionSupport.testConsumer(0,(c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<BulkPersonCreationObservationEvent> eventLabeler = BulkPersonCreationObservationEvent.getEventLabeler();
-			assertEquals(BulkPersonCreationObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<BulkPersonAdditionEvent> eventLabeler = BulkPersonAdditionEvent.getEventLabeler();
+			assertEquals(BulkPersonAdditionEvent.class, eventLabeler.getEventClass());
 
-			assertEquals(BulkPersonCreationObservationEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
+			assertEquals(BulkPersonAdditionEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
 
 			// show that the event labeler produces the expected event
 			// label
 
 			// create an event			
-			BulkPersonCreationObservationEvent event = new BulkPersonCreationObservationEvent(new PersonId(0), BulkPersonConstructionData.builder().build());
+			BulkPersonAdditionEvent event = new BulkPersonAdditionEvent(new PersonId(0), BulkPersonConstructionData.builder().build());
 
 			// derive the expected event label for this event
-			EventLabel<BulkPersonCreationObservationEvent> expectedEventLabel = BulkPersonCreationObservationEvent.getEventLabel();
+			EventLabel<BulkPersonAdditionEvent> expectedEventLabel = BulkPersonAdditionEvent.getEventLabel();
 
 			// have the event labeler produce an event label and show it
 			// is equal to the expected event label
-			EventLabel<BulkPersonCreationObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+			EventLabel<BulkPersonAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 			assertEquals(expectedEventLabel, actualEventLabel);
 
 		});

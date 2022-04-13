@@ -22,9 +22,9 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import plugins.people.events.BulkPersonCreationObservationEvent;
-import plugins.people.events.PersonCreationObservationEvent;
-import plugins.people.events.PersonImminentRemovalObservationEvent;
+import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -124,7 +124,7 @@ public final class AT_PersonDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(PersonCreationObservationEvent.getEventLabel(), (c2, e) -> observedPersonIds.add(e.getPersonId()));
+			c.subscribe(PersonAdditionEvent.getEventLabel(), (c2, e) -> observedPersonIds.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people and show they were added
@@ -175,7 +175,7 @@ public final class AT_PersonDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BulkPersonCreationObservationEvent.getEventLabel(), (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
+			c.subscribe(BulkPersonAdditionEvent.getEventLabel(), (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
 		}));
 
 		// have the agent add a bulk people and show the people were added
@@ -300,7 +300,7 @@ public final class AT_PersonDataManager {
 		// have the observer subscribe to the removals and record them onto the
 		// observed removals
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-			c.subscribe(PersonImminentRemovalObservationEvent.getEventLabel(), (c2, e) -> observedRemovals.add(e.getPersonId()));
+			c.subscribe(PersonImminentRemovalEvent.getEventLabel(), (c2, e) -> observedRemovals.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people
@@ -464,8 +464,8 @@ public final class AT_PersonDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonCreationObservationEventLabelers() {
-		EventLabeler<PersonCreationObservationEvent> eventLabeler = PersonCreationObservationEvent.getEventLabeler();
+	public void testPersonAdditionEventLabelers() {
+		EventLabeler<PersonAdditionEvent> eventLabeler = PersonAdditionEvent.getEventLabeler();
 		PeopleActionSupport.testConsumer(0,(c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -474,8 +474,8 @@ public final class AT_PersonDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonImminentRemovalObservationEventLabelers() {
-		EventLabeler<PersonImminentRemovalObservationEvent> eventLabeler = PersonImminentRemovalObservationEvent.getEventLabeler();
+	public void testPersonImminentRemovalEventLabelers() {
+		EventLabeler<PersonImminentRemovalEvent> eventLabeler = PersonImminentRemovalEvent.getEventLabeler();
 		PeopleActionSupport.testConsumer(0,(c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
@@ -484,8 +484,8 @@ public final class AT_PersonDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBulkPersonCreationObservationEventLabelers() {
-		EventLabeler<BulkPersonCreationObservationEvent> eventLabeler = BulkPersonCreationObservationEvent.getEventLabeler();
+	public void testBulkPersonAdditionEventLabelers() {
+		EventLabeler<BulkPersonAdditionEvent> eventLabeler = BulkPersonAdditionEvent.getEventLabeler();
 		PeopleActionSupport.testConsumer(0,(c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());

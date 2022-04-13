@@ -24,7 +24,7 @@ import nucleus.ActorContext;
 import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
@@ -203,12 +203,12 @@ public class AT_PopulationPartitionImpl {
 				Boolean b1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_1);
 				
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, !b0);				
-				populationPartition.handleEvent(new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, b0, !b0));
+				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, b0, !b0));
 				
 				assertEquals(!b0, populationPartition.contains(personId));
 				
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, !b1);				
-				populationPartition.handleEvent(new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_1, b1, !b1));
+				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_1, b1, !b1));
 				
 				if(!b0) {
 					LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, !b1).build();
@@ -292,7 +292,7 @@ public class AT_PopulationPartitionImpl {
 			for (PersonId personId : expectedPeople) {
 				expectedPeopleCount--;
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, false);				
-				populationPartition.handleEvent(new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, true, false));
+				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, true, false));
 				assertEquals(expectedPeopleCount, populationPartition.getPeopleCount());
 			}
 		});

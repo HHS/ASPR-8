@@ -6,10 +6,10 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import plugins.people.PersonDataManager;
-import plugins.people.events.PersonCreationObservationEvent;
+import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
@@ -98,15 +98,15 @@ public final class RegionTransferReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonCreationObservationEvent(ActorContext ActorContext, PersonCreationObservationEvent personCreationObservationEvent) {
-		PersonId personId = personCreationObservationEvent.getPersonId();
+	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
+		PersonId personId = personAdditionEvent.getPersonId();
 		final RegionId regionId = regionDataManager.getPersonRegion(personId);
 		increment(regionId, regionId);
 	}
 
-	private void handlePersonRegionChangeObservationEvent(ActorContext ActorContext, PersonRegionChangeObservationEvent personRegionChangeObservationEvent) {
-		RegionId previousRegionId = personRegionChangeObservationEvent.getPreviousRegionId();
-		RegionId currentRegionId = personRegionChangeObservationEvent.getCurrentRegionId();
+	private void handlePersonRegionUpdateEvent(ActorContext ActorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+		RegionId previousRegionId = personRegionUpdateEvent.getPreviousRegionId();
+		RegionId currentRegionId = personRegionUpdateEvent.getCurrentRegionId();
 		increment(previousRegionId, currentRegionId);
 	}
 
@@ -124,8 +124,8 @@ public final class RegionTransferReport extends PeriodicReport {
 	public void init(final ActorContext ActorContext) {
 		super.init(ActorContext);
 
-		ActorContext.subscribe(PersonCreationObservationEvent.class, this::handlePersonCreationObservationEvent);
-		ActorContext.subscribe(PersonRegionChangeObservationEvent.class, this::handlePersonRegionChangeObservationEvent);
+		ActorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		ActorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		PersonDataManager personDataManager = ActorContext.getDataManager(PersonDataManager.class).get();
 		regionDataManager = ActorContext.getDataManager(RegionDataManager.class).get();

@@ -15,8 +15,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = StageOfferChangeObservationEvent.class)
-public class AT_StageOfferChangeObservationEvent {
+@UnitTest(target = StageOfferUpdateEvent.class)
+public class AT_StageOfferUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { StageId.class, boolean.class, boolean.class })
@@ -36,8 +36,8 @@ public class AT_StageOfferChangeObservationEvent {
 		StageId stageId = new StageId(543);
 		boolean previousOfferState = true;
 		boolean currentOfferState = false;
-		StageOfferChangeObservationEvent stageOfferChangeObservationEvent = new StageOfferChangeObservationEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(stageId, stageOfferChangeObservationEvent.getStageId());
+		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
+		assertEquals(stageId, stageOfferUpdateEvent.getStageId());
 	}
 
 	@Test
@@ -46,8 +46,8 @@ public class AT_StageOfferChangeObservationEvent {
 		StageId stageId = new StageId(543);
 		boolean previousOfferState = true;
 		boolean currentOfferState = false;
-		StageOfferChangeObservationEvent stageOfferChangeObservationEvent = new StageOfferChangeObservationEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(previousOfferState, stageOfferChangeObservationEvent.isPreviousOfferState());
+		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
+		assertEquals(previousOfferState, stageOfferUpdateEvent.isPreviousOfferState());
 	}
 
 	@Test
@@ -56,8 +56,8 @@ public class AT_StageOfferChangeObservationEvent {
 		StageId stageId = new StageId(543);
 		boolean previousOfferState = true;
 		boolean currentOfferState = false;
-		StageOfferChangeObservationEvent stageOfferChangeObservationEvent = new StageOfferChangeObservationEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(currentOfferState, stageOfferChangeObservationEvent.isCurrentOfferState());
+		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
+		assertEquals(currentOfferState, stageOfferUpdateEvent.isCurrentOfferState());
 	}
 
 	@Test
@@ -66,8 +66,8 @@ public class AT_StageOfferChangeObservationEvent {
 		StageId stageId = new StageId(543);
 		boolean previousOfferState = true;
 		boolean currentOfferState = false;
-		StageOfferChangeObservationEvent stageOfferChangeObservationEvent = new StageOfferChangeObservationEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals("StageOfferChangeObservationEvent [stageId=543, previousOfferState=true, currentOfferState=false]", stageOfferChangeObservationEvent.toString());
+		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
+		assertEquals("StageOfferUpdateEvent [stageId=543, previousOfferState=true, currentOfferState=false]", stageOfferUpdateEvent.toString());
 	}
 
 	@Test
@@ -78,10 +78,10 @@ public class AT_StageOfferChangeObservationEvent {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_2);
-				EventLabel<StageOfferChangeObservationEvent> eventLabel = StageOfferChangeObservationEvent.getEventLabelByStage(c, stageId);
-				assertEquals(StageOfferChangeObservationEvent.class, eventLabel.getEventClass());
-				assertEquals(StageOfferChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(StageOfferChangeObservationEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabel.getLabelerId());
+				EventLabel<StageOfferUpdateEvent> eventLabel = StageOfferUpdateEvent.getEventLabelByStage(c, stageId);
+				assertEquals(StageOfferUpdateEvent.class, eventLabel.getEventClass());
+				assertEquals(StageOfferUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(StageOfferUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -95,27 +95,27 @@ public class AT_StageOfferChangeObservationEvent {
 
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<StageOfferChangeObservationEvent> eventLabeler = StageOfferChangeObservationEvent.getEventLabelerForStage();
-			assertEquals(StageOfferChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<StageOfferUpdateEvent> eventLabeler = StageOfferUpdateEvent.getEventLabelerForStage();
+			assertEquals(StageOfferUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_3);
-				assertEquals(StageOfferChangeObservationEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getId());
+				assertEquals(StageOfferUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getId());
 
 				/*
 				 * show that the event labeler produces the expected event label
 				 */
 
 				// create an event
-				StageOfferChangeObservationEvent event = new StageOfferChangeObservationEvent(stageId, true, false);
+				StageOfferUpdateEvent event = new StageOfferUpdateEvent(stageId, true, false);
 
 				// derive the expected event label for this event
-				EventLabel<StageOfferChangeObservationEvent> expectedEventLabel = StageOfferChangeObservationEvent.getEventLabelByStage(c, stageId);
+				EventLabel<StageOfferUpdateEvent> expectedEventLabel = StageOfferUpdateEvent.getEventLabelByStage(c, stageId);
 
 				// have the event labeler produce an event label and
 				// show it
 				// is equal to the expected event label
-				EventLabel<StageOfferChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<StageOfferUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 				assertEquals(expectedEventLabel, actualEventLabel);
 			}
 		});
@@ -126,10 +126,10 @@ public class AT_StageOfferChangeObservationEvent {
 	@UnitTestMethod(name = "getEventLabelByAll", args = { SimulationContext.class })
 	public void testGetEventLabelByAll() {
 		MaterialsActionSupport.testConsumer(7385651282696514403L, (c) -> {
-			EventLabel<StageOfferChangeObservationEvent> eventLabel = StageOfferChangeObservationEvent.getEventLabelByAll(c);
-			assertEquals(StageOfferChangeObservationEvent.class, eventLabel.getEventClass());
-			assertEquals(StageOfferChangeObservationEvent.class, eventLabel.getPrimaryKeyValue());
-			assertEquals(StageOfferChangeObservationEvent.getEventLabelByAll(c).getLabelerId(), eventLabel.getLabelerId());
+			EventLabel<StageOfferUpdateEvent> eventLabel = StageOfferUpdateEvent.getEventLabelByAll(c);
+			assertEquals(StageOfferUpdateEvent.class, eventLabel.getEventClass());
+			assertEquals(StageOfferUpdateEvent.class, eventLabel.getPrimaryKeyValue());
+			assertEquals(StageOfferUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabel.getLabelerId());
 		});
 	}
 
@@ -142,27 +142,27 @@ public class AT_StageOfferChangeObservationEvent {
 
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<StageOfferChangeObservationEvent> eventLabeler = StageOfferChangeObservationEvent.getEventLabelerForAll();
-			assertEquals(StageOfferChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<StageOfferUpdateEvent> eventLabeler = StageOfferUpdateEvent.getEventLabelerForAll();
+			assertEquals(StageOfferUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-				assertEquals(StageOfferChangeObservationEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getId());
+				assertEquals(StageOfferUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getId());
 
 				/*
 				 * show that the event labeler produces the expected event label
 				 */
 
 				// create an event
-				StageOfferChangeObservationEvent event = new StageOfferChangeObservationEvent(stageId, true, false);
+				StageOfferUpdateEvent event = new StageOfferUpdateEvent(stageId, true, false);
 
 				// derive the expected event label for this event
-				EventLabel<StageOfferChangeObservationEvent> expectedEventLabel = StageOfferChangeObservationEvent.getEventLabelByAll(c);
+				EventLabel<StageOfferUpdateEvent> expectedEventLabel = StageOfferUpdateEvent.getEventLabelByAll(c);
 
 				// have the event labeler produce an event label and
 				// show it
 				// is equal to the expected event label
-				EventLabel<StageOfferChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<StageOfferUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 				assertEquals(expectedEventLabel, actualEventLabel);
 			}
 		});

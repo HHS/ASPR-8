@@ -16,8 +16,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = MaterialsProducerResourceChangeObservationEvent.class)
-public class AT_MaterialsProducerResourceChangeObservationEvent {
+@UnitTest(target = MaterialsProducerResourceUpdateEvent.class)
+public class AT_MaterialsProducerResourceUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { MaterialsProducerId.class, ResourceId.class, long.class, long.class })
@@ -32,9 +32,9 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long previousResourceLevel = 23L;
 		long currentResourceLevel = 346L;
-		MaterialsProducerResourceChangeObservationEvent materialsProducerResourceChangeObservationEvent = new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId,
+		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, materialsProducerResourceChangeObservationEvent.getPrimaryKeyValue());
+		assertEquals(resourceId, materialsProducerResourceUpdateEvent.getPrimaryKeyValue());
 	}
 
 	@Test
@@ -44,9 +44,9 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long previousResourceLevel = 23L;
 		long currentResourceLevel = 346L;
-		MaterialsProducerResourceChangeObservationEvent materialsProducerResourceChangeObservationEvent = new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId,
+		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(materialsProducerId, materialsProducerResourceChangeObservationEvent.getMaterialsProducerId());
+		assertEquals(materialsProducerId, materialsProducerResourceUpdateEvent.getMaterialsProducerId());
 	}
 
 	@Test
@@ -56,9 +56,9 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long previousResourceLevel = 23L;
 		long currentResourceLevel = 346L;
-		MaterialsProducerResourceChangeObservationEvent materialsProducerResourceChangeObservationEvent = new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId,
+		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, materialsProducerResourceChangeObservationEvent.getResourceId());
+		assertEquals(resourceId, materialsProducerResourceUpdateEvent.getResourceId());
 	}
 
 	@Test
@@ -68,9 +68,9 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long previousResourceLevel = 23L;
 		long currentResourceLevel = 346L;
-		MaterialsProducerResourceChangeObservationEvent materialsProducerResourceChangeObservationEvent = new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId,
+		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, materialsProducerResourceChangeObservationEvent.getPreviousResourceLevel());
+		assertEquals(previousResourceLevel, materialsProducerResourceUpdateEvent.getPreviousResourceLevel());
 	}
 
 	@Test
@@ -80,9 +80,9 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long previousResourceLevel = 23L;
 		long currentResourceLevel = 346L;
-		MaterialsProducerResourceChangeObservationEvent materialsProducerResourceChangeObservationEvent = new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId,
+		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, materialsProducerResourceChangeObservationEvent.getCurrentResourceLevel());
+		assertEquals(currentResourceLevel, materialsProducerResourceUpdateEvent.getCurrentResourceLevel());
 	}
 
 	@Test
@@ -92,10 +92,10 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		ResourceId resourceId = TestResourceId.RESOURCE_4;
 		long previousResourceLevel = 23L;
 		long currentResourceLevel = 346L;
-		MaterialsProducerResourceChangeObservationEvent materialsProducerResourceChangeObservationEvent = new MaterialsProducerResourceChangeObservationEvent(materialsProducerId, resourceId,
+		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		String expectedValue = "MaterialsProducerResourceChangeObservationEvent [materialsProducerId=MATERIALS_PRODUCER_3, resourceId=RESOURCE_4, previousResourceLevel=23, currentResourceLevel=346]";
-		String actualValue = materialsProducerResourceChangeObservationEvent.toString();
+		String expectedValue = "MaterialsProducerResourceUpdateEvent [materialsProducerId=MATERIALS_PRODUCER_3, resourceId=RESOURCE_4, previousResourceLevel=23, currentResourceLevel=346]";
+		String actualValue = materialsProducerResourceUpdateEvent.toString();
 		assertEquals(expectedValue, actualValue);
 	}
 
@@ -105,11 +105,11 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		MaterialsActionSupport.testConsumer(7613656660266127922L, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventLabel<MaterialsProducerResourceChangeObservationEvent> eventLabel = MaterialsProducerResourceChangeObservationEvent.getEventLabelByMaterialsProducerAndResource(c,
+					EventLabel<MaterialsProducerResourceUpdateEvent> eventLabel = MaterialsProducerResourceUpdateEvent.getEventLabelByMaterialsProducerAndResource(c,
 							testMaterialsProducerId, testResourceId);
-					assertEquals(MaterialsProducerResourceChangeObservationEvent.class, eventLabel.getEventClass());
+					assertEquals(MaterialsProducerResourceUpdateEvent.class, eventLabel.getEventClass());
 					assertEquals(testResourceId, eventLabel.getPrimaryKeyValue());
-					assertEquals(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForMaterialsProducerAndResource().getId(), eventLabel.getLabelerId());
+					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource().getId(), eventLabel.getLabelerId());
 				}
 			}
 		});
@@ -121,26 +121,26 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		MaterialsActionSupport.testConsumer(3426923014578127127L, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<MaterialsProducerResourceChangeObservationEvent> eventLabeler = MaterialsProducerResourceChangeObservationEvent.getEventLabelerForMaterialsProducerAndResource();
-			assertEquals(MaterialsProducerResourceChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<MaterialsProducerResourceUpdateEvent> eventLabeler = MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource();
+			assertEquals(MaterialsProducerResourceUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					assertEquals(MaterialsProducerResourceChangeObservationEvent.getEventLabelByMaterialsProducerAndResource(c, testMaterialsProducerId,testResourceId).getLabelerId(), eventLabeler.getId());
+					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelByMaterialsProducerAndResource(c, testMaterialsProducerId,testResourceId).getLabelerId(), eventLabeler.getId());
 
 					// show that the event labeler produces the expected event
 					// label
 
 					// create an event
-					MaterialsProducerResourceChangeObservationEvent event = new MaterialsProducerResourceChangeObservationEvent(testMaterialsProducerId, testResourceId, 45L,72L);
+					MaterialsProducerResourceUpdateEvent event = new MaterialsProducerResourceUpdateEvent(testMaterialsProducerId, testResourceId, 45L,72L);
 
 					// derive the expected event label for this event
-					EventLabel<MaterialsProducerResourceChangeObservationEvent> expectedEventLabel = MaterialsProducerResourceChangeObservationEvent.getEventLabelByMaterialsProducerAndResource(c,
+					EventLabel<MaterialsProducerResourceUpdateEvent> expectedEventLabel = MaterialsProducerResourceUpdateEvent.getEventLabelByMaterialsProducerAndResource(c,
 							testMaterialsProducerId,testResourceId);
 
 					// have the event labeler produce an event label and show it
 					// is equal to the expected event label
-					EventLabel<MaterialsProducerResourceChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<MaterialsProducerResourceUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 					assertEquals(expectedEventLabel, actualEventLabel);
 
 				}
@@ -153,10 +153,10 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 	public void testGetEventLabelByResource() {
 		MaterialsActionSupport.testConsumer(6642554036399629036L, (c) -> {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				EventLabel<MaterialsProducerResourceChangeObservationEvent> eventLabel = MaterialsProducerResourceChangeObservationEvent.getEventLabelByResource(c, testResourceId);
-				assertEquals(MaterialsProducerResourceChangeObservationEvent.class, eventLabel.getEventClass());
+				EventLabel<MaterialsProducerResourceUpdateEvent> eventLabel = MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c, testResourceId);
+				assertEquals(MaterialsProducerResourceUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(testResourceId, eventLabel.getPrimaryKeyValue());
-				assertEquals(MaterialsProducerResourceChangeObservationEvent.getEventLabelerForResource().getId(), eventLabel.getLabelerId());
+				assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource().getId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -168,26 +168,26 @@ public class AT_MaterialsProducerResourceChangeObservationEvent {
 		MaterialsActionSupport.testConsumer(1027156783814158843L, (c) -> {
 			// show that the event labeler can be constructed has the correct
 			// values
-			EventLabeler<MaterialsProducerResourceChangeObservationEvent> eventLabeler = MaterialsProducerResourceChangeObservationEvent.getEventLabelerForResource();
-			assertEquals(MaterialsProducerResourceChangeObservationEvent.class, eventLabeler.getEventClass());
+			EventLabeler<MaterialsProducerResourceUpdateEvent> eventLabeler = MaterialsProducerResourceUpdateEvent.getEventLabelerForResource();
+			assertEquals(MaterialsProducerResourceUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					assertEquals(MaterialsProducerResourceChangeObservationEvent.getEventLabelByResource(c, testResourceId).getLabelerId(), eventLabeler.getId());
+					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c, testResourceId).getLabelerId(), eventLabeler.getId());
 
 					// show that the event labeler produces the expected event
 					// label
 
 					// create an event
-					MaterialsProducerResourceChangeObservationEvent event = new MaterialsProducerResourceChangeObservationEvent(testMaterialsProducerId, testResourceId, 45L,72L);
+					MaterialsProducerResourceUpdateEvent event = new MaterialsProducerResourceUpdateEvent(testMaterialsProducerId, testResourceId, 45L,72L);
 
 					// derive the expected event label for this event
-					EventLabel<MaterialsProducerResourceChangeObservationEvent> expectedEventLabel = MaterialsProducerResourceChangeObservationEvent.getEventLabelByResource(c,
+					EventLabel<MaterialsProducerResourceUpdateEvent> expectedEventLabel = MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c,
 							testResourceId);
 
 					// have the event labeler produce an event label and show it
 					// is equal to the expected event label
-					EventLabel<MaterialsProducerResourceChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<MaterialsProducerResourceUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 					assertEquals(expectedEventLabel, actualEventLabel);
 
 				}

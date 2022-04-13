@@ -5,7 +5,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.events.ResourcePropertyChangeObservationEvent;
+import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
 
@@ -46,10 +46,10 @@ public final class ResourcePropertyReport {
 		return reportHeader;
 	}
 
-	private void handleResourcePropertyChangeObservationEvent(ActorContext actorContext,ResourcePropertyChangeObservationEvent resourcePropertyChangeObservationEvent) {
-		ResourceId resourceId = resourcePropertyChangeObservationEvent.getResourceId();
-		ResourcePropertyId resourcePropertyId = resourcePropertyChangeObservationEvent.getResourcePropertyId();
-		Object currentPropertyValue = resourcePropertyChangeObservationEvent.getCurrentPropertyValue();
+	private void handleResourcePropertyUpdateEvent(ActorContext actorContext,ResourcePropertyUpdateEvent resourcePropertyUpdateEvent) {
+		ResourceId resourceId = resourcePropertyUpdateEvent.getResourceId();
+		ResourcePropertyId resourcePropertyId = resourcePropertyUpdateEvent.getResourcePropertyId();
+		Object currentPropertyValue = resourcePropertyUpdateEvent.getCurrentPropertyValue();
 		writeProperty(actorContext,resourceId, resourcePropertyId,currentPropertyValue);
 	}
 
@@ -57,7 +57,7 @@ public final class ResourcePropertyReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(ResourcePropertyChangeObservationEvent.class,this::handleResourcePropertyChangeObservationEvent);
+		actorContext.subscribe(ResourcePropertyUpdateEvent.class,this::handleResourcePropertyUpdateEvent);
 
 		
 		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class).get();

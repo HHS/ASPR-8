@@ -22,7 +22,7 @@ import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
-import plugins.partitions.testsupport.attributes.events.AttributeChangeObservationEvent;
+import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
@@ -206,7 +206,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, !b0);				
-				populationPartition.handleEvent(new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, b0, !b0));
+				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, b0, !b0));
 
 				assertEquals(!b0, populationPartition.contains(personId));
 
@@ -280,7 +280,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			for (PersonId personId : expectedPeople) {
 				expectedPeopleCount--;
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, false);				
-				populationPartition.handleEvent(new AttributeChangeObservationEvent(personId, TestAttributeId.BOOLEAN_0, true, false));
+				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, true, false));
 				assertEquals(expectedPeopleCount, populationPartition.getPeopleCount());
 			}
 		});

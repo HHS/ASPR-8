@@ -13,12 +13,12 @@ import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
 import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.events.PersonResourceChangeObservationEvent;
+import plugins.resources.events.PersonResourceUpdateEvent;
 
 /**
  * A a labeler for resources. The dimension of the labeler is the given
  * {@linkplain ResourceId}, the event that stimulates a label update is
- * {@linkplain PersonResourceChangeObservationEvent} and the labeling function
+ * {@linkplain PersonResourceUpdateEvent} and the labeling function
  * is composed from the given Function.
  * 
  * @author Shawn Hatch
@@ -37,10 +37,10 @@ public final class ResourceLabeler implements Labeler {
 		this.resourceLabelingFunction = resourceLabelingFunction;
 	}
 
-	private Optional<PersonId> getPersonId(PersonResourceChangeObservationEvent personResourceChangeObservationEvent) {
+	private Optional<PersonId> getPersonId(PersonResourceUpdateEvent personResourceUpdateEvent) {
 		PersonId result = null;
-		if (personResourceChangeObservationEvent.getResourceId().equals(resourceId)) {
-			result = personResourceChangeObservationEvent.getPersonId();
+		if (personResourceUpdateEvent.getResourceId().equals(resourceId)) {
+			result = personResourceUpdateEvent.getPersonId();
 		}
 		return Optional.ofNullable(result);
 	}
@@ -48,7 +48,7 @@ public final class ResourceLabeler implements Labeler {
 	@Override
 	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new LabelerSensitivity<PersonResourceChangeObservationEvent>(PersonResourceChangeObservationEvent.class, this::getPersonId));
+		result.add(new LabelerSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
@@ -72,8 +72,8 @@ public final class ResourceLabeler implements Labeler {
 
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
-		PersonResourceChangeObservationEvent personResourceChangeObservationEvent = (PersonResourceChangeObservationEvent)event;
-		return resourceLabelingFunction.apply(personResourceChangeObservationEvent.getPreviousResourceLevel());
+		PersonResourceUpdateEvent personResourceUpdateEvent = (PersonResourceUpdateEvent)event;
+		return resourceLabelingFunction.apply(personResourceUpdateEvent.getPreviousResourceLevel());
 	}
 
 }

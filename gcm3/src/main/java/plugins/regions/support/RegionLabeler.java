@@ -13,12 +13,12 @@ import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
 
 /**
  * A labeler for regions. The dimension of the labeler is the
  * {@linkplain RegionId} class, the event that stimulates a label update is
- * {@linkplain PersonRegionChangeObservationEvent} and the labeling function is
+ * {@linkplain PersonRegionUpdateEvent} and the labeling function is
  * composed from the given Function.
  * 
  * @author Shawn Hatch
@@ -39,14 +39,14 @@ public final class RegionLabeler implements Labeler {
 		this.regionLabelingFunction = regionLabelingFunction;
 	}
 
-	private Optional<PersonId> getPersonId(PersonRegionChangeObservationEvent personRegionChangeObservationEvent) {
-		return Optional.of(personRegionChangeObservationEvent.getPersonId());
+	private Optional<PersonId> getPersonId(PersonRegionUpdateEvent personRegionUpdateEvent) {
+		return Optional.of(personRegionUpdateEvent.getPersonId());
 	}
 
 	@Override
 	public Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new LabelerSensitivity<PersonRegionChangeObservationEvent>(PersonRegionChangeObservationEvent.class, this::getPersonId));
+		result.add(new LabelerSensitivity<PersonRegionUpdateEvent>(PersonRegionUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
@@ -69,8 +69,8 @@ public final class RegionLabeler implements Labeler {
 
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
-		PersonRegionChangeObservationEvent personRegionChangeObservationEvent = (PersonRegionChangeObservationEvent) event;
-		return regionLabelingFunction.apply(personRegionChangeObservationEvent.getPreviousRegionId());
+		PersonRegionUpdateEvent personRegionUpdateEvent = (PersonRegionUpdateEvent) event;
+		return regionLabelingFunction.apply(personRegionUpdateEvent.getPreviousRegionId());
 	}
 
 }

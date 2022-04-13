@@ -10,8 +10,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = StageCreationObservationEvent.class)
-public class AT_StageCreationObservationEvent implements Event {
+@UnitTest(target = StageAdditionEvent.class)
+public class AT_StageAdditionEvent implements Event {
 	
 
 	@Test
@@ -24,8 +24,8 @@ public class AT_StageCreationObservationEvent implements Event {
 	@UnitTestMethod(name="getPrimaryKeyValue",args = {})
 	public void testGetPrimaryKeyValue() {
 		StageId stageId = new StageId(534);
-		StageCreationObservationEvent stageCreationObservationEvent = new StageCreationObservationEvent(stageId);
-		assertEquals(StageCreationObservationEvent.class,stageCreationObservationEvent.getPrimaryKeyValue());
+		StageAdditionEvent stageAdditionEvent = new StageAdditionEvent(stageId);
+		assertEquals(StageAdditionEvent.class,stageAdditionEvent.getPrimaryKeyValue());
 	}
 
 
@@ -33,16 +33,16 @@ public class AT_StageCreationObservationEvent implements Event {
 	@UnitTestMethod(name="getStageId",args = {})
 	public void testGetStageId() {
 		StageId stageId = new StageId(534);
-		StageCreationObservationEvent stageCreationObservationEvent = new StageCreationObservationEvent(stageId);
-		assertEquals(stageId,stageCreationObservationEvent.getStageId());
+		StageAdditionEvent stageAdditionEvent = new StageAdditionEvent(stageId);
+		assertEquals(stageId,stageAdditionEvent.getStageId());
 	}
 
 	@Test
 	@UnitTestMethod(name="toString",args = {})
 	public void testToString() {
 		StageId stageId = new StageId(534);
-		StageCreationObservationEvent stageCreationObservationEvent = new StageCreationObservationEvent(stageId);
-		assertEquals("StageCreation [stageId=534]",stageCreationObservationEvent.toString());
+		StageAdditionEvent stageAdditionEvent = new StageAdditionEvent(stageId);
+		assertEquals("StageCreation [stageId=534]",stageAdditionEvent.toString());
 	}
 
 }

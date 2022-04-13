@@ -12,8 +12,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = AttributeChangeObservationEvent.class)
-public class AT_AttributeChangeObservationEvent implements Event {
+@UnitTest(target = AttributeUpdateEvent.class)
+public class AT_AttributeUpdateEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, AttributeId.class, Object.class, Object.class })
@@ -28,8 +28,8 @@ public class AT_AttributeChangeObservationEvent implements Event {
 		AttributeId attributeId = TestAttributeId.INT_0;
 		for (int i = 0; i < 10; i++) {
 			int currentValue = i * 2 + 3;
-			AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, attributeId, 0, currentValue);
-			assertEquals(currentValue, attributeChangeObservationEvent.getCurrentValue());
+			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, attributeId, 0, currentValue);
+			assertEquals(currentValue, attributeUpdateEvent.getCurrentValue());
 		}
 	}
 
@@ -38,8 +38,8 @@ public class AT_AttributeChangeObservationEvent implements Event {
 	public void testGetAttributeId() {
 		PersonId personId = new PersonId(10);
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, testAttributeId, false, true);
-			assertEquals(testAttributeId, attributeChangeObservationEvent.getAttributeId());
+			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, testAttributeId, false, true);
+			assertEquals(testAttributeId, attributeUpdateEvent.getAttributeId());
 		}
 
 	}
@@ -50,8 +50,8 @@ public class AT_AttributeChangeObservationEvent implements Event {
 		AttributeId attributeId = TestAttributeId.BOOLEAN_0;
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
-			AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, attributeId, false, true);
-			assertEquals(personId, attributeChangeObservationEvent.getPersonId());
+			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, attributeId, false, true);
+			assertEquals(personId, attributeUpdateEvent.getPersonId());
 		}
 	}
 
@@ -62,8 +62,8 @@ public class AT_AttributeChangeObservationEvent implements Event {
 		AttributeId attributeId = TestAttributeId.INT_0;
 		for (int i = 0; i < 10; i++) {
 			int previousValue = i * 2 + 3;
-			AttributeChangeObservationEvent attributeChangeObservationEvent = new AttributeChangeObservationEvent(personId, attributeId, previousValue, 0);
-			assertEquals(previousValue, attributeChangeObservationEvent.getPreviousValue());
+			AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, attributeId, previousValue, 0);
+			assertEquals(previousValue, attributeUpdateEvent.getPreviousValue());
 		}
 	}
 
@@ -71,7 +71,7 @@ public class AT_AttributeChangeObservationEvent implements Event {
 	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
 	public void testGetPrimaryKeyValue() {
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			assertEquals(testAttributeId, new AttributeChangeObservationEvent(null, testAttributeId, null, null).getPrimaryKeyValue());
+			assertEquals(testAttributeId, new AttributeUpdateEvent(null, testAttributeId, null, null).getPrimaryKeyValue());
 		}
 	}
 }

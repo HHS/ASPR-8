@@ -24,7 +24,7 @@ import plugins.resources.support.ResourceId;
  */
 
 @Immutable
-public class RegionResourceChangeObservationEvent implements Event {
+public class RegionResourceUpdateEvent implements Event {
 	private final RegionId regionId;
 	private final ResourceId resourceId;
 	private final long previousResourceLevel;
@@ -33,7 +33,7 @@ public class RegionResourceChangeObservationEvent implements Event {
 	/**
 	 * Constructs the event
 	 */
-	public RegionResourceChangeObservationEvent(RegionId regionId, ResourceId resourceId, long previousResourceLevel, long currentResourceLevel) {
+	public RegionResourceUpdateEvent(RegionId regionId, ResourceId resourceId, long previousResourceLevel, long currentResourceLevel) {
 		super();
 		this.regionId = regionId;
 		this.resourceId = resourceId;
@@ -95,7 +95,7 @@ public class RegionResourceChangeObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link RegionResourceChangeObservationEvent} events. Matches on
+	 * {@link RegionResourceUpdateEvent} events. Matches on
 	 * region id and resource id.
 	 * 
 	 *
@@ -112,19 +112,19 @@ public class RegionResourceChangeObservationEvent implements Event {
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
 	 */
-	public static EventLabel<RegionResourceChangeObservationEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
+	public static EventLabel<RegionResourceUpdateEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
 		validateRegionId(simulationContext, regionId);
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.REGION_RESOURCE, RegionResourceChangeObservationEvent.class, regionId, resourceId);
+		return new MultiKeyEventLabel<>(resourceId, LabelerId.REGION_RESOURCE, RegionResourceUpdateEvent.class, regionId, resourceId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link RegionResourceChangeObservationEvent}
+	 * Returns an event labeler for {@link RegionResourceUpdateEvent}
 	 * events that uses region id and resource id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<RegionResourceChangeObservationEvent> getEventLabelerForRegionAndResource() {
-		return new SimpleEventLabeler<>(LabelerId.REGION_RESOURCE, RegionResourceChangeObservationEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.REGION_RESOURCE, RegionResourceChangeObservationEvent.class, event.getRegionId(), event.getResourceId()));
+	public static EventLabeler<RegionResourceUpdateEvent> getEventLabelerForRegionAndResource() {
+		return new SimpleEventLabeler<>(LabelerId.REGION_RESOURCE, RegionResourceUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.REGION_RESOURCE, RegionResourceUpdateEvent.class, event.getRegionId(), event.getResourceId()));
 	}
 	
 	/**

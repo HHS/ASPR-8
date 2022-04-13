@@ -13,7 +13,7 @@ import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyChangeObservationEvent;
+import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 
@@ -138,7 +138,7 @@ public final class PropertyFilter extends Filter {
 		return builder.toString();
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonPropertyChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonPropertyUpdateEvent event) {
 		if (event.getPersonPropertyId().equals(personPropertyId)) {
 			if (evaluate(event.getPreviousPropertyValue()) != evaluate(event.getCurrentPropertyValue())) {
 				return Optional.of(event.getPersonId());
@@ -150,7 +150,7 @@ public final class PropertyFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<PersonPropertyChangeObservationEvent>(PersonPropertyChangeObservationEvent.class, this::requiresRefresh));
+		result.add(new FilterSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
 

@@ -15,7 +15,7 @@ import plugins.partitions.support.FilterSensitivity;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -62,7 +62,7 @@ public class AT_RegionFilter {
 			assertEquals(filterSensitivities.size(), 1);
 
 			FilterSensitivity<?> filterSensitivity = filterSensitivities.iterator().next();
-			assertEquals(PersonRegionChangeObservationEvent.class, filterSensitivity.getEventClass());
+			assertEquals(PersonRegionUpdateEvent.class, filterSensitivity.getEventClass());
 		});
 	}
 

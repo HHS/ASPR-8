@@ -20,7 +20,7 @@ import plugins.people.PeoplePluginId;
  * <li><b>AttributeValueAssignmentEvent</b>: Sets an attribute value for a
  * person</li>
  *
- * <li><b>AttributeChangeObservationEvent</b>: Notifies subscribed oberservers
+ * <li><b>AttributeUpdateEvent</b>: Notifies subscribed oberservers
  * of a person attribute value change</li>
  *
  * </ul>

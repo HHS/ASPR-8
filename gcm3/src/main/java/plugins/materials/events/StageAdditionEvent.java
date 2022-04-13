@@ -10,10 +10,10 @@ import nucleus.SimpleEventLabeler;
 import plugins.materials.support.StageId;
 
 @Immutable
-public class StageCreationObservationEvent implements Event {
+public class StageAdditionEvent implements Event {
 	private final StageId stageId;
 
-	public StageCreationObservationEvent(StageId stageId) {
+	public StageAdditionEvent(StageId stageId) {
 		super();
 		this.stageId = stageId;
 	}
@@ -31,13 +31,13 @@ public class StageCreationObservationEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<StageCreationObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageCreationObservationEvent.class, LabelerId.ALL, StageCreationObservationEvent.class);
+	private final static EventLabel<StageAdditionEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageAdditionEvent.class, LabelerId.ALL, StageAdditionEvent.class);
 
-	public static EventLabel<StageCreationObservationEvent> getEventLabelByAll() {
+	public static EventLabel<StageAdditionEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<StageCreationObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageCreationObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<StageAdditionEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, StageAdditionEvent.class, (context, event) -> ALL_LABEL);
 	}
 }

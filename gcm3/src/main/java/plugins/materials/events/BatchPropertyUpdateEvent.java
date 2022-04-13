@@ -11,13 +11,13 @@ import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 
 @Immutable
-public class BatchPropertyChangeObservationEvent implements Event {
+public class BatchPropertyUpdateEvent implements Event {
 	private final BatchId batchId;
 	private final BatchPropertyId batchPropertyId;
 	private final Object previousPropertyValue;
 	private final Object currentPropertyValue;
 
-	public BatchPropertyChangeObservationEvent(BatchId batchId, BatchPropertyId batchPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
+	public BatchPropertyUpdateEvent(BatchId batchId, BatchPropertyId batchPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
 		super();
 		this.batchId = batchId;
 		this.batchPropertyId = batchPropertyId;
@@ -43,7 +43,7 @@ public class BatchPropertyChangeObservationEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "BatchPropertyChangeObservationEvent [batchId=" + batchId + ", batchPropertyId=" + batchPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
+		return "BatchPropertyUpdateEvent [batchId=" + batchId + ", batchPropertyId=" + batchPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
 	}
 
 	
@@ -51,13 +51,13 @@ public class BatchPropertyChangeObservationEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<BatchPropertyChangeObservationEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchPropertyChangeObservationEvent.class, LabelerId.ALL, BatchPropertyChangeObservationEvent.class);
+	private final static EventLabel<BatchPropertyUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchPropertyUpdateEvent.class, LabelerId.ALL, BatchPropertyUpdateEvent.class);
 
-	public static EventLabel<BatchPropertyChangeObservationEvent> getEventLabelByAll() {
+	public static EventLabel<BatchPropertyUpdateEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	public static EventLabeler<BatchPropertyChangeObservationEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, BatchPropertyChangeObservationEvent.class, (context, event) -> ALL_LABEL);
+	public static EventLabeler<BatchPropertyUpdateEvent> getEventLabelerForAll() {
+		return new SimpleEventLabeler<>(LabelerId.ALL, BatchPropertyUpdateEvent.class, (context, event) -> ALL_LABEL);
 	}
 }

@@ -23,7 +23,7 @@ import plugins.globals.support.GlobalPropertyId;
  */
 
 @Immutable
-public class GlobalPropertyChangeObservationEvent implements Event {
+public class GlobalPropertyUpdateEvent implements Event {
 	private final GlobalPropertyId globalPropertyId;
 	private final Object previousPropertyValue;
 	private final Object currentPropertyValue;
@@ -32,7 +32,7 @@ public class GlobalPropertyChangeObservationEvent implements Event {
 	 * Constructs the event.
 	 * 
 	 */
-	public GlobalPropertyChangeObservationEvent(GlobalPropertyId globalPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
+	public GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
 		super();
 		this.globalPropertyId = globalPropertyId;
 		this.previousPropertyValue = previousPropertyValue;
@@ -63,13 +63,13 @@ public class GlobalPropertyChangeObservationEvent implements Event {
 	/**
 	 * Standard string implementation of the form
 	 * 
-	 * GlobalPropertyChangeObservationEvent [globalPropertyId=" +
+	 * GlobalPropertyUpdateEvent [globalPropertyId=" +
 	 * globalPropertyId + ", previousPropertyValue=" + previousPropertyValue +
 	 * ", currentPropertyValue=" + currentPropertyValue + "]
 	 */
 	@Override
 	public String toString() {
-		return "GlobalPropertyChangeObservationEvent [globalPropertyId=" + globalPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue
+		return "GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue
 				+ "]";
 	}
 
@@ -79,7 +79,7 @@ public class GlobalPropertyChangeObservationEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GlobalPropertyChangeObservationEvent} events. Matches on global
+	 * {@link GlobalPropertyUpdateEvent} events. Matches on global
 	 * property id.
 	 *
 	 *
@@ -90,18 +90,18 @@ public class GlobalPropertyChangeObservationEvent implements Event {
 	 *             <li>{@linkplain GlobalError#UNKNOWN_GLOBAL_PROPERTY_ID} if
 	 *             the global property id is unknown</li>
 	 */
-	public static EventLabel<GlobalPropertyChangeObservationEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
+	public static EventLabel<GlobalPropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
 		validateGlobalProperty(simulationContext, globalPropertyId);
-		return new MultiKeyEventLabel<>(globalPropertyId, LabelerId.PROPERTY, GlobalPropertyChangeObservationEvent.class, globalPropertyId);
+		return new MultiKeyEventLabel<>(globalPropertyId, LabelerId.PROPERTY, GlobalPropertyUpdateEvent.class, globalPropertyId);
 	}
 
 	/**
-	 * Returns an event labeler for {@link GlobalPropertyChangeObservationEvent}
+	 * Returns an event labeler for {@link GlobalPropertyUpdateEvent}
 	 * events that the global property id.
 	 */
-	public static EventLabeler<GlobalPropertyChangeObservationEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.PROPERTY, GlobalPropertyChangeObservationEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getGlobalPropertyId(), LabelerId.PROPERTY, GlobalPropertyChangeObservationEvent.class, event.getGlobalPropertyId()));
+	public static EventLabeler<GlobalPropertyUpdateEvent> getEventLabeler() {
+		return new SimpleEventLabeler<>(LabelerId.PROPERTY, GlobalPropertyUpdateEvent.class,
+				(context, event) -> new MultiKeyEventLabel<>(event.getGlobalPropertyId(), LabelerId.PROPERTY, GlobalPropertyUpdateEvent.class, event.getGlobalPropertyId()));
 	}
 
 	private static void validateGlobalProperty(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {

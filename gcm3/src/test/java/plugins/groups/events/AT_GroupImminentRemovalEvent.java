@@ -23,8 +23,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GroupImminentRemovalObservationEvent.class)
-public class AT_GroupImminentRemovalObservationEvent {
+@UnitTest(target = GroupImminentRemovalEvent.class)
+public class AT_GroupImminentRemovalEvent {
 
 	@Test
 	@UnitTestConstructor(args = { GroupId.class })
@@ -36,16 +36,16 @@ public class AT_GroupImminentRemovalObservationEvent {
 	@UnitTestMethod(name = "getGroupId", args = {})
 	public void testGetGroupId() {
 		GroupId groupId = new GroupId(35);
-		GroupImminentRemovalObservationEvent groupImminentRemovalObservationEvent = new GroupImminentRemovalObservationEvent(groupId);
-		assertEquals(groupId, groupImminentRemovalObservationEvent.getGroupId());
+		GroupImminentRemovalEvent groupImminentRemovalEvent = new GroupImminentRemovalEvent(groupId);
+		assertEquals(groupId, groupImminentRemovalEvent.getGroupId());
 	}
 	
 	@Test
 	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
 	public void testGetPrimaryKeyValue() {
 		GroupId groupId = new GroupId(35);
-		GroupImminentRemovalObservationEvent groupImminentRemovalObservationEvent = new GroupImminentRemovalObservationEvent(groupId);
-		assertEquals(GroupImminentRemovalObservationEvent.class, groupImminentRemovalObservationEvent.getPrimaryKeyValue());
+		GroupImminentRemovalEvent groupImminentRemovalEvent = new GroupImminentRemovalEvent(groupId);
+		assertEquals(GroupImminentRemovalEvent.class, groupImminentRemovalEvent.getPrimaryKeyValue());
 	}
 
 	@Test
@@ -54,28 +54,28 @@ public class AT_GroupImminentRemovalObservationEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 4793492577271802585L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			Set<EventLabel<GroupImminentRemovalObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupImminentRemovalEvent>> eventLabels = new LinkedHashSet<>();
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0;i<10;i++) {
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 				
 				testGroupTypeId = testGroupTypeId.next();
 				
-				EventLabel<GroupImminentRemovalObservationEvent> eventLabel = GroupImminentRemovalObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupImminentRemovalEvent> eventLabel = GroupImminentRemovalEvent.getEventLabelByGroup(c, groupId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupImminentRemovalObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupImminentRemovalEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupImminentRemovalObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupImminentRemovalEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupImminentRemovalObservationEvent> eventLabeler = GroupImminentRemovalObservationEvent.getEventLabelerForGroup();
+				EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroup();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupImminentRemovalObservationEvent> eventLabel2 = GroupImminentRemovalObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupImminentRemovalEvent> eventLabel2 = GroupImminentRemovalEvent.getEventLabelByGroup(c, groupId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -89,11 +89,11 @@ public class AT_GroupImminentRemovalObservationEvent {
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalObservationEvent.getEventLabelByGroupType(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalEvent.getEventLabelByGroupType(c, null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalObservationEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
+			contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		});		
@@ -109,10 +109,10 @@ public class AT_GroupImminentRemovalObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupImminentRemovalObservationEvent> eventLabeler = GroupImminentRemovalObservationEvent.getEventLabelerForGroup();
+			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroup();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupImminentRemovalObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupImminentRemovalEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
@@ -123,18 +123,18 @@ public class AT_GroupImminentRemovalObservationEvent {
 				testGroupTypeId = testGroupTypeId.next();
 
 				// derive the expected event label for this event
-				EventLabel<GroupImminentRemovalObservationEvent> expectedEventLabel = GroupImminentRemovalObservationEvent.getEventLabelByGroup(c, groupId);
+				EventLabel<GroupImminentRemovalEvent> expectedEventLabel = GroupImminentRemovalEvent.getEventLabelByGroup(c, groupId);
 
 				// show that the event label and event labeler have equal id
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 				// create an event
-				GroupImminentRemovalObservationEvent event = new GroupImminentRemovalObservationEvent(groupId);
+				GroupImminentRemovalEvent event = new GroupImminentRemovalEvent(groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupImminentRemovalObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupImminentRemovalEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -155,25 +155,25 @@ public class AT_GroupImminentRemovalObservationEvent {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			
-			Set<EventLabel<GroupImminentRemovalObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupImminentRemovalEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
-				EventLabel<GroupImminentRemovalObservationEvent> eventLabel = GroupImminentRemovalObservationEvent.getEventLabelByGroupType(c, testGroupTypeId);
+				EventLabel<GroupImminentRemovalEvent> eventLabel = GroupImminentRemovalEvent.getEventLabelByGroupType(c, testGroupTypeId);
 
 				// show that the event label has the correct event class
-				assertEquals(GroupImminentRemovalObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(GroupImminentRemovalEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
-				assertEquals(GroupImminentRemovalObservationEvent.class, eventLabel.getPrimaryKeyValue());
+				assertEquals(GroupImminentRemovalEvent.class, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupImminentRemovalObservationEvent> eventLabeler = GroupImminentRemovalObservationEvent.getEventLabelerForGroupType(groupDataManager);
+				EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager);
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<GroupImminentRemovalObservationEvent> eventLabel2 = GroupImminentRemovalObservationEvent.getEventLabelByGroupType(c, testGroupTypeId);
+				EventLabel<GroupImminentRemovalEvent> eventLabel2 = GroupImminentRemovalEvent.getEventLabelByGroupType(c, testGroupTypeId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -187,11 +187,11 @@ public class AT_GroupImminentRemovalObservationEvent {
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalObservationEvent.getEventLabelByGroupType(c, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalEvent.getEventLabelByGroupType(c, null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the group type id is unknown
-			contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalObservationEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
+			contractException = assertThrows(ContractException.class, () -> GroupImminentRemovalEvent.getEventLabelByGroupType(c, TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		});
@@ -206,17 +206,17 @@ public class AT_GroupImminentRemovalObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupImminentRemovalObservationEvent> eventLabeler = GroupImminentRemovalObservationEvent.getEventLabelerForGroupType(groupDataManager);
+			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager);
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupImminentRemovalObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupImminentRemovalEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupImminentRemovalObservationEvent> expectedEventLabel = GroupImminentRemovalObservationEvent.getEventLabelByGroupType(c, testGroupTypeId);
+				EventLabel<GroupImminentRemovalEvent> expectedEventLabel = GroupImminentRemovalEvent.getEventLabelByGroupType(c, testGroupTypeId);
 
 				// show that the event label and event labeler have equal id
 				// values
@@ -226,11 +226,11 @@ public class AT_GroupImminentRemovalObservationEvent {
 				
 
 				// create an event
-				GroupImminentRemovalObservationEvent event = new GroupImminentRemovalObservationEvent(groupId);
+				GroupImminentRemovalEvent event = new GroupImminentRemovalEvent(groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupImminentRemovalObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupImminentRemovalEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -246,23 +246,23 @@ public class AT_GroupImminentRemovalObservationEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 8130798061872293595L, (c) -> {
 
-			Set<EventLabel<GroupImminentRemovalObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<GroupImminentRemovalEvent>> eventLabels = new LinkedHashSet<>();
 
-			EventLabel<GroupImminentRemovalObservationEvent> eventLabel = GroupImminentRemovalObservationEvent.getEventLabelByAll();
+			EventLabel<GroupImminentRemovalEvent> eventLabel = GroupImminentRemovalEvent.getEventLabelByAll();
 
 			// show that the event label has the correct event class
-			assertEquals(GroupImminentRemovalObservationEvent.class, eventLabel.getEventClass());
+			assertEquals(GroupImminentRemovalEvent.class, eventLabel.getEventClass());
 
 			// show that the event label has the correct primary key
-			assertEquals(GroupImminentRemovalObservationEvent.class, eventLabel.getPrimaryKeyValue());
+			assertEquals(GroupImminentRemovalEvent.class, eventLabel.getPrimaryKeyValue());
 
 			// show that the event label has the same id as its
 			// associated labeler
-			EventLabeler<GroupImminentRemovalObservationEvent> eventLabeler = GroupImminentRemovalObservationEvent.getEventLabelerForAll();
+			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForAll();
 			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
-			EventLabel<GroupImminentRemovalObservationEvent> eventLabel2 = GroupImminentRemovalObservationEvent.getEventLabelByAll();
+			EventLabel<GroupImminentRemovalEvent> eventLabel2 = GroupImminentRemovalEvent.getEventLabelByAll();
 			assertEquals(eventLabel, eventLabel2);
 
 			// show that equal event labels have equal hash codes
@@ -285,17 +285,17 @@ public class AT_GroupImminentRemovalObservationEvent {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<GroupImminentRemovalObservationEvent> eventLabeler = GroupImminentRemovalObservationEvent.getEventLabelerForAll();
+			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForAll();
 
 			// show that the event labeler has the correct event class
-			assertEquals(GroupImminentRemovalObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(GroupImminentRemovalEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
 				// derive the expected event label for this event
-				EventLabel<GroupImminentRemovalObservationEvent> expectedEventLabel = GroupImminentRemovalObservationEvent.getEventLabelByAll();
+				EventLabel<GroupImminentRemovalEvent> expectedEventLabel = GroupImminentRemovalEvent.getEventLabelByAll();
 
 				// show that the event label and event labeler have equal id
 				// values
@@ -305,11 +305,11 @@ public class AT_GroupImminentRemovalObservationEvent {
 				
 
 				// create an event
-				GroupImminentRemovalObservationEvent event = new GroupImminentRemovalObservationEvent(groupId);
+				GroupImminentRemovalEvent event = new GroupImminentRemovalEvent(groupId);
 
 				// show that the event labeler produces the correct event
 				// label
-				EventLabel<GroupImminentRemovalObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+				EventLabel<GroupImminentRemovalEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 				assertEquals(expectedEventLabel, actualEventLabel);
 

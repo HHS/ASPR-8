@@ -11,7 +11,7 @@ import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.events.PersonRegionChangeObservationEvent;
+import plugins.regions.events.PersonRegionUpdateEvent;
 
 public final class RegionFilter extends Filter {
 
@@ -77,7 +77,7 @@ public final class RegionFilter extends Filter {
 		return builder.toString();
 	}
 
-	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonRegionChangeObservationEvent event) {
+	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonRegionUpdateEvent event) {
 		boolean previousRegionIdContained = regionIds.contains(event.getPreviousRegionId());
 		boolean currentRegionIdContained = regionIds.contains(event.getCurrentRegionId());
 		if (previousRegionIdContained != currentRegionIdContained) {
@@ -89,7 +89,7 @@ public final class RegionFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<PersonRegionChangeObservationEvent>(PersonRegionChangeObservationEvent.class, this::requiresRefresh));
+		result.add(new FilterSensitivity<PersonRegionUpdateEvent>(PersonRegionUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
 

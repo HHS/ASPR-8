@@ -25,8 +25,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PersonPropertyChangeObservationEvent.class)
-public class AT_PersonPropertyChangeObservationEvent implements Event {
+@UnitTest(target = PersonPropertyUpdateEvent.class)
+public class AT_PersonPropertyUpdateEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, PersonPropertyId.class, Object.class, Object.class })
@@ -42,8 +42,8 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 		Object previousValue = 0;
 		for (int i = 0; i < 10; i++) {
 			Object currentValue = i;
-			PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, personPropertyId, previousValue, currentValue);
-			assertEquals(currentValue, personPropertyChangeObservationEvent.getCurrentPropertyValue());
+			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, previousValue, currentValue);
+			assertEquals(currentValue, personPropertyUpdateEvent.getCurrentPropertyValue());
 		}
 	}
 
@@ -54,8 +54,8 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 		Object previousValue = 0;
 		Object currentValue = 1;
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, testPersonPropertyId, previousValue, currentValue);
-			assertEquals(testPersonPropertyId, personPropertyChangeObservationEvent.getPersonPropertyId());
+			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, previousValue, currentValue);
+			assertEquals(testPersonPropertyId, personPropertyUpdateEvent.getPersonPropertyId());
 		}
 	}
 
@@ -67,8 +67,8 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 		Object currentValue = 1;
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
-			PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, personPropertyId, previousValue, currentValue);
-			assertEquals(personId, personPropertyChangeObservationEvent.getPersonId());
+			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, previousValue, currentValue);
+			assertEquals(personId, personPropertyUpdateEvent.getPersonId());
 		}
 	}
 
@@ -81,8 +81,8 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 		Object currentValue = 1;
 		for (int i = 0; i < 10; i++) {
 			Object previousValue = i;
-			PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, personPropertyId, previousValue, currentValue);
-			assertEquals(previousValue, personPropertyChangeObservationEvent.getPreviousPropertyValue());
+			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, previousValue, currentValue);
+			assertEquals(previousValue, personPropertyUpdateEvent.getPreviousPropertyValue());
 		}
 
 	}
@@ -94,9 +94,9 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 		Object previousValue = 0;
 		Object currentValue = 1;
-		PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, personPropertyId, previousValue, currentValue);
-		String actualValue = personPropertyChangeObservationEvent.toString();
-		String expectedValue = "PersonPropertyChangeObservationEvent [personId=10, personPropertyId=PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, previousPropertyValue=0, currentPropertyValue=1]";
+		PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, previousValue, currentValue);
+		String actualValue = personPropertyUpdateEvent.toString();
+		String expectedValue = "PersonPropertyUpdateEvent [personId=10, personPropertyId=PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, previousPropertyValue=0, currentPropertyValue=1]";
 		assertEquals(actualValue, expectedValue);
 	}
 
@@ -108,26 +108,26 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			List<PersonId> people = personDataManager.getPeople();
 
-			Set<EventLabel<PersonPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<PersonPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (PersonId personId : people) {
 				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 
-					EventLabel<PersonPropertyChangeObservationEvent> eventLabel = PersonPropertyChangeObservationEvent.getEventLabelByPersonAndProperty(c, personId, testPersonPropertyId);
+					EventLabel<PersonPropertyUpdateEvent> eventLabel = PersonPropertyUpdateEvent.getEventLabelByPersonAndProperty(c, personId, testPersonPropertyId);
 
 					// show that the event label has the correct event class
-					assertEquals(PersonPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+					assertEquals(PersonPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 					// show that the event label has the correct primary key
 					assertEquals(testPersonPropertyId, eventLabel.getPrimaryKeyValue());
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<PersonPropertyChangeObservationEvent> eventLabeler = PersonPropertyChangeObservationEvent.getEventLabelerForPersonAndProperty();
+					EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty();
 					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
-					EventLabel<PersonPropertyChangeObservationEvent> eventLabel2 = PersonPropertyChangeObservationEvent.getEventLabelByPersonAndProperty(c, personId, testPersonPropertyId);
+					EventLabel<PersonPropertyUpdateEvent> eventLabel2 = PersonPropertyUpdateEvent.getEventLabelByPersonAndProperty(c, personId, testPersonPropertyId);
 					assertEquals(eventLabel, eventLabel2);
 
 					// show that equal event labels have equal hash codes
@@ -151,28 +151,28 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 			List<PersonId> people = personDataManager.getPeople();
 
 			// create an event labeler
-			EventLabeler<PersonPropertyChangeObservationEvent> eventLabeler = PersonPropertyChangeObservationEvent.getEventLabelerForPersonAndProperty();
+			EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty();
 
 			// show that the event labeler has the correct event class
-			assertEquals(PersonPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(PersonPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 			for (PersonId personId : people) {
 				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 
 					// derive the expected event label for this event
-					EventLabel<PersonPropertyChangeObservationEvent> expectedEventLabel = PersonPropertyChangeObservationEvent.getEventLabelByPersonAndProperty(c, personId, testPersonPropertyId);
+					EventLabel<PersonPropertyUpdateEvent> expectedEventLabel = PersonPropertyUpdateEvent.getEventLabelByPersonAndProperty(c, personId, testPersonPropertyId);
 
 					// show that the event label and event labeler have equal id
 					// values
 					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 					// create an event
-					PersonPropertyChangeObservationEvent event = new PersonPropertyChangeObservationEvent(personId, testPersonPropertyId, 1, 2);
+					PersonPropertyUpdateEvent event = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, 1, 2);
 
 					// show that the event labeler produces the correct an event
 					// label
-					EventLabel<PersonPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<PersonPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 					assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -187,25 +187,25 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 
 		PersonPropertiesActionSupport.testConsumer(0, 3639063830450063191L, (c) -> {
 
-			Set<EventLabel<PersonPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<PersonPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 
-				EventLabel<PersonPropertyChangeObservationEvent> eventLabel = PersonPropertyChangeObservationEvent.getEventLabelByProperty(c, testPersonPropertyId);
+				EventLabel<PersonPropertyUpdateEvent> eventLabel = PersonPropertyUpdateEvent.getEventLabelByProperty(c, testPersonPropertyId);
 
 				// show that the event label has the correct event class
-				assertEquals(PersonPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+				assertEquals(PersonPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 				// show that the event label has the correct primary key
 				assertEquals(testPersonPropertyId, eventLabel.getPrimaryKeyValue());
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<PersonPropertyChangeObservationEvent> eventLabeler = PersonPropertyChangeObservationEvent.getEventLabelerForProperty();
+				EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForProperty();
 				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
-				EventLabel<PersonPropertyChangeObservationEvent> eventLabel2 = PersonPropertyChangeObservationEvent.getEventLabelByProperty(c, testPersonPropertyId);
+				EventLabel<PersonPropertyUpdateEvent> eventLabel2 = PersonPropertyUpdateEvent.getEventLabelByProperty(c, testPersonPropertyId);
 				assertEquals(eventLabel, eventLabel2);
 
 				// show that equal event labels have equal hash codes
@@ -229,10 +229,10 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 			
 
 			// create an event labeler
-			EventLabeler<PersonPropertyChangeObservationEvent> eventLabeler = PersonPropertyChangeObservationEvent.getEventLabelerForProperty();
+			EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForProperty();
 
 			// show that the event labeler has the correct event class
-			assertEquals(PersonPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(PersonPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 			
@@ -241,18 +241,18 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 
 					// derive the expected event label for this event
-					EventLabel<PersonPropertyChangeObservationEvent> expectedEventLabel = PersonPropertyChangeObservationEvent.getEventLabelByProperty(c, testPersonPropertyId);
+					EventLabel<PersonPropertyUpdateEvent> expectedEventLabel = PersonPropertyUpdateEvent.getEventLabelByProperty(c, testPersonPropertyId);
 
 					// show that the event label and event labeler have equal id
 					// values
 					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 					// create an event
-					PersonPropertyChangeObservationEvent event = new PersonPropertyChangeObservationEvent(new PersonId(0), testPersonPropertyId, 1, 2);
+					PersonPropertyUpdateEvent event = new PersonPropertyUpdateEvent(new PersonId(0), testPersonPropertyId, 1, 2);
 
 					// show that the event labeler produces the correct an event
 					// label
-					EventLabel<PersonPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<PersonPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 					assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -270,26 +270,26 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			
-			Set<EventLabel<PersonPropertyChangeObservationEvent>> eventLabels = new LinkedHashSet<>();
+			Set<EventLabel<PersonPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 
-					EventLabel<PersonPropertyChangeObservationEvent> eventLabel = PersonPropertyChangeObservationEvent.getEventLabelByRegionAndProperty(c, testRegionId, testPersonPropertyId);
+					EventLabel<PersonPropertyUpdateEvent> eventLabel = PersonPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, testRegionId, testPersonPropertyId);
 
 					// show that the event label has the correct event class
-					assertEquals(PersonPropertyChangeObservationEvent.class, eventLabel.getEventClass());
+					assertEquals(PersonPropertyUpdateEvent.class, eventLabel.getEventClass());
 
 					// show that the event label has the correct primary key
 					assertEquals(testPersonPropertyId, eventLabel.getPrimaryKeyValue());
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<PersonPropertyChangeObservationEvent> eventLabeler = PersonPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty(regionDataManager);
+					EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);
 					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
-					EventLabel<PersonPropertyChangeObservationEvent> eventLabel2 = PersonPropertyChangeObservationEvent.getEventLabelByRegionAndProperty(c, testRegionId, testPersonPropertyId);
+					EventLabel<PersonPropertyUpdateEvent> eventLabel2 = PersonPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, testRegionId, testPersonPropertyId);
 					assertEquals(eventLabel, eventLabel2);
 
 					// show that equal event labels have equal hash codes
@@ -312,10 +312,10 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 
 			// create an event labeler
-			EventLabeler<PersonPropertyChangeObservationEvent> eventLabeler = PersonPropertyChangeObservationEvent.getEventLabelerForRegionAndProperty(regionDataManager);
+			EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);
 
 			// show that the event labeler has the correct event class
-			assertEquals(PersonPropertyChangeObservationEvent.class, eventLabeler.getEventClass());
+			assertEquals(PersonPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			// show that the event labeler produces the expected event label
 			for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -329,18 +329,18 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 
 					// derive the expected event label for this event
-					EventLabel<PersonPropertyChangeObservationEvent> expectedEventLabel = PersonPropertyChangeObservationEvent.getEventLabelByRegionAndProperty(c, testRegionId, testPersonPropertyId);
+					EventLabel<PersonPropertyUpdateEvent> expectedEventLabel = PersonPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, testRegionId, testPersonPropertyId);
 
 					// show that the event label and event labeler have equal id
 					// values
 					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
 
 					// create an event
-					PersonPropertyChangeObservationEvent event = new PersonPropertyChangeObservationEvent(personId, testPersonPropertyId, 1, 2);
+					PersonPropertyUpdateEvent event = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, 1, 2);
 
 					// show that the event labeler produces the correct an event
 					// label
-					EventLabel<PersonPropertyChangeObservationEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
+					EventLabel<PersonPropertyUpdateEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
 
 					assertEquals(expectedEventLabel, actualEventLabel);
 
@@ -358,8 +358,8 @@ public class AT_PersonPropertyChangeObservationEvent implements Event {
 		Object previousValue = 0;
 		Object currentValue = 1;
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			PersonPropertyChangeObservationEvent personPropertyChangeObservationEvent = new PersonPropertyChangeObservationEvent(personId, testPersonPropertyId, previousValue, currentValue);
-			assertEquals(testPersonPropertyId, personPropertyChangeObservationEvent.getPrimaryKeyValue());
+			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, previousValue, currentValue);
+			assertEquals(testPersonPropertyId, personPropertyUpdateEvent.getPrimaryKeyValue());
 		}
 	}
 
