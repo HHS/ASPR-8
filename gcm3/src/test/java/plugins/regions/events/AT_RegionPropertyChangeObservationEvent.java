@@ -1,4 +1,4 @@
-package plugins.regions.datamanagers;
+package plugins.regions.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,4 +1,4 @@
-package plugins.regions.datamanagers;
+package plugins.regions.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
@@ -12,6 +12,7 @@ import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.regions.datamanagers.RegionDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 
