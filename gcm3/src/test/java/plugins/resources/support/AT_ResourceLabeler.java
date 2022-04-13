@@ -105,7 +105,7 @@ public final class AT_ResourceLabeler {
 		ResourceLabeler resourceLabeler = new ResourceLabeler(TestResourceId.RESOURCE_1, function);
 
 		// distribute random resources across people
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
@@ -126,7 +126,7 @@ public final class AT_ResourceLabeler {
 		 * produces a label for each person that is consistent with the function
 		 * passed to the compartment labeler.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
 			List<PersonId> people = personDataManager.getPeople();
@@ -146,7 +146,7 @@ public final class AT_ResourceLabeler {
 		}));
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
 			// if the person does not exist
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceLabeler.getLabel(c, new PersonId(-1)));

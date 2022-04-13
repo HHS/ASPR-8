@@ -12,8 +12,8 @@ public class AT_MaterialsActionSupport {
 //	 */
 //	public static void testConsumer(long seed, Consumer<AgentContext> consumer) {
 //		ActionPlugin.Builder pluginBuilder = ActionPlugin.builder();
-//		pluginBuilder.addAgent("agent");
-//		pluginBuilder.addAgentActionPlan("agent", new AgentActionPlan(0, consumer));
+//		pluginBuilder.addAgent("actor");
+//		pluginBuilder.addAgentActionPlan("actor", new AgentActionPlan(0, consumer));
 //		testConsumers(seed, pluginBuilder.build());
 //	}
 //

@@ -88,7 +88,7 @@ public class AT_AttributesDataManager {
 
 		// add an agent that will show that the AttributesDataView is properly
 		// initialized
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();

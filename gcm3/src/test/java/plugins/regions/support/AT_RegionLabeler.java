@@ -70,7 +70,7 @@ public class AT_RegionLabeler {
 
 		// add a few people to the simulation spread across the various
 		// regions		
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			int numberOfPeople = 2 * TestRegionId.size();
 
@@ -91,7 +91,7 @@ public class AT_RegionLabeler {
 		 * produces a label for each person that is consistent with the function
 		 * passed to the region labeler.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			
@@ -112,7 +112,7 @@ public class AT_RegionLabeler {
 		}));
 
 		//test preconditions
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			
 			//if the person does not exist
 			ContractException contractException = assertThrows(ContractException.class, ()->	regionLabeler.getLabel(c, new PersonId(-1)));

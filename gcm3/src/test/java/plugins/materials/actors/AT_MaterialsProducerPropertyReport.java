@@ -57,7 +57,7 @@ public final class AT_MaterialsProducerPropertyReport {
 		double actionTime = 0;
 		
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(actionTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 					expectedReportItems.add(getReportItemFromPropertyId(c, testMaterialsProducerId, testMaterialsProducerPropertyId));
@@ -68,7 +68,7 @@ public final class AT_MaterialsProducerPropertyReport {
 		for (int i = 0; i < 100; i++) {
 
 			// set a property value
-			pluginBuilder.addTestActorPlan("agent", new TestActorPlan(actionTime++, (c) -> {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();

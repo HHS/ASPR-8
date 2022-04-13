@@ -1048,7 +1048,7 @@ public class AT_ActorContext {
 		 * Have the agent build plans to check the time in the simulation
 		 * against the planning time
 		 */
-		pluginDataBuilder.addTestActorPlan("Agent1", new TestActorPlan(0, (context1) -> {
+		pluginDataBuilder.addTestActorPlan("Actor 1", new TestActorPlan(0, (context1) -> {
 			for (Double planTime : planTimes) {
 				context1.addPlan((context2) -> {
 					assertEquals(planTime.doubleValue(), context2.getTime(), 0);

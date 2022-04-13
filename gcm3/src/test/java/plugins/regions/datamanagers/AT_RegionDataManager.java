@@ -103,7 +103,7 @@ public class AT_RegionDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// show that each region is empty at time zero
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				assertEquals(0, regionDataManager.getPeopleInRegion(testRegionId).size());
@@ -111,7 +111,7 @@ public class AT_RegionDataManager {
 		}));
 
 		// add some people
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			for (int i = 0; i < 100; i++) {
@@ -123,7 +123,7 @@ public class AT_RegionDataManager {
 		}));
 
 		// show that the people in the regions match expectations
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				Set<PersonId> expectedPeople = expectedPeopelInRegions.get(testRegionId);
@@ -170,7 +170,7 @@ public class AT_RegionDataManager {
 		/*
 		 * Add some people and show that their regions are correctly assigned.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
@@ -189,7 +189,7 @@ public class AT_RegionDataManager {
 
 		// move people over time and show that each time they are moved the
 		// correct region is reported
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			double planTime = 0;
 			for (PersonId personId : personDataManager.getPeople()) {
@@ -218,7 +218,7 @@ public class AT_RegionDataManager {
 		/*
 		 * Show that the people region arrival times are maintained over time
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(postPersonMovementTime, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(postPersonMovementTime, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			for (PersonId personId : personDataManager.getPeople()) {
@@ -262,7 +262,7 @@ public class AT_RegionDataManager {
 		/*
 		 * Add some people and show that their region arrival times are zero.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
@@ -283,7 +283,7 @@ public class AT_RegionDataManager {
 
 		// move people over time and show that each time they are moved the
 		// their arrival time is correct
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			double planTime = 0;
 			for (PersonId personId : personDataManager.getPeople()) {
@@ -312,7 +312,7 @@ public class AT_RegionDataManager {
 		/*
 		 * Show that the people region arrival times are maintained over time
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(postPersonMovementTime, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(postPersonMovementTime, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			for (PersonId personId : personDataManager.getPeople()) {
@@ -328,7 +328,7 @@ public class AT_RegionDataManager {
 		RegionsActionSupport.testConsumers(0, 2278422620232176214L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
 
 		// precondition test: if region arrival times are not being tracked		
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			for (int i = 0; i < numberOfPeople; i++) {
@@ -405,7 +405,7 @@ public class AT_RegionDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// show that each region has no people
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				assertEquals(0, regionDataManager.getRegionPopulationCount(testRegionId));
@@ -414,7 +414,7 @@ public class AT_RegionDataManager {
 
 		// show that adding people results in the correct population counts
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			int n = TestRegionId.values().length;
@@ -432,7 +432,7 @@ public class AT_RegionDataManager {
 
 		// precondition tests
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 
 			// if the region id is null
@@ -459,7 +459,7 @@ public class AT_RegionDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// show that each region has a zero population time
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				assertEquals(0, regionDataManager.getRegionPopulationTime(testRegionId));
@@ -476,7 +476,7 @@ public class AT_RegionDataManager {
 
 		// show that adding people over time results in the correct population
 		// times
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			for (int i = 0; i < numberOfPeople; i++) {
 				double planTime = i;
 				c.addPlan((c2) -> {
@@ -496,7 +496,7 @@ public class AT_RegionDataManager {
 		// after all the person additions are complete.
 		double postPersonAdditionTime = numberOfPeople;
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(postPersonAdditionTime, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(postPersonAdditionTime, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				double expectedRegionPopulationTime = expectedAssignmentTimes.get(testRegionId).getValue();
@@ -812,7 +812,7 @@ public class AT_RegionDataManager {
 		 * Have the mover agent move every person over time and show that each
 		 * person is where we expect them to be
 		 */
-		pluginBuilder.addTestActorPlan("mover agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("mover", new TestActorPlan(1, (c) -> {
 
 			/*
 			 * Make sure that there are actually people in the simulation so
@@ -963,7 +963,7 @@ public class AT_RegionDataManager {
 		List<MultiKey> expectedObservations = new ArrayList<>();
 
 		// Have the observer agent start observations record them
-		pluginBuilder.addTestActorPlan("observer agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 
 			EventLabel<RegionPropertyChangeObservationEvent> eventLabel = RegionPropertyChangeObservationEvent.getEventLabelByRegionAndProperty(c, TestRegionId.REGION_1,
 					TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
@@ -980,7 +980,7 @@ public class AT_RegionDataManager {
 
 		// Have the update agent make various region property updates over
 		// time
-		pluginBuilder.addTestActorPlan("update agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("update", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 

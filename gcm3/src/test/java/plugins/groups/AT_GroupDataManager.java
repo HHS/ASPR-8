@@ -156,7 +156,7 @@ public class AT_GroupDataManager {
 
 		// add an agent to add members to groups
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			List<PersonId> people = personDataManager.getPeople();
@@ -386,7 +386,7 @@ public class AT_GroupDataManager {
 
 		// have the agent create add a few groups and collect expected
 		// observations
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
@@ -546,7 +546,7 @@ public class AT_GroupDataManager {
 		}));
 
 		// add an agent that removes groups
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 			assertTrue(groupIds.size() > 5);
@@ -557,7 +557,7 @@ public class AT_GroupDataManager {
 			}
 		}));
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			for (GroupId groupId : expectedObservations) {
 				assertFalse(groupDataManager.groupExists(groupId));
@@ -598,7 +598,7 @@ public class AT_GroupDataManager {
 
 		List<GroupId> removedGroupIds = new ArrayList<>();
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0.0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
@@ -611,7 +611,7 @@ public class AT_GroupDataManager {
 			}
 		}));
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0.0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			for (GroupId groupId : removedGroupIds) {
 				// show that the removed groups don't exist
@@ -794,7 +794,7 @@ public class AT_GroupDataManager {
 		}));
 
 		// have an agent change a few group property values
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -1185,7 +1185,7 @@ public class AT_GroupDataManager {
 		 * At time = 1, have the agent show that the property values were all
 		 * set at time = 0 and then set those properties to new values
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -1226,7 +1226,7 @@ public class AT_GroupDataManager {
 		 * At time = 2, have the agent show that the property values were all
 		 * set at time = 1 and then set those properties to new values
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -1248,7 +1248,7 @@ public class AT_GroupDataManager {
 		 * At time = 3, have the agent show that the property values were all
 		 * set at time = 2
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(3, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			for (MultiKey multiKey : expectedTimes.keySet()) {
@@ -1332,7 +1332,7 @@ public class AT_GroupDataManager {
 		/*
 		 * At time = 1, have the agent establish the expected values.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
@@ -1369,7 +1369,7 @@ public class AT_GroupDataManager {
 		 * At time = 2, have the agent show that the property values still have
 		 * their expected values and then set those properties to new values.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -1392,7 +1392,7 @@ public class AT_GroupDataManager {
 		 * At time = 2, have the agent show that the property values still have
 		 * their expected values.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(3, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			for (MultiKey multiKey : expectedValues.keySet()) {
@@ -2419,7 +2419,7 @@ public class AT_GroupDataManager {
 		 * thus the resolver must have handled the corresponding
 		 * BulkPersonCreationObservationEvent.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			// establish data views and how many people and groups already exist
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			int personIdOffest = personDataManager.getPopulationCount();
@@ -2558,7 +2558,7 @@ public class AT_GroupDataManager {
 		 * Have the agent add a person and then remove it. There will be a delay
 		 * of 0 time for the person to be removed.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 
@@ -2580,7 +2580,7 @@ public class AT_GroupDataManager {
 		 * groups
 		 * 
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(3, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 
 			GroupDataManager personGroupDataManager = c.getDataManager(GroupDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
@@ -2700,7 +2700,7 @@ public class AT_GroupDataManager {
 		// add an agent that will demonstrate that the state of the data manager
 		// reflects the contents of the group plugin data.
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			GroupDataManager personGroupDataManager = c.getDataManager(GroupDataManager.class).get();
 
 			// show the groups are as expected

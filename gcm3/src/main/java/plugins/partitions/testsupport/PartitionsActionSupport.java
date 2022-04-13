@@ -29,7 +29,7 @@ public class PartitionsActionSupport {
 	public static void testConsumer(int initialPopulation, long seed, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(0, consumer));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);

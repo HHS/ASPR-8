@@ -56,7 +56,7 @@ public class MaterialsActionSupport {
 	 */
 	public static Set<ReportItem> testConsumer(long seed, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, consumer));
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		return testConsumers(seed, testPlugin,  null);

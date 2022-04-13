@@ -128,7 +128,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		// have the agent add a few people and show they were added
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			for (PersonId expectedPersonId : expectedPersonIds) {
 				PersonId actualPersonId = personDataManager.addPerson(PersonConstructionData.builder().build());
@@ -138,7 +138,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		// precondition tests
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addPerson(null));
 			assertEquals(PersonError.NULL_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
@@ -179,7 +179,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		// have the agent add a bulk people and show the people were added
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionData) {
@@ -194,7 +194,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		// precondition tests
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addBulkPeople(null));
 			assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
@@ -304,7 +304,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		// have the agent add a few people
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			for (int i = 0; i < 10; i++) {
 				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 				personDataManager.addPerson(PersonConstructionData.builder().build());
@@ -312,7 +312,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		// have the agent remove some people
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			for (int i = 0; i < 5; i++) {
 				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 				personDataManager.removePerson(new PersonId(i));
@@ -320,7 +320,7 @@ public final class AT_PersonDataManager {
 		}));
 
 		// precondition tests
-		pluginDataBuilder.addTestActorPlan("agent", new TestActorPlan(3, (c) -> {
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 

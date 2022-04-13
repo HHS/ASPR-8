@@ -1558,7 +1558,7 @@ public final class AT_PartitionDataManager {
 		 * of interest who will be removed later.
 		 */
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			// select 10 people
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
@@ -1624,7 +1624,7 @@ public final class AT_PartitionDataManager {
 		 * simulation. The people will temporarily remain in the simulation and
 		 * will only leave when the planning system moves to the next plan.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// Remove from the simulation the people who are in the partition
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
@@ -1649,7 +1649,7 @@ public final class AT_PartitionDataManager {
 		 * no longer contains them. Note that this plan is for the same time as
 		 * the plan above but is guaranteed to execute after that plan.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			/*
 			 * Show that the report, as an observer of the removals, was able to
 			 * observe each removal and still perceived each person as being a

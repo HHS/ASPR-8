@@ -234,7 +234,7 @@ public class AT_PeriodicReport {
 
 		// create an agent that will make the engine run for a few days
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(simulationEndTime, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(simulationEndTime, (c) -> {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -271,7 +271,7 @@ public class AT_PeriodicReport {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// create an agent that will make the engine run for a few days		
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(simulationEndTime, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(simulationEndTime, (c) -> {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -309,7 +309,7 @@ public class AT_PeriodicReport {
 
 		// create an agent that will make the engine run for a few days
 	
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(simulationEndTime, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(simulationEndTime, (c) -> {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();

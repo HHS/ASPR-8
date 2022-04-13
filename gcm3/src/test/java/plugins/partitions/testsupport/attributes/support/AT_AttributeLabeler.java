@@ -88,7 +88,7 @@ public final class AT_AttributeLabeler {
 		/*
 		 * 
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
 			List<PersonId> people = personDataManager.getPeople();
@@ -109,7 +109,7 @@ public final class AT_AttributeLabeler {
 		}));
 
 		// test preconditions
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// if the person does not exist
 			ContractException contractException = assertThrows(ContractException.class, () -> attributeLabeler.getLabel(c, new PersonId(-1)));

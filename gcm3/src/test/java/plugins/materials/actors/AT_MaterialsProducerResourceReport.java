@@ -63,7 +63,7 @@ public final class AT_MaterialsProducerResourceReport {
 		RandomGenerator rg = RandomGeneratorProvider.getRandomGenerator(8635270533185454765L);
 
 		double actionTime = 0;
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(actionTime++, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					expectedReportItems.add(getReportItemFromResourceId(c, testMaterialsProducerId, testResourceId, 0L));

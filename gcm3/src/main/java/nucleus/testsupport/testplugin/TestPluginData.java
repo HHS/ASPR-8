@@ -158,6 +158,7 @@ public class TestPluginData implements PluginData {
 			if (alias == null) {
 				throw new ContractException(TestError.NULL_ALIAS);
 			}
+
 			if (testActorPlan == null) {
 				throw new ContractException(TestError.NULL_PLAN);
 			}

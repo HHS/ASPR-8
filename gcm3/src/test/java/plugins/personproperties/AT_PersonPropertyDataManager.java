@@ -191,7 +191,7 @@ public final class AT_PersonPropertyDataManager {
 
 		// show that all person property times are 0 for the time-tracked
 		// properties
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
 
@@ -208,7 +208,7 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		// Set property 5 for all people at time 1
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
@@ -220,7 +220,7 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		// Set property 6 for all people at time 2
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
@@ -232,7 +232,7 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		// show that the person property times agree with the times above
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(3, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
 			List<PersonId> people = personDataManager.getPeople();
@@ -247,7 +247,7 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		// precondition tests
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(4, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
 
 			PersonId personId = new PersonId(0);
@@ -398,7 +398,7 @@ public final class AT_PersonPropertyDataManager {
 		 * Add an agent that will alter person property values and record the
 		 * corresponding expected observations.
 		 */
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// establish data views
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
@@ -441,7 +441,7 @@ public final class AT_PersonPropertyDataManager {
 		}));
 
 		// have the agent perform precondition checks
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			PersonId personId = new PersonId(0);
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();

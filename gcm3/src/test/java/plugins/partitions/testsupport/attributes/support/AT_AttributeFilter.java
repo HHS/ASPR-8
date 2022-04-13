@@ -124,7 +124,7 @@ public final class AT_AttributeFilter {
 		// and add the action plugin to the engine
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			// if the filter's attribute id is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new AttributeFilter(null, Equality.EQUAL, false).validate(c));
 			assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());

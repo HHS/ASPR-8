@@ -105,7 +105,7 @@ public class AT_RegionPropertyReport {
 
 		// create an agent and have it assign various region properties at
 		// various times
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(0.0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
 			/*
 			 * note that this is time 0 and should show that property initial
 			 * values are still reported correctly
@@ -114,14 +114,14 @@ public class AT_RegionPropertyReport {
 			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "move");
 		}));
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(1.0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
 			// two settings of the same property
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			regionDataManager.setRegionPropertyValue(regionA, prop_age, 45);
 			regionDataManager.setRegionPropertyValue(regionA, prop_age, 45);
 		}));
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(2.0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			regionDataManager.setRegionPropertyValue(regionA, prop_age, 100);
 			regionDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
@@ -129,7 +129,7 @@ public class AT_RegionPropertyReport {
 
 		}));
 
-		pluginBuilder.addTestActorPlan("agent", new TestActorPlan(3.0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
 
 			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
 			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "terminate");
