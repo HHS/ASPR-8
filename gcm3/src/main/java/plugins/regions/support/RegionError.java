@@ -35,8 +35,8 @@ public enum RegionError implements ContractError {
 
 	INSUFFICIENT_REGION_PROPERTY_VALUE_ASSIGNMENT("A regiont property definition default value is null and not replaced with sufficient property value assignments"),
 
-	REGION_ARRIVAL_TIMES_NOT_TRACKED("Person region arrival times not actively tracked"),
-	SAME_REGION("Cannot move a person into the region they are already occupying");
+	REGION_ARRIVAL_TIMES_NOT_TRACKED("Person region arrival times not actively tracked");
+	
 
 	
 	private final String description;

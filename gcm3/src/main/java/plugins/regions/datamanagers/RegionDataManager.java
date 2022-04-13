@@ -546,15 +546,7 @@ public final class RegionDataManager extends DataManager {
 		return regionPopulationRecordMap.get(regionId).assignmentTime;
 	}
 
-	/*
-	 * Precondition : person and region exist
-	 */
-	private void validatePersonNotInRegion(final DataManagerContext dataManagerContext, final PersonId personId, final RegionId regionId) {
-		final RegionId currentRegionId = getPersonRegion(personId);
-		if (currentRegionId.equals(regionId)) {
-			throw new ContractException(RegionError.SAME_REGION, regionId);
-		}
-	}
+	
 
 	/**
 	 * 
@@ -570,15 +562,14 @@ public final class RegionDataManager extends DataManager {
 	 * <li>{@link RegionError#NULL_REGION_ID} if the region id is null</li>
 	 * <li>{@link RegionError#UNKNOWN_REGION_ID} if the region id is
 	 * unknown</li>
-	 * <li>{@link RegionError#SAME_REGION} if the region id is currently
-	 * assigned to the person</li>
+	 *
 	 */
 
 	public void setPersonRegion(final PersonId personId, final RegionId regionId) {
 
 		validatePersonExists(personId);
 		validateRegionId(regionId);
-		validatePersonNotInRegion(dataManagerContext, personId, regionId);
+		
 
 		/*
 		 * Retrieve the int value that represents the current region of the

@@ -950,29 +950,6 @@ public class AT_RegionDataManager {
 
 		});
 
-		/*
-		 * precondition test: if the region is the current region for the person
-		 */
-		RegionsActionSupport.testConsumer(numberOfPeople, 5385423081958576523L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			// Select a person at random from the simulation and create a person
-			// id outside of the simulation
-
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			List<PersonId> people = personDataManager.getPeople();
-			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
-
-			// establish the person's current region and next region
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			TestRegionId currentRegionId = regionDataManager.getPersonRegion(personId);
-
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setPersonRegion(personId, currentRegionId));
-			assertEquals(RegionError.SAME_REGION, contractException.getErrorType());
-
-		});
-
 	}
 
 	@Test
