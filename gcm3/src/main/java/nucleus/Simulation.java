@@ -232,6 +232,12 @@ public class Simulation {
 		public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
 			subscribeActorToSimulationClose(consumer);
 		}
+		
+		@Override
+		public boolean subscribersExist(Class<? extends Event> eventClass) {
+			return Simulation.this.subscribersExistForEvent(eventClass);
+		}
+		
 
 		@Override
 		public ActorId addActor(Consumer<ActorContext> consumer) {
@@ -1121,35 +1127,8 @@ public class Simulation {
 		}
 	}
 
-	private static class Counter {
-		int count;
-	}
-
-	private Map<Class<? extends Event>, Counter> subscriberExistanceMap = new LinkedHashMap<>();
-
-	private void incrementSubscriberCount(Class<? extends Event> eventClass) {
-		Counter counter = subscriberExistanceMap.get(eventClass);
-		if (counter == null) {
-			counter = new Counter();
-			subscriberExistanceMap.put(eventClass, counter);
-		}
-		counter.count++;
-	}
-
-	private void decrementSubscriberCount(Class<? extends Event> eventClass) {
-		Counter counter = subscriberExistanceMap.get(eventClass);
-		if (counter != null) {
-			counter.count--;
-		}
-	}
-
 	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-
-		Counter counter = subscriberExistanceMap.get(eventClass);
-		if (counter != null) {
-			return counter.count > 0;
-		}
-		return false;
+		return (dataManagerEventMap.containsKey(eventClass)||actorPubSub.containsKey(eventClass));
 	}
 
 	private boolean actorExists(final ActorId actorId) {
@@ -1253,9 +1232,8 @@ public class Simulation {
 
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(eventLabel.getEventClass());
 		if (map1 == null) {
-			map1 = new LinkedHashMap<>();
-			actorPubSub.put(eventClass, map1);
-			incrementSubscriberCount(eventClass);
+			map1 = new LinkedHashMap<>();			
+			actorPubSub.put(eventClass, map1);			
 		}
 
 		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
@@ -1340,8 +1318,7 @@ public class Simulation {
 				if (map2.isEmpty()) {
 					map1.remove(primaryKeyValue);
 					if (map1.isEmpty()) {
-						actorPubSub.remove(eventClass);
-						decrementSubscriberCount(eventClass);
+						actorPubSub.remove(eventClass);						
 					}
 				}
 			}
@@ -1382,8 +1359,6 @@ public class Simulation {
 		if (list == null) {
 			list = new ArrayList<>();
 			dataManagerEventMap.put(eventClass, list);
-			// invoke the increment only when adding to the map
-			incrementSubscriberCount(eventClass);
 		}
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
@@ -1417,8 +1392,6 @@ public class Simulation {
 		if (list == null) {
 			list = new ArrayList<>();
 			dataManagerEventMap.put(eventClass, list);
-			// invoke the increment only when adding to the map
-			incrementSubscriberCount(eventClass);
 		}
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.POST_EXECUTION);
@@ -1439,8 +1412,7 @@ public class Simulation {
 			while (iterator.hasNext()) {
 				MetaDataManagerEventConsumer<?> metaDataManagerEventConsumer = iterator.next();
 				if (metaDataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
-					iterator.remove();
-					decrementSubscriberCount(eventClass);
+					iterator.remove();					
 				}
 			}
 

@@ -205,4 +205,9 @@ public interface ActorContext extends SimulationContext {
 	 */
 	public void subscribeToSimulationClose(Consumer<ActorContext> consumer);
 
+	/**
+	 * Returns true if and only if there are actor or data managers subscribed
+	 * to the given event type.
+	 */
+	public boolean subscribersExist(Class<? extends Event> eventClass);
 }
