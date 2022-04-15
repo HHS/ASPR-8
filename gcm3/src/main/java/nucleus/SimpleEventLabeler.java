@@ -35,6 +35,10 @@ public class SimpleEventLabeler<T extends Event> implements EventLabeler<T> {
 	public EventLabel<T> getEventLabel(SimulationContext simulationContext, T event) {
 		return labelMaker.apply(simulationContext, event);
 	}
+//	@SuppressWarnings("unchecked")
+//	public EventLabel<T> getEventLabel2(SimulationContext simulationContext, Event event) {
+//		return labelMaker.apply(simulationContext, (T)event);
+//	}
 
 	@Override
 	public EventLabelerId getId() {
