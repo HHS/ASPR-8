@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 
@@ -43,10 +42,10 @@ public class BatchPropertyUpdateEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "BatchPropertyUpdateEvent [batchId=" + batchId + ", batchPropertyId=" + batchPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
+		return "BatchPropertyUpdateEvent [batchId=" + batchId + ", batchPropertyId=" + batchPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue="
+				+ currentPropertyValue + "]";
 	}
 
-	
 	private static enum LabelerId implements EventLabelerId {
 		ALL
 	}
@@ -58,6 +57,9 @@ public class BatchPropertyUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<BatchPropertyUpdateEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, BatchPropertyUpdateEvent.class, (context, event) -> ALL_LABEL);
+		return EventLabeler	.builder(BatchPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_LABEL)//
+							.build();
 	}
 }

@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -54,7 +53,7 @@ public class StageOfferUpdateEvent implements Event {
 		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class).get();
 		if (!materialsDataManager.stageExists(stageId)) {
 			throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
-		} 
+		}
 	}
 
 	public static EventLabel<StageOfferUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
@@ -63,7 +62,9 @@ public class StageOfferUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForStage() {
-		return new SimpleEventLabeler<>(LabelerId.STAGE, StageOfferUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageOfferUpdateEvent.class, LabelerId.STAGE, StageOfferUpdateEvent.class, event.getStageId()));
+		return EventLabeler	.builder(StageOfferUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.STAGE).setLabelFunction((context, event) -> getEventLabelByStage(context, event.getStageId()))//
+							.build();
 	}
 
 	private final static EventLabel<StageOfferUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageOfferUpdateEvent.class, LabelerId.ALL, StageOfferUpdateEvent.class);
@@ -73,7 +74,10 @@ public class StageOfferUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageOfferUpdateEvent.class, (context, event) -> ALL_LABEL);
+		return EventLabeler	.builder(StageOfferUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_LABEL)//
+							.build();
 	}
 
 }

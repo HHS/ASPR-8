@@ -85,7 +85,7 @@ public class AT_PersonRegionUpdateEvent {
 				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, testRegionId);
 				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(PersonRegionUpdateEvent.getEventLabelerForArrivalRegion().getId(), eventLabel.getLabelerId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelerForArrivalRegion().getEventLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -99,7 +99,7 @@ public class AT_PersonRegionUpdateEvent {
 				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByDepartureRegion(c, testRegionId);
 				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(PersonRegionUpdateEvent.getEventLabelerForDepartureRegion().getId(), eventLabel.getLabelerId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelerForDepartureRegion().getEventLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -117,7 +117,7 @@ public class AT_PersonRegionUpdateEvent {
 				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByPerson(c, personId);
 				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(PersonRegionUpdateEvent.class, eventLabel.getPrimaryKeyValue());
-				assertEquals(PersonRegionUpdateEvent.getEventLabelerForPerson().getId(), eventLabel.getLabelerId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelerForPerson().getEventLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -132,7 +132,7 @@ public class AT_PersonRegionUpdateEvent {
 			assertEquals(PersonRegionUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, testRegionId).getLabelerId(), eventLabeler.getId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, testRegionId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// show that the event labeler produces the expected event
 				// label
@@ -163,7 +163,7 @@ public class AT_PersonRegionUpdateEvent {
 			assertEquals(PersonRegionUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(PersonRegionUpdateEvent.getEventLabelByDepartureRegion(c, testRegionId).getLabelerId(), eventLabeler.getId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelByDepartureRegion(c, testRegionId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// show that the event labeler produces the expected event
 				// label
@@ -198,7 +198,7 @@ public class AT_PersonRegionUpdateEvent {
 			for (TestRegionId regionId : TestRegionId.values()) {
 				TestRegionId nextRegionId = regionId.next();
 
-				assertEquals(PersonRegionUpdateEvent.getEventLabelByPerson(c, personId).getLabelerId(), eventLabeler.getId());
+				assertEquals(PersonRegionUpdateEvent.getEventLabelByPerson(c, personId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// show that the event labeler produces the expected event
 				// label

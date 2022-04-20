@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -41,7 +40,8 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "StageMaterialsProducerUpdateEvent [stageId=" + stageId + ", previousMaterialsProducerId=" + previousMaterialsProducerId + ", currentMaterialsProducerId=" + currentMaterialsProducerId + "]";
+		return "StageMaterialsProducerUpdateEvent [stageId=" + stageId + ", previousMaterialsProducerId=" + previousMaterialsProducerId + ", currentMaterialsProducerId=" + currentMaterialsProducerId
+				+ "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -74,7 +74,9 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForDestination() {
-		return new SimpleEventLabeler<>(LabelerId.DESTINATION, StageMaterialsProducerUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.DESTINATION, StageMaterialsProducerUpdateEvent.class, event.getCurrentMaterialsProducerId()));
+		return EventLabeler	.builder(StageMaterialsProducerUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.DESTINATION)//
+							.setLabelFunction((context, event) -> getEventLabelByDestination(context, event.getCurrentMaterialsProducerId())).build();
 	}
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelBySource(SimulationContext simulationContext, MaterialsProducerId sourceMaterialsProducerId) {
@@ -83,7 +85,9 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForSource() {
-		return new SimpleEventLabeler<>(LabelerId.SOURCE, StageMaterialsProducerUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.SOURCE, StageMaterialsProducerUpdateEvent.class, event.getPreviousMaterialsProducerId()));
+		return EventLabeler	.builder(StageMaterialsProducerUpdateEvent.class).setEventLabelerId(LabelerId.SOURCE)//
+							.setLabelFunction((context, event) -> getEventLabelBySource(context, event.getPreviousMaterialsProducerId()))//
+							.build();
 	}
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
@@ -92,17 +96,23 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForStage() {
-		return new SimpleEventLabeler<>(LabelerId.STAGE, StageMaterialsProducerUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.STAGE, StageMaterialsProducerUpdateEvent.class, event.getStageId()));
+		return EventLabeler	.builder(StageMaterialsProducerUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.STAGE)//
+							.setLabelFunction((context, event) -> getEventLabelByStage(context, event.getStageId()))//
+							.build();
 	}
 
-	private final static EventLabel<StageMaterialsProducerUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.ALL, StageMaterialsProducerUpdateEvent.class);
+	private final static EventLabel<StageMaterialsProducerUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.ALL,
+			StageMaterialsProducerUpdateEvent.class);
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByAll(SimulationContext simulationContext) {
 		return ALL_LABEL;
 	}
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageMaterialsProducerUpdateEvent.class, (context, event) -> ALL_LABEL);
+		return EventLabeler	.builder(StageMaterialsProducerUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_LABEL).build();
 	}
 
 }

@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -90,8 +89,8 @@ public class GroupMembershipAdditionEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on group
-	 * id and person id.
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group id and
+	 * person id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -114,20 +113,19 @@ public class GroupMembershipAdditionEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionEvent} events that uses group id
-	 * and person id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} events
+	 * that uses group id and person id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupAndPerson() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP_PERSON, GroupMembershipAdditionEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP_PERSON, GroupMembershipAdditionEvent.class, event.getGroupId(),
-						event.getPersonId()));
+		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP_PERSON)//
+							.setLabelFunction((context, event) -> getEventLabelByGroupAndPerson(context, event.getGroupId(), event.getPersonId()))//
+							.build();//
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on group
-	 * id.
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -145,19 +143,18 @@ public class GroupMembershipAdditionEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionEvent} events that uses group
-	 * id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} events
+	 * that uses group id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroup() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupMembershipAdditionEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP, GroupMembershipAdditionEvent.class, event.getGroupId()));
+		return EventLabeler	.builder(GroupMembershipAdditionEvent.class).setEventLabelerId(LabelerId.GROUP)//
+							.setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on person
-	 * id.
+	 * {@link GroupMembershipAdditionEvent} events. Matches on person id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -175,19 +172,21 @@ public class GroupMembershipAdditionEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionEvent} events that uses person
-	 * id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} events
+	 * that uses person id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForPerson() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON, GroupMembershipAdditionEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.PERSON, GroupMembershipAdditionEvent.class, event.getPersonId()));
+		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON)//
+							.setLabelFunction(
+									(context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on person
-	 * id and group type id.
+	 * {@link GroupMembershipAdditionEvent} events. Matches on person id and
+	 * group type id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -209,22 +208,24 @@ public class GroupMembershipAdditionEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionEvent} events that uses group
-	 * type id and person id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} events
+	 * that uses group type id and person id. Automatically added at
+	 * initialization.
 	 */
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupTypeAndPerson(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE_PERSON, GroupMembershipAdditionEvent.class, (context, event) -> {
-			GroupId groupId = event.getGroupId();
-			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE_PERSON, GroupMembershipAdditionEvent.class, groupTypeId, event.getPersonId());
-		});
+		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE_PERSON)//
+							.setLabelFunction((context, event) -> {
+								GroupId groupId = event.getGroupId();
+								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
+								return getEventLabelByGroupTypeAndPerson(context, groupTypeId, event.getPersonId());
+							})//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on group
-	 * type id.
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group type id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -239,23 +240,25 @@ public class GroupMembershipAdditionEvent implements Event {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE, GroupMembershipAdditionEvent.class, groupTypeId);
 	}
+
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionEvent} Matches on group type id. Automatically
-	 * added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} Matches
+	 * on group type id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupMembershipAdditionEvent.class, (context, event) -> {
-			GroupId groupId = event.getGroupId();
-			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE, GroupMembershipAdditionEvent.class, groupTypeId);
-		});
+		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE)//
+							.setLabelFunction((context, event) -> {
+								GroupId groupId = event.getGroupId();
+								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
+								return getEventLabelByGroupType(context, groupTypeId);
+							})//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on all
-	 * events.
+	 * {@link GroupMembershipAdditionEvent} events. Matches on all events.
 	 *
 	 */
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByAll() {
@@ -263,13 +266,14 @@ public class GroupMembershipAdditionEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipAdditionEvent} all events. Automatically
-	 * added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} all
+	 * events. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupMembershipAdditionEvent.class, (context, event) -> {
-			return new MultiKeyEventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.ALL, GroupMembershipAdditionEvent.class);
-		});
+		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> {
+								return getEventLabelByAll();
+							}).build();
 	}
 }

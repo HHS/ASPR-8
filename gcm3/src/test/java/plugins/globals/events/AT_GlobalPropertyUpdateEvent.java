@@ -103,7 +103,7 @@ public class AT_GlobalPropertyUpdateEvent {
 				EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(c, testGlobalPropertyId);
 				assertEquals(GlobalPropertyUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(testGlobalPropertyId, eventLabel.getPrimaryKeyValue());
-				assertEquals(GlobalPropertyUpdateEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+				assertEquals(GlobalPropertyUpdateEvent.getEventLabeler().getEventLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -122,7 +122,7 @@ public class AT_GlobalPropertyUpdateEvent {
 				// show that the event labeler id matches the labeler id
 				// associated with the corresponding event label
 				EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(c, testGlobalPropertyId);
-				assertEquals(eventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(eventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// show that the event labeler produces the expected event
 				// label

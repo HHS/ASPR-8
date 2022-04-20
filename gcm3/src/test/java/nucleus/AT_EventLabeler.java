@@ -12,8 +12,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = SimpleEventLabeler.class)
-public class AT_SimpleEventLabeler {
+@UnitTest(target = EventLabeler.class)
+public class AT_EventLabeler {
 
 	@Test
 	@UnitTestConstructor(args = { EventLabelerId.class, BiFunction.class })
@@ -30,28 +30,35 @@ public class AT_SimpleEventLabeler {
 	@Test
 	@UnitTestMethod(name = "getEventClass", args = {})
 	public void testGetEventClass() {
-		SimpleEventLabeler<TestEvent> eventLabeler = new SimpleEventLabeler<>(id, TestEvent.class, (c, t) -> {
-			return null;
-		});
+		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
+															.setEventLabelerId(id)//
+															.setLabelFunction((c, t) -> {
+																return null;
+															})//
+															.build();
 		assertEquals(TestEvent.class, eventLabeler.getEventClass());
 	}
 
 	@Test
 	@UnitTestMethod(name = "getEventLabel", args = { Context.class, Event.class })
 	public void testGetEventLabel() {
-		//create an event label that will be replicated by the simple event labeler
+		// create an event label that will be replicated by the simple event
+		// labeler
 		MultiKeyEventLabel<TestEvent> expectedEventLabel = new MultiKeyEventLabel<>(TestEvent.class, id, TestEvent.class, 1, 2, 3);
-		
-		//create a simple event labeler that will create the same event label as above
-		SimpleEventLabeler<TestEvent> eventLabeler = new SimpleEventLabeler<>(id, TestEvent.class, (c, t) -> {
-			return new MultiKeyEventLabel<>(TestEvent.class, id, TestEvent.class, 1, 2, 3);
-		});
 
-		//generate an event label from the labeler
+		// create a simple event labeler that will create the same event label
+		// as above
+		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
+															.setEventLabelerId(id).setLabelFunction((c, t) -> {
+																return expectedEventLabel;
+															}).build();
+
+		// generate an event label from the labeler
 		EventLabel<TestEvent> actualEventLabel = eventLabeler.getEventLabel(null, null);
 		assertEquals(expectedEventLabel, actualEventLabel);
 		/*
-		 * Show that the generated event label is equal to the expected event label
+		 * Show that the generated event label is equal to the expected event
+		 * label
 		 * 
 		 * Due to the streamlined, non-standard equality contract of
 		 * MultiKeyEventLabel, we need to show that the non-key fields are also
@@ -64,12 +71,15 @@ public class AT_SimpleEventLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getId", args = {})
-	public void testGetId() {
-		SimpleEventLabeler<TestEvent> eventLabeler = new SimpleEventLabeler<>(id, TestEvent.class, (c, t) -> {
-			return null;
-		});
-		assertEquals(id, eventLabeler.getId());
+	@UnitTestMethod(name = "getEventLabelerId", args = {})
+	public void testGetEventLabelerId() {
+		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
+															.setEventLabelerId(id)//
+															.setLabelFunction((c, t) -> {
+																return null;
+															})//
+															.build();
+		assertEquals(id, eventLabeler.getEventLabelerId());
 	}
 
 }

@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -85,8 +84,8 @@ public class GroupMembershipRemovalEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalEvent} events. Matches on group
-	 * id and person id.
+	 * {@link GroupMembershipRemovalEvent} events. Matches on group id and
+	 * person id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -109,19 +108,19 @@ public class GroupMembershipRemovalEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalEvent} events that uses group id
-	 * and person id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} events
+	 * that uses group id and person id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroupAndPerson() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP_PERSON, GroupMembershipRemovalEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class,
-				LabelerId.GROUP_PERSON, GroupMembershipRemovalEvent.class, event.getGroupId(), event.getPersonId()));
+		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP_PERSON)//
+							.setLabelFunction((context, event) -> getEventLabelByGroupAndPerson(context, event.getGroupId(), event.getPersonId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalEvent} events. Matches on group
-	 * id.
+	 * {@link GroupMembershipRemovalEvent} events. Matches on group id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -139,19 +138,19 @@ public class GroupMembershipRemovalEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalEvent} events that uses group id.
-	 * Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} events
+	 * that uses group id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroup() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupMembershipRemovalEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP, GroupMembershipRemovalEvent.class, event.getGroupId()));
+		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP)//
+							.setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalEvent} events. Matches on person
-	 * id.
+	 * {@link GroupMembershipRemovalEvent} events. Matches on person id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -169,19 +168,21 @@ public class GroupMembershipRemovalEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalEvent} events that uses person
-	 * id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} events
+	 * that uses person id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForPerson() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON, GroupMembershipRemovalEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.PERSON, GroupMembershipRemovalEvent.class, event.getPersonId()));
+
+		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON)//
+							.setLabelFunction((context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalEvent} events. Matches on person
-	 * id and group type id.
+	 * {@link GroupMembershipRemovalEvent} events. Matches on person id and
+	 * group type id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -203,16 +204,19 @@ public class GroupMembershipRemovalEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalEvent} events that uses group
-	 * type id and person id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} events
+	 * that uses group type id and person id. Automatically added at
+	 * initialization.
 	 */
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroupTypeAndPerson(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE_PERSON, GroupMembershipRemovalEvent.class, (context, event) -> {
-			GroupId groupId = event.getGroupId();
-			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE_PERSON, GroupMembershipRemovalEvent.class, groupTypeId, event.getPersonId());
-		});
+		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE_PERSON)//
+							.setLabelFunction((context, event) -> {
+								GroupId groupId = event.getGroupId();
+								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
+								return getEventLabelByGroupTypeAndPerson(context, groupTypeId, event.getPersonId());
+							})//
+							.build();
 
 	}
 
@@ -222,8 +226,7 @@ public class GroupMembershipRemovalEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalEvent} events. Matches on group
-	 * type id.
+	 * {@link GroupMembershipRemovalEvent} events. Matches on group type id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -240,38 +243,39 @@ public class GroupMembershipRemovalEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalEvent} Matches on group type id.
-	 * Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} Matches
+	 * on group type id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupMembershipRemovalEvent.class, (context, event) -> {
-			GroupId groupId = event.getGroupId();
-			GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-			return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE, GroupMembershipRemovalEvent.class, groupTypeId);
-		});
+		return EventLabeler	.builder(GroupMembershipRemovalEvent.class).setEventLabelerId(LabelerId.TYPE)//
+							.setLabelFunction((context, event) -> {
+								GroupId groupId = event.getGroupId();
+								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
+								return getEventLabelByGroupType(context, groupTypeId);
+							})//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipRemovalEvent} events. Matches on all
-	 * events.
+	 * {@link GroupMembershipRemovalEvent} events. Matches on all events.
 	 *
 	 */
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByAll() {
 		return ALL_EVENT_LABEL_INSTANCE;
 	}
 
-	private static EventLabel<GroupMembershipRemovalEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.ALL,
-			GroupMembershipRemovalEvent.class);
+	private static EventLabel<GroupMembershipRemovalEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.ALL, GroupMembershipRemovalEvent.class);
 
 	/**
-	 * Returns an event labeler for
-	 * {@link GroupMembershipRemovalEvent} all events. Automatically
-	 * added at initialization.
+	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} all
+	 * events. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupMembershipRemovalEvent.class, (context, event) -> ALL_EVENT_LABEL_INSTANCE);
+		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_EVENT_LABEL_INSTANCE)//
+							.build();
 	}
 
 }

@@ -110,7 +110,7 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 							testMaterialsProducerId, testMaterialsProducerPropertyId);
 					assertEquals(MaterialsProducerPropertyUpdateEvent.class, eventLabel.getEventClass());
 					assertEquals(testMaterialsProducerPropertyId, eventLabel.getPrimaryKeyValue());
-					assertEquals(MaterialsProducerPropertyUpdateEvent.getEventLabelerForMaterialsProducerAndProperty().getId(), eventLabel.getLabelerId());
+					assertEquals(MaterialsProducerPropertyUpdateEvent.getEventLabelerForMaterialsProducerAndProperty().getEventLabelerId(), eventLabel.getLabelerId());
 				}
 			}
 		});
@@ -128,7 +128,7 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-					assertEquals(MaterialsProducerPropertyUpdateEvent.getEventLabelByMaterialsProducerAndProperty(c, testMaterialsProducerId,testMaterialsProducerPropertyId).getLabelerId(), eventLabeler.getId());
+					assertEquals(MaterialsProducerPropertyUpdateEvent.getEventLabelByMaterialsProducerAndProperty(c, testMaterialsProducerId,testMaterialsProducerPropertyId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// show that the event labeler produces the expected event
 					// label

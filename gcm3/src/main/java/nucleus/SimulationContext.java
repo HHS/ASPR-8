@@ -56,11 +56,7 @@ public interface SimulationContext {
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_LABELER} if the event
-	 *             labeler is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS_IN_EVENT_LABELER} if
-	 *             the event class is null
-	 *             <li>{@link NucleusError#NULL_LABELER_ID_IN_EVENT_LABELER} if
-	 *             the event labeler contains a null labeler id
+	 *             labeler is null             
 	 *             <li>{@link NucleusError#DUPLICATE_LABELER_ID_IN_EVENT_LABELER}
 	 *             if the event labeler contains a labeler id that is the id of
 	 *             a previously added event labeler

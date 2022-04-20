@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.StageId;
 
@@ -33,7 +32,7 @@ public class StageMembershipAdditionEvent implements Event {
 	public String toString() {
 		return "StageMembershipAdditionEvent [batchId=" + batchId + ", stageId=" + stageId + "]";
 	}
-	
+
 	private static enum LabelerId implements EventLabelerId {
 		ALL
 	}
@@ -45,7 +44,10 @@ public class StageMembershipAdditionEvent implements Event {
 	}
 
 	public static EventLabeler<StageMembershipAdditionEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageMembershipAdditionEvent.class, (context, event) -> ALL_LABEL);
+		return EventLabeler	.builder(StageMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_LABEL)//
+							.build();
 	}
 
 }

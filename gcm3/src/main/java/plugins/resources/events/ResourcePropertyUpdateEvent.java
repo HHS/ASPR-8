@@ -6,13 +6,13 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.resources.datamanagers.ResourceDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
+
 /**
  * An observation event indicating that a resource property has changed.
  * 
@@ -91,23 +91,23 @@ public class ResourcePropertyUpdateEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link ResourcePropertyUpdateEvent} events. Matches on
-	 * resource id and resource property id.
+	 * {@link ResourcePropertyUpdateEvent} events. Matches on resource id and
+	 * resource property id.
 	 * 
 	 *
 	 * Preconditions : The context cannot be null
 	 *
 	 * @throws ContractException
 	 *
-
+	 * 
 	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if the
-	 *             resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID} if
-	 *             the resource property id is unknown</li>	 *             
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             the resource property id is null</li>
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             if the resource property id is unknown</li> *
 	 */
 	public static EventLabel<ResourcePropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
 		validateResourceId(simulationContext, resourceId);
@@ -116,13 +116,17 @@ public class ResourcePropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link ResourcePropertyUpdateEvent}
-	 * events that uses resource id and resource property id. Automatically added at
+	 * Returns an event labeler for {@link ResourcePropertyUpdateEvent} events
+	 * that uses resource id and resource property id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<ResourcePropertyUpdateEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourcePropertyId(), LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyUpdateEvent.class, event.getResourceId(), event.getResourcePropertyId()));
+		return EventLabeler	.builder(ResourcePropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.RESOURCE_AND_PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabel(context, event.getResourceId(), event.getResourcePropertyId()))//
+							.build();
 	}
+
 	/**
 	 * Returns the resource property id used to create this event
 	 */

@@ -1,14 +1,13 @@
 package plugins.globals.events;
 
 import net.jcip.annotations.Immutable;
-import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
+import nucleus.SimulationContext;
+import nucleus.util.ContractException;
 import plugins.globals.GlobalDataManager;
 import plugins.globals.support.GlobalError;
 import plugins.globals.support.GlobalPropertyId;
@@ -63,14 +62,13 @@ public class GlobalPropertyUpdateEvent implements Event {
 	/**
 	 * Standard string implementation of the form
 	 * 
-	 * GlobalPropertyUpdateEvent [globalPropertyId=" +
-	 * globalPropertyId + ", previousPropertyValue=" + previousPropertyValue +
-	 * ", currentPropertyValue=" + currentPropertyValue + "]
+	 * GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ",
+	 * previousPropertyValue=" + previousPropertyValue + ",
+	 * currentPropertyValue=" + currentPropertyValue + "]
 	 */
 	@Override
 	public String toString() {
-		return "GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue
-				+ "]";
+		return "GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -79,8 +77,7 @@ public class GlobalPropertyUpdateEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GlobalPropertyUpdateEvent} events. Matches on global
-	 * property id.
+	 * {@link GlobalPropertyUpdateEvent} events. Matches on global property id.
 	 *
 	 *
 	 * @throws ContractException
@@ -96,12 +93,14 @@ public class GlobalPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link GlobalPropertyUpdateEvent}
-	 * events that the global property id.
+	 * Returns an event labeler for {@link GlobalPropertyUpdateEvent} events
+	 * that the global property id.
 	 */
 	public static EventLabeler<GlobalPropertyUpdateEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.PROPERTY, GlobalPropertyUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getGlobalPropertyId(), LabelerId.PROPERTY, GlobalPropertyUpdateEvent.class, event.getGlobalPropertyId()));
+		return EventLabeler	.builder(GlobalPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabel(context, event.getGlobalPropertyId()))//
+							.build();
 	}
 
 	private static void validateGlobalProperty(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {

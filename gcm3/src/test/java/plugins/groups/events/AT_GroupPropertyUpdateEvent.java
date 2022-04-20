@@ -108,7 +108,7 @@ public class AT_GroupPropertyUpdateEvent {
 					// show that the event label has the same id as its
 					// associated labeler
 					EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty();
-					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
 					EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, groupId, groupPropertyId);
@@ -179,7 +179,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 					// show that the event label and event labeler have equal id
 					// values
-					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// create an event
 					GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, groupPropertyId, "previous", "current");
@@ -220,7 +220,7 @@ public class AT_GroupPropertyUpdateEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroup();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroup(c, groupId);
@@ -272,7 +272,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
@@ -314,7 +314,7 @@ public class AT_GroupPropertyUpdateEvent {
 					// show that the event label has the same id as its
 					// associated labeler
 					EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
-					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
 					EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
@@ -384,7 +384,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 					// show that the event label and event labeler have equal id
 					// values
-					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// create an event
 					GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, groupPropertyId, "previous", "current");
@@ -422,7 +422,7 @@ public class AT_GroupPropertyUpdateEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager);
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByGroupType(c, groupTypeId);
@@ -476,7 +476,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");
@@ -511,7 +511,7 @@ public class AT_GroupPropertyUpdateEvent {
 			// show that the event label has the same id as its
 			// associated labeler
 			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForAll();
-			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+			assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
 			EventLabel<GroupPropertyUpdateEvent> eventLabel2 = GroupPropertyUpdateEvent.getEventLabelByAll();
@@ -551,7 +551,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupPropertyUpdateEvent event = new GroupPropertyUpdateEvent(groupId, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, "previous", "current");

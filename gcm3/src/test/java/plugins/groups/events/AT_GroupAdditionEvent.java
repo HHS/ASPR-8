@@ -72,7 +72,7 @@ public class AT_GroupAdditionEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupAdditionEvent> eventLabeler = GroupAdditionEvent.getEventLabelerForGroupType(groupDataManager);
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupAdditionEvent> eventLabel2 = GroupAdditionEvent.getEventLabelByGroupType(c, testGroupTypeId);
@@ -122,7 +122,7 @@ public class AT_GroupAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 
@@ -159,7 +159,7 @@ public class AT_GroupAdditionEvent {
 			// show that the event label has the same id as its
 			// associated labeler
 			EventLabeler<GroupAdditionEvent> eventLabeler = GroupAdditionEvent.getEventLabelerForAll();
-			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+			assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
 			EventLabel<GroupAdditionEvent> eventLabel2 = GroupAdditionEvent.getEventLabelByAll();
@@ -198,7 +198,7 @@ public class AT_GroupAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 

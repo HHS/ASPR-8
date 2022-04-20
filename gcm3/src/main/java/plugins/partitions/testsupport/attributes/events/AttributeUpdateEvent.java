@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
@@ -49,39 +48,39 @@ public class AttributeUpdateEvent implements Event {
 	public Object getPrimaryKeyValue() {
 		return attributeId;
 	}
-	
+
 	private static enum LabelerId implements EventLabelerId {
 		ATTRIBUTE
 	}
-	
+
 	/**
-	 * Returns an event label used to subscribe to
-	 * {@link AttributeUpdateEvent} events. Matches on attribute id.
+	 * Returns an event label used to subscribe to {@link AttributeUpdateEvent}
+	 * events. Matches on attribute id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the attribute id
-	 *             is null</li>
-	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the attribute
-	 *             id is not known</li>
+	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
+	 *             attribute id is null</li>
+	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the
+	 *             attribute id is not known</li>
 	 */
 	public static EventLabel<AttributeUpdateEvent> getEventLabel(final SimulationContext simulationContext, final AttributeId attributeId) {
 		validateAttributed(simulationContext, attributeId);
 		return new MultiKeyEventLabel<>(attributeId, LabelerId.ATTRIBUTE, AttributeUpdateEvent.class, attributeId);
 	}
-	
+
 	/**
-	 * Returns an event labeler for
-	 * {@link AttributeUpdateEvent} events that uses only
-	 * the attribute id. Automatically added at initialization.
+	 * Returns an event labeler for {@link AttributeUpdateEvent} events that
+	 * uses only the attribute id. Automatically added at initialization.
 	 */
 	public static EventLabeler<AttributeUpdateEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.ATTRIBUTE, AttributeUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getAttributeId(), LabelerId.ATTRIBUTE, AttributeUpdateEvent.class, event.getAttributeId()));
+		return EventLabeler	.builder(AttributeUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.ATTRIBUTE)//
+							.setLabelFunction((context, event) -> getEventLabel(context, event.getAttributeId()))//
+							.build();
 	}
 
-	
 	private static void validateAttributed(final SimulationContext simulationContext, final AttributeId attributeId) {
 		if (attributeId == null) {
 			throw new ContractException(AttributeError.NULL_ATTRIBUTE_ID);

@@ -109,7 +109,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 							testMaterialsProducerId, testResourceId);
 					assertEquals(MaterialsProducerResourceUpdateEvent.class, eventLabel.getEventClass());
 					assertEquals(testResourceId, eventLabel.getPrimaryKeyValue());
-					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource().getId(), eventLabel.getLabelerId());
+					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource().getEventLabelerId(), eventLabel.getLabelerId());
 				}
 			}
 		});
@@ -126,7 +126,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelByMaterialsProducerAndResource(c, testMaterialsProducerId,testResourceId).getLabelerId(), eventLabeler.getId());
+					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelByMaterialsProducerAndResource(c, testMaterialsProducerId,testResourceId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// show that the event labeler produces the expected event
 					// label
@@ -156,7 +156,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 				EventLabel<MaterialsProducerResourceUpdateEvent> eventLabel = MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c, testResourceId);
 				assertEquals(MaterialsProducerResourceUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(testResourceId, eventLabel.getPrimaryKeyValue());
-				assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource().getId(), eventLabel.getLabelerId());
+				assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource().getEventLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -173,7 +173,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c, testResourceId).getLabelerId(), eventLabeler.getId());
+					assertEquals(MaterialsProducerResourceUpdateEvent.getEventLabelByResource(c, testResourceId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// show that the event labeler produces the expected event
 					// label

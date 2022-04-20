@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
@@ -70,8 +69,6 @@ public class PersonResourceUpdateEvent implements Event {
 		return previousResourceLevel;
 	}
 
-	
-
 	private static void validatePersonId(SimulationContext simulationContext, PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
@@ -108,8 +105,8 @@ public class PersonResourceUpdateEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonResourceUpdateEvent} events. Matches on region id
-	 * and resource id.
+	 * {@link PersonResourceUpdateEvent} events. Matches on region id and
+	 * resource id.
 	 * 
 	 *
 	 * Preconditions : The context cannot be null
@@ -132,21 +129,23 @@ public class PersonResourceUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonResourceUpdateEvent}
-	 * events that uses region id and resource id. Automatically added at
+	 * Returns an event labeler for {@link PersonResourceUpdateEvent} events
+	 * that uses region id and resource id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForRegionAndResource(RegionDataManager regionDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.REGION_RESOURCE, PersonResourceUpdateEvent.class, (context, event) -> {
-			RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
-			return new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.REGION_RESOURCE, PersonResourceUpdateEvent.class, regionId, event.getResourceId());
-		});
+		return EventLabeler	.builder(PersonResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
+							.setLabelFunction((context, event) -> {
+								RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
+								return getEventLabelByRegionAndResource(context, regionId, event.getResourceId());
+							}).build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonResourceUpdateEvent} events. Matches on person id
-	 * and resource id.
+	 * {@link PersonResourceUpdateEvent} events. Matches on person id and
+	 * resource id.
 	 * 
 	 *
 	 * Preconditions : The context cannot be null
@@ -169,19 +168,20 @@ public class PersonResourceUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonResourceUpdateEvent}
-	 * events that uses person id and resource id. Automatically added at
+	 * Returns an event labeler for {@link PersonResourceUpdateEvent} events
+	 * that uses person id and resource id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForPersonAndResource() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON_RESOURCE, PersonResourceUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.PERSON_RESOURCE, PersonResourceUpdateEvent.class, event.getPersonId(), event.getResourceId()));
+		return EventLabeler	.builder(PersonResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON_RESOURCE)//
+							.setLabelFunction((context, event) -> getEventLabelByPersonAndResource(context, event.getPersonId(), event.getResourceId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonResourceUpdateEvent} events. Matches on resource
-	 * id.
+	 * {@link PersonResourceUpdateEvent} events. Matches on resource id.
 	 * 
 	 *
 	 * Preconditions : The context cannot be null
@@ -197,15 +197,17 @@ public class PersonResourceUpdateEvent implements Event {
 		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, PersonResourceUpdateEvent.class, resourceId);
 	}
+
 	/**
-	 * Returns an event labeler for {@link PersonResourceUpdateEvent}
-	 * events that uses resource id. Automatically added at
-	 * initialization.
+	 * Returns an event labeler for {@link PersonResourceUpdateEvent} events
+	 * that uses resource id. Automatically added at initialization.
 	 */
 
 	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForResource() {
-		return new SimpleEventLabeler<>(LabelerId.RESOURCE, PersonResourceUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.RESOURCE, PersonResourceUpdateEvent.class, event.getResourceId()));
+		return EventLabeler	.builder(PersonResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.RESOURCE)//
+							.setLabelFunction((context, event) -> getEventLabelByResource(context, event.getResourceId()))//
+							.build();
 	}
 
 	/**

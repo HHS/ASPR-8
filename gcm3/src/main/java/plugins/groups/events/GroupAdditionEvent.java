@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -45,8 +44,8 @@ public class GroupAdditionEvent implements Event {
 	}
 
 	/**
-	 * Returns an event label used to subscribe to
-	 * {@link GroupAdditionEvent} events. Matches on group type id.
+	 * Returns an event label used to subscribe to {@link GroupAdditionEvent}
+	 * events. Matches on group type id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -70,19 +69,22 @@ public class GroupAdditionEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupAdditionEvent} events
-	 * that uses group type id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupAdditionEvent} events that uses
+	 * group type id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupAdditionEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupAdditionEvent.class, (context, event) -> {
-			GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-			return new MultiKeyEventLabel<>(GroupAdditionEvent.class, LabelerId.TYPE, GroupAdditionEvent.class, groupTypeId);
-		});
+		return EventLabeler	.builder(GroupAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE)//
+							.setLabelFunction((context, event) -> {
+								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
+								return getEventLabelByGroupType(context, groupTypeId);
+							})//
+							.build();
 	}
 
 	/**
-	 * Returns an event label used to subscribe to
-	 * {@link GroupAdditionEvent} events. Matches on all events.
+	 * Returns an event label used to subscribe to {@link GroupAdditionEvent}
+	 * events. Matches on all events.
 	 *
 	 *
 	 */
@@ -90,14 +92,16 @@ public class GroupAdditionEvent implements Event {
 		return ALL_EVENT_LABEL_INSTANCE;
 	}
 
-	private final static EventLabel<GroupAdditionEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupAdditionEvent.class, LabelerId.ALL,
-			GroupAdditionEvent.class);
+	private final static EventLabel<GroupAdditionEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupAdditionEvent.class, LabelerId.ALL, GroupAdditionEvent.class);
 
 	/**
-	 * Returns an event labeler for {@link GroupAdditionEvent} events
-	 * that matches all events. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupAdditionEvent} events that
+	 * matches all events. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupAdditionEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupAdditionEvent.class, (context, event) -> ALL_EVENT_LABEL_INSTANCE);
+		return EventLabeler	.builder(GroupAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_EVENT_LABEL_INSTANCE)//
+							.build();
 	}
 }

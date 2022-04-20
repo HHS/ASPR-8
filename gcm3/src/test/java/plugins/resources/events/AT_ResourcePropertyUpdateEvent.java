@@ -102,7 +102,7 @@ public class AT_ResourcePropertyUpdateEvent implements Event {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<ResourcePropertyUpdateEvent> eventLabeler = ResourcePropertyUpdateEvent.getEventLabeler();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<ResourcePropertyUpdateEvent> eventLabel2 = ResourcePropertyUpdateEvent.getEventLabel(c, resourceId, testResourcePropertyId);
@@ -166,7 +166,7 @@ public class AT_ResourcePropertyUpdateEvent implements Event {
 				 * show that the event label and event labeler have equal id
 				 * values
 				 */
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				Object previousValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);

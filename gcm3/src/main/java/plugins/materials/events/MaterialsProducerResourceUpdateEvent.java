@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -49,7 +48,8 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "MaterialsProducerResourceUpdateEvent [materialsProducerId=" + materialsProducerId + ", resourceId=" + resourceId + ", previousResourceLevel=" + previousResourceLevel + ", currentResourceLevel=" + currentResourceLevel + "]";
+		return "MaterialsProducerResourceUpdateEvent [materialsProducerId=" + materialsProducerId + ", resourceId=" + resourceId + ", previousResourceLevel=" + previousResourceLevel
+				+ ", currentResourceLevel=" + currentResourceLevel + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -76,14 +76,18 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 		}
 	}
 
-	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByMaterialsProducerAndResource(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, ResourceId resourceId) {
+	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByMaterialsProducerAndResource(SimulationContext simulationContext, MaterialsProducerId materialsProducerId,
+			ResourceId resourceId) {
 		validateMaterialProducerId(simulationContext, materialsProducerId);
 		validateResourceId(simulationContext, resourceId);
 		return new MultiKeyEventLabel<>(resourceId, LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, materialsProducerId, resourceId);
 	}
 
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForMaterialsProducerAndResource() {
-		return new SimpleEventLabeler<>(LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, event.getMaterialsProducerId(), event.getResourceId()));
+		return EventLabeler	.builder(MaterialsProducerResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PRODUCER_RESOURCE)//
+							.setLabelFunction((context, event) -> getEventLabelByMaterialsProducerAndResource(context, event.getMaterialsProducerId(), event.getResourceId()))//
+							.build();
 	}
 
 	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
@@ -92,7 +96,10 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForResource() {
-		return new SimpleEventLabeler<>(LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, event.getResourceId()));
+		return EventLabeler	.builder(MaterialsProducerResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.RESOURCE)//
+							.setLabelFunction((context, event) -> getEventLabelByResource(context, event.getResourceId()))//
+							.build();
 	}
 
 	@Override

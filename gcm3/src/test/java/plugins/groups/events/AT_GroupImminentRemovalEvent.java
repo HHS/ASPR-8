@@ -72,7 +72,7 @@ public class AT_GroupImminentRemovalEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroup();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupImminentRemovalEvent> eventLabel2 = GroupImminentRemovalEvent.getEventLabelByGroup(c, groupId);
@@ -127,7 +127,7 @@ public class AT_GroupImminentRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupImminentRemovalEvent event = new GroupImminentRemovalEvent(groupId);
@@ -170,7 +170,7 @@ public class AT_GroupImminentRemovalEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager);
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupImminentRemovalEvent> eventLabel2 = GroupImminentRemovalEvent.getEventLabelByGroupType(c, testGroupTypeId);
@@ -220,7 +220,7 @@ public class AT_GroupImminentRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 				
@@ -259,7 +259,7 @@ public class AT_GroupImminentRemovalEvent {
 			// show that the event label has the same id as its
 			// associated labeler
 			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForAll();
-			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+			assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
 			EventLabel<GroupImminentRemovalEvent> eventLabel2 = GroupImminentRemovalEvent.getEventLabelByAll();
@@ -299,7 +299,7 @@ public class AT_GroupImminentRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 				

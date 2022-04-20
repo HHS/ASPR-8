@@ -216,8 +216,8 @@ public class AT_DataManagerContext {
 
 		// Precondition test 1
 
-		pluginDataBuilder.addTestDataManager("dm3A",()->new  TestDataManager3A());
-		pluginDataBuilder.addTestDataManager("dm3B",()->new  TestDataManager3B());
+		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
+		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 
 		pluginDataBuilder.addTestDataManagerPlan("dm3A", new TestDataManagerPlan(4, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.getDataManager(TestDataManager3.class));
@@ -242,7 +242,7 @@ public class AT_DataManagerContext {
 
 		// Precondition test 2
 
-		pluginDataBuilder.addTestDataManager("dm3B",()->new  TestDataManager3B());
+		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 
 		pluginDataBuilder.addTestDataManagerPlan("dm3B", new TestDataManagerPlan(4, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.getDataManager(null));
@@ -271,15 +271,15 @@ public class AT_DataManagerContext {
 	@UnitTestMethod(name = "getDataManagerId", args = {})
 	public void testGetDataManagerId() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		
+
 		Set<DataManagerId> observedDataManagerIds = new LinkedHashSet<>();
 
-		pluginDataBuilder.addTestDataManager("dm1", ()->new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (context) -> {
-			observedDataManagerIds.add(context.getDataManagerId());			
+			observedDataManagerIds.add(context.getDataManagerId());
 		}));
 
-		pluginDataBuilder.addTestDataManager("dm2",()->new  TestDataManager2());
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
 			observedDataManagerIds.add(context.getDataManagerId());
 		}));
@@ -298,8 +298,8 @@ public class AT_DataManagerContext {
 
 		// show that the action plans got executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
-		
-		//show that each data manger has a distinct id
+
+		// show that each data manger has a distinct id
 		assertEquals(2, observedDataManagerIds.size());
 	}
 
@@ -310,7 +310,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm", ()->new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			double scheduledTime = context.getTime() + 1;
 
@@ -357,7 +357,7 @@ public class AT_DataManagerContext {
 	@UnitTestMethod(name = "addPassivePlan", args = { Consumer.class, double.class })
 	public void testAddPassivePlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 
 		// test preconditions
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
@@ -432,7 +432,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			Object key = new Object();
 
@@ -533,7 +533,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			Object key = new Object();
 
@@ -595,7 +595,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
@@ -638,7 +638,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlanTime(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
@@ -682,7 +682,7 @@ public class AT_DataManagerContext {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// test preconditions
-		pluginDataBuilder.addTestDataManager("dm",()->new  TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> context.removePlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
@@ -742,7 +742,7 @@ public class AT_DataManagerContext {
 		}
 
 		// have the test agent add some plans
-		pluginDataBuilder.addTestDataManager("dm", ()->new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
 			for (Object key : expectedKeys) {
 				context.addKeyedPlan((c) -> {
@@ -779,7 +779,7 @@ public class AT_DataManagerContext {
 
 		// Have the data manager subscribe to test event and then set the
 		// eventResolved to true
-		pluginDataBuilder.addTestDataManager("dm1",()->new  TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
 			c.subscribe(TestEvent.class, (c2, e) -> {
 				eventResolved.setValue(true);
@@ -787,7 +787,7 @@ public class AT_DataManagerContext {
 		}));
 
 		// have another data manager resolve a test event
-		pluginDataBuilder.addTestDataManager("dm2",()->new  TestDataManager2());
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
 			context.releaseEvent(new TestEvent());
 		}));
@@ -1198,66 +1198,32 @@ public class AT_DataManagerContext {
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
 
-	/*
-	 * Event labeler class designed to possibly not comply with preconditions
-	 * required for the adding of event labelers
-	 */
-	private static class TestEventLabeler implements EventLabeler<TestEvent> {
-		private final Class<TestEvent> eventClass;
-		private final EventLabelerId eventLabelerId;
-
-		public TestEventLabeler(Class<TestEvent> eventClass, EventLabelerId eventLabelerId) {
-			this.eventClass = eventClass;
-			this.eventLabelerId = eventLabelerId;
-		}
-
-		@Override
-		public EventLabel<TestEvent> getEventLabel(SimulationContext context, TestEvent event) {
-			return new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
-		}
-
-		@Override
-		public Class<TestEvent> getEventClass() {
-			return eventClass;
-		}
-
-		@Override
-		public EventLabelerId getId() {
-			return eventLabelerId;
-		}
-
-	}
-
 	@Test
 	@UnitTestMethod(name = "addEventLabeler", args = { EventLabeler.class })
 	public void testAddEventLabeler() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
+		
 		// have the actor test the preconditions
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+			
 			EventLabelerId eventLabelerId = new EventLabelerId() {
 			};
+			MultiKeyEventLabel<TestEvent> multiKeyEventLabel = new MultiKeyEventLabel<TestEvent>(TestEvent.class,eventLabelerId,TestEvent.class);
 
 			// if the event labeler is null
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(null));
 			assertEquals(NucleusError.NULL_EVENT_LABELER, contractException.getErrorType());
-
-			// if the event class is null
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(null, eventLabelerId)));
-			assertEquals(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER, contractException.getErrorType());
-
-			// if the event labeler contains a null labeler id
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(TestEvent.class, null)));
-			assertEquals(NucleusError.NULL_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
+	
 
 			/*
 			 * if the event labeler contains a labeler id that is the id of a
 			 * previously added event labeler
 			 */
-			c.addEventLabeler(new TestEventLabeler(TestEvent.class, eventLabelerId));
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(TestEvent.class, eventLabelerId)));
+			c.addEventLabeler(EventLabeler.builder(TestEvent.class).setEventLabelerId(eventLabelerId).setLabelFunction((c2, e) -> multiKeyEventLabel).build());
+			contractException = assertThrows(ContractException.class,
+					() -> c.addEventLabeler(EventLabeler.builder(TestEvent.class).setEventLabelerId(eventLabelerId).setLabelFunction((c2, e) -> multiKeyEventLabel).build()));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
 		}));
@@ -1269,7 +1235,10 @@ public class AT_DataManagerContext {
 		EventLabelerId id = new EventLabelerId() {
 		};
 
-		EventLabeler<TestEvent> eventLabeler = new TestEventLabeler(TestEvent.class, id);
+		EventLabeler<TestEvent> eventLabeler = EventLabeler.builder(TestEvent.class)//
+				.setEventLabelerId(id)//
+				.setLabelFunction((c,e)->new MultiKeyEventLabel<>(TestEvent.class, id, TestEvent.class))//
+				.build();
 
 		// have the actor add the event labeler
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
@@ -1333,9 +1302,11 @@ public class AT_DataManagerContext {
 		MultiKeyEventLabel<TestEvent> eventLabel = new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
 
 		// create an event labeler that always returns the label above
-		EventLabeler<TestEvent> eventLabeler = new SimpleEventLabeler<>(eventLabelerId, TestEvent.class, (c2, e) -> {
-			return eventLabel;
-		});
+		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
+															.setEventLabelerId(eventLabelerId)//
+															.setLabelFunction((c2, e) -> {
+																return eventLabel;
+															}).build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 

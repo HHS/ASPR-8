@@ -81,7 +81,7 @@ public class AT_GroupMembershipRemovalEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForGroupAndPerson();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipRemovalEvent> eventLabel2 = GroupMembershipRemovalEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
@@ -141,7 +141,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupMembershipRemovalEvent event = new GroupMembershipRemovalEvent(personId, groupId);
@@ -183,7 +183,7 @@ public class AT_GroupMembershipRemovalEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForGroup();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipRemovalEvent> eventLabel2 = GroupMembershipRemovalEvent.getEventLabelByGroup(c, groupId);
@@ -238,7 +238,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				PersonId personId = new PersonId(0);
@@ -278,7 +278,7 @@ public class AT_GroupMembershipRemovalEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForPerson();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipRemovalEvent> eventLabel2 = GroupMembershipRemovalEvent.getEventLabelByPerson(c, personId);
@@ -330,7 +330,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupMembershipRemovalEvent event = new GroupMembershipRemovalEvent(personId, groupId);
@@ -369,7 +369,7 @@ public class AT_GroupMembershipRemovalEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipRemovalEvent> eventLabel2 = GroupMembershipRemovalEvent.getEventLabelByGroupTypeAndPerson(c, testGroupTypeId, personId);
@@ -435,7 +435,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupMembershipRemovalEvent event = new GroupMembershipRemovalEvent(personId, groupId);
@@ -473,7 +473,7 @@ public class AT_GroupMembershipRemovalEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForGroupType(groupDataManager);
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipRemovalEvent> eventLabel2 = GroupMembershipRemovalEvent.getEventLabelByGroupType(c, testGroupTypeId);
@@ -524,7 +524,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 
@@ -563,7 +563,7 @@ public class AT_GroupMembershipRemovalEvent {
 			// show that the event label has the same id as its
 			// associated labeler
 			EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForAll();
-			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+			assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
 			EventLabel<GroupMembershipRemovalEvent> eventLabel2 = GroupMembershipRemovalEvent.getEventLabelByAll();
@@ -603,7 +603,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 

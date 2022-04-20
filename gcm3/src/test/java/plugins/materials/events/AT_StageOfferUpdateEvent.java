@@ -100,7 +100,7 @@ public class AT_StageOfferUpdateEvent {
 
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_3);
-				assertEquals(StageOfferUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getId());
+				assertEquals(StageOfferUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 				/*
 				 * show that the event labeler produces the expected event label
@@ -147,7 +147,7 @@ public class AT_StageOfferUpdateEvent {
 
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-				assertEquals(StageOfferUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getId());
+				assertEquals(StageOfferUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getEventLabelerId());
 
 				/*
 				 * show that the event labeler produces the expected event label

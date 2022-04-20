@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
@@ -22,7 +21,6 @@ public final class PersonRegionUpdateEvent implements Event {
 	private final RegionId previousRegionId;
 	private final RegionId currentRegionId;
 
-
 	public PersonRegionUpdateEvent(final PersonId personId, final RegionId previousRegionId, final RegionId currentRegionId) {
 		super();
 		this.personId = personId;
@@ -30,7 +28,6 @@ public final class PersonRegionUpdateEvent implements Event {
 		this.currentRegionId = currentRegionId;
 	}
 
-	
 	public RegionId getCurrentRegionId() {
 		return currentRegionId;
 	}
@@ -78,7 +75,10 @@ public final class PersonRegionUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForArrivalRegion() {
-		return new SimpleEventLabeler<>(LabelerId.ARRIVAL, PersonRegionUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.ARRIVAL, PersonRegionUpdateEvent.class, event.getCurrentRegionId()));
+		return EventLabeler	.builder(PersonRegionUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.ARRIVAL)//
+							.setLabelFunction((context, event) -> getEventLabelByArrivalRegion(context, event.getCurrentRegionId()))//
+							.build();
 	}
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByDepartureRegion(SimulationContext simulationContext, RegionId regionId) {
@@ -87,7 +87,10 @@ public final class PersonRegionUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForDepartureRegion() {
-		return new SimpleEventLabeler<>(LabelerId.DEPARTURE, PersonRegionUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.DEPARTURE, PersonRegionUpdateEvent.class, event.getPreviousRegionId()));
+		return EventLabeler	.builder(PersonRegionUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.DEPARTURE)//
+							.setLabelFunction((context, event) -> getEventLabelByDepartureRegion(context, event.getPreviousRegionId()))//
+							.build();
 	}
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
@@ -96,7 +99,10 @@ public final class PersonRegionUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForPerson() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON, PersonRegionUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.PERSON, PersonRegionUpdateEvent.class, event.getPersonId()));
+		return EventLabeler	.builder(PersonRegionUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON)//
+							.setLabelFunction((context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
+							.build();
 	}
 
 }

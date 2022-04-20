@@ -97,7 +97,7 @@ public class AT_RegionPropertyUpdateEvent {
 				EventLabel<RegionPropertyUpdateEvent> eventLabel = RegionPropertyUpdateEvent.getEventLabelByProperty(c, testRegionPropertyId);
 				assertEquals(RegionPropertyUpdateEvent.class, eventLabel.getEventClass());
 				assertEquals(testRegionPropertyId, eventLabel.getPrimaryKeyValue());
-				assertEquals(RegionPropertyUpdateEvent.getEventLabelerForProperty().getId(), eventLabel.getLabelerId());
+				assertEquals(RegionPropertyUpdateEvent.getEventLabelerForProperty().getEventLabelerId(), eventLabel.getLabelerId());
 			}
 		});
 	}
@@ -111,7 +111,7 @@ public class AT_RegionPropertyUpdateEvent {
 					EventLabel<RegionPropertyUpdateEvent> eventLabel = RegionPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, testRegionId, testRegionPropertyId);
 					assertEquals(RegionPropertyUpdateEvent.class, eventLabel.getEventClass());
 					assertEquals(testRegionPropertyId, eventLabel.getPrimaryKeyValue());
-					assertEquals(RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty().getId(), eventLabel.getLabelerId());
+					assertEquals(RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty().getEventLabelerId(), eventLabel.getLabelerId());
 				}
 			}
 		});
@@ -128,7 +128,7 @@ public class AT_RegionPropertyUpdateEvent {
 
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 				for (TestRegionId testRegionId : TestRegionId.values()) {
-					assertEquals(RegionPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, testRegionId, testRegionPropertyId).getLabelerId(), eventLabeler.getId());
+					assertEquals(RegionPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, testRegionId, testRegionPropertyId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// show that the event labeler produces the expected event
 					// label
@@ -159,7 +159,7 @@ public class AT_RegionPropertyUpdateEvent {
 			assertEquals(RegionPropertyUpdateEvent.class, eventLabeler.getEventClass());
 
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				assertEquals(RegionPropertyUpdateEvent.getEventLabelByProperty(c, testRegionPropertyId).getLabelerId(), eventLabeler.getId());
+				assertEquals(RegionPropertyUpdateEvent.getEventLabelByProperty(c, testRegionPropertyId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// show that the event labeler produces the expected event
 				// label

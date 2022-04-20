@@ -124,7 +124,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 					// show that the event label has the same id as its
 					// associated labeler
 					EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty();
-					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
 					EventLabel<PersonPropertyUpdateEvent> eventLabel2 = PersonPropertyUpdateEvent.getEventLabelByPersonAndProperty(c, personId, testPersonPropertyId);
@@ -165,7 +165,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 
 					// show that the event label and event labeler have equal id
 					// values
-					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// create an event
 					PersonPropertyUpdateEvent event = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, 1, 2);
@@ -202,7 +202,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForProperty();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<PersonPropertyUpdateEvent> eventLabel2 = PersonPropertyUpdateEvent.getEventLabelByProperty(c, testPersonPropertyId);
@@ -245,7 +245,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 
 					// show that the event label and event labeler have equal id
 					// values
-					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// create an event
 					PersonPropertyUpdateEvent event = new PersonPropertyUpdateEvent(new PersonId(0), testPersonPropertyId, 1, 2);
@@ -286,7 +286,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 					// show that the event label has the same id as its
 					// associated labeler
 					EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);
-					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
 					EventLabel<PersonPropertyUpdateEvent> eventLabel2 = PersonPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, testRegionId, testPersonPropertyId);
@@ -333,7 +333,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 
 					// show that the event label and event labeler have equal id
 					// values
-					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// create an event
 					PersonPropertyUpdateEvent event = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, 1, 2);

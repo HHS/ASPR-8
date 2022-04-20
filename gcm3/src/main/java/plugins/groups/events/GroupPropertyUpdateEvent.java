@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -117,8 +116,8 @@ public class GroupPropertyUpdateEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group id
-	 * and group property id.
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group id and group
+	 * property id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -141,13 +140,15 @@ public class GroupPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
-	 * events that uses group id and group property id. Automatically added at
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events that
+	 * uses group id and group property id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupAndProperty() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class,
-				LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, event.getGroupId(), event.getGroupPropertyId()));
+		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP_PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabelByGroupAndProperty(context, event.getGroupId(), event.getGroupPropertyId()))//
+							.build();
 	}
 
 	/**
@@ -170,18 +171,20 @@ public class GroupPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
-	 * events that uses group id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events that
+	 * uses group id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroup() {
-		return new SimpleEventLabeler<>(LabelerId.GROUP, GroupPropertyUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP, GroupPropertyUpdateEvent.class, event.getGroupId()));
+		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP)//
+							.setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group type
-	 * id and group property id.
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group type id and
+	 * group property id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -204,20 +207,22 @@ public class GroupPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
-	 * events that uses group id and group type id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events that
+	 * uses group id and group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupTypeAndProperty(GroupDataManager groupDataManager ) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, (context, event) -> {
-			GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-			return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, groupTypeId, event.getGroupPropertyId());
-		});
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupTypeAndProperty(GroupDataManager groupDataManager) {
+		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE_PROPERTY)//
+							.setLabelFunction((context, event) -> {
+								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
+								return getEventLabelByGroupTypeAndProperty(context, groupTypeId, event.getGroupPropertyId());
+							})//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group type
-	 * id.
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group type id.
 	 *
 	 * Preconditions : The context cannot be null
 	 *
@@ -236,34 +241,38 @@ public class GroupPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
-	 * events that uses group type id. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events that
+	 * uses group type id. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.TYPE, GroupPropertyUpdateEvent.class, (context, event) -> {
-			GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-			return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE, GroupPropertyUpdateEvent.class, groupTypeId);
-		});
+		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE)//
+							.setLabelFunction((context, event) -> {
+								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
+								return getEventLabelByGroupType(context, groupTypeId);
+							})//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on all
-	 * events.
+	 * {@link GroupPropertyUpdateEvent} events. Matches on all events.
 	 */
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByAll() {
 		return ALL_LABEL;
 	}
 
-	private final static EventLabel<GroupPropertyUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.ALL,
-			GroupPropertyUpdateEvent.class);
+	private final static EventLabel<GroupPropertyUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.ALL, GroupPropertyUpdateEvent.class);
 
 	/**
-	 * Returns an event labeler for {@link GroupPropertyUpdateEvent}
-	 * events matches all events. Automatically added at initialization.
+	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events
+	 * matches all events. Automatically added at initialization.
 	 */
 	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, GroupPropertyUpdateEvent.class, (context, event) -> ALL_LABEL);
+		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_LABEL)//
+							.build();
 	}
 
 }

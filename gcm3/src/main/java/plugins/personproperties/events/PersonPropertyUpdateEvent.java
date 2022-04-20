@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
@@ -29,9 +28,7 @@ import plugins.regions.support.RegionId;
 
 @Immutable
 public class PersonPropertyUpdateEvent implements Event {
-	
-		
-	
+
 	private final PersonId personId;
 	private final PersonPropertyId personPropertyId;
 	private final Object previousPropertyValue;
@@ -80,10 +77,9 @@ public class PersonPropertyUpdateEvent implements Event {
 	/**
 	 * Returns this event in the form:
 	 * 
-	 * "PersonPropertyUpdateEvent [personId=" + personId + ",
-	 * personPropertyId=" + personPropertyId + ", previousPropertyValue=" +
-	 * previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue
-	 * + "]";
+	 * "PersonPropertyUpdateEvent [personId=" + personId + ", personPropertyId="
+	 * + personPropertyId + ", previousPropertyValue=" + previousPropertyValue +
+	 * ", currentPropertyValue=" + currentPropertyValue + "]";
 	 */
 	@Override
 	public String toString() {
@@ -95,13 +91,10 @@ public class PersonPropertyUpdateEvent implements Event {
 		PERSON_PROPERTY, PROPERTY, REGION_PROPERTY
 	}
 
-	
-
-	
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches on person id
-	 * and person property id.
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person id and person
+	 * property id.
 	 *
 	 *
 	 * @throws ContractException
@@ -123,19 +116,20 @@ public class PersonPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonPropertyUpdateEvent}
-	 * events that uses person id and person property id. Automatically added at
+	 * Returns an event labeler for {@link PersonPropertyUpdateEvent} events
+	 * that uses person id and person property id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForPersonAndProperty() {
-		return new SimpleEventLabeler<>(LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getPersonPropertyId(),
-				LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, event.getPersonId(), event.getPersonPropertyId()));
+		return EventLabeler	.builder(PersonPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON_PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabelByPersonAndProperty(context, event.getPersonId(), event.getPersonPropertyId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches on person
-	 * property id.
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id.
 	 *
 	 *
 	 * @throws ContractException
@@ -152,19 +146,21 @@ public class PersonPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonPropertyUpdateEvent}
-	 * events that uses only the person property id. Automatically added at
+	 * Returns an event labeler for {@link PersonPropertyUpdateEvent} events
+	 * that uses only the person property id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForProperty() {
-		return new SimpleEventLabeler<>(LabelerId.PROPERTY, PersonPropertyUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getPersonPropertyId(), LabelerId.PROPERTY, PersonPropertyUpdateEvent.class, event.getPersonPropertyId()));
+		return EventLabeler	.builder(PersonPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabelByProperty(context, event.getPersonPropertyId()))//
+							.build();
 	}
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link PersonPropertyUpdateEvent} events. Matches on region id
-	 * and person property id.
+	 * {@link PersonPropertyUpdateEvent} events. Matches on region id and person
+	 * property id.
 	 *
 	 *
 	 * @throws ContractException
@@ -186,15 +182,17 @@ public class PersonPropertyUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link PersonPropertyUpdateEvent}
-	 * events that uses the region id and person property id. Automatically added at
+	 * Returns an event labeler for {@link PersonPropertyUpdateEvent} events
+	 * that uses the region id and person property id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForRegionAndProperty(RegionDataManager regionDataManager) {
-		return new SimpleEventLabeler<>(LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, (context, event) -> {
-			RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
-			return new MultiKeyEventLabel<>(event.getPersonPropertyId(), LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, regionId, event.getPersonPropertyId());
-		});
+		return EventLabeler	.builder(PersonPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
+							.setLabelFunction((context, event) -> {
+								RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
+								return getEventLabelByRegionAndProperty(context, regionId, event.getPersonPropertyId());
+							}).build();
 	}
 
 	private static void validatePersonPropertyId(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
@@ -206,7 +204,6 @@ public class PersonPropertyUpdateEvent implements Event {
 			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID);
 		}
 	}
-
 
 	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
 		if (regionId == null) {

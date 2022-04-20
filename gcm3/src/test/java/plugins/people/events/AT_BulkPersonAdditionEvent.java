@@ -67,7 +67,7 @@ public class AT_BulkPersonAdditionEvent implements Event {
 		EventLabel<BulkPersonAdditionEvent> eventLabel = BulkPersonAdditionEvent.getEventLabel();
 		assertEquals(BulkPersonAdditionEvent.class, eventLabel.getEventClass());
 		assertEquals(BulkPersonAdditionEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(BulkPersonAdditionEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+		assertEquals(BulkPersonAdditionEvent.getEventLabeler().getEventLabelerId(), eventLabel.getLabelerId());
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class AT_BulkPersonAdditionEvent implements Event {
 			EventLabeler<BulkPersonAdditionEvent> eventLabeler = BulkPersonAdditionEvent.getEventLabeler();
 			assertEquals(BulkPersonAdditionEvent.class, eventLabeler.getEventClass());
 
-			assertEquals(BulkPersonAdditionEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
+			assertEquals(BulkPersonAdditionEvent.getEventLabel().getLabelerId(), eventLabeler.getEventLabelerId());
 
 			// show that the event labeler produces the expected event
 			// label

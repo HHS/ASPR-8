@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.util.ContractException;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
@@ -60,27 +59,25 @@ public final class BulkPersonAdditionEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link BulkPersonAdditionEvent} events. Matches all such
-	 * events.
+	 * {@link BulkPersonAdditionEvent} events. Matches all such events.
 	 */
 	public static EventLabel<BulkPersonAdditionEvent> getEventLabel() {
-		return EVENT_LABEL_INSTANCE;
+		return EVENT_LABEL_ALL;
 	}
 
 	private static enum LabelerId implements EventLabelerId {
 		ALL
 	}
 
-	private final static EventLabel<BulkPersonAdditionEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(BulkPersonAdditionEvent.class, LabelerId.ALL,
-			BulkPersonAdditionEvent.class);
+	private final static EventLabel<BulkPersonAdditionEvent> EVENT_LABEL_ALL = new MultiKeyEventLabel<>(BulkPersonAdditionEvent.class, LabelerId.ALL, BulkPersonAdditionEvent.class);
 
 	/**
 	 * Returns an event labeler for {@link BulkPersonAdditionEvent}
 	 */
 	public static EventLabeler<BulkPersonAdditionEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(
-				LabelerId.ALL,
-				BulkPersonAdditionEvent.class,
-				(context, event) -> EVENT_LABEL_INSTANCE);
+		return EventLabeler	.builder(BulkPersonAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> EVENT_LABEL_ALL)//
+							.build();
 	}
 }

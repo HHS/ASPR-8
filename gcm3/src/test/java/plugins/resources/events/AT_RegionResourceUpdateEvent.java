@@ -107,7 +107,7 @@ public class AT_RegionResourceUpdateEvent implements Event {
 					// show that the event label has the same id as its
 					// associated labeler
 					EventLabeler<RegionResourceUpdateEvent> eventLabeler = RegionResourceUpdateEvent.getEventLabelerForRegionAndResource();
-					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
 					EventLabel<RegionResourceUpdateEvent> eventLabel2 = RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
@@ -173,7 +173,7 @@ public class AT_RegionResourceUpdateEvent implements Event {
 					// show that the event label and event labeler have
 					// equal id
 					// values
-					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// create an event
 					RegionResourceUpdateEvent event = new RegionResourceUpdateEvent(regionId, resourceId, 10L, 30L);

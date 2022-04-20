@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import plugins.materials.support.StageId;
 
 @Immutable
@@ -43,7 +42,10 @@ public class StageImminentRemovalEvent implements Event {
 	}
 
 	public static EventLabeler<StageImminentRemovalEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, StageImminentRemovalEvent.class, (context, event) -> ALL_LABEL);
+		return EventLabeler	.builder(StageImminentRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_LABEL)//
+							.build();
 	}
 
 }

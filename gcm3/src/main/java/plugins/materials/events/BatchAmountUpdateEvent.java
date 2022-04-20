@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import plugins.materials.support.BatchId;
 
 @Immutable
@@ -38,6 +37,7 @@ public class BatchAmountUpdateEvent implements Event {
 	public String toString() {
 		return "BatchAmountUpdateEvent [batchId=" + batchId + ", previousAmount=" + previousAmount + ", currentAmount=" + currentAmount + "]";
 	}
+
 	private static enum LabelerId implements EventLabelerId {
 		ALL
 	}
@@ -49,6 +49,9 @@ public class BatchAmountUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<BatchAmountUpdateEvent> getEventLabelerForAll() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, BatchAmountUpdateEvent.class, (context, event) -> ALL_LABEL);
+		return EventLabeler	.builder(BatchAmountUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> ALL_LABEL)//
+							.build();
 	}
 }

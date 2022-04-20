@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -21,7 +20,8 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 	private final Object previousPropertyValue;
 	private final Object currentPropertyValue;
 
-	public MaterialsProducerPropertyUpdateEvent(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
+	public MaterialsProducerPropertyUpdateEvent(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId, Object previousPropertyValue,
+			Object currentPropertyValue) {
 		super();
 		this.materialsProducerId = materialsProducerId;
 		this.materialsProducerPropertyId = materialsProducerPropertyId;
@@ -47,7 +47,8 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "MaterialsProducerPropertyUpdateEvent [materialsProducerId=" + materialsProducerId + ", materialsProducerPropertyId=" + materialsProducerPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
+		return "MaterialsProducerPropertyUpdateEvent [materialsProducerId=" + materialsProducerId + ", materialsProducerPropertyId=" + materialsProducerPropertyId + ", previousPropertyValue="
+				+ previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
 	}
 
 	private static enum LabelerId implements EventLabelerId {
@@ -74,7 +75,8 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 		}
 	}
 
-	public static EventLabel<MaterialsProducerPropertyUpdateEvent> getEventLabelByMaterialsProducerAndProperty(SimulationContext simulationContext, MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public static EventLabel<MaterialsProducerPropertyUpdateEvent> getEventLabelByMaterialsProducerAndProperty(SimulationContext simulationContext, MaterialsProducerId materialsProducerId,
+			MaterialsProducerPropertyId materialsProducerPropertyId) {
 		validateMaterialsProducerId(simulationContext, materialsProducerId);
 		validateMaterialsProducerPropertyId(simulationContext, materialsProducerPropertyId);
 
@@ -82,10 +84,10 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<MaterialsProducerPropertyUpdateEvent> getEventLabelerForMaterialsProducerAndProperty() {
-		return new SimpleEventLabeler<>(
-				LabelerId.PRODUCER_PROPERTY,
-				MaterialsProducerPropertyUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getMaterialsProducerPropertyId(), LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyUpdateEvent.class, event.getMaterialsProducerId(), event.getMaterialsProducerPropertyId()));
+		return EventLabeler	.builder(MaterialsProducerPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PRODUCER_PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabelByMaterialsProducerAndProperty(context, event.getMaterialsProducerId(), event.getMaterialsProducerPropertyId()))//
+							.build();
 	}
 
 	@Override

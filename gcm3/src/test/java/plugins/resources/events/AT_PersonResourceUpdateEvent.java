@@ -115,7 +115,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 					// show that the event label has the same id as its
 					// associated labeler
 					EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager);
-					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
 					EventLabel<PersonResourceUpdateEvent> eventLabel2 = PersonResourceUpdateEvent.getEventLabelByRegionAndResource(c, regionId, resourceId);
@@ -186,7 +186,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 						// show that the event label and event labeler have
 						// equal id
 						// values
-						assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+						assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 						// create an event
 						PersonResourceUpdateEvent event = new PersonResourceUpdateEvent(personId, resourceId, 10L, 30L);
@@ -232,7 +232,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 					// show that the event label has the same id as its
 					// associated labeler
 					EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForPersonAndResource();
-					assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
 					EventLabel<PersonResourceUpdateEvent> eventLabel2 = PersonResourceUpdateEvent.getEventLabelByPersonAndResource(c, personId, resourceId);
@@ -297,7 +297,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 					// show that the event label and event labeler have
 					// equal id
 					// values
-					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+					assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// create an event
 					PersonResourceUpdateEvent event = new PersonResourceUpdateEvent(personId, resourceId, 10L, 30L);
@@ -339,7 +339,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForResource();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<PersonResourceUpdateEvent> eventLabel2 = PersonResourceUpdateEvent.getEventLabelByResource(c, resourceId);
@@ -389,7 +389,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 				// show that the event label and event labeler have
 				// equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				PersonResourceUpdateEvent event = new PersonResourceUpdateEvent(new PersonId(0), resourceId, 10L, 30L);

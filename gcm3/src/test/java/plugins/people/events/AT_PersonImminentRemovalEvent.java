@@ -58,7 +58,7 @@ public class AT_PersonImminentRemovalEvent implements Event {
 		EventLabel<PersonImminentRemovalEvent> eventLabel = PersonImminentRemovalEvent.getEventLabel();
 		assertEquals(PersonImminentRemovalEvent.class, eventLabel.getEventClass());
 		assertEquals(PersonImminentRemovalEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(PersonImminentRemovalEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+		assertEquals(PersonImminentRemovalEvent.getEventLabeler().getEventLabelerId(), eventLabel.getLabelerId());
 	}
 	
 	@Test
@@ -70,7 +70,7 @@ public class AT_PersonImminentRemovalEvent implements Event {
 			EventLabeler<PersonImminentRemovalEvent> eventLabeler = PersonImminentRemovalEvent.getEventLabeler();
 			assertEquals(PersonImminentRemovalEvent.class, eventLabeler.getEventClass());
 
-			assertEquals(PersonImminentRemovalEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
+			assertEquals(PersonImminentRemovalEvent.getEventLabel().getLabelerId(), eventLabeler.getEventLabelerId());
 
 			// show that the event labeler produces the expected event
 			// label

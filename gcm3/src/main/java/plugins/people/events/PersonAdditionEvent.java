@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -29,10 +28,10 @@ public final class PersonAdditionEvent implements Event {
 	 */
 	public PersonAdditionEvent(final PersonId personId, PersonConstructionData personConstructionData) {
 
-		if(personId == null) {
+		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if(personConstructionData == null) {
+		if (personConstructionData == null) {
 			throw new ContractException(PersonError.NULL_PERSON_CONSTRUCTION_DATA);
 		}
 		this.personId = personId;
@@ -52,27 +51,28 @@ public final class PersonAdditionEvent implements Event {
 	public PersonConstructionData getPersonConstructionData() {
 		return personConstructionData;
 	}
-	
+
 	/**
-	 * Returns an event label used to subscribe to
-	 * {@link PersonAdditionEvent} events. Matches all such
-	 * events.
+	 * Returns an event label used to subscribe to {@link PersonAdditionEvent}
+	 * events. Matches all such events.
 	 */
 	public static EventLabel<PersonAdditionEvent> getEventLabel() {
-		return EVENT_LABEL_INSTANCE;
+		return EVENT_LABEL_ALL;
 	}
 
 	private static enum LabelerId implements EventLabelerId {
 		ALL
 	}
 
-	
-	private final static EventLabel<PersonAdditionEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(PersonAdditionEvent.class, LabelerId.ALL,
-			PersonAdditionEvent.class);
+	private final static EventLabel<PersonAdditionEvent> EVENT_LABEL_ALL = new MultiKeyEventLabel<>(PersonAdditionEvent.class, LabelerId.ALL, PersonAdditionEvent.class);
+
 	/**
 	 * Returns an event labeler for {@link PersonAdditionEvent}
 	 */
 	public static EventLabeler<PersonAdditionEvent> getEventLabeler() {
-		return new SimpleEventLabeler<>(LabelerId.ALL, PersonAdditionEvent.class, (context, event) -> EVENT_LABEL_INSTANCE);
+		return EventLabeler	.builder(PersonAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.ALL)//
+							.setLabelFunction((context, event) -> EVENT_LABEL_ALL)//
+							.build();
 	}
 }

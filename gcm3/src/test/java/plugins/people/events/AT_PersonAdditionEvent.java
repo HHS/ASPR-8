@@ -61,7 +61,7 @@ public class AT_PersonAdditionEvent implements Event {
 		EventLabel<PersonAdditionEvent> eventLabel = PersonAdditionEvent.getEventLabel();
 		assertEquals(PersonAdditionEvent.class, eventLabel.getEventClass());
 		assertEquals(PersonAdditionEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(PersonAdditionEvent.getEventLabeler().getId(), eventLabel.getLabelerId());
+		assertEquals(PersonAdditionEvent.getEventLabeler().getEventLabelerId(), eventLabel.getLabelerId());
 	}
 	
 
@@ -74,7 +74,7 @@ public class AT_PersonAdditionEvent implements Event {
 			EventLabeler<PersonAdditionEvent> eventLabeler = PersonAdditionEvent.getEventLabeler();
 			assertEquals(PersonAdditionEvent.class, eventLabeler.getEventClass());
 
-			assertEquals(PersonAdditionEvent.getEventLabel().getLabelerId(), eventLabeler.getId());
+			assertEquals(PersonAdditionEvent.getEventLabel().getLabelerId(), eventLabeler.getEventLabelerId());
 
 			// show that the event labeler produces the expected event
 			// label

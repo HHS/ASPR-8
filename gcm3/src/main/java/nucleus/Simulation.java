@@ -204,7 +204,7 @@ public class Simulation {
 
 		@Override
 		public void releaseEvent(final Event event) {
-			Simulation.this.resolveEvent(event);
+			Simulation.this.releaseEvent(event);
 
 		}
 
@@ -440,7 +440,7 @@ public class Simulation {
 
 		@Override
 		public void releaseEvent(final Event event) {
-			simulation.resolveEvent(event);
+			simulation.releaseEvent(event);
 
 		}
 
@@ -1077,7 +1077,7 @@ public class Simulation {
 		private final EventLabelerId id;
 
 		public MetaEventLabeler(EventLabeler<T> eventLabeler, Class<T> eventClass) {
-			this.id = eventLabeler.getId();
+			this.id = eventLabeler.getEventLabelerId();
 			this.eventClass = eventClass;
 			this.eventLabeler = eventLabeler;
 
@@ -1086,6 +1086,9 @@ public class Simulation {
 		@SuppressWarnings("unchecked")
 		public EventLabel<T> getEventLabel(SimulationContext simulationContext, Event event) {
 			EventLabel<T> eventLabel = eventLabeler.getEventLabel(simulationContext, (T) event);
+			if(eventLabel == null) {
+				throw new ContractException(NucleusError.NULL_EVENT_LABEL,"event labeler for class = "+ eventLabeler.getEventClass().getSimpleName()+" and label id ="+ eventLabeler.getEventLabelerId()+ " returned a null event label");
+			}
 			if (!eventClass.equals(eventLabel.getEventClass())) {
 				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS);
 			}
@@ -1245,7 +1248,7 @@ public class Simulation {
 		map.remove(focalActorId);
 	}
 
-	private void resolveEvent(final Event event) {
+	private void releaseEvent(final Event event) {
 
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
@@ -1443,15 +1446,9 @@ public class Simulation {
 		}
 
 		Class<T> eventClass = eventLabeler.getEventClass();
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER);
-		}
 		
-		EventLabelerId id = eventLabeler.getId();
 		
-		if (id == null) {
-			throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABELER);
-		}
+		EventLabelerId id = eventLabeler.getEventLabelerId();
 
 		if (id_Labeler_Map.containsKey(id)) {
 			throw new ContractException(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER);

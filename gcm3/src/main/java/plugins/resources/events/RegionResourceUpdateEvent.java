@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.regions.datamanagers.RegionDataManager;
@@ -95,18 +94,18 @@ public class RegionResourceUpdateEvent implements Event {
 
 	/**
 	 * Returns an event label used to subscribe to
-	 * {@link RegionResourceUpdateEvent} events. Matches on
-	 * region id and resource id.
+	 * {@link RegionResourceUpdateEvent} events. Matches on region id and
+	 * resource id.
 	 * 
 	 *
 	 * Preconditions : The context cannot be null
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the
-	 *             region id is null</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
-	 *             the region id is unknown</li>
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             id is unknown</li>
 	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
@@ -119,14 +118,17 @@ public class RegionResourceUpdateEvent implements Event {
 	}
 
 	/**
-	 * Returns an event labeler for {@link RegionResourceUpdateEvent}
-	 * events that uses region id and resource id. Automatically added at
+	 * Returns an event labeler for {@link RegionResourceUpdateEvent} events
+	 * that uses region id and resource id. Automatically added at
 	 * initialization.
 	 */
 	public static EventLabeler<RegionResourceUpdateEvent> getEventLabelerForRegionAndResource() {
-		return new SimpleEventLabeler<>(LabelerId.REGION_RESOURCE, RegionResourceUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getResourceId(), LabelerId.REGION_RESOURCE, RegionResourceUpdateEvent.class, event.getRegionId(), event.getResourceId()));
+		return EventLabeler	.builder(RegionResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
+							.setLabelFunction((context, event) -> getEventLabelByRegionAndResource(context, event.getRegionId(), event.getResourceId()))//
+							.build();
 	}
-	
+
 	/**
 	 * Returns the resource id used to create this event
 	 */

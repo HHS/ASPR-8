@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.MultiKeyEventLabel;
-import nucleus.SimpleEventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.regions.datamanagers.RegionDataManager;
@@ -20,7 +19,6 @@ public final class RegionPropertyUpdateEvent implements Event {
 	private final RegionPropertyId regionPropertyId;
 	private final Object previousPropertyValue;
 	private final Object currentPropertyValue;
-
 
 	public RegionPropertyUpdateEvent(RegionId regionId, RegionPropertyId regionPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
 		super();
@@ -71,11 +69,6 @@ public final class RegionPropertyUpdateEvent implements Event {
 		}
 	}
 
-	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
-		validateRegionPropertyId(simulationContext, regionPropertyId);
-		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.PROPERTY, RegionPropertyUpdateEvent.class, regionPropertyId);
-	}
-
 	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, RegionPropertyId regionPropertyId) {
 		validateRegionId(simulationContext, regionId);
 		validateRegionPropertyId(simulationContext, regionPropertyId);
@@ -83,13 +76,22 @@ public final class RegionPropertyUpdateEvent implements Event {
 	}
 
 	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForRegionAndProperty() {
-		return new SimpleEventLabeler<>(LabelerId.REGION_PROPERTY, RegionPropertyUpdateEvent.class, (context, event) -> new MultiKeyEventLabel<>(event.getRegionPropertyId(),
-				LabelerId.REGION_PROPERTY, RegionPropertyUpdateEvent.class, event.getRegionId(), event.getRegionPropertyId()));
+		return EventLabeler	.builder(RegionPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabelByRegionAndProperty(context, event.getRegionId(), event.getRegionPropertyId()))//
+							.build();
+	}
+
+	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
+		validateRegionPropertyId(simulationContext, regionPropertyId);
+		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.PROPERTY, RegionPropertyUpdateEvent.class, regionPropertyId);
 	}
 
 	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForProperty() {
-		return new SimpleEventLabeler<>(LabelerId.PROPERTY, RegionPropertyUpdateEvent.class,
-				(context, event) -> new MultiKeyEventLabel<>(event.getRegionPropertyId(), LabelerId.PROPERTY, RegionPropertyUpdateEvent.class, event.getRegionPropertyId()));
+		return EventLabeler	.builder(RegionPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PROPERTY)//
+							.setLabelFunction((context, event) -> getEventLabelByProperty(context, event.getRegionPropertyId()))//
+							.build();
 	}
 
 	@Override

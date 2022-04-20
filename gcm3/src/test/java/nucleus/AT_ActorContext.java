@@ -198,36 +198,6 @@ public class AT_ActorContext {
 		}
 	}
 
-	/*
-	 * Event labeler class designed to possibly not comply with preconditions
-	 * required for the adding of event labelers
-	 */
-	private static class TestEventLabeler implements EventLabeler<BaseEvent> {
-		private final Class<BaseEvent> eventClass;
-		private final EventLabelerId eventLabelerId;
-
-		public TestEventLabeler(final Class<BaseEvent> eventClass, final EventLabelerId eventLabelerId) {
-			this.eventClass = eventClass;
-			this.eventLabelerId = eventLabelerId;
-		}
-
-		@Override
-		public Class<BaseEvent> getEventClass() {
-			return eventClass;
-		}
-
-		@Override
-		public EventLabel<BaseEvent> getEventLabel(final SimulationContext context, final BaseEvent event) {
-			return new MultiKeyEventLabel<>(BaseEvent.class, eventLabelerId, BaseEvent.class);
-		}
-
-		@Override
-		public EventLabelerId getId() {
-			return eventLabelerId;
-		}
-
-	}
-
 	private static class TestEvent implements Event {
 
 	}
@@ -284,13 +254,16 @@ public class AT_ActorContext {
 	}
 
 	private static EventLabeler<DataChangeEvent> getEventLabelerForDataChangeObservation() {
-		return new SimpleEventLabeler<>(Local_Labeler_ID.DATA_CHANGE, DataChangeEvent.class, (context, event) -> {
-			ValueType valueType = ValueType.LOW;
-			if (event.getValue() > 10) {
-				valueType = ValueType.HIGH;
-			}
-			return new MultiKeyEventLabel<>(event.getDatumType(), Local_Labeler_ID.DATA_CHANGE, DataChangeEvent.class, event.getDatumType(), valueType);
-		});
+		return EventLabeler	.builder(DataChangeEvent.class)//
+							.setEventLabelerId(Local_Labeler_ID.DATA_CHANGE)//
+							.setLabelFunction((context, event) -> {
+								ValueType valueType = ValueType.LOW;
+								if (event.getValue() > 10) {
+									valueType = ValueType.HIGH;
+								}
+								return getEventLabelByDatumAndValue(event.getDatumType(), valueType);
+							})//
+							.build();
 	}
 
 	/**
@@ -372,20 +345,18 @@ public class AT_ActorContext {
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(null));
 			assertEquals(NucleusError.NULL_EVENT_LABELER, contractException.getErrorType());
 
-			// if the event class is null
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(null, eventLabelerId)));
-			assertEquals(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER, contractException.getErrorType());
-
-			// if the event labeler contains a null labeler id
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(BaseEvent.class, null)));
-			assertEquals(NucleusError.NULL_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
 			/*
 			 * if the event labeler contains a labeler id that is the id of a
 			 * previously added event labeler
 			 */
-			c.addEventLabeler(new TestEventLabeler(BaseEvent.class, eventLabelerId));
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(new TestEventLabeler(BaseEvent.class, eventLabelerId)));
+			c.addEventLabeler(EventLabeler.builder(BaseEvent.class).setEventLabelerId(eventLabelerId).setLabelFunction((c2, e) -> null).build());
+			contractException = assertThrows(ContractException.class, () -> {
+				EventLabeler<BaseEvent> eventLabeler = EventLabeler.builder(BaseEvent.class)//
+						.setEventLabelerId(eventLabelerId)//
+						.setLabelFunction((c2, e) -> new MultiKeyEventLabel<>(BaseEvent.class, eventLabelerId, BaseEvent.class))//
+						.build();
+				c.addEventLabeler(eventLabeler);
+			});
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
 		}));
@@ -397,7 +368,10 @@ public class AT_ActorContext {
 		EventLabelerId id = new EventLabelerId() {
 		};
 
-		EventLabeler<BaseEvent> eventLabeler = new TestEventLabeler(BaseEvent.class, id);
+		EventLabeler<BaseEvent> eventLabeler = EventLabeler	.builder(BaseEvent.class)//
+															.setEventLabelerId(id)//
+															.setLabelFunction((c, e) -> new MultiKeyEventLabel<>(BaseEvent.class, id, BaseEvent.class))//
+															.build();
 
 		// have the actor add the event labeler
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
@@ -745,7 +719,7 @@ public class AT_ActorContext {
 		// there are no precondition tests
 
 		Set<ActorId> observedActorIds = new LinkedHashSet<>();
-		
+
 		/*
 		 * Have actors get their own actor ids and show that these ids match the
 		 * expected values established duing the initialization of the
@@ -755,21 +729,21 @@ public class AT_ActorContext {
 			ActorId actorId = c.getActorId();
 			observedActorIds.add(actorId);
 			assertNotNull(actorId);
-			
+
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			observedActorIds.add(actorId);
 			assertNotNull(actorId);
-			
+
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(testTime++, (c) -> {
 			ActorId actorId = c.getActorId();
 			observedActorIds.add(actorId);
 			assertNotNull(actorId);
-			
+
 		}));
 
 		// build the plugin
@@ -786,8 +760,8 @@ public class AT_ActorContext {
 
 		// show that all action plans were executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
-		
-		//show that the number of actor ids matches the number of actor aliases
+
+		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(3, observedActorIds.size());
 	}
 
@@ -848,8 +822,8 @@ public class AT_ActorContext {
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 
 		// Precondition test 1
-		pluginDataBuilder.addTestDataManager("dm3A",()->new TestDataManager3A());
-		pluginDataBuilder.addTestDataManager("dm3B", ()->new TestDataManager3B());
+		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
+		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 
 		// show that ambiguous class matching throws an exception
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -1417,9 +1391,16 @@ public class AT_ActorContext {
 		// have an actor perform precondition tests
 		pluginDataBuilder.addTestActorPlan("precondition checker", new TestActorPlan(0, (context) -> {
 
-			context.addEventLabeler(new SimpleEventLabeler<BaseEvent>(Local_Labeler_ID.TEST_LABELER_ID, BaseEvent.class, (c, e) -> {
-				return new BaseEventLabel();
-			}));
+			context.addEventLabeler(
+
+					EventLabeler.builder(BaseEvent.class)//
+								.setEventLabelerId(Local_Labeler_ID.TEST_LABELER_ID)//
+								.setLabelFunction((c, e) -> {
+									return new BaseEventLabel();
+								})//
+								.build()
+
+			);
 
 			BaseEventLabel baseEventLabel = null;
 			ContractException contractException = assertThrows(ContractException.class, () -> context.subscribe(baseEventLabel, (c, e) -> {
@@ -1691,9 +1672,12 @@ public class AT_ActorContext {
 			 * passed to all actor subscribers so that we can demonstrate that
 			 * unsubscribing works without complicating the test with filtering
 			 */
-			EventLabeler<BaseEvent> eventLabeler = new SimpleEventLabeler<BaseEvent>(Local_Labeler_ID.TEST_LABELER_ID, BaseEvent.class, (c2, e) -> {
-				return eventLabel;
-			});
+			EventLabeler<BaseEvent> eventLabeler = EventLabeler	.builder(BaseEvent.class)//
+																.setEventLabelerId(Local_Labeler_ID.TEST_LABELER_ID)//
+																.setLabelFunction((c2, e) -> {
+																	return eventLabel;
+																})//
+																.build();
 			c.addEventLabeler(eventLabeler);
 
 			for (Double time : eventGenerationTimes) {

@@ -53,7 +53,7 @@ public class AT_StageImminentRemovalEvent {
 			EventLabel<StageImminentRemovalEvent> eventLabel = StageImminentRemovalEvent.getEventLabelByAll();
 			assertEquals(StageImminentRemovalEvent.class, eventLabel.getEventClass());
 			assertEquals(StageImminentRemovalEvent.class, eventLabel.getPrimaryKeyValue());
-			assertEquals(StageImminentRemovalEvent.getEventLabelerForAll().getId(), eventLabel.getLabelerId());
+			assertEquals(StageImminentRemovalEvent.getEventLabelerForAll().getEventLabelerId(), eventLabel.getLabelerId());
 		});
 	}
 
@@ -68,7 +68,7 @@ public class AT_StageImminentRemovalEvent {
 			assertEquals(StageImminentRemovalEvent.class, eventLabeler.getEventClass());
 
 			
-					assertEquals(StageImminentRemovalEvent.getEventLabelByAll().getLabelerId(), eventLabeler.getId());
+					assertEquals(StageImminentRemovalEvent.getEventLabelByAll().getLabelerId(), eventLabeler.getEventLabelerId());
 
 					// show that the event labeler produces the expected event
 					// label

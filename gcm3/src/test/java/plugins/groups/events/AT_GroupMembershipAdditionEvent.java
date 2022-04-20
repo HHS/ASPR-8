@@ -81,7 +81,7 @@ public class AT_GroupMembershipAdditionEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroupAndPerson(c, groupId, personId);
@@ -141,7 +141,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
@@ -182,7 +182,7 @@ public class AT_GroupMembershipAdditionEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroup();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroup(c, groupId);
@@ -237,7 +237,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				PersonId personId = new PersonId(0);
@@ -277,7 +277,7 @@ public class AT_GroupMembershipAdditionEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForPerson();
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByPerson(c, personId);
@@ -329,7 +329,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
@@ -369,7 +369,7 @@ public class AT_GroupMembershipAdditionEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, testGroupTypeId, personId);
@@ -434,7 +434,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				// create an event
 				GroupMembershipAdditionEvent event = new GroupMembershipAdditionEvent(personId, groupId);
@@ -472,7 +472,7 @@ public class AT_GroupMembershipAdditionEvent {
 				// show that the event label has the same id as its
 				// associated labeler
 				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupDataManager);
-				assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
 				EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByGroupType(c, testGroupTypeId);
@@ -523,7 +523,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 
@@ -562,7 +562,7 @@ public class AT_GroupMembershipAdditionEvent {
 			// show that the event label has the same id as its
 			// associated labeler
 			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForAll();
-			assertEquals(eventLabeler.getId(), eventLabel.getLabelerId());
+			assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 			// show that two event labels with the same inputs are equal
 			EventLabel<GroupMembershipAdditionEvent> eventLabel2 = GroupMembershipAdditionEvent.getEventLabelByAll();
@@ -602,7 +602,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label and event labeler have equal id
 				// values
-				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getId());
+				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
 

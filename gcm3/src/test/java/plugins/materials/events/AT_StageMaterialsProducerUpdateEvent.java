@@ -110,7 +110,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = new StageId(i);
-						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByDestination(c, currentMaterialsProducerId).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByDestination(c, currentMaterialsProducerId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 						// show that the event labeler produces the expected
 						// event
@@ -164,7 +164,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = new StageId(i);
-						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelBySource(c, previousMaterialsProducerId).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelBySource(c, previousMaterialsProducerId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 						// show that the event labeler produces the expected
 						// event
@@ -221,7 +221,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByStage(c, stageId).getLabelerId(), eventLabeler.getEventLabelerId());
 
 						/*
 						 * show that the event labeler produces the expected
@@ -272,7 +272,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 				for (TestMaterialsProducerId currentMaterialsProducerId : TestMaterialsProducerId.values()) {
 					for (int i = 0; i < 10; i++) {
 						StageId stageId = new StageId(i);
-						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getId());
+						assertEquals(StageMaterialsProducerUpdateEvent.getEventLabelByAll(c).getLabelerId(), eventLabeler.getEventLabelerId());
 
 						// show that the event labeler produces the expected
 						// event
