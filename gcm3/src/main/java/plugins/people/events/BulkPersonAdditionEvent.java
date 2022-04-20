@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.util.ContractException;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
@@ -69,7 +69,7 @@ public final class BulkPersonAdditionEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<BulkPersonAdditionEvent> EVENT_LABEL_ALL = new MultiKeyEventLabel<>(BulkPersonAdditionEvent.class, LabelerId.ALL, BulkPersonAdditionEvent.class);
+	private final static EventLabel<BulkPersonAdditionEvent> EVENT_LABEL_ALL = new EventLabel<>(BulkPersonAdditionEvent.class, LabelerId.ALL, BulkPersonAdditionEvent.class);
 
 	/**
 	 * Returns an event labeler for {@link BulkPersonAdditionEvent}

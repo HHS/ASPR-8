@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.resources.datamanagers.ResourceDataManager;
@@ -112,7 +112,7 @@ public class ResourcePropertyUpdateEvent implements Event {
 	public static EventLabel<ResourcePropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
 		validateResourceId(simulationContext, resourceId);
 		validateResourcePropertyId(simulationContext, resourceId, resourcePropertyId);
-		return new MultiKeyEventLabel<>(resourcePropertyId, LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyUpdateEvent.class, resourceId, resourcePropertyId);
+		return new EventLabel<>(resourcePropertyId, LabelerId.RESOURCE_AND_PROPERTY, ResourcePropertyUpdateEvent.class, resourceId, resourcePropertyId);
 	}
 
 	/**

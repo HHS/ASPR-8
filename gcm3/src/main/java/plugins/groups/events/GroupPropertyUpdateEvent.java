@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -136,7 +136,7 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupAndProperty(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
 		validateGroupId(simulationContext, groupId);
 		validateGroupPropertyId(simulationContext, groupId, groupPropertyId);
-		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, groupId, groupPropertyId);
+		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, groupId, groupPropertyId);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class GroupPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP, GroupPropertyUpdateEvent.class, groupId);
+		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP, GroupPropertyUpdateEvent.class, groupId);
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupTypeAndProperty(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validateGroupPropertyId(simulationContext, groupTypeId, groupPropertyId);
-		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, groupTypeId, groupPropertyId);
+		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, groupTypeId, groupPropertyId);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class GroupPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE, GroupPropertyUpdateEvent.class, groupTypeId);
+		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE, GroupPropertyUpdateEvent.class, groupTypeId);
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class GroupPropertyUpdateEvent implements Event {
 		return ALL_LABEL;
 	}
 
-	private final static EventLabel<GroupPropertyUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.ALL, GroupPropertyUpdateEvent.class);
+	private final static EventLabel<GroupPropertyUpdateEvent> ALL_LABEL = new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.ALL, GroupPropertyUpdateEvent.class);
 
 	/**
 	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events

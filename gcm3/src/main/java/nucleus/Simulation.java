@@ -1501,16 +1501,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 		Class<T> eventClass = eventLabel.getEventClass();
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABEL);
-		}
-
 		EventLabelerId eventLabelerId = eventLabel.getLabelerId();
-
-		if (eventLabelerId == null) {
-			throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
-		}
-
 		MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
 
 		if (metaEventLabeler == null) {
@@ -1518,9 +1509,6 @@ public class Simulation {
 		}
 
 		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
-		if (primaryKeyValue == null) {
-			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
-		}
 
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(eventLabel.getEventClass());
 		if (map1 == null) {
@@ -1558,24 +1546,13 @@ public class Simulation {
 		}
 
 		Class<T> eventClass = eventLabel.getEventClass();
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABELER);
-		}
-
 		EventLabelerId eventLabelerId = eventLabel.getLabelerId();
-		if (eventLabelerId == null) {
-			throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
-		}
-
 		MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
 		if (metaEventLabeler == null) {
 			throw new ContractException(NucleusError.UNKNOWN_EVENT_LABELER, eventLabelerId);
 		}
 
 		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
-		if (primaryKeyValue == null) {
-			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
-		}
 
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(eventClass);
 

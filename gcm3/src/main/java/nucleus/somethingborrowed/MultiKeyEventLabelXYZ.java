@@ -17,15 +17,15 @@ import util.wrappers.MultiKey;
  *
  */
 @NotThreadSafe
-public class MultiKeyEventLabelX<T extends Event> implements EventLabelX<T> {
+public class MultiKeyEventLabelXYZ<T extends Event> implements EventLabelXYZ<T> {
 
 	private static class Data<N extends Event> {
 		private List<Object> keys = new ArrayList<>();
-		private EventLabelerX<N> labeler;
+		private EventLabelerXYZ<N> labeler;
 		private Class<N> eventClass;
 	}
 
-	private final EventLabelerX<T> labeler;
+	private final EventLabelerXYZ<T> labeler;
 	private final MultiKey multiKey;
 	private final Class<T> eventClass;
 	private final Object primaryKeyValue;
@@ -62,10 +62,10 @@ public class MultiKeyEventLabelX<T extends Event> implements EventLabelX<T> {
 		 *             <li>{@linkplain NucleusError.NULL_EVENT_LABELER} if no
 		 *             event labeler was set</li>
 		 */
-		public MultiKeyEventLabelX<N> build() {
+		public MultiKeyEventLabelXYZ<N> build() {
 			try {
 				data.eventClass = this.eventClass;
-				return new MultiKeyEventLabelX<>(data);
+				return new MultiKeyEventLabelXYZ<>(data);
 			} finally {
 				data = new Data<>();
 			}
@@ -78,7 +78,7 @@ public class MultiKeyEventLabelX<T extends Event> implements EventLabelX<T> {
 		 *             <li>{@linkplain NucleusError#NULL_EVENT_LABELER} if the
 		 *             labeler is null</li>
 		 */
-		public Builder<N> setEventLabeler(EventLabelerX<N> labeler) {
+		public Builder<N> setEventLabeler(EventLabelerXYZ<N> labeler) {
 			if (labeler == null) {
 				throw new ContractException(NucleusError.NULL_EVENT_LABELER);
 			}
@@ -103,7 +103,7 @@ public class MultiKeyEventLabelX<T extends Event> implements EventLabelX<T> {
 
 	}
 
-	private MultiKeyEventLabelX(Data<T> data) {
+	private MultiKeyEventLabelXYZ(Data<T> data) {
 
 		if (data.keys.isEmpty()) {
 			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
@@ -143,11 +143,11 @@ public class MultiKeyEventLabelX<T extends Event> implements EventLabelX<T> {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof MultiKeyEventLabelX)) {
+		if (!(obj instanceof MultiKeyEventLabelXYZ)) {
 			return false;
 		}
 		@SuppressWarnings("rawtypes")
-		MultiKeyEventLabelX other = (MultiKeyEventLabelX) obj;
+		MultiKeyEventLabelXYZ other = (MultiKeyEventLabelXYZ) obj;
 		return multiKey.equals(other.multiKey);
 	}
 
@@ -157,7 +157,7 @@ public class MultiKeyEventLabelX<T extends Event> implements EventLabelX<T> {
 	}
 
 	@Override
-	public EventLabelerX<T> getLabeler() {
+	public EventLabelerXYZ<T> getLabeler() {
 		return labeler;
 	}
 

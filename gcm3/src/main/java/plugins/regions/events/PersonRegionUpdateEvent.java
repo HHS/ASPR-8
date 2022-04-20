@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
@@ -71,7 +71,7 @@ public final class PersonRegionUpdateEvent implements Event {
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByArrivalRegion(SimulationContext simulationContext, RegionId regionId) {
 		validateRegionId(simulationContext, regionId);
-		return new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.ARRIVAL, PersonRegionUpdateEvent.class, regionId);
+		return new EventLabel<>(PersonRegionUpdateEvent.class, LabelerId.ARRIVAL, PersonRegionUpdateEvent.class, regionId);
 	}
 
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForArrivalRegion() {
@@ -83,7 +83,7 @@ public final class PersonRegionUpdateEvent implements Event {
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByDepartureRegion(SimulationContext simulationContext, RegionId regionId) {
 		validateRegionId(simulationContext, regionId);
-		return new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.DEPARTURE, PersonRegionUpdateEvent.class, regionId);
+		return new EventLabel<>(PersonRegionUpdateEvent.class, LabelerId.DEPARTURE, PersonRegionUpdateEvent.class, regionId);
 	}
 
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForDepartureRegion() {
@@ -95,7 +95,7 @@ public final class PersonRegionUpdateEvent implements Event {
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(PersonRegionUpdateEvent.class, LabelerId.PERSON, PersonRegionUpdateEvent.class, personId);
+		return new EventLabel<>(PersonRegionUpdateEvent.class, LabelerId.PERSON, PersonRegionUpdateEvent.class, personId);
 	}
 
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForPerson() {

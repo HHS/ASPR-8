@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.globals.GlobalDataManager;
@@ -89,7 +89,7 @@ public class GlobalPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GlobalPropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
 		validateGlobalProperty(simulationContext, globalPropertyId);
-		return new MultiKeyEventLabel<>(globalPropertyId, LabelerId.PROPERTY, GlobalPropertyUpdateEvent.class, globalPropertyId);
+		return new EventLabel<>(globalPropertyId, LabelerId.PROPERTY, GlobalPropertyUpdateEvent.class, globalPropertyId);
 	}
 
 	/**

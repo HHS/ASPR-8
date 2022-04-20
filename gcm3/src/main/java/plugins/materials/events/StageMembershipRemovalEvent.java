@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.StageId;
 
@@ -37,7 +36,7 @@ public class StageMembershipRemovalEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<StageMembershipRemovalEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMembershipRemovalEvent.class, LabelerId.ALL, StageMembershipRemovalEvent.class);
+	private final static EventLabel<StageMembershipRemovalEvent> ALL_LABEL = new EventLabel<>(StageMembershipRemovalEvent.class, LabelerId.ALL, StageMembershipRemovalEvent.class);
 
 	public static EventLabel<StageMembershipRemovalEvent> getEventLabelByAll() {
 		return ALL_LABEL;

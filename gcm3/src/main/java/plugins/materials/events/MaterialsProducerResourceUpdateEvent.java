@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -80,7 +79,7 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 			ResourceId resourceId) {
 		validateMaterialProducerId(simulationContext, materialsProducerId);
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, materialsProducerId, resourceId);
+		return new EventLabel<>(resourceId, LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, materialsProducerId, resourceId);
 	}
 
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForMaterialsProducerAndResource() {
@@ -92,7 +91,7 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 
 	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
 		validateResourceId(simulationContext, resourceId);
-		return new MultiKeyEventLabel<>(resourceId, LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, resourceId);
+		return new EventLabel<>(resourceId, LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, resourceId);
 	}
 
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForResource() {

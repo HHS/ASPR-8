@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -104,7 +104,7 @@ public class GroupMembershipRemovalEvent implements Event {
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
 		validateGroupId(simulationContext, groupId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP_PERSON, GroupMembershipRemovalEvent.class, groupId, personId);
+		return new EventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP_PERSON, GroupMembershipRemovalEvent.class, groupId, personId);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class GroupMembershipRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP, GroupMembershipRemovalEvent.class, groupId);
+		return new EventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.GROUP, GroupMembershipRemovalEvent.class, groupId);
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class GroupMembershipRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.PERSON, GroupMembershipRemovalEvent.class, personId);
+		return new EventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.PERSON, GroupMembershipRemovalEvent.class, personId);
 	}
 
 	/**
@@ -200,7 +200,7 @@ public class GroupMembershipRemovalEvent implements Event {
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE_PERSON, GroupMembershipRemovalEvent.class, groupTypeId, personId);
+		return new EventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE_PERSON, GroupMembershipRemovalEvent.class, groupTypeId, personId);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class GroupMembershipRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE, GroupMembershipRemovalEvent.class, groupTypeId);
+		return new EventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.TYPE, GroupMembershipRemovalEvent.class, groupTypeId);
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class GroupMembershipRemovalEvent implements Event {
 		return ALL_EVENT_LABEL_INSTANCE;
 	}
 
-	private static EventLabel<GroupMembershipRemovalEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.ALL, GroupMembershipRemovalEvent.class);
+	private static EventLabel<GroupMembershipRemovalEvent> ALL_EVENT_LABEL_INSTANCE = new EventLabel<>(GroupMembershipRemovalEvent.class, LabelerId.ALL, GroupMembershipRemovalEvent.class);
 
 	/**
 	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} all

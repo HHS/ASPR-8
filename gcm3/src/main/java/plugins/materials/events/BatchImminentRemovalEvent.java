@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import plugins.materials.support.BatchId;
 
 @Immutable
@@ -34,7 +33,7 @@ public class BatchImminentRemovalEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<BatchImminentRemovalEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchImminentRemovalEvent.class, LabelerId.ALL, BatchImminentRemovalEvent.class);
+	private final static EventLabel<BatchImminentRemovalEvent> ALL_LABEL = new EventLabel<>(BatchImminentRemovalEvent.class, LabelerId.ALL, BatchImminentRemovalEvent.class);
 
 	public static EventLabel<BatchImminentRemovalEvent> getEventLabelByAll() {
 		return ALL_LABEL;

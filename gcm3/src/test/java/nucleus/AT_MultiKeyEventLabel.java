@@ -17,7 +17,7 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = MultiKeyEventLabel.class)
+@UnitTest(target = EventLabel.class)
 public class AT_MultiKeyEventLabel {
 
 	private static class EventA implements Event {
@@ -46,13 +46,13 @@ public class AT_MultiKeyEventLabel {
 	public void testConstructor() {
 		// precondition tests
 
-		ContractException contractException = assertThrows(ContractException.class, () -> new MultiKeyEventLabel<>(null, eventLabelerId1, EventA.class));
+		ContractException contractException = assertThrows(ContractException.class, () -> new EventLabel<>(null, eventLabelerId1, EventA.class));
 		assertEquals(NucleusError.NULL_PRIMARY_KEY_VALUE, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new MultiKeyEventLabel<>(EventA.class, null, EventA.class));
+		contractException = assertThrows(ContractException.class, () -> new EventLabel<>(EventA.class, null, EventA.class));
 		assertEquals(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new MultiKeyEventLabel<>(EventA.class, eventLabelerId1, null));
+		contractException = assertThrows(ContractException.class, () -> new EventLabel<>(EventA.class, eventLabelerId1, null));
 		assertEquals(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABEL, contractException.getErrorType());
 
 	}
@@ -63,8 +63,8 @@ public class AT_MultiKeyEventLabel {
 		//Equal event labels have equal auxiliary keys, but may disagree on other constructor arguments
 		
 		//Show equal objects have equal hash codes
-		MultiKeyEventLabel<EventA> multiKeyEventLabel1 = new MultiKeyEventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2, 3);
-		MultiKeyEventLabel<EventB> multiKeyEventLabel2 = new MultiKeyEventLabel<>("key2", eventLabelerId2, EventB.class, 1, 2, 3);		
+		EventLabel<EventA> multiKeyEventLabel1 = new EventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2, 3);
+		EventLabel<EventB> multiKeyEventLabel2 = new EventLabel<>("key2", eventLabelerId2, EventB.class, 1, 2, 3);		
 		assertEquals(multiKeyEventLabel1.hashCode(), multiKeyEventLabel2.hashCode());
 		
 		
@@ -76,14 +76,14 @@ public class AT_MultiKeyEventLabel {
 		//Equal event labels have equal auxiliary keys, but may disagree on other constructor arguments
 		
 		//show that matching auxiliary keys forces equality
-		MultiKeyEventLabel<EventA> multiKeyEventLabel1 = new MultiKeyEventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2, 3);
-		MultiKeyEventLabel<EventB> multiKeyEventLabel2 = new MultiKeyEventLabel<>("key2", eventLabelerId2, EventB.class, 1, 2, 3);		
+		EventLabel<EventA> multiKeyEventLabel1 = new EventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2, 3);
+		EventLabel<EventB> multiKeyEventLabel2 = new EventLabel<>("key2", eventLabelerId2, EventB.class, 1, 2, 3);		
 		assertEquals(multiKeyEventLabel1, multiKeyEventLabel2);
 		
 
 		//show that non-matching auxiliary keys forcec non-equality
-		MultiKeyEventLabel<EventA> multiKeyEventLabel3 = new MultiKeyEventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2, 3);
-		MultiKeyEventLabel<EventA> multiKeyEventLabel4 = new MultiKeyEventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2);
+		EventLabel<EventA> multiKeyEventLabel3 = new EventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2, 3);
+		EventLabel<EventA> multiKeyEventLabel4 = new EventLabel<>("key1", eventLabelerId1, EventA.class, 1, 2);
 		assertNotEquals(multiKeyEventLabel3, multiKeyEventLabel4);
 
 	}
@@ -91,13 +91,13 @@ public class AT_MultiKeyEventLabel {
 	@Test
 	@UnitTestMethod(name = "getEventClass", args = {})
 	public void testGetEventClass() {
-		MultiKeyEventLabel<EventA> eventLabelA = new MultiKeyEventLabel<>("key", eventLabelerId1, EventA.class);
+		EventLabel<EventA> eventLabelA = new EventLabel<>("key", eventLabelerId1, EventA.class);
 		assertEquals(EventA.class, eventLabelA.getEventClass());
 		
-		MultiKeyEventLabel<EventB> eventLabelB = new MultiKeyEventLabel<>("key", eventLabelerId1, EventB.class);
+		EventLabel<EventB> eventLabelB = new EventLabel<>("key", eventLabelerId1, EventB.class);
 		assertEquals(EventB.class, eventLabelB.getEventClass());
 		
-		MultiKeyEventLabel<EventC> eventLabelC = new MultiKeyEventLabel<>("key", eventLabelerId1, EventC.class);
+		EventLabel<EventC> eventLabelC = new EventLabel<>("key", eventLabelerId1, EventC.class);
 		assertEquals(EventC.class, eventLabelC.getEventClass());
 	}
 
@@ -110,13 +110,13 @@ public class AT_MultiKeyEventLabel {
 		EventLabelerId eventLabelerId3 = new EventLabelerId() {};
 		
 			
-		MultiKeyEventLabel<EventA> eventLabel = new MultiKeyEventLabel<>("key", eventLabelerId1, EventA.class);
+		EventLabel<EventA> eventLabel = new EventLabel<>("key", eventLabelerId1, EventA.class);
 		assertEquals(eventLabelerId1, eventLabel.getLabelerId());
 		
-		eventLabel = new MultiKeyEventLabel<>("key", eventLabelerId2, EventA.class);
+		eventLabel = new EventLabel<>("key", eventLabelerId2, EventA.class);
 		assertEquals(eventLabelerId2, eventLabel.getLabelerId());
 		
-		eventLabel = new MultiKeyEventLabel<>("key", eventLabelerId3, EventA.class);
+		eventLabel = new EventLabel<>("key", eventLabelerId3, EventA.class);
 		assertEquals(eventLabelerId3, eventLabel.getLabelerId());
 
 		
@@ -128,7 +128,7 @@ public class AT_MultiKeyEventLabel {
 
 		for (int i = 0; i < 10; i++) {
 			Object key = "key" + i;
-			MultiKeyEventLabel<EventA> eventLabel = new MultiKeyEventLabel<>(key, eventLabelerId1, EventA.class);
+			EventLabel<EventA> eventLabel = new EventLabel<>(key, eventLabelerId1, EventA.class);
 			assertEquals(key, eventLabel.getPrimaryKeyValue());
 		}
 	}

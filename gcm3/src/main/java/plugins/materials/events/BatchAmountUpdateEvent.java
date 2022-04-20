@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import plugins.materials.support.BatchId;
 
 @Immutable
@@ -42,7 +41,7 @@ public class BatchAmountUpdateEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<BatchAmountUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchAmountUpdateEvent.class, LabelerId.ALL, BatchAmountUpdateEvent.class);
+	private final static EventLabel<BatchAmountUpdateEvent> ALL_LABEL = new EventLabel<>(BatchAmountUpdateEvent.class, LabelerId.ALL, BatchAmountUpdateEvent.class);
 
 	public static EventLabel<BatchAmountUpdateEvent> getEventLabelByAll() {
 		return ALL_LABEL;

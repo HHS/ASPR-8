@@ -28,7 +28,7 @@ import nucleus.Event;
  *
  * @param <T>
  */
-public interface EventLabelX<T extends Event> {
+public interface EventLabelXYZ<T extends Event> {
 
 	/**
 	 * Returns the event subclass that this label applies to.
@@ -39,7 +39,7 @@ public interface EventLabelX<T extends Event> {
 	 * Returns the labeler id associated with this label. Labels can only be
 	 * compared to other labels that share the same labeler id.
 	 */
-	public EventLabelerX<T> getLabeler();
+	public EventLabelerXYZ<T> getLabeler();
 
 	/**
 	 * Returns the primary key value of any event that this label matches. This

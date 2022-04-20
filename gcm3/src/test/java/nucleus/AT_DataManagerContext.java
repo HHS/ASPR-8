@@ -1210,7 +1210,7 @@ public class AT_DataManagerContext {
 			
 			EventLabelerId eventLabelerId = new EventLabelerId() {
 			};
-			MultiKeyEventLabel<TestEvent> multiKeyEventLabel = new MultiKeyEventLabel<TestEvent>(TestEvent.class,eventLabelerId,TestEvent.class);
+			EventLabel<TestEvent> multiKeyEventLabel = new EventLabel<TestEvent>(TestEvent.class,eventLabelerId,TestEvent.class);
 
 			// if the event labeler is null
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(null));
@@ -1237,7 +1237,7 @@ public class AT_DataManagerContext {
 
 		EventLabeler<TestEvent> eventLabeler = EventLabeler.builder(TestEvent.class)//
 				.setEventLabelerId(id)//
-				.setLabelFunction((c,e)->new MultiKeyEventLabel<>(TestEvent.class, id, TestEvent.class))//
+				.setLabelFunction((c,e)->new EventLabel<>(TestEvent.class, id, TestEvent.class))//
 				.build();
 
 		// have the actor add the event labeler
@@ -1255,7 +1255,7 @@ public class AT_DataManagerContext {
 		// have the agent observe the test event
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
-			c.subscribe(new MultiKeyEventLabel<>(TestEvent.class, id, TestEvent.class), (c2, e) -> {
+			c.subscribe(new EventLabel<>(TestEvent.class, id, TestEvent.class), (c2, e) -> {
 				eventObserved.setValue(true);
 			});
 		}));
@@ -1299,7 +1299,7 @@ public class AT_DataManagerContext {
 		 * create a simple event label as a place holder -- all test events will
 		 * be matched
 		 */
-		MultiKeyEventLabel<TestEvent> eventLabel = new MultiKeyEventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
+		EventLabel<TestEvent> eventLabel = new EventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
 
 		// create an event labeler that always returns the label above
 		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//

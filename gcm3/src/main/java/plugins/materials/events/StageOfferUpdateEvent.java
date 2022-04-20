@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -58,7 +57,7 @@ public class StageOfferUpdateEvent implements Event {
 
 	public static EventLabel<StageOfferUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
 		validateStageId(simulationContext, stageId);
-		return new MultiKeyEventLabel<>(StageOfferUpdateEvent.class, LabelerId.STAGE, StageOfferUpdateEvent.class, stageId);
+		return new EventLabel<>(StageOfferUpdateEvent.class, LabelerId.STAGE, StageOfferUpdateEvent.class, stageId);
 	}
 
 	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForStage() {
@@ -67,7 +66,7 @@ public class StageOfferUpdateEvent implements Event {
 							.build();
 	}
 
-	private final static EventLabel<StageOfferUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageOfferUpdateEvent.class, LabelerId.ALL, StageOfferUpdateEvent.class);
+	private final static EventLabel<StageOfferUpdateEvent> ALL_LABEL = new EventLabel<>(StageOfferUpdateEvent.class, LabelerId.ALL, StageOfferUpdateEvent.class);
 
 	public static EventLabel<StageOfferUpdateEvent> getEventLabelByAll(SimulationContext simulationContext) {
 		return ALL_LABEL;

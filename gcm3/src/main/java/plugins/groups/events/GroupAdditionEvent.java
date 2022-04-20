@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -65,7 +65,7 @@ public class GroupAdditionEvent implements Event {
 		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}
-		return new MultiKeyEventLabel<>(GroupAdditionEvent.class, LabelerId.TYPE, GroupAdditionEvent.class, groupTypeId);
+		return new EventLabel<>(GroupAdditionEvent.class, LabelerId.TYPE, GroupAdditionEvent.class, groupTypeId);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class GroupAdditionEvent implements Event {
 		return ALL_EVENT_LABEL_INSTANCE;
 	}
 
-	private final static EventLabel<GroupAdditionEvent> ALL_EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(GroupAdditionEvent.class, LabelerId.ALL, GroupAdditionEvent.class);
+	private final static EventLabel<GroupAdditionEvent> ALL_EVENT_LABEL_INSTANCE = new EventLabel<>(GroupAdditionEvent.class, LabelerId.ALL, GroupAdditionEvent.class);
 
 	/**
 	 * Returns an event labeler for {@link GroupAdditionEvent} events that

@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 
@@ -50,7 +49,7 @@ public class BatchPropertyUpdateEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<BatchPropertyUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(BatchPropertyUpdateEvent.class, LabelerId.ALL, BatchPropertyUpdateEvent.class);
+	private final static EventLabel<BatchPropertyUpdateEvent> ALL_LABEL = new EventLabel<>(BatchPropertyUpdateEvent.class, LabelerId.ALL, BatchPropertyUpdateEvent.class);
 
 	public static EventLabel<BatchPropertyUpdateEvent> getEventLabelByAll() {
 		return ALL_LABEL;

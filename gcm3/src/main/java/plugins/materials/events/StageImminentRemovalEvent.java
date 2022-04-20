@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import plugins.materials.support.StageId;
 
 @Immutable
@@ -35,7 +34,7 @@ public class StageImminentRemovalEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<StageImminentRemovalEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageImminentRemovalEvent.class, LabelerId.ALL, StageImminentRemovalEvent.class);
+	private final static EventLabel<StageImminentRemovalEvent> ALL_LABEL = new EventLabel<>(StageImminentRemovalEvent.class, LabelerId.ALL, StageImminentRemovalEvent.class);
 
 	public static EventLabel<StageImminentRemovalEvent> getEventLabelByAll() {
 		return ALL_LABEL;

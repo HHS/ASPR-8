@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import plugins.materials.support.StageId;
 
 @Immutable
@@ -30,7 +29,7 @@ public class StageAdditionEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<StageAdditionEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageAdditionEvent.class, LabelerId.ALL, StageAdditionEvent.class);
+	private final static EventLabel<StageAdditionEvent> ALL_LABEL = new EventLabel<>(StageAdditionEvent.class, LabelerId.ALL, StageAdditionEvent.class);
 
 	public static EventLabel<StageAdditionEvent> getEventLabelByAll() {
 		return ALL_LABEL;

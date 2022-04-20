@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -70,7 +69,7 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByDestination(SimulationContext simulationContext, MaterialsProducerId destinationMaterialsProducerId) {
 		validateMaterialsProducerId(simulationContext, destinationMaterialsProducerId);
-		return new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.DESTINATION, StageMaterialsProducerUpdateEvent.class, destinationMaterialsProducerId);
+		return new EventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.DESTINATION, StageMaterialsProducerUpdateEvent.class, destinationMaterialsProducerId);
 	}
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForDestination() {
@@ -81,7 +80,7 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelBySource(SimulationContext simulationContext, MaterialsProducerId sourceMaterialsProducerId) {
 		validateMaterialsProducerId(simulationContext, sourceMaterialsProducerId);
-		return new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.SOURCE, StageMaterialsProducerUpdateEvent.class, sourceMaterialsProducerId);
+		return new EventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.SOURCE, StageMaterialsProducerUpdateEvent.class, sourceMaterialsProducerId);
 	}
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForSource() {
@@ -92,7 +91,7 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
 		validateStageId(simulationContext, stageId);
-		return new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.STAGE, StageMaterialsProducerUpdateEvent.class, stageId);
+		return new EventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.STAGE, StageMaterialsProducerUpdateEvent.class, stageId);
 	}
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForStage() {
@@ -102,7 +101,7 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 							.build();
 	}
 
-	private final static EventLabel<StageMaterialsProducerUpdateEvent> ALL_LABEL = new MultiKeyEventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.ALL,
+	private final static EventLabel<StageMaterialsProducerUpdateEvent> ALL_LABEL = new EventLabel<>(StageMaterialsProducerUpdateEvent.class, LabelerId.ALL,
 			StageMaterialsProducerUpdateEvent.class);
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByAll(SimulationContext simulationContext) {

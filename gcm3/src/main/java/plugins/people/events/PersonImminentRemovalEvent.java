@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -62,7 +62,7 @@ public final class PersonImminentRemovalEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<PersonImminentRemovalEvent> EVENT_LABEL_INSTANCE = new MultiKeyEventLabel<>(PersonImminentRemovalEvent.class, LabelerId.ALL, PersonImminentRemovalEvent.class);
+	private final static EventLabel<PersonImminentRemovalEvent> EVENT_LABEL_INSTANCE = new EventLabel<>(PersonImminentRemovalEvent.class, LabelerId.ALL, PersonImminentRemovalEvent.class);
 
 	/**
 	 * Returns an event label used to subscribe to

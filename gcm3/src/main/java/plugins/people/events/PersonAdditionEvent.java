@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -64,7 +64,7 @@ public final class PersonAdditionEvent implements Event {
 		ALL
 	}
 
-	private final static EventLabel<PersonAdditionEvent> EVENT_LABEL_ALL = new MultiKeyEventLabel<>(PersonAdditionEvent.class, LabelerId.ALL, PersonAdditionEvent.class);
+	private final static EventLabel<PersonAdditionEvent> EVENT_LABEL_ALL = new EventLabel<>(PersonAdditionEvent.class, LabelerId.ALL, PersonAdditionEvent.class);
 
 	/**
 	 * Returns an event labeler for {@link PersonAdditionEvent}

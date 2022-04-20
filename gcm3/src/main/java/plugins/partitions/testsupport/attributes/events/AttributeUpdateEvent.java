@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
@@ -67,7 +67,7 @@ public class AttributeUpdateEvent implements Event {
 	 */
 	public static EventLabel<AttributeUpdateEvent> getEventLabel(final SimulationContext simulationContext, final AttributeId attributeId) {
 		validateAttributed(simulationContext, attributeId);
-		return new MultiKeyEventLabel<>(attributeId, LabelerId.ATTRIBUTE, AttributeUpdateEvent.class, attributeId);
+		return new EventLabel<>(attributeId, LabelerId.ATTRIBUTE, AttributeUpdateEvent.class, attributeId);
 	}
 
 	/**

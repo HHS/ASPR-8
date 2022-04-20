@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
@@ -112,7 +112,7 @@ public class PersonPropertyUpdateEvent implements Event {
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByPersonAndProperty(SimulationContext simulationContext, PersonId personId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
 		validatePersonId(simulationContext, personId);
-		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, personId, personPropertyId);
+		return new EventLabel<>(personPropertyId, LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, personId, personPropertyId);
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class PersonPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
-		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.PROPERTY, PersonPropertyUpdateEvent.class, personPropertyId);
+		return new EventLabel<>(personPropertyId, LabelerId.PROPERTY, PersonPropertyUpdateEvent.class, personPropertyId);
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class PersonPropertyUpdateEvent implements Event {
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
 		validateRegionId(simulationContext, regionId);
-		return new MultiKeyEventLabel<>(personPropertyId, LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, regionId, personPropertyId);
+		return new EventLabel<>(personPropertyId, LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, regionId, personPropertyId);
 	}
 
 	/**

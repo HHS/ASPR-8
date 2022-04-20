@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -80,7 +79,7 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 		validateMaterialsProducerId(simulationContext, materialsProducerId);
 		validateMaterialsProducerPropertyId(simulationContext, materialsProducerPropertyId);
 
-		return new MultiKeyEventLabel<>(materialsProducerPropertyId, LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyUpdateEvent.class, materialsProducerId, materialsProducerPropertyId);
+		return new EventLabel<>(materialsProducerPropertyId, LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyUpdateEvent.class, materialsProducerId, materialsProducerPropertyId);
 	}
 
 	public static EventLabeler<MaterialsProducerPropertyUpdateEvent> getEventLabelerForMaterialsProducerAndProperty() {

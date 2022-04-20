@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -80,7 +80,7 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUP, GroupImminentRemovalEvent.class, groupId);
+		return new EventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUP, GroupImminentRemovalEvent.class, groupId);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalEvent.class, groupTypeId);
+		return new EventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalEvent.class, groupTypeId);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class GroupImminentRemovalEvent implements Event {
 							.build();
 	}
 
-	private static EventLabel<GroupImminentRemovalEvent> ALL_EVENTS_LABEL = new MultiKeyEventLabel<>(GroupImminentRemovalEvent.class, LabelerId.ALL, GroupImminentRemovalEvent.class);
+	private static EventLabel<GroupImminentRemovalEvent> ALL_EVENTS_LABEL = new EventLabel<>(GroupImminentRemovalEvent.class, LabelerId.ALL, GroupImminentRemovalEvent.class);
 
 	/**
 	 * Returns an event label used to subscribe to

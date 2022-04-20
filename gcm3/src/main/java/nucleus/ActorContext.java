@@ -140,16 +140,11 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_LABEL} if the EventLabel
 	 *             is null
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
-	 *             ActorEventConsumer is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS_IN_EVENT_LABEL} if
-	 *             the event class in the event label is null
-	 *             <li>{@link NucleusError#NULL_LABELER_ID_IN_EVENT_LABEL} if
-	 *             the event labeler id in the event label is null
+	 *             ActorEventConsumer is null           
 	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
 	 *             labeler id in the event label cannot be resolved to a
-	 *             registered event labeler *
-	 *             <li>{@link NucleusError#NULL_PRIMARY_KEY_VALUE} if the event
-	 *             label has a null primary key
+	 *             registered event labeler 
+	 *           
 	 * 
 	 */
 	public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer);

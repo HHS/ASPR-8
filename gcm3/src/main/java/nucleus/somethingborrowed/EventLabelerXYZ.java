@@ -8,26 +8,26 @@ import nucleus.SimulationContext;
 /**
  * A generics-based class that is used to filter event observations.
  * 
- * See {@linkplain EventLabelX} for details.
+ * See {@linkplain EventLabelXYZ} for details.
  * 
  * @author Shawn Hatch 
  */
-public final class EventLabelerX<T extends Event> {
-	private final BiFunction<SimulationContext, T, EventLabelX<T>> labelMaker;
+public final class EventLabelerXYZ<T extends Event> {
+	private final BiFunction<SimulationContext, T, EventLabelXYZ<T>> labelMaker;
 	private final Object id;
 
 	/**
 	 * Constructs the event labeler from the given labeler id, event class and
 	 * function for producing a label from an event.
 	 */
-	public EventLabelerX(final Object id,	
-			BiFunction<SimulationContext, T, EventLabelX<T>> labelMaker) {	
+	public EventLabelerXYZ(final Object id,	
+			BiFunction<SimulationContext, T, EventLabelXYZ<T>> labelMaker) {	
 		this.labelMaker = labelMaker;
 		this.id = id;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public EventLabelX<T> getEventLabel(SimulationContext simulationContext, Event event) {
+	public EventLabelXYZ<T> getEventLabel(SimulationContext simulationContext, Event event) {
 		return labelMaker.apply(simulationContext, (T)event);
 	}
 
@@ -44,11 +44,11 @@ public final class EventLabelerX<T extends Event> {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof EventLabelerX)) {
+		if (!(obj instanceof EventLabelerXYZ)) {
 			return false;
 		}
 		@SuppressWarnings("rawtypes")
-		EventLabelerX other = (EventLabelerX) obj;
+		EventLabelerXYZ other = (EventLabelerXYZ) obj;
 		if (id == null) {
 			if (other.id != null) {
 				return false;

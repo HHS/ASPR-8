@@ -7,7 +7,7 @@ import nucleus.util.ContractException;
 /**
  * A generics-based class that is used to filter event observations.
  * 
- * See {@linkplain EventLabel} for details.
+ * See {@linkplain EventLabelX} for details.
  * 
  * @author Shawn Hatch
  *

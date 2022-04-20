@@ -5,7 +5,7 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.MultiKeyEventLabel;
+import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.regions.datamanagers.RegionDataManager;
@@ -72,7 +72,7 @@ public final class RegionPropertyUpdateEvent implements Event {
 	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, RegionPropertyId regionPropertyId) {
 		validateRegionId(simulationContext, regionId);
 		validateRegionPropertyId(simulationContext, regionPropertyId);
-		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.REGION_PROPERTY, RegionPropertyUpdateEvent.class, regionId, regionPropertyId);
+		return new EventLabel<>(regionPropertyId, LabelerId.REGION_PROPERTY, RegionPropertyUpdateEvent.class, regionId, regionPropertyId);
 	}
 
 	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForRegionAndProperty() {
@@ -84,7 +84,7 @@ public final class RegionPropertyUpdateEvent implements Event {
 
 	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
 		validateRegionPropertyId(simulationContext, regionPropertyId);
-		return new MultiKeyEventLabel<>(regionPropertyId, LabelerId.PROPERTY, RegionPropertyUpdateEvent.class, regionPropertyId);
+		return new EventLabel<>(regionPropertyId, LabelerId.PROPERTY, RegionPropertyUpdateEvent.class, regionPropertyId);
 	}
 
 	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForProperty() {
