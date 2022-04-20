@@ -21,6 +21,13 @@ public final class EventLabeler<T extends Event> {
 		private EventLabelerId eventLabelerId;
 	}
 
+	/**
+	 * Returns an instance of the builder class that will build EventLabelers of
+	 * the type specified by the class reference.
+	 * 
+	 * @throws ContractException
+	 * <li>{@linkplain NucleusError#NULL_EVENT_CLASS} if the class reference is null</li>
+	 */
 	public static <N extends Event> Builder<N> builder(Class<N> classReference) {
 		if (classReference == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
@@ -36,16 +43,24 @@ public final class EventLabeler<T extends Event> {
 		}
 
 		private Data<N> data = new Data<>();
-		
+
 		private void validate() {
 			if (data.eventLabelerId == null) {
 				throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABELER);
 			}
-			if(data.labelFunction==null) {
+			if (data.labelFunction == null) {
 				throw new ContractException(NucleusError.NULL_EVENT_LABEL_FUNCTION);
 			}
 		}
 
+		/**
+		 * Builds the event labeler from the given input
+		 * 
+		 * @throws ContractException
+		 * <li>{@linkplain NucleusError#NULL_LABELER_ID_IN_EVENT_LABELER} if the id is not set</li> 
+		 * <li>{@linkplain NucleusError#NULL_EVENT_LABEL_FUNCTION} if the label function </li>
+		 * 
+		 */
 		public EventLabeler<N> build() {
 			try {
 				validate();
@@ -60,8 +75,7 @@ public final class EventLabeler<T extends Event> {
 		 * Sets the label function
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_EVENT_LABEL_FUNCTION}
-		 *             </li>
+		 *             <li>{@linkplain NucleusError#NULL_EVENT_LABEL_FUNCTION} id the label function is null </li>
 		 */
 		public Builder<N> setLabelFunction(BiFunction<SimulationContext, N, EventLabel<N>> labelFunction) {
 			if (labelFunction == null) {
@@ -75,7 +89,7 @@ public final class EventLabeler<T extends Event> {
 		 * Sets the event labeler id
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_EVENT_LABELER_ID}</li>
+		 *             <li>{@linkplain NucleusError#NULL_EVENT_LABELER_ID} if the event labeler id is null</li>
 		 */
 		public Builder<N> setEventLabelerId(EventLabelerId eventLabelerId) {
 			if (eventLabelerId == null) {
