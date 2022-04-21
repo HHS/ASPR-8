@@ -48,26 +48,26 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPoint", args = {})
-	public void testGetPoint() {
+	@UnitTestMethod(name = "getLevel", args = {})
+	public void testGetLevel() {
 
 		Dimension.Builder builder = Dimension.builder();
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
 		Dimension dimension = builder.build();
 
 		for (int i = 0; i < dimension.size(); i++) {
-			assertNotNull(dimension.getPoint(i));
+			assertNotNull(dimension.getLevel(i));
 		}
 
 	}
@@ -79,16 +79,16 @@ public class AT_Dimension {
 		Dimension dimension = builder.build();
 		assertEquals(0, dimension.size());
 
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
 		dimension = builder.build();
 		assertEquals(1, dimension.size());
 
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
 		dimension = builder.build();
@@ -108,25 +108,25 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.Builder.class, name = "addPoint", args = { Function.class, List.class })
-	public void testAddPoint() {
+	@UnitTestMethod(target = Dimension.Builder.class, name = "addLevel", args = { Function.class, List.class })
+	public void testAddLevel() {
 		Dimension.Builder builder = Dimension.builder();
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
-		builder.addPoint((map) -> {
+		builder.addLevel((map) -> {
 			return new ArrayList<>();
 		});
 		Dimension dimension = builder.build();
 
 		for (int i = 0; i < dimension.size(); i++) {
-			assertNotNull(dimension.getPoint(i));
+			assertNotNull(dimension.getLevel(i));
 		}
 	}
 

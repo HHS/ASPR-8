@@ -8,7 +8,7 @@ import nucleus.util.TypeMap;
 
 /**
  * A Dimension represents a single independent dimension of an experiment.
- * Dimensions are composed of a finite number of points. Each point in a
+ * Dimensions are composed of a finite number of levels. Each level in a
  * dimension is a function that 1) consumes a type map of plugin data builders,
  * 2) updates those builders to create alternate inputs for each scenario and 3)
  * returns a list of strings representing the variant values in the scenario.
@@ -21,7 +21,7 @@ public final class Dimension {
 
 	private static class Data {
 		List<String> metaData = new ArrayList<>();
-		List<Function<TypeMap<PluginDataBuilder>, List<String>>> points = new ArrayList<>();
+		List<Function<TypeMap<PluginDataBuilder>, List<String>>> levels = new ArrayList<>();
 	}
 
 	/**
@@ -54,22 +54,22 @@ public final class Dimension {
 		}
 
 		/**
-		 * Adds a point function to the dimension. Each such function consumes a
+		 * Adds a level function to the dimension. Each such function consumes a
 		 * TypeMap of PluginDataBuilders and returns a list of scenario-level
 		 * meta data that describes the changes performed on the
 		 * PluginDataBuilders. The list of meta data is aligned to the
 		 * experiment level meta data contained in the dimension and must
 		 * contain the same number of elements.
 		 */
-		public Builder addPoint(Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator) {
-			data.points.add(memberGenerator);
+		public Builder addLevel(Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator) {
+			data.levels.add(memberGenerator);
 			return this;
 		}
 
 		/**
 		 * Adds an experiment-level string meta datum value that describes the
 		 * corresponding scenario-level meta data returned by the individual
-		 * points of this dimension.
+		 * levels of this dimension.
 		 */
 		public Builder addMetaDatum(String idValue) {
 			data.metaData.add(idValue);
@@ -92,17 +92,17 @@ public final class Dimension {
 	}
 
 	/**
-	 * Returns the number of points in this dimension
+	 * Returns the number of levels in this dimension
 	 */
 	public int size() {
-		return data.points.size();
+		return data.levels.size();
 	}
 
 	/**
-	 * Returns the function(point) for the given index.  Valid indexes are zero through size()-1 inclusive.
+	 * Returns the function(level) for the given index.  Valid indexes are zero through size()-1 inclusive.
 	 */
-	public Function<TypeMap<PluginDataBuilder>, List<String>> getPoint(int index) {
-		return data.points.get(index);
+	public Function<TypeMap<PluginDataBuilder>, List<String>> getLevel(int index) {
+		return data.levels.get(index);
 	}
 
 }

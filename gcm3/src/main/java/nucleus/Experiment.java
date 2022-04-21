@@ -23,7 +23,7 @@ import nucleus.util.TypeMap;
  * An experiment provides a means for executing the simulation over variants of
  * plugin data. Each such variant is referred to as a scenario. The scenarios
  * correspond to the cross product of a finite number of dimensions, with each
- * dimension having a finite number of variant points.
+ * dimension having a finite number of variant levels.
  * 
  * For example: An experiment contains several plugins and correspondingly
  * several plugin data objects. The experiment has two dimensions. The first
@@ -490,7 +490,7 @@ public final class Experiment {
 			modulus *= dimension.size();
 
 			// get the function from the dimension
-			final Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator = dimension.getPoint(index);
+			final Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator = dimension.getLevel(index);
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function

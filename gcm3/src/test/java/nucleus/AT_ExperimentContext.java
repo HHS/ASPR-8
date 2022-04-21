@@ -133,10 +133,10 @@ public class AT_ExperimentContext {
 					.execute();//
 		assertEquals(1, scenarioCount.getValue());
 
-		// create an experiment with two dimensions, having 10 and 7 points each
+		// create an experiment with two dimensions, having 10 and 7 levels each
 		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("A").addMetaDatum("B");
 		IntStream.range(0, 10).forEach((i) -> {
-			dimBuilder.addPoint((typeMap) -> {
+			dimBuilder.addLevel((typeMap) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				result.add(Integer.toString(3 * i));
@@ -147,7 +147,7 @@ public class AT_ExperimentContext {
 
 		dimBuilder.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
-			dimBuilder.addPoint((typeMap) -> {
+			dimBuilder.addLevel((typeMap) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i * i));
 				return result;
@@ -180,7 +180,7 @@ public class AT_ExperimentContext {
 		// data
 		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("A").addMetaDatum("B");
 		IntStream.range(0, 10).forEach((i) -> {
-			dimBuilder.addPoint((typeMap) -> {
+			dimBuilder.addLevel((typeMap) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				result.add(Integer.toString(3 * i));
@@ -191,7 +191,7 @@ public class AT_ExperimentContext {
 
 		dimBuilder.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
-			dimBuilder.addPoint((typeMap) -> {
+			dimBuilder.addLevel((typeMap) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i * i));
 				return result;
@@ -283,7 +283,7 @@ public class AT_ExperimentContext {
 		// data
 		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("A").addMetaDatum("B");
 		IntStream.range(0, 10).forEach((i) -> {
-			dimBuilder.addPoint((typeMap) -> {
+			dimBuilder.addLevel((typeMap) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				result.add(Integer.toString(3 * i));
@@ -294,7 +294,7 @@ public class AT_ExperimentContext {
 
 		dimBuilder.addMetaDatum("X");
 		IntStream.range(0, 7).forEach((i) -> {
-			dimBuilder.addPoint((typeMap) -> {
+			dimBuilder.addLevel((typeMap) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i * i));
 				return result;
@@ -383,7 +383,7 @@ public class AT_ExperimentContext {
 		// match the scenario id.
 		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("value");
 		IntStream.range(0, 10).forEach((i) -> {
-			dimBuilder.addPoint((typeMap) -> {
+			dimBuilder.addLevel((typeMap) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				return result;
