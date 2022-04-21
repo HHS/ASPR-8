@@ -244,22 +244,12 @@ public final class MaterialsDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 
 		dataManagerContext.addEventLabeler(StageOfferUpdateEvent.getEventLabelerForStage());
-		dataManagerContext.addEventLabeler(StageOfferUpdateEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForAll());
 		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForDestination());
 		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForSource());
 		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForStage());
 		dataManagerContext.addEventLabeler(MaterialsProducerPropertyUpdateEvent.getEventLabelerForMaterialsProducerAndProperty());
 		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource());
-		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource());
-		dataManagerContext.addEventLabeler(BatchAdditionEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(BatchAmountUpdateEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(BatchImminentRemovalEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(BatchPropertyUpdateEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageMembershipRemovalEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageMembershipAdditionEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageAdditionEvent.getEventLabelerForAll());
-		dataManagerContext.addEventLabeler(StageImminentRemovalEvent.getEventLabelerForAll());
+		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource());		
 
 		for (final MaterialId materialId : materialsPluginData.getMaterialIds()) {
 			materialIds.add(materialId);

@@ -86,7 +86,7 @@ public final class LabelSet {
 		}
 
 		/**
-		 * Sets the compartment label
+		 * Sets the dimension label
 		 */
 		public Builder setLabel(Object dimension, Object label) {
 			if (dimension == null) {
@@ -115,7 +115,7 @@ public final class LabelSet {
 	}
 
 	/**
-	 * Returns the compartment label for this {@link LabelSet}
+	 * Returns the dimension label for this {@link LabelSet}
 	 */
 	public Optional<Object> getLabel(Object dimension) {
 		return Optional.ofNullable(this.labels.get(dimension));

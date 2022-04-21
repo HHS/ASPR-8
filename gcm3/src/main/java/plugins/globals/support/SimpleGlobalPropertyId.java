@@ -11,7 +11,7 @@ public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 	private final Object value;
 
 	/**
-	 * Creates a compartment id from the given value.  The value must implement a proper equals contract.
+	 * Creates a global property id from the given value.  The value must implement a proper equals contract.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain GlobalError#NULL_GLOBAL_PROPERTY_VALUE} if

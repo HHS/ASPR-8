@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -61,7 +60,7 @@ public class GroupImminentRemovalEvent implements Event {
 	}
 
 	private static enum LabelerId implements EventLabelerId {
-		GROUP, GROUPTYPE, ALL
+		GROUP, GROUPTYPE
 	}
 
 	/**
@@ -80,7 +79,11 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new EventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUP, GroupImminentRemovalEvent.class, groupId);
+		return EventLabel	.builder(GroupImminentRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP)//
+							.addKey(GroupImminentRemovalEvent.class)//
+							.addKey(groupId)//
+							.build();
 	}
 
 	/**
@@ -89,8 +92,7 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForGroup() {
 		return EventLabeler	.builder(GroupImminentRemovalEvent.class)//
-							.setEventLabelerId(LabelerId.GROUP)
-							.setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.setEventLabelerId(LabelerId.GROUP).setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
 							.build();
 	}
 
@@ -110,7 +112,11 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new EventLabel<>(GroupImminentRemovalEvent.class, LabelerId.GROUPTYPE, GroupImminentRemovalEvent.class, groupTypeId);
+		return EventLabel	.builder(GroupImminentRemovalEvent.class)//
+							.setEventLabelerId(LabelerId.GROUPTYPE)//
+							.addKey(GroupImminentRemovalEvent.class)//
+							.addKey(groupTypeId)//
+							.build();//
 	}
 
 	/**
@@ -126,27 +132,6 @@ public class GroupImminentRemovalEvent implements Event {
 							.build();
 	}
 
-	private static EventLabel<GroupImminentRemovalEvent> ALL_EVENTS_LABEL = new EventLabel<>(GroupImminentRemovalEvent.class, LabelerId.ALL, GroupImminentRemovalEvent.class);
-
-	/**
-	 * Returns an event label used to subscribe to
-	 * {@link GroupImminentRemovalEvent} events. Matches on all events.
-	 *
-	 * 
-	 */
-	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByAll() {
-		return ALL_EVENTS_LABEL;
-	}
-
-	/**
-	 * Returns an event labeler for {@link GroupImminentRemovalEvent} events
-	 * that uses group type id. Automatically added at initialization.
-	 */
-	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(GroupImminentRemovalEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> ALL_EVENTS_LABEL)//
-							.build();
-	}
+	
 
 }

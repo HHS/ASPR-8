@@ -37,7 +37,6 @@ public class PluginDependencyTest {
 //		plugins.add(new PeoplePlugin(PeopleInitialData.builder().build()));
 //		plugins.add(new PartitionsPlugin());
 //		plugins.add(new RegionPlugin(RegionInitialData.builder().build()));
-//		plugins.add(new CompartmentPlugin(CompartmentInitialData.builder().build()));
 //		plugins.add(new PersonPropertiesPlugin(PersonPropertyInitialData.builder().build()));
 //		plugins.add(new GroupPlugin(GroupInitialData.builder().build()));
 //		plugins.add(new ResourcesPlugin(ResourceInitialData.builder().build()));

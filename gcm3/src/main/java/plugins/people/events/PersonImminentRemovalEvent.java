@@ -2,10 +2,6 @@ package plugins.people.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -58,27 +54,4 @@ public final class PersonImminentRemovalEvent implements Event {
 		return builder.toString();
 	}
 
-	private static enum LabelerId implements EventLabelerId {
-		ALL
-	}
-
-	private final static EventLabel<PersonImminentRemovalEvent> EVENT_LABEL_INSTANCE = new EventLabel<>(PersonImminentRemovalEvent.class, LabelerId.ALL, PersonImminentRemovalEvent.class);
-
-	/**
-	 * Returns an event label used to subscribe to
-	 * {@link PersonImminentRemovalEvent} events. Matches all such events.
-	 */
-	public static EventLabel<PersonImminentRemovalEvent> getEventLabel() {
-		return EVENT_LABEL_INSTANCE;
-	}
-
-	/**
-	 * Returns an event labeler for {@link PersonImminentRemovalEvent}
-	 */
-	public static EventLabeler<PersonImminentRemovalEvent> getEventLabeler() {
-		return EventLabeler	.builder(PersonImminentRemovalEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> EVENT_LABEL_INSTANCE)//
-							.build();
-	}
 }

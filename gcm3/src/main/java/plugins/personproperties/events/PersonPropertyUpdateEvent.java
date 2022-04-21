@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
@@ -112,7 +111,11 @@ public class PersonPropertyUpdateEvent implements Event {
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByPersonAndProperty(SimulationContext simulationContext, PersonId personId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
 		validatePersonId(simulationContext, personId);
-		return new EventLabel<>(personPropertyId, LabelerId.PERSON_PROPERTY, PersonPropertyUpdateEvent.class, personId, personPropertyId);
+		return EventLabel	.builder(PersonPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON_PROPERTY)//
+							.addKey(personPropertyId)//
+							.addKey(personId)//
+							.build();//
 	}
 
 	/**
@@ -142,7 +145,11 @@ public class PersonPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
-		return new EventLabel<>(personPropertyId, LabelerId.PROPERTY, PersonPropertyUpdateEvent.class, personPropertyId);
+		return EventLabel	.builder(PersonPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PROPERTY)//
+							.addKey(personPropertyId)//
+							.build();//
+
 	}
 
 	/**
@@ -177,10 +184,13 @@ public class PersonPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
-		validateRegionId(simulationContext, regionId);
-		return new EventLabel<>(personPropertyId, LabelerId.REGION_PROPERTY, PersonPropertyUpdateEvent.class, regionId, personPropertyId);
+		validateRegionId(simulationContext, regionId);	
+		return EventLabel	.builder(PersonPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
+							.addKey(personPropertyId)//
+							.addKey(regionId)//
+							.build();//
 	}
-
 	/**
 	 * Returns an event labeler for {@link PersonPropertyUpdateEvent} events
 	 * that uses the region id and person property id. Automatically added at

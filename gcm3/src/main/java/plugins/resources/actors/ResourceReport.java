@@ -28,8 +28,7 @@ import plugins.resources.support.ResourceId;
 
 /**
  * A periodic Report that displays the creation, transfer or consumption of
- * resources within a region/compartment pair. Some activities have no
- * compartment association and will leave the compartment field blank. Only
+ * resources within a region. Only
  * activities with non-zero action counts are reported.
  *
  *
@@ -137,7 +136,7 @@ public final class ResourceReport extends PeriodicReport {
 	private final List<ResourceId> resourceIds = new ArrayList<>();
 
 	/*
-	 * The mapping of (Region, Compartment, Resource, Activity) tuples to
+	 * The mapping of (Region, Resource, Activity) tuples to
 	 * counters that record the number of actions and the number of items
 	 * handled across those actions.
 	 */
@@ -151,8 +150,7 @@ public final class ResourceReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)	.add("region")//
-																	.add("compartment")//
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)	.add("region")//																	
 																	.add("resource")//
 																	.add("activity")//
 																	.add("actions")//

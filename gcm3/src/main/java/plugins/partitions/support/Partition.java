@@ -19,7 +19,7 @@ import net.jcip.annotations.NotThreadSafe;
  * immutable. However, the implementation of the partition within the simulation
  * is dynamic and the contents(people) of the partition remain consistent with
  * the filter and label mapping functions as people change their properties,
- * group associations, resources, regions and compartments.
+ * group associations, resources and regions.
  * 
  * Partitions are built by the modeler via the supplied Builder class.
  * Partitions may be added and removed from the simulation and are identified by

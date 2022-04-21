@@ -79,7 +79,11 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 		validateMaterialsProducerId(simulationContext, materialsProducerId);
 		validateMaterialsProducerPropertyId(simulationContext, materialsProducerPropertyId);
 
-		return new EventLabel<>(materialsProducerPropertyId, LabelerId.PRODUCER_PROPERTY, MaterialsProducerPropertyUpdateEvent.class, materialsProducerId, materialsProducerPropertyId);
+		return EventLabel.builder(MaterialsProducerPropertyUpdateEvent.class)//
+				.setEventLabelerId(LabelerId.PRODUCER_PROPERTY)//
+				.addKey(materialsProducerPropertyId)//
+				.addKey(materialsProducerId)//				
+				.build();//
 	}
 
 	public static EventLabeler<MaterialsProducerPropertyUpdateEvent> getEventLabelerForMaterialsProducerAndProperty() {

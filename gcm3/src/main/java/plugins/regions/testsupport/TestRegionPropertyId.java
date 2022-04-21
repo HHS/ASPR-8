@@ -98,7 +98,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 	}
 
 	/**
-	 * Returns a new {@link CompartmentId} instance.
+	 * Returns a new {@link RegionPropertyId} instance.
 	 */
 	public static RegionPropertyId getUnknownRegionPropertyId() {
 		return new RegionPropertyId() {

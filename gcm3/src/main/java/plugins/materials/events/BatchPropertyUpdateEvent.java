@@ -2,9 +2,6 @@ package plugins.materials.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 
@@ -45,20 +42,5 @@ public class BatchPropertyUpdateEvent implements Event {
 				+ currentPropertyValue + "]";
 	}
 
-	private static enum LabelerId implements EventLabelerId {
-		ALL
-	}
-
-	private final static EventLabel<BatchPropertyUpdateEvent> ALL_LABEL = new EventLabel<>(BatchPropertyUpdateEvent.class, LabelerId.ALL, BatchPropertyUpdateEvent.class);
-
-	public static EventLabel<BatchPropertyUpdateEvent> getEventLabelByAll() {
-		return ALL_LABEL;
-	}
-
-	public static EventLabeler<BatchPropertyUpdateEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(BatchPropertyUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> ALL_LABEL)//
-							.build();
-	}
+	
 }

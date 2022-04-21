@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -40,7 +39,7 @@ public class GroupAdditionEvent implements Event {
 	}
 
 	private static enum LabelerId implements EventLabelerId {
-		TYPE, ALL
+		TYPE
 	}
 
 	/**
@@ -65,7 +64,11 @@ public class GroupAdditionEvent implements Event {
 		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}
-		return new EventLabel<>(GroupAdditionEvent.class, LabelerId.TYPE, GroupAdditionEvent.class, groupTypeId);
+		return EventLabel	.builder(GroupAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE)//
+							.addKey(GroupAdditionEvent.class)//
+							.addKey(groupTypeId)//
+							.build();//
 	}
 
 	/**
@@ -82,26 +85,4 @@ public class GroupAdditionEvent implements Event {
 							.build();
 	}
 
-	/**
-	 * Returns an event label used to subscribe to {@link GroupAdditionEvent}
-	 * events. Matches on all events.
-	 *
-	 *
-	 */
-	public static EventLabel<GroupAdditionEvent> getEventLabelByAll() {
-		return ALL_EVENT_LABEL_INSTANCE;
-	}
-
-	private final static EventLabel<GroupAdditionEvent> ALL_EVENT_LABEL_INSTANCE = new EventLabel<>(GroupAdditionEvent.class, LabelerId.ALL, GroupAdditionEvent.class);
-
-	/**
-	 * Returns an event labeler for {@link GroupAdditionEvent} events that
-	 * matches all events. Automatically added at initialization.
-	 */
-	public static EventLabeler<GroupAdditionEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(GroupAdditionEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> ALL_EVENT_LABEL_INSTANCE)//
-							.build();
-	}
 }

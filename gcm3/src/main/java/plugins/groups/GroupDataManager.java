@@ -53,9 +53,7 @@ import plugins.util.properties.arraycontainers.ObjectValueContainer;
 
 /**
  * <p>
- * Mutable data manager that backs the {@linkplain PersonGroupDataView}. This
- * data manager is for internal use by the {@link CompartmentPlugin} and should
- * not be published.
+ * Mutable data manager that backs the {@linkplain PersonGroupDataView}. 
  * </p>
  *
  * <b>Implementation Notes</b>
@@ -184,7 +182,7 @@ public final class GroupDataManager extends DataManager {
 	 * allows references and group memberships to remain long enough for
 	 * resolvers, agents and reports to have final reference to the person while
 	 * still associated with any relevant groups.
-	 * {@linkplain CompartmentDataManager}
+	 *
 	 * 
 	 * <BR>
 	 * <BR>
@@ -215,28 +213,23 @@ public final class GroupDataManager extends DataManager {
 		 * contained in the groups plugin.
 		 */
 
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForAll());
 		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroup());
 		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson());
 		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupType(this));
 		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(this));
 		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForPerson());
 
-		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForAll());
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroup());
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupAndPerson());
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupType(this));
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupTypeAndPerson(this));
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForPerson());
 
-		dataManagerContext.addEventLabeler(GroupAdditionEvent.getEventLabelerForAll());
 		dataManagerContext.addEventLabeler(GroupAdditionEvent.getEventLabelerForGroupType(this));
 
-		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForAll());
 		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForGroup());
 		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForGroupType(this));
 
-		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForAll());
 		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroup());
 		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
 		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupType(this));

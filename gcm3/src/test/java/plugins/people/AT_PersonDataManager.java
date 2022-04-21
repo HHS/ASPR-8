@@ -14,9 +14,6 @@ import java.util.Set;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.DataManagerContext;
-import nucleus.EventLabeler;
-import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -124,7 +121,7 @@ public final class AT_PersonDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(PersonAdditionEvent.getEventLabel(), (c2, e) -> observedPersonIds.add(e.getPersonId()));
+			c.subscribe(PersonAdditionEvent.class, (c2, e) -> observedPersonIds.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people and show they were added
@@ -175,7 +172,7 @@ public final class AT_PersonDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BulkPersonAdditionEvent.getEventLabel(), (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
+			c.subscribe(BulkPersonAdditionEvent.class, (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
 		}));
 
 		// have the agent add a bulk people and show the people were added
@@ -300,7 +297,7 @@ public final class AT_PersonDataManager {
 		// have the observer subscribe to the removals and record them onto the
 		// observed removals
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-			c.subscribe(PersonImminentRemovalEvent.getEventLabel(), (c2, e) -> observedRemovals.add(e.getPersonId()));
+			c.subscribe(PersonImminentRemovalEvent.class, (c2, e) -> observedRemovals.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people
@@ -460,36 +457,6 @@ public final class AT_PersonDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PeopleActionSupport.testConsumers(0,testPlugin);
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonAdditionEventLabelers() {
-		EventLabeler<PersonAdditionEvent> eventLabeler = PersonAdditionEvent.getEventLabeler();
-		PeopleActionSupport.testConsumer(0,(c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonImminentRemovalEventLabelers() {
-		EventLabeler<PersonImminentRemovalEvent> eventLabeler = PersonImminentRemovalEvent.getEventLabeler();
-		PeopleActionSupport.testConsumer(0,(c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBulkPersonAdditionEventLabelers() {
-		EventLabeler<BulkPersonAdditionEvent> eventLabeler = BulkPersonAdditionEvent.getEventLabeler();
-		PeopleActionSupport.testConsumer(0,(c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
 	}
 
 }

@@ -1,5 +1,8 @@
 package nucleus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.jcip.annotations.NotThreadSafe;
 import nucleus.util.ContractException;
 import util.wrappers.MultiKey;
@@ -31,7 +34,16 @@ import util.wrappers.MultiKey;
  * @param <T>
  */
 @NotThreadSafe
-public final class EventLabel<T extends Event>  {
+public final class EventLabel<T extends Event> {
+
+	private static class Data<N> {
+
+		private Class<N> eventClass;
+
+		private EventLabelerId labelerId;
+
+		private final List<Object> keys = new ArrayList<>();
+	}
 
 	private final MultiKey multiKey;
 
@@ -42,52 +54,114 @@ public final class EventLabel<T extends Event>  {
 	private final Object primaryKeyValue;
 
 	/**
-	 * Constructs a new MultiKeyEventLabel.
+	 * Returns a new instance of the Builder class
 	 * 
 	 * @throws ContractException
-	 *             <li>if the primary key value is null
-	 *             <li>if the event labeler id is null
-	 *             <li>if the event class is null
 	 * 
-	 * @param primaryKeyValue
-	 *            -- the primary key that will be returned by this event label
-	 * @param labelerId
-	 *            -- the labelerId that will be returned by this event label
-	 * @param eventClass
-	 *            -- the event class that will be returned by this event label
-	 * @param keys
-	 *            -- the various order-sensitive keys that will used for
-	 *            equality comparisons between event labels
-	 * 
-	 * 
+	 *             <li>{@linkplain NucleusError#NULL_EVENT_CLASS } if the class
+	 *             reference is null</li>
 	 */
-	public EventLabel(final Object primaryKeyValue, final EventLabelerId labelerId, final Class<T> eventClass, final Object... keys) {
-		
-		if(primaryKeyValue == null) {
-			throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
+	public static <N extends Event> Builder<N> builder(Class<N> classReference) {
+		if (classReference == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
-		
-		if(labelerId == null) {
-			throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
-		}
-		
-		if(eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS_IN_EVENT_LABEL);
-		}
-
-		this.primaryKeyValue = primaryKeyValue;
-		this.eventClass = eventClass;
-		this.labelerId = labelerId;
-		multiKey = new MultiKey(keys);
+		return new Builder<N>(classReference);
 	}
 
+	public static class Builder<N extends Event> {
+
+		private Data<N> data = new Data<>();
+
+		private final Class<N> eventClass;
+
+		private Builder(Class<N> classReference) {
+			this.eventClass = classReference;
+		}
+
+		private void validate() {
+			if (data.keys.isEmpty()) {
+				throw new ContractException(NucleusError.NULL_PRIMARY_KEY_VALUE);
+			}
+
+			if (data.labelerId == null) {
+				throw new ContractException(NucleusError.NULL_LABELER_ID_IN_EVENT_LABEL);
+			}
+		}
+
+		/**
+		 * Constructs a new EventLabel.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NULL_PRIMARY_KEY_VALUE} if
+		 *             no keys were added</li>
+		 *             <li>{@linkplain NucleusError#NULL_LABELER_ID_IN_EVENT_LABEL} if no
+		 *             event labeler was set</li>
+		 */
+		public EventLabel<N> build() {
+			try {
+				validate();
+				data.eventClass = this.eventClass;
+				return new EventLabel<>(data);
+			} finally {
+				data = new Data<>();
+			}
+		}
+
+		/**
+		 * Adds a key to the event label
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NULL_EVENT_LABEL_KEY} if the
+		 *             key is null</li>
+		 */
+		public Builder<N> addKey(Object key) {
+			if (key == null) {
+				throw new ContractException(NucleusError.NULL_EVENT_LABEL_KEY);
+			}
+			data.keys.add(key);
+			return this;
+		}
+
+		/**
+		 * Sets the event labeler for the event label
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NULL_EVENT_LABELER_ID} if
+		 *             the labeler is null</li>
+		 */
+		public Builder<N> setEventLabelerId(EventLabelerId eventLabelerId) {
+			if (eventLabelerId == null) {
+				throw new ContractException(NucleusError.NULL_EVENT_LABELER_ID);
+			}
+			data.labelerId = eventLabelerId;
+			return this;
+		}
+
+	}
+
+	private EventLabel(Data<T> data) {
+		this.primaryKeyValue = data.keys.get(0);
+		this.eventClass = data.eventClass;
+		this.labelerId = data.labelerId;
+		MultiKey.Builder builder = MultiKey.builder();
+		for (Object key : data.keys) {
+			builder.addKey(key);
+		}
+		multiKey = builder.build();
+	}
+
+	/**
+	 * WARNING, NON-STANDARD EQUALS CONTRACT: Nucleus only checks for equality
+	 * between event labels when those labels have the same primary keys, event
+	 * class types and labeler ids. Thus, within the confines of nucleus, the
+	 * equality contract can ignore these values to gain efficiency.
+	 */
 	@Override
 	public int hashCode() {
 		/*
-		 * Justify the use of a non-standard approach to equals: this
-		 * was done to gain efficiency, but should we use a correct
-		 * implementation or force this to be the only implementation class of
-		 * the event label?
+		 * Justify the use of a non-standard approach to equals: this was done
+		 * to gain efficiency, but should we use a correct implementation or
+		 * force this to be the only implementation class of the event label?
 		 */
 		return multiKey.hashCode();
 	}
@@ -110,17 +184,27 @@ public final class EventLabel<T extends Event>  {
 		return multiKey.equals(other.multiKey);
 	}
 
-	
+	/**
+	 * Returns the event subclass that this label applies to.
+	 */
 	public Class<T> getEventClass() {
 		return eventClass;
 	}
 
-	
+	/**
+	 * Returns the labeler id associated with this label. Labels can only be
+	 * compared to other labels that share the same labeler id.
+	 */
 	public EventLabelerId getLabelerId() {
 		return labelerId;
 	}
 
-	
+	/**
+	 * Returns the primary key value of any event that this label matches. This
+	 * provides efficiency to the publication/subscription process and does not
+	 * replace the equality comparison between labels. This label will only be
+	 * matched to events that have the same primary key.
+	 */
 	public Object getPrimaryKeyValue() {
 		return primaryKeyValue;
 	}

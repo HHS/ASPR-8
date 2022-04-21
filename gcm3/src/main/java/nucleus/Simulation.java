@@ -1595,7 +1595,7 @@ public class Simulation {
 	}
 	
 	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-		return (dataManagerEventMap.containsKey(eventClass)||actorPubSub.containsKey(eventClass));
+		return (dataManagerEventMap.containsKey(eventClass)||actorPubSub.containsKey(eventClass)||actorEventMap.containsKey(eventClass));
 	}
 
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();

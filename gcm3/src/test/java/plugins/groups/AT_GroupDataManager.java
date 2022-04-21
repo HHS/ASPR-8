@@ -149,7 +149,7 @@ public class AT_GroupDataManager {
 		// add an agent to observe the group membership additions
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupMembershipAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupMembershipAdditionEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
 			});
 
@@ -259,7 +259,7 @@ public class AT_GroupDataManager {
 
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupAdditionEvent.class, (c2, e) -> {
 				actualGroupObservations.add(e.getGroupId());
 			});
 
@@ -379,7 +379,7 @@ public class AT_GroupDataManager {
 
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupAdditionEvent.class, (c2, e) -> {
 				actualObservations.add(e.getGroupId());
 			});
 
@@ -439,7 +439,7 @@ public class AT_GroupDataManager {
 
 		// add an agent to observe the group membership additions
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupMembershipAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupMembershipAdditionEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
 			});
 
@@ -540,7 +540,7 @@ public class AT_GroupDataManager {
 
 		// add an agent to observe the group removals
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(e.getGroupId());
 			});
 
@@ -788,7 +788,7 @@ public class AT_GroupDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupPropertyUpdateEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupPropertyUpdateEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
 
 			});
@@ -2305,8 +2305,6 @@ public class AT_GroupDataManager {
 		GroupsActionSupport.testConsumer(100, 3, 5, 6706902549572603852L, (c) -> {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-
-			testEventLabeler(c, GroupAdditionEvent.getEventLabelerForAll());
 			testEventLabeler(c, GroupAdditionEvent.getEventLabelerForGroupType(groupDataManager));
 		});
 
@@ -2323,8 +2321,7 @@ public class AT_GroupDataManager {
 		GroupsActionSupport.testConsumer(100, 3, 5, 6196206924587095446L, (c) -> {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-
-			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForAll());
+			
 			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroup());
 			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager));
 		});
@@ -2342,7 +2339,6 @@ public class AT_GroupDataManager {
 		GroupsActionSupport.testConsumer(100, 3, 5, 4869845127685024578L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForAll());
 			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroup());
 			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
 			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager));
@@ -2361,7 +2357,7 @@ public class AT_GroupDataManager {
 		GroupsActionSupport.testConsumer(100, 3, 5, 5331119358636307434L, (c) -> {
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForAll());
+			
 			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroup());
 			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson());
 			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupDataManager));
@@ -2383,7 +2379,6 @@ public class AT_GroupDataManager {
 
 			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
 
-			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForAll());
 			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroup());
 			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroupAndPerson());
 			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroupType(groupDataManager));
@@ -2407,7 +2402,7 @@ public class AT_GroupDataManager {
 		// well as the people being added to the groups
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(GroupAdditionEvent.class, (c2, e) -> {
 				actualGroupObservations.add(e.getGroupId());
 			});
 

@@ -318,7 +318,7 @@ public class RegionPluginData implements PluginData {
 		}
 
 		/**
-		 * Defines a compartment property
+		 * Defines a region property
 		 * 
 		 * @throws ContractException
 		 * 
@@ -367,7 +367,7 @@ public class RegionPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the set of {@link CompartmentPropertyId}
+	 * Returns the set of {@link RegionPropertyId}
 	 * 
 	 */
 	@SuppressWarnings("unchecked")

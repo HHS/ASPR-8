@@ -28,7 +28,7 @@ public enum TestRegionId implements RegionId {
 	}
 
 	/**
-	 * Returns a new {@link CompartmentId} instance.
+	 * Returns a new {@link RegionId} instance.
 	 */
 	public static RegionId getUnknownRegionId() {
 		return new RegionId() {

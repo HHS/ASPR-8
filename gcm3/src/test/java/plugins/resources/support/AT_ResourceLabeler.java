@@ -90,8 +90,8 @@ public final class AT_ResourceLabeler {
 	public void testGetLabel() {
 		/*
 		 * Create a resource labeler from a function. Have an agent apply the
-		 * function directly to a person's compartment to get a label for that
-		 * person. Get the label from the compartment labeler from the person id
+		 * function directly to a person's resource to get a label for that
+		 * person. Get the label from the resource labeler from the person id
 		 * alone. Compare the two labels for equality.
 		 */
 
@@ -122,9 +122,9 @@ public final class AT_ResourceLabeler {
 		}));
 
 		/*
-		 * Have the agent show that the compartment labeler created above
+		 * Have the agent show that the resource labeler created above
 		 * produces a label for each person that is consistent with the function
-		 * passed to the compartment labeler.
+		 * passed to the resource labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
@@ -132,7 +132,7 @@ public final class AT_ResourceLabeler {
 			List<PersonId> people = personDataManager.getPeople();
 			for (PersonId personId : people) {
 
-				// get the person's compartment and apply the function directly
+				// get the person's resource and apply the function directly
 				long personResourceLevel = resourceDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, personId);
 				Object expectedLabel = function.apply(personResourceLevel);
 

@@ -22,7 +22,10 @@ public class AT_EventLabeler {
 		// precondition test: if the id is not set
 		ContractException contractException = assertThrows(ContractException.class, () -> EventLabeler	.builder(TestEvent.class)//
 																										.setLabelFunction((c, t) -> {
-																											return new EventLabel<>(TestEvent.class, id, TestEvent.class);
+																											return EventLabel	.builder(TestEvent.class)//
+																																.setEventLabelerId(id)//
+																																.addKey(TestEvent.class)//
+																																.build();//
 																										})//
 																										.build());
 
@@ -44,7 +47,10 @@ public class AT_EventLabeler {
 		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
 															.setEventLabelerId(id)//
 															.setLabelFunction((c, t) -> {
-																return new EventLabel<>(TestEvent.class, id, TestEvent.class);
+																return EventLabel	.builder(TestEvent.class)//
+																					.setEventLabelerId(id)//
+																					.addKey(TestEvent.class)//
+																					.build();//
 															})//
 															.build();
 		assertEquals(id, eventLabeler.getEventLabelerId());
@@ -53,7 +59,10 @@ public class AT_EventLabeler {
 		ContractException contractException = assertThrows(ContractException.class, () -> EventLabeler	.builder(TestEvent.class)//
 																										.setEventLabelerId(null)//
 																										.setLabelFunction((c, t) -> {
-																											return new EventLabel<>(TestEvent.class, id, TestEvent.class);
+																											return EventLabel	.builder(TestEvent.class)//
+																																.setEventLabelerId(id)//
+																																.addKey(TestEvent.class)//
+																																.build();//
 																										})//
 																										.build());
 
@@ -65,7 +74,13 @@ public class AT_EventLabeler {
 	public void testSetLabelFunction() {
 		// create an event label that will be replicated by the simple event
 		// labeler
-		EventLabel<TestEvent> expectedEventLabel = new EventLabel<>(TestEvent.class, id, TestEvent.class, 1, 2, 3);
+		EventLabel<TestEvent> expectedEventLabel = EventLabel	.builder(TestEvent.class)//
+																.setEventLabelerId(id)//
+																.addKey(TestEvent.class)//
+																.addKey(1)//
+																.addKey(2)//
+																.addKey(3)//
+																.build();
 
 		// create a simple event labeler that will create the same event label
 		// as above
@@ -123,7 +138,10 @@ public class AT_EventLabeler {
 		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
 															.setEventLabelerId(id)//
 															.setLabelFunction((c, t) -> {
-																return new EventLabel<>(TestEvent.class, id, TestEvent.class);
+																return EventLabel	.builder(TestEvent.class)//
+																					.setEventLabelerId(id)//
+																					.addKey(TestEvent.class)//
+																					.build();
 															})//
 															.build();
 		assertEquals(TestEvent.class, eventLabeler.getEventClass());
@@ -134,7 +152,13 @@ public class AT_EventLabeler {
 	public void testGetEventLabel() {
 		// create an event label that will be replicated by the simple event
 		// labeler
-		EventLabel<TestEvent> expectedEventLabel = new EventLabel<>(TestEvent.class, id, TestEvent.class, 1, 2, 3);
+		EventLabel<TestEvent> expectedEventLabel = EventLabel	.builder(TestEvent.class)//
+																.setEventLabelerId(id)//
+																.addKey(TestEvent.class)//
+																.addKey(1)//
+																.addKey(2)//
+																.addKey(3)//
+																.build();//
 
 		// create a simple event labeler that will create the same event label
 		// as above
@@ -166,7 +190,10 @@ public class AT_EventLabeler {
 		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
 															.setEventLabelerId(id)//
 															.setLabelFunction((c, t) -> {
-																return new EventLabel<>(TestEvent.class, id, TestEvent.class);
+																return EventLabel	.builder(TestEvent.class)//
+																					.setEventLabelerId(id)//
+																					.addKey(TestEvent.class)//
+																					.build();//
 															})//
 															.build();
 		assertEquals(id, eventLabeler.getEventLabelerId());

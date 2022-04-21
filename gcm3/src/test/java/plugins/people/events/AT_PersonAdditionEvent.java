@@ -6,13 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.people.testsupport.PeopleActionSupport;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -53,43 +50,5 @@ public class AT_PersonAdditionEvent implements Event {
 		PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
 
 		assertEquals(personConstructionData, personAdditionEvent.getPersonConstructionData());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getEventLabel", args = {})
-	public void testGetEventLabel() {
-		EventLabel<PersonAdditionEvent> eventLabel = PersonAdditionEvent.getEventLabel();
-		assertEquals(PersonAdditionEvent.class, eventLabel.getEventClass());
-		assertEquals(PersonAdditionEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(PersonAdditionEvent.getEventLabeler().getEventLabelerId(), eventLabel.getLabelerId());
-	}
-	
-
-	@Test
-	@UnitTestMethod(name = "getEventLabeler", args = {})
-	public void testGetEventLabeler() {
-		PeopleActionSupport.testConsumer(0,(c) -> {
-			// show that the event labeler can be constructed has the correct
-			// values
-			EventLabeler<PersonAdditionEvent> eventLabeler = PersonAdditionEvent.getEventLabeler();
-			assertEquals(PersonAdditionEvent.class, eventLabeler.getEventClass());
-
-			assertEquals(PersonAdditionEvent.getEventLabel().getLabelerId(), eventLabeler.getEventLabelerId());
-
-			// show that the event labeler produces the expected event
-			// label
-
-			// create an event			
-			PersonAdditionEvent event = new PersonAdditionEvent(new PersonId(0), PersonConstructionData.builder().build());
-
-			// derive the expected event label for this event
-			EventLabel<PersonAdditionEvent> expectedEventLabel = PersonAdditionEvent.getEventLabel();
-
-			// have the event labeler produce an event label and show it
-			// is equal to the expected event label
-			EventLabel<PersonAdditionEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
-			assertEquals(expectedEventLabel, actualEventLabel);
-
-		});
 	}
 }

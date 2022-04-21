@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import nucleus.SimulationContext;
 import nucleus.Event;
+import nucleus.SimulationContext;
 import plugins.groups.GroupDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
@@ -66,7 +66,7 @@ public final class GroupLabeler implements Labeler {
 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
 	 *                          the person id is null
 	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
-	 *                          if the compartment id is unknown
+	 *                          if the person id is unknown
 	 */
 	@Override
 	public Object getLabel(SimulationContext simulationContext, PersonId personId) {

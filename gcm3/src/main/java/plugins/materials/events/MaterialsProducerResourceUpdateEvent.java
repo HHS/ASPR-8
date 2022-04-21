@@ -79,7 +79,12 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 			ResourceId resourceId) {
 		validateMaterialProducerId(simulationContext, materialsProducerId);
 		validateResourceId(simulationContext, resourceId);
-		return new EventLabel<>(resourceId, LabelerId.PRODUCER_RESOURCE, MaterialsProducerResourceUpdateEvent.class, materialsProducerId, resourceId);
+		return EventLabel	.builder(MaterialsProducerResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PRODUCER_RESOURCE)//
+							.addKey(resourceId)//
+							.addKey(materialsProducerId)//
+							.build();//
+
 	}
 
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForMaterialsProducerAndResource() {
@@ -91,7 +96,10 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 
 	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
 		validateResourceId(simulationContext, resourceId);
-		return new EventLabel<>(resourceId, LabelerId.RESOURCE, MaterialsProducerResourceUpdateEvent.class, resourceId);
+		return EventLabel	.builder(MaterialsProducerResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.RESOURCE)//
+							.addKey(resourceId)//
+							.build();//
 	}
 
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForResource() {

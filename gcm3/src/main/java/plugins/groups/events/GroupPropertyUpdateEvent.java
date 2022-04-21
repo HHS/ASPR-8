@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -69,7 +68,7 @@ public class GroupPropertyUpdateEvent implements Event {
 	}
 
 	private static enum LabelerId implements EventLabelerId {
-		GROUP_PROPERTY, GROUP, TYPE_PROPERTY, TYPE, ALL
+		GROUP_PROPERTY, GROUP, TYPE_PROPERTY, TYPE
 	}
 
 	private static void validateGroupId(SimulationContext simulationContext, GroupId groupId) {
@@ -136,7 +135,12 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupAndProperty(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
 		validateGroupId(simulationContext, groupId);
 		validateGroupPropertyId(simulationContext, groupId, groupPropertyId);
-		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP_PROPERTY, GroupPropertyUpdateEvent.class, groupId, groupPropertyId);
+		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP_PROPERTY)//
+							.addKey(GroupPropertyUpdateEvent.class)//
+							.addKey(groupId)//
+							.addKey(groupPropertyId)//
+							.build();//
 	}
 
 	/**
@@ -167,7 +171,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.GROUP, GroupPropertyUpdateEvent.class, groupId);
+		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP)//
+							.addKey(GroupPropertyUpdateEvent.class)//
+							.addKey(groupId)//
+							.build();//
 	}
 
 	/**
@@ -203,7 +211,12 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupTypeAndProperty(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validateGroupPropertyId(simulationContext, groupTypeId, groupPropertyId);
-		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE_PROPERTY, GroupPropertyUpdateEvent.class, groupTypeId, groupPropertyId);
+		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE_PROPERTY)//
+							.addKey(GroupPropertyUpdateEvent.class)//
+							.addKey(groupTypeId)//
+							.addKey(groupPropertyId)//
+							.build();
 	}
 
 	/**
@@ -237,7 +250,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.TYPE, GroupPropertyUpdateEvent.class, groupTypeId);
+		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE)//
+							.addKey(GroupPropertyUpdateEvent.class)//
+							.addKey(groupTypeId)//
+							.build();//
 	}
 
 	/**
@@ -251,27 +268,6 @@ public class GroupPropertyUpdateEvent implements Event {
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
 								return getEventLabelByGroupType(context, groupTypeId);
 							})//
-							.build();
-	}
-
-	/**
-	 * Returns an event label used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on all events.
-	 */
-	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByAll() {
-		return ALL_LABEL;
-	}
-
-	private final static EventLabel<GroupPropertyUpdateEvent> ALL_LABEL = new EventLabel<>(GroupPropertyUpdateEvent.class, LabelerId.ALL, GroupPropertyUpdateEvent.class);
-
-	/**
-	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events
-	 * matches all events. Automatically added at initialization.
-	 */
-	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> ALL_LABEL)//
 							.build();
 	}
 

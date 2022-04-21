@@ -1203,19 +1203,21 @@ public class AT_DataManagerContext {
 	public void testAddEventLabeler() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		
+
 		// have the actor test the preconditions
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-			
+
 			EventLabelerId eventLabelerId = new EventLabelerId() {
 			};
-			EventLabel<TestEvent> multiKeyEventLabel = new EventLabel<TestEvent>(TestEvent.class,eventLabelerId,TestEvent.class);
+			EventLabel<TestEvent> multiKeyEventLabel = EventLabel	.builder(TestEvent.class)//
+																	.setEventLabelerId(eventLabelerId)//
+																	.addKey(TestEvent.class)//
+																	.build();//
 
 			// if the event labeler is null
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(null));
 			assertEquals(NucleusError.NULL_EVENT_LABELER, contractException.getErrorType());
-	
 
 			/*
 			 * if the event labeler contains a labeler id that is the id of a
@@ -1235,10 +1237,13 @@ public class AT_DataManagerContext {
 		EventLabelerId id = new EventLabelerId() {
 		};
 
-		EventLabeler<TestEvent> eventLabeler = EventLabeler.builder(TestEvent.class)//
-				.setEventLabelerId(id)//
-				.setLabelFunction((c,e)->new EventLabel<>(TestEvent.class, id, TestEvent.class))//
-				.build();
+		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
+															.setEventLabelerId(id)//
+															.setLabelFunction((c, e) -> EventLabel	.builder(TestEvent.class)//
+																									.setEventLabelerId(id)//
+																									.addKey(TestEvent.class)//
+																									.build())//
+															.build();
 
 		// have the actor add the event labeler
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
@@ -1255,9 +1260,12 @@ public class AT_DataManagerContext {
 		// have the agent observe the test event
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
-			c.subscribe(new EventLabel<>(TestEvent.class, id, TestEvent.class), (c2, e) -> {
-				eventObserved.setValue(true);
-			});
+			c.subscribe(EventLabel	.builder(TestEvent.class)//
+									.setEventLabelerId(id)//
+									.addKey(TestEvent.class).build(),
+					(c2, e) -> {
+						eventObserved.setValue(true);
+					});
 		}));
 
 		// have the actor create a test event for the agent to observe
@@ -1299,7 +1307,10 @@ public class AT_DataManagerContext {
 		 * create a simple event label as a place holder -- all test events will
 		 * be matched
 		 */
-		EventLabel<TestEvent> eventLabel = new EventLabel<>(TestEvent.class, eventLabelerId, TestEvent.class);
+		EventLabel<TestEvent> eventLabel = EventLabel	.builder(TestEvent.class)//
+														.setEventLabelerId(eventLabelerId)//
+														.addKey(TestEvent.class)//
+														.build();//
 
 		// create an event labeler that always returns the label above
 		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//

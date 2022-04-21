@@ -2,9 +2,6 @@ package plugins.materials.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
 import plugins.materials.support.BatchId;
 
 @Immutable
@@ -37,20 +34,4 @@ public class BatchAmountUpdateEvent implements Event {
 		return "BatchAmountUpdateEvent [batchId=" + batchId + ", previousAmount=" + previousAmount + ", currentAmount=" + currentAmount + "]";
 	}
 
-	private static enum LabelerId implements EventLabelerId {
-		ALL
-	}
-
-	private final static EventLabel<BatchAmountUpdateEvent> ALL_LABEL = new EventLabel<>(BatchAmountUpdateEvent.class, LabelerId.ALL, BatchAmountUpdateEvent.class);
-
-	public static EventLabel<BatchAmountUpdateEvent> getEventLabelByAll() {
-		return ALL_LABEL;
-	}
-
-	public static EventLabeler<BatchAmountUpdateEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(BatchAmountUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> ALL_LABEL)//
-							.build();
-	}
 }

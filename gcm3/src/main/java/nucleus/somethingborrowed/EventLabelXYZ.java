@@ -30,41 +30,21 @@ import nucleus.Event;
  */
 public interface EventLabelXYZ<T extends Event> {
 
-	/**
-	 * Returns the event subclass that this label applies to.
-	 */
+	
 	public Class<T> getEventClass();
 
-	/**
-	 * Returns the labeler id associated with this label. Labels can only be
-	 * compared to other labels that share the same labeler id.
-	 */
+	
 	public EventLabelerXYZ<T> getLabeler();
 
-	/**
-	 * Returns the primary key value of any event that this label matches. This
-	 * provides efficiency to the publication/subscription process and does not
-	 * replace the equality comparison between labels. This label will only be
-	 * matched to events that have the same primary key.
-	 */
+	
 	public Object getPrimaryKeyValue();
 
-	/**
-	 * WARNING, NON-STANDARD EQUALS CONTRACT: Nucleus only checks for equality
-	 * between event labels when those labels have the same primary keys, event
-	 * class types and labeler ids. Thus, within the confines of nucleus, the
-	 * equality contract can ignore these values to gain efficiency.
-	 */
+	
 
 	@Override
 	public boolean equals(Object obj);
 
-	/**
-	 * WARNING, NON-STANDARD EQUALS CONTRACT: Nucleus only checks for equality
-	 * between event labels when those labels have the same primary keys, event
-	 * class types and labeler ids. Thus, within the confines of nucleus, the
-	 * equality contract can ignore these values to gain efficiency.
-	 */
+	
 	@Override
 	public int hashCode();
 

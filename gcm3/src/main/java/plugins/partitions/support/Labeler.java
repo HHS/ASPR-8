@@ -2,8 +2,8 @@ package plugins.partitions.support;
 
 import java.util.Set;
 
-import nucleus.SimulationContext;
 import nucleus.Event;
+import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
 
 /**

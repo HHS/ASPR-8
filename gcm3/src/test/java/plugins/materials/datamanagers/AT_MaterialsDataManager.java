@@ -116,7 +116,7 @@ public class AT_MaterialsDataManager {
 		/* create an observer actor that will observe the batch creations */
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BatchAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAdditionEvent.class, (c2, e) -> {
 				actualBatchObservations.add(e.getBatchId());
 			});
 		}));
@@ -168,7 +168,7 @@ public class AT_MaterialsDataManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
-				builder.setAmount(0.1234);				
+				builder.setAmount(0.1234);
 				BatchConstructionInfo batchConstructionInfo = builder.build();
 				materialsDataManager.addBatch(batchConstructionInfo);
 			});
@@ -212,9 +212,9 @@ public class AT_MaterialsDataManager {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setAmount(0.1234);
 				builder.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
-				BatchConstructionInfo batchConstructionInfo = builder.build();				
+				BatchConstructionInfo batchConstructionInfo = builder.build();
 				materialsDataManager.addBatch(batchConstructionInfo);
-				
+
 			});
 			assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 		});
@@ -358,7 +358,7 @@ public class AT_MaterialsDataManager {
 
 		/* create an observer actor that will observe the batch creations */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BatchAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAdditionEvent.class, (c2, e) -> {
 				actualBatchObservations.add(e.getBatchId());
 			});
 		}));
@@ -469,7 +469,7 @@ public class AT_MaterialsDataManager {
 		// have a actor observe stage creations
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageAdditionEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 		}));
@@ -610,15 +610,15 @@ public class AT_MaterialsDataManager {
 		// have an actor observe
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 
-			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), "removal"));
 			});
 
-			c.subscribe(BatchAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAdditionEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), "creation"));
 			});
 
-			c.subscribe(StageImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 
@@ -775,7 +775,7 @@ public class AT_MaterialsDataManager {
 		// have an actor observe
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 
-			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId()));
 			});
 
@@ -785,7 +785,7 @@ public class AT_MaterialsDataManager {
 				});
 			}
 
-			c.subscribe(StageImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 
@@ -1093,7 +1093,8 @@ public class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumer(3682262623372578238L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
 			TestBatchPropertyId testBatchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK;
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyDefinition(TestMaterialId.getUnknownMaterialId(), testBatchPropertyId));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> materialsDataManager.getBatchPropertyDefinition(TestMaterialId.getUnknownMaterialId(), testBatchPropertyId));
 			assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
 		});
 
@@ -1380,7 +1381,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the batch property id is null */
 		MaterialsActionSupport.testConsumer(4276253162944402582L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1,TestMaterialId.MATERIAL_2,45L);
+			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 45L);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyValue(batchId, null));
 			assertEquals(MaterialsError.NULL_BATCH_PROPERTY_ID, contractException.getErrorType());
 		});
@@ -1388,7 +1389,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the batch property id is unknown */
 		MaterialsActionSupport.testConsumer(211483511977100214L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1,TestMaterialId.MATERIAL_2,45L);
+			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 45L);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyValue(batchId, TestBatchPropertyId.getUnknownBatchPropertyId()));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID, contractException.getErrorType());
 		});
@@ -1527,8 +1528,7 @@ public class AT_MaterialsDataManager {
 
 				// create some batches
 				for (int i = 0; i < 100; i++) {
-					BatchId batchId = materialsDataManager.addBatch(testMaterialsProducerId, TestMaterialId.getRandomMaterialId(randomGenerator),
-							randomGenerator.nextInt(100));
+					BatchId batchId = materialsDataManager.addBatch(testMaterialsProducerId, TestMaterialId.getRandomMaterialId(randomGenerator), randomGenerator.nextInt(100));
 					expectedInventoryBatches.add(batchId);
 				}
 
@@ -2546,7 +2546,7 @@ public class AT_MaterialsDataManager {
 
 		// have an observer record batches being removed from stages
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageMembershipRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageMembershipRemovalEvent.class, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId());
 				actualObservations.add(multiKey);
 			});
@@ -2670,7 +2670,7 @@ public class AT_MaterialsDataManager {
 		// have an observer record observations of batches being assigned to
 		// stages
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageMembershipAdditionEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageMembershipAdditionEvent.class, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId());
 				actualObservations.add(multiKey);
 			});
@@ -2808,7 +2808,7 @@ public class AT_MaterialsDataManager {
 		Set<BatchId> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(e.getBatchId());
 			});
 		}));
@@ -2903,15 +2903,15 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 
-			c.subscribe(StageImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
 			});
 
-			c.subscribe(StageMembershipRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(StageMembershipRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId()));
 			});
 
-			c.subscribe(BatchImminentRemovalEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchImminentRemovalEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId()));
 			});
 		}));
@@ -2940,7 +2940,6 @@ public class AT_MaterialsDataManager {
 			List<StageId> stagesToConfirm = new ArrayList<>();
 			List<BatchId> batchesToConfirm = new ArrayList<>();
 			Set<BatchId> expectedInventoryBatches = new LinkedHashSet<>();
-			
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
@@ -2960,7 +2959,7 @@ public class AT_MaterialsDataManager {
 					 */
 					if (destroyBatches) {
 						batchesToConfirm.addAll(stageBatches);
-					}else {
+					} else {
 						expectedInventoryBatches.addAll(stageBatches);
 					}
 					stagesToConfirm.add(stageId);
@@ -2970,14 +2969,14 @@ public class AT_MaterialsDataManager {
 						for (BatchId batchId : stageBatches) {
 							expectedObservations.add(new MultiKey(c.getTime(), batchId));
 						}
-					} 
+					}
 
 					expectedObservations.add(new MultiKey(c.getTime(), stageId));
 
 				}
 			}));
 
-			//show that the expected batches and stages were removed 
+			// show that the expected batches and stages were removed
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
 				for (StageId stageId : stagesToConfirm) {
@@ -2988,7 +2987,7 @@ public class AT_MaterialsDataManager {
 				}
 				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(testMaterialsProducerId);
 				Set<BatchId> actualInventoryBatches = new LinkedHashSet<>(inventoryBatches);
-				assertEquals(expectedInventoryBatches,actualInventoryBatches);				
+				assertEquals(expectedInventoryBatches, actualInventoryBatches);
 			}));
 
 		}
@@ -3039,7 +3038,7 @@ public class AT_MaterialsDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(BatchPropertyUpdateEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchPropertyUpdateEvent.class, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getBatchPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue());
 				actualObservations.add(multiKey);
 			});
@@ -3198,8 +3197,8 @@ public class AT_MaterialsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-					EventLabel<MaterialsProducerPropertyUpdateEvent> eventLabel = MaterialsProducerPropertyUpdateEvent.getEventLabelByMaterialsProducerAndProperty(c,
-							testMaterialsProducerId, testMaterialsProducerPropertyId);
+					EventLabel<MaterialsProducerPropertyUpdateEvent> eventLabel = MaterialsProducerPropertyUpdateEvent.getEventLabelByMaterialsProducerAndProperty(c, testMaterialsProducerId,
+							testMaterialsProducerPropertyId);
 					c.subscribe(eventLabel, (c2, e) -> {
 						MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialsProducerId(), e.getMaterialsProducerPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue());
 						actualObservations.add(multiKey);
@@ -3327,7 +3326,7 @@ public class AT_MaterialsDataManager {
 
 		// have a agent observe stage creations
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageOfferUpdateEvent.getEventLabelByAll(c), (c2, e) -> {
+			c.subscribe(StageOfferUpdateEvent.class, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId(), e.isPreviousOfferState(), e.isCurrentOfferState()));
 			});
 		}));
@@ -3404,7 +3403,7 @@ public class AT_MaterialsDataManager {
 
 		// have an agent observe the movement of materials between batches
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(BatchAmountUpdateEvent.getEventLabelByAll(), (c2, e) -> {
+			c.subscribe(BatchAmountUpdateEvent.class, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(e.getBatchId(), e.getPreviousAmount(), e.getCurrentAmount());
 				actualObservations.add(multiKey);
 			});
@@ -3655,12 +3654,12 @@ public class AT_MaterialsDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
-			c.subscribe(StageMaterialsProducerUpdateEvent.getEventLabelByAll(c), (c2, e) -> {
+			c.subscribe(StageMaterialsProducerUpdateEvent.class, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId(), e.getPreviousMaterialsProducerId(), e.getCurrentMaterialsProducerId());
 				actualObservations.add(multiKey);
 			});
 
-			c.subscribe(StageOfferUpdateEvent.getEventLabelByAll(c), (c2, e) -> {
+			c.subscribe(StageOfferUpdateEvent.class, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId());
 				actualObservations.add(multiKey);
 
@@ -4051,6 +4050,7 @@ public class AT_MaterialsDataManager {
 		});
 
 	}
+
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testStageOfferUpdateEventLabelers() {
@@ -4059,72 +4059,10 @@ public class AT_MaterialsDataManager {
 			assertNotNull(eventLabeler1);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-			EventLabeler<StageOfferUpdateEvent> eventLabeler2 = StageOfferUpdateEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler2);
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
 		});
 
 	}
-	
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageAdditionEventLabelers() {
-		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageAdditionEvent> eventLabeler = StageAdditionEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-	
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchAmountUpdateEventLabelers() {
-		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<BatchAmountUpdateEvent> eventLabeler = BatchAmountUpdateEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
 
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchAdditionEventLabelers() {
-
-		MaterialsActionSupport.testConsumer(6871307284439549691L, (c) -> {
-			EventLabeler<BatchAdditionEvent> eventLabeler = BatchAdditionEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-	
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchImminentRemovalEventLabelers() {
-		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<BatchImminentRemovalEvent> eventLabeler = BatchImminentRemovalEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-	
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBatchPropertyUpdateEventLabelers() {
-		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<BatchPropertyUpdateEvent> eventLabeler = BatchPropertyUpdateEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-	
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testMaterialsProducerPropertyUpdateEventLabelers() {
@@ -4141,7 +4079,7 @@ public class AT_MaterialsDataManager {
 
 		});
 	}
-	
+
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testMaterialsProducerResourceUpdateEventLabelers() {
@@ -4163,65 +4101,28 @@ public class AT_MaterialsDataManager {
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		});
 	}
-	
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageImminentRemovalEventLabelers() {
-		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageImminentRemovalEvent> eventLabeler = StageImminentRemovalEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-	
+
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testStageMaterialsProducerUpdateEventLabelers() {
 
 		MaterialsActionSupport.testConsumer(6871307284439549691L, (c) -> {
-			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler1 = StageMaterialsProducerUpdateEvent.getEventLabelerForAll();
+
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler1 = StageMaterialsProducerUpdateEvent.getEventLabelerForDestination();
 			assertNotNull(eventLabeler1);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler2 = StageMaterialsProducerUpdateEvent.getEventLabelerForDestination();
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler2 = StageMaterialsProducerUpdateEvent.getEventLabelerForSource();
 			assertNotNull(eventLabeler2);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler3 = StageMaterialsProducerUpdateEvent.getEventLabelerForSource();
+			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler3 = StageMaterialsProducerUpdateEvent.getEventLabelerForStage();
 			assertNotNull(eventLabeler3);
 			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler3));
 			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 
-			EventLabeler<StageMaterialsProducerUpdateEvent> eventLabeler4 = StageMaterialsProducerUpdateEvent.getEventLabelerForStage();
-			assertNotNull(eventLabeler4);
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler4));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-		});
-	}
-	
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageMembershipAdditionEventLabelers() {
-		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageMembershipAdditionEvent> eventLabeler = StageMembershipAdditionEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-	
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testStageMembershipRemovalEventLabelers() {
-		MaterialsActionSupport.testConsumer(645534075810555962L, (c) -> {
-			EventLabeler<StageMembershipRemovalEvent> eventLabeler = StageMembershipRemovalEvent.getEventLabelerForAll();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 		});
 	}
 
@@ -4242,8 +4143,6 @@ public class AT_MaterialsDataManager {
 		 * correctly renumbering the ids.
 		 */
 		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
-
-		
 
 		int bId = 0;
 		int sId = 0;
@@ -4347,8 +4246,6 @@ public class AT_MaterialsDataManager {
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
 
-		
-		
 		// add the regions plugin
 		RegionPluginData.Builder regionsBuilder = RegionPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -4357,7 +4254,6 @@ public class AT_MaterialsDataManager {
 		RegionPluginData regionPluginData = regionsBuilder.build();
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
 		builder.addPlugin(regionPlugin);
-		
 
 		// add the report plugin
 		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
@@ -4450,8 +4346,6 @@ public class AT_MaterialsDataManager {
 
 			for (BatchId batchId : materialsPluginData.getBatchIds()) {
 
-				
-
 				MaterialId expectedMaterialId = materialsPluginData.getBatchMaterial(batchId);
 				MaterialId actualMaterialId = materialsDataManager.getBatchMaterial(batchId);
 				assertEquals(expectedMaterialId, actualMaterialId);
@@ -4486,9 +4380,8 @@ public class AT_MaterialsDataManager {
 			}
 			assertEquals(expectedStageIds, actualStageIds);
 
-			
 			for (StageId stageId : materialsPluginData.getStageIds()) {
-				
+
 				MaterialsProducerId expectedMaterialsProducerId = materialsPluginData.getStageMaterialsProducer(stageId);
 				MaterialsProducerId actualMaterialsProducerId = materialsDataManager.getStageProducer(stageId);
 				assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
@@ -4522,7 +4415,6 @@ public class AT_MaterialsDataManager {
 		}
 
 	}
-
 
 }
 

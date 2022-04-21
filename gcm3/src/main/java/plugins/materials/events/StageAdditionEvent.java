@@ -2,9 +2,6 @@ package plugins.materials.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
 import plugins.materials.support.StageId;
 
 @Immutable
@@ -25,20 +22,5 @@ public class StageAdditionEvent implements Event {
 		return "StageCreation [stageId=" + stageId + "]";
 	}
 
-	private static enum LabelerId implements EventLabelerId {
-		ALL
-	}
-
-	private final static EventLabel<StageAdditionEvent> ALL_LABEL = new EventLabel<>(StageAdditionEvent.class, LabelerId.ALL, StageAdditionEvent.class);
-
-	public static EventLabel<StageAdditionEvent> getEventLabelByAll() {
-		return ALL_LABEL;
-	}
-
-	public static EventLabeler<StageAdditionEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(StageAdditionEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> ALL_LABEL)//
-							.build();
-	}
+	
 }

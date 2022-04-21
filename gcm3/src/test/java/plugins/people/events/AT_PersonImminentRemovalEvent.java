@@ -6,12 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.people.testsupport.PeopleActionSupport;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -50,42 +47,5 @@ public class AT_PersonImminentRemovalEvent implements Event {
 			assertEquals(expectedValue, actualValue);
 		}
 		
-	}
-
-	@Test
-	@UnitTestMethod(name = "getEventLabel", args = {})
-	public void testGetEventLabel() {
-		EventLabel<PersonImminentRemovalEvent> eventLabel = PersonImminentRemovalEvent.getEventLabel();
-		assertEquals(PersonImminentRemovalEvent.class, eventLabel.getEventClass());
-		assertEquals(PersonImminentRemovalEvent.class, eventLabel.getPrimaryKeyValue());
-		assertEquals(PersonImminentRemovalEvent.getEventLabeler().getEventLabelerId(), eventLabel.getLabelerId());
-	}
-	
-	@Test
-	@UnitTestMethod(name = "getEventLabeler", args = {})
-	public void testGetEventLabeler() {
-		PeopleActionSupport.testConsumer(0,(c) -> {
-			// show that the event labeler can be constructed has the correct
-			// values
-			EventLabeler<PersonImminentRemovalEvent> eventLabeler = PersonImminentRemovalEvent.getEventLabeler();
-			assertEquals(PersonImminentRemovalEvent.class, eventLabeler.getEventClass());
-
-			assertEquals(PersonImminentRemovalEvent.getEventLabel().getLabelerId(), eventLabeler.getEventLabelerId());
-
-			// show that the event labeler produces the expected event
-			// label
-
-			// create an event			
-			PersonImminentRemovalEvent event = new PersonImminentRemovalEvent(new PersonId(0));
-
-			// derive the expected event label for this event
-			EventLabel<PersonImminentRemovalEvent> expectedEventLabel = PersonImminentRemovalEvent.getEventLabel();
-
-			// have the event labeler produce an event label and show it
-			// is equal to the expected event label
-			EventLabel<PersonImminentRemovalEvent> actualEventLabel = eventLabeler.getEventLabel(c, event);
-			assertEquals(expectedEventLabel, actualEventLabel);
-
-		});
 	}
 }

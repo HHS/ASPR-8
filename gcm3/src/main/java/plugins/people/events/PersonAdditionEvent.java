@@ -2,10 +2,6 @@ package plugins.people.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.util.ContractException;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -52,27 +48,5 @@ public final class PersonAdditionEvent implements Event {
 		return personConstructionData;
 	}
 
-	/**
-	 * Returns an event label used to subscribe to {@link PersonAdditionEvent}
-	 * events. Matches all such events.
-	 */
-	public static EventLabel<PersonAdditionEvent> getEventLabel() {
-		return EVENT_LABEL_ALL;
-	}
-
-	private static enum LabelerId implements EventLabelerId {
-		ALL
-	}
-
-	private final static EventLabel<PersonAdditionEvent> EVENT_LABEL_ALL = new EventLabel<>(PersonAdditionEvent.class, LabelerId.ALL, PersonAdditionEvent.class);
-
-	/**
-	 * Returns an event labeler for {@link PersonAdditionEvent}
-	 */
-	public static EventLabeler<PersonAdditionEvent> getEventLabeler() {
-		return EventLabeler	.builder(PersonAdditionEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> EVENT_LABEL_ALL)//
-							.build();
-	}
+	
 }

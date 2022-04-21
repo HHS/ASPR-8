@@ -119,15 +119,7 @@ public class AT_ResourcePropertyReport {
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		builder.addPlugin(stochasticsPlugin);
 
-		/*
-		 * We will add three compartments, one agent and the compartment
-		 * property report to the engine. The compartments will have a few
-		 * properties and the agent will alter various compartment properties
-		 * over time. Report items from the report will be collected in an
-		 * output consumer. The expected report items will be collected in a
-		 * separate consumer and the consumers will be compared for equality.
-		 * The output consumers properly account for report item duplications.
-		 */
+		
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

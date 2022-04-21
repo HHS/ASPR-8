@@ -19,12 +19,12 @@ public class AT_PersonError {
 	public void test() {
 		//show that each description is a unique, non-null and non-empty string 
 		Set<String> descriptions = new LinkedHashSet<>();
-		for(PersonError compartmentError : PersonError.values()) {
-			String description = compartmentError.getDescription();			
-			assertNotNull(description,"null description for "+compartmentError);			
-			assertTrue(description.length()>0, "empty string for "+compartmentError);
+		for(PersonError personError : PersonError.values()) {
+			String description = personError.getDescription();			
+			assertNotNull(description,"null description for "+personError);			
+			assertTrue(description.length()>0, "empty string for "+personError);
 			boolean unique = descriptions.add(description);
-			assertTrue(unique,"description for "+compartmentError+" is not unique");
+			assertTrue(unique,"description for "+personError+" is not unique");
 		}
 	}
 }

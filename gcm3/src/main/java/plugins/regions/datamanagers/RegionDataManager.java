@@ -158,7 +158,7 @@ public final class RegionDataManager extends DataManager {
 		 * THAT REGIONS MUST BE CONVERTED TO INTEGER VALUES STARTING AT ONE, NOT
 		 * ZERO.
 		 *
-		 * The same holds true for compartments.
+		 *
 		 */
 		regionValues = new IntValueContainer(0);
 
@@ -403,8 +403,8 @@ public final class RegionDataManager extends DataManager {
 	}
 
 	/*
-	 * Record for maintaining the number of people either globally, regionally
-	 * or by compartment. Also maintains the time when the population count was
+	 * Record for maintaining the number of people either globally or regionally.
+	 * Also maintains the time when the population count was
 	 * last changed. PopulationRecords are maintained to eliminate iterations
 	 * over other tracking structures to answer queries about population counts.
 	 */
@@ -445,10 +445,10 @@ public final class RegionDataManager extends DataManager {
 	 * Returns as a List the person identifiers of the people in the given
 	 * region. List elements are unique.
 	 * 
-	 * @throwsContractException
+	 * @throws ContractException
 	 *                          <li>{@linkplain RegionError#NULL_REGION_ID} if
 	 *                          the c id is null
-	 *                          <li>{@linkplain CompartmentError#UNKNOWN_REGION_ID}
+	 *                          <li>{@linkplain RegionError#UNKNOWN_REGION_ID}
 	 *                          if the region id is not known
 	 */
 	public List<PersonId> getPeopleInRegion(final RegionId regionId) {
@@ -481,7 +481,7 @@ public final class RegionDataManager extends DataManager {
 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
 	 *                          the person id is null
 	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
-	 *                          if the compartment id is unknown
+	 *                          if the person id is unknown
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RegionId> T getPersonRegion(final PersonId personId) {
@@ -497,7 +497,7 @@ public final class RegionDataManager extends DataManager {
 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
 	 *                          the person id is null
 	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
-	 *                          if the compartment id is unknown
+	 *                          if the person id is unknown
 	 *                          <li>{@linkplain RegionError#REGION_ARRIVAL_TIMES_NOT_TRACKED}
 	 *                          if the region arrival times are not being
 	 *                          tracked</li>

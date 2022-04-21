@@ -153,7 +153,7 @@ public class AT_GlobalPropertyUpdateEvent {
 	}
 
 	/*
-	 * Runs the engine by loading all plugins necessary to support compartments
+	 * Runs the engine by loading all plugins necessary to support globals
 	 * and executes the given consumer as an AgentActionPlan.
 	 */
 	private void testConsumer(Consumer<ActorContext> consumer) {

@@ -42,7 +42,7 @@ public class StageOfferUpdateEvent implements Event {
 	}
 
 	private static enum LabelerId implements EventLabelerId {
-		STAGE, ALL
+		STAGE
 	}
 
 	private static void validateStageId(SimulationContext simulationContext, StageId stageId) {
@@ -57,25 +57,16 @@ public class StageOfferUpdateEvent implements Event {
 
 	public static EventLabel<StageOfferUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
 		validateStageId(simulationContext, stageId);
-		return new EventLabel<>(StageOfferUpdateEvent.class, LabelerId.STAGE, StageOfferUpdateEvent.class, stageId);
+		return EventLabel	.builder(StageOfferUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.STAGE)//
+							.addKey(StageOfferUpdateEvent.class)//
+							.addKey(stageId)//
+							.build();//
 	}
 
 	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForStage() {
 		return EventLabeler	.builder(StageOfferUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.STAGE).setLabelFunction((context, event) -> getEventLabelByStage(context, event.getStageId()))//
-							.build();
-	}
-
-	private final static EventLabel<StageOfferUpdateEvent> ALL_LABEL = new EventLabel<>(StageOfferUpdateEvent.class, LabelerId.ALL, StageOfferUpdateEvent.class);
-
-	public static EventLabel<StageOfferUpdateEvent> getEventLabelByAll(SimulationContext simulationContext) {
-		return ALL_LABEL;
-	}
-
-	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(StageOfferUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> ALL_LABEL)//
 							.build();
 	}
 

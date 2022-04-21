@@ -61,7 +61,7 @@ public final class AttributeLabeler implements Labeler {
 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
 	 *                          the person id is null
 	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
-	 *                          if the compartment id is unknown
+	 *                          if the person id is unknown
 	 */
 	@Override
 	public Object getLabel(SimulationContext simulationContext, PersonId personId) {

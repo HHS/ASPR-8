@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.groups.GroupDataManager;
@@ -53,7 +52,7 @@ public class GroupMembershipAdditionEvent implements Event {
 	}
 
 	private static enum LabelerId implements EventLabelerId {
-		GROUP_PERSON, GROUP, PERSON, TYPE_PERSON, TYPE, ALL
+		GROUP_PERSON, GROUP, PERSON, TYPE_PERSON, TYPE
 	}
 
 	private static void validateGroupId(SimulationContext simulationContext, GroupId groupId) {
@@ -109,7 +108,12 @@ public class GroupMembershipAdditionEvent implements Event {
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
 		validateGroupId(simulationContext, groupId);
 		validatePersonId(simulationContext, personId);
-		return new EventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP_PERSON, GroupMembershipAdditionEvent.class, groupId, personId);
+		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP_PERSON)//
+							.addKey(GroupMembershipAdditionEvent.class)//
+							.addKey(groupId)//
+							.addKey(personId)//
+							.build();//
 	}
 
 	/**
@@ -139,7 +143,11 @@ public class GroupMembershipAdditionEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
-		return new EventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.GROUP, GroupMembershipAdditionEvent.class, groupId);
+		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.GROUP)//
+							.addKey(GroupMembershipAdditionEvent.class)//
+							.addKey(groupId)//
+							.build();//
 	}
 
 	/**
@@ -168,7 +176,11 @@ public class GroupMembershipAdditionEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
-		return new EventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.PERSON, GroupMembershipAdditionEvent.class, personId);
+		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON)//
+							.addKey(GroupMembershipAdditionEvent.class).addKey(personId)//
+							.build();
+
 	}
 
 	/**
@@ -178,8 +190,7 @@ public class GroupMembershipAdditionEvent implements Event {
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForPerson() {
 		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON)//
-							.setLabelFunction(
-									(context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
+							.setLabelFunction((context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
 							.build();
 	}
 
@@ -204,7 +215,12 @@ public class GroupMembershipAdditionEvent implements Event {
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validatePersonId(simulationContext, personId);
-		return new EventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE_PERSON, GroupMembershipAdditionEvent.class, groupTypeId, personId);
+		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE_PERSON)//
+							.addKey(GroupMembershipAdditionEvent.class)//
+							.addKey(groupTypeId)//
+							.addKey(personId)//
+							.build();//
 	}
 
 	/**
@@ -238,7 +254,11 @@ public class GroupMembershipAdditionEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
-		return new EventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.TYPE, GroupMembershipAdditionEvent.class, groupTypeId);
+		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
+							.setEventLabelerId(LabelerId.TYPE)//
+							.addKey(GroupMembershipAdditionEvent.class)//
+							.addKey(groupTypeId)//
+							.build();//
 	}
 
 	/**
@@ -255,25 +275,5 @@ public class GroupMembershipAdditionEvent implements Event {
 							})//
 							.build();
 	}
-
-	/**
-	 * Returns an event label used to subscribe to
-	 * {@link GroupMembershipAdditionEvent} events. Matches on all events.
-	 *
-	 */
-	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByAll() {
-		return new EventLabel<>(GroupMembershipAdditionEvent.class, LabelerId.ALL, GroupMembershipAdditionEvent.class);
-	}
-
-	/**
-	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} all
-	 * events. Automatically added at initialization.
-	 */
-	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForAll() {
-		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> {
-								return getEventLabelByAll();
-							}).build();
-	}
+	
 }

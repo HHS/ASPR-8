@@ -95,8 +95,7 @@ public final class PersonResourceReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			addTimeFieldHeaders(reportHeaderBuilder)//
-			.add("region")//
-			.add("compartment")//
+			.add("region")//			
 			.add("resource")//
 			.add("people_with_resource");
 			if (reportPeopleWithoutResources) {

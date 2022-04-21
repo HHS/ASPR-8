@@ -3,8 +3,8 @@ package plugins.partitions.support;
 import java.util.Optional;
 
 import net.jcip.annotations.Immutable;
-import nucleus.SimulationContext;
 import nucleus.Event;
+import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
 
 /**

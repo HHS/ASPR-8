@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.people.PersonDataManager;
@@ -100,7 +99,7 @@ public class PersonResourceUpdateEvent implements Event {
 	}
 
 	private static enum LabelerId implements EventLabelerId {
-		COMPARTMENT_RESOURCE, REGION_RESOURCE, PERSON_RESOURCE, RESOURCE
+		REGION_RESOURCE, PERSON_RESOURCE, RESOURCE
 	}
 
 	/**
@@ -125,7 +124,11 @@ public class PersonResourceUpdateEvent implements Event {
 	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
 		validateRegionId(simulationContext, regionId);
 		validateResourceId(simulationContext, resourceId);
-		return new EventLabel<>(resourceId, LabelerId.REGION_RESOURCE, PersonResourceUpdateEvent.class, regionId, resourceId);
+		return EventLabel	.builder(PersonResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
+							.addKey(resourceId)//
+							.addKey(regionId)//
+							.build();//
 	}
 
 	/**
@@ -164,7 +167,11 @@ public class PersonResourceUpdateEvent implements Event {
 	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByPersonAndResource(SimulationContext simulationContext, PersonId personId, ResourceId resourceId) {
 		validatePersonId(simulationContext, personId);
 		validateResourceId(simulationContext, resourceId);
-		return new EventLabel<>(resourceId, LabelerId.PERSON_RESOURCE, PersonResourceUpdateEvent.class, personId, resourceId);
+		return EventLabel	.builder(PersonResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.PERSON_RESOURCE)//
+							.addKey(resourceId)//
+							.addKey(personId)//
+							.build();//
 	}
 
 	/**
@@ -195,7 +202,10 @@ public class PersonResourceUpdateEvent implements Event {
 	 */
 	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
 		validateResourceId(simulationContext, resourceId);
-		return new EventLabel<>(resourceId, LabelerId.RESOURCE, PersonResourceUpdateEvent.class, resourceId);
+		return EventLabel	.builder(PersonResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.RESOURCE)//
+							.addKey(resourceId)//
+							.build();//
 	}
 
 	/**

@@ -47,9 +47,7 @@ public class AT_RegionFilter {
 
 	}
 
-	/**
-	 * Tests {@link CompartmentFilter#getFilterSensitivities()}
-	 */
+	
 	@Test
 	@UnitTestMethod(name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {

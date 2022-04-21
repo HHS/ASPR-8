@@ -91,7 +91,7 @@ public class AT_PersonPropertyLabeler {
 		/*
 		 * Have the agent show that the person property labeler produces a label
 		 * for each person that is consistent with the function passed to the
-		 * compartment labeler.
+		 * person property labeler.
 		 */
 		PersonPropertiesActionSupport.testConsumer(10, 6445109933336671672L, (c) -> {
 			// establish data views
@@ -132,7 +132,7 @@ public class AT_PersonPropertyLabeler {
 			 */
 			for (PersonId personId : people) {
 
-				// get the person's compartment and apply the function directly
+				// get the person's property value and apply the function directly
 				Boolean value = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 				Object expectedLabel = function.apply(value);
 

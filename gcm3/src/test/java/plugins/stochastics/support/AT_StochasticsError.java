@@ -20,12 +20,12 @@ public class AT_StochasticsError {
 		
 		//show that each description is a unique, non-null and non-empty string 
 		Set<String> descriptions = new LinkedHashSet<>();
-		for(StochasticsError compartmentError : StochasticsError.values()) {
-			String description = compartmentError.getDescription();			
-			assertNotNull(description,"null description for "+compartmentError);			
-			assertTrue(description.length()>0, "empty string for "+compartmentError);
+		for(StochasticsError stochasticsError : StochasticsError.values()) {
+			String description = stochasticsError.getDescription();			
+			assertNotNull(description,"null description for "+stochasticsError);			
+			assertTrue(description.length()>0, "empty string for "+stochasticsError);
 			boolean unique = descriptions.add(description);
-			assertTrue(unique,"description for "+compartmentError+" is not unique");
+			assertTrue(unique,"description for "+stochasticsError+" is not unique");
 		}
 	}
 }

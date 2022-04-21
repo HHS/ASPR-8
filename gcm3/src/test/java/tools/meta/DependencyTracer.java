@@ -81,16 +81,15 @@ public class DependencyTracer {
 		Path dir = Paths.get("C:\\git_repos\\ASPR-6\\gcm2\\src\\main\\java\\plugins");
 
 		List<String> pluginNames = new ArrayList<>();
-		pluginNames.add("compartments");
+		
 		pluginNames.add("components");
-		pluginNames.add("gcm");
+		
 		pluginNames.add("groups");
 		pluginNames.add("globals");
 		pluginNames.add("materials");
 		pluginNames.add("partitions");
 		pluginNames.add("people");
 		pluginNames.add("personproperties");
-		pluginNames.add("properties");
 		pluginNames.add("regions");
 		pluginNames.add("reports");
 		pluginNames.add("resources");

@@ -17,7 +17,7 @@ public class AT_TestAttributeId {
 
 	@Test
 	@UnitTestMethod(name = "getUnknownAttributeId", args = {})
-	public void testGetUnknownCompartmentId() {
+	public void testGetUnknownAttributeId() {
 		/*
 		 * Show that a generated unknown attribute id is not null and not a
 		 * member of the enum

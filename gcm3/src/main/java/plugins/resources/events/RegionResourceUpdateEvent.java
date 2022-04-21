@@ -5,7 +5,6 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.regions.datamanagers.RegionDataManager;
@@ -114,7 +113,11 @@ public class RegionResourceUpdateEvent implements Event {
 	public static EventLabel<RegionResourceUpdateEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
 		validateRegionId(simulationContext, regionId);
 		validateResourceId(simulationContext, resourceId);
-		return new EventLabel<>(resourceId, LabelerId.REGION_RESOURCE, RegionResourceUpdateEvent.class, regionId, resourceId);
+		return EventLabel	.builder(RegionResourceUpdateEvent.class)//
+							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
+							.addKey(resourceId)//
+							.addKey(regionId)//
+							.build();//
 	}
 
 	/**

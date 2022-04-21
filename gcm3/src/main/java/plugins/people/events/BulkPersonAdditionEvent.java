@@ -2,10 +2,6 @@ package plugins.people.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
-import nucleus.EventLabel;
 import nucleus.util.ContractException;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
@@ -57,27 +53,4 @@ public final class BulkPersonAdditionEvent implements Event {
 		return bulkPersonConstructionData;
 	}
 
-	/**
-	 * Returns an event label used to subscribe to
-	 * {@link BulkPersonAdditionEvent} events. Matches all such events.
-	 */
-	public static EventLabel<BulkPersonAdditionEvent> getEventLabel() {
-		return EVENT_LABEL_ALL;
-	}
-
-	private static enum LabelerId implements EventLabelerId {
-		ALL
-	}
-
-	private final static EventLabel<BulkPersonAdditionEvent> EVENT_LABEL_ALL = new EventLabel<>(BulkPersonAdditionEvent.class, LabelerId.ALL, BulkPersonAdditionEvent.class);
-
-	/**
-	 * Returns an event labeler for {@link BulkPersonAdditionEvent}
-	 */
-	public static EventLabeler<BulkPersonAdditionEvent> getEventLabeler() {
-		return EventLabeler	.builder(BulkPersonAdditionEvent.class)//
-							.setEventLabelerId(LabelerId.ALL)//
-							.setLabelFunction((context, event) -> EVENT_LABEL_ALL)//
-							.build();
-	}
 }

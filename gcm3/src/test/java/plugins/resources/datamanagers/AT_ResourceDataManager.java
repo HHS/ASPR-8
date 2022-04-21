@@ -2376,7 +2376,7 @@ public final class AT_ResourceDataManager {
 			// create 30 people, testing each in turn for their resource levels
 			for (int i = 0; i < 30; i++) {
 				PersonConstructionData.Builder builder = PersonConstructionData.builder();
-				// give the person a region and compartment
+				// give the person and region
 				builder.add(TestRegionId.getRandomRegionId(randomGenerator));
 
 				// give the person a positive resource level for about half of
@@ -2499,7 +2499,7 @@ public final class AT_ResourceDataManager {
 				// build the map of expected resources for the person
 				Map<ResourceId, MutableInteger> expectationForPerson = new LinkedHashMap<>();
 				expectedResources.put(i, expectationForPerson);
-				// assign a region and compartment to the person
+				// assign a region to the person
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
 				// give the person a positive resource level for about half of
 				// the resources

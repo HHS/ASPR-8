@@ -53,7 +53,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	/*
-	 * A counter for people having the tuple (Region, Compartment, Person
+	 * A counter for people having the tuple (Region, Person
 	 * Property, Property Value)
 	 */
 	private final static class Counter {

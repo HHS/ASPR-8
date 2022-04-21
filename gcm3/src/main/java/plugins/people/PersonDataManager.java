@@ -210,12 +210,6 @@ public final class PersonDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
-		dataManagerContext.addEventLabeler(BulkPersonAdditionEvent.getEventLabeler());
-
-		dataManagerContext.addEventLabeler(PersonAdditionEvent.getEventLabeler());
-
-		dataManagerContext.addEventLabeler(PersonImminentRemovalEvent.getEventLabeler());
-
 		for (PersonId personId : peoplePluginData.getPersonIds()) {
 			personIds.add(personId);
 		}		
