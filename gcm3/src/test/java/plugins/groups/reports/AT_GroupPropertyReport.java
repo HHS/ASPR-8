@@ -111,7 +111,7 @@ public class AT_GroupPropertyReport {
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 0, 0), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
@@ -124,26 +124,26 @@ public class AT_GroupPropertyReport {
 
 		//
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 1, 10), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.setGroupPropertyValue(new GroupId(0), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true);
 			groupDataManager.setGroupPropertyValue(new GroupId(3), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 2, 3), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.setGroupPropertyValue(new GroupId(2), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false);
 			groupDataManager.setGroupPropertyValue(new GroupId(4), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 5, 0), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.setGroupPropertyValue(new GroupId(1), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 123);
 			groupDataManager.setGroupPropertyValue(new GroupId(3), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 123);
 			groupDataManager.setGroupPropertyValue(new GroupId(5), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 123);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 5, 16), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.setGroupPropertyValue(new GroupId(0), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false);
 			groupDataManager.setGroupPropertyValue(new GroupId(5), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 77);
 		}));
@@ -208,7 +208,7 @@ public class AT_GroupPropertyReport {
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			assertEquals(0, groupId.getValue());
@@ -230,25 +230,25 @@ public class AT_GroupPropertyReport {
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.removeGroup(new GroupId(0));
 			groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.5, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.setGroupPropertyValue(new GroupId(1), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17);
 			groupDataManager.setGroupPropertyValue(new GroupId(4), TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(5.7, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.setGroupPropertyValue(new GroupId(1), TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false);
 			groupDataManager.setGroupPropertyValue(new GroupId(4), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 65);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(5.8, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			groupDataManager.setGroupPropertyValue(new GroupId(1), TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, true);
 			groupDataManager.setGroupPropertyValue(new GroupId(4), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 127);
 		}));

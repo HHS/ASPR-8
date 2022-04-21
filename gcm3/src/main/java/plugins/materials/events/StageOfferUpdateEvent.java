@@ -49,7 +49,7 @@ public class StageOfferUpdateEvent implements Event {
 		if (stageId == null) {
 			throw new ContractException(MaterialsError.NULL_STAGE_ID);
 		}
-		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class);
 		if (!materialsDataManager.stageExists(stageId)) {
 			throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
 		}

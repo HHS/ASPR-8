@@ -202,9 +202,9 @@ public final class PersonPropertyReport extends PeriodicReport {
 		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
-		regionDataManager = actorContext.getDataManager(RegionDataManager.class).get();
-		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class).get();
-		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class).get();
+		regionDataManager = actorContext.getDataManager(RegionDataManager.class);
+		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
 
 		/*
 		 * If no person properties were specified, then assume all are wanted
@@ -241,7 +241,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		 */
 
 		// Map<RegionId, Map<PersonPropertyId, Map<Object, Counter>>>
-		final Set<RegionId> regionIds = actorContext.getDataManager(RegionDataManager.class).get().getRegionIds();
+		final Set<RegionId> regionIds = actorContext.getDataManager(RegionDataManager.class).getRegionIds();
 		for (final RegionId regionId : regionIds) {
 			final Map<PersonPropertyId, Map<Object, Counter>> propertyIdMap = new LinkedHashMap<>();
 			tupleMap.put(regionId, propertyIdMap);

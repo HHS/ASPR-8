@@ -161,7 +161,7 @@ public class Simulation {
 		}
 
 		@Override
-		public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 			return Simulation.this.getDataManager(dataManagerClass);
 		}
 
@@ -408,7 +408,7 @@ public class Simulation {
 		}
 
 		@Override
-		public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 			return simulation.getDataManager(dataManagerClass);
 		}
 
@@ -1319,7 +1319,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass) {
+	private <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 
 		if (dataManagerClass == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
@@ -1353,7 +1353,10 @@ public class Simulation {
 			}
 		}
 
-		return Optional.ofNullable((T) dataManager);
+		if(dataManager == null) {
+			throw new ContractException(NucleusError.UNKNOWN_DATA_MANAGER," : "+dataManagerClass.getSimpleName());
+		}
+		return (T)dataManager;
 	}
 
 	/////////////////////////////////

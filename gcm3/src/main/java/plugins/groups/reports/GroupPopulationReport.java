@@ -110,7 +110,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	@Override
 	public void init(ActorContext actorContext) {
 		super.init(actorContext);
-		groupDataManager = actorContext.getDataManager(GroupDataManager.class).get();
+		groupDataManager = actorContext.getDataManager(GroupDataManager.class);
 	}
 
 }

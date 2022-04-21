@@ -76,7 +76,7 @@ public final class RegionPropertyReport {
 	 * {@link ReportItem} for each region property's initial value.
 	 */
 	public void init(final ActorContext actorContext) {
-		RegionDataManager regionDataManager = actorContext.getDataManager(RegionDataManager.class).get();
+		RegionDataManager regionDataManager = actorContext.getDataManager(RegionDataManager.class);
 
 		/*
 		 * If no region properties were specified, then assume all are wanted

@@ -89,8 +89,8 @@ public final class AT_AttributeLabeler {
 		 * 
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			for (PersonId personId : people) {
 

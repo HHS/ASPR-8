@@ -60,7 +60,7 @@ public final class ResourcePropertyReport {
 		actorContext.subscribe(ResourcePropertyUpdateEvent.class,this::handleResourcePropertyUpdateEvent);
 
 		
-		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class).get();
+		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class);
 		for (final ResourceId resourceId : resourceDataManager.getResourceIds()) {
 			for (final ResourcePropertyId resourcePropertyId : resourceDataManager.getResourcePropertyIds(resourceId)) {
 				Object resourcePropertyValue = resourceDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);

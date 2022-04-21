@@ -72,7 +72,7 @@ public class PersonResourceUpdateEvent implements Event {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class).get();
+		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class);
 		if (!personDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID, personId);
 		}
@@ -82,7 +82,7 @@ public class PersonResourceUpdateEvent implements Event {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		if (!regionDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
@@ -92,7 +92,7 @@ public class PersonResourceUpdateEvent implements Event {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class).get();
+		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
 		if (!resourceDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}

@@ -75,7 +75,7 @@ public class RegionResourceUpdateEvent implements Event {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		if (!regionDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
@@ -85,7 +85,7 @@ public class RegionResourceUpdateEvent implements Event {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class).get();
+		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
 		if (!resourceDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}

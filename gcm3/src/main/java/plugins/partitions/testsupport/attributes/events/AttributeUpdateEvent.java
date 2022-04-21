@@ -95,7 +95,7 @@ public class AttributeUpdateEvent implements Event {
 		if (attributeId == null) {
 			throw new ContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
-		final AttributesDataManager attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class).get();
+		final AttributesDataManager attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
 		if (!attributesDataManager.attributeExists(attributeId)) {
 			throw new ContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID);
 		}

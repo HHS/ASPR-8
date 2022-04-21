@@ -37,8 +37,8 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
@@ -89,8 +89,8 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
@@ -132,8 +132,8 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
@@ -169,8 +169,8 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
@@ -213,8 +213,8 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
@@ -256,8 +256,8 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
@@ -304,8 +304,8 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people

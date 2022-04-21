@@ -87,26 +87,26 @@ public class AT_GlobalPropertyReport {
 			 * note that this is time 0 and should show that property initial
 			 * values are still reported correctly
 			 */
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class).get();
+			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
 			globalDataManager.setGlobalPropertyValue(globalPropertyId_1, 67);			
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
 			// two settings of the same property
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class).get();
+			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
 			globalDataManager.setGlobalPropertyValue(globalPropertyId_2, 88.88);
 			globalDataManager.setGlobalPropertyValue(globalPropertyId_3, false);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class).get();
+			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
 			globalDataManager.setGlobalPropertyValue(globalPropertyId_1, 100);
 			globalDataManager.setGlobalPropertyValue(globalPropertyId_2, 3.45);
 			globalDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class).get();
+			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
 			
 			
 			globalDataManager.setGlobalPropertyValue(globalPropertyId_3, false);			

@@ -12,10 +12,7 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
-import plugins.regions.datamanagers.RegionDataManager;
-import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.reports.ReportsPluginId;
-import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
@@ -41,10 +38,6 @@ public class AT_RegionPlugin {
 		expectedDependencies.add(ReportsPluginId.PLUGIN_ID);
 		
 		assertEquals(expectedDependencies, regionPlugin.getPluginDependencies());
-
-		RegionsActionSupport.testConsumer(0, 6578534453778788L, TimeTrackingPolicy.TRACK_TIME,(c) -> {
-			assertTrue(c.getDataManager(RegionDataManager.class).isPresent());
-		});
 
 	}
 

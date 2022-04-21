@@ -60,7 +60,7 @@ public class GroupAdditionEvent implements Event {
 		if (groupTypeId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}

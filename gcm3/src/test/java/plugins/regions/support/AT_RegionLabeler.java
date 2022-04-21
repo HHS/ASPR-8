@@ -71,7 +71,7 @@ public class AT_RegionLabeler {
 		// add a few people to the simulation spread across the various
 		// regions		
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			int numberOfPeople = 2 * TestRegionId.size();
 
 			// show that there will be people
@@ -92,8 +92,8 @@ public class AT_RegionLabeler {
 		 * passed to the region labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			
 			List<PersonId> people = personDataManager.getPeople();
 			for (PersonId personId : people) {

@@ -61,9 +61,9 @@ public final class AT_PartitionDataManager {
 	 * assigned to be consistent with the static labeling functions.
 	 */
 	private static void assignRandomAttributes(final ActorContext c) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-		AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
-		final StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+		final StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 		final RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 		for (final PersonId personId : personDataManager.getPeople()) {
@@ -125,8 +125,8 @@ public final class AT_PartitionDataManager {
 	 * sets consist of labels for INT_0, INT_1, DOUBLE_0 and DOUBLE_1.
 	 */
 	private static Map<LabelSet, Set<PersonId>> getExpectedStructure(final ActorContext c) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-		final AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		final AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 		final Map<LabelSet, Set<PersonId>> expectedPeople = new LinkedHashMap<>();
 		for (final PersonId personId : personDataManager.getPeople()) {
 
@@ -171,7 +171,7 @@ public final class AT_PartitionDataManager {
 	 */
 	private static void showPartitionIsCorrect(final ActorContext c, final Map<LabelSet, Set<PersonId>> expectedPartitionStructure, final Object key) {
 
-		final PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+		final PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 		// derive the number of people in the expected partition structure
 		int expectedPersonCount = 0;
@@ -208,8 +208,8 @@ public final class AT_PartitionDataManager {
 	 * Person count may exceed the current population size.
 	 */
 	private static void removePeople(final ActorContext c, final int numberOfPeopleToRemove) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-		final StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		final StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 		final long seed = stochasticsDataManager.getRandomGenerator().nextLong();
 		final Random random = new Random(seed);
 		final List<PersonId> people = personDataManager.getPeople();
@@ -224,7 +224,7 @@ public final class AT_PartitionDataManager {
 	 * Adds the given number of people to the simulation
 	 */
 	private static void addPeople(final ActorContext c, final int numberOfPeopleToAdd) {
-		PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+		PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 		for (int i = 0; i < numberOfPeopleToAdd; i++) {
 			personDataManager.addPerson(PersonConstructionData.builder().build());
 		}
@@ -241,7 +241,7 @@ public final class AT_PartitionDataManager {
 
 		PartitionsActionSupport.testConsumer(1000, 5127268948453841557L, (c) -> {
 			// get the partition data view
-			final PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			final PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			// initialize people's attributes
 			assignRandomAttributes(c);
@@ -311,7 +311,7 @@ public final class AT_PartitionDataManager {
 		// if the key is already allocated to another population partition
 		PartitionsActionSupport.testConsumer(0, 1137046131619466337L, (c) -> {
 
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 			Object key = new Object();
 
 			partitionDataManager.addPartition(Partition.builder().build(), key);
@@ -347,7 +347,7 @@ public final class AT_PartitionDataManager {
 
 		PartitionsActionSupport.testConsumer(0, 5767679585616452606L, (c) -> {
 
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 			Object key = new Object();
 
 			// show that the partition does not yet exist
@@ -371,7 +371,7 @@ public final class AT_PartitionDataManager {
 	public void testPartitionExists() {
 
 		PartitionsActionSupport.testConsumer(0, 1968926333881399732L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			// create containers to hold known and unknown keys
 			Set<Object> knownKeys = new LinkedHashSet<>();
@@ -413,10 +413,10 @@ public final class AT_PartitionDataManager {
 	public void testContains() {
 
 		PartitionsActionSupport.testConsumer(100, 607630153604184177L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			// create a partition where half the population is in the partition
 			Object key = new Object();
@@ -455,10 +455,10 @@ public final class AT_PartitionDataManager {
 	public void testContains_LabelSet() {
 
 		PartitionsActionSupport.testConsumer(100, 7338572401998066291L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
 			 * Define functions that will convert attribute values into labels
@@ -600,10 +600,10 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(100, 6033209037401060593L, (c) -> {
 
 			// establish data views
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			// create a container to hold the people we expect to find in the
 			// partition
@@ -653,10 +653,10 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(100, 7761046492495930843L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			// define a function that will convert an integer into another
 			// integer that will be used as a labeling function for the
@@ -743,10 +743,10 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(1000, 3993911184725585603L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
 			 * Define functions that will convert attribute values into labels
@@ -944,10 +944,10 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(100, 1559429415782871174L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			// create a couter to hold the number people we expect to find in
 			// the
@@ -995,10 +995,10 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(100, 3217787540697556531L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			// define a function that will convert an integer into another
 			// integer that will be used as a labeling function for the
@@ -1165,10 +1165,10 @@ public final class AT_PartitionDataManager {
 			// different results?
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
 			 * Define functions that will convert attribute values into labels
@@ -1392,7 +1392,7 @@ public final class AT_PartitionDataManager {
 
 		// precondition: if the key is null
 		PartitionsActionSupport.testConsumer(10, 8368182028203057994L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
@@ -1410,7 +1410,7 @@ public final class AT_PartitionDataManager {
 
 		// precondition: if the key is unknown
 		PartitionsActionSupport.testConsumer(10, 2301450217287059237L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
@@ -1429,7 +1429,7 @@ public final class AT_PartitionDataManager {
 		});
 
 		PartitionsActionSupport.testConsumer(10, 8837909864261179707L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
@@ -1451,7 +1451,7 @@ public final class AT_PartitionDataManager {
 		 * dimensions not present in the population partition
 		 */
 		PartitionsActionSupport.testConsumer(10, 1697817005173536231L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
@@ -1475,7 +1475,7 @@ public final class AT_PartitionDataManager {
 		 * does not exist
 		 */
 		PartitionsActionSupport.testConsumer(10, 624346712512051803L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
@@ -1499,8 +1499,8 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPartitionDataManagerInitialization() {
 		PartitionsActionSupport.testConsumer(0, 2954766214498605129L, (c) -> {
-			final Optional<PartitionDataManager> optional = c.getDataManager(PartitionDataManager.class);
-			assertTrue(optional.isPresent());
+			PartitionDataManager dataManager = c.getDataManager(PartitionDataManager.class);
+			assertNotNull(dataManager);
 		});
 	}
 
@@ -1508,8 +1508,8 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonAdditionEvent() {
 		PartitionsActionSupport.testConsumer(100, 6964380012813498875L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 
 			/*
 			 * Create keys for the two population partitions. One that accepts
@@ -1561,9 +1561,9 @@ public final class AT_PartitionDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			// select 10 people
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			List<PersonId> peopleOfInterest = new ArrayList<>();
 			for (int i = 0; i < 10; i++) {
@@ -1610,7 +1610,7 @@ public final class AT_PartitionDataManager {
 				PersonId personId = e.getPersonId();
 
 				// show that the person is still in the partition
-				PartitionDataManager partitionDataManager = c2.getDataManager(PartitionDataManager.class).get();
+				PartitionDataManager partitionDataManager = c2.getDataManager(PartitionDataManager.class);
 				assertTrue(partitionDataManager.contains(personId, key));
 
 				// add the person to the verified list for later use
@@ -1627,8 +1627,8 @@ public final class AT_PartitionDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// Remove from the simulation the people who are in the partition
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 			List<PersonId> people = partitionDataManager.getPeople(key);
 			for (PersonId personId : people) {
 				personDataManager.removePerson(personId);
@@ -1655,7 +1655,7 @@ public final class AT_PartitionDataManager {
 			 * observe each removal and still perceived each person as being a
 			 * member of the partition.
 			 */
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			assertEquals(10, peopleVerifiedByReport.size());
 
 			// show that each of these people is no longer in the simulation
@@ -1664,7 +1664,7 @@ public final class AT_PartitionDataManager {
 			}
 
 			// show that the partition is empty
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
 			assertEquals(0, partitionDataManager.getPersonCount(key));
 
 		}));
@@ -1679,8 +1679,8 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonAdditionEvent() {		
 		PartitionsActionSupport.testConsumer(100, 2561425586247460069L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			/*
 			 * Create keys for the two population partitions. One that accepts
 			 * people with attribute BOOLEAN_0 = true and the other with

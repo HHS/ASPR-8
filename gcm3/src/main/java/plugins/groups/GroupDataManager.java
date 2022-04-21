@@ -205,8 +205,8 @@ public final class GroupDataManager extends DataManager {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		this.dataManagerContext = dataManagerContext;
-		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class).get();
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
+		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
+		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
 
 		/*
 		 * Add the event labelers associated with the various observation events
@@ -350,7 +350,7 @@ public final class GroupDataManager extends DataManager {
 			for (final GroupPropertyId groupPropertyId : groupPluginData.getGroupPropertyIds(groupTypeId)) {
 				final Object groupPropertyValue = groupPluginData.getGroupPropertyValue(groupId, groupPropertyId);
 				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-				Object defaultValue = propertyDefinition.getDefaultValue().get();
+				Object defaultValue = propertyDefinition.getDefaultValue();
 				if (!groupPropertyValue.equals(defaultValue)) {
 					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 					final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);

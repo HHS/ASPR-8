@@ -12,7 +12,6 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
-import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.regions.RegionPluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -37,10 +36,6 @@ public class AT_PersonPropertiesPlugin {
 		expectedDependencies.add(RegionPluginId.PLUGIN_ID);
 		
 		assertEquals(expectedDependencies, personPropertiesPlugin.getPluginDependencies());
-
-		PersonPropertiesActionSupport.testConsumer(0, 6578534453778788L, (c) -> {
-			assertTrue(c.getDataManager(PersonPropertiesDataManager.class).isPresent());
-		});
 
 	}
 

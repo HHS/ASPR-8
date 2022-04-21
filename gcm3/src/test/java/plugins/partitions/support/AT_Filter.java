@@ -63,7 +63,7 @@ public class AT_Filter {
 	@UnitTestMethod(name = "and", args = { Filter.class })
 	public void testAnd() {
 		PartitionsActionSupport.testConsumer(100, 254308828477050611L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
@@ -122,7 +122,7 @@ public class AT_Filter {
 	public void testOr() {
 		PartitionsActionSupport.testConsumer(100, 921279696119043098L, (c) -> {
 			
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			
 			/*
 			 * Show that there are enough people in the simulation to make a
@@ -183,7 +183,7 @@ public class AT_Filter {
 	@UnitTestMethod(name = "negate", args = {})
 	public void testNegate() {
 		PartitionsActionSupport.testConsumer(100, 4038710674336002107L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
@@ -213,7 +213,7 @@ public class AT_Filter {
 	@UnitTestMethod(name = "allPeople", args = {})
 	public void testAllPeople() {
 		PartitionsActionSupport.testConsumer(30, 847391904888351863L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			// show that the test is valid
 			assertTrue(personDataManager.getPopulationCount() > 0);
 
@@ -234,7 +234,7 @@ public class AT_Filter {
 	@UnitTestMethod(name = "noPeople", args = {})
 	public void testNoPeople() {
 		PartitionsActionSupport.testConsumer(100, 6400633994679307999L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			assertEquals(100,personDataManager.getPopulationCount());
 
 			final Filter filter = Filter.noPeople();

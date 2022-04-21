@@ -148,7 +148,7 @@ public final class StageReport {
 		actorContext.subscribe(StageImminentRemovalEvent.class, this::handleStageImminentRemovalEvent);
 		actorContext.subscribe(StageMaterialsProducerUpdateEvent.class, this::handleStageMaterialsProducerUpdateEvent);
 
-		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();
+		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (StageId stageId : materialsDataManager.getStages(materialsProducerId)) {

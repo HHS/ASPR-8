@@ -38,7 +38,7 @@ public class AT_StochasticsDataManager {
 
 		StochasticsActionSupport.testConsumer(2276874395058795370L, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			Set<RandomNumberGeneratorId> actualRandomNumberGeneratorIds = stochasticsDataManager.getRandomNumberGeneratorIds();
 
@@ -56,7 +56,7 @@ public class AT_StochasticsDataManager {
 
 		// show that random generators can be retrieved by ids.
 		StochasticsActionSupport.testConsumer(5489824520767978373L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
 				RandomGenerator randomGeneratorFromId = stochasticsDataManager.getRandomGeneratorFromId(testRandomGeneratorId);
 				assertNotNull(randomGeneratorFromId);
@@ -65,7 +65,7 @@ public class AT_StochasticsDataManager {
 		
 		// show that an unknown random number generator id will retrieve a random generator
 		StochasticsActionSupport.testConsumer(2276874395058795370L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			
 			RandomNumberGeneratorId randomNumberGeneratorIdA = new RandomNumberGeneratorId() {
 				@Override
@@ -102,7 +102,7 @@ public class AT_StochasticsDataManager {
 
 		// precondition test : if the random number generator is null
 		StochasticsActionSupport.testConsumer(5489824520767978373L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> stochasticsDataManager.getRandomGeneratorFromId(null));
 			assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
 		});
@@ -115,7 +115,7 @@ public class AT_StochasticsDataManager {
 	public void testGetRandomGenerator() {
 		// show that random generators can be retrieved by ids
 		StochasticsActionSupport.testConsumer(683597885444214892L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGeneratorFromId = stochasticsDataManager.getRandomGenerator();
 			assertNotNull(randomGeneratorFromId);
 		});
@@ -133,7 +133,7 @@ public class AT_StochasticsDataManager {
 
 		StochasticsActionSupport.testConsumer(7392476210385850542L, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 

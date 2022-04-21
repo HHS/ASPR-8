@@ -105,7 +105,7 @@ public class AT_AbstractIndexedPropertyManager {
 
 		IntStream.range(0, 1000).forEach((i -> {
 			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				LocalDM localDM = c.getDataManager(LocalDM.class).get();
+				LocalDM localDM = c.getDataManager(LocalDM.class);
 				int id = randomGenerator.nextInt(300);
 				boolean value = randomGenerator.nextBoolean();
 				SimplePropertyManager simplePropertyManager = localDM.simplePropertyManager;

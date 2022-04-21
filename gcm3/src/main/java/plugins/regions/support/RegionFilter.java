@@ -43,7 +43,7 @@ public final class RegionFilter extends Filter {
 		}
 
 		if (regionDataManager == null) {
-			regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+			regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		}
 		
 		for (RegionId regionId : regionIds) {
@@ -63,7 +63,7 @@ public final class RegionFilter extends Filter {
 		}
 
 		if (regionDataManager == null) {
-			regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+			regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		}
 		return regionIds.contains(regionDataManager.getPersonRegion(personId));
 	}

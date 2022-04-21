@@ -110,19 +110,19 @@ public class AT_RegionPropertyReport {
 			 * note that this is time 0 and should show that property initial
 			 * values are still reported correctly
 			 */
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "move");
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
 			// two settings of the same property
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			regionDataManager.setRegionPropertyValue(regionA, prop_age, 45);
 			regionDataManager.setRegionPropertyValue(regionA, prop_age, 45);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			regionDataManager.setRegionPropertyValue(regionA, prop_age, 100);
 			regionDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
 			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "hold");
@@ -131,7 +131,7 @@ public class AT_RegionPropertyReport {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "terminate");
 
 			// note the duplicated value

@@ -75,7 +75,7 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		if (!groupDataManager.groupExists(groupId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
@@ -85,7 +85,7 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupTypeId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
@@ -95,7 +95,7 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupPropertyId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
 		if (!groupDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
@@ -106,7 +106,7 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupPropertyId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 
 		if (!groupDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);

@@ -637,8 +637,8 @@ public final class ResourceDataManager extends DataManager {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		this.dataManagerContext = dataManagerContext;
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
-		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class).get();
+		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
+		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
 
 		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager));
 		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForPersonAndResource());
@@ -646,9 +646,9 @@ public final class ResourceDataManager extends DataManager {
 		dataManagerContext.addEventLabeler(ResourcePropertyUpdateEvent.getEventLabeler());
 		dataManagerContext.addEventLabeler(RegionResourceUpdateEvent.getEventLabelerForRegionAndResource());
 
-		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class).get();
+		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
 
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
+		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
 
 		// load resource property definitions, property values and time tracking
 		// policies

@@ -127,9 +127,9 @@ public final class RegionTransferReport extends PeriodicReport {
 		ActorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		ActorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
-		PersonDataManager personDataManager = ActorContext.getDataManager(PersonDataManager.class).get();
-		regionDataManager = ActorContext.getDataManager(RegionDataManager.class).get();
-		RegionDataManager regionDataManager = ActorContext.getDataManager(RegionDataManager.class).get();
+		PersonDataManager personDataManager = ActorContext.getDataManager(PersonDataManager.class);
+		regionDataManager = ActorContext.getDataManager(RegionDataManager.class);
+		RegionDataManager regionDataManager = ActorContext.getDataManager(RegionDataManager.class);
 
 		final Set<RegionId> regionIds = regionDataManager.getRegionIds();
 

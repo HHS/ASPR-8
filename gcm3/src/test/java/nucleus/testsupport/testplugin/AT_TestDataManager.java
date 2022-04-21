@@ -64,14 +64,7 @@ public class AT_TestDataManager {
 			}));
 		}
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			Optional<TestDataManagerType1> optional1 = c.getDataManager(TestDataManagerType1.class);
-			assertTrue(optional1.isPresent());
-
-			Optional<TestDataManagerType2> optional2 = c.getDataManager(TestDataManagerType2.class);
-			assertTrue(optional2.isPresent());
-
-		}));
+		
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();

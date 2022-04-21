@@ -34,7 +34,7 @@ public final class TestActor {
 	 * in the ActionDataView that were associated with its alias.
 	 */
 	public void init(ActorContext actorContext) {
-		TestPlanDataManager testPlanDataManager = actorContext.getDataManager(TestPlanDataManager.class).get();
+		TestPlanDataManager testPlanDataManager = actorContext.getDataManager(TestPlanDataManager.class);
 		
 		List<TestActorPlan> testActorPlans = testPlanDataManager.getTestActorPlans(alias);
 		for (final TestActorPlan testActorPlan : testActorPlans) {

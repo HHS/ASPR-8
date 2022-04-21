@@ -56,7 +56,7 @@ public final class PersonPropertyLabeler implements Labeler {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class).get();
+			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
 		}
 		Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 		return personPropertyValueLabelingFunction.apply(personPropertyValue);

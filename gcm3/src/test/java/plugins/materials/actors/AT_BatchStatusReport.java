@@ -41,7 +41,7 @@ import tools.annotations.UnitTestMethod;
 public final class AT_BatchStatusReport {
 
 	private ReportItem getReportItemFromBatch(ActorContext agentContext, BatchId batchId) {
-		MaterialsDataManager materialsDataManager = agentContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = agentContext.getDataManager(MaterialsDataManager.class);
 		MaterialsProducerId batchProducer = materialsDataManager.getBatchProducer(batchId);
 		MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
 		double amount = materialsDataManager.getBatchAmount(batchId);
@@ -76,8 +76,8 @@ public final class AT_BatchStatusReport {
 
 			// add a few batches
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				for (int i = 0; i < 20; i++) {
@@ -92,8 +92,8 @@ public final class AT_BatchStatusReport {
 			// transfer material between batches
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -121,8 +121,8 @@ public final class AT_BatchStatusReport {
 
 			// destroy some batches
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				Random random = new Random(randomGenerator.nextLong());
 				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(testMaterialsProducerId);
@@ -137,8 +137,8 @@ public final class AT_BatchStatusReport {
 
 			// set some batch property values
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(testMaterialsProducerId);
@@ -154,8 +154,8 @@ public final class AT_BatchStatusReport {
 
 			// put some of the batches on stages
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				List<StageId> stageIds = new ArrayList<>();
@@ -177,8 +177,8 @@ public final class AT_BatchStatusReport {
 
 			// take some of the batches off of stages
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				List<StageId> stageIds = materialsDataManager.getStages(testMaterialsProducerId);

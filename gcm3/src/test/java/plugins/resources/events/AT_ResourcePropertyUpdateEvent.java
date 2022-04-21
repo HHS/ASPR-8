@@ -145,7 +145,7 @@ public class AT_ResourcePropertyUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabeler", args = {})
 	public void testGetEventLabeler() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler

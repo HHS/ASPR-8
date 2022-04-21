@@ -33,7 +33,7 @@ public class BasePeopleContainer implements PeopleContainer {
 	private PeopleContainer internalPeopleContainer;
 
 	public BasePeopleContainer(SimulationContext simulationContext) {
-		this.personDataManager = simulationContext.getDataManager(PersonDataManager.class).get();
+		this.personDataManager = simulationContext.getDataManager(PersonDataManager.class);
 		mode = PeopleContainerMode.INTSET;
 		internalPeopleContainer = new IntSetPeopleContainer();
 

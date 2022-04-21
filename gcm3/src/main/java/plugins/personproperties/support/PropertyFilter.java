@@ -27,7 +27,7 @@ public final class PropertyFilter extends Filter {
 	private void validatePersonPropertyId(SimulationContext simulationContext, final PersonPropertyId personPropertyId) {
 		
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class).get();
+			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
 		}
 		
 		if (personPropertyId == null) {
@@ -83,7 +83,7 @@ public final class PropertyFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class).get();
+			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
 		}
 		
 		validatePersonPropertyId(simulationContext, personPropertyId);
@@ -101,7 +101,7 @@ public final class PropertyFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
-			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class).get();
+			personPropertiesDataManager = simulationContext.getDataManager(PersonPropertiesDataManager.class);
 		}
 		
 		// we do not assume that the returned property value is

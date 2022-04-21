@@ -1,6 +1,5 @@
 package nucleus;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import nucleus.util.ContractException;
@@ -39,7 +38,7 @@ public interface SimulationContext {
 	 *             more than one data manager matches the given class</li>
 	 * 
 	 */
-	public <T extends DataManager> Optional<T> getDataManager(Class<T> dataManagerClass);
+	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass);
 
 	/**
 	 * Returns the current time in the simulation

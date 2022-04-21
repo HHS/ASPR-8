@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPluginId;
 import tools.annotations.UnitTest;
@@ -32,10 +31,6 @@ public final class AT_PartitionsPlugin {
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);
 		expectedDependencies.add(StochasticsPluginId.PLUGIN_ID);
 		assertEquals(expectedDependencies, partitionsPlugin.getPluginDependencies());
-
-		PartitionsActionSupport.testConsumer(0, 6578534453778788L, (c) -> {
-			assertTrue(c.getDataManager(PartitionDataManager.class).isPresent());
-		});
 
 	}
 

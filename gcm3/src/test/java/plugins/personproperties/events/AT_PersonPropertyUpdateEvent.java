@@ -105,7 +105,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 	public void testGetEventLabelByPersonAndProperty() {
 
 		PersonPropertiesActionSupport.testConsumer(5, 4447674464104241765L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			Set<EventLabel<PersonPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
@@ -147,7 +147,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 	public void testGetEventLabelerForPersonAndProperty() {
 
 		PersonPropertiesActionSupport.testConsumer(5, 1295505199200349679L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			// create an event labeler
@@ -268,7 +268,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 		
 		PersonPropertiesActionSupport.testConsumer(0, 7020781813930698612L, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			
 			Set<EventLabel<PersonPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -309,7 +309,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 	public void testGetEventLabelerForRegionAndProperty() {
 	 
 		PersonPropertiesActionSupport.testConsumer(50, 7370040718450691849L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			// create an event labeler
 			EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);

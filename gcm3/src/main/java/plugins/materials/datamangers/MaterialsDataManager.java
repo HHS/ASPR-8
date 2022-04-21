@@ -238,8 +238,8 @@ public final class MaterialsDataManager extends DataManager {
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
-		resourceDataManager = dataManagerContext.getDataManager(ResourceDataManager.class).get();
-		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class).get();
+		resourceDataManager = dataManagerContext.getDataManager(ResourceDataManager.class);
+		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
 
 		this.dataManagerContext = dataManagerContext;
 
@@ -300,7 +300,7 @@ public final class MaterialsDataManager extends DataManager {
 		// }
 
 		// RegionDataManager regionDataManager =
-		// dataManagerContext.getDataManager(RegionDataManager.class).get();
+		// dataManagerContext.getDataManager(RegionDataManager.class);
 		// regionIds = regionDataManager.getRegionIds();
 		// materialsProducerIds = materialsPluginData.getMaterialsProducerIds();
 
@@ -359,7 +359,7 @@ public final class MaterialsDataManager extends DataManager {
 			for (final BatchPropertyId batchPropertyId : batchPropertyIds) {
 				final PropertyDefinition propertyDefinition = getBatchPropertyDefinition(materialId, batchPropertyId);
 				final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
+				propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue());
 				map.put(batchPropertyId, propertyValueRecord);
 			}
 			batchPropertyMap.put(batchRecord.batchId, map);
@@ -1082,7 +1082,7 @@ public final class MaterialsDataManager extends DataManager {
 			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
 			Object batchPropertyValue = propertyValues.get(batchPropertyId);
 			if (batchPropertyValue == null) {
-				batchPropertyValue = propertyDefinition.getDefaultValue().get();
+				batchPropertyValue = propertyDefinition.getDefaultValue();
 			}
 			propertyValueRecord.setPropertyValue(batchPropertyValue);
 			map.put(batchPropertyId, propertyValueRecord);
@@ -1160,7 +1160,7 @@ public final class MaterialsDataManager extends DataManager {
 		for (final BatchPropertyId batchPropertyId : batchPropertyIds) {
 			final PropertyDefinition propertyDefinition = getBatchPropertyDefinition(materialId, batchPropertyId);
 			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
+			propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue());
 			map.put(batchPropertyId, propertyValueRecord);
 		}
 		batchPropertyMap.put(batchRecord.batchId, map);
@@ -1837,7 +1837,7 @@ public final class MaterialsDataManager extends DataManager {
 		for (final BatchPropertyId batchPropertyId : batchPropertyIds) {
 			final PropertyDefinition propertyDefinition = getBatchPropertyDefinition(materialId, batchPropertyId);
 			final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
+			propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue());
 			map.put(batchPropertyId, propertyValueRecord);
 		}
 		batchPropertyMap.put(newBatchRecord.batchId, map);

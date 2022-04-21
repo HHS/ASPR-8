@@ -108,10 +108,7 @@ public class AT_PluginContext {
 		pluginDataBuilder.addTestDataManager("A", ()->new TestDataManager1());
 		pluginDataBuilder.addTestDataManager("B", ()->new TestDataManager2());
 		pluginDataBuilder.addTestDataManager("C", ()->new TestDataManager3());
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			assertTrue(c.getDataManager(TestDataManager1.class).isPresent());
-			assertTrue(c.getDataManager(TestDataManager2.class).isPresent());
-			assertTrue(c.getDataManager(TestDataManager3.class).isPresent());
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {			
 			actorExecuted.setValue(true);
 		}));
 

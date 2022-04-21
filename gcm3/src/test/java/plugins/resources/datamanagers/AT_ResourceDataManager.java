@@ -84,8 +84,8 @@ public final class AT_ResourceDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// create a person and set their resources
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
@@ -109,8 +109,8 @@ public final class AT_ResourceDataManager {
 		// fully eliminated
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonId personId = mutablePersonId.getValue();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			assertFalse(personDataManager.personExists(personId));
 
@@ -131,11 +131,11 @@ public final class AT_ResourceDataManager {
 	public void testGetPeopleWithoutResource() {
 
 		ResourcesActionSupport.testConsumer(100, 3641510187112920884L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 			// give about half of the people the resource
 			for (PersonId personId : personDataManager.getPeople()) {
@@ -156,14 +156,14 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(100, 3473450607674582992L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPeopleWithoutResource(null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(100, 1143781261828756924L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPeopleWithoutResource(TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
@@ -181,7 +181,7 @@ public final class AT_ResourceDataManager {
 	@UnitTestMethod(name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
 		ResourcesActionSupport.testConsumer(100, 9107703044214388523L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.expandCapacity(-1));
 			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
 		});
@@ -192,11 +192,11 @@ public final class AT_ResourceDataManager {
 	public void testGetPeopleWithResource() {
 
 		ResourcesActionSupport.testConsumer(100, 1030108367649001208L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 			// give about half of the people the resource
 			for (PersonId personId : personDataManager.getPeople()) {
@@ -216,14 +216,14 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(100, 319392144027980087L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPeopleWithoutResource(null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(100, 8576038889544967878L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPeopleWithoutResource(TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
@@ -234,11 +234,11 @@ public final class AT_ResourceDataManager {
 	public void testGetPersonResourceLevel() {
 
 		ResourcesActionSupport.testConsumer(20, 110987310555566746L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 
@@ -261,13 +261,13 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(20, 5173387308794126450L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceLevel(null, new PersonId(0)));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(20, 5756572221517144312L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceLevel(TestResourceId.getUnknownResourceId(), new PersonId(0)));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
@@ -275,13 +275,13 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the person id null */
 		ResourcesActionSupport.testConsumer(20, 1392115005391991861L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 		/* precondition test: if the person id has a negative value */
 		ResourcesActionSupport.testConsumer(20, 3500853843230804485L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, new PersonId(-1)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -296,11 +296,11 @@ public final class AT_ResourceDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			// establish data views
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			// establish the people and resources
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
@@ -342,11 +342,11 @@ public final class AT_ResourceDataManager {
 		// make more resource updates at time 1
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			// establish data views
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			// establish the people and resources
 			List<PersonId> people = personDataManager.getPeople();
@@ -369,11 +369,11 @@ public final class AT_ResourceDataManager {
 		// make more resource updates at time 2
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			// establish data views
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			// establish the people and resources
 			List<PersonId> people = personDataManager.getPeople();
@@ -396,8 +396,8 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 			// establish data views
 
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			// show that the person resource times match expectations
 			int actualAssertionsCount = 0;
@@ -439,35 +439,35 @@ public final class AT_ResourceDataManager {
 		 * tracked
 		 */
 		ResourcesActionSupport.testConsumer(30, 4631279382559646912L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.RESOURCE_2, new PersonId(0)));
 			assertEquals(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(30, 2409228447197751995L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(null, new PersonId(0)));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(30, 6640524810334992305L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.getUnknownResourceId(), new PersonId(0)));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id null */
 		ResourcesActionSupport.testConsumer(30, 6775179388362303664L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.RESOURCE_1, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id has a negative value */
 		ResourcesActionSupport.testConsumer(30, 2970818265707036394L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.RESOURCE_1, new PersonId(-1)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -479,7 +479,7 @@ public final class AT_ResourceDataManager {
 	public void testGetPersonResourceTimeTrackingPolicy() {
 
 		ResourcesActionSupport.testConsumer(5, 757175164544632409L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				TimeTrackingPolicy actualPolicy = resourceDataManager.getPersonResourceTimeTrackingPolicy(testResourceId);
 				TimeTrackingPolicy expectedPolicy = testResourceId.getTimeTrackingPolicy();
@@ -489,14 +489,14 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(5, 1761534115327431429L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTimeTrackingPolicy(null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(5, 7202590650313787556L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTimeTrackingPolicy(TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
@@ -508,10 +508,10 @@ public final class AT_ResourceDataManager {
 	public void testGetRegionResourceLevel() {
 
 		ResourcesActionSupport.testConsumer(20, 6606932435911201728L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			List<RegionId> regionIds = new ArrayList<>(regionDataManager.getRegionIds());
 
@@ -531,28 +531,28 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(20, 1436454351032688103L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getRegionResourceLevel(TestRegionId.REGION_1, null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(20, 7954290176104108412L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the region id null */
 		ResourcesActionSupport.testConsumer(20, 936653403265146113L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getRegionResourceLevel(null, TestResourceId.RESOURCE_1));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the region id is unknown */
 		ResourcesActionSupport.testConsumer(20, 8256630838791330328L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getRegionResourceLevel(TestRegionId.getUnknownRegionId(), TestResourceId.RESOURCE_1));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
@@ -569,10 +569,10 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			// establish data views
 
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			// establish the people and resources
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
@@ -600,10 +600,10 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			// establish data views
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// establish the regions
 			List<RegionId> regionIds = new ArrayList<>(regionDataManager.getRegionIds());
@@ -623,10 +623,10 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			// establish data views
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			// establish the regions
 			List<RegionId> regionIds = new ArrayList<>(regionDataManager.getRegionIds());
 
@@ -645,8 +645,8 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 			// establish data views
 
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			// show that the region resource times match expectations
 			int actualAssertionsCount = 0;
@@ -675,35 +675,35 @@ public final class AT_ResourceDataManager {
 		 * tracked
 		 */
 		ResourcesActionSupport.testConsumer(30, 3888561557931148149L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.RESOURCE_2, new PersonId(0)));
 			assertEquals(ResourceError.RESOURCE_ASSIGNMENT_TIME_NOT_TRACKED, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(30, 9045818580061726595L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(null, new PersonId(0)));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(30, 5592254382530100326L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.getUnknownResourceId(), new PersonId(0)));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id null */
 		ResourcesActionSupport.testConsumer(30, 1245016103076447355L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.RESOURCE_1, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id has a negative value */
 		ResourcesActionSupport.testConsumer(30, 4010540244741787446L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getPersonResourceTime(TestResourceId.RESOURCE_1, new PersonId(-1)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -715,7 +715,7 @@ public final class AT_ResourceDataManager {
 	public void testGetResourceIds() {
 
 		ResourcesActionSupport.testConsumer(5, 2601236547109660988L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// show that the resource ids are the test resource ids
 			Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
@@ -732,7 +732,7 @@ public final class AT_ResourceDataManager {
 	public void testGetResourcePropertyDefinition() {
 
 		ResourcesActionSupport.testConsumer(5, 7619546908709928867L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			// show that each of the resource property definitions from the test
 			// resource property enum are present
 			for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
@@ -748,7 +748,7 @@ public final class AT_ResourceDataManager {
 	public void testGetResourcePropertyIds() {
 
 		ResourcesActionSupport.testConsumer(5, 1203402714876510055L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			// show that the resource property ids are the test resource
 			// property ids
 			for (TestResourceId testResourceId : TestResourceId.values()) {
@@ -761,14 +761,14 @@ public final class AT_ResourceDataManager {
 
 		/* precondition tests if the resource id is null */
 		ResourcesActionSupport.testConsumer(5, 3551512082879672269L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getResourcePropertyIds(null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests if the resource id unknown */
 		ResourcesActionSupport.testConsumer(5, 7372199991315732905L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getResourcePropertyIds(TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
@@ -784,9 +784,9 @@ public final class AT_ResourceDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			// establish data views
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the resources
@@ -816,8 +816,8 @@ public final class AT_ResourceDataManager {
 		// make more resource property updates at time 1
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			// establish data views
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the resources
@@ -840,8 +840,8 @@ public final class AT_ResourceDataManager {
 		// make more resource property updates at time 2
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			// establish data views
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the resources
@@ -865,7 +865,7 @@ public final class AT_ResourceDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 			// establish data views
 
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// show that the person resource times match expectations
 			int actualAssertionsCount = 0;
@@ -892,27 +892,27 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(10, 1319950978123668303L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyTime(null, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(10, 250698207522319222L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyTime(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
 		/* precondition test: if the resource property id is null */
 		ResourcesActionSupport.testConsumer(10, 5885550428859775099L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, null));
 			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
 		});
 		/* precondition test: if the resource property id is unknown */
 		ResourcesActionSupport.testConsumer(10, 6053540186403572061L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
@@ -920,7 +920,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource property id is unknown */
 		ResourcesActionSupport.testConsumer(10, 6439495795797811534L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
@@ -933,8 +933,8 @@ public final class AT_ResourceDataManager {
 	public void testGetResourcePropertyValue() {
 
 		ResourcesActionSupport.testConsumer(10, 8757871520559824784L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// establish the expected values of all resource properties
@@ -979,7 +979,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(10, 5856579804289926491L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyValue(null, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
@@ -987,7 +987,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id unknown */
 		ResourcesActionSupport.testConsumer(10, 1735955680485266104L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyValue(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
@@ -995,14 +995,14 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource property id is null */
 		ResourcesActionSupport.testConsumer(10, 5544999164968796966L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, null));
 			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource property id unknown */
 		ResourcesActionSupport.testConsumer(10, 3394498124288646142L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
@@ -1010,7 +1010,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource property id unknown */
 		ResourcesActionSupport.testConsumer(10, 2505584646755789288L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
@@ -1022,7 +1022,7 @@ public final class AT_ResourceDataManager {
 	public void testResourceIdExists() {
 
 		ResourcesActionSupport.testConsumer(5, 4964974931601945506L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// show that the resource ids that exist are the test resource ids
 
@@ -1040,7 +1040,7 @@ public final class AT_ResourceDataManager {
 	public void testResourcePropertyIdExists() {
 
 		ResourcesActionSupport.testConsumer(5, 8074706630609416041L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// show that the resource property ids that exist are the test
 			// resource property ids
@@ -1085,9 +1085,9 @@ public final class AT_ResourceDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
@@ -1121,7 +1121,7 @@ public final class AT_ResourceDataManager {
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(0, 8603231391482244436L, (c) -> {
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Object value = 10;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.setResourcePropertyValue(null, resourcePropertyId, value));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
@@ -1130,7 +1130,7 @@ public final class AT_ResourceDataManager {
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(0, 4345368701918830681L, (c) -> {
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Object value = 10;
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.setResourcePropertyValue(TestResourceId.getUnknownResourceId(), resourcePropertyId, value));
@@ -1140,7 +1140,7 @@ public final class AT_ResourceDataManager {
 		/* precondition test: if the resource property id is null */
 		ResourcesActionSupport.testConsumer(0, 697099694521127247L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Object value = 10;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.setResourcePropertyValue(resourceId, null, value));
 			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
@@ -1149,7 +1149,7 @@ public final class AT_ResourceDataManager {
 		/* precondition test: if the resource property id is unknown */
 		ResourcesActionSupport.testConsumer(0, 5208483875882077960L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Object value = 10;
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.setResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId(), value));
@@ -1160,7 +1160,7 @@ public final class AT_ResourceDataManager {
 		ResourcesActionSupport.testConsumer(0, 1862818482356534123L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.setResourcePropertyValue(resourceId, resourcePropertyId, null));
 			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_VALUE, contractException.getErrorType());
 		});
@@ -1172,14 +1172,14 @@ public final class AT_ResourceDataManager {
 		ResourcesActionSupport.testConsumer(0, 8731358919842250070L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.setResourcePropertyValue(resourceId, resourcePropertyId, 23.4));
 			assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 		});
 
 		/* precondition test: if the property has been defined as immutable */
 		ResourcesActionSupport.testConsumer(0, 2773568485593496806L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Object value = 10;
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, value));
@@ -1203,7 +1203,7 @@ public final class AT_ResourceDataManager {
 		// previously added by the resolver.
 
 		ResourcesActionSupport.testConsumer(100, 4062799122381184575L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForPersonAndResource());
 			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager));
 			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForResource());
@@ -1252,9 +1252,9 @@ public final class AT_ResourceDataManager {
 		// Have and actor give resources to people
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 			// add resources to all the people
@@ -1279,10 +1279,10 @@ public final class AT_ResourceDataManager {
 		// Have the actor remove resources from people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 
@@ -1330,8 +1330,8 @@ public final class AT_ResourceDataManager {
 		///////////////////
 		/* precondition test: if the person id is null */
 		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			PersonId personId = new PersonId(0);
 			long amount = 10;
@@ -1346,8 +1346,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the person does not exist */
 		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			PersonId personId = new PersonId(0);
 			long amount = 10;
@@ -1362,8 +1362,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			PersonId personId = new PersonId(0);
 			long amount = 10;
@@ -1378,8 +1378,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			PersonId personId = new PersonId(0);
 			long amount = 10;
@@ -1394,8 +1394,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the amount is negative */
 		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			PersonId personId = new PersonId(0);
 			// add resource to the person to ensure the precondition tests will
@@ -1413,8 +1413,8 @@ public final class AT_ResourceDataManager {
 		 * the resource
 		 */
 		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			PersonId personId = new PersonId(0);
 			// add resource to the person to ensure the precondition tests will
@@ -1439,7 +1439,7 @@ public final class AT_ResourceDataManager {
 
 		// Have the actor add resources to the regions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			// add resources to the regions
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
@@ -1466,9 +1466,9 @@ public final class AT_ResourceDataManager {
 		// Have the actor remove resources from regions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// remove random amounts of resources from regions
 			int transfercount = 0;
@@ -1509,7 +1509,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the region id is null */
 		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 10;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.removeResourceFromRegion(resourceId, null, amount));
@@ -1518,7 +1518,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the region id is unknown */
 		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 10;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.removeResourceFromRegion(resourceId, TestRegionId.getUnknownRegionId(), amount));
@@ -1527,7 +1527,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			RegionId regionId = TestRegionId.REGION_1;
 			long amount = 10;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.removeResourceFromRegion(null, regionId, amount));
@@ -1536,7 +1536,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			RegionId regionId = TestRegionId.REGION_1;
 			long amount = 10;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.removeResourceFromRegion(TestResourceId.getUnknownResourceId(), regionId, amount));
@@ -1545,7 +1545,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the amount is negative */
 		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId = TestRegionId.REGION_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.removeResourceFromRegion(resourceId, regionId, -1L));
@@ -1557,7 +1557,7 @@ public final class AT_ResourceDataManager {
 		 * the resource
 		 */
 		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId = TestRegionId.REGION_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.removeResourceFromRegion(resourceId, regionId, 10000000L));
@@ -1589,9 +1589,9 @@ public final class AT_ResourceDataManager {
 		// create an actor that will transfer resources between regions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// add resources to all the regions
 			for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -1653,7 +1653,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the source region is null */
 		ResourcesActionSupport.testConsumer(0, 2545276913032843668L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId2 = TestRegionId.REGION_2;
 			long amount = 10;
@@ -1671,7 +1671,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the source region is unknown */
 		ResourcesActionSupport.testConsumer(0, 1182536948902380826L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId2 = TestRegionId.REGION_2;
 			long amount = 10;
@@ -1689,7 +1689,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the destination region is null */
 		ResourcesActionSupport.testConsumer(0, 3358578155263941L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId1 = TestRegionId.REGION_1;
 			long amount = 10;
@@ -1706,7 +1706,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the destination region is unknown */
 		ResourcesActionSupport.testConsumer(0, 289436879730670757L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId1 = TestRegionId.REGION_1;
 			long amount = 10;
@@ -1724,7 +1724,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(0, 3690172166437098600L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			RegionId regionId1 = TestRegionId.REGION_1;
 			RegionId regionId2 = TestRegionId.REGION_2;
 			long amount = 10;
@@ -1741,7 +1741,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(0, 7636787584894783093L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			RegionId regionId1 = TestRegionId.REGION_1;
 			RegionId regionId2 = TestRegionId.REGION_2;
 			long amount = 10;
@@ -1759,7 +1759,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource amount is negative */
 		ResourcesActionSupport.testConsumer(0, 1320571074133841280L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId1 = TestRegionId.REGION_1;
 			RegionId regionId2 = TestRegionId.REGION_2;
@@ -1776,7 +1776,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the source and destination region are equal */
 		ResourcesActionSupport.testConsumer(0, 2402299633191289724L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId1 = TestRegionId.REGION_1;
 			long amount = 10;
@@ -1796,7 +1796,7 @@ public final class AT_ResourceDataManager {
 		 * resources to support the transfer
 		 */
 		ResourcesActionSupport.testConsumer(0, 9136536902267748610L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId1 = TestRegionId.REGION_1;
 			RegionId regionId2 = TestRegionId.REGION_2;
@@ -1816,7 +1816,7 @@ public final class AT_ResourceDataManager {
 		 * the destination region
 		 */
 		ResourcesActionSupport.testConsumer(0, 342832088592207841L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId1 = TestRegionId.REGION_1;
 			RegionId regionId2 = TestRegionId.REGION_2;
@@ -1847,9 +1847,9 @@ public final class AT_ResourceDataManager {
 
 		// Have an actor give people resources
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 
@@ -1886,11 +1886,11 @@ public final class AT_ResourceDataManager {
 		// Have an actor return resources from people back to their regions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 
@@ -1933,8 +1933,8 @@ public final class AT_ResourceDataManager {
 		// Have an actor test preconditions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			// precondition tests
 			PersonId personId = new PersonId(0);
 			ResourceId resourceId = TestResourceId.RESOURCE_4;
@@ -2019,9 +2019,9 @@ public final class AT_ResourceDataManager {
 
 		// Have an actor add resources to the regions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionLocationDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionLocationDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 
@@ -2057,11 +2057,11 @@ public final class AT_ResourceDataManager {
 		// Have an actor transfer the resources to people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionLocationDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionLocationDataManager = c.getDataManager(RegionDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 
@@ -2107,8 +2107,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the person id is null */
 		ResourcesActionSupport.testConsumer(30, 2628501738627419743L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			PersonId personId = new PersonId(0);
 			ResourceId resourceId = TestResourceId.RESOURCE_4;
 			long amount = 10;
@@ -2123,8 +2123,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the person does not exist */
 		ResourcesActionSupport.testConsumer(30, 4172586983768511485L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			PersonId personId = new PersonId(0);
 			ResourceId resourceId = TestResourceId.RESOURCE_4;
 			long amount = 10;
@@ -2139,8 +2139,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(30, 6256935891787853979L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			PersonId personId = new PersonId(0);
 			long amount = 10;
 			// add resources to the region to support the precondition tests
@@ -2154,8 +2154,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(30, 6949348067383487020L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			PersonId personId = new PersonId(0);
 			long amount = 10;
 			// add resources to the region to support the precondition tests
@@ -2170,8 +2170,8 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: if the amount is negative */
 		ResourcesActionSupport.testConsumer(30, 6911979438110217773L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			PersonId personId = new PersonId(0);
 			ResourceId resourceId = TestResourceId.RESOURCE_4;
 			// add resources to the region to support the precondition tests
@@ -2188,8 +2188,8 @@ public final class AT_ResourceDataManager {
 		 * the resource
 		 */
 		ResourcesActionSupport.testConsumer(30, 1022333582572896703L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			PersonId personId = new PersonId(0);
 			ResourceId resourceId = TestResourceId.RESOURCE_4;
 			// add resources to the region to support the precondition tests
@@ -2206,8 +2206,8 @@ public final class AT_ResourceDataManager {
 		 * person's resource level
 		 */
 		ResourcesActionSupport.testConsumer(30, 1989550065510462161L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			PersonId personId = new PersonId(0);
 			ResourceId resourceId = TestResourceId.RESOURCE_4;
 			// add resources to the region to support the precondition tests
@@ -2263,9 +2263,9 @@ public final class AT_ResourceDataManager {
 		// Have an actor add resources to regions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// add random amounts of resources to regions
 			int transfercount = 0;
@@ -2308,7 +2308,7 @@ public final class AT_ResourceDataManager {
 		ResourcesActionSupport.testConsumer(0, 6097938300290796293L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 10;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.addResourceToRegion(resourceId, null, amount));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
@@ -2317,7 +2317,7 @@ public final class AT_ResourceDataManager {
 		ResourcesActionSupport.testConsumer(0, 1284607529543124944L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 10;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.addResourceToRegion(resourceId, TestRegionId.getUnknownRegionId(), amount));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
@@ -2326,7 +2326,7 @@ public final class AT_ResourceDataManager {
 		ResourcesActionSupport.testConsumer(0, 5929063621703486118L, (c) -> {
 			RegionId regionId = TestRegionId.REGION_1;
 			long amount = 10;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.addResourceToRegion(null, regionId, amount));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
@@ -2335,7 +2335,7 @@ public final class AT_ResourceDataManager {
 		ResourcesActionSupport.testConsumer(0, 1240045272882068003L, (c) -> {
 			RegionId regionId = TestRegionId.REGION_1;
 			long amount = 10;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.addResourceToRegion(TestResourceId.getUnknownResourceId(), regionId, amount));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
@@ -2344,7 +2344,7 @@ public final class AT_ResourceDataManager {
 		ResourcesActionSupport.testConsumer(0, 2192023733930104434L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId = TestRegionId.REGION_1;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.addResourceToRegion(resourceId, regionId, -1));
 			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 		});
@@ -2354,7 +2354,7 @@ public final class AT_ResourceDataManager {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId = TestRegionId.REGION_1;
 			long amount = 10;
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			resourceDataManager.addResourceToRegion(resourceId, regionId, amount);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourceDataManager.addResourceToRegion(resourceId, regionId, Long.MAX_VALUE));
 			assertEquals(ResourceError.RESOURCE_ARITHMETIC_EXCEPTION, contractException.getErrorType());
@@ -2368,9 +2368,9 @@ public final class AT_ResourceDataManager {
 
 		// Have an actor create a few people with random resource levels
 		ResourcesActionSupport.testConsumer(0, 5441878385875188805L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create 30 people, testing each in turn for their resource levels
@@ -2409,7 +2409,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: */
 		ResourcesActionSupport.testConsumer(0, 3508334533286675130L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			/*
 			 * Precondition tests for the validity of the person id are shadowed
@@ -2431,7 +2431,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: */
 		ResourcesActionSupport.testConsumer(0, 7458875943724352968L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			/*
 			 * Precondition tests for the validity of the person id are shadowed
@@ -2453,7 +2453,7 @@ public final class AT_ResourceDataManager {
 
 		/* precondition test: */
 		ResourcesActionSupport.testConsumer(0, 3702960689314847457L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			/*
 			 * Precondition tests for the validity of the person id are shadowed
@@ -2481,9 +2481,9 @@ public final class AT_ResourceDataManager {
 		// Have an actor create a few people with random resource levels in a
 		// bulk construction request
 		ResourcesActionSupport.testConsumer(0, 1373835434254978465L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// prepare builders
@@ -2543,7 +2543,7 @@ public final class AT_ResourceDataManager {
 		 * ResourceInitialization that has a null resource id
 		 */
 		ResourcesActionSupport.testConsumer(0, 4090942440102620995L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
 
@@ -2561,7 +2561,7 @@ public final class AT_ResourceDataManager {
 		 * ResourceInitialization that has an unknown resource id
 		 */
 		ResourcesActionSupport.testConsumer(0, 4932056019543858717L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
 																						.add(TestRegionId.REGION_2)//
@@ -2578,7 +2578,7 @@ public final class AT_ResourceDataManager {
 		 * ResourceInitialization that has a negative resource level
 		 */
 		ResourcesActionSupport.testConsumer(0, 4192802703078518338L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
 																						.add(TestRegionId.REGION_3)//
@@ -2685,9 +2685,9 @@ public final class AT_ResourceDataManager {
 		
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			List<PersonId> personIds = personDataManager.getPeople();
 			assertEquals(new LinkedHashSet<>(personIds), resourcesPluginData.getPersonIds());

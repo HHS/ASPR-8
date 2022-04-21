@@ -54,7 +54,7 @@ public class GroupMembershipRemovalEvent implements Event {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
-		GroupDataManager personGroupDataView = simulationContext.getDataManager(GroupDataManager.class).get();
+		GroupDataManager personGroupDataView = simulationContext.getDataManager(GroupDataManager.class);
 
 		if (!personGroupDataView.groupExists(groupId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
@@ -65,7 +65,7 @@ public class GroupMembershipRemovalEvent implements Event {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class).get();
+		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class);
 		if (!personDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
@@ -75,7 +75,7 @@ public class GroupMembershipRemovalEvent implements Event {
 		if (groupTypeId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}

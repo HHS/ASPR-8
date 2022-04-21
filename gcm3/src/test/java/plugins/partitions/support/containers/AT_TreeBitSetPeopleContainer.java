@@ -21,7 +21,7 @@ public class AT_TreeBitSetPeopleContainer {
 
 	
 	private PeopleContainer getPeopleContainer(SimulationContext context) {
-		return new TreeBitSetPeopleContainer(context.getDataManager(PersonDataManager.class).get());
+		return new TreeBitSetPeopleContainer(context.getDataManager(PersonDataManager.class));
 	}
 	
 	@Test

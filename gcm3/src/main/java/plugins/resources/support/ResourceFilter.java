@@ -31,7 +31,7 @@ public final class ResourceFilter extends Filter {
 		}
 
 		if (resourceDataManager == null) {
-			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class).get();
+			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
 		}
 
 		if (!resourceDataManager.resourceIdExists(resourceId)) {
@@ -64,7 +64,7 @@ public final class ResourceFilter extends Filter {
 		}
 
 		if (resourceDataManager == null) {
-			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class).get();
+			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
 		}
 		
 		final long level = resourceDataManager.getPersonResourceLevel(resourceId, personId);

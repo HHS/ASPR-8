@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -45,12 +44,7 @@ public class AT_ActorContext {
 	private static class TestDataManager1 extends TestDataManager {
 	}
 
-	/*
-	 * DataView implementor to support tests
-	 */
-	private static class TestDataManager2 extends TestDataManager {
-
-	}
+	
 
 	private static class TestDataManager3 extends TestDataManager {
 
@@ -694,31 +688,13 @@ public class AT_ActorContext {
 		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
 
-		/*
-		 * Have the agent search for the data manager that was added to the
-		 * simulation. Show that there is no instance of the second type of data
-		 * manager present.
-		 */
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
-			Optional<TestDataManager1> optional1 = c.getDataManager(TestDataManager1.class);
-			assertTrue(optional1.isPresent());
-
-			Optional<TestDataManager2> optional2 = c.getDataManager(TestDataManager2.class);
-			assertFalse(optional2.isPresent());
-
-			// show that we can ask for the child classes of a type individually
-			Optional<TestDataManager3A> optional3A = c.getDataManager(TestDataManager3A.class);
-			assertTrue(optional3A.isPresent());
-
-			Optional<TestDataManager3B> optional3B = c.getDataManager(TestDataManager3B.class);
-			assertTrue(optional3B.isPresent());
-
-			// show that we can retrieve by the super type when there is no
-			// collision
-			Optional<TestDataManager4> optional4 = c.getDataManager(TestDataManager4.class);
-			assertTrue(optional4.isPresent());
-
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,(c)->{
+			c.getDataManager(TestDataManager1.class);
+			c.getDataManager(TestDataManager3A.class);
+			c.getDataManager(TestDataManager3B.class);
+			c.getDataManager(TestDataManager4A.class);
 		}));
+		
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();

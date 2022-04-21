@@ -69,8 +69,8 @@ public class AT_RegionFilter {
 	public void testEvaluate() {
 		RegionsActionSupport.testConsumer(100, 8908124836418429909L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 

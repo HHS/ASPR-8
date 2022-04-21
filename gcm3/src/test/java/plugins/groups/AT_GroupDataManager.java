@@ -85,7 +85,7 @@ public class AT_GroupDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 				// add a group
 				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
@@ -106,7 +106,7 @@ public class AT_GroupDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			// show that the group is no long present
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (GroupId groupId : removedGroups) {
 				assertFalse(groupDataManager.groupExists(groupId));
 			}
@@ -121,14 +121,14 @@ public class AT_GroupDataManager {
 		
 		//precondition test: if the group id is null
 		GroupsActionSupport.testConsumer(30, 3, 5, 1164752712088660908L, (c)->{
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,()->groupDataManager.removeGroup(null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());			
 		});
 		
 		//precondition test: if the group id is unknown
 		GroupsActionSupport.testConsumer(30, 3, 5, 6321229743136171684L, (c)->{
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,()->groupDataManager.removeGroup(new GroupId(100000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());			
 		});
@@ -158,11 +158,11 @@ public class AT_GroupDataManager {
 		// add an agent to add members to groups
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			Collections.shuffle(people, new Random(randomGenerator.nextLong()));
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (GroupId groupId : groupDataManager.getGroupIds()) {
 				Set<PersonId> peopleForGroup = new LinkedHashSet<>(groupDataManager.getPeopleForGroup(groupId));
 				int count = 0;
@@ -193,7 +193,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the person id is null */
 		GroupsActionSupport.testConsumer(30, 3, 10, 667206327628089405L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.removePersonFromGroup(null,groupId));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
@@ -201,7 +201,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the person id is unknown */
 		GroupsActionSupport.testConsumer(30, 3, 10, 283038490401536931L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.removePersonFromGroup(new PersonId(10000),groupId));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
@@ -209,8 +209,8 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(30, 3, 10, 6913106996750459497L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.removePersonFromGroup(personId,null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
@@ -218,8 +218,8 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(30, 3, 10, 4632472396816795419L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.removePersonFromGroup(personId,new GroupId(10000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
@@ -227,8 +227,8 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the person is not a member of the group */
 		GroupsActionSupport.testConsumer(30, 3, 10, 8295961559327801013L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.removePersonFromGroup(personId,groupId));
@@ -268,8 +268,8 @@ public class AT_GroupDataManager {
 		// have the agent create add a few groups and collect expected
 		// observations
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
 			GroupConstructionInfo.Builder builder = GroupConstructionInfo.builder();
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -311,7 +311,7 @@ public class AT_GroupDataManager {
 		
 		// precondition test: if the group construction info is null
 		GroupsActionSupport.testConsumer(40, 5.0, 20.0, 5229546252018518751L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupConstructionInfo nullGroupConstructionInfo = null;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.addGroup(nullGroupConstructionInfo));
 			assertEquals(GroupError.NULL_GROUP_CONSTRUCTION_INFO, contractException.getErrorType());
@@ -323,7 +323,7 @@ public class AT_GroupDataManager {
 		 */
 		GroupsActionSupport.testConsumer(40, 5.0, 20.0, 7404840971962130072L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.addGroup(GroupConstructionInfo.builder().setGroupTypeId(TestGroupTypeId.getUnknownGroupTypeId()).build()));
@@ -335,7 +335,7 @@ public class AT_GroupDataManager {
 		 * construction info is unknown
 		 */
 		GroupsActionSupport.testConsumer(40, 5.0, 20.0, 8782123343145389682L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo	.builder()//
@@ -354,7 +354,7 @@ public class AT_GroupDataManager {
 		 */
 		GroupsActionSupport.testConsumer(40, 5.0, 20.0, 8782123343145389682L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo	.builder()//
 																					.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
@@ -388,7 +388,7 @@ public class AT_GroupDataManager {
 		// have the agent create add a few groups and collect expected
 		// observations
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			expectedObservations.add(groupId);
@@ -412,7 +412,7 @@ public class AT_GroupDataManager {
 
 		// precondition tests
 		GroupsActionSupport.testConsumer(30, 4.0, 10.0, 5229546252018518751L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupTypeId groupTypeId = null;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.addGroup(groupTypeId));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
@@ -420,7 +420,7 @@ public class AT_GroupDataManager {
 
 		// precondition tests
 		GroupsActionSupport.testConsumer(30, 4.0, 10.0, 5229546252018518751L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.addGroup(TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 		});
@@ -447,11 +447,11 @@ public class AT_GroupDataManager {
 
 		// add an agent to add members to groups
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			Collections.shuffle(people, new Random(randomGenerator.nextLong()));
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (GroupId groupId : groupDataManager.getGroupIds()) {
 				Set<PersonId> peopleForGroup = new LinkedHashSet<>(groupDataManager.getPeopleForGroup(groupId));
 				int count = 0;
@@ -483,7 +483,7 @@ public class AT_GroupDataManager {
 
 		// precondition tests: if the person id is null
 		GroupsActionSupport.testConsumer(30, 3, 10, 2886293572900391101L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.addPersonToGroup(null,groupId));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
@@ -491,7 +491,7 @@ public class AT_GroupDataManager {
 
 		// precondition tests: if the person id is unknown
 		GroupsActionSupport.testConsumer(30, 3, 10, 5604775963632692909L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.addPersonToGroup(new PersonId(10000),groupId));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
@@ -499,8 +499,8 @@ public class AT_GroupDataManager {
 
 		// precondition tests: if the group id is null
 		GroupsActionSupport.testConsumer(30, 3, 10, 3853147120254074375L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.addPersonToGroup(personId,null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
@@ -508,8 +508,8 @@ public class AT_GroupDataManager {
 
 		// precondition tests: if the group id is unknown
 		GroupsActionSupport.testConsumer(30, 3, 10, 7259750239550962667L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.addPersonToGroup(personId, new GroupId(10000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
@@ -517,8 +517,8 @@ public class AT_GroupDataManager {
 
 		// precondition tests: if the person is already a member of the group
 		GroupsActionSupport.testConsumer(30, 3, 10, 3285943689624298882L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
 			groupDataManager.addPersonToGroup(personId,groupId);
@@ -548,7 +548,7 @@ public class AT_GroupDataManager {
 
 		// add an agent that removes groups
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 			assertTrue(groupIds.size() > 5);
 			for (int i = 0; i < 5; i++) {
@@ -559,7 +559,7 @@ public class AT_GroupDataManager {
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (GroupId groupId : expectedObservations) {
 				assertFalse(groupDataManager.groupExists(groupId));
 			}
@@ -577,14 +577,14 @@ public class AT_GroupDataManager {
 
 		// precondition test: if the group id is null
 		GroupsActionSupport.testConsumer(30, 3, 10, 7796647463624453709L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.removeGroup(null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the group id is unknown
 		GroupsActionSupport.testConsumer(30, 3, 10, 8368986779885621446L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.removeGroup(new GroupId(10000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 		});
@@ -600,7 +600,7 @@ public class AT_GroupDataManager {
 		List<GroupId> removedGroupIds = new ArrayList<>();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 
 				// add a group and show it exists
@@ -613,7 +613,7 @@ public class AT_GroupDataManager {
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (GroupId groupId : removedGroupIds) {
 				// show that the removed groups don't exist
 				assertFalse(groupDataManager.groupExists(groupId));
@@ -632,11 +632,11 @@ public class AT_GroupDataManager {
 		GroupsActionSupport.testConsumer(30, 3, 5, 9211292135944399530L, (c) -> {
 			// establish data views and the lists to groups and people in the
 			// simulation
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -748,28 +748,28 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(30, 3, 5, 5080244401642933835L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.sampleGroup(null, GroupSampler.builder().build()));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(30, 3, 5, 8782123343145389682L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.sampleGroup(new GroupId(1000000), GroupSampler.builder().build()));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group sampler is null */
 		GroupsActionSupport.testConsumer(30, 3, 5, 4175298436277522063L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.sampleGroup(new GroupId(0), null));
 			assertEquals(GroupError.NULL_GROUP_SAMPLER, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group sampler is null */
 		GroupsActionSupport.testConsumer(30, 3, 5, 7404840971962130072L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.sampleGroup(new GroupId(0), GroupSampler.builder().setExcludedPersonId(new PersonId(1000000)).build()));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
@@ -796,8 +796,8 @@ public class AT_GroupDataManager {
 
 		// have an agent change a few group property values
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
@@ -832,7 +832,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test if the group id is null */
 		GroupsActionSupport.testConsumer(100, 3, 5, 3285943689624298882L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.setGroupPropertyValue(null, testGroupPropertyId, true));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
@@ -840,7 +840,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test if the group id is unknown */
 		GroupsActionSupport.testConsumer(100, 3, 5, 3853147120254074375L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.setGroupPropertyValue(new GroupId(100000), testGroupPropertyId, true));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
@@ -848,7 +848,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test if the group property id is null */
 		GroupsActionSupport.testConsumer(100, 3, 5, 5118884606334935158L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.setGroupPropertyValue(groupId, null, true));
 			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
@@ -856,7 +856,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test if the group property id is unknown */
 		GroupsActionSupport.testConsumer(100, 3, 5, 6389640203066924425L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.setGroupPropertyValue(groupId, TestGroupPropertyId.getUnknownGroupPropertyId(), true));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
@@ -864,7 +864,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test if the property value is null */
 		GroupsActionSupport.testConsumer(100, 3, 5, 6323361964403648167L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, null));
@@ -876,7 +876,7 @@ public class AT_GroupDataManager {
 		 * corresponding property definition
 		 */
 		GroupsActionSupport.testConsumer(100, 3, 5, 3728888495166492963L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, 5));
@@ -888,7 +888,7 @@ public class AT_GroupDataManager {
 		 * the property as immutable
 		 */
 		GroupsActionSupport.testConsumer(100, 3, 5, 7440937277837294440L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 			TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, true));
@@ -903,7 +903,7 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(300, 3, 5, 2910747162784803859L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// show that there are some groups -- we expect about 180
@@ -929,14 +929,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group type is null */
 		GroupsActionSupport.testConsumer(300, 3, 5, 8342387507356594823L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupCountForGroupType(null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group type is unknown */
 		GroupsActionSupport.testConsumer(300, 3, 5, 4573510051341354320L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupCountForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 		});
@@ -949,9 +949,9 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(300, 3, 5, 6371809280692201768L, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
@@ -983,14 +983,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the person id is null */
 		GroupsActionSupport.testConsumer(300, 3, 5, 3920152432964044129L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupCountForPerson(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id is unknown */
 		GroupsActionSupport.testConsumer(300, 3, 5, 6739633613106510243L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupCountForPerson(new PersonId(10000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -1003,10 +1003,10 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(10, 0, 5, 6455798573295403809L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -1035,7 +1035,7 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(10, 0, 5, 4462836951642761957L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// show that the personGroupDataManger has the expected property
 			// definitions
@@ -1074,7 +1074,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group type id is null */
 		GroupsActionSupport.testConsumer(10, 0, 5, 5959643517439959298L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyDefinition(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
@@ -1082,7 +1082,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group type id is unknown */
 		GroupsActionSupport.testConsumer(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyDefinition(TestGroupTypeId.getUnknownGroupTypeId(), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
@@ -1090,14 +1090,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group property id is null */
 		GroupsActionSupport.testConsumer(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null));
 			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group property id is unknown */
 		GroupsActionSupport.testConsumer(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
@@ -1105,7 +1105,7 @@ public class AT_GroupDataManager {
 
 		/* precondition tests: if the group property id is unknown */
 		GroupsActionSupport.testConsumer(10, 0, 5, 9138791522018557245L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
@@ -1118,7 +1118,7 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(10, 0, 5, 8858123829776885259L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// show that the personGroupDataManger returns true for the group
 			// properties that should be present
@@ -1141,7 +1141,7 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(10, 0, 5, 1205481410658607626L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// show that the personGroupDataManger returns the correct group
 			// property ids
@@ -1155,14 +1155,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group type id is null */
 		GroupsActionSupport.testConsumer(10, 0, 5, 8498668590902665283L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupPropertyIds(null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group type id is unknown */
 		GroupsActionSupport.testConsumer(10, 0, 5, 3809094168724176083L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupPropertyIds(TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 		});
@@ -1187,8 +1187,8 @@ public class AT_GroupDataManager {
 		 * set at time = 0 and then set those properties to new values
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
@@ -1228,8 +1228,8 @@ public class AT_GroupDataManager {
 		 * set at time = 1 and then set those properties to new values
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (MultiKey multiKey : expectedTimes.keySet()) {
@@ -1250,7 +1250,7 @@ public class AT_GroupDataManager {
 		 * set at time = 2
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			for (MultiKey multiKey : expectedTimes.keySet()) {
 				GroupId groupId = multiKey.getKey(0);
@@ -1270,7 +1270,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group id is null
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 4540064428634658468L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyTime(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
@@ -1279,7 +1279,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group id is null
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 5080244401642933835L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyTime(new GroupId(1000000), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
@@ -1289,7 +1289,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group property id is null
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 4175298436277522063L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupPropertyTime(new GroupId(0), null));
 			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
 		});
@@ -1298,7 +1298,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group property id is unknown
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 3557052948001350675L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupPropertyTime(groupId, TestGroupPropertyId.getUnknownGroupPropertyId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
@@ -1308,7 +1308,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group property id is unknown
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 7349200768842830982L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyTime(groupId, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
@@ -1334,7 +1334,7 @@ public class AT_GroupDataManager {
 		 * At time = 1, have the agent establish the expected values.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
@@ -1371,8 +1371,8 @@ public class AT_GroupDataManager {
 		 * their expected values and then set those properties to new values.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (MultiKey multiKey : expectedValues.keySet()) {
@@ -1394,7 +1394,7 @@ public class AT_GroupDataManager {
 		 * their expected values.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			for (MultiKey multiKey : expectedValues.keySet()) {
 				GroupId groupId = multiKey.getKey(0);
@@ -1414,7 +1414,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group id is null
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 1071603906331418640L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyValue(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
@@ -1424,7 +1424,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group id is null
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 7115328473763483106L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyValue(new GroupId(1000000), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
@@ -1434,7 +1434,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group property id is null
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 2444842488298604050L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupPropertyValue(new GroupId(0), null));
 			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
 		});
@@ -1443,7 +1443,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group property id is unknown
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 1772465526096544640L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupPropertyValue(groupId, TestGroupPropertyId.getUnknownGroupPropertyId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
@@ -1453,7 +1453,7 @@ public class AT_GroupDataManager {
 		 * precondition test: if the group property id is unknown
 		 */
 		GroupsActionSupport.testConsumer(30, 3, 5, 6994832854288891414L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupPropertyValue(groupId, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
@@ -1468,9 +1468,9 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(10, 0, 5, 3948247844369837305L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -1510,14 +1510,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group type id is null */
 		GroupsActionSupport.testConsumer(10, 0, 5, 2441670244909950371L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupsForGroupType(null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group type id is unknown */
 		GroupsActionSupport.testConsumer(10, 0, 5, 8938160844024056358L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupsForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 		});
@@ -1530,11 +1530,11 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 4847183275886938594L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -1587,28 +1587,28 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the person id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 5248499346426314201L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupsForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_1, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 1445347293441431961L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupsForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_1, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group type id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 1445347293441431961L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupsForGroupTypeAndPerson(null, new PersonId(0)));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group type id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 1445347293441431961L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupDataManager.getGroupsForGroupTypeAndPerson(TestGroupTypeId.getUnknownGroupTypeId(), new PersonId(0)));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
@@ -1622,11 +1622,11 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 1095418957424488372L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -1676,14 +1676,14 @@ public class AT_GroupDataManager {
 
 		/* precondition tests: if the person id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 4037186565913379048L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupsForPerson(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests: if the person id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 5901067879853942202L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupsForPerson(new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -1696,9 +1696,9 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 5910635654466929788L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -1727,14 +1727,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 4697608906151940983L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupType(null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 5074440747148359344L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupType(new GroupId(100000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 		});
@@ -1746,11 +1746,11 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 1561008711822589907L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -1797,14 +1797,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the person id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 2733980118690868605L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupTypeCountForPersonId(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 7646517978722507404L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupTypeCountForPersonId(new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -1814,7 +1814,7 @@ public class AT_GroupDataManager {
 	@UnitTestMethod(name = "getGroupTypeIds", args = {})
 	public void testGetGroupTypeIds() {
 		GroupsActionSupport.testConsumer(10, 3, 5, 1999263877784730672L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			// show that the group ids match the expected group ids
 			Set<GroupTypeId> groupTypeIds = groupDataManager.getGroupTypeIds();
 			assertEquals(EnumSet.allOf(TestGroupTypeId.class), groupTypeIds);
@@ -1827,11 +1827,11 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 2999448198567478958L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -1881,14 +1881,14 @@ public class AT_GroupDataManager {
 
 		/* precondition tests if the person id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 5882134079494817898L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupTypesForPerson(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests if the person id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 4598510399026722120L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getGroupTypesForPerson(new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -1901,12 +1901,12 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 4550534695972929193L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -1954,14 +1954,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 1054111866998260759L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPeopleForGroup(null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 976385337250084757L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPeopleForGroup(new GroupId(100000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 		});
@@ -1974,11 +1974,11 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 8576174021026036673L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -2026,14 +2026,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 3966867633401336210L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPeopleForGroupType(null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 4582534442214781870L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPeopleForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 		});
@@ -2046,12 +2046,12 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 1763603697244834578L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -2097,7 +2097,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 2981746189003482663L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPersonCountForGroup(null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
@@ -2105,7 +2105,7 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 3438693482743062795L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPersonCountForGroup(new GroupId(10000000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 		});
@@ -2118,11 +2118,11 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 5794665230130343350L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -2171,14 +2171,14 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 5829408984346963563L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPersonCountForGroupType(null));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 3769874950212938109L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.getPersonCountForGroupType(TestGroupTypeId.getUnknownGroupTypeId()));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 		});
@@ -2189,7 +2189,7 @@ public class AT_GroupDataManager {
 	public void testGroupTypeIdExists() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 1172766215251823083L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 				assertTrue(groupDataManager.groupTypeIdExists(testGroupTypeId));
 			}
@@ -2204,11 +2204,11 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 8319627382232144625L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 
 			/*
@@ -2260,28 +2260,28 @@ public class AT_GroupDataManager {
 
 		/* precondition test: if the group id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 3623255510968295889L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.isPersonInGroup(new PersonId(0),null));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 825983259283758140L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.isPersonInGroup(new PersonId(0),new GroupId(10000)));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id is null */
 		GroupsActionSupport.testConsumer(100, 0, 5, 1009864608566885897L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.isPersonInGroup(null,new GroupId(0) ));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the person id is unknown */
 		GroupsActionSupport.testConsumer(100, 0, 5, 5275459426147794240L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupDataManager.isPersonInGroup(new PersonId(1000000),new GroupId(0)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
@@ -2304,7 +2304,7 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 3, 5, 6706902549572603852L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			testEventLabeler(c, GroupAdditionEvent.getEventLabelerForGroupType(groupDataManager));
 		});
 
@@ -2320,7 +2320,7 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 3, 5, 6196206924587095446L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			
 			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroup());
 			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager));
@@ -2337,7 +2337,7 @@ public class AT_GroupDataManager {
 		// previously added by the resolver.
 
 		GroupsActionSupport.testConsumer(100, 3, 5, 4869845127685024578L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroup());
 			testEventLabeler(c, GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
@@ -2355,7 +2355,7 @@ public class AT_GroupDataManager {
 		// previously added by the resolver.
 
 		GroupsActionSupport.testConsumer(100, 3, 5, 5331119358636307434L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			
 			testEventLabeler(c, GroupMembershipAdditionEvent.getEventLabelerForGroup());
@@ -2377,7 +2377,7 @@ public class AT_GroupDataManager {
 
 		GroupsActionSupport.testConsumer(100, 3, 5, 774686050832969915L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroup());
 			testEventLabeler(c, GroupMembershipRemovalEvent.getEventLabelerForGroupAndPerson());
@@ -2418,10 +2418,10 @@ public class AT_GroupDataManager {
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			// establish data views and how many people and groups already exist
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			int personIdOffest = personDataManager.getPopulationCount();
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			int groupIdOffset = groupDataManager.getGroupIds().size();
 
 			// create a bulk construction event with 5 new people and 4 new
@@ -2517,7 +2517,7 @@ public class AT_GroupDataManager {
 				membershipBuilder.addPersonToGroup(1, 0);
 				builder.addAuxiliaryData(membershipBuilder.build());
 				BulkPersonConstructionData bulkPersonConstructionData = builder.build();
-				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 				personDataManager.addBulkPeople(bulkPersonConstructionData);
 			});
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
@@ -2536,7 +2536,7 @@ public class AT_GroupDataManager {
 				membershipBuilder.addGroup(TestGroupTypeId.getUnknownGroupTypeId());
 				builder.addAuxiliaryData(membershipBuilder.build());
 				BulkPersonConstructionData bulkPersonConstructionData = builder.build();
-				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 				personDataManager.addBulkPeople(bulkPersonConstructionData);
 			});
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
@@ -2556,8 +2556,8 @@ public class AT_GroupDataManager {
 		 * of 0 time for the person to be removed.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			// add a new person
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
@@ -2579,8 +2579,8 @@ public class AT_GroupDataManager {
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 
-			GroupDataManager personGroupDataManager = c.getDataManager(GroupDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			GroupDataManager personGroupDataManager = c.getDataManager(GroupDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			// get a list of all the groups
 			List<GroupId> groupIds = personGroupDataManager.getGroupIds();
@@ -2698,7 +2698,7 @@ public class AT_GroupDataManager {
 		// reflects the contents of the group plugin data.
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			GroupDataManager personGroupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager personGroupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// show the groups are as expected
 			List<GroupId> actualGroupIds = personGroupDataManager.getGroupIds();

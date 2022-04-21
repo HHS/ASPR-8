@@ -101,8 +101,8 @@ public final class MaterialsProducerResourceReport {
 
 		actorContext.subscribe(MaterialsProducerResourceUpdateEvent.class,this::handleMaterialsProducerResourceUpdateEvent);
 
-		ResourceDataManager resourceDataManager = actorContext.getDataManager(ResourceDataManager.class).get();
-		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();
+		ResourceDataManager resourceDataManager = actorContext.getDataManager(ResourceDataManager.class);
+		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (ResourceId resourceId : resourceDataManager.getResourceIds()) {
 				long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);

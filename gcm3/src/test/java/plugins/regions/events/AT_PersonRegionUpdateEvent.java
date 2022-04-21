@@ -110,7 +110,7 @@ public class AT_PersonRegionUpdateEvent {
 
 		RegionsActionSupport.testConsumer(0, 3991680549375011891L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(testRegionId).build();
 				PersonId personId = personDataManager.addPerson(personConstructionData);
 
@@ -192,7 +192,7 @@ public class AT_PersonRegionUpdateEvent {
 			// values
 			EventLabeler<PersonRegionUpdateEvent> eventLabeler = PersonRegionUpdateEvent.getEventLabelerForPerson();
 			assertEquals(PersonRegionUpdateEvent.class, eventLabeler.getEventClass());
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
 
 			for (TestRegionId regionId : TestRegionId.values()) {

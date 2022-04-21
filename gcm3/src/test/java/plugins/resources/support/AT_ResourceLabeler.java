@@ -106,10 +106,10 @@ public final class AT_ResourceLabeler {
 
 		// distribute random resources across people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (PersonId personId : personDataManager.getPeople()) {
 				RegionId regionId = regionDataManager.getPersonRegion(personId);
@@ -127,8 +127,8 @@ public final class AT_ResourceLabeler {
 		 * passed to the resource labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			for (PersonId personId : people) {
 

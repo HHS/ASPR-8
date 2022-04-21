@@ -44,9 +44,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 		PartitionsActionSupport.testConsumer(100, 3760806761100897313L, (c) -> {
 			// establish data view
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select about half of the people
@@ -93,8 +93,8 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 		PartitionsActionSupport.testConsumer(100, 2545018253500191849L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0
@@ -134,9 +134,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testAttemptPersonRemoval() {
 		PartitionsActionSupport.testConsumer(100, 1924419629240381672L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -185,10 +185,10 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 		PartitionsActionSupport.testConsumer(100, 5331854470768144150L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			for (PersonId personId : personDataManager.getPeople()) {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, randomGenerator.nextBoolean());
@@ -241,9 +241,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 		PartitionsActionSupport.testConsumer(100, 2295886123984917407L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -291,12 +291,12 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testGetPeopleCount_LabelSet() {
 		PartitionsActionSupport.testConsumer(1000, 1957059921486084637L, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			// Randomize the attribute values for all people
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			for (PersonId personId : personDataManager.getPeople()) {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, randomGenerator.nextBoolean());
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, randomGenerator.nextBoolean());
@@ -338,9 +338,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 		PartitionsActionSupport.testConsumer(1000, 5254073186909000918L, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// randomize BOOLEAN_0 attribute values
@@ -367,9 +367,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testContains() {
 		PartitionsActionSupport.testConsumer(100, 2907418341194860848L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -408,9 +408,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testContains_LabelSet() {
 		PartitionsActionSupport.testConsumer(100, 2888054511830289156L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -451,12 +451,12 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testGetPeople_LabelSet() {
 		PartitionsActionSupport.testConsumer(1000, 8577028018353363458L, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			// Randomize the attribute values for all people
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			for (PersonId personId : personDataManager.getPeople()) {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, randomGenerator.nextBoolean());
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, randomGenerator.nextBoolean());
@@ -498,9 +498,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 	public void testGetPeople() {
 		PartitionsActionSupport.testConsumer(100, 3706541397073246652L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -626,9 +626,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 			// different results?
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
 			 * Define functions that will convert attribute values into labels

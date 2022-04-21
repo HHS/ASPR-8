@@ -61,7 +61,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 298549072627101248L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			Set<EventLabel<GroupMembershipRemovalEvent>> eventLabels = new LinkedHashSet<>();
@@ -122,7 +122,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 4452567174321509486L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
@@ -163,7 +163,7 @@ public class AT_GroupMembershipRemovalEvent {
 	public void testGetEventLabelByGroup() {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 8484038291544974628L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			Set<EventLabel<GroupMembershipRemovalEvent>> eventLabels = new LinkedHashSet<>();
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0; i < 10; i++) {
@@ -217,7 +217,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 3313438051476160164L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForGroup();
@@ -261,7 +261,7 @@ public class AT_GroupMembershipRemovalEvent {
 	public void testGetEventLabelByPerson() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 5181120908681821960L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			Set<EventLabel<GroupMembershipRemovalEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -311,7 +311,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 7591006487215638552L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
@@ -352,7 +352,7 @@ public class AT_GroupMembershipRemovalEvent {
 	public void testGetEventLabelByGroupTypeAndPerson() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 2396297410749360025L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			Set<EventLabel<GroupMembershipRemovalEvent>> eventLabels = new LinkedHashSet<>();
 
 			PersonId personId = new PersonId(0);
@@ -413,7 +413,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 944196534930517005L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
@@ -457,7 +457,7 @@ public class AT_GroupMembershipRemovalEvent {
 	public void testGetEventLabelByGroupType() {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4360946626249599442L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			Set<EventLabel<GroupMembershipRemovalEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -507,7 +507,7 @@ public class AT_GroupMembershipRemovalEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 825213654032168954L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupMembershipRemovalEvent> eventLabeler = GroupMembershipRemovalEvent.getEventLabelerForGroupType(groupDataManager);

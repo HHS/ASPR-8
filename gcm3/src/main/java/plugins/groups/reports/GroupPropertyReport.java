@@ -247,7 +247,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		groupDataManager = actorContext.getDataManager(GroupDataManager.class).get();
+		groupDataManager = actorContext.getDataManager(GroupDataManager.class);
 
 		// transfer all VALID property selections from the scaffold
 		Set<GroupTypeId> groupTypeIds = groupDataManager.getGroupTypeIds();

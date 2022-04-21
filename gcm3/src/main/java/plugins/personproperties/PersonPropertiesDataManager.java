@@ -48,8 +48,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
-		RegionDataManager regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class).get();
+		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
+		RegionDataManager regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
 
 		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager));
 		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty());

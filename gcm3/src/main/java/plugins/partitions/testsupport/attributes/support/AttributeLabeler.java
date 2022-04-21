@@ -66,7 +66,7 @@ public final class AttributeLabeler implements Labeler {
 	@Override
 	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class).get();
+			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
 		}
 		Object value = attributesDataManager.getAttributeValue(personId, attributeId);
 		return attributeValueLabelingFunction.apply(value);

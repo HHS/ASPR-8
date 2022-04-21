@@ -95,9 +95,9 @@ public class AT_PersonPropertyLabeler {
 		 */
 		PersonPropertiesActionSupport.testConsumer(10, 6445109933336671672L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select a property to work with

@@ -55,7 +55,7 @@ public class AT_GroupAdditionEvent {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 296314827017119408L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			
 			Set<EventLabel<GroupAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -105,7 +105,7 @@ public class AT_GroupAdditionEvent {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4044175875975004087L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupAdditionEvent> eventLabeler = GroupAdditionEvent.getEventLabelerForGroupType(groupDataManager);

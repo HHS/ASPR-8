@@ -85,8 +85,8 @@ public final class AT_GroupLabeler {
 	public void testGetLabel() {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 5880749882920317232L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			Function<GroupTypeCountMap, Object> func = (g) -> {
 				int result = 0;

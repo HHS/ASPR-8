@@ -86,7 +86,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 2608996249142401870L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
@@ -158,7 +158,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 8688886270722853901L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
@@ -202,7 +202,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 7912737444879496875L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
@@ -254,7 +254,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 5829392632134617932L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 
 			// create an event labeler
@@ -295,7 +295,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 7297949839974902355L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -364,7 +364,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 9005403678043381761L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
@@ -406,7 +406,7 @@ public class AT_GroupPropertyUpdateEvent {
 	public void testGetEventLabelByGroupType() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 676016189463079696L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupTypeId groupTypeId : TestGroupTypeId.values()) {
@@ -457,7 +457,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 6063816259833737907L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager);

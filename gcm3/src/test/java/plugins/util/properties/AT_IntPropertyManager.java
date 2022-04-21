@@ -104,7 +104,7 @@ public class AT_IntPropertyManager {
 		// Plan 1000 changes
 		IntStream.range(0, 1000).forEach((i -> {
 			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				LocalDM localDM = c.getDataManager(LocalDM.class).get();
+				LocalDM localDM = c.getDataManager(LocalDM.class);
 				int id = randomGenerator.nextInt(300);
 				int value = randomGenerator.nextInt();
 

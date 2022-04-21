@@ -71,7 +71,7 @@ public final class GroupLabeler implements Labeler {
 	@Override
 	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
 		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		}
 
 		GroupTypeCountMap.Builder groupTypeCountMapBuilder = GroupTypeCountMap.builder();
@@ -94,7 +94,7 @@ public final class GroupLabeler implements Labeler {
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		}
 
 		PersonId personId;

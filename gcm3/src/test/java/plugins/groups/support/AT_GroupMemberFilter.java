@@ -38,7 +38,7 @@ public class AT_GroupMemberFilter {
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 8499169041100865476L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			List<GroupId> groupIds = groupDataManager.getGroupIds();
 			assertFalse(groupIds.isEmpty());
 			for (GroupId groupId : groupIds) {
@@ -58,7 +58,7 @@ public class AT_GroupMemberFilter {
 	public void testGetFilterSensitivities() {
 		
 		GroupsActionSupport.testConsumer(100, 3, 10, 7283631979607042406L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			 
@@ -88,9 +88,9 @@ public class AT_GroupMemberFilter {
 	public void testEvaluate() {
 		
 		GroupsActionSupport.testConsumer(100, 3, 10, 6248106595116941770L, (c) -> {
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 			Filter filter = new GroupMemberFilter(groupId);
 			

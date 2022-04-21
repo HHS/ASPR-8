@@ -27,7 +27,7 @@ public final class AttributeFilter extends Filter {
 			throw new ContractException(AttributeError.NULL_ATTRIBUTE_ID);
 		}
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class).get();
+			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
 		}
 
 		if (!attributesDataManager.attributeExists(attributeId)) {
@@ -105,7 +105,7 @@ public final class AttributeFilter extends Filter {
 		validateEquality(simulationContext, equality);
 		validateValueNotNull(simulationContext, value);
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class).get();
+			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
 		}
 		final AttributeDefinition attributeDefinition = attributesDataManager.getAttributeDefinition(attributeId);
 		validateValueCompatibility(simulationContext, attributeId, attributeDefinition, value);
@@ -120,7 +120,7 @@ public final class AttributeFilter extends Filter {
 		}
 		
 		if (attributesDataManager == null) {
-			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class).get();
+			attributesDataManager = simulationContext.getDataManager(AttributesDataManager.class);
 		}
 		
 		// we do not assume that the returned attribute value is

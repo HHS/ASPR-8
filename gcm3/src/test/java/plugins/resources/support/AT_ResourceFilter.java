@@ -85,10 +85,10 @@ public class AT_ResourceFilter {
 	public void testEvaluate() {
 
 		ResourcesActionSupport.testConsumer(100, 5313696152098995059L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			Filter filter = new ResourceFilter(TestResourceId.RESOURCE_1, Equality.GREATER_THAN, 12L);

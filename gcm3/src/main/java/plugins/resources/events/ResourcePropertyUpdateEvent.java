@@ -72,7 +72,7 @@ public class ResourcePropertyUpdateEvent implements Event {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class).get();
+		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
 		if (!resourceDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}
@@ -82,7 +82,7 @@ public class ResourcePropertyUpdateEvent implements Event {
 		if (resourcePropertyId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class).get();
+		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
 		if (!resourceDataManager.resourcePropertyIdExists(resourceId, resourcePropertyId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID);
 		}

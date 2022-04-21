@@ -81,8 +81,8 @@ public final class AT_MaterialsProducerResourceReport {
 
 			// set a resource value
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				
 				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);

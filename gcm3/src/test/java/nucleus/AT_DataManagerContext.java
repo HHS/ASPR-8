@@ -2,13 +2,13 @@ package nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -172,34 +172,30 @@ public class AT_DataManagerContext {
 		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
 		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
-		/*
-		 * Have the agent search for the data manager that was added to the
-		 * simulation. Show that there is no instance of the second type of data
-		 * manager present.
-		 */
-		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(4, (c) -> {
-			Optional<TestDataManager1> optional1 = c.getDataManager(TestDataManager1.class);
-			assertTrue(optional1.isPresent());
+		
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,(c)->{
+			TestDataManager1 testDataManager1 = c.getDataManager(TestDataManager1.class);
+			assertNotNull(testDataManager1);
+			
+			TestDataManager3A testDataManager3A = c.getDataManager(TestDataManager3A.class);
+			assertNotNull(testDataManager3A);
 
-			Optional<TestDataManager2> optional2 = c.getDataManager(TestDataManager2.class);
-			assertFalse(optional2.isPresent());
+			TestDataManager3B testDataManager3B = c.getDataManager(TestDataManager3B.class);
+			assertNotNull(testDataManager3B);
 
-			// show that we can ask for the child classes of a type individually
-			Optional<TestDataManager3A> optional3A = c.getDataManager(TestDataManager3A.class);
-			assertTrue(optional3A.isPresent());
+			TestDataManager4A testDataManager4A = c.getDataManager(TestDataManager4A.class);
+			assertNotNull(testDataManager4A);
 
-			Optional<TestDataManager3B> optional3B = c.getDataManager(TestDataManager3B.class);
-			assertTrue(optional3B.isPresent());
-
-			// show that we can retrieve by the super type when there is no
-			// collision
-			Optional<TestDataManager4> optional4 = c.getDataManager(TestDataManager4.class);
-			assertTrue(optional4.isPresent());
-
+			
+			
 		}));
-
+		
+		
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
+		
+		
+		
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();

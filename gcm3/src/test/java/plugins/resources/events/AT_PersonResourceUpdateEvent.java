@@ -93,9 +93,9 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	public void testGetEventLabelByRegionAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Set<RegionId> regionIds = regionDataManager.getRegionIds();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
@@ -158,12 +158,12 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForRegionAndResource", args = {})
 	public void testGetEventLabelerForRegionAndResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Set<RegionId> regionIds = regionDataManager.getRegionIds();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler
@@ -211,8 +211,8 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	public void testGetEventLabelByPersonAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
@@ -274,8 +274,8 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForPersonAndResource", args = {})
 	public void testGetEventLabelerForPersonAndResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
@@ -321,7 +321,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	public void testGetEventLabelByResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
 			Set<EventLabel<PersonResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
@@ -370,7 +370,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForResource", args = {})
 	public void testGetEventLabelerForResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
 			// create an event labeler

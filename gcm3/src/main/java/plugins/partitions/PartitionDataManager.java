@@ -376,7 +376,7 @@ public final class PartitionDataManager extends DataManager {
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
+		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
 
 		dataManagerContext.subscribePostOrder(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
@@ -491,7 +491,7 @@ public final class PartitionDataManager extends DataManager {
 		validatePopulationPartitionKeyNotNull(key);
 		validatePopulationPartitionDoesNotExist(key);
 
-		// final AgentId agentId = dataManagerContext.getCurrentAgentId().get();
+		// final AgentId agentId = dataManagerContext.getCurrentAgentId();
 
 		// determine the event classes that will trigger refreshes on the
 		// partition

@@ -54,7 +54,7 @@ public final class RegionPropertyUpdateEvent implements Event {
 	}
 
 	private static void validateRegionPropertyId(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		regionDataManager.getRegionPropertyDefinition(regionPropertyId);
 	}
 
@@ -62,7 +62,7 @@ public final class RegionPropertyUpdateEvent implements Event {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		if (!regionDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}

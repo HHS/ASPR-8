@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.regions.RegionPluginId;
 import plugins.reports.ReportsPluginId;
 import plugins.resources.ResourcesPluginId;
@@ -38,10 +36,6 @@ public class AT_MaterialsPlugin {
 		expectedDependencies.add(ReportsPluginId.PLUGIN_ID);
 		expectedDependencies.add(ResourcesPluginId.PLUGIN_ID);
 		assertEquals(expectedDependencies, materialsPlugin.getPluginDependencies());
-
-		MaterialsActionSupport.testConsumer(924462486121444909L, (c) -> {
-			assertTrue(c.getDataManager(MaterialsDataManager.class).isPresent());
-		});
 
 	}
 

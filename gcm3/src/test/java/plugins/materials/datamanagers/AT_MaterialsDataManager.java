@@ -123,8 +123,8 @@ public class AT_MaterialsDataManager {
 
 		// create some batches and show that their various features are correct
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 20; i++) {
@@ -164,7 +164,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer is null */
 		MaterialsActionSupport.testConsumer(5818867905165255006L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -177,7 +177,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer is null */
 		MaterialsActionSupport.testConsumer(7126499343584962390L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -195,7 +195,7 @@ public class AT_MaterialsDataManager {
 		 * null
 		 */
 		MaterialsActionSupport.testConsumer(6921778272119512748L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				materialsDataManager.addBatch(null);
 			});
@@ -207,7 +207,7 @@ public class AT_MaterialsDataManager {
 		 * is null
 		 */
 		MaterialsActionSupport.testConsumer(3677913497762052761L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setAmount(0.1234);
@@ -224,7 +224,7 @@ public class AT_MaterialsDataManager {
 		 * is unknown
 		 */
 		MaterialsActionSupport.testConsumer(6823349146270705865L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.getUnknownMaterialId());
@@ -242,7 +242,7 @@ public class AT_MaterialsDataManager {
 		 * not finite
 		 */
 		MaterialsActionSupport.testConsumer(1740687746013988916L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -259,7 +259,7 @@ public class AT_MaterialsDataManager {
 		 * negative
 		 */
 		MaterialsActionSupport.testConsumer(3552750401177629416L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -276,7 +276,7 @@ public class AT_MaterialsDataManager {
 		 * batch property id
 		 */
 		MaterialsActionSupport.testConsumer(2067301487300157385L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -294,7 +294,7 @@ public class AT_MaterialsDataManager {
 		 * batch property id
 		 */
 		MaterialsActionSupport.testConsumer(3866738227501386466L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -313,7 +313,7 @@ public class AT_MaterialsDataManager {
 		 * def
 		 */
 		MaterialsActionSupport.testConsumer(2067301487300157385L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -332,7 +332,7 @@ public class AT_MaterialsDataManager {
 		 * def
 		 */
 		MaterialsActionSupport.testConsumer(8126846490003696164L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 				builder.setMaterialId(TestMaterialId.MATERIAL_1);
@@ -365,8 +365,8 @@ public class AT_MaterialsDataManager {
 
 		// create some batches and show that their various features are correct
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 20; i++) {
@@ -398,7 +398,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer is null */
 		MaterialsActionSupport.testConsumer(248695003930151563L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				materialsDataManager.addBatch(null, TestMaterialId.MATERIAL_1, 0.1234);
 			});
@@ -407,7 +407,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer is unknown */
 		MaterialsActionSupport.testConsumer(4435615926145456787L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				materialsDataManager.addBatch(TestMaterialsProducerId.getUnknownMaterialsProducerId(), TestMaterialId.MATERIAL_1, 0.1234);
 			});
@@ -419,7 +419,7 @@ public class AT_MaterialsDataManager {
 		 * is null
 		 */
 		MaterialsActionSupport.testConsumer(281162150914663405L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null, 0.1234);
 			});
@@ -428,7 +428,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the material id is unknown */
 		MaterialsActionSupport.testConsumer(4108216709703776214L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.getUnknownMaterialId(), 0.1234);
 			});
@@ -437,7 +437,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the amount is not finite */
 		MaterialsActionSupport.testConsumer(1456036643803016956L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, Double.POSITIVE_INFINITY);
 			});
@@ -446,7 +446,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the amount is negative */
 		MaterialsActionSupport.testConsumer(2577507368270644288L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, -1.0);
 			});
@@ -478,7 +478,7 @@ public class AT_MaterialsDataManager {
 		for (int i = 0; i < 10; i++) {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
 
 					// show that the stage exists and belongs to the producer
@@ -503,14 +503,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test if the materials producer is null */
 		MaterialsActionSupport.testConsumer(2938510662832987631L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addStage(null));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/* precondition test if the materials producer is unknown */
 		MaterialsActionSupport.testConsumer(2938510662832987631L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addStage(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
@@ -533,8 +533,8 @@ public class AT_MaterialsDataManager {
 			removalConfirmationBatches.put(testMaterialsProducerId, new LinkedHashSet<>());
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				Set<BatchId> confimationBatches = removalConfirmationBatches.get(testMaterialsProducerId);
 				for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -555,7 +555,7 @@ public class AT_MaterialsDataManager {
 
 			// show that the batches removed above are now gone
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				Set<BatchId> confimationBatches = removalConfirmationBatches.get(testMaterialsProducerId);
 				for (BatchId batchId : confimationBatches) {
 					assertFalse(materialsDataManager.batchExists(batchId));
@@ -573,7 +573,7 @@ public class AT_MaterialsDataManager {
 	public void testBatchPropertyIdExists() {
 
 		MaterialsActionSupport.testConsumer(4250860228077588132L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 				MaterialId associatedMaterialId = testBatchPropertyId.getTestMaterialId();
@@ -630,8 +630,8 @@ public class AT_MaterialsDataManager {
 			List<StageId> stagesToConfirm = new ArrayList<>();
 			List<BatchId> batchesToConfirm = new ArrayList<>();
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (int i = 0; i < 50; i++) {
 					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
@@ -673,7 +673,7 @@ public class AT_MaterialsDataManager {
 			// show that the stages and batches used to generate the new batches
 			// were in fact removed
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				for (StageId stageId : stagesToConfirm) {
 					assertFalse(materialsDataManager.stageExists(stageId));
 				}
@@ -691,7 +691,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the material id is null */
 		MaterialsActionSupport.testConsumer(5594572733415411831L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			double amount = 12.5;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToBatch(stageId, null, amount));
@@ -700,7 +700,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the material id is unknown */
 		MaterialsActionSupport.testConsumer(5132874324434783837L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			double amount = 12.5;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToBatch(stageId, TestMaterialId.getUnknownMaterialId(), amount));
@@ -710,7 +710,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is null */
 		MaterialsActionSupport.testConsumer(195083586581127005L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			double amount = 12.5;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToBatch(null, materialId, amount));
@@ -720,7 +720,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if stage id is unknown */
 		MaterialsActionSupport.testConsumer(6716241372071908817L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			double amount = 12.5;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToBatch(new StageId(10000000), materialId, amount));
@@ -729,7 +729,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage is offered */
 		MaterialsActionSupport.testConsumer(696988531477059866L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			double amount = 12.5;
@@ -740,7 +740,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the material amount is not finite */
 		MaterialsActionSupport.testConsumer(1976879256674379671L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToBatch(stageId, materialId, Double.POSITIVE_INFINITY));
@@ -749,7 +749,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the material amount is negative */
 		MaterialsActionSupport.testConsumer(8026304657517692525L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToBatch(stageId, materialId, -1.0));
@@ -798,8 +798,8 @@ public class AT_MaterialsDataManager {
 			List<BatchId> batchesToConfirm = new ArrayList<>();
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (int i = 0; i < 50; i++) {
 					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
@@ -842,7 +842,7 @@ public class AT_MaterialsDataManager {
 			// show that the stages and batches used to generate the new batches
 			// were in fact removed
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				for (StageId stageId : stagesToConfirm) {
 					assertFalse(materialsDataManager.stageExists(stageId));
 				}
@@ -864,7 +864,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is null */
 		MaterialsActionSupport.testConsumer(684895513326133078L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			long amount = 15L;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToResource(stageId, null, amount));
@@ -873,7 +873,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		MaterialsActionSupport.testConsumer(4496439455291273002L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			long amount = 15L;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToResource(stageId, TestResourceId.getUnknownResourceId(), amount));
@@ -882,7 +882,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: */
 		MaterialsActionSupport.testConsumer(7915777615994239053L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 15L;
 			// if the stage id is null
@@ -892,7 +892,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is unknown */
 		MaterialsActionSupport.testConsumer(7939732368430243050L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 15L;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToResource(new StageId(10000000), resourceId, amount));
@@ -901,7 +901,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage is offered */
 		MaterialsActionSupport.testConsumer(5426191091405983240L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 15L;
@@ -913,7 +913,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the the resource amount is negative */
 		MaterialsActionSupport.testConsumer(677670960081138598L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.convertStageToResource(stageId, resourceId, -1L));
@@ -925,7 +925,7 @@ public class AT_MaterialsDataManager {
 		 * the materials producer's resource level
 		 */
 		MaterialsActionSupport.testConsumer(3420597827763142806L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			// first ensure that there is some small amount of resource stored
@@ -946,8 +946,8 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
@@ -981,8 +981,8 @@ public class AT_MaterialsDataManager {
 	public void testGetBatchMaterial() {
 
 		MaterialsActionSupport.testConsumer(2922188778885130752L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (int i = 0; i < 100; i++) {
@@ -998,14 +998,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(8694113802920961598L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchMaterial(null));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(6524569565798029395L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException // if the batch id is unknown
 			contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchMaterial(new BatchId(10000000)));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
@@ -1021,9 +1021,9 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				for (int i = 0; i < 10; i++) {
@@ -1045,7 +1045,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test : if the batch id is null */
 		MaterialsActionSupport.testConsumer(1422948417739515067L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchProducer(null));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
@@ -1054,7 +1054,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test : if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(6083037726892077495L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchProducer(new BatchId(10000000)));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
@@ -1067,7 +1067,7 @@ public class AT_MaterialsDataManager {
 	public void testGetBatchPropertyDefinition() {
 
 		MaterialsActionSupport.testConsumer(4785939121817102392L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 
@@ -1083,7 +1083,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition tests if the material id is null */
 		MaterialsActionSupport.testConsumer(5856664286545303775L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			TestBatchPropertyId testBatchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyDefinition(null, testBatchPropertyId));
 			assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
@@ -1091,7 +1091,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition tests if the material id is unknown */
 		MaterialsActionSupport.testConsumer(3682262623372578238L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			TestBatchPropertyId testBatchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK;
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getBatchPropertyDefinition(TestMaterialId.getUnknownMaterialId(), testBatchPropertyId));
@@ -1100,14 +1100,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition tests if the batch property id is null */
 		MaterialsActionSupport.testConsumer(2977320444281387466L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyDefinition(TestMaterialId.MATERIAL_1, null));
 			assertEquals(MaterialsError.NULL_BATCH_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests if the batch property id is unknown */
 		MaterialsActionSupport.testConsumer(712791219730643932L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getBatchPropertyDefinition(TestMaterialId.MATERIAL_1, TestBatchPropertyId.getUnknownBatchPropertyId()));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID, contractException.getErrorType());
@@ -1120,7 +1120,7 @@ public class AT_MaterialsDataManager {
 	public void testGetBatchPropertyIds() {
 
 		MaterialsActionSupport.testConsumer(8657082858154514151L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 				Set<TestBatchPropertyId> expectedBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
@@ -1142,14 +1142,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the material id is null */
 		MaterialsActionSupport.testConsumer(6822125249787156609L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyIds(null));
 			assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the material id is unknown */
 		MaterialsActionSupport.testConsumer(7025275053813907413L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyIds(TestMaterialId.getUnknownMaterialId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
 		});
@@ -1173,8 +1173,8 @@ public class AT_MaterialsDataManager {
 		 * times for all properties
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a few batches
@@ -1197,8 +1197,8 @@ public class AT_MaterialsDataManager {
 		for (int i = 1; i < 10; i++) {
 			double actionTime = i;
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				// plan several times to alter some of the batch properties
@@ -1229,8 +1229,8 @@ public class AT_MaterialsDataManager {
 		 * expected values.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
@@ -1257,7 +1257,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(411385203720638722L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyTime(null, batchPropertyId));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
@@ -1265,7 +1265,7 @@ public class AT_MaterialsDataManager {
 		});
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(6352485251167807955L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyTime(new BatchId(100000), batchPropertyId));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
@@ -1273,7 +1273,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch property id is null */
 		MaterialsActionSupport.testConsumer(3856953954489485161L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_3, TestMaterialId.MATERIAL_2, 15L);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyTime(batchId, null));
 			assertEquals(MaterialsError.NULL_BATCH_PROPERTY_ID, contractException.getErrorType());
@@ -1281,7 +1281,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch property id is unknown */
 		MaterialsActionSupport.testConsumer(2978468228127714889L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 65L);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyTime(batchId, TestBatchPropertyId.getUnknownBatchPropertyId()));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID, contractException.getErrorType());
@@ -1307,8 +1307,8 @@ public class AT_MaterialsDataManager {
 			 * for all properties
 			 */
 
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a few batches
@@ -1343,7 +1343,7 @@ public class AT_MaterialsDataManager {
 
 		// have an actor show that the batches have the expected property values
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 				List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(materialsProducerId);
 				for (BatchId batchId : inventoryBatches) {
@@ -1364,7 +1364,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(7782292483170344303L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyValue(null, batchPropertyId));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
@@ -1372,7 +1372,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(2235610256211958684L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyValue(new BatchId(100000), batchPropertyId));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
@@ -1380,7 +1380,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch property id is null */
 		MaterialsActionSupport.testConsumer(4276253162944402582L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 45L);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyValue(batchId, null));
 			assertEquals(MaterialsError.NULL_BATCH_PROPERTY_ID, contractException.getErrorType());
@@ -1388,7 +1388,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch property id is unknown */
 		MaterialsActionSupport.testConsumer(211483511977100214L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 45L);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchPropertyValue(batchId, TestBatchPropertyId.getUnknownBatchPropertyId()));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID, contractException.getErrorType());
@@ -1401,7 +1401,7 @@ public class AT_MaterialsDataManager {
 	public void testGetBatchStageId() {
 
 		MaterialsActionSupport.testConsumer(472707250737446845L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			// create a stage and a batch
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_3);
 
@@ -1429,14 +1429,14 @@ public class AT_MaterialsDataManager {
 		});
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(8182230906627557939L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchStageId(null));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(3682958492574276233L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchStageId(new BatchId(100000)));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 		});
@@ -1459,10 +1459,10 @@ public class AT_MaterialsDataManager {
 
 			double planTime = i;
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(planTime, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 				// build a few batches
 				int numberOfBatches = randomGenerator.nextInt(5) + 1;
@@ -1493,14 +1493,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(2942652850143901549L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchTime(null));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(8578067293001466760L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getBatchTime(new BatchId(1000000)));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 		});
@@ -1521,9 +1521,9 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				Set<BatchId> expectedInventoryBatches = expectedInventoryBatchesByProducer.get(testMaterialsProducerId);
 
 				// create some batches
@@ -1563,7 +1563,7 @@ public class AT_MaterialsDataManager {
 		}
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				Set<BatchId> expectedInventoryBatches = expectedInventoryBatchesByProducer.get(testMaterialsProducerId);
@@ -1582,14 +1582,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition tests if the materials producerId id is null */
 		MaterialsActionSupport.testConsumer(6759896268818524420L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getInventoryBatches(null));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests if the materials producerId id is unknown */
 		MaterialsActionSupport.testConsumer(944257921550728616L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getInventoryBatches(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
@@ -1619,10 +1619,10 @@ public class AT_MaterialsDataManager {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				Map<MaterialId, Set<BatchId>> materialToBatchesMap = expectedInventoryBatchesMap.get(materialsProducerId);
 
 				// create some (100) batches
@@ -1677,7 +1677,7 @@ public class AT_MaterialsDataManager {
 		}
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			// show that the inventory batches are correct
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
@@ -1698,14 +1698,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId id is null */
 		MaterialsActionSupport.testConsumer(8066333940937253765L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getInventoryBatchesByMaterialId(null, TestMaterialId.MATERIAL_1));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the materials producerId id is unknown */
 		MaterialsActionSupport.testConsumer(3143917391309849287L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getInventoryBatchesByMaterialId(TestMaterialsProducerId.getUnknownMaterialsProducerId(), TestMaterialId.MATERIAL_2));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -1713,14 +1713,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the material id is null */
 		MaterialsActionSupport.testConsumer(874196115936784556L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getInventoryBatchesByMaterialId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null));
 			assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the material id is null */
 		MaterialsActionSupport.testConsumer(9112311292467047420L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getInventoryBatchesByMaterialId(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.getUnknownMaterialId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
@@ -1732,7 +1732,7 @@ public class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "getMaterialIds", args = {})
 	public void testGetMaterialIds() {
 		MaterialsActionSupport.testConsumer(6611654668838622496L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			assertEquals(EnumSet.allOf(TestMaterialId.class), materialsDataManager.getMaterialIds());
 		});
 	}
@@ -1742,7 +1742,7 @@ public class AT_MaterialsDataManager {
 	public void testGetMaterialsProducerIds() {
 
 		MaterialsActionSupport.testConsumer(3824970086302200338L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			assertEquals(EnumSet.allOf(TestMaterialsProducerId.class), materialsDataManager.getMaterialsProducerIds());
 		});
 	}
@@ -1752,7 +1752,7 @@ public class AT_MaterialsDataManager {
 	public void testMaterialIdExists() {
 
 		MaterialsActionSupport.testConsumer(6918669723394457093L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 				assertTrue(materialsDataManager.materialIdExists(testMaterialId));
@@ -1767,7 +1767,7 @@ public class AT_MaterialsDataManager {
 	public void testGetMaterialsProducerPropertyDefinition() {
 
 		MaterialsActionSupport.testConsumer(7151961147034751776L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 				PropertyDefinition expectedPropertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
@@ -1779,7 +1779,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer property id is null */
 		MaterialsActionSupport.testConsumer(4030472148503907839L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDaView.getMaterialsProducerPropertyDefinition(null));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID, contractException.getErrorType());
 		});
@@ -1788,7 +1788,7 @@ public class AT_MaterialsDataManager {
 		 * precondition test: if the materials producer property id is unknown
 		 */
 		MaterialsActionSupport.testConsumer(863172317284141879L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDaView.getMaterialsProducerPropertyDefinition(TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, contractException.getErrorType());
@@ -1800,7 +1800,7 @@ public class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "getMaterialsProducerPropertyIds", args = {})
 	public void testGetMaterialsProducerPropertyIds() {
 		MaterialsActionSupport.testConsumer(8718225529106870071L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			assertEquals(EnumSet.allOf(TestMaterialsProducerPropertyId.class), materialsDaView.getMaterialsProducerPropertyIds());
 		});
 	}
@@ -1826,9 +1826,9 @@ public class AT_MaterialsDataManager {
 		// update several random property values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 				for (int j = 0; j < propertyChangeCount; j++) {
 					TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
@@ -1842,7 +1842,7 @@ public class AT_MaterialsDataManager {
 		}
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 					MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
@@ -1859,7 +1859,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId id is null */
 		MaterialsActionSupport.testConsumer(8047663013308359028L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDaView.getMaterialsProducerPropertyTime(null, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -1867,7 +1867,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId id is unknown */
 		MaterialsActionSupport.testConsumer(7076209560671384217L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDaView.getMaterialsProducerPropertyTime(TestMaterialsProducerId.getUnknownMaterialsProducerId(),
 					TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -1875,7 +1875,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId property id is null */
 		MaterialsActionSupport.testConsumer(8444324674368897195L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDaView.getMaterialsProducerPropertyTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID, contractException.getErrorType());
 		});
@@ -1884,7 +1884,7 @@ public class AT_MaterialsDataManager {
 		 * precondition test: if the materials producerId property id is unknown
 		 */
 		MaterialsActionSupport.testConsumer(3195486517854831744L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDaView.getMaterialsProducerPropertyTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, contractException.getErrorType());
@@ -1904,7 +1904,7 @@ public class AT_MaterialsDataManager {
 
 		// initialize the materials data manager
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
@@ -1922,8 +1922,8 @@ public class AT_MaterialsDataManager {
 		// update several random property values at various times
 		for (int i = 0; i < 10; i++) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (int j = 0; j < propertyChangeCount; j++) {
 					TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
@@ -1937,7 +1937,7 @@ public class AT_MaterialsDataManager {
 		}
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 					MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
@@ -1954,7 +1954,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId id is null */
 		MaterialsActionSupport.testConsumer(4247143641356704364L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDaView.getMaterialsProducerPropertyValue(null, TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -1962,7 +1962,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId id is unknown */
 		MaterialsActionSupport.testConsumer(7731689857034028615L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDaView.getMaterialsProducerPropertyValue(TestMaterialsProducerId.getUnknownMaterialsProducerId(),
 					TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_4_BOOLEAN_MUTABLE_TRACK));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -1970,7 +1970,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId property id is null */
 		MaterialsActionSupport.testConsumer(1004792420489047936L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDaView.getMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID, contractException.getErrorType());
 		});
@@ -1979,7 +1979,7 @@ public class AT_MaterialsDataManager {
 		 * precondition test: if the materials producerId property id is unknown
 		 */
 		MaterialsActionSupport.testConsumer(133851619411326116L, (c) -> {
-			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDaView = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDaView.getMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, contractException.getErrorType());
@@ -2006,9 +2006,9 @@ public class AT_MaterialsDataManager {
 		// update several random resource levels values at various times
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 				for (int j = 0; j < resourceLevelChangeCount; j++) {
 
@@ -2024,7 +2024,7 @@ public class AT_MaterialsDataManager {
 		}
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					MultiKey multiKey = new MultiKey(testMaterialsProducerId, testResourceId);
@@ -2041,14 +2041,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId id is null */
 		MaterialsActionSupport.testConsumer(11082575022266925L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getMaterialsProducerResourceLevel(null, TestResourceId.RESOURCE_1));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the materials producerId id is unknown */
 		MaterialsActionSupport.testConsumer(6362058221207452078L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getMaterialsProducerResourceLevel(TestMaterialsProducerId.getUnknownMaterialsProducerId(), TestResourceId.RESOURCE_1));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -2056,7 +2056,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is null */
 		MaterialsActionSupport.testConsumer(7531288497048301736L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
@@ -2064,7 +2064,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		MaterialsActionSupport.testConsumer(2745862264533327311L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
@@ -2090,9 +2090,9 @@ public class AT_MaterialsDataManager {
 		double plantime = 0;
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(plantime++, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				for (int j = 0; j < 5; j++) {
 					TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
 					Integer resourceLevel = randomGenerator.nextInt(100) + 1;
@@ -2105,7 +2105,7 @@ public class AT_MaterialsDataManager {
 		}
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(10, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					MultiKey multiKey = new MultiKey(testMaterialsProducerId, testResourceId);
@@ -2122,14 +2122,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producerId id is null */
 		MaterialsActionSupport.testConsumer(5802266741184871831L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getMaterialsProducerResourceTime(null, TestResourceId.RESOURCE_1));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the materials producerId id is unknown */
 		MaterialsActionSupport.testConsumer(4254859094661916110L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getMaterialsProducerResourceTime(TestMaterialsProducerId.getUnknownMaterialsProducerId(), TestResourceId.RESOURCE_1));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -2137,7 +2137,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is null */
 		MaterialsActionSupport.testConsumer(3911919336328300644L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getMaterialsProducerResourceTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, null));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
@@ -2145,7 +2145,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		MaterialsActionSupport.testConsumer(2654216033515042203L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> materialsDataManager.getMaterialsProducerResourceTime(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
@@ -2161,8 +2161,8 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				/*
@@ -2193,14 +2193,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition tests if the materials producerId id is null */
 		MaterialsActionSupport.testConsumer(1728234953072549300L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getOfferedStages(null));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests if the materials producerId id is unknown */
 		MaterialsActionSupport.testConsumer(809512240800144004L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getOfferedStages(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
@@ -2219,8 +2219,8 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				// create some stages and batches
@@ -2240,7 +2240,7 @@ public class AT_MaterialsDataManager {
 		// have an actor show that the batches are staged as expected
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			Map<StageId, Set<BatchId>> actualStageBatches = new LinkedHashMap<>();
 			for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 				List<StageId> stageIds = materialsDataManager.getStages(materialsProducerId);
@@ -2258,14 +2258,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition tests if the stage id is null */
 		MaterialsActionSupport.testConsumer(7434749084817685354L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getStageBatches(null));
 			assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests if the stage id is unknown */
 		MaterialsActionSupport.testConsumer(8988415576850624232L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getStageBatches(new StageId(10000000)));
 			assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 		});
@@ -2285,9 +2285,9 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				// create some stages and batches
@@ -2315,7 +2315,7 @@ public class AT_MaterialsDataManager {
 		// have an actor show that the batches are staged as expected
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			/*
 			 * gather the actual stage batches in a structure identical to the
@@ -2349,7 +2349,7 @@ public class AT_MaterialsDataManager {
 
 		// precondition tests
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			// if the stage id is null
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getStageBatchesByMaterialId(null, TestMaterialId.MATERIAL_1));
@@ -2382,7 +2382,7 @@ public class AT_MaterialsDataManager {
 
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
 				assertEquals(testMaterialsProducerId, materialsDataManager.getStageProducer(stageId));
 			}));
@@ -2394,14 +2394,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is null */
 		MaterialsActionSupport.testConsumer(3429442631390139742L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getStageProducer(null));
 			assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the stage id is unknown */
 		MaterialsActionSupport.testConsumer(8553021441594074433L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getStageProducer(new StageId(1000000000)));
 			assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 		});
@@ -2417,8 +2417,8 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				Set<StageId> expectedStages = new LinkedHashSet<>();
@@ -2443,14 +2443,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer id is null */
 		MaterialsActionSupport.testConsumer(8012112350970626114L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getStages(null));
 			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the materials producer id is unknown */
 		MaterialsActionSupport.testConsumer(4013634140214782310L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.getStages(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
@@ -2463,7 +2463,7 @@ public class AT_MaterialsDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (int i = 0; i < 100; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
@@ -2494,7 +2494,7 @@ public class AT_MaterialsDataManager {
 	public void testMaterialsProducerIdExists() {
 
 		MaterialsActionSupport.testConsumer(4005535514531641716L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				assertTrue(materialsDataManager.materialsProducerIdExists(testMaterialsProducerId));
@@ -2510,7 +2510,7 @@ public class AT_MaterialsDataManager {
 	public void testMaterialsProducerPropertyIdExists() {
 
 		MaterialsActionSupport.testConsumer(8256309156804000329L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 				assertTrue(materialsDataManager.materialsProducerPropertyIdExists(testMaterialsProducerPropertyId));
@@ -2524,7 +2524,7 @@ public class AT_MaterialsDataManager {
 	@UnitTestMethod(name = "stageExists", args = { StageId.class })
 	public void testStageExists() {
 		MaterialsActionSupport.testConsumer(4646356228574091149L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 				assertTrue(materialsDataManager.stageExists(stageId));
@@ -2558,9 +2558,9 @@ public class AT_MaterialsDataManager {
 		 */
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 				for (int i = 0; i < 40; i++) {
 					materialsDataManager.addBatch(testMaterialsProducerId, TestMaterialId.getRandomMaterialId(randomGenerator), randomGenerator.nextDouble() + 0.01);
@@ -2589,9 +2589,9 @@ public class AT_MaterialsDataManager {
 		 */
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 				List<StageId> stages = materialsDataManager.getStages(testMaterialsProducerId);
 				for (StageId stageId : stages) {
@@ -2623,21 +2623,21 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(9033912130601526542L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToInventory(null));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(4357313141781993780L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToInventory(new BatchId(10000000)));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the batch is not staged */
 		MaterialsActionSupport.testConsumer(5899034328012868517L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 5.0);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToInventory(batchId));
 			assertEquals(MaterialsError.BATCH_NOT_STAGED, contractException.getErrorType());
@@ -2645,7 +2645,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage containing the batch is offered */
 		MaterialsActionSupport.testConsumer(6151702850690578711L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 5.0);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.moveBatchToStage(batchId, stageId);
@@ -2680,8 +2680,8 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (int i = 0; i < 40; i++) {
 					materialsDataManager.addBatch(testMaterialsProducerId, TestMaterialId.getRandomMaterialId(randomGenerator), randomGenerator.nextDouble() + 0.01);
@@ -2696,8 +2696,8 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				List<StageId> stages = materialsDataManager.getStages(testMaterialsProducerId);
@@ -2733,7 +2733,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToStage(null, stageId));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
@@ -2741,7 +2741,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToStage(new BatchId(100000000), stageId));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
@@ -2749,7 +2749,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch is already staged */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 5.6);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.moveBatchToStage(batchId, stageId);
@@ -2759,7 +2759,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is null */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 5.6);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToStage(batchId, null));
 			assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
@@ -2767,7 +2767,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is unknown */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 5.6);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToStage(batchId, new StageId(10000000)));
 			assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
@@ -2775,7 +2775,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage is offered */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 5.6);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.setStageOfferState(stageId, true);
@@ -2788,7 +2788,7 @@ public class AT_MaterialsDataManager {
 		 * materials producer
 		 */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialId.MATERIAL_2, 12);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToStage(batchId, stageId));
@@ -2820,8 +2820,8 @@ public class AT_MaterialsDataManager {
 		 */
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (int i = 0; i < 50; i++) {
 					materialsDataManager.addBatch(testMaterialsProducerId, TestMaterialId.getRandomMaterialId(randomGenerator), randomGenerator.nextDouble());
@@ -2831,9 +2831,9 @@ public class AT_MaterialsDataManager {
 
 		// remove some batches
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			for (BatchId batchId : inventoryBatches) {
 				if (randomGenerator.nextBoolean()) {
@@ -2845,7 +2845,7 @@ public class AT_MaterialsDataManager {
 
 		// show that the batches were indeed removed
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			for (BatchId batchId : expectedObservations) {
 				assertFalse(materialsDataManager.batchExists(batchId));
 			}
@@ -2863,21 +2863,21 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(6338675888020916426L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.removeBatch(null));
 			assertEquals(MaterialsError.NULL_BATCH_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(3451796010171778050L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.removeBatch(new BatchId(100000)));
 			assertEquals(MaterialsError.UNKNOWN_BATCH_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the batch is on an offered stage */
 		MaterialsActionSupport.testConsumer(2022222016456137374L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.moveBatchToStage(batchId, stageId);
@@ -2919,8 +2919,8 @@ public class AT_MaterialsDataManager {
 		// have the producers create some stages with batches
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (int i = 0; i < 50; i++) {
 					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
@@ -2942,8 +2942,8 @@ public class AT_MaterialsDataManager {
 			Set<BatchId> expectedInventoryBatches = new LinkedHashSet<>();
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				List<StageId> stages = materialsDataManager.getStages(testMaterialsProducerId);
@@ -2978,7 +2978,7 @@ public class AT_MaterialsDataManager {
 
 			// show that the expected batches and stages were removed
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				for (StageId stageId : stagesToConfirm) {
 					assertFalse(materialsDataManager.stageExists(stageId));
 				}
@@ -3004,21 +3004,21 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is null */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.removeStage(null, false));
 			assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the stage id is unknown */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.removeStage(new StageId(1000000), false));
 			assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if stage is offered */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.setStageOfferState(stageId, true);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.removeStage(stageId, false));
@@ -3047,8 +3047,8 @@ public class AT_MaterialsDataManager {
 		// create some batches
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (int i = 0; i < 10; i++) {
 					materialsDataManager.addBatch(testMaterialsProducerId, TestMaterialId.getRandomMaterialId(randomGenerator), randomGenerator.nextDouble() + 0.01);
@@ -3061,9 +3061,9 @@ public class AT_MaterialsDataManager {
 		for (int i = 0; i < 5; i++) {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 					RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 					List<BatchId> inventoryBatches = materialsDataManager.getInventoryBatches(testMaterialsProducerId);
 					for (BatchId batchId : inventoryBatches) {
 						TestMaterialId batchMaterial = materialsDataManager.getBatchMaterial(batchId);
@@ -3097,7 +3097,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is null */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 			Object propertyValue = 56;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.setBatchPropertyValue(null, batchPropertyId, propertyValue));
@@ -3106,7 +3106,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch id is unknown */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 			Object propertyValue = 56;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.setBatchPropertyValue(new BatchId(100000), batchPropertyId, propertyValue));
@@ -3115,7 +3115,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch property id is null */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, materialId, 1.0);
 			Object propertyValue = 56;
@@ -3125,7 +3125,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch property id is unknown */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, materialId, 1.0);
 			Object propertyValue = 56;
@@ -3136,7 +3136,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if batch property is not mutable */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, materialId, 1.0);
 			ContractException contractException = assertThrows(ContractException.class,
@@ -3146,7 +3146,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch property value is null */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, materialId, 1.0);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
@@ -3159,7 +3159,7 @@ public class AT_MaterialsDataManager {
 		 * the corresponding property definition
 		 */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, materialId, 1.0);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
@@ -3169,7 +3169,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the batch in on an offered stage */
 		MaterialsActionSupport.testConsumer(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			BatchId batchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, materialId, 1.0);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
@@ -3211,8 +3211,8 @@ public class AT_MaterialsDataManager {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				// pick a random materials producer property and update it to a
 				// random value
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
 				TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.getRandomMutableMaterialsProducerPropertyId(randomGenerator);
@@ -3241,7 +3241,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer id is null */
 		MaterialsActionSupport.testConsumer(6542684073527908815L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 			Object propertyValue = 5;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.setMaterialsProducerPropertyValue(null, materialsProducerPropertyId, propertyValue));
@@ -3250,7 +3250,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer id is unknown */
 		MaterialsActionSupport.testConsumer(7681762910631637513L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 			Object propertyValue = 5;
 			ContractException contractException = assertThrows(ContractException.class,
@@ -3260,7 +3260,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer property id is null */
 		MaterialsActionSupport.testConsumer(5021355716878157868L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 			Object propertyValue = 5;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId, null, propertyValue));
@@ -3271,7 +3271,7 @@ public class AT_MaterialsDataManager {
 		 * precondition test: if the materials producer property id is unknown
 		 */
 		MaterialsActionSupport.testConsumer(6739449188760503613L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 			Object propertyValue = 5;
 			ContractException contractException = assertThrows(ContractException.class,
@@ -3281,7 +3281,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer property is immutable */
 		MaterialsActionSupport.testConsumer(3015359065220869477L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 			Object propertyValue = 5;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId,
@@ -3291,7 +3291,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the property value is null */
 		MaterialsActionSupport.testConsumer(2614476067199172944L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 			MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class,
@@ -3304,7 +3304,7 @@ public class AT_MaterialsDataManager {
 		 * corresponding property definition
 		 */
 		MaterialsActionSupport.testConsumer(5704066697861534404L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 			MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class,
@@ -3334,7 +3334,7 @@ public class AT_MaterialsDataManager {
 		// have the producers create a few stages
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				for (int i = 0; i < 5; i++) {
 					materialsDataManager.addStage(testMaterialsProducerId);
 				}
@@ -3345,9 +3345,9 @@ public class AT_MaterialsDataManager {
 		for (int i = 0; i < 10; i++) {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 					RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 					List<StageId> stages = materialsDataManager.getStages(testMaterialsProducerId);
 					StageId stageId = stages.get(randomGenerator.nextInt(stages.size()));
 					boolean isOffered = materialsDataManager.isStageOffered(stageId);
@@ -3375,14 +3375,14 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is null */
 		MaterialsActionSupport.testConsumer(5384463547664747393L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.setStageOfferState(null, true));
 			assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the stage id is unknown */
 		MaterialsActionSupport.testConsumer(319106508275202491L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.setStageOfferState(new StageId(10000000), true));
 			assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 		});
@@ -3413,8 +3413,8 @@ public class AT_MaterialsDataManager {
 		// amount in each batch is positive
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 					for (int i = 0; i < 10; i++) {
@@ -3432,8 +3432,8 @@ public class AT_MaterialsDataManager {
 
 		// have the materials producer swap material amount around
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 				List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(materialsProducerId, testMaterialId);
@@ -3479,7 +3479,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the source batch id is null */
 		MaterialsActionSupport.testConsumer(4531031694400929670L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				materialsDataManager.transferMaterialBetweenBatches(null, destinationBatchId, 0.1);
 			});
@@ -3489,7 +3489,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the source batch id is unknown */
 		MaterialsActionSupport.testConsumer(6565712732641056695L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = new BatchId(100000);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, 0.1);
@@ -3500,7 +3500,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the destination batch id is null */
 		MaterialsActionSupport.testConsumer(2331763843587032989L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = null;
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, 0.1);
@@ -3511,7 +3511,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the destination batch id is unknown */
 		MaterialsActionSupport.testConsumer(6191035775701595700L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = new BatchId(10000000);
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, 0.1);
@@ -3524,7 +3524,7 @@ public class AT_MaterialsDataManager {
 		 */
 		MaterialsActionSupport.testConsumer(3554772523918373156L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = sourceBatchId;
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, 0.1);
@@ -3537,7 +3537,7 @@ public class AT_MaterialsDataManager {
 		 */
 		MaterialsActionSupport.testConsumer(7162782209932339508L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_2, 1.0);
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, 0.1);
@@ -3551,7 +3551,7 @@ public class AT_MaterialsDataManager {
 		 */
 		MaterialsActionSupport.testConsumer(5391338933894482101L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_2, TestMaterialId.MATERIAL_1, 1.0);
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, 0.1);
@@ -3562,7 +3562,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the source batch is on a stage is offered */
 		MaterialsActionSupport.testConsumer(3272165493215915111L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 				materialsDataManager.moveBatchToStage(sourceBatchId, stageId);
@@ -3578,7 +3578,7 @@ public class AT_MaterialsDataManager {
 		 */
 		MaterialsActionSupport.testConsumer(472094558069917703L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
@@ -3592,7 +3592,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the shift amount is not a finite number */
 		MaterialsActionSupport.testConsumer(2032850391793850929L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, Double.POSITIVE_INFINITY);
@@ -3603,7 +3603,7 @@ public class AT_MaterialsDataManager {
 		/* precondition test: if the shift amount is negative */
 		MaterialsActionSupport.testConsumer(5245408361837825062L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, -0.5);
@@ -3617,7 +3617,7 @@ public class AT_MaterialsDataManager {
 		 */
 		MaterialsActionSupport.testConsumer(8724998204446972180L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, 1.0);
 				materialsDataManager.transferMaterialBetweenBatches(sourceBatchId, destinationBatchId, 2.0);
@@ -3631,7 +3631,7 @@ public class AT_MaterialsDataManager {
 		 */
 		MaterialsActionSupport.testConsumer(3007064903100070620L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				BatchId sourceBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, Double.MAX_VALUE);
 				BatchId destinationBatchId = materialsDataManager.addBatch(TestMaterialsProducerId.MATERIALS_PRODUCER_1, TestMaterialId.MATERIAL_1, Double.MAX_VALUE);
 				double amount = Double.MAX_VALUE / 2;
@@ -3672,9 +3672,9 @@ public class AT_MaterialsDataManager {
 		// have the materials producers create a few offered stages
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				for (int i = 0; i < stagesPerProducer; i++) {
 					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
 					for (int j = 0; j < 3; j++) {
@@ -3691,8 +3691,8 @@ public class AT_MaterialsDataManager {
 		// have an agent transfer offered stages
 		for (int i = 0; i < transferCount; i++) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				// determine the stages to transfer
@@ -3740,7 +3740,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is null */
 		MaterialsActionSupport.testConsumer(1130010427224075392L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			MaterialsProducerId altProducer = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			materialsDataManager.setStageOfferState(stageId, true);
@@ -3750,7 +3750,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage id is unknown */
 		MaterialsActionSupport.testConsumer(3682112595474000731L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			MaterialsProducerId altProducer = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			materialsDataManager.setStageOfferState(stageId, true);
@@ -3760,7 +3760,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer id is null */
 		MaterialsActionSupport.testConsumer(2900230239814256887L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.setStageOfferState(stageId, true);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.transferOfferedStage(stageId, null));
@@ -3769,7 +3769,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer id is unknown */
 		MaterialsActionSupport.testConsumer(452781590728467653L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.setStageOfferState(stageId, true);
 			ContractException contractException = assertThrows(ContractException.class,
@@ -3779,7 +3779,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the stage is not offered */
 		MaterialsActionSupport.testConsumer(6778669475043282422L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			MaterialsProducerId altProducer = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			materialsDataManager.setStageOfferState(stageId, true);
@@ -3795,7 +3795,7 @@ public class AT_MaterialsDataManager {
 		 */
 		MaterialsActionSupport.testConsumer(4646205108657064829L, (c) -> {
 
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.setStageOfferState(stageId, true);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.transferOfferedStage(stageId, TestMaterialsProducerId.MATERIALS_PRODUCER_1));
@@ -3847,8 +3847,8 @@ public class AT_MaterialsDataManager {
 		// have the producers generate some resources
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				for (TestResourceId testResourceId : TestResourceId.values()) {
@@ -3868,9 +3868,9 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-					ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
-					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+					ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 					RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 					long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
 					if (materialsProducerResourceLevel > 0) {
@@ -3910,7 +3910,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is null */
 		MaterialsActionSupport.testConsumer(1367796071113751106L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			RegionId regionId = TestRegionId.REGION_4;
@@ -3923,7 +3923,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the resource id is unknown */
 		MaterialsActionSupport.testConsumer(8014590590926533288L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			RegionId regionId = TestRegionId.REGION_4;
@@ -3937,7 +3937,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the region id is null */
 		MaterialsActionSupport.testConsumer(4865873025074936636L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			long amountToTransfer = 45L;
@@ -3949,7 +3949,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the region id is unknown */
 		MaterialsActionSupport.testConsumer(4472671173642659805L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			long amountToTransfer = 45L;
@@ -3962,7 +3962,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer id is null */
 		MaterialsActionSupport.testConsumer(6956131170154399460L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			RegionId regionId = TestRegionId.REGION_4;
@@ -3975,7 +3975,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials producer id is unknown */
 		MaterialsActionSupport.testConsumer(1760306489660703762L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			RegionId regionId = TestRegionId.REGION_4;
@@ -3989,7 +3989,7 @@ public class AT_MaterialsDataManager {
 
 		/* precondition test: if the materials amount is negative */
 		MaterialsActionSupport.testConsumer(2214714534579989103L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			RegionId regionId = TestRegionId.REGION_4;
@@ -4005,7 +4005,7 @@ public class AT_MaterialsDataManager {
 		 * of the materials producer
 		 */
 		MaterialsActionSupport.testConsumer(8260344965557977221L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			RegionId regionId = TestRegionId.REGION_4;
@@ -4022,7 +4022,7 @@ public class AT_MaterialsDataManager {
 		 * the regions resource level
 		 */
 		MaterialsActionSupport.testConsumer(4416313459810970424L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 			ResourceId resourceId = TestResourceId.RESOURCE_3;
 			RegionId regionId = TestRegionId.REGION_4;
@@ -4273,8 +4273,8 @@ public class AT_MaterialsDataManager {
 		// create an agent to show that materials initial data was properly
 		// loaded as reflected in the data view
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 
 			// show that the correct materials producer ids are present
 			assertEquals(materialsPluginData.getMaterialsProducerIds(), materialsDataManager.getMaterialsProducerIds());

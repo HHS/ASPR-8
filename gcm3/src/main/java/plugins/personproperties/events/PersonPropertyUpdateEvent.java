@@ -226,7 +226,7 @@ public class PersonPropertyUpdateEvent implements Event {
 			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
 		}
 
-		if (!simulationContext.getDataManager(PersonPropertiesDataManager.class).get().personPropertyIdExists(personPropertyId)) {
+		if (!simulationContext.getDataManager(PersonPropertiesDataManager.class).personPropertyIdExists(personPropertyId)) {
 			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID);
 		}
 	}
@@ -236,7 +236,7 @@ public class PersonPropertyUpdateEvent implements Event {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
 
-		if (!simulationContext.getDataManager(RegionDataManager.class).get().regionIdExists(regionId)) {
+		if (!simulationContext.getDataManager(RegionDataManager.class).regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
@@ -246,7 +246,7 @@ public class PersonPropertyUpdateEvent implements Event {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
 
-		if (!simulationContext.getDataManager(PersonDataManager.class).get().personExists(personId)) {
+		if (!simulationContext.getDataManager(PersonDataManager.class).personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}

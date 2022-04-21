@@ -4,13 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.Simulation;
-import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import tools.annotations.UnitTest;
@@ -39,10 +36,7 @@ public class AT_StochasticsPlugin {
 		 * Show that the plugin establishes the StochasticsDataManager
 		 */
 		TestPluginData.Builder testPluginBuilder = TestPluginData.builder();
-		testPluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			Optional<StochasticsDataManager> optionalDataManager = c.getDataManager(StochasticsDataManager.class);
-			assertTrue(optionalDataManager.isPresent());
-		}));
+		
 		TestPluginData testPluginData = testPluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 

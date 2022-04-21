@@ -328,7 +328,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		this.simulationContext = simulationContext;
 		
 		retainPersonKeys = partition.retainPersonKeys();
-		personDataManager = simulationContext.getDataManager(PersonDataManager.class).get();
+		personDataManager = simulationContext.getDataManager(PersonDataManager.class);
 
 		if (retainPersonKeys) {
 			personToKeyMap = new ArrayList<>(personDataManager.getPersonIdLimit());
@@ -365,7 +365,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		labelerSensitivities = new LabelerSensitivity<?>[maxLabelerSensitivityCount];
 
-		stochasticsDataManager = simulationContext.getDataManager(StochasticsDataManager.class).get();
+		stochasticsDataManager = simulationContext.getDataManager(StochasticsDataManager.class);
 
 		keySize = labelers.size();
 		tempKeyForLabelSets = new Key(keySize);

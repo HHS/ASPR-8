@@ -288,10 +288,10 @@ public final class ResourceReport extends PeriodicReport {
 		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 		actorContext.subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);
 
-		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class).get();
-		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class).get();
-		RegionDataManager regionDataManager = actorContext.getDataManager(RegionDataManager.class).get();
-		regionDataManager = actorContext.getDataManager(RegionDataManager.class).get();
+		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class);
+		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
+		RegionDataManager regionDataManager = actorContext.getDataManager(RegionDataManager.class);
+		regionDataManager = actorContext.getDataManager(RegionDataManager.class);
 
 		if (resourceIds.size() == 0) {
 			resourceIds.addAll(resourceDataManager.getResourceIds());

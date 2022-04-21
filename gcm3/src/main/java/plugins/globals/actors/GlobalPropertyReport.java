@@ -72,7 +72,7 @@ public final class GlobalPropertyReport {
 	 */
 	public void init(final ActorContext actorContext) {
 
-		GlobalDataManager globalDataManager = actorContext.getDataManager(GlobalDataManager.class).get();
+		GlobalDataManager globalDataManager = actorContext.getDataManager(GlobalDataManager.class);
 
 		/*
 		 * If no global properties were specified, then assume all are wanted

@@ -63,7 +63,7 @@ public class GroupMemberFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		}
 		return groupDataManager.isPersonInGroup(personId,groupId);
 	}

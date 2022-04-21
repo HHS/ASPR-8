@@ -66,6 +66,7 @@ public enum NucleusError implements ContractError {
 	NON_EXISTANT_SCEANARIO_PROGRESS("The scenario progress file does not exist, but is required when continuation from progress file is chosen"),
 	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
 	INCOMPATIBLE_SCEANARIO_PROGRESS("The scenario progress file is incompatible with the current experiment"),
+	UNKNOWN_DATA_MANAGER("Unknown data manager"),
 	;
 
 	private final String description;

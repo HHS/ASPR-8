@@ -172,9 +172,9 @@ public final class AT_AttributeFilter {
 	public void testEvaluate() {
 		PartitionsActionSupport.testConsumer(100, 2853953940626718331L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			for (PersonId personId : personDataManager.getPeople()) {

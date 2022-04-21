@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -60,10 +59,12 @@ public class AT_AttributesPlugin {
 		
 		//show that the plugin contributed the AttributesDataManager to the simulation
 		Builder testPluginDataBuilder = TestPluginData.builder();
+		
 		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,(c)->{
-			Optional<AttributesDataManager> optional = c.getDataManager(AttributesDataManager.class);
-			assertTrue(optional.isPresent());
+			AttributesDataManager dataManager = c.getDataManager(AttributesDataManager.class);
+			assertNotNull(dataManager);
 		}));
+		
 		TestPluginData testPluginData = testPluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 

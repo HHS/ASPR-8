@@ -37,7 +37,7 @@ public class TestDataManager extends DataManager {
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
-		TestPlanDataManager testPlanDataManager = dataManagerContext.getDataManager(TestPlanDataManager.class).get();
+		TestPlanDataManager testPlanDataManager = dataManagerContext.getDataManager(TestPlanDataManager.class);
 		
 		List<TestDataManagerPlan> testDataManagerPlans = testPlanDataManager.getTestDataManagerPlans(alias);
 		for (final TestDataManagerPlan testDataManagerPlan : testDataManagerPlans) {

@@ -44,7 +44,7 @@ public class GroupsForPersonFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class).get();
+			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
 		}
 		final int count = groupDataManager.getGroupCountForPerson(personId);
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupCount));

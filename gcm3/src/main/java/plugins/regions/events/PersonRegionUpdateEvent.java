@@ -52,7 +52,7 @@ public final class PersonRegionUpdateEvent implements Event {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		if (!regionDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
@@ -62,7 +62,7 @@ public final class PersonRegionUpdateEvent implements Event {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class).get();
+		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class);
 		if (!personDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}

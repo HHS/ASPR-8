@@ -116,7 +116,7 @@ public class AT_EnumPropertyManager {
 
 		IntStream.range(0, 1000).forEach((i -> {
 			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				LocalDM localDM = c.getDataManager(LocalDM.class).get();
+				LocalDM localDM = c.getDataManager(LocalDM.class);
 				int id = randomGenerator.nextInt(300);
 				Color value = Color.values()[randomGenerator.nextInt(3)];
 				EnumPropertyManager enumPropertyManager = localDM.enumPropertyManager;

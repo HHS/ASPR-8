@@ -14,8 +14,6 @@ import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
 import plugins.regions.RegionPluginId;
 import plugins.reports.ReportsPluginId;
-import plugins.resources.datamanagers.ResourceDataManager;
-import plugins.resources.testsupport.ResourcesActionSupport;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
@@ -44,9 +42,7 @@ public class AT_ResourcesPlugin {
 		
 		assertEquals(expectedDependencies, resourcesPlugin.getPluginDependencies());
 
-		ResourcesActionSupport.testConsumer(0,924462486121444909L, (c) -> {
-			assertTrue(c.getDataManager(ResourceDataManager.class).isPresent());
-		});
+		
 
 	}
 

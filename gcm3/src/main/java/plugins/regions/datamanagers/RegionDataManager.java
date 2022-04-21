@@ -150,7 +150,7 @@ public final class RegionDataManager extends DataManager {
 
 		this.dataManagerContext = dataManagerContext;
 
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
+		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
 
 		/*
 		 * By setting the default value to 0, we are allowing the container to

@@ -107,7 +107,7 @@ public class AT_FloatPropertyManager {
 
 		IntStream.range(0, 1000).forEach((i -> {
 			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				LocalDM localDM = c.getDataManager(LocalDM.class).get();
+				LocalDM localDM = c.getDataManager(LocalDM.class);
 				int id = randomGenerator.nextInt(300);
 				float value = randomGenerator.nextFloat();
 				FloatPropertyManager floatPropertyManager = localDM.floatPropertyManager;

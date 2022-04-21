@@ -74,9 +74,9 @@ public final class AT_PersonPropertyDataManager {
 		PersonPropertiesActionSupport.testConsumer(100, 7917315534360369845L, (c) -> {
 
 			// establish data views
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -114,9 +114,9 @@ public final class AT_PersonPropertyDataManager {
 		PersonPropertiesActionSupport.testConsumer(100, 686456599634987511L, (c) -> {
 
 			// establish data views
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			/*
@@ -150,7 +150,7 @@ public final class AT_PersonPropertyDataManager {
 	public void testGetPersonPropertyDefinition() {
 
 		PersonPropertiesActionSupport.testConsumer(0, 138806179316502662L, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
 			// show that the person property definitions match expectations
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
@@ -176,7 +176,7 @@ public final class AT_PersonPropertyDataManager {
 	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
 	public void testGetPersonPropertyIds() {
 		PersonPropertiesActionSupport.testConsumer(0, 8485097765777963229L, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			EnumSet<TestPersonPropertyId> expectedPropertyIds = EnumSet.allOf(TestPersonPropertyId.class);
 			Set<PersonPropertyId> actualPropertyIds = personPropertiesDataManager.getPersonPropertyIds();
 			assertEquals(expectedPropertyIds, actualPropertyIds);
@@ -193,9 +193,9 @@ public final class AT_PersonPropertyDataManager {
 		// properties
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			for (PersonId personId : people) {
 				double personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId, TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
@@ -210,10 +210,10 @@ public final class AT_PersonPropertyDataManager {
 		// Set property 5 for all people at time 1
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
 			for (PersonId personId : people) {
 				personPropertiesDataManager.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK, randomGenerator.nextInt());
 			}
@@ -222,10 +222,10 @@ public final class AT_PersonPropertyDataManager {
 		// Set property 6 for all people at time 2
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
 			for (PersonId personId : people) {
 				personPropertiesDataManager.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK, randomGenerator.nextDouble());
 			}
@@ -233,8 +233,8 @@ public final class AT_PersonPropertyDataManager {
 
 		// show that the person property times agree with the times above
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			List<PersonId> people = personDataManager.getPeople();
 			for (PersonId personId : people) {
 				double personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId, TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
@@ -248,7 +248,7 @@ public final class AT_PersonPropertyDataManager {
 
 		// precondition tests
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
 			PersonId personId = new PersonId(0);
 			PersonId unknownPersonId = new PersonId(100000);
@@ -291,9 +291,9 @@ public final class AT_PersonPropertyDataManager {
 	public void testGetPersonPropertyValue() {
 
 		PersonPropertiesActionSupport.testConsumer(10, 816143115345188642L, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create a container to hold expectations
@@ -351,7 +351,7 @@ public final class AT_PersonPropertyDataManager {
 	public void testExpandCapacity() {
 		PersonPropertiesActionSupport.testConsumer(20, 7153865371557964932L, (c) -> {
 			// show that a negative growth causes an exception
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.expandCapacity(-1));
 			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
 		});
@@ -363,7 +363,7 @@ public final class AT_PersonPropertyDataManager {
 	public void testPersonPropertyIdExists() {
 
 		PersonPropertiesActionSupport.testConsumer(0, 4797443283568888200L, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				assertTrue(personPropertiesDataManager.personPropertyIdExists(testPersonPropertyId));
 			}
@@ -401,9 +401,9 @@ public final class AT_PersonPropertyDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select all the property ids that are mutable
@@ -444,7 +444,7 @@ public final class AT_PersonPropertyDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			PersonId personId = new PersonId(0);
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PersonPropertyId immutablePersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK;
 			Object value = true;
 
@@ -508,7 +508,7 @@ public final class AT_PersonPropertyDataManager {
 		 */
 
 		PersonPropertiesActionSupport.testConsumer(100, 4585617051924828596L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
 			EventLabeler<PersonPropertyUpdateEvent> eventLabelerForRegionAndProperty = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);
 			assertNotNull(eventLabelerForRegionAndProperty);
 			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForRegionAndProperty));
@@ -612,8 +612,8 @@ public final class AT_PersonPropertyDataManager {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c2) -> {
 			// get the person property data view
-			PersonPropertiesDataManager personPropertiesDataManager = c2.getDataManager(PersonPropertiesDataManager.class).get();
-			PersonDataManager personDataManager = c2.getDataManager(PersonDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c2.getDataManager(PersonPropertiesDataManager.class);
+			PersonDataManager personDataManager = c2.getDataManager(PersonDataManager.class);
 
 			// show that the property ids are correct
 			assertEquals(personPropertiesPluginData.getPersonPropertyIds(), personPropertiesDataManager.getPersonPropertyIds());
@@ -662,9 +662,9 @@ public final class AT_PersonPropertyDataManager {
 
 		PersonPropertiesActionSupport.testConsumer(100, 4771130331997762252L, (c) -> {
 			// establish data views
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
 			// get the random generator for use later
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -716,8 +716,8 @@ public final class AT_PersonPropertyDataManager {
 		 */
 		PersonPropertiesActionSupport.testConsumer(100, 5194635938533128930L, (c) -> {
 			// add a person with some person property auxiliary data
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
@@ -737,8 +737,8 @@ public final class AT_PersonPropertyDataManager {
 		 */
 		PersonPropertiesActionSupport.testConsumer(100, 4349734439660163798L, (c) -> {
 			// add a person with some person property auxiliary data
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
@@ -758,8 +758,8 @@ public final class AT_PersonPropertyDataManager {
 		 */
 		PersonPropertiesActionSupport.testConsumer(100, 2152152824636786936L, (c) -> {
 			// add a person with some person property auxiliary data
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
@@ -778,8 +778,8 @@ public final class AT_PersonPropertyDataManager {
 		 */
 		PersonPropertiesActionSupport.testConsumer(100, 8379070211267955743L, (c) -> {
 			// add a person with some person property auxiliary data
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
@@ -801,9 +801,9 @@ public final class AT_PersonPropertyDataManager {
 	public void testBulkPersonAdditionEvent() {
 		PersonPropertiesActionSupport.testConsumer(0, 2547218192811543040L, (c) -> {
 			// establish data views
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
 			// get the random generator for use later
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -945,8 +945,8 @@ public final class AT_PersonPropertyDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonId personId = new PersonId(0);
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
 			assertTrue(personDataManager.personExists(personId));
 
@@ -972,10 +972,10 @@ public final class AT_PersonPropertyDataManager {
 			PersonId personId = new PersonId(0);
 
 			// show that the person does not exist
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			assertFalse(personDataManager.personExists(personId));
 
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class).get();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 

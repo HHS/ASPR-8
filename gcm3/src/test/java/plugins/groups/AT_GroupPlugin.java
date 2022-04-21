@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
 import plugins.reports.ReportsPluginId;
@@ -42,9 +41,7 @@ public class AT_GroupPlugin {
 		
 		assertEquals(expectedDependencies, groupPlugin.getPluginDependencies());
 
-		GroupsActionSupport.testConsumer(0,3,10, 924462486121444909L, (c) -> {
-			assertTrue(c.getDataManager(GroupDataManager.class).isPresent());
-		});
+		
 
 	}
 

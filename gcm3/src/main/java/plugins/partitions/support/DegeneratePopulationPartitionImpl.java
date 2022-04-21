@@ -50,7 +50,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	public DegeneratePopulationPartitionImpl(final SimulationContext simulationContext, final Partition partition) {
 
 		this.simulationContext = simulationContext;
-		stochasticsDataManager = simulationContext.getDataManager(StochasticsDataManager.class).get();
+		stochasticsDataManager = simulationContext.getDataManager(StochasticsDataManager.class);
 		filter = partition.getFilter().orElse(Filter.allPeople());
 
 		if (!partition.isDegenerate()) {
@@ -68,7 +68,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 		peopleContainer = new BasePeopleContainer(simulationContext);
 
-		final PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class).get();
+		final PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class);
 		final int personIdLimit = personDataManager.getPersonIdLimit();
 		for (int i = 0; i < personIdLimit; i++) {
 			if (personDataManager.personIndexExists(i)) {

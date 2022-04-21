@@ -194,7 +194,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 	public void testGetEventLabelByStage() {
 
 		MaterialsActionSupport.testConsumer(2260703021186632066L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			for (int i = 0; i < 10; i++) {
 				StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 				EventLabel<StageMaterialsProducerUpdateEvent> eventLabel = StageMaterialsProducerUpdateEvent.getEventLabelByStage(c, stageId);
@@ -210,7 +210,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 	public void testGetEventLabelerForStage() {
 
 		MaterialsActionSupport.testConsumer(6880728031897161656L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			// show that the event labeler can be constructed has the correct
 			// values

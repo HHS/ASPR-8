@@ -56,7 +56,7 @@ public final class RegionLabeler implements Labeler {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (regionDataManager == null) {
-			regionDataManager = simulationContext.getDataManager(RegionDataManager.class).get();
+			regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
 		}
 		RegionId regionId = regionDataManager.getPersonRegion(personId);
 		return regionLabelingFunction.apply(regionId);

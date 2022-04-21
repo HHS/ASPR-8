@@ -33,7 +33,7 @@ public final class AT_MaterialsProducerPropertyReport {
 
 	private ReportItem getReportItemFromPropertyId(ActorContext agentContext, MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
 
-		MaterialsDataManager materialsDataManager = agentContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = agentContext.getDataManager(MaterialsDataManager.class);
 		Object propertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 
 		ReportItem reportItem = getReportItem(//
@@ -69,8 +69,8 @@ public final class AT_MaterialsProducerPropertyReport {
 
 			// set a property value
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class).get();
-				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
 				TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.getRandomMutableMaterialsProducerPropertyId(randomGenerator);

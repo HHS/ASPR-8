@@ -51,7 +51,7 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 		if (stageId == null) {
 			throw new ContractException(MaterialsError.NULL_STAGE_ID);
 		}
-		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class);
 		if (!materialsDataManager.stageExists(stageId)) {
 			throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID);
 		}
@@ -61,7 +61,7 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 		if (materialsProducerId == null) {
 			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
-		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class);
 		if (!materialsDataManager.materialsProducerIdExists(materialsProducerId)) {
 			throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
 		}

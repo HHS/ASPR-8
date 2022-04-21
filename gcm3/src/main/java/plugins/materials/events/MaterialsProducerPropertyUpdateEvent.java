@@ -58,7 +58,7 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 		if (materialsProducerId == null) {
 			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 		}
-		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class);
 		if (!materialsDataManager.materialsProducerIdExists(materialsProducerId)) {
 			throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID);
 		}
@@ -68,7 +68,7 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 		if (materialsProducerPropertyId == null) {
 			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
 		}
-		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class);
 		if (!materialsDataManager.materialsProducerPropertyIdExists(materialsProducerPropertyId)) {
 			throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID);
 		}

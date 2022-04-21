@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -43,10 +42,8 @@ public class AT_AttributesDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testAttributesDataViewInitialization() {
 		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
-			Optional<AttributesDataManager> optional = c.getDataManager(AttributesDataManager.class);
-			assertTrue(optional.isPresent());
-
-			AttributesDataManager attributesDataManager = optional.get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			
 			assertEquals(EnumSet.allOf(TestAttributeId.class), attributesDataManager.getAttributeIds());
 
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -90,8 +87,8 @@ public class AT_AttributesDataManager {
 		// initialized
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			for (PersonId personId : personDataManager.getPeople()) {
 				Boolean value = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
@@ -126,7 +123,7 @@ public class AT_AttributesDataManager {
 	@UnitTestMethod(name = "attributeExists", args = { AttributeId.class })
 	public void testAttributeExists() {
 		PartitionsActionSupport.testConsumer(100, 6136319242032948471L, (c) -> {
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 				assertTrue(attributesDataManager.attributeExists(testAttributeId));
@@ -144,7 +141,7 @@ public class AT_AttributesDataManager {
 
 		PartitionsActionSupport.testConsumer(100, 7056826773207732206L, (c) -> {
 
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 				AttributeDefinition expectedAttributeDefinition = testAttributeId.getAttributeDefinition();
@@ -168,7 +165,7 @@ public class AT_AttributesDataManager {
 	@UnitTestMethod(name = "getAttributeIds", args = {})
 	public void testGetAttributeIds() {
 		PartitionsActionSupport.testConsumer(100, 3922883805893258744L, (c) -> {
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			assertEquals(EnumSet.allOf(TestAttributeId.class), attributesDataManager.getAttributeIds());
 		});
 	}
@@ -179,11 +176,11 @@ public class AT_AttributesDataManager {
 
 		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
 
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class).get();
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 
 			// show that there are people in the test
 			assertEquals(100, personDataManager.getPopulationCount());
@@ -226,7 +223,7 @@ public class AT_AttributesDataManager {
 		});
 
 		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			PersonId goodPersonId = new PersonId(0);
 
@@ -237,7 +234,7 @@ public class AT_AttributesDataManager {
 		});
 
 		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			PersonId goodPersonId = new PersonId(0);
 			AttributeId badAttributeId = TestAttributeId.getUnknownAttributeId();
@@ -249,7 +246,7 @@ public class AT_AttributesDataManager {
 		});
 
 		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			AttributeId goodAttributeId = TestAttributeId.BOOLEAN_0;
 
@@ -260,7 +257,7 @@ public class AT_AttributesDataManager {
 		});
 
 		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class).get();
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			PersonId badPersonId = new PersonId(10000000);
 			AttributeId goodAttributeId = TestAttributeId.BOOLEAN_0;
 			// if the person id is unknown

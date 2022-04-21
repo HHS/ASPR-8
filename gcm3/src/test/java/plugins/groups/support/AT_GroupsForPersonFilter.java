@@ -82,9 +82,9 @@ public class AT_GroupsForPersonFilter {
 	public void testEvaluate() {
 
 		GroupsActionSupport.testConsumer(100, 0, 10, 6164158277278234559L, (c) -> {
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).get().getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			List<PersonId> people = personDataManager.getPeople();
 

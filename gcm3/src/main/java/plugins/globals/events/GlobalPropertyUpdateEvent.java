@@ -110,7 +110,7 @@ public class GlobalPropertyUpdateEvent implements Event {
 	}
 
 	private static void validateGlobalProperty(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
-		simulationContext.getDataManager(GlobalDataManager.class).get().getGlobalPropertyDefinition(globalPropertyId);
+		simulationContext.getDataManager(GlobalDataManager.class).getGlobalPropertyDefinition(globalPropertyId);
 	}
 
 	/**

@@ -53,7 +53,7 @@ public class AT_GroupImminentRemovalEvent {
 	public void testGetEventLabelByGroup() {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 4793492577271802585L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			Set<EventLabel<GroupImminentRemovalEvent>> eventLabels = new LinkedHashSet<>();
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0;i<10;i++) {
@@ -106,7 +106,7 @@ public class AT_GroupImminentRemovalEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 2029538624275094851L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroup();
@@ -153,7 +153,7 @@ public class AT_GroupImminentRemovalEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 5740881055810962155L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			
 			Set<EventLabel<GroupImminentRemovalEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -203,7 +203,7 @@ public class AT_GroupImminentRemovalEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 1065941748199403338L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager);

@@ -59,7 +59,7 @@ public final class MaterialsProducerPropertyReport {
 
 		actorContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
 
-		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();
+		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 
 		for (final MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataManager.getMaterialsProducerPropertyIds()) {

@@ -86,8 +86,8 @@ public class AT_RegionResourceUpdateEvent implements Event {
 	public void testGetEventLabelByRegionAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Set<RegionId> regionIds = regionDataManager.getRegionIds();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 
@@ -150,8 +150,8 @@ public class AT_RegionResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForRegionAndResource", args = {})
 	public void testGetEventLabelerForRegionAndResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class).get();
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class).get();
+			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
 			Set<RegionId> regionIds = regionDataManager.getRegionIds();
 			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
 

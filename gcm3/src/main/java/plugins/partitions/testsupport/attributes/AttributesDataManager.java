@@ -130,7 +130,7 @@ public final class AttributesDataManager extends DataManager {
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class).get();
+		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
 
 		dataManagerContext.addEventLabeler(AttributeUpdateEvent.getEventLabeler());
 

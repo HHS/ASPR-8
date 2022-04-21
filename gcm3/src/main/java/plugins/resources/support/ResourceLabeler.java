@@ -59,7 +59,7 @@ public final class ResourceLabeler implements Labeler {
 		}
 
 		if (resourceDataManager == null) {
-			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class).get();
+			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
 		}
 		long personResourceLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
 		return resourceLabelingFunction.apply(personResourceLevel);

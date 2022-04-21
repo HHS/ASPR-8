@@ -216,7 +216,7 @@ public final class BatchStatusReport {
 		actorContext.subscribe(StageMembershipAdditionEvent.class, this::handleStageMembershipAdditionEvent);
 		actorContext.subscribe(StageMembershipRemovalEvent.class, this::handleStageMembershipRemovalEvent);
 
-		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class).get();
+		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (BatchId inventoryBatchId : materialsDataManager.getInventoryBatches(materialsProducerId)) {

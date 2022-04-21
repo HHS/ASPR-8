@@ -28,11 +28,11 @@ public class AT_GroupsActionSupport {
 		GroupsActionSupport.testConsumer(100, 3, 5, 234L, (c) -> {
 
 			// show that there are 100 people
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class).get();
+			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
 			assertEquals(100, personDataManager.getPopulationCount());
 
 			// show that there are 60 groups
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class).get();
+			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
 			assertEquals(60, groupDataManager.getGroupIds().size());
 
 			// show that there are 300 group memberships
