@@ -88,6 +88,10 @@ public class GlobalPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GlobalPropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
 		validateGlobalProperty(simulationContext, globalPropertyId);
+		return _getEventLabel(globalPropertyId);
+	}
+	
+	private static EventLabel<GlobalPropertyUpdateEvent> _getEventLabel(GlobalPropertyId globalPropertyId) {
 		return EventLabel	.builder(GlobalPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PROPERTY)//
 							.addKey(globalPropertyId)//
@@ -101,7 +105,7 @@ public class GlobalPropertyUpdateEvent implements Event {
 	public static EventLabeler<GlobalPropertyUpdateEvent> getEventLabeler() {
 		return EventLabeler	.builder(GlobalPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PROPERTY)//
-							.setLabelFunction((context, event) -> getEventLabel(context, event.getGlobalPropertyId()))//
+							.setLabelFunction((context, event) -> _getEventLabel(event.getGlobalPropertyId()))//
 							.build();
 	}
 

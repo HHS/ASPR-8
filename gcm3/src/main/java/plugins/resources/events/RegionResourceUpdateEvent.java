@@ -113,6 +113,11 @@ public class RegionResourceUpdateEvent implements Event {
 	public static EventLabel<RegionResourceUpdateEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
 		validateRegionId(simulationContext, regionId);
 		validateResourceId(simulationContext, resourceId);
+		return _getEventLabelByRegionAndResource(regionId, resourceId);//
+	}
+	
+	private static EventLabel<RegionResourceUpdateEvent> _getEventLabelByRegionAndResource(RegionId regionId, ResourceId resourceId) {
+		
 		return EventLabel	.builder(RegionResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
 							.addKey(resourceId)//
@@ -128,9 +133,11 @@ public class RegionResourceUpdateEvent implements Event {
 	public static EventLabeler<RegionResourceUpdateEvent> getEventLabelerForRegionAndResource() {
 		return EventLabeler	.builder(RegionResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
-							.setLabelFunction((context, event) -> getEventLabelByRegionAndResource(context, event.getRegionId(), event.getResourceId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByRegionAndResource(event.getRegionId(), event.getResourceId()))//
 							.build();
 	}
+	
+	
 
 	/**
 	 * Returns the resource id used to create this event

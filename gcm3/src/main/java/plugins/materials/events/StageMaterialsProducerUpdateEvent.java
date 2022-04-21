@@ -69,6 +69,10 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByDestination(SimulationContext simulationContext, MaterialsProducerId destinationMaterialsProducerId) {
 		validateMaterialsProducerId(simulationContext, destinationMaterialsProducerId);
+		return _getEventLabelByDestination(destinationMaterialsProducerId);
+	}
+	
+	private static EventLabel<StageMaterialsProducerUpdateEvent> _getEventLabelByDestination(MaterialsProducerId destinationMaterialsProducerId) {
 		return EventLabel	.builder(StageMaterialsProducerUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.DESTINATION)//
 							.addKey(StageMaterialsProducerUpdateEvent.class).addKey(destinationMaterialsProducerId).build();
@@ -77,11 +81,15 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForDestination() {
 		return EventLabeler	.builder(StageMaterialsProducerUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.DESTINATION)//
-							.setLabelFunction((context, event) -> getEventLabelByDestination(context, event.getCurrentMaterialsProducerId())).build();
+							.setLabelFunction((context, event) -> _getEventLabelByDestination(event.getCurrentMaterialsProducerId())).build();
 	}
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelBySource(SimulationContext simulationContext, MaterialsProducerId sourceMaterialsProducerId) {
 		validateMaterialsProducerId(simulationContext, sourceMaterialsProducerId);
+		return _getEventLabelBySource(sourceMaterialsProducerId);//
+	}
+	
+	private static EventLabel<StageMaterialsProducerUpdateEvent> _getEventLabelBySource(MaterialsProducerId sourceMaterialsProducerId) {
 		return EventLabel	.builder(StageMaterialsProducerUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.SOURCE)//
 							.addKey(StageMaterialsProducerUpdateEvent.class)//
@@ -91,12 +99,17 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForSource() {
 		return EventLabeler	.builder(StageMaterialsProducerUpdateEvent.class).setEventLabelerId(LabelerId.SOURCE)//
-							.setLabelFunction((context, event) -> getEventLabelBySource(context, event.getPreviousMaterialsProducerId()))//
+							.setLabelFunction((context, event) -> _getEventLabelBySource(event.getPreviousMaterialsProducerId()))//
 							.build();
 	}
 
 	public static EventLabel<StageMaterialsProducerUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
 		validateStageId(simulationContext, stageId);
+		return _getEventLabelByStage(stageId);
+	}
+	
+	private static EventLabel<StageMaterialsProducerUpdateEvent> _getEventLabelByStage(StageId stageId) {
+		
 		return EventLabel	.builder(StageMaterialsProducerUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.STAGE)//
 							.addKey(StageMaterialsProducerUpdateEvent.class)//
@@ -107,7 +120,7 @@ public class StageMaterialsProducerUpdateEvent implements Event {
 	public static EventLabeler<StageMaterialsProducerUpdateEvent> getEventLabelerForStage() {
 		return EventLabeler	.builder(StageMaterialsProducerUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.STAGE)//
-							.setLabelFunction((context, event) -> getEventLabelByStage(context, event.getStageId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByStage(event.getStageId()))//
 							.build();
 	}
 

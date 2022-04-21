@@ -70,6 +70,11 @@ public final class PersonRegionUpdateEvent implements Event {
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByArrivalRegion(SimulationContext simulationContext, RegionId regionId) {
 		validateRegionId(simulationContext, regionId);
+		return _getEventLabelByArrivalRegion(regionId);//
+	}
+	
+	private static EventLabel<PersonRegionUpdateEvent> _getEventLabelByArrivalRegion(RegionId regionId) {
+		
 		return EventLabel	.builder(PersonRegionUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.ARRIVAL)//
 							.addKey(PersonRegionUpdateEvent.class)//
@@ -80,12 +85,17 @@ public final class PersonRegionUpdateEvent implements Event {
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForArrivalRegion() {
 		return EventLabeler	.builder(PersonRegionUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.ARRIVAL)//
-							.setLabelFunction((context, event) -> getEventLabelByArrivalRegion(context, event.getCurrentRegionId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByArrivalRegion(event.getCurrentRegionId()))//
 							.build();
 	}
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByDepartureRegion(SimulationContext simulationContext, RegionId regionId) {
 		validateRegionId(simulationContext, regionId);
+		return _getEventLabelByDepartureRegion(regionId);//
+	}
+	
+	private static EventLabel<PersonRegionUpdateEvent> _getEventLabelByDepartureRegion(RegionId regionId) {
+		
 		return EventLabel	.builder(PersonRegionUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.DEPARTURE)//
 							.addKey(PersonRegionUpdateEvent.class)//
@@ -96,12 +106,17 @@ public final class PersonRegionUpdateEvent implements Event {
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForDepartureRegion() {
 		return EventLabeler	.builder(PersonRegionUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.DEPARTURE)//
-							.setLabelFunction((context, event) -> getEventLabelByDepartureRegion(context, event.getPreviousRegionId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByDepartureRegion(event.getPreviousRegionId()))//
 							.build();
 	}
 
 	public static EventLabel<PersonRegionUpdateEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByPerson(personId);//
+	}
+	
+	private static EventLabel<PersonRegionUpdateEvent> _getEventLabelByPerson(PersonId personId) {
+		
 		return EventLabel	.builder(PersonRegionUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON)//
 							.addKey(PersonRegionUpdateEvent.class)//
@@ -112,7 +127,7 @@ public final class PersonRegionUpdateEvent implements Event {
 	public static EventLabeler<PersonRegionUpdateEvent> getEventLabelerForPerson() {
 		return EventLabeler	.builder(PersonRegionUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON)//
-							.setLabelFunction((context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByPerson(event.getPersonId()))//
 							.build();
 	}
 

@@ -124,6 +124,11 @@ public class PersonResourceUpdateEvent implements Event {
 	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
 		validateRegionId(simulationContext, regionId);
 		validateResourceId(simulationContext, resourceId);
+		return _getEventLabelByRegionAndResource(regionId, resourceId);//
+	}
+	
+	private static EventLabel<PersonResourceUpdateEvent> _getEventLabelByRegionAndResource(RegionId regionId, ResourceId resourceId) {
+		
 		return EventLabel	.builder(PersonResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
 							.addKey(resourceId)//
@@ -141,7 +146,7 @@ public class PersonResourceUpdateEvent implements Event {
 							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
 							.setLabelFunction((context, event) -> {
 								RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
-								return getEventLabelByRegionAndResource(context, regionId, event.getResourceId());
+								return _getEventLabelByRegionAndResource(regionId, event.getResourceId());
 							}).build();
 	}
 
@@ -167,6 +172,11 @@ public class PersonResourceUpdateEvent implements Event {
 	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByPersonAndResource(SimulationContext simulationContext, PersonId personId, ResourceId resourceId) {
 		validatePersonId(simulationContext, personId);
 		validateResourceId(simulationContext, resourceId);
+		return _getEventLabelByPersonAndResource(personId, resourceId);//
+	}
+	
+	private static EventLabel<PersonResourceUpdateEvent> _getEventLabelByPersonAndResource(PersonId personId, ResourceId resourceId) {
+		
 		return EventLabel	.builder(PersonResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON_RESOURCE)//
 							.addKey(resourceId)//
@@ -182,7 +192,7 @@ public class PersonResourceUpdateEvent implements Event {
 	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForPersonAndResource() {
 		return EventLabeler	.builder(PersonResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON_RESOURCE)//
-							.setLabelFunction((context, event) -> getEventLabelByPersonAndResource(context, event.getPersonId(), event.getResourceId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByPersonAndResource(event.getPersonId(), event.getResourceId()))//
 							.build();
 	}
 
@@ -202,6 +212,10 @@ public class PersonResourceUpdateEvent implements Event {
 	 */
 	public static EventLabel<PersonResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
 		validateResourceId(simulationContext, resourceId);
+		return _getEventLabelByResource(resourceId);//
+	}
+	
+	private static EventLabel<PersonResourceUpdateEvent> _getEventLabelByResource(ResourceId resourceId) {
 		return EventLabel	.builder(PersonResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.RESOURCE)//
 							.addKey(resourceId)//
@@ -216,7 +230,7 @@ public class PersonResourceUpdateEvent implements Event {
 	public static EventLabeler<PersonResourceUpdateEvent> getEventLabelerForResource() {
 		return EventLabeler	.builder(PersonResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.RESOURCE)//
-							.setLabelFunction((context, event) -> getEventLabelByResource(context, event.getResourceId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByResource(event.getResourceId()))//
 							.build();
 	}
 

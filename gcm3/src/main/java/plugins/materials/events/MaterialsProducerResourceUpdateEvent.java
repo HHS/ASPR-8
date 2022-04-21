@@ -79,6 +79,12 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 			ResourceId resourceId) {
 		validateMaterialProducerId(simulationContext, materialsProducerId);
 		validateResourceId(simulationContext, resourceId);
+		return _getEventLabelByMaterialsProducerAndResource(materialsProducerId, resourceId);//
+
+	}
+	
+	private static EventLabel<MaterialsProducerResourceUpdateEvent> _getEventLabelByMaterialsProducerAndResource(MaterialsProducerId materialsProducerId,
+			ResourceId resourceId) {
 		return EventLabel	.builder(MaterialsProducerResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PRODUCER_RESOURCE)//
 							.addKey(resourceId)//
@@ -87,15 +93,21 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 
 	}
 
+
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForMaterialsProducerAndResource() {
 		return EventLabeler	.builder(MaterialsProducerResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PRODUCER_RESOURCE)//
-							.setLabelFunction((context, event) -> getEventLabelByMaterialsProducerAndResource(context, event.getMaterialsProducerId(), event.getResourceId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByMaterialsProducerAndResource(event.getMaterialsProducerId(), event.getResourceId()))//
 							.build();
 	}
 
 	public static EventLabel<MaterialsProducerResourceUpdateEvent> getEventLabelByResource(SimulationContext simulationContext, ResourceId resourceId) {
 		validateResourceId(simulationContext, resourceId);
+		return _getEventLabelByResource(resourceId);//
+	}
+	
+	private static EventLabel<MaterialsProducerResourceUpdateEvent> _getEventLabelByResource(ResourceId resourceId) {
+		
 		return EventLabel	.builder(MaterialsProducerResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.RESOURCE)//
 							.addKey(resourceId)//
@@ -105,7 +117,7 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 	public static EventLabeler<MaterialsProducerResourceUpdateEvent> getEventLabelerForResource() {
 		return EventLabeler	.builder(MaterialsProducerResourceUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.RESOURCE)//
-							.setLabelFunction((context, event) -> getEventLabelByResource(context, event.getResourceId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByResource(event.getResourceId()))//
 							.build();
 	}
 

@@ -108,6 +108,11 @@ public class GroupMembershipAdditionEvent implements Event {
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
 		validateGroupId(simulationContext, groupId);
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByGroupAndPerson(groupId, personId);//
+	}
+	
+	private static EventLabel<GroupMembershipAdditionEvent> _getEventLabelByGroupAndPerson(GroupId groupId, PersonId personId) {
+		
 		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP_PERSON)//
 							.addKey(GroupMembershipAdditionEvent.class)//
@@ -123,7 +128,7 @@ public class GroupMembershipAdditionEvent implements Event {
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupAndPerson() {
 		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP_PERSON)//
-							.setLabelFunction((context, event) -> getEventLabelByGroupAndPerson(context, event.getGroupId(), event.getPersonId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByGroupAndPerson(event.getGroupId(), event.getPersonId()))//
 							.build();//
 	}
 
@@ -143,6 +148,12 @@ public class GroupMembershipAdditionEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
+		return _getEventLabelByGroup(groupId);//
+	}
+	
+	
+	private static EventLabel<GroupMembershipAdditionEvent> _getEventLabelByGroup(GroupId groupId) {
+		
 		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP)//
 							.addKey(GroupMembershipAdditionEvent.class)//
@@ -156,7 +167,7 @@ public class GroupMembershipAdditionEvent implements Event {
 	 */
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroup() {
 		return EventLabeler	.builder(GroupMembershipAdditionEvent.class).setEventLabelerId(LabelerId.GROUP)//
-							.setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByGroup(event.getGroupId()))//
 							.build();
 	}
 
@@ -176,9 +187,16 @@ public class GroupMembershipAdditionEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByPerson(personId);
+
+	}
+	
+	private static EventLabel<GroupMembershipAdditionEvent> _getEventLabelByPerson(PersonId personId) {
+		
 		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON)//
-							.addKey(GroupMembershipAdditionEvent.class).addKey(personId)//
+							.addKey(GroupMembershipAdditionEvent.class)//
+							.addKey(personId)//
 							.build();
 
 	}
@@ -190,7 +208,7 @@ public class GroupMembershipAdditionEvent implements Event {
 	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForPerson() {
 		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON)//
-							.setLabelFunction((context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByPerson(event.getPersonId()))//
 							.build();
 	}
 
@@ -215,6 +233,11 @@ public class GroupMembershipAdditionEvent implements Event {
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByGroupTypeAndPerson(groupTypeId, personId);//
+	}
+	
+	private static EventLabel<GroupMembershipAdditionEvent> _getEventLabelByGroupTypeAndPerson(GroupTypeId groupTypeId, PersonId personId) {
+		
 		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE_PERSON)//
 							.addKey(GroupMembershipAdditionEvent.class)//
@@ -234,7 +257,7 @@ public class GroupMembershipAdditionEvent implements Event {
 							.setLabelFunction((context, event) -> {
 								GroupId groupId = event.getGroupId();
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-								return getEventLabelByGroupTypeAndPerson(context, groupTypeId, event.getPersonId());
+								return _getEventLabelByGroupTypeAndPerson(groupTypeId, event.getPersonId());
 							})//
 							.build();
 	}
@@ -254,6 +277,11 @@ public class GroupMembershipAdditionEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipAdditionEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
+		return _getEventLabelByGroupType(groupTypeId);//
+	}
+	
+	private static EventLabel<GroupMembershipAdditionEvent> _getEventLabelByGroupType(GroupTypeId groupTypeId) {
+		
 		return EventLabel	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE)//
 							.addKey(GroupMembershipAdditionEvent.class)//
@@ -271,7 +299,7 @@ public class GroupMembershipAdditionEvent implements Event {
 							.setLabelFunction((context, event) -> {
 								GroupId groupId = event.getGroupId();
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-								return getEventLabelByGroupType(context, groupTypeId);
+								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();
 	}

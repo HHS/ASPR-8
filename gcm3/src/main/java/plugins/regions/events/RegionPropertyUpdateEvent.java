@@ -71,6 +71,11 @@ public final class RegionPropertyUpdateEvent implements Event {
 	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, RegionPropertyId regionPropertyId) {
 		validateRegionId(simulationContext, regionId);
 		validateRegionPropertyId(simulationContext, regionPropertyId);
+		return _getEventLabelByRegionAndProperty(regionId, regionPropertyId);//
+	}
+	
+	private static EventLabel<RegionPropertyUpdateEvent> _getEventLabelByRegionAndProperty(RegionId regionId, RegionPropertyId regionPropertyId) {
+		
 		return EventLabel	.builder(RegionPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
 							.addKey(regionPropertyId)//
@@ -81,12 +86,17 @@ public final class RegionPropertyUpdateEvent implements Event {
 	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForRegionAndProperty() {
 		return EventLabeler	.builder(RegionPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
-							.setLabelFunction((context, event) -> getEventLabelByRegionAndProperty(context, event.getRegionId(), event.getRegionPropertyId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByRegionAndProperty(event.getRegionId(), event.getRegionPropertyId()))//
 							.build();
 	}
 
 	public static EventLabel<RegionPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
 		validateRegionPropertyId(simulationContext, regionPropertyId);
+		return _getEventLabelByProperty(regionPropertyId);//
+	}
+	
+	private static EventLabel<RegionPropertyUpdateEvent> _getEventLabelByProperty(RegionPropertyId regionPropertyId) {
+		
 		return EventLabel	.builder(RegionPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PROPERTY)//
 							.addKey(regionPropertyId)//
@@ -97,7 +107,7 @@ public final class RegionPropertyUpdateEvent implements Event {
 	public static EventLabeler<RegionPropertyUpdateEvent> getEventLabelerForProperty() {
 		return EventLabeler	.builder(RegionPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PROPERTY)//
-							.setLabelFunction((context, event) -> getEventLabelByProperty(context, event.getRegionPropertyId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByProperty(event.getRegionPropertyId()))//
 							.build();
 	}
 

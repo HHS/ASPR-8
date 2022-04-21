@@ -57,6 +57,11 @@ public class StageOfferUpdateEvent implements Event {
 
 	public static EventLabel<StageOfferUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
 		validateStageId(simulationContext, stageId);
+		return _getEventLabelByStage(stageId);//
+	}
+	
+	private static EventLabel<StageOfferUpdateEvent> _getEventLabelByStage(StageId stageId) {
+		
 		return EventLabel	.builder(StageOfferUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.STAGE)//
 							.addKey(StageOfferUpdateEvent.class)//
@@ -66,7 +71,7 @@ public class StageOfferUpdateEvent implements Event {
 
 	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForStage() {
 		return EventLabeler	.builder(StageOfferUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.STAGE).setLabelFunction((context, event) -> getEventLabelByStage(context, event.getStageId()))//
+							.setEventLabelerId(LabelerId.STAGE).setLabelFunction((context, event) -> _getEventLabelByStage(event.getStageId()))//
 							.build();
 	}
 

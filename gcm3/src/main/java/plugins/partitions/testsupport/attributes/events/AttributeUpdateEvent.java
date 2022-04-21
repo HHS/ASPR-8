@@ -71,6 +71,14 @@ public class AttributeUpdateEvent implements Event {
 				.addKey(attributeId)
 				.build();
 	}
+	
+	private static EventLabel<AttributeUpdateEvent> _getEventLabel(final AttributeId attributeId) {
+		
+		return EventLabel.builder(AttributeUpdateEvent.class)//
+				.setEventLabelerId(LabelerId.ATTRIBUTE)
+				.addKey(attributeId)
+				.build();
+	}
 
 	/**
 	 * Returns an event labeler for {@link AttributeUpdateEvent} events that
@@ -79,7 +87,7 @@ public class AttributeUpdateEvent implements Event {
 	public static EventLabeler<AttributeUpdateEvent> getEventLabeler() {
 		return EventLabeler	.builder(AttributeUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.ATTRIBUTE)//
-							.setLabelFunction((context, event) -> getEventLabel(context, event.getAttributeId()))//
+							.setLabelFunction((context, event) -> _getEventLabel(event.getAttributeId()))//
 							.build();
 	}
 

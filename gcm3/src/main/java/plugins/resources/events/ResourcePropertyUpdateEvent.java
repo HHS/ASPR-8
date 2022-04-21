@@ -97,8 +97,6 @@ public class ResourcePropertyUpdateEvent implements Event {
 	 * Preconditions : The context cannot be null
 	 *
 	 * @throws ContractException
-	 *
-	 * 
 	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
@@ -111,6 +109,11 @@ public class ResourcePropertyUpdateEvent implements Event {
 	public static EventLabel<ResourcePropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
 		validateResourceId(simulationContext, resourceId);
 		validateResourcePropertyId(simulationContext, resourceId, resourcePropertyId);
+		return _getEventLabel(resourceId, resourcePropertyId);
+	}
+	
+	private static EventLabel<ResourcePropertyUpdateEvent> _getEventLabel(ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
+		
 		return EventLabel	.builder(ResourcePropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.RESOURCE_AND_PROPERTY)//
 							.addKey(resourcePropertyId)//
@@ -126,7 +129,7 @@ public class ResourcePropertyUpdateEvent implements Event {
 	public static EventLabeler<ResourcePropertyUpdateEvent> getEventLabeler() {
 		return EventLabeler	.builder(ResourcePropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.RESOURCE_AND_PROPERTY)//
-							.setLabelFunction((context, event) -> getEventLabel(context, event.getResourceId(), event.getResourcePropertyId()))//
+							.setLabelFunction((context, event) -> _getEventLabel(event.getResourceId(), event.getResourcePropertyId()))//
 							.build();
 	}
 

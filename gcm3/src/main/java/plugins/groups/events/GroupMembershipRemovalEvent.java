@@ -103,6 +103,11 @@ public class GroupMembershipRemovalEvent implements Event {
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupAndPerson(SimulationContext simulationContext, GroupId groupId, PersonId personId) {
 		validateGroupId(simulationContext, groupId);
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByGroupAndPerson(groupId, personId);//
+	}
+
+	private static EventLabel<GroupMembershipRemovalEvent> _getEventLabelByGroupAndPerson(GroupId groupId, PersonId personId) {
+		
 		return EventLabel	.builder(GroupMembershipRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP_PERSON)//
 							.addKey(GroupMembershipRemovalEvent.class)//
@@ -111,6 +116,7 @@ public class GroupMembershipRemovalEvent implements Event {
 							.build();//
 	}
 
+	
 	/**
 	 * Returns an event labeler for {@link GroupMembershipRemovalEvent} events
 	 * that uses group id and person id. Automatically added at initialization.
@@ -118,7 +124,7 @@ public class GroupMembershipRemovalEvent implements Event {
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroupAndPerson() {
 		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP_PERSON)//
-							.setLabelFunction((context, event) -> getEventLabelByGroupAndPerson(context, event.getGroupId(), event.getPersonId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByGroupAndPerson(event.getGroupId(), event.getPersonId()))//
 							.build();
 	}
 
@@ -138,6 +144,11 @@ public class GroupMembershipRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
+		return _getEventLabelByGroup(groupId);//
+	}
+	
+	private static EventLabel<GroupMembershipRemovalEvent> _getEventLabelByGroup(GroupId groupId) {
+		
 		return EventLabel	.builder(GroupMembershipRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP)//
 							.addKey(GroupMembershipRemovalEvent.class)//
@@ -152,7 +163,7 @@ public class GroupMembershipRemovalEvent implements Event {
 	public static EventLabeler<GroupMembershipRemovalEvent> getEventLabelerForGroup() {
 		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP)//
-							.setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByGroup(event.getGroupId()))//
 							.build();
 	}
 
@@ -172,6 +183,11 @@ public class GroupMembershipRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByPerson(SimulationContext simulationContext, PersonId personId) {
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByPerson(personId);
+	}
+	
+	private static EventLabel<GroupMembershipRemovalEvent> _getEventLabelByPerson(PersonId personId) {
+		
 		return EventLabel	.builder(GroupMembershipRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON)//
 							.addKey(GroupMembershipRemovalEvent.class)//
@@ -187,7 +203,7 @@ public class GroupMembershipRemovalEvent implements Event {
 
 		return EventLabeler	.builder(GroupMembershipRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON)//
-							.setLabelFunction((context, event) -> getEventLabelByPerson(context, event.getPersonId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByPerson(event.getPersonId()))//
 							.build();
 	}
 
@@ -212,6 +228,11 @@ public class GroupMembershipRemovalEvent implements Event {
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupTypeAndPerson(SimulationContext simulationContext, GroupTypeId groupTypeId, PersonId personId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByGroupTypeAndPerson(groupTypeId, personId);//
+	}
+	
+	private static EventLabel<GroupMembershipRemovalEvent> _getEventLabelByGroupTypeAndPerson(GroupTypeId groupTypeId, PersonId personId) {
+		
 		return EventLabel	.builder(GroupMembershipRemovalEvent.class).setEventLabelerId(LabelerId.TYPE_PERSON)//
 							.addKey(GroupMembershipRemovalEvent.class)//
 							.addKey(groupTypeId)//
@@ -230,7 +251,7 @@ public class GroupMembershipRemovalEvent implements Event {
 							.setLabelFunction((context, event) -> {
 								GroupId groupId = event.getGroupId();
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-								return getEventLabelByGroupTypeAndPerson(context, groupTypeId, event.getPersonId());
+								return _getEventLabelByGroupTypeAndPerson(groupTypeId, event.getPersonId());
 							})//
 							.build();
 
@@ -255,6 +276,11 @@ public class GroupMembershipRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupMembershipRemovalEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
+		return _getEventLabelByGroupType(groupTypeId);//
+	}
+	
+	private static EventLabel<GroupMembershipRemovalEvent> _getEventLabelByGroupType(GroupTypeId groupTypeId) {
+		
 		return EventLabel	.builder(GroupMembershipRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE)//
 							.addKey(GroupMembershipRemovalEvent.class)//
@@ -271,7 +297,7 @@ public class GroupMembershipRemovalEvent implements Event {
 							.setLabelFunction((context, event) -> {
 								GroupId groupId = event.getGroupId();
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-								return getEventLabelByGroupType(context, groupTypeId);
+								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();
 	}

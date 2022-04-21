@@ -79,6 +79,11 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
+		return _getEventLabelByGroup(groupId);
+	}
+	
+	private static EventLabel<GroupImminentRemovalEvent> _getEventLabelByGroup(GroupId groupId) {
+		
 		return EventLabel	.builder(GroupImminentRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP)//
 							.addKey(GroupImminentRemovalEvent.class)//
@@ -92,7 +97,7 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForGroup() {
 		return EventLabeler	.builder(GroupImminentRemovalEvent.class)//
-							.setEventLabelerId(LabelerId.GROUP).setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.setEventLabelerId(LabelerId.GROUP).setLabelFunction((context, event) -> _getEventLabelByGroup(event.getGroupId()))//
 							.build();
 	}
 
@@ -112,6 +117,12 @@ public class GroupImminentRemovalEvent implements Event {
 	 */
 	public static EventLabel<GroupImminentRemovalEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
+		return _getEventLabelByGroupType(groupTypeId);//
+	}
+	
+	
+	private static EventLabel<GroupImminentRemovalEvent> _getEventLabelByGroupType(GroupTypeId groupTypeId) {
+		
 		return EventLabel	.builder(GroupImminentRemovalEvent.class)//
 							.setEventLabelerId(LabelerId.GROUPTYPE)//
 							.addKey(GroupImminentRemovalEvent.class)//
@@ -127,7 +138,7 @@ public class GroupImminentRemovalEvent implements Event {
 		return EventLabeler	.builder(GroupImminentRemovalEvent.class).setEventLabelerId(LabelerId.GROUPTYPE)//
 							.setLabelFunction((context, event) -> {
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-								return getEventLabelByGroupType(context, groupTypeId);
+								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();
 	}

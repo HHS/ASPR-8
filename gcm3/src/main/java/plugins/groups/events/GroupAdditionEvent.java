@@ -64,6 +64,11 @@ public class GroupAdditionEvent implements Event {
 		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}
+		return _getEventLabelByGroupType(groupTypeId);
+	}
+	
+	private static EventLabel<GroupAdditionEvent> _getEventLabelByGroupType(GroupTypeId groupTypeId) {
+		
 		return EventLabel	.builder(GroupAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE)//
 							.addKey(GroupAdditionEvent.class)//
@@ -80,7 +85,7 @@ public class GroupAdditionEvent implements Event {
 							.setEventLabelerId(LabelerId.TYPE)//
 							.setLabelFunction((context, event) -> {
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-								return getEventLabelByGroupType(context, groupTypeId);
+								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();
 	}

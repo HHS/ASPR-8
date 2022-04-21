@@ -111,6 +111,11 @@ public class PersonPropertyUpdateEvent implements Event {
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByPersonAndProperty(SimulationContext simulationContext, PersonId personId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
 		validatePersonId(simulationContext, personId);
+		return _getEventLabelByPersonAndProperty(personId, personPropertyId);//
+	}
+	
+	private static EventLabel<PersonPropertyUpdateEvent> _getEventLabelByPersonAndProperty(PersonId personId, PersonPropertyId personPropertyId) {
+		
 		return EventLabel	.builder(PersonPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON_PROPERTY)//
 							.addKey(personPropertyId)//
@@ -126,7 +131,7 @@ public class PersonPropertyUpdateEvent implements Event {
 	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForPersonAndProperty() {
 		return EventLabeler	.builder(PersonPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PERSON_PROPERTY)//
-							.setLabelFunction((context, event) -> getEventLabelByPersonAndProperty(context, event.getPersonId(), event.getPersonPropertyId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByPersonAndProperty(event.getPersonId(), event.getPersonPropertyId()))//
 							.build();
 	}
 
@@ -145,6 +150,11 @@ public class PersonPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByProperty(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
+		return _getEventLabelByProperty(personPropertyId);//
+	}
+	
+	private static EventLabel<PersonPropertyUpdateEvent> _getEventLabelByProperty(PersonPropertyId personPropertyId) {
+		
 		return EventLabel	.builder(PersonPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PROPERTY)//
 							.addKey(personPropertyId)//
@@ -160,7 +170,7 @@ public class PersonPropertyUpdateEvent implements Event {
 	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForProperty() {
 		return EventLabeler	.builder(PersonPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.PROPERTY)//
-							.setLabelFunction((context, event) -> getEventLabelByProperty(context, event.getPersonPropertyId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByProperty(event.getPersonPropertyId()))//
 							.build();
 	}
 
@@ -185,12 +195,18 @@ public class PersonPropertyUpdateEvent implements Event {
 	public static EventLabel<PersonPropertyUpdateEvent> getEventLabelByRegionAndProperty(SimulationContext simulationContext, RegionId regionId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(simulationContext, personPropertyId);
 		validateRegionId(simulationContext, regionId);	
+		return _getEventLabelByRegionAndProperty(regionId, personPropertyId);//
+	}
+	
+	private static EventLabel<PersonPropertyUpdateEvent> _getEventLabelByRegionAndProperty(RegionId regionId, PersonPropertyId personPropertyId) {
+			
 		return EventLabel	.builder(PersonPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
 							.addKey(personPropertyId)//
 							.addKey(regionId)//
 							.build();//
 	}
+	
 	/**
 	 * Returns an event labeler for {@link PersonPropertyUpdateEvent} events
 	 * that uses the region id and person property id. Automatically added at
@@ -201,7 +217,7 @@ public class PersonPropertyUpdateEvent implements Event {
 							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
 							.setLabelFunction((context, event) -> {
 								RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
-								return getEventLabelByRegionAndProperty(context, regionId, event.getPersonPropertyId());
+								return _getEventLabelByRegionAndProperty(regionId, event.getPersonPropertyId());
 							}).build();
 	}
 

@@ -135,6 +135,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupAndProperty(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
 		validateGroupId(simulationContext, groupId);
 		validateGroupPropertyId(simulationContext, groupId, groupPropertyId);
+		return _getEventLabelByGroupAndProperty(groupId, groupPropertyId);//
+	}
+	
+	private static EventLabel<GroupPropertyUpdateEvent> _getEventLabelByGroupAndProperty(GroupId groupId, GroupPropertyId groupPropertyId) {
+		
 		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP_PROPERTY)//
 							.addKey(GroupPropertyUpdateEvent.class)//
@@ -151,7 +156,7 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupAndProperty() {
 		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP_PROPERTY)//
-							.setLabelFunction((context, event) -> getEventLabelByGroupAndProperty(context, event.getGroupId(), event.getGroupPropertyId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByGroupAndProperty(event.getGroupId(), event.getGroupPropertyId()))//
 							.build();
 	}
 
@@ -171,6 +176,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroup(SimulationContext simulationContext, GroupId groupId) {
 		validateGroupId(simulationContext, groupId);
+		return _getEventLabelByGroup(groupId);//
+	}
+	
+	private static EventLabel<GroupPropertyUpdateEvent> _getEventLabelByGroup(GroupId groupId) {
+		
 		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP)//
 							.addKey(GroupPropertyUpdateEvent.class)//
@@ -185,9 +195,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroup() {
 		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.GROUP)//
-							.setLabelFunction((context, event) -> getEventLabelByGroup(context, event.getGroupId()))//
+							.setLabelFunction((context, event) -> _getEventLabelByGroup(event.getGroupId()))//
 							.build();
 	}
+	
+	
 
 	/**
 	 * Returns an event label used to subscribe to
@@ -211,6 +223,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupTypeAndProperty(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
 		validateGroupPropertyId(simulationContext, groupTypeId, groupPropertyId);
+		return _getEventLabelByGroupTypeAndProperty(groupTypeId, groupPropertyId);
+	}
+	
+	private static EventLabel<GroupPropertyUpdateEvent> _getEventLabelByGroupTypeAndProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+		
 		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE_PROPERTY)//
 							.addKey(GroupPropertyUpdateEvent.class)//
@@ -228,7 +245,7 @@ public class GroupPropertyUpdateEvent implements Event {
 							.setEventLabelerId(LabelerId.TYPE_PROPERTY)//
 							.setLabelFunction((context, event) -> {
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-								return getEventLabelByGroupTypeAndProperty(context, groupTypeId, event.getGroupPropertyId());
+								return _getEventLabelByGroupTypeAndProperty(groupTypeId, event.getGroupPropertyId());
 							})//
 							.build();
 	}
@@ -250,6 +267,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	 */
 	public static EventLabel<GroupPropertyUpdateEvent> getEventLabelByGroupType(SimulationContext simulationContext, GroupTypeId groupTypeId) {
 		validateGroupTypeId(simulationContext, groupTypeId);
+		return _getEventLabelByGroupType(groupTypeId);//
+	}
+	
+	private static EventLabel<GroupPropertyUpdateEvent> _getEventLabelByGroupType(GroupTypeId groupTypeId) {
+		
 		return EventLabel	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE)//
 							.addKey(GroupPropertyUpdateEvent.class)//
@@ -266,7 +288,7 @@ public class GroupPropertyUpdateEvent implements Event {
 							.setEventLabelerId(LabelerId.TYPE)//
 							.setLabelFunction((context, event) -> {
 								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
-								return getEventLabelByGroupType(context, groupTypeId);
+								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();
 	}
