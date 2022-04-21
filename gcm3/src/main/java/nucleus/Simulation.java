@@ -210,17 +210,17 @@ public class Simulation {
 
 		@Override
 		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
-			Simulation.this.subscribeActorToEvent(eventLabel, eventConsumer);
+			Simulation.this.subscribeActorToEventByLabel(eventLabel, eventConsumer);
 		}
 
 		@Override
 		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
-			Simulation.this.subscribeActorToEvent(eventClass, eventConsumer);
+			Simulation.this.subscribeActorToEventByClass(eventClass, eventConsumer);
 		}
 
 		@Override
 		public <T extends Event> void unsubscribe(EventLabel<T> eventLabel) {
-			Simulation.this.unsubscribeActorFromEvent(eventLabel);
+			Simulation.this.unsubscribeActorFromEventByLabel(eventLabel);
 		}
 
 		@Override
@@ -251,7 +251,7 @@ public class Simulation {
 
 		@Override
 		public <T extends Event> void unsubscribe(Class<T> eventClass) {
-			unSubscribeActorToEvent(eventClass);
+			unSubscribeActorFromEventByClass(eventClass);
 		}
 
 	}
@@ -1046,7 +1046,7 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeActorToEvent(Class<? extends Event> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
+	private <T extends Event> void subscribeActorToEventByClass(Class<? extends Event> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1240,7 +1240,7 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void unSubscribeActorToEvent(Class<T> eventClass) {
+	private <T extends Event> void unSubscribeActorFromEventByClass(Class<T> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1491,7 +1491,7 @@ public class Simulation {
 
 	
 
-	private <T extends Event> void subscribeActorToEvent(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
+	private <T extends Event> void subscribeActorToEventByLabel(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
 
 		if (eventLabel == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
@@ -1539,7 +1539,7 @@ public class Simulation {
 
 	}
 
-	private <T extends Event> void unsubscribeActorFromEvent(EventLabel<T> eventLabel) {
+	private <T extends Event> void unsubscribeActorFromEventByLabel(EventLabel<T> eventLabel) {
 
 		if (eventLabel == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
