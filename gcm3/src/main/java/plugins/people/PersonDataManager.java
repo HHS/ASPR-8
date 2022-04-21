@@ -256,14 +256,14 @@ public final class PersonDataManager extends DataManager {
 	 */
 	public void removePerson(final PersonId personId) {
 		validatePersonExists(personId);
-
-		dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
-
+		
 		dataManagerContext.addPlan((context) -> {
 			globalPopulationRecord.populationCount--;
 			globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 			personIds.set(personId.getValue(), null);
 		}, dataManagerContext.getTime());
+		
+		dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
 
 	}
 

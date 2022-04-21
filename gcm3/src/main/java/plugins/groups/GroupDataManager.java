@@ -1173,7 +1173,7 @@ public final class GroupDataManager extends DataManager {
 	public void removeGroup(final GroupId groupId) {
 
 		validateGroupExists(groupId);
-		dataManagerContext.releaseEvent(new GroupImminentRemovalEvent(groupId));
+		
 		dataManagerContext.addPlan((context) -> {
 
 			final GroupTypeId groupTypeId = getGroupType(groupId);
@@ -1201,6 +1201,8 @@ public final class GroupDataManager extends DataManager {
 			}
 
 		}, dataManagerContext.getTime());
+		
+		dataManagerContext.releaseEvent(new GroupImminentRemovalEvent(groupId));
 	}
 
 	/**
