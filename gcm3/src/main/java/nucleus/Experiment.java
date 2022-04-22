@@ -455,7 +455,7 @@ public final class Experiment {
 		 * supplied to the dimensions of the experiment
 		 */
 
-		final PluginDataBuilderContext.Builder<PluginDataBuilder> typeMapBuilder = PluginDataBuilderContext.builder(PluginDataBuilder.class);
+		final PluginDataBuilderContext.Builder contextBuilder = PluginDataBuilderContext.builder();
 
 		/*
 		 * Set up a map that will allow us to associate each data builder with
@@ -467,10 +467,10 @@ public final class Experiment {
 			for (final PluginData pluginData : plugin.getPluginDatas()) {
 				PluginDataBuilder pluginDataBuilder = pluginData.getCloneBuilder();
 				humptyMap.put(pluginDataBuilder, plugin.getPluginId());
-				typeMapBuilder.add(pluginDataBuilder);
+				contextBuilder.add(pluginDataBuilder);
 			}
 		}
-		final PluginDataBuilderContext<PluginDataBuilder> typeMap = typeMapBuilder.build();
+		final PluginDataBuilderContext pluginDataBuilderContext = contextBuilder.build();
 
 		// initialize the scenario meta data
 		final List<String> scenarioMetaData = new ArrayList<>();
@@ -489,11 +489,11 @@ public final class Experiment {
 			modulus *= dimension.size();
 
 			// get the function from the dimension
-			final Function<PluginDataBuilderContext<PluginDataBuilder>, List<String>> memberGenerator = dimension.getLevel(index);
+			final Function<PluginDataBuilderContext, List<String>> memberGenerator = dimension.getLevel(index);
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function
-			scenarioMetaData.addAll(memberGenerator.apply(typeMap));
+			scenarioMetaData.addAll(memberGenerator.apply(pluginDataBuilderContext));
 
 		}
 
@@ -523,7 +523,7 @@ public final class Experiment {
 		// Get the plugin data builders and create the new plugin datas,
 		// associating each with the correct plugin. The plugin datas should be
 		// added in the order that they were in in the original plugins
-		for (final PluginDataBuilder pluginDataBuilder : typeMap.getContents()) {
+		for (final PluginDataBuilder pluginDataBuilder : pluginDataBuilderContext.getContents()) {
 			final PluginData pluginData = pluginDataBuilder.build();
 			PluginId pluginId = humptyMap.get(pluginDataBuilder);
 			Plugin.Builder pluginBuilder = dumptyMap.get(pluginId);

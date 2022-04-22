@@ -5,59 +5,45 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
-import nucleus.util.ContractError;
 import nucleus.util.ContractException;
 
 /**
  * 
- * A generics-based object container that retrieves instances from class
- * references.
+ * A context containing PluginDataBuilder instances that are used to build a
+ * particular scenario within an experiment.
  * 
  * @author Shawn Hatch
  *
- * @param <K>
+ * 
  */
-public final class PluginDataBuilderContext<K> {
-	public static enum TypeMapError implements ContractError {
-
-		NULL_INSTANCE("A null instance was added to the type map"),;
-
-		private final String description;
-
-		private TypeMapError(final String description) {
-			this.description = description;
-		}
-
-		@Override
-		public String getDescription() {
-			return description;
-		}
-	}
+public final class PluginDataBuilderContext {
 
 	private PluginDataBuilderContext() {
 	}
 
-	private Map<Class<?>, K> baseMap = new LinkedHashMap<>();
+	private Map<Class<?>, PluginDataBuilder> baseMap = new LinkedHashMap<>();
 
-	private Map<Class<?>, K> workingMap = new LinkedHashMap<>();
+	private Map<Class<?>, PluginDataBuilder> workingMap = new LinkedHashMap<>();
 
 	/**
 	 * Returns the stored item matching the given class reference.
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if more than one item matches the given class
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS}
+	 *             if more than one plugin data builder matches the given class
 	 *             reference</li>
 	 * 
-	 * 
+	 *             <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_BUILDER_CLASS}
+	 *             if no plugin data builder matches the given class
+	 *             reference</li>
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends K> Optional<T> get(Class<T> classRef) {
+	public <T extends PluginDataBuilder> T get(Class<T> classRef) {
 
-		K k = workingMap.get(classRef);
-		if (k == null) {
+		PluginDataBuilder pluginDataBuilder = workingMap.get(classRef);
+		if (pluginDataBuilder == null) {
 			List<Class<?>> candidates = new ArrayList<>();
 			for (Class<?> c : baseMap.keySet()) {
 				if (classRef.isAssignableFrom(c)) {
@@ -65,42 +51,45 @@ public final class PluginDataBuilderContext<K> {
 				}
 			}
 			if (candidates.size() > 1) {
-				throw new RuntimeException("Class reference matches multiple values");
+				throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS);
 			}
 			if (candidates.size() == 1) {
-				k = baseMap.get(candidates.get(0));
-				workingMap.put(classRef, k);
+				pluginDataBuilder = baseMap.get(candidates.get(0));
+				workingMap.put(classRef, pluginDataBuilder);
 			}
 		}
-		return Optional.ofNullable((T) k);
+		if (pluginDataBuilder == null) {
+			throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_BUILDER_CLASS);
+		}
+		return (T)pluginDataBuilder;
 	}
 
 	/**
-	 * Returns a typed Builder instance for TypeMap
+	 * Returns a typed Builder instance for PluginDataBuilderContext
 	 */
-	public static <N> Builder<N> builder(Class<N> n) {
-		return new Builder<N>();
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	/**
-	 * A type builder class for TypeMap
+	 * A builder class for PluginDataBuilderContext
 	 * 
 	 * @author Shawn Hatch
 	 *
 	 */
-	public static class Builder<N> {
+	public static class Builder {
 		private Builder() {
 		}
 
-		private Map<Class<?>, N> map = new LinkedHashMap<>();
+		private Map<Class<?>, PluginDataBuilder> map = new LinkedHashMap<>();
 
 		/**
-		 * Returns the TypeMap instance composed from the inputs to this
-		 * builder.
+		 * Returns the PluginDataBuilderContext instance composed from the
+		 * inputs to this builder.
 		 */
-		public PluginDataBuilderContext<N> build() {
+		public PluginDataBuilderContext build() {
 			try {
-				PluginDataBuilderContext<N> result = new PluginDataBuilderContext<>();
+				PluginDataBuilderContext result = new PluginDataBuilderContext();
 				result.baseMap = map;
 				return result;
 			} finally {
@@ -110,12 +99,13 @@ public final class PluginDataBuilderContext<K> {
 
 		/**
 		 * @throws ContractException
-		 *             <li>{@linkplain TypeMapError#NULL_INSTANCE}</li>
+		 *             <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER} if
+		 *             the plugin data builder is null</li>
 		 * 
 		 */
-		public <T extends N> Builder<N> add(T t) {
+		public <T extends PluginDataBuilder> Builder add(T t) {
 			if (t == null) {
-				throw new ContractException(TypeMapError.NULL_INSTANCE);
+				throw new ContractException(NucleusError.NULL_PLUGIN_DATA_BUILDER);
 			}
 			map.put(t.getClass(), t);
 			return this;
@@ -125,10 +115,10 @@ public final class PluginDataBuilderContext<K> {
 	/**
 	 * Returns the set of items stored in this container.
 	 */
-	public Set<K> getContents() {
-		Set<K> result = new LinkedHashSet<>();
-		for (K value : baseMap.values()) {
-			result.add(value);
+	public Set<PluginDataBuilder> getContents() {
+		Set<PluginDataBuilder> result = new LinkedHashSet<>();
+		for (PluginDataBuilder pluginDataBuilder : baseMap.values()) {
+			result.add(pluginDataBuilder);
 		}
 		return result;
 	}

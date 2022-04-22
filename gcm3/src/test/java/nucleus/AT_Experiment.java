@@ -31,12 +31,12 @@ public class AT_Experiment {
 
 		Dimension dimension1 = Dimension.builder()//
 										.addMetaDatum("Alpha")//
-										.addLevel((typeMap) -> {
+										.addLevel((context) -> {
 											List<String> result = new ArrayList<>();
 											result.add("alpha1");
 											return result;
 										})//
-										.addLevel((typeMap) -> {
+										.addLevel((context) -> {
 											List<String> result = new ArrayList<>();
 											result.add("alpha2");
 											return result;
@@ -45,17 +45,17 @@ public class AT_Experiment {
 
 		Dimension dimension2 = Dimension.builder()//
 										.addMetaDatum("Beta")//
-										.addLevel((typeMap) -> {
+										.addLevel((context) -> {
 											List<String> result = new ArrayList<>();
 											result.add("beta1");
 											return result;
 										})//
-										.addLevel((typeMap) -> {
+										.addLevel((context) -> {
 											List<String> result = new ArrayList<>();
 											result.add("beta2");
 											return result;
 										})//
-										.addLevel((typeMap) -> {
+										.addLevel((context) -> {
 											List<String> result = new ArrayList<>();
 											result.add("beta3");
 											return result;
@@ -330,7 +330,7 @@ public class AT_Experiment {
 		// simulation instances
 		Dimension.Builder dimBuilder = Dimension.builder().addMetaDatum("Alpha");//
 		IntStream.range(0, 5).forEach((i) -> {
-			dimBuilder.addLevel((typeMap) -> {
+			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				return result;
@@ -340,7 +340,7 @@ public class AT_Experiment {
 		Dimension dimension1 = dimBuilder.build();
 
 		IntStream.range(0, 8).forEach((i) -> {
-			dimBuilder.addLevel((typeMap) -> {
+			dimBuilder.addLevel((context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				return result;

@@ -13,6 +13,7 @@ import nucleus.util.ContractException;
 public enum NucleusError implements ContractError {
 	ACCESS_VIOLATION("A contributed behavior is accessing locked state during a state change"),
 	AMBIGUOUS_DATA_MANAGER_CLASS("Multiple data manager matches found"),
+	AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS("Multiple plugin data builder matches found"),
 	AMBIGUOUS_PLUGIN_DATA_CLASS("Multiple plugin data object matches found"),
 	CIRCULAR_PLUGIN_DEPENDENCIES("Circular plugin dependencies were found"),
 	DATA_MANAGER_DUPLICATE_INITIALIZATION("Data manager was already initialized"),
@@ -51,6 +52,7 @@ public enum NucleusError implements ContractError {
 	NULL_PLAN_KEY("Null planning key"),
 	NULL_PLUGIN("Null plugin"),
 	NULL_PLUGIN_DATA("Null plugin data"),
+	NULL_PLUGIN_DATA_BUILDER("A null plugin data builder instance was added to the context"),
 	NULL_PLUGIN_ID("Null plugin id"),
 	NULL_PLUGIN_INITIALIZER("Null plugin initializer"),
 	NULL_PRIMARY_KEY_VALUE("Null primary key value"),
@@ -64,9 +66,10 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_ACTOR_ID("Actor id does not correspond to a known actor"),
 	UNKNOWN_DATA_MANAGER("Unknown data manager"),
 	UNKNOWN_EVENT_LABELER("The labeler id an event label does not match a registered event labeler"),
+	UNKNOWN_PLUGIN_DATA_BUILDER_CLASS("The plugin data builder class was not found"),
 	UNKNOWN_SCENARIO_ID("Unknown scenario id"),
 	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
-
+	
 	;
 
 	private final String description;
