@@ -101,7 +101,12 @@ public class Simulation {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
+
+		public <T extends PluginData> T getPluginData(Class<T> pluginDataClass) {
+			if (pluginDataClass == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
+			}
+
 			PluginData pluginData = workingPluginDataMap.get(pluginDataClass);
 			if (pluginData == null) {
 				List<Class<?>> candidates = new ArrayList<>();
@@ -118,8 +123,11 @@ public class Simulation {
 					workingPluginDataMap.put(pluginDataClass, pluginData);
 				}
 			}
+			if (pluginData == null) {
+				throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS);
+			}
 
-			return Optional.ofNullable((T) pluginData);
+			return (T) pluginData;
 		}
 
 	}
@@ -232,12 +240,11 @@ public class Simulation {
 		public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
 			subscribeActorToSimulationClose(consumer);
 		}
-		
+
 		@Override
 		public boolean subscribersExist(Class<? extends Event> eventClass) {
 			return Simulation.this.subscribersExistForEvent(eventClass);
 		}
-		
 
 		@Override
 		public ActorId addActor(Consumer<ActorContext> consumer) {
@@ -1086,8 +1093,9 @@ public class Simulation {
 		@SuppressWarnings("unchecked")
 		public EventLabel<T> getEventLabel(SimulationContext simulationContext, Event event) {
 			EventLabel<T> eventLabel = eventLabeler.getEventLabel(simulationContext, (T) event);
-			if(eventLabel == null) {
-				throw new ContractException(NucleusError.NULL_EVENT_LABEL,"event labeler for class = "+ eventLabeler.getEventClass().getSimpleName()+" and label id ="+ eventLabeler.getEventLabelerId()+ " returned a null event label");
+			if (eventLabel == null) {
+				throw new ContractException(NucleusError.NULL_EVENT_LABEL,
+						"event labeler for class = " + eventLabeler.getEventClass().getSimpleName() + " and label id =" + eventLabeler.getEventLabelerId() + " returned a null event label");
 			}
 			if (!eventClass.equals(eventLabel.getEventClass())) {
 				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS);
@@ -1130,7 +1138,6 @@ public class Simulation {
 		}
 	}
 
-
 	private boolean actorExists(final ActorId actorId) {
 		if (actorId == null) {
 			return false;
@@ -1145,7 +1152,6 @@ public class Simulation {
 
 		return actorIds.get(index) != null;
 	}
-
 
 	private void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
@@ -1230,7 +1236,7 @@ public class Simulation {
 			while (iterator.hasNext()) {
 				MetaDataManagerEventConsumer<?> metaDataManagerEventConsumer = iterator.next();
 				if (metaDataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
-					iterator.remove();					
+					iterator.remove();
 				}
 			}
 
@@ -1353,10 +1359,10 @@ public class Simulation {
 			}
 		}
 
-		if(dataManager == null) {
-			throw new ContractException(NucleusError.UNKNOWN_DATA_MANAGER," : "+dataManagerClass.getSimpleName());
+		if (dataManager == null) {
+			throw new ContractException(NucleusError.UNKNOWN_DATA_MANAGER, " : " + dataManagerClass.getSimpleName());
 		}
-		return (T)dataManager;
+		return (T) dataManager;
 	}
 
 	/////////////////////////////////
@@ -1440,17 +1446,15 @@ public class Simulation {
 
 	}
 
-	
 	/////////////////////////////////////////////////////////////////////////
-	
+
 	private <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
 		if (eventLabeler == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABELER);
 		}
 
 		Class<T> eventClass = eventLabeler.getEventClass();
-		
-		
+
 		EventLabelerId id = eventLabeler.getEventLabelerId();
 
 		if (id_Labeler_Map.containsKey(id)) {
@@ -1461,7 +1465,7 @@ public class Simulation {
 
 		id_Labeler_Map.put(metaEventLabeler.getId(), metaEventLabeler);
 	}
-	
+
 	private void broadcastEventToActorSubscribers(final Event event) {
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(event.getClass());
 		if (map1 == null) {
@@ -1492,8 +1496,6 @@ public class Simulation {
 		}
 	}
 
-	
-
 	private <T extends Event> void subscribeActorToEventByLabel(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
 
 		if (eventLabel == null) {
@@ -1515,8 +1517,8 @@ public class Simulation {
 
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>> map1 = actorPubSub.get(eventLabel.getEventClass());
 		if (map1 == null) {
-			map1 = new LinkedHashMap<>();			
-			actorPubSub.put(eventClass, map1);			
+			map1 = new LinkedHashMap<>();
+			actorPubSub.put(eventClass, map1);
 		}
 
 		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>> map2 = map1.get(primaryKeyValue);
@@ -1590,20 +1592,19 @@ public class Simulation {
 				if (map2.isEmpty()) {
 					map1.remove(primaryKeyValue);
 					if (map1.isEmpty()) {
-						actorPubSub.remove(eventClass);						
+						actorPubSub.remove(eventClass);
 					}
 				}
 			}
 		}
 	}
-	
+
 	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-		return (dataManagerEventMap.containsKey(eventClass)||actorPubSub.containsKey(eventClass)||actorEventMap.containsKey(eventClass));
+		return (dataManagerEventMap.containsKey(eventClass) || actorPubSub.containsKey(eventClass) || actorEventMap.containsKey(eventClass));
 	}
 
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
 
 	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer<?>>>>>> actorPubSub = new LinkedHashMap<>();
-
 
 }

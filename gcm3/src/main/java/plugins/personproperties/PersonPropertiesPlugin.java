@@ -27,7 +27,7 @@ public final class PersonPropertiesPlugin {
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.addPluginDependency(RegionPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							PersonPropertiesPluginData pluginData = c.getPluginData(PersonPropertiesPluginData.class).get();
+							PersonPropertiesPluginData pluginData = c.getPluginData(PersonPropertiesPluginData.class);
 							c.addDataManager(new PersonPropertiesDataManager(pluginData));
 						}).build();
 

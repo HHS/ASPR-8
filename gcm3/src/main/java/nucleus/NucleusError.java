@@ -53,6 +53,7 @@ public enum NucleusError implements ContractError {
 	NULL_PLUGIN("Null plugin"),
 	NULL_PLUGIN_DATA("Null plugin data"),
 	NULL_PLUGIN_DATA_BUILDER("A null plugin data builder instance was added to the context"),
+	NULL_PLUGIN_DATA_CLASS("Null plugin data class"),
 	NULL_PLUGIN_ID("Null plugin id"),
 	NULL_PLUGIN_INITIALIZER("Null plugin initializer"),
 	NULL_PRIMARY_KEY_VALUE("Null primary key value"),
@@ -67,6 +68,7 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_DATA_MANAGER("Unknown data manager"),
 	UNKNOWN_EVENT_LABELER("The labeler id an event label does not match a registered event labeler"),
 	UNKNOWN_PLUGIN_DATA_BUILDER_CLASS("The plugin data builder class was not found"),
+	UNKNOWN_PLUGIN_DATA_CLASS("Unknown plugin data class"),
 	UNKNOWN_SCENARIO_ID("Unknown scenario id"),
 	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
 	

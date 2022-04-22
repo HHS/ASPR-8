@@ -86,8 +86,8 @@ public class AT_Simulation {
 								.addPluginData(new PluginData1())//
 								.addPluginData(new PluginData2())//
 								.setInitializer((c) -> {
-									assertTrue(c.getPluginData(PluginData1.class).isPresent());
-									assertTrue(c.getPluginData(PluginData2.class).isPresent());
+									assertNotNull(c.getPluginData(PluginData1.class));
+									assertNotNull(c.getPluginData(PluginData2.class));
 									pluginAssertionsExecuted.setValue(true);
 								})//
 								.build();//

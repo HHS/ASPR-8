@@ -22,7 +22,7 @@ public final class ResourcesPlugin {
 						.addPluginDependency(ReportsPluginId.PLUGIN_ID)//
 						.addPluginDependency(RegionPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							ResourcesPluginData pluginData = c.getPluginData(ResourcesPluginData.class).get();
+							ResourcesPluginData pluginData = c.getPluginData(ResourcesPluginData.class);
 							c.addDataManager(new ResourceDataManager(pluginData));
 						})//
 						.build();

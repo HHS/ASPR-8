@@ -1,6 +1,8 @@
 package nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -13,6 +15,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.util.ContractException;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MutableBoolean;
@@ -152,6 +155,13 @@ public class AT_PluginContext {
 			throw new UnsupportedOperationException();
 		}
 	}
+	
+	private static class PluginData4 implements PluginData {
+		@Override
+		public PluginDataBuilder getCloneBuilder() {
+			throw new UnsupportedOperationException();
+		}
+	}
 
 	@Test
 	@UnitTestMethod(name = "getPluginData", args = { Class.class })
@@ -166,9 +176,29 @@ public class AT_PluginContext {
 		Plugin plugin = Plugin	.builder()//
 								.setPluginId(new SimplePluginId("plugin id"))//
 								.setInitializer((c) -> {
-									assertTrue(c.getPluginData(PluginData1.class).isPresent());
-									assertTrue(c.getPluginData(PluginData2.class).isPresent());
-									assertTrue(c.getPluginData(PluginData3.class).isPresent());
+									assertNotNull(c.getPluginData(PluginData1.class));
+									assertNotNull(c.getPluginData(PluginData2.class));
+									assertNotNull(c.getPluginData(PluginData3.class));
+									
+									ContractException contractException = assertThrows(ContractException.class,()->{
+										c.getPluginData(PluginData.class);
+									});
+									
+									assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS,contractException.getErrorType());
+
+									contractException = assertThrows(ContractException.class,()->{
+										c.getPluginData(PluginData4.class);
+									});
+									
+									assertEquals(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS,contractException.getErrorType());
+
+									contractException = assertThrows(ContractException.class,()->{
+										c.getPluginData(null);
+									});
+									
+									assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS,contractException.getErrorType());
+
+									
 									assertionsExecuted.setValue(true);
 								})//
 								.addPluginData(new PluginData1())//

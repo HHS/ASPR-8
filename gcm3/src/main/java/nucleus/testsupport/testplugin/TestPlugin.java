@@ -33,7 +33,7 @@ public class TestPlugin {
 			throw new RuntimeException("null plugin context");
 		}
 
-		TestPluginData testPluginData = pluginContext.getPluginData(TestPluginData.class).get();
+		TestPluginData testPluginData = pluginContext.getPluginData(TestPluginData.class);
 
 		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(testPluginData);
 		pluginContext.addDataManager(testPlanDataManager);

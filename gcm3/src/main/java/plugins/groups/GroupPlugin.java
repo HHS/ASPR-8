@@ -26,7 +26,7 @@ public final class GroupPlugin {
 						.addPluginDependency(ReportsPluginId.PLUGIN_ID)//
 						.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							GroupPluginData pluginData = c.getPluginData(GroupPluginData.class).get();
+							GroupPluginData pluginData = c.getPluginData(GroupPluginData.class);
 							c.addDataManager(new GroupDataManager(pluginData));
 						})//
 						.build();

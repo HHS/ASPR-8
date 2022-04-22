@@ -1,6 +1,5 @@
 package nucleus;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import nucleus.util.ContractException;
@@ -44,9 +43,17 @@ public interface PluginContext {
 	 * Returns the plugin data object associated with the given class reference
 	 * 
 	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
+	 *             the class reference is null</li>
+ 
 	 *             <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS} if
 	 *             more than one plugin data object matches the class
 	 *             reference</li>
+	 * 
+	 *             <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_CLASS} if no
+	 *             plugin data object matches the class reference</li> 
+	 * 
 	 */
-	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass);
+	public <T extends PluginData> T getPluginData(Class<T> pluginDataClass);
 }

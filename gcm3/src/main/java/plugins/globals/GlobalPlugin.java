@@ -49,7 +49,7 @@ public final class GlobalPlugin {
 						.addPluginData(globalPluginData)//
 						.addPluginDependency(ReportsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							GlobalPluginData data = c.getPluginData(GlobalPluginData.class).get();
+							GlobalPluginData data = c.getPluginData(GlobalPluginData.class);
 							c.addDataManager(new GlobalDataManager(data));
 						})//
 						.setPluginId(GlobalsPluginId.PLUGIN_ID)//

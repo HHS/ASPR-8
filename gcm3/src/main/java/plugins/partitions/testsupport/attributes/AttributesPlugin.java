@@ -108,7 +108,7 @@ public final class AttributesPlugin {
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.addPluginDependency(PartitionsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							AttributesPluginData pluginData = c.getPluginData(AttributesPluginData.class).get();
+							AttributesPluginData pluginData = c.getPluginData(AttributesPluginData.class);
 							c.addDataManager(new AttributesDataManager(pluginData));
 						})//
 						.addPluginData(attributesPluginData)//

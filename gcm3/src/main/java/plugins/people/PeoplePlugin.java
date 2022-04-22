@@ -48,7 +48,7 @@ public final class PeoplePlugin {
 						.addPluginData(peoplePluginData)//
 						.setPluginId(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class).get();
+							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class);
 							c.addDataManager(new PersonDataManager(pluginData));							
 						})//
 						.build();
