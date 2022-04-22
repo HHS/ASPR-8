@@ -24,5 +24,7 @@ public @interface UnitTestMethod {
 	Class<?> target() default Object.class;
 
 	Class<?>[] args();
+	
+	boolean manual() default false;
 
 }

@@ -46,6 +46,7 @@ public enum NucleusError implements ContractError {
 	NULL_EVENT_LABEL_KEY("Null event label key"),
 	NULL_LABELER_ID_IN_EVENT_LABEL("Event label returns a null event labeler id"),
 	NULL_LABELER_ID_IN_EVENT_LABELER("Event labeler returns a null id"),
+	NULL_PLUGIN_INITIALIZER("Null plugin initializer"),
 	NULL_OUTPUT_HANDLER("Null output item handler"),
 	NULL_OUTPUT_ITEM("Null output"),
 	NULL_PLAN("Null plan"),

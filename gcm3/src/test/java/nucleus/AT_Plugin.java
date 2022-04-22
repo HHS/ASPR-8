@@ -1,105 +1,224 @@
 package nucleus;
 
-import org.junit.jupiter.api.Disabled;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+
 import org.junit.jupiter.api.Test;
 
+import nucleus.util.ContractException;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = Plugin.class)
-@Disabled
 public class AT_Plugin {
-	@Test
-	public void test() {
+
+	private static final class XPluginData implements PluginData {
+
+		@Override
+		public PluginDataBuilder getCloneBuilder() {
+			return null;
+		}
 
 	}
-	
-//	@Test
-//	@UnitTestMethod(name = "addPluginDependency", args = { PluginId.class })
-//	public void testAddPluginDependency() {
-//		final RandomGenerator randomGenerator = SeedProvider.getRandomGenerator(5064139892061974375L);
-//
-//		/*
-//		 * We will generate several plugins with randomized, non-circular
-//		 * dependencies. Each plugin initializer will add an actor to the
-//		 * simulation. This actor will contribute the plugin's id to a local
-//		 * list. If the plugin dependencies were properly ordered, then each
-//		 * actor should come after the actors associated with the dependent
-//		 * plugins.
-//		 */
-//
-//		// replicate this test 30 times
-//		for (int rep = 0; rep < 30; rep++) {
-//
-//			/*
-//			 * Create a list to hold the plugin id values collected from the
-//			 * actors on their initialization
-//			 */
-//			final List<PluginId> executionOrdering = new ArrayList<>();
-//
-//			// determine a random number of plugins to build
-//			final int numberOfPlugins = randomGenerator.nextInt(20);
-//
-//			// create plugin ids
-//			final List<PluginId> pluginIds = new ArrayList<>();
-//			for (int i = 0; i < numberOfPlugins; i++) {
-//				pluginIds.add(new SimplePluginId(i));
-//			}
-//
-//			/*
-//			 * Create a map to record the plugin dependencies for each plugin.
-//			 */
-//			final Map<PluginId, List<PluginId>> dependencyMap = new LinkedHashMap<>();
-//
-//			// begin building the simulation
-//			final Simulation.Builder builder = Simulation.builder();//
-//
-//			// Create each plugin initializer with randomized, non-circular
-//			// dependencies. Record the dependencies in the dependencyMap for
-//			// later use.
-//			for (int i = 0; i < numberOfPlugins; i++) {
-//				final PluginId pluginId = pluginIds.get(i);
-//				final Set<PluginId> selectedPlugins = new LinkedHashSet<>();
-//				if (i > 0) {
-//					final int maxNumberOfDependencies = randomGenerator.nextInt(i);
-//					for (int j = 0; j < maxNumberOfDependencies; j++) {
-//						selectedPlugins.add(pluginIds.get(randomGenerator.nextInt(i)));
-//					}
-//				}
-//				final List<PluginId> dependencies = new ArrayList<>(selectedPlugins);
-//				dependencyMap.put(pluginId, dependencies);
-//
-//				final DependencyPluginInitializer dependencyPluginInitializer = new DependencyPluginInitializer(pluginId, dependencies);
-//				builder.addPluginInitializer(dependencyPluginInitializer);
-//
-//			}
-//
-//			// Create an output consumer that will collect the output from the
-//			// actors.
-//			builder.setOutputConsumer((o) -> {
-//				if (o instanceof PluginId) {
-//					executionOrdering.add((PluginId) o);
-//				}
-//			});
-//
-//			// Execute the simulation. We expect that the actors associated with
-//			// the plugins will be initialized in the correct order.
-//			builder.build().execute();//
-//
-//			// show that the plugin ordering recorded in the executionOrdering
-//			// list is consistent with the ordering recorded in the plugin
-//			// initializers
-//			for (final PluginId pluginId : dependencyMap.keySet()) {
-//				final List<PluginId> dependencies = dependencyMap.get(pluginId);
-//				final int pluginIndex = executionOrdering.indexOf(pluginId);
-//				assertTrue(pluginIndex >= 0);
-//				for (final PluginId pId : dependencies) {
-//					final int dependentIndex = executionOrdering.indexOf(pId);
-//					assertTrue(dependentIndex >= 0);
-//					assertTrue(pluginIndex > dependentIndex);
-//				}
-//			}
-//
-//		}
-//
-//	}
+
+	private static enum PluginIds implements PluginId {
+		PLUGIN_ID_1, PLUGIN_ID_2, PLUGIN_ID_3,
+	}
+
+	@Test
+	@UnitTestMethod(name = "builder", args = {})
+	public void testBuilder() {
+		assertNotNull(Plugin.builder());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getInitializer", args = {})
+	public void testGetInitializer() {
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.build();//
+
+		assertFalse(plugin.getInitializer().isPresent());
+
+		Consumer<PluginContext> initializer = (c) -> {
+		};
+
+		plugin = Plugin	.builder()//
+						.setPluginId(PluginIds.PLUGIN_ID_1)//
+						.setInitializer(initializer)//
+						.build();//
+
+		assertTrue(plugin.getInitializer().isPresent());
+		assertEquals(initializer, plugin.getInitializer().get());
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPluginDatas", args = {})
+	public void testGetPluginDatas() {
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.build();//
+
+		assertTrue(plugin.getPluginDatas().isEmpty());
+
+		XPluginData xPluginData1 = new XPluginData();
+		XPluginData xPluginData2 = new XPluginData();
+		Set<PluginData> expectedPluginDatas = new LinkedHashSet<>();
+		expectedPluginDatas.add(xPluginData1);
+		expectedPluginDatas.add(xPluginData2);
+
+		plugin = Plugin	.builder()//
+						.setPluginId(PluginIds.PLUGIN_ID_1)//
+						.addPluginData(xPluginData1)//
+						.addPluginData(xPluginData2)//
+						.build();//
+
+		assertEquals(expectedPluginDatas, plugin.getPluginDatas());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPluginDependencies", args = {})
+	public void testGetPluginDependencies() {
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.build();//
+
+		assertTrue(plugin.getPluginDependencies().isEmpty());
+
+		Set<PluginId> expectedPluginIds = new LinkedHashSet<>();
+		expectedPluginIds.add(PluginIds.PLUGIN_ID_2);
+		expectedPluginIds.add(PluginIds.PLUGIN_ID_3);
+
+		plugin = Plugin	.builder()//
+						.setPluginId(PluginIds.PLUGIN_ID_1)//
+						.addPluginDependency(PluginIds.PLUGIN_ID_2)//
+						.addPluginDependency(PluginIds.PLUGIN_ID_3)//
+						.build();//
+
+		assertEquals(expectedPluginIds, plugin.getPluginDependencies());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPluginId", args = {})
+	public void testGetPluginId() {
+
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.build();//
+
+		assertEquals(PluginIds.PLUGIN_ID_1, plugin.getPluginId());
+
+		plugin = Plugin	.builder()//
+						.setPluginId(PluginIds.PLUGIN_ID_2)//
+						.build();//
+
+		assertEquals(PluginIds.PLUGIN_ID_2, plugin.getPluginId());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = Plugin.Builder.class, name = "addPluginData", args = { PluginData.class })
+	public void testAddPluginData() {
+
+		XPluginData xPluginData1 = new XPluginData();
+		XPluginData xPluginData2 = new XPluginData();
+		Set<PluginData> expectedPluginDatas = new LinkedHashSet<>();
+		expectedPluginDatas.add(xPluginData1);
+		expectedPluginDatas.add(xPluginData2);
+
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.addPluginData(xPluginData1)//
+								.addPluginData(xPluginData2)//
+								.build();//
+
+		assertEquals(expectedPluginDatas, plugin.getPluginDatas());
+
+		// precondition test: if the plugin data is null
+		ContractException contractException = assertThrows(ContractException.class, () -> Plugin.builder().addPluginData(null));
+		assertEquals(NucleusError.NULL_PLUGIN_DATA, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = Plugin.Builder.class, name = "addPluginDependency", args = { PluginId.class })
+	public void testAddPluginDependency() {
+
+		Set<PluginId> expectedPluginIds = new LinkedHashSet<>();
+		expectedPluginIds.add(PluginIds.PLUGIN_ID_2);
+		expectedPluginIds.add(PluginIds.PLUGIN_ID_3);
+
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.addPluginDependency(PluginIds.PLUGIN_ID_2)//
+								.addPluginDependency(PluginIds.PLUGIN_ID_3)//
+								.build();//
+
+		assertEquals(expectedPluginIds, plugin.getPluginDependencies());
+
+		// precondition test: if a plugin dependency is null
+		ContractException contractException = assertThrows(ContractException.class, () -> Plugin.builder().addPluginDependency(null));
+		assertEquals(NucleusError.NULL_PLUGIN_ID, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = Plugin.Builder.class, name = "build", args = {})
+	public void testBuild() {
+
+		Plugin plugin = Plugin.builder().setPluginId(PluginIds.PLUGIN_ID_1).build();
+		assertNotNull(plugin);
+
+		// precondition test: if the plugin id was not set
+		ContractException contractException = assertThrows(ContractException.class, () -> Plugin.builder().build());
+		assertEquals(NucleusError.NULL_PLUGIN_ID, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = Plugin.Builder.class, name = "setInitializer", args = { Consumer.class })
+	public void testSetInitializer() {
+
+		Consumer<PluginContext> initializer = (c) -> {
+		};
+
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.setInitializer(initializer)//
+								.build();//
+
+		assertTrue(plugin.getInitializer().isPresent());
+		assertEquals(initializer, plugin.getInitializer().get());
+
+		// precondition test: if the initializer is null
+		ContractException contractException = assertThrows(ContractException.class, () -> Plugin.builder().setInitializer(null));
+		assertEquals(NucleusError.NULL_PLUGIN_INITIALIZER, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = Plugin.Builder.class, name = "setPluginId", args = { PluginId.class })
+	public void testSetPluginId() {
+		Plugin plugin = Plugin	.builder()//
+								.setPluginId(PluginIds.PLUGIN_ID_1)//
+								.build();//
+
+		assertEquals(PluginIds.PLUGIN_ID_1, plugin.getPluginId());
+
+		plugin = Plugin	.builder()//
+						.setPluginId(PluginIds.PLUGIN_ID_2)//
+						.build();//
+
+		assertEquals(PluginIds.PLUGIN_ID_2, plugin.getPluginId());
+		
+		//precondition test: if the plugin id is null
+		assertThrows(ContractException.class,()->Plugin	.builder().setPluginId(null));
+		
+	}
+
 }

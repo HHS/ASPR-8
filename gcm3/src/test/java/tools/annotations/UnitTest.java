@@ -20,4 +20,5 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 public @interface UnitTest {
 	Class<?> target();
+	Class<?>[] proxy() default Object.class;
 }

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import nucleus.Plugin;
 import nucleus.PluginContext;
-import nucleus.PluginData;
 
 /**
  * Static test support plugin that is designed to work with a unit testing
@@ -53,10 +52,10 @@ public class TestPlugin {
 
 	}
 
-	public static Plugin getTestPlugin(PluginData pluginData) {
+	public static Plugin getTestPlugin(TestPluginData testPluginData) {
 		return Plugin	.builder()//
 						.setInitializer(TestPlugin::init)//
-						.addPluginData(pluginData)//
+						.addPluginData(testPluginData)//
 						.setPluginId(TestPluginId.PLUGIN_ID)//
 						.build();//
 	}

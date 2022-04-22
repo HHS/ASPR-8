@@ -3,7 +3,6 @@ package nucleus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -313,19 +311,15 @@ public class AT_Experiment {
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressConsole", args = { boolean.class })
-	@Disabled
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressConsole", args = { boolean.class }, manual = true)
 	public void testSetExperimentProgressConsole() {
-		// should be manually tested
-		fail();
+		// should be manually tested		
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class })
-	@Disabled
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, manual = true)	
 	public void testSetExperimentProgressLog() {
-		// should be manually tested
-		fail();
+		// should be manually tested		
 	}
 
 	@Test

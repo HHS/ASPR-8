@@ -17,38 +17,6 @@ public final class TestReportItemOutputConsumer {
 	private Map<Integer, Map<ReportItem, MutableInteger>> reportItems = new LinkedHashMap<>();
 
 	/**
-	 * Returns the report items consumed by this consumer listed in the order of
-	 * insertion on separate lines. Each line is formed of the scenario id, the
-	 * count of report identical items received and a string representation of
-	 * the report item.
-	 */
-	@Override
-	public synchronized String toString() {
-		String lineSeparator = System.getProperty("line.separator");
-		StringBuilder builder = new StringBuilder();
-		builder.append("scenario");
-		builder.append("\t");
-		builder.append("count");
-		builder.append(lineSeparator);
-
-		for (Integer scenarioId : reportItems.keySet()) {
-			Map<ReportItem, MutableInteger> map = reportItems.get(scenarioId);
-			for (ReportItem reportItem : map.keySet()) {
-				MutableInteger mutableInteger = map.get(reportItem);
-				builder.append(scenarioId);
-				builder.append("\t");
-				builder.append(mutableInteger.getValue());
-				for (int i = 0; i < reportItem.size(); i++) {
-					builder.append("\t");
-					builder.append(reportItem.getValue(i));
-				}
-				builder.append(lineSeparator);
-			}
-		}
-		return builder.toString();
-	}
-
-	/**
 	 * Stores the {@link ReportItem} output, keep counts on duplicates.
 	 * 
 	 * @throws RuntimeException

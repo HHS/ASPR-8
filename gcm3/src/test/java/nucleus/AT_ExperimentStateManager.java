@@ -1,14 +1,11 @@
 package nucleus;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
 
-@UnitTest(target = ExperimentStateManager.class)
-@Disabled
+@UnitTest(target = ExperimentStateManager.class, proxy = {ExperimentStateManager.class,ExperimentContext.class })
+
 public class AT_ExperimentStateManager {
 
 	@Test
@@ -16,7 +13,6 @@ public class AT_ExperimentStateManager {
 		/*
 		 * All tests of the ExperimentStateManager are covered by the Experiment
 		 * and ExperimentContext tests
-		 */
-		fail();
+		 */		
 	}
 }

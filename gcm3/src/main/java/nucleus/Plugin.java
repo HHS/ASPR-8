@@ -70,6 +70,9 @@ public final class Plugin {
 		}
 
 		public Builder setPluginId(PluginId pluginId) {
+			if(pluginId == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
+			}
 			data.pluginId = pluginId;
 			return this;
 		}
@@ -89,12 +92,14 @@ public final class Plugin {
 		 * contributed to a simulation or experiment.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED} if
-		 *             plugin initialization is over
+		 *            
 		 *             <li>{@link NucleusError#NULL_PLUGIN_ID} if the plugin id
 		 *             is null
 		 */
 		public Builder addPluginDependency(PluginId pluginId) {
+			if(pluginId == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
+			}
 			data.pluginDependencies.add(pluginId);
 			return this;
 		}
@@ -124,8 +129,15 @@ public final class Plugin {
 		 * simulation by adding actors and data mangers to the simulation on the
 		 * simulation's startup. The initializer must be thread-safe. It is best
 		 * practice for the initializer to be stateless.
+		 * 
+		 * @throws ContractException
+		 * <li>{@linkplain NucleusError#NULL_PLUGIN_INITIALIZER} if the initializer is null</li>
+		 * 
 		 */
 		public Builder setInitializer(Consumer<PluginContext> initializer) {
+			if(initializer == null) {
+				throw new ContractException(NucleusError.NULL_PLUGIN_INITIALIZER);
+			}
 			data.initializer = initializer;
 			return this;
 		}
