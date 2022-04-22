@@ -17,7 +17,6 @@ import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
 import nucleus.util.ContractException;
-import nucleus.util.TypeMap;
 
 /**
  * An experiment provides a means for executing the simulation over variants of
@@ -456,7 +455,7 @@ public final class Experiment {
 		 * supplied to the dimensions of the experiment
 		 */
 
-		final TypeMap.Builder<PluginDataBuilder> typeMapBuilder = TypeMap.builder(PluginDataBuilder.class);
+		final PluginDataBuilderContext.Builder<PluginDataBuilder> typeMapBuilder = PluginDataBuilderContext.builder(PluginDataBuilder.class);
 
 		/*
 		 * Set up a map that will allow us to associate each data builder with
@@ -471,7 +470,7 @@ public final class Experiment {
 				typeMapBuilder.add(pluginDataBuilder);
 			}
 		}
-		final TypeMap<PluginDataBuilder> typeMap = typeMapBuilder.build();
+		final PluginDataBuilderContext<PluginDataBuilder> typeMap = typeMapBuilder.build();
 
 		// initialize the scenario meta data
 		final List<String> scenarioMetaData = new ArrayList<>();
@@ -490,7 +489,7 @@ public final class Experiment {
 			modulus *= dimension.size();
 
 			// get the function from the dimension
-			final Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator = dimension.getLevel(index);
+			final Function<PluginDataBuilderContext<PluginDataBuilder>, List<String>> memberGenerator = dimension.getLevel(index);
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function

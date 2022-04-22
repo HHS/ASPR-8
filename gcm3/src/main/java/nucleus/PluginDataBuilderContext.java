@@ -1,4 +1,4 @@
-package nucleus.util;
+package nucleus;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import nucleus.util.ContractError;
+import nucleus.util.ContractException;
 
 /**
  * 
@@ -17,7 +20,7 @@ import java.util.Set;
  *
  * @param <K>
  */
-public final class TypeMap<K> {
+public final class PluginDataBuilderContext<K> {
 	public static enum TypeMapError implements ContractError {
 
 		NULL_INSTANCE("A null instance was added to the type map"),;
@@ -34,7 +37,7 @@ public final class TypeMap<K> {
 		}
 	}
 
-	private TypeMap() {
+	private PluginDataBuilderContext() {
 	}
 
 	private Map<Class<?>, K> baseMap = new LinkedHashMap<>();
@@ -95,9 +98,9 @@ public final class TypeMap<K> {
 		 * Returns the TypeMap instance composed from the inputs to this
 		 * builder.
 		 */
-		public TypeMap<N> build() {
+		public PluginDataBuilderContext<N> build() {
 			try {
-				TypeMap<N> result = new TypeMap<>();
+				PluginDataBuilderContext<N> result = new PluginDataBuilderContext<>();
 				result.baseMap = map;
 				return result;
 			} finally {

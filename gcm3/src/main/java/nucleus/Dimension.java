@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import nucleus.util.TypeMap;
-
 /**
  * A Dimension represents a single independent dimension of an experiment.
  * Dimensions are composed of a finite number of levels. Each level in a
@@ -21,7 +19,7 @@ public final class Dimension {
 
 	private static class Data {
 		List<String> metaData = new ArrayList<>();
-		List<Function<TypeMap<PluginDataBuilder>, List<String>>> levels = new ArrayList<>();
+		List<Function<PluginDataBuilderContext<PluginDataBuilder>, List<String>>> levels = new ArrayList<>();
 	}
 
 	/**
@@ -61,7 +59,7 @@ public final class Dimension {
 		 * experiment level meta data contained in the dimension and must
 		 * contain the same number of elements.
 		 */
-		public Builder addLevel(Function<TypeMap<PluginDataBuilder>, List<String>> memberGenerator) {
+		public Builder addLevel(Function<PluginDataBuilderContext<PluginDataBuilder>, List<String>> memberGenerator) {
 			data.levels.add(memberGenerator);
 			return this;
 		}
@@ -101,7 +99,7 @@ public final class Dimension {
 	/**
 	 * Returns the function(level) for the given index.  Valid indexes are zero through size()-1 inclusive.
 	 */
-	public Function<TypeMap<PluginDataBuilder>, List<String>> getLevel(int index) {
+	public Function<PluginDataBuilderContext<PluginDataBuilder>, List<String>> getLevel(int index) {
 		return data.levels.get(index);
 	}
 
