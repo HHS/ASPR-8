@@ -7,7 +7,7 @@ import plugins.materials.support.MaterialsProducerId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
 
 /**
@@ -101,10 +101,10 @@ public final class MaterialsProducerResourceReport {
 
 		actorContext.subscribe(MaterialsProducerResourceUpdateEvent.class,this::handleMaterialsProducerResourceUpdateEvent);
 
-		ResourceDataManager resourceDataManager = actorContext.getDataManager(ResourceDataManager.class);
+		ResourcesDataManager resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-			for (ResourceId resourceId : resourceDataManager.getResourceIds()) {
+			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 				long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 				writeReportItem(actorContext,resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
 			}

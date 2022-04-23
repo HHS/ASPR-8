@@ -33,7 +33,7 @@ import plugins.partitions.testsupport.attributes.AttributesPluginData;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
@@ -172,12 +172,12 @@ public final class AT_AttributeFilter {
 	public void testEvaluate() {
 		PartitionsActionSupport.testConsumer(100, 2853953940626718331L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				boolean value = randomGenerator.nextBoolean();
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, value);
 				boolean expected = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);

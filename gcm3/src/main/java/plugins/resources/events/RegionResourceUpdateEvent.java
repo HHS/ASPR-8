@@ -7,10 +7,10 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 
@@ -75,8 +75,8 @@ public class RegionResourceUpdateEvent implements Event {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
-		if (!regionDataManager.regionIdExists(regionId)) {
+		RegionsDataManager regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+		if (!regionsDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
@@ -85,8 +85,8 @@ public class RegionResourceUpdateEvent implements Event {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
-		if (!resourceDataManager.resourceIdExists(resourceId)) {
+		ResourcesDataManager resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
+		if (!resourcesDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}
 	}

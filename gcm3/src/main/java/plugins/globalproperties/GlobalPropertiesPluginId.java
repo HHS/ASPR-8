@@ -1,4 +1,4 @@
-package plugins.globals;
+package plugins.globalproperties;
 
 import nucleus.PluginId;
 /**
@@ -8,7 +8,7 @@ import nucleus.PluginId;
  *
  */
 
-public final class GlobalsPluginId implements PluginId {
-	public final static PluginId PLUGIN_ID = new GlobalsPluginId();
-	private GlobalsPluginId() {};
+public final class GlobalPropertiesPluginId implements PluginId {
+	public final static PluginId PLUGIN_ID = new GlobalPropertiesPluginId();
+	private GlobalPropertiesPluginId() {};
 }

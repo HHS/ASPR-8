@@ -24,12 +24,12 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
 import plugins.partitions.support.LabelerSensitivity;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
@@ -106,17 +106,17 @@ public final class AT_ResourceLabeler {
 
 		// distribute random resources across people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
-				RegionId regionId = regionDataManager.getPersonRegion(personId);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				RegionId regionId = regionsDataManager.getPersonRegion(personId);
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					long amount = randomGenerator.nextInt(100) + 1;
-					resourceDataManager.addResourceToRegion(testResourceId, regionId, amount);
-					resourceDataManager.transferResourceToPersonFromRegion(testResourceId, personId, amount);
+					resourcesDataManager.addResourceToRegion(testResourceId, regionId, amount);
+					resourcesDataManager.transferResourceToPersonFromRegion(testResourceId, personId, amount);
 				}
 			}
 		}));
@@ -127,13 +127,13 @@ public final class AT_ResourceLabeler {
 		 * passed to the resource labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			for (PersonId personId : people) {
 
 				// get the person's resource and apply the function directly
-				long personResourceLevel = resourceDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, personId);
+				long personResourceLevel = resourcesDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, personId);
 				Object expectedLabel = function.apply(personResourceLevel);
 
 				// get the label from the person id

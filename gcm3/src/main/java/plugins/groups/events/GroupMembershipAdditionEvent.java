@@ -7,11 +7,11 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 
@@ -59,9 +59,9 @@ public class GroupMembershipAdditionEvent implements Event {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 
-		if (!groupDataManager.groupExists(groupId)) {
+		if (!groupsDataManager.groupExists(groupId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 	}
@@ -70,8 +70,8 @@ public class GroupMembershipAdditionEvent implements Event {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class);
-		if (!personDataManager.personExists(personId)) {
+		PeopleDataManager peopleDataManager = simulationContext.getDataManager(PeopleDataManager.class);
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
@@ -80,8 +80,8 @@ public class GroupMembershipAdditionEvent implements Event {
 		if (groupTypeId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
-		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+		if (!groupsDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID);
 		}
 	}
@@ -251,12 +251,12 @@ public class GroupMembershipAdditionEvent implements Event {
 	 * that uses group type id and person id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupTypeAndPerson(GroupDataManager groupDataManager) {
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupTypeAndPerson(GroupsDataManager groupsDataManager) {
 		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE_PERSON)//
 							.setLabelFunction((context, event) -> {
 								GroupId groupId = event.getGroupId();
-								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
+								GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 								return _getEventLabelByGroupTypeAndPerson(groupTypeId, event.getPersonId());
 							})//
 							.build();
@@ -293,12 +293,12 @@ public class GroupMembershipAdditionEvent implements Event {
 	 * Returns an event labeler for {@link GroupMembershipAdditionEvent} Matches
 	 * on group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+	public static EventLabeler<GroupMembershipAdditionEvent> getEventLabelerForGroupType(GroupsDataManager groupsDataManager) {
 		return EventLabeler	.builder(GroupMembershipAdditionEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE)//
 							.setLabelFunction((context, event) -> {
 								GroupId groupId = event.getGroupId();
-								GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
+								GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();

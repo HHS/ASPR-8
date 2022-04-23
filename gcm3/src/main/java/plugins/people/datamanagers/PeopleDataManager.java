@@ -1,4 +1,4 @@
-package plugins.people;
+package plugins.people.datamanagers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.util.ContractException;
+import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -22,11 +23,11 @@ import plugins.people.support.PersonId;
  * @author Shawn Hatch
  *
  */
-public final class PersonDataManager extends DataManager {
+public final class PeopleDataManager extends DataManager {
 
 	private final PeoplePluginData peoplePluginData;
 
-	public PersonDataManager(PeoplePluginData peoplePluginData) {
+	public PeopleDataManager(PeoplePluginData peoplePluginData) {
 		this.peoplePluginData = peoplePluginData;
 
 	}

@@ -21,7 +21,7 @@ import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
@@ -89,9 +89,9 @@ public final class AT_AttributeLabeler {
 		 * 
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			List<PersonId> people = peopleDataManager.getPeople();
 			for (PersonId personId : people) {
 
 				// get the person's attribute value and apply the function

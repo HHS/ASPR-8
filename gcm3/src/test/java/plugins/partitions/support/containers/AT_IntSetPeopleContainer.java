@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.support.PartitionError;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
@@ -25,7 +25,7 @@ public class AT_IntSetPeopleContainer {
 	}
 	
 	@Test
-	@UnitTestConstructor(args = {PersonDataManager.class})
+	@UnitTestConstructor(args = {PeopleDataManager.class})
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class,()->new TreeBitSetPeopleContainer(null));
 		assertEquals(PartitionError.NULL_PERSON_DATA_VIEW, contractException.getErrorType());

@@ -1,4 +1,4 @@
-package plugins.globals;
+package plugins.globalproperties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,21 +14,21 @@ import plugins.reports.ReportsPluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GlobalPlugin.class)
-public class AT_GlobalPlugin {
+@UnitTest(target = GlobalPropertiesPlugin.class)
+public class AT_GlobalPropertiesPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getPlugin", args = { GlobalPluginData.class })
+	@UnitTestMethod(name = "getPlugin", args = { GlobalPropertiesPluginData.class })
 	public void testGetPlugin() {
 		/*
 		 *Show that the plugin contains the plugin data and has the property id and dependencies 
 		 */
 
-		GlobalPluginData globalPluginData = GlobalPluginData.builder().build();
-		Plugin globalsPlugin = GlobalPlugin.getPlugin(globalPluginData);
+		GlobalPropertiesPluginData globalPropertiesPluginData = GlobalPropertiesPluginData.builder().build();
+		Plugin globalsPlugin = GlobalPropertiesPlugin.getPlugin(globalPropertiesPluginData);
 
-		assertTrue(globalsPlugin.getPluginDatas().contains(globalPluginData));
-		assertEquals(GlobalsPluginId.PLUGIN_ID, globalsPlugin.getPluginId());
+		assertTrue(globalsPlugin.getPluginDatas().contains(globalPropertiesPluginData));
+		assertEquals(GlobalPropertiesPluginId.PLUGIN_ID, globalsPlugin.getPluginId());
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();		
 		expectedDependencies.add(ReportsPluginId.PLUGIN_ID);

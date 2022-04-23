@@ -7,7 +7,7 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
@@ -75,8 +75,8 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
-		if (!groupDataManager.groupExists(groupId)) {
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+		if (!groupsDataManager.groupExists(groupId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 	}
@@ -85,8 +85,8 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupTypeId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
-		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+		if (!groupsDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
@@ -95,9 +95,9 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupPropertyId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
-		GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-		if (!groupDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+		GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		if (!groupsDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
 		}
 	}
@@ -106,9 +106,9 @@ public class GroupPropertyUpdateEvent implements Event {
 		if (groupPropertyId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 
-		if (!groupDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
+		if (!groupsDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
 		}
 	}
@@ -240,11 +240,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events that
 	 * uses group id and group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupTypeAndProperty(GroupDataManager groupDataManager) {
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupTypeAndProperty(GroupsDataManager groupsDataManager) {
 		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE_PROPERTY)//
 							.setLabelFunction((context, event) -> {
-								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
+								GroupTypeId groupTypeId = groupsDataManager.getGroupType(event.getGroupId());
 								return _getEventLabelByGroupTypeAndProperty(groupTypeId, event.getGroupPropertyId());
 							})//
 							.build();
@@ -283,11 +283,11 @@ public class GroupPropertyUpdateEvent implements Event {
 	 * Returns an event labeler for {@link GroupPropertyUpdateEvent} events that
 	 * uses group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+	public static EventLabeler<GroupPropertyUpdateEvent> getEventLabelerForGroupType(GroupsDataManager groupsDataManager) {
 		return EventLabeler	.builder(GroupPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.TYPE)//
 							.setLabelFunction((context, event) -> {
-								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
+								GroupTypeId groupTypeId = groupsDataManager.getGroupType(event.getGroupId());
 								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();

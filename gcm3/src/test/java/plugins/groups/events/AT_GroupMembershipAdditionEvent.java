@@ -15,13 +15,13 @@ import org.junit.jupiter.api.Test;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
@@ -61,8 +61,8 @@ public class AT_GroupMembershipAdditionEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 298549072627101248L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -122,8 +122,8 @@ public class AT_GroupMembershipAdditionEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 4452567174321509486L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			// create an event labeler
 			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson();
@@ -163,11 +163,11 @@ public class AT_GroupMembershipAdditionEvent {
 	public void testGetEventLabelByGroup() {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 8484038291544974628L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0; i < 10; i++) {
-				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
 
 				testGroupTypeId = testGroupTypeId.next();
 
@@ -216,7 +216,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 3313438051476160164L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroup();
@@ -228,7 +228,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0; i < 10; i++) {
-				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
 				
 				testGroupTypeId = testGroupTypeId.next();
 
@@ -260,8 +260,8 @@ public class AT_GroupMembershipAdditionEvent {
 	public void testGetEventLabelByPerson() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 5181120908681821960L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (PersonId personId : people) {
@@ -310,8 +310,8 @@ public class AT_GroupMembershipAdditionEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 7591006487215638552L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			// create an event labeler
 			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForPerson();
@@ -352,7 +352,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 2396297410749360025L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
 			PersonId personId = new PersonId(0);
@@ -368,7 +368,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
+				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupsDataManager);
 				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
@@ -413,11 +413,11 @@ public class AT_GroupMembershipAdditionEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 944196534930517005L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupDataManager);
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(groupsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
@@ -427,7 +427,7 @@ public class AT_GroupMembershipAdditionEvent {
 			PersonId personId = new PersonId(0);
 			for (GroupId groupId : groupIds) {
 
-				GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
+				GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 
 				// derive the expected event label for this event
 				EventLabel<GroupMembershipAdditionEvent> expectedEventLabel = GroupMembershipAdditionEvent.getEventLabelByGroupTypeAndPerson(c, groupTypeId, personId);
@@ -456,7 +456,7 @@ public class AT_GroupMembershipAdditionEvent {
 	public void testGetEventLabelByGroupType() {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4360946626249599442L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			Set<EventLabel<GroupMembershipAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -471,7 +471,7 @@ public class AT_GroupMembershipAdditionEvent {
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupDataManager);
+				EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupsDataManager);
 				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
@@ -506,10 +506,10 @@ public class AT_GroupMembershipAdditionEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 825213654032168954L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// create an event labeler
-			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupDataManager);
+			EventLabeler<GroupMembershipAdditionEvent> eventLabeler = GroupMembershipAdditionEvent.getEventLabelerForGroupType(groupsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(GroupMembershipAdditionEvent.class, eventLabeler.getEventClass());
@@ -525,7 +525,7 @@ public class AT_GroupMembershipAdditionEvent {
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
-				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
 
 				PersonId personId = new PersonId(0);
 				// create an event

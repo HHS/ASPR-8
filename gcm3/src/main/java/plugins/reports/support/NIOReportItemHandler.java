@@ -1,4 +1,4 @@
-package plugins.reports;
+package plugins.reports.support;
 
 import java.nio.file.Path;
 import java.util.Collections;
@@ -7,10 +7,6 @@ import java.util.Map;
 
 import nucleus.ExperimentContext;
 import nucleus.util.ContractException;
-import plugins.reports.support.LineWriter;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportId;
-import plugins.reports.support.ReportItem;
 
 /**
  * An experiment-level output management utility for writing report items to

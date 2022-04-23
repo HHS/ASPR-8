@@ -15,14 +15,14 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -38,8 +38,8 @@ public class AT_GroupMemberFilter {
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 8499169041100865476L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 			assertFalse(groupIds.isEmpty());
 			for (GroupId groupId : groupIds) {
 				final Filter filter = new GroupMemberFilter(groupId);
@@ -58,9 +58,9 @@ public class AT_GroupMemberFilter {
 	public void testGetFilterSensitivities() {
 		
 		GroupsActionSupport.testConsumer(100, 3, 10, 7283631979607042406L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			 
 			Filter filter = new GroupMemberFilter(groupId);
 
@@ -89,19 +89,19 @@ public class AT_GroupMemberFilter {
 		
 		GroupsActionSupport.testConsumer(100, 3, 10, 6248106595116941770L, (c) -> {
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 			Filter filter = new GroupMemberFilter(groupId);
 			
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
-					groupDataManager.addPersonToGroup(personId,groupId);					
+					groupsDataManager.addPersonToGroup(personId,groupId);					
 				}
 			}
 
-			for (PersonId personId : personDataManager.getPeople()) {
-				boolean expected = groupDataManager.isPersonInGroup(personId,groupId);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				boolean expected = groupsDataManager.isPersonInGroup(personId,groupId);
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);
 			}

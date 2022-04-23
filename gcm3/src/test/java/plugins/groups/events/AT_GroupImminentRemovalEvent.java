@@ -13,7 +13,7 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
@@ -53,11 +53,11 @@ public class AT_GroupImminentRemovalEvent {
 	public void testGetEventLabelByGroup() {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 4793492577271802585L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			Set<EventLabel<GroupImminentRemovalEvent>> eventLabels = new LinkedHashSet<>();
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0;i<10;i++) {
-				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
 				
 				testGroupTypeId = testGroupTypeId.next();
 				
@@ -106,7 +106,7 @@ public class AT_GroupImminentRemovalEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 2029538624275094851L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// create an event labeler
 			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroup();
@@ -118,7 +118,7 @@ public class AT_GroupImminentRemovalEvent {
 
 			TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 			for (int i = 0;i<10;i++) {
-				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
 				
 				testGroupTypeId = testGroupTypeId.next();
 
@@ -153,7 +153,7 @@ public class AT_GroupImminentRemovalEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 5740881055810962155L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			
 			Set<EventLabel<GroupImminentRemovalEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -169,7 +169,7 @@ public class AT_GroupImminentRemovalEvent {
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager);
+				EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupsDataManager);
 				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
@@ -203,10 +203,10 @@ public class AT_GroupImminentRemovalEvent {
 		
 		GroupsActionSupport.testConsumer(0, 3, 5, 1065941748199403338L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// create an event labeler
-			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupDataManager);
+			EventLabeler<GroupImminentRemovalEvent> eventLabeler = GroupImminentRemovalEvent.getEventLabelerForGroupType(groupsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(GroupImminentRemovalEvent.class, eventLabeler.getEventClass());
@@ -222,7 +222,7 @@ public class AT_GroupImminentRemovalEvent {
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
-				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
 				
 
 				// create an event

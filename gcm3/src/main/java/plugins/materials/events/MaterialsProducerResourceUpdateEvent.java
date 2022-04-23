@@ -10,7 +10,7 @@ import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 
@@ -69,8 +69,8 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
-		if (!resourceDataManager.resourceIdExists(resourceId)) {
+		ResourcesDataManager resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
+		if (!resourcesDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}
 	}

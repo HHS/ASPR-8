@@ -7,7 +7,7 @@ import java.util.Set;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Filter;
@@ -16,7 +16,7 @@ import plugins.people.support.PersonId;
 
 public class GroupMemberFilter extends Filter {
 	final GroupId groupId;
-	private GroupDataManager groupDataManager;
+	private GroupsDataManager groupsDataManager;
 
 	private void validateGroupIdNotNull(SimulationContext simulationContext, final GroupId groupId) {
 		if (groupId == null) {
@@ -62,10 +62,10 @@ public class GroupMemberFilter extends Filter {
 		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
-		return groupDataManager.isPersonInGroup(personId,groupId);
+		return groupsDataManager.isPersonInGroup(personId,groupId);
 	}
 
 }

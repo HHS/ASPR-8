@@ -11,7 +11,7 @@ import java.util.Set;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.util.ContractException;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -46,7 +46,7 @@ import plugins.util.properties.arraycontainers.IntValueContainer;
  * @author Shawn Hatch
  *
  */
-public final class RegionDataManager extends DataManager {
+public final class RegionsDataManager extends DataManager {
 	private DataManagerContext dataManagerContext;
 
 	private final RegionPluginData regionPluginData;
@@ -55,14 +55,14 @@ public final class RegionDataManager extends DataManager {
 	 * Creates a Region Data Manager from the given resolver context.
 	 * Preconditions: The context must be a valid and non-null.
 	 */
-	public RegionDataManager(RegionPluginData regionPluginData) {
+	public RegionsDataManager(RegionPluginData regionPluginData) {
 		if (regionPluginData == null) {
 			throw new ContractException(RegionError.NULL_REGION_PLUGIN_DATA);
 		}
 		this.regionPluginData = regionPluginData;
 	}
 
-	private PersonDataManager personDataManager;
+	private PeopleDataManager peopleDataManager;
 
 	/**
 	 * 
@@ -150,7 +150,7 @@ public final class RegionDataManager extends DataManager {
 
 		this.dataManagerContext = dataManagerContext;
 
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		/*
 		 * By setting the default value to 0, we are allowing the container to
@@ -201,7 +201,7 @@ public final class RegionDataManager extends DataManager {
 			}
 		}
 		
-		List<PersonId> people = personDataManager.getPeople();
+		List<PersonId> people = peopleDataManager.getPeople();
 		for (PersonId personId : people) {
 			RegionId regionId = regionPluginData.getPersonRegion(personId);
 			final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
@@ -466,7 +466,7 @@ public final class RegionDataManager extends DataManager {
 			 * indicating that person does not exist
 			 */
 			if (targetRegionIndex == regionIndex) {
-				PersonId personId = personDataManager.getBoxedPersonId(personIndex).get();
+				PersonId personId = peopleDataManager.getBoxedPersonId(personIndex).get();
 				result.add(personId);
 			}
 		}
@@ -635,7 +635,7 @@ public final class RegionDataManager extends DataManager {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
 
-		if (!personDataManager.personExists(personId)) {
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
@@ -702,7 +702,7 @@ public final class RegionDataManager extends DataManager {
 
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {
 			RegionId regionId = personConstructionData.getValue(RegionId.class).get();
-			Optional<PersonId> optionalBoxedPersonId = personDataManager.getBoxedPersonId(pId);
+			Optional<PersonId> optionalBoxedPersonId = peopleDataManager.getBoxedPersonId(pId);
 			if (!optionalBoxedPersonId.isPresent()) {
 				throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 			}

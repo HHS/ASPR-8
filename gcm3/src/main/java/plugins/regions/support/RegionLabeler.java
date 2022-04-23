@@ -12,7 +12,7 @@ import nucleus.util.ContractException;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 
 /**
@@ -28,7 +28,7 @@ public final class RegionLabeler implements Labeler {
 
 	private final Function<RegionId, Object> regionLabelingFunction;
 
-	private RegionDataManager regionDataManager;
+	private RegionsDataManager regionsDataManager;
 
 	/**
 	 * Creates the Region labeler from the given labeling function
@@ -55,10 +55,10 @@ public final class RegionLabeler implements Labeler {
 		if (simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
-		if (regionDataManager == null) {
-			regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
+		if (regionsDataManager == null) {
+			regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
 		}
-		RegionId regionId = regionDataManager.getPersonRegion(personId);
+		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		return regionLabelingFunction.apply(regionId);
 	}
 

@@ -1,4 +1,4 @@
-package plugins.people;
+package plugins.people.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,6 +19,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
+import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -31,32 +32,32 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PersonDataManager.class)
-public final class AT_PersonDataManager {
+@UnitTest(target = PeopleDataManager.class)
+public final class AT_PeopleDataManager {
 
 	@Test
 	@UnitTestMethod(name = "personIndexExists", args = { int.class })
 	public void testPersonIndexExists() {
 
 		PeopleActionSupport.testConsumer(0,(c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			// initially there are no people despite the initial size
-			assertFalse(personDataManager.personIndexExists(-1));
-			assertFalse(personDataManager.personIndexExists(0));
-			assertFalse(personDataManager.personIndexExists(1));
+			assertFalse(peopleDataManager.personIndexExists(-1));
+			assertFalse(peopleDataManager.personIndexExists(0));
+			assertFalse(peopleDataManager.personIndexExists(1));
 
 			// show that we can add a few people and for each the manager will
 			// indicate that they exist
 			for (int i = 0; i < 10; i++) {
-				PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
-				assertTrue(personDataManager.personIndexExists(personId.getValue()));
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				assertTrue(peopleDataManager.personIndexExists(personId.getValue()));
 			}
 
 			// show that people who should not exist, actually don't exist
-			assertFalse(personDataManager.personIndexExists(-1));
+			assertFalse(peopleDataManager.personIndexExists(-1));
 			for (int i = 10; i < 20; i++) {
-				assertFalse(personDataManager.personIndexExists(i));
+				assertFalse(peopleDataManager.personIndexExists(i));
 			}
 
 		});
@@ -67,17 +68,17 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "getPersonIdLimit", args = {})
 	public void testGetPersonIdLimit() {
 		PeopleActionSupport.testConsumer(0,(c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Initially there are no people despite the initial size, so we
 			 * expect the limit to be zero.
 			 */
-			assertEquals(0, personDataManager.getPersonIdLimit());
+			assertEquals(0, peopleDataManager.getPersonIdLimit());
 
 			// show that the limit increments as PersonId values are added
 			for (int i = 0; i < 10; i++) {
-				PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
-				assertEquals(personId.getValue() + 1, personDataManager.getPersonIdLimit());
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				assertEquals(personId.getValue() + 1, peopleDataManager.getPersonIdLimit());
 			}
 
 		});
@@ -88,14 +89,14 @@ public final class AT_PersonDataManager {
 	@UnitTestMethod(name = "getBoxedPersonId", args = { int.class })
 	public void testGetBoxedPersonId() {
 		PeopleActionSupport.testConsumer(0,(c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show that the boxed person id is correct
 			for (int i = 0; i < 10; i++) {
-				Optional<PersonId> optional = personDataManager.getBoxedPersonId(i);
+				Optional<PersonId> optional = peopleDataManager.getBoxedPersonId(i);
 				assertFalse(optional.isPresent());
 
-				PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
-				optional = personDataManager.getBoxedPersonId(i);
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				optional = peopleDataManager.getBoxedPersonId(i);
 				assertTrue(optional.isPresent());
 
 				PersonId boxedPersonId = optional.get();
@@ -126,18 +127,18 @@ public final class AT_PersonDataManager {
 
 		// have the agent add a few people and show they were added
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			for (PersonId expectedPersonId : expectedPersonIds) {
-				PersonId actualPersonId = personDataManager.addPerson(PersonConstructionData.builder().build());
+				PersonId actualPersonId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 				assertEquals(expectedPersonId, actualPersonId);
-				assertTrue(personDataManager.personExists(actualPersonId));
+				assertTrue(peopleDataManager.personExists(actualPersonId));
 			}
 		}));
 
 		// precondition tests
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addPerson(null));
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addPerson(null));
 			assertEquals(PersonError.NULL_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 		}));
 
@@ -178,12 +179,12 @@ public final class AT_PersonDataManager {
 		// have the agent add a bulk people and show the people were added
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionData) {
-				List<PersonId> priorPeople = personDataManager.getPeople();
-				personDataManager.addBulkPeople(bulkPersonConstructionData);
+				List<PersonId> priorPeople = peopleDataManager.getPeople();
+				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
 
-				List<PersonId> postPeople = personDataManager.getPeople();
+				List<PersonId> postPeople = peopleDataManager.getPeople();
 				postPeople.removeAll(priorPeople);
 				int expectedNewPeople = bulkPersonConstructionData.getPersonConstructionDatas().size();
 				assertEquals(expectedNewPeople, postPeople.size());
@@ -192,8 +193,8 @@ public final class AT_PersonDataManager {
 
 		// precondition tests
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addBulkPeople(null));
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addBulkPeople(null));
 			assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 		}));
 
@@ -211,20 +212,20 @@ public final class AT_PersonDataManager {
 	public void testPersonExists() {
 
 		PeopleActionSupport.testConsumer(0,(c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			for (int i = 0; i < 10; i++) {
-				personDataManager.addPerson(PersonConstructionData.builder().build());
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 
-			assertFalse(personDataManager.personExists(new PersonId(-1)));
+			assertFalse(peopleDataManager.personExists(new PersonId(-1)));
 
 			for (int i = 0; i < 10; i++) {
-				assertTrue(personDataManager.personExists(new PersonId(i)));
+				assertTrue(peopleDataManager.personExists(new PersonId(i)));
 			}
 
 			for (int i = 10; i < 20; i++) {
-				assertFalse(personDataManager.personExists(new PersonId(i)));
+				assertFalse(peopleDataManager.personExists(new PersonId(i)));
 			}
 
 		});
@@ -240,37 +241,37 @@ public final class AT_PersonDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			// add some people
 
 			for (int i = 0; i < 10; i++) {
-				PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 				expectedPeople.add(personId);
 			}
 
-			List<PersonId> actualPeople = personDataManager.getPeople();
+			List<PersonId> actualPeople = peopleDataManager.getPeople();
 			assertEquals(expectedPeople.size(), actualPeople.size());
 			assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(actualPeople));
 
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			// remove a few people
 			for (int i = 0; i < 5; i++) {
 				PersonId personId = new PersonId(i);
-				personDataManager.removePerson(personId);
+				peopleDataManager.removePerson(personId);
 				expectedPeople.remove(personId);
 			}
 
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show that the removals resulted in the correct people
-			List<PersonId> actualPeople = personDataManager.getPeople();
+			List<PersonId> actualPeople = peopleDataManager.getPeople();
 			assertEquals(expectedPeople.size(), actualPeople.size());
 			assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(actualPeople));
 		}));
@@ -303,28 +304,28 @@ public final class AT_PersonDataManager {
 		// have the agent add a few people
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			for (int i = 0; i < 10; i++) {
-				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-				personDataManager.addPerson(PersonConstructionData.builder().build());
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 		}));
 
 		// have the agent remove some people
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			for (int i = 0; i < 5; i++) {
-				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-				personDataManager.removePerson(new PersonId(i));
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				peopleDataManager.removePerson(new PersonId(i));
 			}
 		}));
 
 		// precondition tests
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.removePerson(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.removePerson(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> personDataManager.removePerson(new PersonId(1000)));
+			contractException = assertThrows(ContractException.class, () -> peopleDataManager.removePerson(new PersonId(1000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -348,8 +349,8 @@ public final class AT_PersonDataManager {
 	public void testExpandCapacity() {
 		PeopleActionSupport.testConsumer(0,(c) -> {
 			// show that a negative growth causes an exception
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.expandCapacity(-1));
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.expandCapacity(-1));
 			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
 		});
 
@@ -361,12 +362,12 @@ public final class AT_PersonDataManager {
 	public void testGetPopulationCount() {
 
 		PeopleActionSupport.testConsumer(0,(c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show the population count grows as we add people
 			for (int i = 0; i < 10; i++) {
-				assertEquals(i, personDataManager.getPopulationCount());
-				personDataManager.addPerson(PersonConstructionData.builder().build());
-				assertEquals(i + 1, personDataManager.getPopulationCount());
+				assertEquals(i, peopleDataManager.getPopulationCount());
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				assertEquals(i + 1, peopleDataManager.getPopulationCount());
 			}
 		});
 
@@ -378,40 +379,40 @@ public final class AT_PersonDataManager {
 
 		PeopleActionSupport.testConsumer(0,(c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
-			assertEquals(0, personDataManager.getProjectedPopulationCount());
+			assertEquals(0, peopleDataManager.getProjectedPopulationCount());
 
 			/*
 			 * Add a few people so we are not working from a zero-base and show
 			 * the projected population count is correct
 			 */
 			for (int i = 0; i < 10; i++) {
-				personDataManager.addPerson(PersonConstructionData.builder().build());
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
-			assertEquals(10, personDataManager.getProjectedPopulationCount());
+			assertEquals(10, peopleDataManager.getProjectedPopulationCount());
 
 			// show that expanding the capacity results in the correct projected
 			// count
-			personDataManager.expandCapacity(30);
-			assertEquals(40, personDataManager.getProjectedPopulationCount());
+			peopleDataManager.expandCapacity(30);
+			assertEquals(40, peopleDataManager.getProjectedPopulationCount());
 
 			/*
 			 * show that adding people will not change the projected population
 			 * count until the actual population catches up
 			 */
 			for (int i = 0; i < 100; i++) {
-				personDataManager.addPerson(PersonConstructionData.builder().build());
-				int expectedValue = FastMath.max(40, personDataManager.getPopulationCount());
-				assertEquals(expectedValue, personDataManager.getProjectedPopulationCount());
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				int expectedValue = FastMath.max(40, peopleDataManager.getPopulationCount());
+				assertEquals(expectedValue, peopleDataManager.getProjectedPopulationCount());
 			}
 
 			// show that expanding multiple times works as well
-			personDataManager.expandCapacity(100);
-			assertEquals(210, personDataManager.getProjectedPopulationCount());
+			peopleDataManager.expandCapacity(100);
+			assertEquals(210, peopleDataManager.getProjectedPopulationCount());
 
-			personDataManager.expandCapacity(100);
-			assertEquals(310, personDataManager.getProjectedPopulationCount());
+			peopleDataManager.expandCapacity(100);
+			assertEquals(310, peopleDataManager.getProjectedPopulationCount());
 		});
 	}
 
@@ -421,36 +422,36 @@ public final class AT_PersonDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
-			assertEquals(0.0, personDataManager.getPopulationTime());
+			assertEquals(0.0, peopleDataManager.getPopulationTime());
 
 			// add some people
 			for (int i = 0; i < 10; i++) {
-				personDataManager.addPerson(PersonConstructionData.builder().build());
-				assertEquals(c.getTime(), personDataManager.getPopulationTime());
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				assertEquals(c.getTime(), peopleDataManager.getPopulationTime());
 			}
 
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			personDataManager.removePerson(new PersonId(0));
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			peopleDataManager.removePerson(new PersonId(0));
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			assertEquals(c.getTime(), personDataManager.getPopulationTime());
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			assertEquals(c.getTime(), peopleDataManager.getPopulationTime());
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			personDataManager.removePerson(new PersonId(1));
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			peopleDataManager.removePerson(new PersonId(1));
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			assertEquals(c.getTime(), personDataManager.getPopulationTime());
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			assertEquals(c.getTime(), peopleDataManager.getPopulationTime());
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();

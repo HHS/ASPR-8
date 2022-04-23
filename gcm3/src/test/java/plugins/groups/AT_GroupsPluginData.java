@@ -34,25 +34,25 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 
-@UnitTest(target = GroupPluginData.class)
-public class AT_GroupPluginData {
+@UnitTest(target = GroupsPluginData.class)
+public class AT_GroupsPluginData {
 
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		assertNotNull(GroupPluginData.builder());
+		assertNotNull(GroupsPluginData.builder());
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPluginData.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		// show that the builder does not return null
-		assertNotNull(GroupPluginData.builder().build());
+		assertNotNull(GroupsPluginData.builder().build());
 
 		// show that the builder clears its state on build invocation
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 
-		GroupPluginData groupInitialData = builder //
+		GroupsPluginData groupInitialData = builder //
 													.addPersonToGroup(new GroupId(0), new PersonId(0))//
 													.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
 													.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1)//
@@ -131,22 +131,22 @@ public class AT_GroupPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPluginData.Builder.class, name = "addGroupTypeId", args = { GroupTypeId.class })
+	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addGroupTypeId", args = { GroupTypeId.class })
 	public void testAddGroupTypeId() {
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
 		}
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group type ids exist in the groupInitialData
 		assertEquals(EnumSet.allOf(TestGroupTypeId.class), groupInitialData.getGroupTypeIds());
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPluginData.Builder.class, name = "addGroup", args = { GroupId.class, GroupTypeId.class })
+	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addGroup", args = { GroupId.class, GroupTypeId.class })
 	public void testAddGroup() {
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		int masterGroupId = 0;
 		Set<GroupId> expectedGroupIds = new LinkedHashSet<>();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -160,7 +160,7 @@ public class AT_GroupPluginData {
 			builder.addGroup(groupId, testGroupTypeId);
 			expectedGroupIds.add(groupId);
 		}
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group ids that were added are present in the
 		// groupInitialData
@@ -168,9 +168,9 @@ public class AT_GroupPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPluginData.Builder.class, name = "defineGroupProperty", args = { GroupTypeId.class, GroupPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "defineGroupProperty", args = { GroupTypeId.class, GroupPropertyId.class, PropertyDefinition.class })
 	public void testDefineGroupProperty() {
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
@@ -181,7 +181,7 @@ public class AT_GroupPluginData {
 			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
 		}
 
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that each property definition that was added is present in the
 		// groupInitialData
@@ -193,11 +193,11 @@ public class AT_GroupPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPluginData.Builder.class, name = "setGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class, Object.class })
+	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "setGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class, Object.class })
 	public void testSetGroupPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(206512993284256660L);
 
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 
 		// add in the group types
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -237,7 +237,7 @@ public class AT_GroupPluginData {
 		}
 
 		// build the group initial data
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the expected group property values are present
 		for (MultiKey multiKey : expectedValues.keySet()) {
@@ -250,14 +250,14 @@ public class AT_GroupPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPluginData.Builder.class, name = "addPersonToGroup", args = { GroupId.class, PersonId.class })
+	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addPersonToGroup", args = { GroupId.class, PersonId.class })
 	public void testAddPersonToGroup() {
 
 		Random random = new Random(7282493148489771700L);
 
 		Map<GroupId, Set<PersonId>> expectedGroupAssignments = new LinkedHashMap<>();
 
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		// add in the group types
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
@@ -293,7 +293,7 @@ public class AT_GroupPluginData {
 		}
 
 		// build the group initial data
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group memberships are as expected
 		assertEquals(expectedGroupAssignments.keySet(), groupInitialData.getGroupIds());
@@ -309,7 +309,7 @@ public class AT_GroupPluginData {
 	@UnitTestMethod(name = "getGroupPropertyDefinition", args = { GroupTypeId.class, GroupPropertyId.class })
 	public void testGetGroupPropertyDefinition() {
 
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
@@ -320,7 +320,7 @@ public class AT_GroupPluginData {
 			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
 		}
 
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that each property definition that was added is present in the
 		// groupInitialData
@@ -363,7 +363,7 @@ public class AT_GroupPluginData {
 	@UnitTestMethod(name = "getGroupPropertyIds", args = { GroupTypeId.class })
 	public void testGetGroupPropertyIds() {
 
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
@@ -373,7 +373,7 @@ public class AT_GroupPluginData {
 			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
 		}
 
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group properties for each group type match expectations
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -399,7 +399,7 @@ public class AT_GroupPluginData {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8435308203966252001L);
 
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 
 		// add in the group types
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -439,7 +439,7 @@ public class AT_GroupPluginData {
 		}
 
 		// build the group initial data
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the expected group property values are present
 		for (MultiKey multiKey : expectedValues.keySet()) {
@@ -478,11 +478,11 @@ public class AT_GroupPluginData {
 	@Test
 	@UnitTestMethod(name = "getGroupTypeIds", args = {})
 	public void testGetGroupTypeIds() {
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
 		}
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group type ids exist in the groupInitialData
 		assertEquals(EnumSet.allOf(TestGroupTypeId.class), groupInitialData.getGroupTypeIds());
@@ -491,7 +491,7 @@ public class AT_GroupPluginData {
 	@Test
 	@UnitTestMethod(name = "getGroupIds", args = {})
 	public void testGetGroupIds() {
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		int masterGroupId = 0;
 		Set<GroupId> expectedGroupIds = new LinkedHashSet<>();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -505,7 +505,7 @@ public class AT_GroupPluginData {
 			builder.addGroup(groupId, testGroupTypeId);
 			expectedGroupIds.add(groupId);
 		}
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group ids that were added are present in the
 		// groupInitialData
@@ -521,7 +521,7 @@ public class AT_GroupPluginData {
 
 		Map<GroupId, Set<PersonId>> expectedGroupAssignments = new LinkedHashMap<>();
 
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		// add in the group types
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
@@ -557,7 +557,7 @@ public class AT_GroupPluginData {
 		}
 
 		// build the group initial data
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group memberships are as expected
 		assertEquals(expectedGroupAssignments.keySet(), groupInitialData.getGroupIds());
@@ -582,7 +582,7 @@ public class AT_GroupPluginData {
 	@UnitTestMethod(name = "getGroupTypeId", args = { GroupId.class })
 	public void testGetGroupTypeId() {
 
-		GroupPluginData.Builder builder = GroupPluginData.builder();
+		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		int masterGroupId = 0;
 		Map<GroupId, GroupTypeId> expectedGroupTypes = new LinkedHashMap<>();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -596,7 +596,7 @@ public class AT_GroupPluginData {
 			builder.addGroup(groupId, testGroupTypeId);
 			expectedGroupTypes.put(groupId, testGroupTypeId);
 		}
-		GroupPluginData groupInitialData = builder.build();
+		GroupsPluginData groupInitialData = builder.build();
 
 		for (GroupId groupId : expectedGroupTypes.keySet()) {
 			GroupTypeId expecctedGroupTypeId = expectedGroupTypes.get(groupId);
@@ -621,7 +621,7 @@ public class AT_GroupPluginData {
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9130589441333999144L);
 		
-		GroupPluginData.Builder groupPluginDataBuilder = GroupPluginData.builder();
+		GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
 		}
@@ -654,48 +654,48 @@ public class AT_GroupPluginData {
 				groupPluginDataBuilder.addPersonToGroup(groupId, personId);
 			}
 		}
-		GroupPluginData groupPluginData = groupPluginDataBuilder.build();
+		GroupsPluginData groupsPluginData = groupPluginDataBuilder.build();
 
-		PluginData pluginData = groupPluginData.getCloneBuilder().build();
+		PluginData pluginData = groupsPluginData.getCloneBuilder().build();
 
 		// show that the clone plugin data has the correct type
-		assertTrue(pluginData instanceof GroupPluginData);
+		assertTrue(pluginData instanceof GroupsPluginData);
 
-		GroupPluginData cloneGroupPluginData = (GroupPluginData) pluginData;
+		GroupsPluginData cloneGroupPluginData = (GroupsPluginData) pluginData;
 
 		// show that the two plugin datas have the same groups
-		assertEquals(groupPluginData.getGroupIds(), cloneGroupPluginData.getGroupIds());
+		assertEquals(groupsPluginData.getGroupIds(), cloneGroupPluginData.getGroupIds());
 
 		// show that the two plugin datas have the same group types
-		assertEquals(groupPluginData.getGroupTypeIds(), cloneGroupPluginData.getGroupTypeIds());
+		assertEquals(groupsPluginData.getGroupTypeIds(), cloneGroupPluginData.getGroupTypeIds());
 
 		// show that the two plugin datas have the same group property ids
-		for (GroupTypeId groupTypeId : groupPluginData.getGroupTypeIds()) {
-			assertEquals(groupPluginData.getGroupPropertyIds(groupTypeId), cloneGroupPluginData.getGroupPropertyIds(groupTypeId));
+		for (GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
+			assertEquals(groupsPluginData.getGroupPropertyIds(groupTypeId), cloneGroupPluginData.getGroupPropertyIds(groupTypeId));
 			//show that the two plugin datas have the same group property definitions
-			for(GroupPropertyId  groupPropertyId : groupPluginData.getGroupPropertyIds(groupTypeId)) {
-				PropertyDefinition expectedPropertyDefinition = groupPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+			for(GroupPropertyId  groupPropertyId : groupsPluginData.getGroupPropertyIds(groupTypeId)) {
+				PropertyDefinition expectedPropertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 				PropertyDefinition actualPropertyDefinition = cloneGroupPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 				assertEquals(expectedPropertyDefinition,actualPropertyDefinition);
 			}
 		}
 		
 		// show that the two plugin datas have the same groups
-		assertEquals(groupPluginData.getGroupIds(), cloneGroupPluginData.getGroupIds());
+		assertEquals(groupsPluginData.getGroupIds(), cloneGroupPluginData.getGroupIds());
 		
 		//show that the groups have the same types
-		for(GroupId  groupId : groupPluginData.getGroupIds()) {
-			GroupTypeId expectedGroupTypeId = groupPluginData.getGroupTypeId(groupId);
+		for(GroupId  groupId : groupsPluginData.getGroupIds()) {
+			GroupTypeId expectedGroupTypeId = groupsPluginData.getGroupTypeId(groupId);
 			GroupTypeId actualGroupTypeId = cloneGroupPluginData.getGroupTypeId(groupId);
 			assertEquals(expectedGroupTypeId, actualGroupTypeId);
 			//show that the groups have the property values
-			for(GroupPropertyId  groupPropertyId : groupPluginData.getGroupPropertyIds(expectedGroupTypeId)) {
-				Object expectedPropertyValue = groupPluginData.getGroupPropertyValue(groupId, groupPropertyId);
+			for(GroupPropertyId  groupPropertyId : groupsPluginData.getGroupPropertyIds(expectedGroupTypeId)) {
+				Object expectedPropertyValue = groupsPluginData.getGroupPropertyValue(groupId, groupPropertyId);
 				Object actualPropertyValue = cloneGroupPluginData.getGroupPropertyValue(groupId, groupPropertyId);
 				assertEquals(expectedPropertyValue, actualPropertyValue);
 			}
 			//show that the groups have the members
-			Set<PersonId> expectedGroupMembers = groupPluginData.getGroupMembers(groupId);
+			Set<PersonId> expectedGroupMembers = groupsPluginData.getGroupMembers(groupId);
 			Set<PersonId> actualGroupMembers = cloneGroupPluginData.getGroupMembers(groupId);
 			assertEquals(expectedGroupMembers, actualGroupMembers);
 		}

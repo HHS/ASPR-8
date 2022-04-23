@@ -1,4 +1,4 @@
-package plugins.globals.testsupport;
+package plugins.globalproperties.testsupport;
 
 import java.util.function.Consumer;
 
@@ -11,8 +11,8 @@ import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import plugins.globals.GlobalPlugin;
-import plugins.globals.GlobalPluginData;
+import plugins.globalproperties.GlobalPropertiesPlugin;
+import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 
@@ -26,12 +26,12 @@ import plugins.reports.ReportsPluginData;
  *
  */
 
-public class GlobalsActionSupport {
+public class GlobalsPropertiesActionSupport {
 
 	/**
 	 * Creates the test plugin containing a test actor initialized by the given
 	 * consumer. Executes the simulation via the
-	 * {@linkplain GlobalsActionSupport#testConsumers(Plugin)} method
+	 * {@linkplain GlobalsPropertiesActionSupport#testConsumers(Plugin)} method
 	 *
 	 */
 
@@ -51,12 +51,12 @@ public class GlobalsActionSupport {
 	 */
 	public static void testConsumers(Plugin testPlugin) {
 
-		GlobalPluginData.Builder globalsPluginBuilder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
 		}
-		GlobalPluginData globalPluginData = globalsPluginBuilder.build();
-		Plugin globalsPlugin = GlobalPlugin.getPlugin(globalPluginData);
+		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
+		Plugin globalsPlugin = GlobalPropertiesPlugin.getPlugin(globalPropertiesPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		Simulation	.builder()//

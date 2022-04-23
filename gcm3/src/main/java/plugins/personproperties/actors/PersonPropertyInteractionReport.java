@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 
 import nucleus.ActorContext;
 import nucleus.EventLabel;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
@@ -189,7 +189,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
-		final Object regionId = regionDataManager.getPersonRegion(personId);
+		final Object regionId = regionsDataManager.getPersonRegion(personId);
 		increment(regionId, personId);
 	}
 
@@ -198,7 +198,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		if (propertyIds.contains(personPropertyId)) {
 			PersonId personId = personPropertyUpdateEvent.getPersonId();
 			Object previousPropertyValue = personPropertyUpdateEvent.getPreviousPropertyValue();
-			final Object regionId = regionDataManager.getPersonRegion(personId);
+			final Object regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, personId);
 			decrementOldPropertyValue(regionId, personId, personPropertyId, previousPropertyValue);
 		}
@@ -206,7 +206,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 
 	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 		PersonId personId = personImminentRemovalEvent.getPersonId();
-		RegionId regionId = regionDataManager.getPersonRegion(personId);
+		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		decrement(regionId, personId);
 	}
 
@@ -226,8 +226,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		getCounter(regionId, personId, null, null).count++;
 	}
 
-	private RegionDataManager regionDataManager;
-	private PersonDataManager personDataManager;
+	private RegionsDataManager regionsDataManager;
+	private PeopleDataManager peopleDataManager;
 	private PersonPropertiesDataManager personPropertiesDataManager;
 
 	@Override
@@ -239,8 +239,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		personDataManager = actorContext.getDataManager(PersonDataManager.class);
-		regionDataManager = actorContext.getDataManager(RegionDataManager.class);
+		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
 		/*
 		 * if the client did not choose any properties, then we assume that all
@@ -274,8 +274,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 			}
 		}
 
-		for (PersonId personId : personDataManager.getPeople()) {
-			final Object regionId = regionDataManager.getPersonRegion(personId);
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			final Object regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, personId);
 		}
 	}

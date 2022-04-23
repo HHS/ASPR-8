@@ -19,8 +19,8 @@ import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import plugins.groups.GroupPlugin;
-import plugins.groups.GroupPluginData;
+import plugins.groups.GroupsPlugin;
+import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
@@ -94,7 +94,7 @@ public class GroupsActionSupport {
 		Builder builder = Simulation.builder();
 
 		// add the group plugin
-		GroupPluginData.Builder groupBuilder = GroupPluginData.builder();
+		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 		// add group types
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			groupBuilder.addGroupTypeId(testGroupTypeId);
@@ -125,8 +125,8 @@ public class GroupsActionSupport {
 			PersonId personId = multiKey.getKey(1);
 			groupBuilder.addPersonToGroup(groupId, personId);
 		}
-		GroupPluginData groupPluginData = groupBuilder.build();
-		Plugin groupPlugin = GroupPlugin.getGroupPlugin(groupPluginData);
+		GroupsPluginData groupsPluginData = groupBuilder.build();
+		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
 		builder.addPlugin(groupPlugin);
 
 		// add the partitions plugin

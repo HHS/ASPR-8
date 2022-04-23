@@ -12,7 +12,7 @@ import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -20,7 +20,7 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.resources.ResourcesPlugin;
@@ -53,7 +53,7 @@ import plugins.util.properties.arraycontainers.IntValueContainer;
  *
  */
 
-public final class ResourceDataManager extends DataManager {
+public final class ResourcesDataManager extends DataManager {
 	/*
 	 * Static utility class for tracking region resources.
 	 */
@@ -98,8 +98,8 @@ public final class ResourceDataManager extends DataManager {
 
 	}
 
-	private PersonDataManager personDataManager;
-	private RegionDataManager regionDataManager;
+	private PeopleDataManager peopleDataManager;
+	private RegionsDataManager regionsDataManager;
 
 	// resources
 	private final Map<ResourceId, Map<ResourcePropertyId, PropertyValueRecord>> resourcePropertyMap = new LinkedHashMap<>();
@@ -131,7 +131,7 @@ public final class ResourceDataManager extends DataManager {
 	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#NULL_RESOURCE_PLUGIN_DATA} if the plugin data is null</li>
 	 */
-	public ResourceDataManager(final ResourcesPluginData resourcesPluginData) {
+	public ResourcesDataManager(final ResourcesPluginData resourcesPluginData) {
 		if(resourcesPluginData == null) {
 			throw new  ContractException(ResourceError.NULL_RESOURCE_PLUGIN_DATA);
 		}
@@ -227,9 +227,9 @@ public final class ResourceDataManager extends DataManager {
 		 */
 		int count = 0;
 		final IntValueContainer intValueContainer = personResourceValues.get(resourceId);
-		final int n = personDataManager.getPersonIdLimit();
+		final int n = peopleDataManager.getPersonIdLimit();
 		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personDataManager.personIndexExists(personIndex)) {
+			if (peopleDataManager.personIndexExists(personIndex)) {
 				final long resourceLevel = intValueContainer.getValueAsLong(personIndex);
 				if (resourceLevel == 0) {
 					count++;
@@ -246,10 +246,10 @@ public final class ResourceDataManager extends DataManager {
 		 * We loop again and add the people to the list
 		 */
 		for (int personId = 0; personId < n; personId++) {
-			if (personDataManager.personIndexExists(personId)) {
+			if (peopleDataManager.personIndexExists(personId)) {
 				final long resourceLevel = intValueContainer.getValueAsLong(personId);
 				if (resourceLevel == 0) {
-					result.add(personDataManager.getBoxedPersonId(personId).get());
+					result.add(peopleDataManager.getBoxedPersonId(personId).get());
 				}
 			}
 		}
@@ -274,9 +274,9 @@ public final class ResourceDataManager extends DataManager {
 		 */
 		int count = 0;
 		final IntValueContainer intValueContainer = personResourceValues.get(resourceId);
-		final int n = personDataManager.getPersonIdLimit();
+		final int n = peopleDataManager.getPersonIdLimit();
 		for (int personId = 0; personId < n; personId++) {
-			if (personDataManager.personIndexExists(personId)) {
+			if (peopleDataManager.personIndexExists(personId)) {
 				final long resourceLevel = intValueContainer.getValueAsLong(personId);
 				if (resourceLevel > 0) {
 					count++;
@@ -291,10 +291,10 @@ public final class ResourceDataManager extends DataManager {
 		 * We loop again and add the people to the list
 		 */
 		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personDataManager.personIndexExists(personIndex)) {
+			if (peopleDataManager.personIndexExists(personIndex)) {
 				final long resourceLevel = intValueContainer.getValueAsLong(personIndex);
 				if (resourceLevel > 0) {
-					result.add(personDataManager.getBoxedPersonId(personIndex).get());
+					result.add(peopleDataManager.getBoxedPersonId(personIndex).get());
 				}
 			}
 		}
@@ -569,7 +569,7 @@ public final class ResourceDataManager extends DataManager {
 	 *
 	 *
 	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the
-	 * person's initial resource levels in the {@linkplain ResourceDataManager}
+	 * person's initial resource levels in the {@linkplain ResourcesDataManager}
 	 * from the ResourceInitialization references in the auxiliary data of the
 	 * event.
 	 * 
@@ -593,7 +593,7 @@ public final class ResourceDataManager extends DataManager {
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
 	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each
-	 * person's initial resource levels in the {@linkplain ResourceDataManager}
+	 * person's initial resource levels in the {@linkplain ResourcesDataManager}
 	 * from the ResourceInitialization references in the auxiliary data of the
 	 * event.
 	 * 
@@ -617,7 +617,7 @@ public final class ResourceDataManager extends DataManager {
 	 * -------------------------------------------------------------------------------
 	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote>
 	 * Removes the resource assignment data for the person from the
-	 * {@linkplain ResourceDataManager} by scheduling the removal for the
+	 * {@linkplain ResourcesDataManager} by scheduling the removal for the
 	 * current time. This allows the person and their resource levels to remain
 	 * long enough for resolvers, agents and reports to have final reference to
 	 * the person while still associated with any relevant resources. <BR>
@@ -637,18 +637,18 @@ public final class ResourceDataManager extends DataManager {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		this.dataManagerContext = dataManagerContext;
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
-		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
+		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
-		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager));
+		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionsDataManager));
 		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForPersonAndResource());
 		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForResource());
 		dataManagerContext.addEventLabeler(ResourcePropertyUpdateEvent.getEventLabeler());
 		dataManagerContext.addEventLabeler(RegionResourceUpdateEvent.getEventLabelerForRegionAndResource());
 
-		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
+		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		// load resource property definitions, property values and time tracking
 		// policies
@@ -708,7 +708,7 @@ public final class ResourceDataManager extends DataManager {
 		// load the region resources
 		// private final Map<RegionId, Map<ResourceId, RegionResourceRecord>>
 		// regionResources = new LinkedHashMap<>();
-		Set<RegionId> regionIds = regionDataManager.getRegionIds();
+		Set<RegionId> regionIds = regionsDataManager.getRegionIds();
 
 		for (RegionId regionId : regionIds) {
 			final Map<ResourceId, RegionResourceRecord> map = new LinkedHashMap<>();
@@ -740,7 +740,7 @@ public final class ResourceDataManager extends DataManager {
 		// private final Map<ResourceId, DoubleValueContainer>
 		// personResourceTimes = new LinkedHashMap<>();
 		for (final PersonId personId : resourcesPluginData.getPersonIds()) {
-			if (!personDataManager.personExists(personId)) {
+			if (!peopleDataManager.personExists(personId)) {
 				throw new ContractException(PersonError.UNKNOWN_PERSON_ID, personId);
 			}
 			for (final ResourceId resourceId : personResourceValues.keySet()) {
@@ -794,7 +794,7 @@ public final class ResourceDataManager extends DataManager {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if (!personDataManager.personExists(personId)) {
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
@@ -814,7 +814,7 @@ public final class ResourceDataManager extends DataManager {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
 
-		if (!regionDataManager.regionIdExists(regionId)) {
+		if (!regionsDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
@@ -1130,7 +1130,7 @@ public final class ResourceDataManager extends DataManager {
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
 		validatePersonHasSufficientResources(resourceId, personId, amount);
-		final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		final long previousRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 		validateResourceAdditionValue(previousRegionResourceLevel, amount);
 		final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
@@ -1175,7 +1175,7 @@ public final class ResourceDataManager extends DataManager {
 		validatePersonExists(personId);
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
-		final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		validateRegionHasSufficientResources(resourceId, regionId, amount);
 		final long personResourceLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 		validateResourceAdditionValue(personResourceLevel, amount);
@@ -1227,7 +1227,7 @@ public final class ResourceDataManager extends DataManager {
 
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {
 			List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);
-			PersonId boxedPersonId = personDataManager.getBoxedPersonId(pId).get();
+			PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(pId).get();
 			for (final ResourceInitialization resourceAssignment : resourceAssignments) {
 				incrementPersonResourceLevel(resourceAssignment.getResourceId(), boxedPersonId, resourceAssignment.getAmount());
 			}

@@ -1,4 +1,4 @@
-package plugins.partitions;
+package plugins.partitions.datamanagers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,7 @@ import plugins.partitions.support.PartitionError;
 import plugins.partitions.support.PartitionSampler;
 import plugins.partitions.support.PopulationPartition;
 import plugins.partitions.support.PopulationPartitionImpl;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -70,7 +70,7 @@ import plugins.stochastics.support.StochasticsError;
  *
  */
 
-public final class PartitionDataManager extends DataManager {
+public final class PartitionsDataManager extends DataManager {
 
 	private final Map<Object, Set<Class<? extends Event>>> keyToEventClassesMap = new LinkedHashMap<>();
 
@@ -79,7 +79,7 @@ public final class PartitionDataManager extends DataManager {
 	private final Map<Class<? extends Event>, Set<Object>> eventClassToKeyMap = new LinkedHashMap<>();
 
 	private DataManagerContext dataManagerContext;
-	private PersonDataManager personDataManager;
+	private PeopleDataManager peopleDataManager;
 
 	private final Map<Object, PopulationPartition> keyToPopulationPartitionMap = new LinkedHashMap<>();
 	private final Set<Object> safePartitionKeys = Collections.unmodifiableSet(keyToPopulationPartitionMap.keySet());
@@ -350,7 +350,7 @@ public final class PartitionDataManager extends DataManager {
 	 * Precondition : person id is not null
 	 */
 	private void validatePersonExists(final PersonId personId) {
-		if (!personDataManager.personExists(personId)) {
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
@@ -376,7 +376,7 @@ public final class PartitionDataManager extends DataManager {
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		dataManagerContext.subscribePostOrder(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
@@ -448,7 +448,7 @@ public final class PartitionDataManager extends DataManager {
 		highId += lowId;
 		final List<PersonId> personIds = new ArrayList<>();
 		for (int id = lowId; id < highId; id++) {
-			final PersonId boxedPersonId = personDataManager.getBoxedPersonId(id).get();
+			final PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(id).get();
 			personIds.add(boxedPersonId);
 		}
 		final Set<Object> partitionIds = getKeys();

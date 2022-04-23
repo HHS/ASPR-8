@@ -7,7 +7,7 @@ import java.util.Set;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Equality;
@@ -20,7 +20,7 @@ public class GroupsForPersonFilter extends Filter {
 
 	private final Equality equality;
 	private final int groupCount;
-	private GroupDataManager groupDataManager;
+	private GroupsDataManager groupsDataManager;
 
 	private void validateEquality(final SimulationContext simulationContext, final Equality equality) {
 		if (equality == null) {
@@ -43,10 +43,10 @@ public class GroupsForPersonFilter extends Filter {
 		if(simulationContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
-		final int count = groupDataManager.getGroupCountForPerson(personId);
+		final int count = groupsDataManager.getGroupCountForPerson(personId);
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupCount));
 	}
 

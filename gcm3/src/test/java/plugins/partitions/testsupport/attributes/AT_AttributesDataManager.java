@@ -27,7 +27,7 @@ import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -87,10 +87,10 @@ public class AT_AttributesDataManager {
 		// initialized
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				Boolean value = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 
 				assertFalse(value);
@@ -180,13 +180,13 @@ public class AT_AttributesDataManager {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			// show that there are people in the test
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// set random attribute values on people
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 
 				Boolean b0_expected = randomGenerator.nextBoolean();
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, b0_expected);

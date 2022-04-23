@@ -17,21 +17,21 @@ import plugins.stochastics.StochasticsPluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GroupPlugin.class)
-public class AT_GroupPlugin {
+@UnitTest(target = GroupsPlugin.class)
+public class AT_GroupsPlugin {
 	
 
 	@Test
-	@UnitTestMethod(name = "getGroupPlugin", args = { GroupPluginData.class })
+	@UnitTestMethod(name = "getGroupPlugin", args = { GroupsPluginData.class })
 	public void testGetGroupPlugin() {
 
-		GroupPluginData groupPluginData = GroupPluginData.builder().build();
-		Plugin groupPlugin = GroupPlugin.getGroupPlugin(groupPluginData);
+		GroupsPluginData groupsPluginData = GroupsPluginData.builder().build();
+		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
 
 		assertEquals(1,groupPlugin.getPluginDatas().size());
-		assertTrue(groupPlugin.getPluginDatas().contains(groupPluginData));
+		assertTrue(groupPlugin.getPluginDatas().contains(groupsPluginData));
 
-		assertEquals(GroupPluginId.PLUGIN_ID, groupPlugin.getPluginId());
+		assertEquals(GroupsPluginId.PLUGIN_ID, groupPlugin.getPluginId());
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();
 		expectedDependencies.add(PartitionsPluginId.PLUGIN_ID);

@@ -1,4 +1,4 @@
-package plugins.globals.support;
+package plugins.globalproperties.support;
 
 import nucleus.util.ContractError;
 import nucleus.util.ContractException;
@@ -10,7 +10,7 @@ import nucleus.util.ContractException;
  * @author Shawn Hatch
  *
  */
-public enum GlobalError implements ContractError {
+public enum GlobalPropertiesError implements ContractError {
 
 	NULL_GLOBAL_COMPONENT_INITIAL_BEHVAVIOR_SUPPLIER("Null global component initial behvavior supplier"),
 	
@@ -37,7 +37,7 @@ public enum GlobalError implements ContractError {
 
 	private final String description;
 
-	private GlobalError(final String description) {
+	private GlobalPropertiesError(final String description) {
 		this.description = description;
 	}
 

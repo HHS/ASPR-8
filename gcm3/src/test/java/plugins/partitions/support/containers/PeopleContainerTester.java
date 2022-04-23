@@ -18,7 +18,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 
@@ -37,17 +37,17 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// add about half of the people to the people we expect to find in
 			// the people container
 			List<PersonId> expectedPeople = new ArrayList<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
 				}
@@ -89,17 +89,17 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// add about half of the people to the people we expect to find in
 			// the people container
 			List<PersonId> expectedPeople = new ArrayList<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
 				}
@@ -132,17 +132,17 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// add about half of the people to the people we expect to find in
 			// the people container
 			List<PersonId> expectedPeople = new ArrayList<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
 				}
@@ -169,17 +169,17 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// add about half of the people to the people we expect to find in
 			// the people container
 			List<PersonId> expectedPeople = new ArrayList<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
 				}
@@ -213,17 +213,17 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// add about half of the people to the people we expect to find in
 			// the people container
 			List<PersonId> expectedPeople = new ArrayList<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
 				}
@@ -256,18 +256,18 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// add about half of the people to the people we expect to find in
 			// the people container
 			List<PersonId> expectedPeople = new ArrayList<>();
 			List<PersonId> peopleNotIncluded = new ArrayList<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
 				} else {
@@ -304,18 +304,18 @@ public class PeopleContainerTester {
 			PeopleContainer peopleContainer = provider.apply(c);
 
 			// get some data views that will be needed below
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// show that the simulation contains the correct number of people
-			assertEquals(100, personDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// add about half of the people to the people we expect to find in
 			// the people container
 			List<PersonId> expectedPeopleList = new ArrayList<>();
 			List<PersonId> peopleNotIncluded = new ArrayList<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeopleList.add(personId);
 				} else {

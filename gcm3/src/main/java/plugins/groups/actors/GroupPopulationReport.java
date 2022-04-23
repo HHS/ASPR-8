@@ -1,10 +1,10 @@
-package plugins.groups.reports;
+package plugins.groups.actors;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ActorContext;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
@@ -68,11 +68,11 @@ public final class GroupPopulationReport extends PeriodicReport {
 		 * type
 		 */
 		Map<GroupTypeId, Map<Integer, Counter>> groupTypePopulationMap = new LinkedHashMap<>();
-		for (GroupTypeId groupTypeId : groupDataManager.getGroupTypeIds()) {
+		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
 			Map<Integer, Counter> groupSizeMap = new LinkedHashMap<>();
 			groupTypePopulationMap.put(groupTypeId, groupSizeMap);
-			for (GroupId groupId : groupDataManager.getGroupsForGroupType(groupTypeId)) {
-				Integer personCountForGroup = groupDataManager.getPersonCountForGroup(groupId);
+			for (GroupId groupId : groupsDataManager.getGroupsForGroupType(groupTypeId)) {
+				Integer personCountForGroup = groupsDataManager.getPersonCountForGroup(groupId);
 				Counter counter = groupSizeMap.get(personCountForGroup);
 				if (counter == null) {
 					counter = new Counter();
@@ -105,12 +105,12 @@ public final class GroupPopulationReport extends PeriodicReport {
 
 	}
 
-	private GroupDataManager groupDataManager;
+	private GroupsDataManager groupsDataManager;
 
 	@Override
 	public void init(ActorContext actorContext) {
 		super.init(actorContext);
-		groupDataManager = actorContext.getDataManager(GroupDataManager.class);
+		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
 	}
 
 }

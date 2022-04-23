@@ -1,4 +1,4 @@
-package plugins.globals.actors;
+package plugins.globalproperties.actors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,11 +14,11 @@ import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.globals.GlobalDataManager;
-import plugins.globals.GlobalPlugin;
-import plugins.globals.GlobalPluginData;
-import plugins.globals.support.GlobalPropertyId;
-import plugins.globals.support.SimpleGlobalPropertyId;
+import plugins.globalproperties.GlobalPropertiesPlugin;
+import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.reports.support.ReportHeader;
@@ -52,7 +52,7 @@ public class AT_GlobalPropertyReport {
 		builder.setReportScenarioFailureToConsole(false);
 
 		// add the global property definitions
-		GlobalPluginData.Builder initialDatabuilder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();
 
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
@@ -66,8 +66,8 @@ public class AT_GlobalPropertyReport {
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
 		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
 
-		GlobalPluginData globalPluginData = initialDatabuilder.build();
-		builder.addPlugin(GlobalPlugin.getPlugin(globalPluginData));
+		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
+		builder.addPlugin(GlobalPropertiesPlugin.getPlugin(globalPropertiesPluginData));
 
 		// add the report
 		ReportsPluginData reportsInitialData = ReportsPluginData.builder()//
@@ -87,35 +87,35 @@ public class AT_GlobalPropertyReport {
 			 * note that this is time 0 and should show that property initial
 			 * values are still reported correctly
 			 */
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_1, 67);			
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_1, 67);			
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
 			// two settings of the same property
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_2, 88.88);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_3, false);
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 88.88);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, false);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_1, 100);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_2, 3.45);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_1, 100);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 3.45);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
-			GlobalDataManager globalDataManager = c.getDataManager(GlobalDataManager.class);
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 			
 			
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_3, false);			
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, false);			
 			// note the duplicated value
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_2, 99.7);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_2, 99.7);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 99.7);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 99.7);
 			// and now a third setting of the same property to a new value
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_2, 100.0);
-			globalDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 100.0);
+			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();

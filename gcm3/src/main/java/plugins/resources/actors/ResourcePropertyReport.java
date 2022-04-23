@@ -4,7 +4,7 @@ import nucleus.ActorContext;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
@@ -53,17 +53,17 @@ public final class ResourcePropertyReport {
 		writeProperty(actorContext,resourceId, resourcePropertyId,currentPropertyValue);
 	}
 
-	private ResourceDataManager resourceDataManager;
+	private ResourcesDataManager resourcesDataManager;
 
 	public void init(final ActorContext actorContext) {
 
 		actorContext.subscribe(ResourcePropertyUpdateEvent.class,this::handleResourcePropertyUpdateEvent);
 
 		
-		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class);
-		for (final ResourceId resourceId : resourceDataManager.getResourceIds()) {
-			for (final ResourcePropertyId resourcePropertyId : resourceDataManager.getResourcePropertyIds(resourceId)) {
-				Object resourcePropertyValue = resourceDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
+		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
+		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+			for (final ResourcePropertyId resourcePropertyId : resourcesDataManager.getResourcePropertyIds(resourceId)) {
+				Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
 				writeProperty(actorContext,resourceId, resourcePropertyId,resourcePropertyValue);
 			}
 		}

@@ -11,7 +11,7 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -23,7 +23,7 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.util.properties.BooleanPropertyManager;
 import plugins.util.properties.DoublePropertyManager;
 import plugins.util.properties.EnumPropertyManager;
@@ -48,10 +48,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
-		RegionDataManager regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
+		RegionsDataManager regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
-		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager));
+		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionsDataManager));
 		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty());
 		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForProperty());
 
@@ -62,7 +62,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, personPropertyDefinition, 0);
 			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 		}
-		List<PersonId> people = personDataManager.getPeople();
+		List<PersonId> people = peopleDataManager.getPeople();
 		for (PersonId personId : people) {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
 				Object personPropertyValue = personPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
@@ -86,7 +86,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * retrieve a person record by index (personId).
 	 */
 
-	private PersonDataManager personDataManager;
+	private PeopleDataManager peopleDataManager;
 
 	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
 
@@ -157,11 +157,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 		 * determine the number of people who will be returned so that we can
 		 * size the resulting ArrayList properly.
 		 */
-		final int n = personDataManager.getPersonIdLimit();
+		final int n = peopleDataManager.getPersonIdLimit();
 		int count = 0;
 		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personDataManager.personIndexExists(personIndex)) {
-				final PersonId personId = personDataManager.getBoxedPersonId(personIndex).get();
+			if (peopleDataManager.personIndexExists(personIndex)) {
+				final PersonId personId = peopleDataManager.getBoxedPersonId(personIndex).get();
 				final Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
 				if (propertyValue.equals(personPropertyValue)) {
 					count++;
@@ -175,8 +175,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 		final List<PersonId> result = new ArrayList<>(count);
 
 		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personDataManager.personIndexExists(personIndex)) {
-				final PersonId personId = personDataManager.getBoxedPersonId(personIndex).get();
+			if (peopleDataManager.personIndexExists(personIndex)) {
+				final PersonId personId = peopleDataManager.getBoxedPersonId(personIndex).get();
 				final Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
 				if (propertyValue.equals(personPropertyValue)) {
 					result.add(personId);
@@ -216,11 +216,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 		 */
 
 		final IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
-		final int n = personDataManager.getPersonIdLimit();
+		final int n = peopleDataManager.getPersonIdLimit();
 		int count = 0;
 		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personDataManager.personIndexExists(personIndex)) {
-				final PersonId personId = personDataManager.getBoxedPersonId(personIndex).get();
+			if (peopleDataManager.personIndexExists(personIndex)) {
+				final PersonId personId = peopleDataManager.getBoxedPersonId(personIndex).get();
 				final Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
 				if (propertyValue.equals(personPropertyValue)) {
 					count++;
@@ -319,7 +319,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if (!personDataManager.personExists(personId)) {
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}

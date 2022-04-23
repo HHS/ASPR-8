@@ -7,7 +7,7 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
@@ -72,8 +72,8 @@ public class ResourcePropertyUpdateEvent implements Event {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
-		if (!resourceDataManager.resourceIdExists(resourceId)) {
+		ResourcesDataManager resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
+		if (!resourcesDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID);
 		}
 	}
@@ -82,8 +82,8 @@ public class ResourcePropertyUpdateEvent implements Event {
 		if (resourcePropertyId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
 		}
-		ResourceDataManager resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
-		if (!resourceDataManager.resourcePropertyIdExists(resourceId, resourcePropertyId)) {
+		ResourcesDataManager resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
+		if (!resourcesDataManager.resourcePropertyIdExists(resourceId, resourcePropertyId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID);
 		}
 	}

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
@@ -86,14 +86,14 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 2608996249142401870L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupId groupId : groupIds) {
-				GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-				Set<GroupPropertyId> groupPropertyIds = groupDataManager.getGroupPropertyIds(groupTypeId);
+				GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+				Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
 
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 
@@ -158,8 +158,8 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 8688886270722853901L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			// create an event labeler
 			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty();
@@ -170,8 +170,8 @@ public class AT_GroupPropertyUpdateEvent {
 			// show that the event labeler produces the expected event label
 
 			for (GroupId groupId : groupIds) {
-				GroupTypeId groupTypeId = groupDataManager.getGroupType(groupId);
-				Set<GroupPropertyId> groupPropertyIds = groupDataManager.getGroupPropertyIds(groupTypeId);
+				GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+				Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
 
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 					// derive the expected event label for this event
@@ -202,8 +202,8 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 7912737444879496875L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -254,8 +254,8 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 5829392632134617932L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			List<GroupId> groupIds = groupDataManager.getGroupIds();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
 
 			// create an event labeler
 			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroup();
@@ -295,12 +295,12 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 7297949839974902355L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupTypeId groupTypeId : TestGroupTypeId.values()) {
-				Set<GroupPropertyId> groupPropertyIds = groupDataManager.getGroupPropertyIds(groupTypeId);
+				Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 
 					EventLabel<GroupPropertyUpdateEvent> eventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, groupTypeId, groupPropertyId);
@@ -313,7 +313,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
+					EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupsDataManager);
 					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
@@ -364,10 +364,10 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 9005403678043381761L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// create an event labeler
-			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupDataManager);
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(groupsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(GroupPropertyUpdateEvent.class, eventLabeler.getEventClass());
@@ -375,8 +375,8 @@ public class AT_GroupPropertyUpdateEvent {
 			// show that the event labeler produces the expected event label
 
 			for (GroupTypeId groupTypeId : TestGroupTypeId.values()) {
-				Set<GroupPropertyId> groupPropertyIds = groupDataManager.getGroupPropertyIds(groupTypeId);
-				GroupId groupId = groupDataManager.getGroupsForGroupType(groupTypeId).get(0);
+				Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
+				GroupId groupId = groupsDataManager.getGroupsForGroupType(groupTypeId).get(0);
 
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 					// derive the expected event label for this event
@@ -406,7 +406,7 @@ public class AT_GroupPropertyUpdateEvent {
 	public void testGetEventLabelByGroupType() {
 
 		GroupsActionSupport.testConsumer(10, 3, 5, 676016189463079696L, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			Set<EventLabel<GroupPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
 			for (GroupTypeId groupTypeId : TestGroupTypeId.values()) {
@@ -421,7 +421,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager);
+				EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupsDataManager);
 				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
@@ -457,10 +457,10 @@ public class AT_GroupPropertyUpdateEvent {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 6063816259833737907L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// create an event labeler
-			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupDataManager);
+			EventLabeler<GroupPropertyUpdateEvent> eventLabeler = GroupPropertyUpdateEvent.getEventLabelerForGroupType(groupsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(GroupPropertyUpdateEvent.class, eventLabeler.getEventClass());
@@ -469,7 +469,7 @@ public class AT_GroupPropertyUpdateEvent {
 
 			for (GroupTypeId groupTypeId : TestGroupTypeId.values()) {
 				
-				GroupId groupId = groupDataManager.getGroupsForGroupType(groupTypeId).get(0);
+				GroupId groupId = groupsDataManager.getGroupsForGroupType(groupTypeId).get(0);
 
 				// derive the expected event label for this event
 				EventLabel<GroupPropertyUpdateEvent> expectedEventLabel = GroupPropertyUpdateEvent.getEventLabelByGroupType(c, groupTypeId);

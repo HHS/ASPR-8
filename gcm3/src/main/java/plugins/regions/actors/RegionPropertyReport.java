@@ -5,7 +5,7 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import nucleus.EventLabel;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -76,26 +76,26 @@ public final class RegionPropertyReport {
 	 * {@link ReportItem} for each region property's initial value.
 	 */
 	public void init(final ActorContext actorContext) {
-		RegionDataManager regionDataManager = actorContext.getDataManager(RegionDataManager.class);
+		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
 		/*
 		 * If no region properties were specified, then assume all are wanted
 		 */
 		if (regionPropertyIds.size() == 0) {
-			regionPropertyIds.addAll(regionDataManager.getRegionPropertyIds());
+			regionPropertyIds.addAll(regionsDataManager.getRegionPropertyIds());
 		}
 
 		/*
 		 * Ensure that every client supplied property identifier is valid
 		 */
-		final Set<RegionPropertyId> validPropertyIds = regionDataManager.getRegionPropertyIds();
+		final Set<RegionPropertyId> validPropertyIds = regionsDataManager.getRegionPropertyIds();
 		for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
 			if (!validPropertyIds.contains(regionPropertyId)) {
 				throw new RuntimeException("invalid property id " + regionPropertyId);
 			}
 		}
 
-		if (regionPropertyIds.equals(regionDataManager.getRegionPropertyIds())) {
+		if (regionPropertyIds.equals(regionsDataManager.getRegionPropertyIds())) {
 			actorContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
 		} else {
 			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
@@ -104,9 +104,9 @@ public final class RegionPropertyReport {
 			}
 		}
 
-		for (final RegionId regionId : regionDataManager.getRegionIds()) {
+		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
 			for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
-				Object propertyValue = regionDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
 				writeProperty(actorContext, regionId, regionPropertyId, propertyValue);
 			}
 		}

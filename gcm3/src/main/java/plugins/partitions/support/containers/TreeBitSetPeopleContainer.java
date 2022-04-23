@@ -9,7 +9,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import nucleus.util.ContractException;
 import plugins.partitions.support.PartitionError;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 
 
@@ -37,7 +37,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	// power
 	// private TreeHolder treeHolder;
 
-	private final PersonDataManager personDataManager;
+	private final PeopleDataManager peopleDataManager;
 
 	
 	/**
@@ -47,12 +47,12 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	 * <li>{@linkplain PartitionError#NULL_PERSON_DATA_VIEW} if the person data view is null</li>
 	 * 
 	 */
-	public TreeBitSetPeopleContainer(PersonDataManager personDataManger) {
+	public TreeBitSetPeopleContainer(PeopleDataManager personDataManger) {
 		if(personDataManger==null) {
 			throw new ContractException(PartitionError.NULL_PERSON_DATA_VIEW);
 		}
 		blockSize = 63;
-		this.personDataManager = personDataManger;
+		this.peopleDataManager = personDataManger;
 		// initialize the size of the bitSet to that of the full population,
 		// including removed people
 		int capacity = personDataManger.getPersonIdLimit();
@@ -144,7 +144,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		size = 0;
 		for (int i = 0; i < exclusizeMaxId; i++) {
 			if (oldBitSet.get(i)) {
-				safeAdd(personDataManager.getBoxedPersonId(i).get());
+				safeAdd(peopleDataManager.getBoxedPersonId(i).get());
 			}
 		}
 	}
@@ -358,7 +358,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			if (bitSet.get(i)) {
 				targetCount--;
 				if (targetCount == 0) {
-					return personDataManager.getBoxedPersonId(i).get();
+					return peopleDataManager.getBoxedPersonId(i).get();
 				}
 			}
 		}
@@ -371,7 +371,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		int n = bitSet.size();
 		for (int i = 0; i < n; i++) {
 			if (bitSet.get(i)) {
-				result.add(personDataManager.getBoxedPersonId(i).get());
+				result.add(peopleDataManager.getBoxedPersonId(i).get());
 			}
 		}
 		return result;

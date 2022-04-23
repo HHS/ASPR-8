@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsActionSupport;
@@ -23,7 +23,7 @@ import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -84,14 +84,14 @@ public class AT_GroupTypesForPersonFilter {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 2954287333801626073L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
 			
-			GroupId groupId1 = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			GroupId groupId2 = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
-			GroupId groupId3 = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
+			GroupId groupId1 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupId groupId2 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
+			GroupId groupId3 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 
 			Filter filter = new GroupTypesForPersonFilter(Equality.EQUAL, 2);
 
@@ -102,23 +102,23 @@ public class AT_GroupTypesForPersonFilter {
 				case 0:
 					break;
 				case 1:
-					groupDataManager.addPersonToGroup(personId,groupId1);					
+					groupsDataManager.addPersonToGroup(personId,groupId1);					
 					break;
 				case 2:
-					groupDataManager.addPersonToGroup(personId,groupId1);
-					groupDataManager.addPersonToGroup(personId,groupId2);
+					groupsDataManager.addPersonToGroup(personId,groupId1);
+					groupsDataManager.addPersonToGroup(personId,groupId2);
 					break;
 				default:
-					groupDataManager.addPersonToGroup(personId,groupId1);
-					groupDataManager.addPersonToGroup(personId,groupId2);
-					groupDataManager.addPersonToGroup(personId,groupId3);
+					groupsDataManager.addPersonToGroup(personId,groupId1);
+					groupsDataManager.addPersonToGroup(personId,groupId2);
+					groupsDataManager.addPersonToGroup(personId,groupId3);
 					break;
 				}
 
 			}
 
 			for (PersonId personId : people) {
-				boolean expected = groupDataManager.getGroupTypeCountForPersonId(personId) == 2;
+				boolean expected = groupsDataManager.getGroupTypeCountForPersonId(personId) == 2;
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);
 			}

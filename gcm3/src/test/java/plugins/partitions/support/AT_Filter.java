@@ -15,7 +15,7 @@ import nucleus.Event;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.testsupport.PartitionsActionSupport;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -63,31 +63,31 @@ public class AT_Filter {
 	@UnitTestMethod(name = "and", args = { Filter.class })
 	public void testAnd() {
 		PartitionsActionSupport.testConsumer(100, 254308828477050611L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
 			 */
-			assertEquals(100,personDataManager.getPopulationCount());
+			assertEquals(100,peopleDataManager.getPopulationCount());
 
 			// create the filters
 			Filter filter = Filter.allPeople().and(Filter.allPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
 			filter = Filter.allPeople().and(Filter.noPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
 			filter = Filter.noPeople().and(Filter.allPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
 			filter = Filter.noPeople().and(Filter.noPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
@@ -122,32 +122,32 @@ public class AT_Filter {
 	public void testOr() {
 		PartitionsActionSupport.testConsumer(100, 921279696119043098L, (c) -> {
 			
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
 			 */
-			assertEquals(100,personDataManager.getPopulationCount());
+			assertEquals(100,peopleDataManager.getPopulationCount());
 
 			// create the filters
 			Filter filter = Filter.allPeople().or(Filter.allPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
 			filter = Filter.allPeople().or(Filter.noPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
 			filter = Filter.noPeople().or(Filter.allPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
 			filter = Filter.noPeople().or(Filter.noPeople());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
@@ -183,21 +183,21 @@ public class AT_Filter {
 	@UnitTestMethod(name = "negate", args = {})
 	public void testNegate() {
 		PartitionsActionSupport.testConsumer(100, 4038710674336002107L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
 			 */
-			assertEquals(100,personDataManager.getPopulationCount());
+			assertEquals(100,peopleDataManager.getPopulationCount());
 
 			Filter filter = Filter.allPeople().negate();
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 
 			filter = Filter.noPeople().negate();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 
@@ -213,13 +213,13 @@ public class AT_Filter {
 	@UnitTestMethod(name = "allPeople", args = {})
 	public void testAllPeople() {
 		PartitionsActionSupport.testConsumer(30, 847391904888351863L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show that the test is valid
-			assertTrue(personDataManager.getPopulationCount() > 0);
+			assertTrue(peopleDataManager.getPopulationCount() > 0);
 
 			final Filter filter = Filter.allPeople();
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertTrue(filter.evaluate(c, personId));
 			}
 			assertEquals(filter.getFilterSensitivities().size(), 0);
@@ -234,12 +234,12 @@ public class AT_Filter {
 	@UnitTestMethod(name = "noPeople", args = {})
 	public void testNoPeople() {
 		PartitionsActionSupport.testConsumer(100, 6400633994679307999L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			assertEquals(100,personDataManager.getPopulationCount());
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			assertEquals(100,peopleDataManager.getPopulationCount());
 
 			final Filter filter = Filter.noPeople();
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertFalse(filter.evaluate(c, personId));
 			}
 

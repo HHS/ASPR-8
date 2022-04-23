@@ -36,10 +36,10 @@ import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
@@ -229,8 +229,8 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	private final MaterialsPluginData materialsPluginData;
-	private ResourceDataManager resourceDataManager;
-	private RegionDataManager regionDataManager;
+	private ResourcesDataManager resourcesDataManager;
+	private RegionsDataManager regionsDataManager;
 
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
@@ -238,8 +238,8 @@ public final class MaterialsDataManager extends DataManager {
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
-		resourceDataManager = dataManagerContext.getDataManager(ResourceDataManager.class);
-		regionDataManager = dataManagerContext.getDataManager(RegionDataManager.class);
+		resourcesDataManager = dataManagerContext.getDataManager(ResourcesDataManager.class);
+		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
 		this.dataManagerContext = dataManagerContext;
 
@@ -263,7 +263,7 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 
-		for (ResourceId resourceId : resourceDataManager.getResourceIds()) {
+		for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 			resourceIds.add(resourceId);
 		}
 		for (ResourceId resourceId : materialsPluginData.getResourceIds()) {
@@ -821,7 +821,7 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
 
-		if (!resourceDataManager.resourceIdExists(resourceId)) {
+		if (!resourcesDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
@@ -1639,7 +1639,7 @@ public final class MaterialsDataManager extends DataManager {
 		validateMaterialsProducerId(materialsProducerId);
 		validateNonnegativeResourceAmount(amount);
 		validateMaterialsProducerHasSufficientResource(materialsProducerId, resourceId, amount);
-		final long currentResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
+		final long currentResourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, resourceId);
 		validateResourceAdditionValue(currentResourceLevel, amount);
 
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
@@ -1647,7 +1647,7 @@ public final class MaterialsDataManager extends DataManager {
 		long previousMaterialsProducerResourceLevel = componentResourceRecord.getAmount();
 		componentResourceRecord.decrementAmount(amount);
 		long currentMaterialsProducerResourceLevel = componentResourceRecord.getAmount();
-		resourceDataManager.addResourceToRegion(resourceId, regionId, amount);
+		resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
 		dataManagerContext.releaseEvent(
 				new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
 	}
@@ -1680,7 +1680,7 @@ public final class MaterialsDataManager extends DataManager {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
 
-		if (!regionDataManager.regionIdExists(regionId)) {
+		if (!regionsDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}

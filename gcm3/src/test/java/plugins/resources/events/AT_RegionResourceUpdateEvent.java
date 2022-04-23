@@ -15,11 +15,11 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.util.ContractException;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.ResourcesActionSupport;
@@ -86,10 +86,10 @@ public class AT_RegionResourceUpdateEvent implements Event {
 	public void testGetEventLabelByRegionAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			Set<RegionId> regionIds = regionDataManager.getRegionIds();
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 
 			Set<EventLabel<RegionResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -150,10 +150,10 @@ public class AT_RegionResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForRegionAndResource", args = {})
 	public void testGetEventLabelerForRegionAndResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			Set<RegionId> regionIds = regionDataManager.getRegionIds();
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 
 			// create an event labeler
 			EventLabeler<RegionResourceUpdateEvent> eventLabeler = RegionResourceUpdateEvent.getEventLabelerForRegionAndResource();

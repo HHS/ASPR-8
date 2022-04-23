@@ -17,11 +17,11 @@ import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
@@ -85,23 +85,23 @@ public class AT_ResourceFilter {
 	public void testEvaluate() {
 
 		ResourcesActionSupport.testConsumer(100, 5313696152098995059L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			Filter filter = new ResourceFilter(TestResourceId.RESOURCE_1, Equality.GREATER_THAN, 12L);
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				long amount = randomGenerator.nextInt(10) + 7;
-				RegionId regionId = regionDataManager.getPersonRegion(personId);
-				resourceDataManager.addResourceToRegion(TestResourceId.RESOURCE_1, regionId, amount);
-				resourceDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_1, personId, amount);				
+				RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_1, regionId, amount);
+				resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_1, personId, amount);				
 			}
 
-			for (PersonId personId : personDataManager.getPeople()) {
-				long personResourceLevel = resourceDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, personId);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				long personResourceLevel = resourcesDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, personId);
 				boolean expected = personResourceLevel > 12L;
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);

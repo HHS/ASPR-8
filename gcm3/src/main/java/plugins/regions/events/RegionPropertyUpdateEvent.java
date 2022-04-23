@@ -7,7 +7,7 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -54,16 +54,16 @@ public final class RegionPropertyUpdateEvent implements Event {
 	}
 
 	private static void validateRegionPropertyId(SimulationContext simulationContext, RegionPropertyId regionPropertyId) {
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
-		regionDataManager.getRegionPropertyDefinition(regionPropertyId);
+		RegionsDataManager regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+		regionsDataManager.getRegionPropertyDefinition(regionPropertyId);
 	}
 
 	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
-		if (!regionDataManager.regionIdExists(regionId)) {
+		RegionsDataManager regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+		if (!regionsDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}

@@ -7,10 +7,10 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 
@@ -52,8 +52,8 @@ public final class PersonRegionUpdateEvent implements Event {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
-		RegionDataManager regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
-		if (!regionDataManager.regionIdExists(regionId)) {
+		RegionsDataManager regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
+		if (!regionsDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
@@ -62,8 +62,8 @@ public final class PersonRegionUpdateEvent implements Event {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class);
-		if (!personDataManager.personExists(personId)) {
+		PeopleDataManager peopleDataManager = simulationContext.getDataManager(PeopleDataManager.class);
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}

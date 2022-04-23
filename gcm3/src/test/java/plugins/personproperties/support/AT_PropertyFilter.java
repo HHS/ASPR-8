@@ -16,7 +16,7 @@ import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
@@ -106,7 +106,7 @@ public class AT_PropertyFilter {
 	public void testEvaluate() {
 		
 		PersonPropertiesActionSupport.testConsumer(100, 9037413907425227057L, (c)->{
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -115,12 +115,12 @@ public class AT_PropertyFilter {
 			
 			Filter filter = new PropertyFilter(testPersonPropertyId, Equality.GREATER_THAN, 12);
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				int value = randomGenerator.nextInt(10) + 7;
 				personPropertiesDataManager.setPersonPropertyValue(personId, testPersonPropertyId, value);				
 			}
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				Integer value = personPropertiesDataManager.getPersonPropertyValue(personId, testPersonPropertyId);
 				boolean expected = value > 12;
 				boolean actual = filter.evaluate(c, personId);

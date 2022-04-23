@@ -1,4 +1,4 @@
-package plugins.partitions;
+package plugins.partitions.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,7 +41,7 @@ import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
@@ -53,20 +53,20 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = PartitionDataManager.class)
-public final class AT_PartitionDataManager {
+@UnitTest(target = PartitionsDataManager.class)
+public final class AT_PartitionsDataManager {
 
 	/*
 	 * Assigns randomized values for all attributes to all people. Values are
 	 * assigned to be consistent with the static labeling functions.
 	 */
 	private static void assignRandomAttributes(final ActorContext c) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		final PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 		AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 		final StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 		final RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-		for (final PersonId personId : personDataManager.getPeople()) {
+		for (final PersonId personId : peopleDataManager.getPeople()) {
 
 			boolean b = randomGenerator.nextBoolean();
 			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, b);
@@ -125,10 +125,10 @@ public final class AT_PartitionDataManager {
 	 * sets consist of labels for INT_0, INT_1, DOUBLE_0 and DOUBLE_1.
 	 */
 	private static Map<LabelSet, Set<PersonId>> getExpectedStructure(final ActorContext c) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		final PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 		final AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 		final Map<LabelSet, Set<PersonId>> expectedPeople = new LinkedHashMap<>();
-		for (final PersonId personId : personDataManager.getPeople()) {
+		for (final PersonId personId : peopleDataManager.getPeople()) {
 
 			final Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 			final Boolean b1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_1);
@@ -171,7 +171,7 @@ public final class AT_PartitionDataManager {
 	 */
 	private static void showPartitionIsCorrect(final ActorContext c, final Map<LabelSet, Set<PersonId>> expectedPartitionStructure, final Object key) {
 
-		final PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+		final PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 		// derive the number of people in the expected partition structure
 		int expectedPersonCount = 0;
@@ -182,7 +182,7 @@ public final class AT_PartitionDataManager {
 
 		// Show that the number of people in the partition matches the expected
 		// count of people.
-		final int actualPersonCount = partitionDataManager.getPersonCount(key);
+		final int actualPersonCount = partitionsDataManager.getPersonCount(key);
 		assertEquals(expectedPersonCount, actualPersonCount);
 
 		/*
@@ -197,7 +197,7 @@ public final class AT_PartitionDataManager {
 		 */
 		for (final LabelSet labelSet : expectedPartitionStructure.keySet()) {
 			final Set<PersonId> expectedPeople = expectedPartitionStructure.get(labelSet);
-			final List<PersonId> actualpeople = partitionDataManager.getPeople(key, labelSet);
+			final List<PersonId> actualpeople = partitionsDataManager.getPeople(key, labelSet);
 			assertEquals(expectedPeople.size(), actualpeople.size());
 			assertEquals(expectedPeople, new LinkedHashSet<>(actualpeople));
 		}
@@ -208,15 +208,15 @@ public final class AT_PartitionDataManager {
 	 * Person count may exceed the current population size.
 	 */
 	private static void removePeople(final ActorContext c, final int numberOfPeopleToRemove) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		final PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 		final StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 		final long seed = stochasticsDataManager.getRandomGenerator().nextLong();
 		final Random random = new Random(seed);
-		final List<PersonId> people = personDataManager.getPeople();
+		final List<PersonId> people = peopleDataManager.getPeople();
 		Collections.shuffle(people, random);
 		final int correctedNumberOfPeopleToRemove = FastMath.min(numberOfPeopleToRemove, people.size());
 		for (int i = 0; i < correctedNumberOfPeopleToRemove; i++) {
-			personDataManager.removePerson(people.get(i));
+			peopleDataManager.removePerson(people.get(i));
 		}
 	}
 
@@ -224,9 +224,9 @@ public final class AT_PartitionDataManager {
 	 * Adds the given number of people to the simulation
 	 */
 	private static void addPeople(final ActorContext c, final int numberOfPeopleToAdd) {
-		PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 		for (int i = 0; i < numberOfPeopleToAdd; i++) {
-			personDataManager.addPerson(PersonConstructionData.builder().build());
+			peopleDataManager.addPerson(PersonConstructionData.builder().build());
 		}
 	}
 
@@ -241,7 +241,7 @@ public final class AT_PartitionDataManager {
 
 		PartitionsActionSupport.testConsumer(1000, 5127268948453841557L, (c) -> {
 			// get the partition data view
-			final PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			final PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			// initialize people's attributes
 			assignRandomAttributes(c);
@@ -250,7 +250,7 @@ public final class AT_PartitionDataManager {
 			final Object key = new Object();
 
 			// show that the population partition does not yet exist
-			assertFalse(partitionDataManager.partitionExists(key));
+			assertFalse(partitionsDataManager.partitionExists(key));
 
 			/*
 			 * Add the partition. We will filter to select people who have
@@ -269,10 +269,10 @@ public final class AT_PartitionDataManager {
 													.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
 													.build();//
 
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// show that the partition was added
-			assertTrue(partitionDataManager.partitionExists(key));
+			assertTrue(partitionsDataManager.partitionExists(key));
 
 			/*
 			 * Get the expected structure by examining each person and grouping
@@ -311,11 +311,11 @@ public final class AT_PartitionDataManager {
 		// if the key is already allocated to another population partition
 		PartitionsActionSupport.testConsumer(0, 1137046131619466337L, (c) -> {
 
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			Object key = new Object();
 
-			partitionDataManager.addPartition(Partition.builder().build(), key);
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.addPartition(Partition.builder().build(), key));
+			partitionsDataManager.addPartition(Partition.builder().build(), key);
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.addPartition(Partition.builder().build(), key));
 			assertEquals(PartitionError.DUPLICATE_PARTITION, contractException.getErrorType());
 
 		});
@@ -323,18 +323,18 @@ public final class AT_PartitionDataManager {
 		// precondition: if the partition is null
 		PartitionsActionSupport.testConsumer(0, 1137046131619466337L, (c) -> {
 
-			PartitionDataManager partitionDataManager = new PartitionDataManager();
+			PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
 			Object key = new Object();
 
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.addPartition(null, key));
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.addPartition(null, key));
 			assertEquals(PartitionError.NULL_PARTITION, contractException.getErrorType());
 
 		});
 
 		// precondition: if the key is null
 		PartitionsActionSupport.testConsumer(0, 1137046131619466337L, (c) -> {
-			PartitionDataManager partitionDataManager = new PartitionDataManager();
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.addPartition(Partition.builder().build(), null));
+			PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.addPartition(Partition.builder().build(), null));
 			assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
 
 		});
@@ -347,21 +347,21 @@ public final class AT_PartitionDataManager {
 
 		PartitionsActionSupport.testConsumer(0, 5767679585616452606L, (c) -> {
 
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			Object key = new Object();
 
 			// show that the partition does not yet exist
-			assertFalse(partitionDataManager.partitionExists(key));
+			assertFalse(partitionsDataManager.partitionExists(key));
 
 			Partition partition = Partition.builder().build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// show that the partition was added
-			assertTrue(partitionDataManager.partitionExists(key));
+			assertTrue(partitionsDataManager.partitionExists(key));
 
 			// show that partition is removed
-			partitionDataManager.removePartition(key);
-			assertFalse(partitionDataManager.partitionExists(key));
+			partitionsDataManager.removePartition(key);
+			assertFalse(partitionsDataManager.partitionExists(key));
 
 		});
 	}
@@ -371,7 +371,7 @@ public final class AT_PartitionDataManager {
 	public void testPartitionExists() {
 
 		PartitionsActionSupport.testConsumer(0, 1968926333881399732L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			// create containers to hold known and unknown keys
 			Set<Object> knownKeys = new LinkedHashSet<>();
@@ -389,21 +389,21 @@ public final class AT_PartitionDataManager {
 			// add a partition for each key
 			for (Object key : knownKeys) {
 				Partition partition = Partition.builder().build();
-				partitionDataManager.addPartition(partition, key);
+				partitionsDataManager.addPartition(partition, key);
 			}
 
 			// show that the known keys will have a partition
 			for (Object key : knownKeys) {
-				assertTrue(partitionDataManager.partitionExists(key));
+				assertTrue(partitionsDataManager.partitionExists(key));
 			}
 
 			// show that the unknown keys will not have a partition
 			for (Object key : unknownKeys) {
-				assertFalse(partitionDataManager.partitionExists(key));
+				assertFalse(partitionsDataManager.partitionExists(key));
 			}
 
 			// show that the null key has no partition
-			assertFalse(partitionDataManager.partitionExists(null));
+			assertFalse(partitionsDataManager.partitionExists(null));
 
 		});
 	}
@@ -413,8 +413,8 @@ public final class AT_PartitionDataManager {
 	public void testContains() {
 
 		PartitionsActionSupport.testConsumer(100, 607630153604184177L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -424,26 +424,26 @@ public final class AT_PartitionDataManager {
 											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
 											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, (v) -> 3)).build();//
 
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// change the BOOLEAN_0 randomly for every person
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				boolean newValue = randomGenerator.nextBoolean();
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, newValue);
 			}
 
 			// show that there is at least one person in the partition and one
 			// person outside the partition
-			int personCountInPartition = partitionDataManager.getPersonCount(key);
-			assertTrue(personCountInPartition < personDataManager.getPopulationCount());
+			int personCountInPartition = partitionsDataManager.getPersonCount(key);
+			assertTrue(personCountInPartition < peopleDataManager.getPopulationCount());
 			assertTrue(personCountInPartition > 0);
 
 			// show that a person is in the partition if and only if their
 			// BOOLEAN_0 attribute is true
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				boolean expectPersonInPartition = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
-				boolean actualPersonInPartition = partitionDataManager.contains(personId, key);
+				boolean actualPersonInPartition = partitionsDataManager.contains(personId, key);
 				assertEquals(expectPersonInPartition, actualPersonInPartition);
 			}
 
@@ -455,8 +455,8 @@ public final class AT_PartitionDataManager {
 	public void testContains_LabelSet() {
 
 		PartitionsActionSupport.testConsumer(100, 7338572401998066291L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -503,11 +503,11 @@ public final class AT_PartitionDataManager {
 											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))
 											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction)).build();//
 
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// alter people's attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
 
@@ -539,7 +539,7 @@ public final class AT_PartitionDataManager {
 			 * and only if their BOOLEAN_0 attribute is true and their INT_0,
 			 * and DOUBLE_0 labels are 0 and A
 			 */
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				boolean contained = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 
 				Integer int0Value = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_0);
@@ -550,43 +550,43 @@ public final class AT_PartitionDataManager {
 
 				boolean expectPersonInPartitionUnderLabel = contained && int0Label.equals(0) && double0Label.equals("A");
 
-				boolean actualPersonInPartitionUnderLabel = partitionDataManager.contains(personId, queryLabelSet, key);
+				boolean actualPersonInPartitionUnderLabel = partitionsDataManager.contains(personId, queryLabelSet, key);
 				assertEquals(expectPersonInPartitionUnderLabel, actualPersonInPartitionUnderLabel);
 			}
 
 			// precondition tests
 			PersonId personId = new PersonId(0);
-			assertTrue(personDataManager.personExists(personId));
+			assertTrue(peopleDataManager.personExists(personId));
 
 			PersonId unknownPersonId = new PersonId(10000000);
-			assertFalse(personDataManager.personExists(unknownPersonId));
+			assertFalse(peopleDataManager.personExists(unknownPersonId));
 
 			Object unknownKey = new Object();
 
 			LabelSet badLabelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, 0).build();
 
 			// if the person id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.contains(null, queryLabelSet, key));
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(null, queryLabelSet, key));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is unknown
-			contractException = assertThrows(ContractException.class, () -> partitionDataManager.contains(unknownPersonId, queryLabelSet, key));
+			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(unknownPersonId, queryLabelSet, key));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the key is null
-			contractException = assertThrows(ContractException.class, () -> partitionDataManager.contains(personId, queryLabelSet, null));
+			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, queryLabelSet, null));
 			assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
 
 			// if the key is unknown
-			contractException = assertThrows(ContractException.class, () -> partitionDataManager.contains(personId, queryLabelSet, unknownKey));
+			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, queryLabelSet, unknownKey));
 			assertEquals(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, contractException.getErrorType());
 
 			// if the label set is null
-			contractException = assertThrows(ContractException.class, () -> partitionDataManager.contains(personId, null, key));
+			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, null, key));
 			assertEquals(PartitionError.NULL_LABEL_SET, contractException.getErrorType());
 
 			// if the label contains a dimension not present in the partition
-			contractException = assertThrows(ContractException.class, () -> partitionDataManager.contains(personId, badLabelSet, key));
+			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, badLabelSet, key));
 			assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
 
 		});
@@ -601,8 +601,8 @@ public final class AT_PartitionDataManager {
 
 			// establish data views
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			// create a container to hold the people we expect to find in the
@@ -611,7 +611,7 @@ public final class AT_PartitionDataManager {
 
 			// alter people's attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
 
@@ -632,10 +632,10 @@ public final class AT_PartitionDataManager {
 												return v / 10;
 											}))//
 											.build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// get the people in the partition
-			List<PersonId> peopleInPartition = partitionDataManager.getPeople(key);
+			List<PersonId> peopleInPartition = partitionsDataManager.getPeople(key);
 			Set<PersonId> actualPeople = new LinkedHashSet<>(peopleInPartition);
 			// show that the list of people contained no duplicates
 			assertEquals(peopleInPartition.size(), actualPeople.size());
@@ -653,8 +653,8 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(100, 7761046492495930843L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -668,7 +668,7 @@ public final class AT_PartitionDataManager {
 
 			// alter people's INT_0 and BOOLEAN_0 attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
 
@@ -684,14 +684,14 @@ public final class AT_PartitionDataManager {
 											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
 											.build();
 
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// create a container to hold the people we expect to find in the
 			// partition associated with labels
 			Map<Object, Set<PersonId>> expectedLabelToPeopleMap = new LinkedHashMap<>();
 
 			// fill the expectedLabelToPeopleMap
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				// will the person pass the filter?
 
 				Boolean booleanValue = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
@@ -720,7 +720,7 @@ public final class AT_PartitionDataManager {
 
 				// get the people that the partition associates with the label
 				LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_0, labelValue).build();
-				List<PersonId> peopleInPartition = partitionDataManager.getPeople(key, labelSet);
+				List<PersonId> peopleInPartition = partitionsDataManager.getPeople(key, labelSet);
 				Set<PersonId> actualPeople = new LinkedHashSet<>(peopleInPartition);
 
 				/*
@@ -743,8 +743,8 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(1000, 3993911184725585603L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -784,7 +784,7 @@ public final class AT_PartitionDataManager {
 
 			// alter people's attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
 
@@ -820,7 +820,7 @@ public final class AT_PartitionDataManager {
 											.addLabeler(new AttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction))//
 											.build();
 
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			/*
 			 * Create a container to hold the number of people we expect to find
@@ -830,7 +830,7 @@ public final class AT_PartitionDataManager {
 			Map<LabelSet, MutableInteger> expectedPartitionContentMap = new LinkedHashMap<>();
 
 			// fill the expectedLabelToPeopleMap
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				// will the person pass the filter?
 				Boolean booleanValue = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 				if (booleanValue) {
@@ -928,7 +928,7 @@ public final class AT_PartitionDataManager {
 					 * Show that the count map we receive from the partition
 					 * matches our expectation
 					 */
-					Map<LabelSet, Integer> actualCountMap = partitionDataManager.getPeopleCountMap(key, queryLabelSet);
+					Map<LabelSet, Integer> actualCountMap = partitionsDataManager.getPeopleCountMap(key, queryLabelSet);
 					assertEquals(expectedCountMap, actualCountMap);
 				}
 			}
@@ -944,9 +944,9 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(100, 1559429415782871174L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
 			// create a couter to hold the number people we expect to find in
@@ -956,7 +956,7 @@ public final class AT_PartitionDataManager {
 
 			// alter people's attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
 
@@ -976,10 +976,10 @@ public final class AT_PartitionDataManager {
 												return v / 10;
 											}))//
 											.build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// get the people in the partition
-			int actualCount = partitionDataManager.getPersonCount(key);
+			int actualCount = partitionsDataManager.getPersonCount(key);
 
 			// show that there were the expected people
 			assertEquals(expectedPeopleCount, actualCount);
@@ -995,8 +995,8 @@ public final class AT_PartitionDataManager {
 		PartitionsActionSupport.testConsumer(100, 3217787540697556531L, (c) -> {
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -1010,7 +1010,7 @@ public final class AT_PartitionDataManager {
 
 			// alter people's INT_0 and BOOLEAN_0 attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
 
@@ -1026,14 +1026,14 @@ public final class AT_PartitionDataManager {
 											.addLabeler(new AttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
 											.build();
 
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// create a container to hold the people we expect to find in the
 			// partition associated with labels
 			Map<Object, MutableInteger> expectedPeopleCountMap = new LinkedHashMap<>();
 
 			// fill the expectedLabelToPeopleMap
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				// will the person pass the filter?
 				Boolean booleanValue = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 				if (booleanValue) {
@@ -1061,7 +1061,7 @@ public final class AT_PartitionDataManager {
 
 				// get the people that the partition associates with the label
 				LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_0, labelValue).build();
-				int actualPersonCount = partitionDataManager.getPersonCount(key, labelSet);
+				int actualPersonCount = partitionsDataManager.getPersonCount(key, labelSet);
 
 				// show that expected and actual people counts are equal
 				assertEquals(expectedPeopleCount.getValue(), actualPersonCount);
@@ -1165,8 +1165,8 @@ public final class AT_PartitionDataManager {
 			// different results?
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -1205,7 +1205,7 @@ public final class AT_PartitionDataManager {
 			};
 
 			// determine the people in the world
-			List<PersonId> peopleInTheWorld = personDataManager.getPeople();
+			List<PersonId> peopleInTheWorld = peopleDataManager.getPeople();
 
 			// alter people's attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -1250,7 +1250,7 @@ public final class AT_PartitionDataManager {
 
 			Partition partition = partitionBuilder.build();
 
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			/*
 			 * Create a label set for the query that does not contain all the
@@ -1373,7 +1373,7 @@ public final class AT_PartitionDataManager {
 			int samplingCount = FastMath.min(expectedPeopleMatchingQueryLabelSet.size() + 1, 10);
 
 			for (int i = 0; i < samplingCount; i++) {
-				Optional<PersonId> optional = partitionDataManager.samplePartition(key, partitionSampler);
+				Optional<PersonId> optional = partitionsDataManager.samplePartition(key, partitionSampler);
 				if (optional.isPresent()) {
 					PersonId selectedPerson = optional.get();
 					assertTrue(expectedPeopleMatchingPartitionSampler.contains(selectedPerson));
@@ -1392,56 +1392,56 @@ public final class AT_PartitionDataManager {
 
 		// precondition: if the key is null
 		PartitionsActionSupport.testConsumer(10, 8368182028203057994L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			PartitionSampler partitionSampler = PartitionSampler.builder().build();
 
 			// first we show that the values we will be using are valid
-			assertNotNull(partitionDataManager.samplePartition(key, partitionSampler));
+			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
 
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.samplePartition(null, partitionSampler));
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(null, partitionSampler));
 			assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
 
 		});
 
 		// precondition: if the key is unknown
 		PartitionsActionSupport.testConsumer(10, 2301450217287059237L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			PartitionSampler partitionSampler = PartitionSampler.builder().build();
 
 			Object unknownKey = new Object();
 
 			// first we show that the values we will be using are valid
-			assertNotNull(partitionDataManager.samplePartition(key, partitionSampler));
+			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
 
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.samplePartition(unknownKey, partitionSampler));
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(unknownKey, partitionSampler));
 			assertEquals(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, contractException.getErrorType());
 
 		});
 
 		PartitionsActionSupport.testConsumer(10, 8837909864261179707L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			PartitionSampler partitionSampler = PartitionSampler.builder().build();
 
 			// first we show that the values we will be using are valid
-			assertNotNull(partitionDataManager.samplePartition(key, partitionSampler));
+			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
 
 			// if the partition sampler is null
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.samplePartition(key, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(key, null));
 			assertEquals(PartitionError.NULL_PARTITION_SAMPLER, contractException.getErrorType());
 
 		});
@@ -1451,11 +1451,11 @@ public final class AT_PartitionDataManager {
 		 * dimensions not present in the population partition
 		 */
 		PartitionsActionSupport.testConsumer(10, 1697817005173536231L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			PartitionSampler partitionSampler = PartitionSampler.builder().build();
 
@@ -1463,9 +1463,9 @@ public final class AT_PartitionDataManager {
 			PartitionSampler partitionSamplerWithBadDimension = PartitionSampler.builder().setLabelSet(labelSet).build();
 
 			// first we show that the values we will be using are valid
-			assertNotNull(partitionDataManager.samplePartition(key, partitionSampler));
+			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
 
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.samplePartition(key, partitionSamplerWithBadDimension));
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(key, partitionSamplerWithBadDimension));
 			assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
 
 		});
@@ -1475,20 +1475,20 @@ public final class AT_PartitionDataManager {
 		 * does not exist
 		 */
 		PartitionsActionSupport.testConsumer(10, 624346712512051803L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			Object key = new Object();
 			Partition partition = Partition.builder().setFilter(Filter.allPeople()).build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			PartitionSampler partitionSampler = PartitionSampler.builder().build();
 
 			PartitionSampler partitionSamplerWithUnknownExcludedPerson = PartitionSampler.builder().setExcludedPerson(new PersonId(10000)).build();
 
 			// first we show that the values we will be using are valid
-			assertNotNull(partitionDataManager.samplePartition(key, partitionSampler));
+			assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
 
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionDataManager.samplePartition(key, partitionSamplerWithUnknownExcludedPerson));
+			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.samplePartition(key, partitionSamplerWithUnknownExcludedPerson));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
@@ -1499,7 +1499,7 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPartitionDataManagerInitialization() {
 		PartitionsActionSupport.testConsumer(0, 2954766214498605129L, (c) -> {
-			PartitionDataManager dataManager = c.getDataManager(PartitionDataManager.class);
+			PartitionsDataManager dataManager = c.getDataManager(PartitionsDataManager.class);
 			assertNotNull(dataManager);
 		});
 	}
@@ -1508,8 +1508,8 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonAdditionEvent() {
 		PartitionsActionSupport.testConsumer(100, 6964380012813498875L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			/*
 			 * Create keys for the two population partitions. One that accepts
@@ -1522,21 +1522,21 @@ public final class AT_PartitionDataManager {
 			// add the partitions
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition1 = Partition.builder().setFilter(filter).build();
-			partitionDataManager.addPartition(partition1, key1);
+			partitionsDataManager.addPartition(partition1, key1);
 
 			filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
 			Partition partition2 = Partition.builder().setFilter(filter).build();
-			partitionDataManager.addPartition(partition2, key2);
+			partitionsDataManager.addPartition(partition2, key2);
 
 			// add a new person, by default they will have BOOLEAN_0 = false
 			// determine the person id of the person just added
-			PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
+			PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 
 			// show that the person is not a member of partition 1
-			assertFalse(partitionDataManager.contains(personId, key1));
+			assertFalse(partitionsDataManager.contains(personId, key1));
 
 			// show that the person is a member of partition 2
-			assertTrue(partitionDataManager.contains(personId, key2));
+			assertTrue(partitionsDataManager.contains(personId, key2));
 
 		});
 	}
@@ -1562,9 +1562,9 @@ public final class AT_PartitionDataManager {
 
 			// select 10 people
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			List<PersonId> peopleOfInterest = new ArrayList<>();
 			for (int i = 0; i < 10; i++) {
 				peopleOfInterest.add(people.get(i));
@@ -1583,10 +1583,10 @@ public final class AT_PartitionDataManager {
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			partitionDataManager.addPartition(partition, key);
+			partitionsDataManager.addPartition(partition, key);
 
 			// show that the partition does contain the people of interest
-			List<PersonId> actualPeople = partitionDataManager.getPeople(key);
+			List<PersonId> actualPeople = partitionsDataManager.getPeople(key);
 			assertEquals(peopleOfInterest.size(), actualPeople.size());
 			assertEquals(new LinkedHashSet<>(peopleOfInterest), new LinkedHashSet<>(actualPeople));
 
@@ -1610,8 +1610,8 @@ public final class AT_PartitionDataManager {
 				PersonId personId = e.getPersonId();
 
 				// show that the person is still in the partition
-				PartitionDataManager partitionDataManager = c2.getDataManager(PartitionDataManager.class);
-				assertTrue(partitionDataManager.contains(personId, key));
+				PartitionsDataManager partitionsDataManager = c2.getDataManager(PartitionsDataManager.class);
+				assertTrue(partitionsDataManager.contains(personId, key));
 
 				// add the person to the verified list for later use
 				peopleVerifiedByReport.add(personId);
@@ -1627,19 +1627,19 @@ public final class AT_PartitionDataManager {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// Remove from the simulation the people who are in the partition
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
-			List<PersonId> people = partitionDataManager.getPeople(key);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+			List<PersonId> people = partitionsDataManager.getPeople(key);
 			for (PersonId personId : people) {
-				personDataManager.removePerson(personId);
+				peopleDataManager.removePerson(personId);
 			}
 
 			// show that the people still exist
 			
 			for (PersonId personId : people) {
-				assertTrue(personDataManager.personExists(personId));
+				assertTrue(peopleDataManager.personExists(personId));
 			}
-			List<PersonId> peopleImmediatelyAfterRemoval = partitionDataManager.getPeople(key);
+			List<PersonId> peopleImmediatelyAfterRemoval = partitionsDataManager.getPeople(key);
 			assertEquals(people, peopleImmediatelyAfterRemoval);
 
 		}));
@@ -1655,17 +1655,17 @@ public final class AT_PartitionDataManager {
 			 * observe each removal and still perceived each person as being a
 			 * member of the partition.
 			 */
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			assertEquals(10, peopleVerifiedByReport.size());
 
 			// show that each of these people is no longer in the simulation
 			for (PersonId personId : peopleVerifiedByReport) {
-				assertFalse(personDataManager.personExists(personId));
+				assertFalse(peopleDataManager.personExists(personId));
 			}
 
 			// show that the partition is empty
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
-			assertEquals(0, partitionDataManager.getPersonCount(key));
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+			assertEquals(0, partitionsDataManager.getPersonCount(key));
 
 		}));
 
@@ -1679,8 +1679,8 @@ public final class AT_PartitionDataManager {
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonAdditionEvent() {		
 		PartitionsActionSupport.testConsumer(100, 2561425586247460069L, (c) -> {
-			PartitionDataManager partitionDataManager = c.getDataManager(PartitionDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Create keys for the two population partitions. One that accepts
 			 * people with attribute BOOLEAN_0 = true and the other with
@@ -1692,22 +1692,22 @@ public final class AT_PartitionDataManager {
 			// add the partitions
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition1 = Partition.builder().setFilter(filter).build();
-			partitionDataManager.addPartition(partition1, key1);
+			partitionsDataManager.addPartition(partition1, key1);
 
 			filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
 			Partition partition2 = Partition.builder().setFilter(filter).build();
-			partitionDataManager.addPartition(partition2, key2);
+			partitionsDataManager.addPartition(partition2, key2);
 
 			// determine the person ids of the people before the bulk addition
-			List<PersonId> priorPeople = personDataManager.getPeople();
+			List<PersonId> priorPeople = peopleDataManager.getPeople();
 
 			// add three new people, by default they will have BOOLEAN_0 = false
 			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personBuilder.build()).add(personBuilder.build()).add(personBuilder.build()).build();
-			personDataManager.addBulkPeople(bulkPersonConstructionData);
+			peopleDataManager.addBulkPeople(bulkPersonConstructionData);
 
 			// determine the new people who were added
-			List<PersonId> newPeople = personDataManager.getPeople();
+			List<PersonId> newPeople = peopleDataManager.getPeople();
 			newPeople.removeAll(priorPeople);
 
 			// show that there are three new people
@@ -1715,11 +1715,11 @@ public final class AT_PartitionDataManager {
 
 			// show that the new people are not members of partition 1
 			for (PersonId personId : newPeople) {
-				assertFalse(partitionDataManager.contains(personId, key1));
+				assertFalse(partitionsDataManager.contains(personId, key1));
 			}
 			// show that the new people are members of partition 2
 			for (PersonId personId : newPeople) {
-				assertTrue(partitionDataManager.contains(personId, key2));
+				assertTrue(partitionsDataManager.contains(personId, key2));
 			}
 		});
 	}

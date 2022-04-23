@@ -13,12 +13,12 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.SimulationContext;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import tools.annotations.UnitTest;
@@ -105,8 +105,8 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 	public void testGetEventLabelByPersonAndProperty() {
 
 		PersonPropertiesActionSupport.testConsumer(5, 4447674464104241765L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 
 			Set<EventLabel<PersonPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -147,8 +147,8 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 	public void testGetEventLabelerForPersonAndProperty() {
 
 		PersonPropertiesActionSupport.testConsumer(5, 1295505199200349679L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 
 			// create an event labeler
 			EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty();
@@ -268,7 +268,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 		
 		PersonPropertiesActionSupport.testConsumer(0, 7020781813930698612L, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			
 			Set<EventLabel<PersonPropertyUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -285,7 +285,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);
+					EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionsDataManager);
 					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
@@ -309,10 +309,10 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 	public void testGetEventLabelerForRegionAndProperty() {
 	 
 		PersonPropertiesActionSupport.testConsumer(50, 7370040718450691849L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// create an event labeler
-			EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionDataManager);
+			EventLabeler<PersonPropertyUpdateEvent> eventLabeler = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(PersonPropertyUpdateEvent.class, eventLabeler.getEventClass());
@@ -321,7 +321,7 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				
 				//we will need to select a person from the region to run this test correctly
-				List<PersonId> peopleInRegion = regionDataManager.getPeopleInRegion(testRegionId);
+				List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(testRegionId);
 				if(peopleInRegion.isEmpty()) {
 					continue;
 				}

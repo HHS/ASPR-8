@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.SimulationContext;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 
 /**
@@ -28,12 +28,12 @@ public class BasePeopleContainer implements PeopleContainer {
 
 	private PeopleContainerMode mode;
 
-	private final PersonDataManager personDataManager;
+	private final PeopleDataManager peopleDataManager;
 
 	private PeopleContainer internalPeopleContainer;
 
 	public BasePeopleContainer(SimulationContext simulationContext) {
-		this.personDataManager = simulationContext.getDataManager(PersonDataManager.class);
+		this.peopleDataManager = simulationContext.getDataManager(PeopleDataManager.class);
 		mode = PeopleContainerMode.INTSET;
 		internalPeopleContainer = new IntSetPeopleContainer();
 
@@ -53,7 +53,7 @@ public class BasePeopleContainer implements PeopleContainer {
 		switch (mode) {
 
 		case TREE_BIT_SET_SLOW:
-			if (size <= personDataManager.getProjectedPopulationCount() / INT_SET_THRESHOLD) {
+			if (size <= peopleDataManager.getProjectedPopulationCount() / INT_SET_THRESHOLD) {
 				mode = PeopleContainerMode.INTSET;
 				List<PersonId> people = internalPeopleContainer.getPeople();
 				internalPeopleContainer = new IntSetPeopleContainer();
@@ -67,10 +67,10 @@ public class BasePeopleContainer implements PeopleContainer {
 			}
 			break;
 		case INTSET:
-			if (size >= personDataManager.getProjectedPopulationCount() / TREE_BIT_SET_SLOW_THRESHOLD) {
+			if (size >= peopleDataManager.getProjectedPopulationCount() / TREE_BIT_SET_SLOW_THRESHOLD) {
 				mode = PeopleContainerMode.TREE_BIT_SET_SLOW;
 				List<PersonId> people = internalPeopleContainer.getPeople();
-				internalPeopleContainer = new TreeBitSetPeopleContainer(personDataManager);
+				internalPeopleContainer = new TreeBitSetPeopleContainer(peopleDataManager);
 				for (PersonId personId : people) {
 					// we use the safe add as it is faster
 					internalPeopleContainer.safeAdd(personId);

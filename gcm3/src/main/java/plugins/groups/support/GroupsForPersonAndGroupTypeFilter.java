@@ -6,7 +6,7 @@ import java.util.Set;
 
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Equality;
@@ -19,7 +19,7 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	private final GroupTypeId groupTypeId;
 	private final Equality equality;
 	private final int groupCount;
-	private GroupDataManager groupDataManager;
+	private GroupsDataManager groupsDataManager;
 
 	private void validateEquality(final SimulationContext simulationContext, final Equality equality) {
 		if (equality == null) {
@@ -32,11 +32,11 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
 		
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
 
-		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
+		if (!groupsDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
@@ -55,10 +55,10 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 
 	@Override
 	public boolean evaluate(SimulationContext simulationContext, PersonId personId) {
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
-		final int count = groupDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
+		final int count = groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
 		return evaluate(count);
 	}
 
@@ -67,20 +67,20 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	}
 
 	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionEvent event) {
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
-		if (groupDataManager.getGroupType(event.getGroupId()).equals(groupTypeId)) {
+		if (groupsDataManager.getGroupType(event.getGroupId()).equals(groupTypeId)) {
 			return Optional.of(event.getPersonId());
 		}
 		return Optional.empty();
 	}
 
 	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalEvent event) {
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
-		if (groupDataManager.getGroupType(event.getGroupId()).equals(groupTypeId)) {
+		if (groupsDataManager.getGroupType(event.getGroupId()).equals(groupTypeId)) {
 			return Optional.of(event.getPersonId());
 		}
 		return Optional.empty();

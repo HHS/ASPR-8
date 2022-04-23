@@ -1,4 +1,4 @@
-package plugins.globals;
+package plugins.globalproperties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,28 +14,28 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.util.ContractException;
-import plugins.globals.support.GlobalError;
-import plugins.globals.support.GlobalPropertyId;
-import plugins.globals.support.SimpleGlobalPropertyId;
-import plugins.globals.testsupport.TestGlobalPropertyId;
+import plugins.globalproperties.support.GlobalPropertiesError;
+import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.globalproperties.support.SimpleGlobalPropertyId;
+import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = GlobalPluginData.class)
+@UnitTest(target = GlobalPropertiesPluginData.class)
 
-public class AT_GlobalPluginData {
+public class AT_GlobalPropertiesPluginData {
 
 	@Test
-	@UnitTestMethod(target = GlobalPluginData.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = GlobalPropertiesPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
 
-		GlobalPluginData globalInitialData = GlobalPluginData.builder().build();
+		GlobalPropertiesPluginData globalInitialData = GlobalPropertiesPluginData.builder().build();
 		assertNotNull(globalInitialData);
 
 		// precondition tests
-		GlobalPluginData.Builder builder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(34).build();
 		GlobalPropertyId globalPropertyId1 = new SimpleGlobalPropertyId("id 1");
 		GlobalPropertyId globalPropertyId2 = new SimpleGlobalPropertyId("id 2");
@@ -47,7 +47,7 @@ public class AT_GlobalPluginData {
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		builder.setGlobalPropertyValue(globalPropertyId2, 67);
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, contractException.getErrorType());
 
 		/*
 		 * If a global property value was associated with a global property id
@@ -56,7 +56,7 @@ public class AT_GlobalPluginData {
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		builder.setGlobalPropertyValue(globalPropertyId1, "bad value");
 		contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(GlobalError.INCOMPATIBLE_VALUE, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
 		 * If a global property definition does not have a default value and
@@ -65,14 +65,14 @@ public class AT_GlobalPluginData {
 		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(GlobalError.INSUFFICIENT_GLOBAL_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.INSUFFICIENT_GLOBAL_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPluginData.Builder.class, name = "defineGlobalProperty", args = { GlobalPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = GlobalPropertiesPluginData.Builder.class, name = "defineGlobalProperty", args = { GlobalPropertyId.class, PropertyDefinition.class })
 	public void testDefineGlobalProperty() {
-		GlobalPluginData.Builder builder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
 		// create a container to hold the expected property definitions
 		Map<GlobalPropertyId, PropertyDefinition> expectedPropertyDefinitions = new LinkedHashMap<>();
@@ -94,7 +94,7 @@ public class AT_GlobalPluginData {
 		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
 
 		// build the initial data
-		GlobalPluginData globalInitialData = builder.build();
+		GlobalPropertiesPluginData globalInitialData = builder.build();
 
 		// show that the property definitions are retrieved by their ids
 		for (GlobalPropertyId gpid : expectedPropertyDefinitions.keySet()) {
@@ -108,28 +108,28 @@ public class AT_GlobalPluginData {
 		// if the global property id is null
 		PropertyDefinition propDef = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(17).build();
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(null, propDef));
-		assertEquals(GlobalError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), null));
-		assertEquals(GlobalError.NULL_GLOBAL_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if a property definition for the given global property id was
 		// previously defined.
 		builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef);
 		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef));
-		assertEquals(GlobalError.DUPLICATE_GLOBAL_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.DUPLICATE_GLOBAL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
 
 	
 
 	@Test
-	@UnitTestMethod(target = GlobalPluginData.Builder.class, name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
+	@UnitTestMethod(target = GlobalPropertiesPluginData.Builder.class, name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testSetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(170390875787254562L);
 
-		GlobalPluginData.Builder builder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
 		// show there are some properties in the support enum
 		assertTrue(TestGlobalPropertyId.values().length > 0);
@@ -150,7 +150,7 @@ public class AT_GlobalPluginData {
 		}
 
 		// show that the expected values are present
-		GlobalPluginData globalInitialData = builder.build();
+		GlobalPropertiesPluginData globalInitialData = builder.build();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			Integer expectedGlobalPropertyValue = expectedValues.get(testGlobalPropertyId);
 			Integer actualGlobalPropertyValue = globalInitialData.getGlobalPropertyValue(testGlobalPropertyId);
@@ -165,17 +165,17 @@ public class AT_GlobalPluginData {
 
 		// if the global property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(null, 5));
-		assertEquals(GlobalError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the global property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, null));
-		assertEquals(GlobalError.NULL_GLOBAL_PROPERTY_VALUE, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_VALUE, contractException.getErrorType());
 
 		// if the global property value was previously defined for the given
 		// global property id
 		builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, 4);
 		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, 5));
-		assertEquals(GlobalError.DUPLICATE_GLOBAL_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.DUPLICATE_GLOBAL_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 	}
 
@@ -183,7 +183,7 @@ public class AT_GlobalPluginData {
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 		// show that the builder can be created
-		assertNotNull(GlobalPluginData.builder());
+		assertNotNull(GlobalPropertiesPluginData.builder());
 	}
 
 	
@@ -191,7 +191,7 @@ public class AT_GlobalPluginData {
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {
-		GlobalPluginData.Builder builder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
 		// show there are some properties in the support enum
 		assertTrue(TestGlobalPropertyId.values().length > 0);
@@ -208,7 +208,7 @@ public class AT_GlobalPluginData {
 		}
 
 		// show that the expected property definitions are present
-		GlobalPluginData globalInitialData = builder.build();
+		GlobalPropertiesPluginData globalInitialData = builder.build();
 
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			PropertyDefinition expectedPropertyDefinition = expectedGlobalPropertyDefinitions.get(testGlobalPropertyId);
@@ -218,10 +218,10 @@ public class AT_GlobalPluginData {
 
 		// precondition tests
 		ContractException contractException = assertThrows(ContractException.class, () -> globalInitialData.getGlobalPropertyDefinition(null));
-		assertEquals(GlobalError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
 
 		contractException = assertThrows(ContractException.class, () -> globalInitialData.getGlobalPropertyDefinition(TestGlobalPropertyId.getUnknownGlobalPropertyId()));
-		assertEquals(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
@@ -229,7 +229,7 @@ public class AT_GlobalPluginData {
 	@UnitTestMethod(name = "getGlobalPropertyIds", args = {})
 	public void testGetGlobalPropertyIds() {
 
-		GlobalPluginData.Builder builder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
 		// show there are some properties in the support enum
 		assertTrue(TestGlobalPropertyId.values().length > 0);
@@ -246,7 +246,7 @@ public class AT_GlobalPluginData {
 		}
 
 		// show that the expected values are present
-		GlobalPluginData globalInitialData = builder.build();
+		GlobalPropertiesPluginData globalInitialData = builder.build();
 		assertEquals(expectedGlobalPropertyIds, globalInitialData.getGlobalPropertyIds());
 	}
 
@@ -255,7 +255,7 @@ public class AT_GlobalPluginData {
 	public void testGetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250048639082754761L);
 
-		GlobalPluginData.Builder builder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
 		// show there are some properties in the support enum
 		assertTrue(TestGlobalPropertyId.values().length > 0);
@@ -278,7 +278,7 @@ public class AT_GlobalPluginData {
 		}
 
 		// show that the expected values are present
-		GlobalPluginData globalInitialData = builder.build();
+		GlobalPropertiesPluginData globalInitialData = builder.build();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			Integer expectedGlobalPropertyValue = expectedValues.get(testGlobalPropertyId);
 			Integer actualGlobalPropertyValue = globalInitialData.getGlobalPropertyValue(testGlobalPropertyId);
@@ -293,11 +293,11 @@ public class AT_GlobalPluginData {
 
 		// if the global property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> globalInitialData.getGlobalPropertyValue(null));
-		assertEquals(GlobalError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the global property value is null
 		contractException = assertThrows(ContractException.class, () -> globalInitialData.getGlobalPropertyValue(TestGlobalPropertyId.getUnknownGlobalPropertyId()));
-		assertEquals(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, contractException.getErrorType());
 
 	}
 

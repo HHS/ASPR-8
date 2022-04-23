@@ -12,9 +12,9 @@ import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
@@ -69,13 +69,13 @@ public class AT_RegionFilter {
 	public void testEvaluate() {
 		RegionsActionSupport.testConsumer(100, 8908124836418429909L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
-			for (PersonId personId : personDataManager.getPeople()) {
-				boolean expected = regionDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1) || regionDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1) || regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);
 			}

@@ -5,7 +5,7 @@ import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
 import plugins.regions.RegionPluginId;
 import plugins.reports.ReportsPluginId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 
 public final class ResourcesPlugin {
 
@@ -23,7 +23,7 @@ public final class ResourcesPlugin {
 						.addPluginDependency(RegionPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							ResourcesPluginData pluginData = c.getPluginData(ResourcesPluginData.class);
-							c.addDataManager(new ResourceDataManager(pluginData));
+							c.addDataManager(new ResourcesDataManager(pluginData));
 						})//
 						.build();
 	}

@@ -28,7 +28,7 @@ import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -45,14 +45,14 @@ public class AT_PopulationPartitionImpl {
 	public void testConstructor() {
 		PartitionsActionSupport.testConsumer(100, 2997202170895856110L, (c) -> {
 			// establish data view
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select about half of the people
 			Set<PersonId> expectedPeople = new LinkedHashSet<>();
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
 				}
@@ -90,7 +90,7 @@ public class AT_PopulationPartitionImpl {
 
 		PartitionsActionSupport.testConsumer(100, 3063819509780972206L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
@@ -109,7 +109,7 @@ public class AT_PopulationPartitionImpl {
 			 * true and false
 			 */
 			for (int i = 0; i < 20; i++) {
-				PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().build());
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 				boolean attributeValue = i % 2 == 0;				
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, attributeValue);				
 				populationPartition.attemptPersonAddition(personId);
@@ -129,7 +129,7 @@ public class AT_PopulationPartitionImpl {
 
 		PartitionsActionSupport.testConsumer(100, 4856457716960397685L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -142,7 +142,7 @@ public class AT_PopulationPartitionImpl {
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
 					expectedPeople.add(personId);
@@ -166,7 +166,7 @@ public class AT_PopulationPartitionImpl {
 			 * Remove people and show that they are no longer in the partition
 			 */
 			for (PersonId personId : expectedPeople) {
-				personDataManager.removePerson(personId);				
+				peopleDataManager.removePerson(personId);				
 				populationPartition.attemptPersonRemoval(personId);
 				// show that the person was removed
 				assertFalse(populationPartition.contains(personId));
@@ -179,12 +179,12 @@ public class AT_PopulationPartitionImpl {
 	public void testHandleEvent() {
 		PartitionsActionSupport.testConsumer(100, 8982209428616460818L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				attributesDataManager.setAttributeValue(personId,TestAttributeId.BOOLEAN_0, randomGenerator.nextBoolean());
 				attributesDataManager.setAttributeValue(personId,TestAttributeId.BOOLEAN_1, randomGenerator.nextBoolean());
 			}
@@ -198,7 +198,7 @@ public class AT_PopulationPartitionImpl {
 			Partition partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> v)).setFilter(filter).build();
 			PopulationPartition populationPartition = new PopulationPartitionImpl(c, partition);
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 				Boolean b1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_1);
 				
@@ -253,7 +253,7 @@ public class AT_PopulationPartitionImpl {
 	public void testGetPeopleCount() {
 		PartitionsActionSupport.testConsumer(100, 9050139615348413060L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -266,7 +266,7 @@ public class AT_PopulationPartitionImpl {
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
 					expectedPeople.add(personId);
@@ -332,12 +332,12 @@ public class AT_PopulationPartitionImpl {
 	 * assigned to be consistent with the static labeling functions.
 	 */
 	private static void assignRandomAttributes(final ActorContext c) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		final PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 		final StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 		AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 		final RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-		for (final PersonId personId : personDataManager.getPeople()) {
+		for (final PersonId personId : peopleDataManager.getPeople()) {
 			boolean b = randomGenerator.nextBoolean();
 			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, b);
 
@@ -365,10 +365,10 @@ public class AT_PopulationPartitionImpl {
 	 * sets consist of labels for INT_0, INT_1, DOUBLE_0 and DOUBLE_1.
 	 */
 	private static Map<LabelSet, Set<PersonId>> getExpectedStructure(final ActorContext c) {
-		final PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+		final PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 		final AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 		final Map<LabelSet, Set<PersonId>> expectedPeople = new LinkedHashMap<>();
-		for (final PersonId personId : personDataManager.getPeople()) {
+		for (final PersonId personId : peopleDataManager.getPeople()) {
 
 			final Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 			final Boolean b1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_1);
@@ -499,9 +499,9 @@ public class AT_PopulationPartitionImpl {
 			}
 
 			// build the values of the expected structure
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 				Boolean b1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_1);
 				if (b0 && !b1) {
@@ -544,7 +544,7 @@ public class AT_PopulationPartitionImpl {
 	public void testContains() {
 		PartitionsActionSupport.testConsumer(100, 2652052463264971998L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -557,7 +557,7 @@ public class AT_PopulationPartitionImpl {
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
 					expectedPeople.add(personId);
@@ -577,7 +577,7 @@ public class AT_PopulationPartitionImpl {
 
 			// show that the person data view contains the people we expect
 			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				//System.out.println(personId+" : "+ populationPartition.contains(personId));
 				assertEquals(expectedPeople.contains(personId), populationPartition.contains(personId));
 			}
@@ -619,8 +619,8 @@ public class AT_PopulationPartitionImpl {
 			}
 			assertEquals(expectedCount, populationPartition.getPeopleCount());
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> allPeople = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> allPeople = peopleDataManager.getPeople();
 
 			// show that each label set contains the people expected
 			for (LabelSet labelSet : expectedStructure.keySet()) {
@@ -683,7 +683,7 @@ public class AT_PopulationPartitionImpl {
 	public void testGetPeople() {
 		PartitionsActionSupport.testConsumer(100, 4597503339659285165L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -696,7 +696,7 @@ public class AT_PopulationPartitionImpl {
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
 					expectedPeople.add(personId);
@@ -811,7 +811,7 @@ public class AT_PopulationPartitionImpl {
 			// different results?
 
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
@@ -850,7 +850,7 @@ public class AT_PopulationPartitionImpl {
 			};
 
 			// determine the people in the world
-			List<PersonId> peopleInTheWorld = personDataManager.getPeople();
+			List<PersonId> peopleInTheWorld = peopleDataManager.getPeople();
 
 			// alter people's attributes randomly
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();

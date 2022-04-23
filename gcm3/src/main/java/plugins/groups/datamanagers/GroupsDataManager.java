@@ -1,4 +1,4 @@
-package plugins.groups;
+package plugins.groups.datamanagers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,6 +17,7 @@ import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
+import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupMembershipAdditionEvent;
@@ -30,7 +31,7 @@ import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
@@ -85,7 +86,7 @@ import plugins.util.properties.arraycontainers.ObjectValueContainer;
  * @author Shawn Hatch
  */
 
-public final class GroupDataManager extends DataManager {
+public final class GroupsDataManager extends DataManager {
 
 	/*
 	 * Used to generate new group id values
@@ -124,7 +125,7 @@ public final class GroupDataManager extends DataManager {
 
 	private DataManagerContext dataManagerContext;
 
-	private final GroupPluginData groupPluginData;
+	private final GroupsPluginData groupsPluginData;
 
 	/**
 	 * Constructs this person group data manager
@@ -132,14 +133,14 @@ public final class GroupDataManager extends DataManager {
 	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#NULL_CONTEXT}</li>
 	 */
-	public GroupDataManager(GroupPluginData groupPluginData) {
-		if (groupPluginData == null) {
+	public GroupsDataManager(GroupsPluginData groupsPluginData) {
+		if (groupsPluginData == null) {
 			throw new ContractException(GroupError.NULL_GROUP_INITIALIZATION_DATA);
 		}
-		this.groupPluginData = groupPluginData;
+		this.groupsPluginData = groupsPluginData;
 	}
 
-	private PersonDataManager personDataManager;
+	private PeopleDataManager peopleDataManager;
 
 	/**
 	 * Initial behavior
@@ -154,7 +155,7 @@ public final class GroupDataManager extends DataManager {
 	 * </ul>
 	 * 
 	 * <li>Adds groups, group memberships, group properties from the
-	 * {@linkplain GroupPluginData}</li>
+	 * {@linkplain GroupsPluginData}</li>
 	 * 
 	 * 
 	 * <li>Subscribes to the following events:
@@ -206,7 +207,7 @@ public final class GroupDataManager extends DataManager {
 		}
 		this.dataManagerContext = dataManagerContext;
 		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		/*
 		 * Add the event labelers associated with the various observation events
@@ -247,10 +248,10 @@ public final class GroupDataManager extends DataManager {
 	}
 
 	private void loadGroupPropertyDefinitions() {
-		for (final GroupTypeId groupTypeId : groupPluginData.getGroupTypeIds()) {
-			final Set<GroupPropertyId> propertyIds = groupPluginData.getGroupPropertyIds(groupTypeId);
+		for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
+			final Set<GroupPropertyId> propertyIds = groupsPluginData.getGroupPropertyIds(groupTypeId);
 			for (final GroupPropertyId groupPropertyId : propertyIds) {
-				final PropertyDefinition propertyDefinition = groupPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+				final PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
@@ -261,7 +262,7 @@ public final class GroupDataManager extends DataManager {
 	}
 
 	private void loadGroupTypes() {
-		for (final GroupTypeId groupTypeId : groupPluginData.getGroupTypeIds()) {
+		for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
 			final int index = typesToIndexesMap.size();
 			typesToIndexesMap.put(groupTypeId, index);
 			indexesToTypesMap.add(groupTypeId);
@@ -271,8 +272,8 @@ public final class GroupDataManager extends DataManager {
 	}
 
 	private void loadGroupMembership() {
-		for (final GroupId groupId : groupPluginData.getGroupIds()) {
-			for (final PersonId personId : groupPluginData.getGroupMembers(groupId)) {
+		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
+			for (final PersonId personId : groupsPluginData.getGroupMembers(groupId)) {
 
 
 				List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
@@ -345,10 +346,10 @@ public final class GroupDataManager extends DataManager {
 	}
 
 	private void loadGroupPropertyValues() {
-		for (final GroupId groupId : groupPluginData.getGroupIds()) {
-			final GroupTypeId groupTypeId = groupPluginData.getGroupTypeId(groupId);
-			for (final GroupPropertyId groupPropertyId : groupPluginData.getGroupPropertyIds(groupTypeId)) {
-				final Object groupPropertyValue = groupPluginData.getGroupPropertyValue(groupId, groupPropertyId);
+		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
+			final GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
+			for (final GroupPropertyId groupPropertyId : groupsPluginData.getGroupPropertyIds(groupTypeId)) {
+				final Object groupPropertyValue = groupsPluginData.getGroupPropertyValue(groupId, groupPropertyId);
 				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
 				Object defaultValue = propertyDefinition.getDefaultValue();
 				if (!groupPropertyValue.equals(defaultValue)) {
@@ -412,8 +413,8 @@ public final class GroupDataManager extends DataManager {
 
 	private void loadGroups() {
 		masterGroupId = -1;
-		for (final GroupId groupId : groupPluginData.getGroupIds()) {
-			final GroupTypeId groupTypeId = groupPluginData.getGroupTypeId(groupId);
+		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
+			final GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
 			final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 			List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
 			if (groups == null) {
@@ -699,7 +700,7 @@ public final class GroupDataManager extends DataManager {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if (!personDataManager.personExists(personId)) {
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
@@ -1400,7 +1401,7 @@ public final class GroupDataManager extends DataManager {
 	}
 
 	private void validatePersonIndexExists(final int personIndex) {
-		if (!personDataManager.personIndexExists(personIndex)) {
+		if (!peopleDataManager.personIndexExists(personIndex)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
@@ -1451,7 +1452,7 @@ public final class GroupDataManager extends DataManager {
 			}
 
 			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
-				PersonId boxedPersonId = personDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
+				PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
 				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
 				for (Integer groupIndex : groupIndices) {
 					GroupId groupId = newGroups.get(groupIndex);

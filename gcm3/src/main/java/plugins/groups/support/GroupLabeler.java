@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import nucleus.Event;
 import nucleus.SimulationContext;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.partitions.support.Labeler;
@@ -28,7 +28,7 @@ import plugins.people.support.PersonId;
 public final class GroupLabeler implements Labeler {
 
 	private final Function<GroupTypeCountMap, Object> groupTypeCountLabelingFunction;
-	private GroupDataManager groupDataManager;
+	private GroupsDataManager groupsDataManager;
 
 	/**
 	 * Creates the Group labeler from the given labeling function
@@ -70,13 +70,13 @@ public final class GroupLabeler implements Labeler {
 	 */
 	@Override
 	public Object getLabel(SimulationContext simulationContext, PersonId personId) {
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
 
 		GroupTypeCountMap.Builder groupTypeCountMapBuilder = GroupTypeCountMap.builder();
-		for (GroupTypeId groupTypeId : groupDataManager.getGroupTypeIds()) {
-			int count = groupDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
+		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+			int count = groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
 			groupTypeCountMapBuilder.setCount(groupTypeId, count);
 		}
 		GroupTypeCountMap groupTypeCountMap = groupTypeCountMapBuilder.build();
@@ -93,8 +93,8 @@ public final class GroupLabeler implements Labeler {
 
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
-		if (groupDataManager == null) {
-			groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
+		if (groupsDataManager == null) {
+			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
 
 		PersonId personId;
@@ -104,19 +104,19 @@ public final class GroupLabeler implements Labeler {
 			GroupMembershipAdditionEvent groupMembershipAdditionEvent = (GroupMembershipAdditionEvent) event;
 			personId = groupMembershipAdditionEvent.getPersonId();
 			GroupId groupId = groupMembershipAdditionEvent.getGroupId();
-			eventGroupTypeId = groupDataManager.getGroupType(groupId);
+			eventGroupTypeId = groupsDataManager.getGroupType(groupId);
 			delta = -1;
 		} else {
 			GroupMembershipRemovalEvent groupMembershipRemovalEvent = (GroupMembershipRemovalEvent) event;
 			personId = groupMembershipRemovalEvent.getPersonId();
 			GroupId groupId = groupMembershipRemovalEvent.getGroupId();
-			eventGroupTypeId = groupDataManager.getGroupType(groupId);
+			eventGroupTypeId = groupsDataManager.getGroupType(groupId);
 			delta = +1;
 		}
 
 		GroupTypeCountMap.Builder groupTypeCountMapBuilder = GroupTypeCountMap.builder();
-		for (GroupTypeId groupTypeId : groupDataManager.getGroupTypeIds()) {
-			int count = groupDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
+		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+			int count = groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
 			if(groupTypeId.equals(eventGroupTypeId)) {
 				count += delta;
 			}

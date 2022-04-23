@@ -1,4 +1,4 @@
-package plugins.globals.actors;
+package plugins.globalproperties.actors;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -6,10 +6,10 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import nucleus.util.ContractException;
-import plugins.globals.GlobalDataManager;
-import plugins.globals.events.GlobalPropertyUpdateEvent;
-import plugins.globals.support.GlobalError;
-import plugins.globals.support.GlobalPropertyId;
+import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
+import plugins.globalproperties.support.GlobalPropertiesError;
+import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -72,26 +72,26 @@ public final class GlobalPropertyReport {
 	 */
 	public void init(final ActorContext actorContext) {
 
-		GlobalDataManager globalDataManager = actorContext.getDataManager(GlobalDataManager.class);
+		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 
 		/*
 		 * If no global properties were specified, then assume all are wanted
 		 */
 		if (globalPropertyIds.size() == 0) {
-			globalPropertyIds.addAll(globalDataManager.getGlobalPropertyIds());
+			globalPropertyIds.addAll(globalPropertiesDataManager.getGlobalPropertyIds());
 		}
 
 		/*
 		 * Ensure that every client supplied property identifier is valid
 		 */
-		final Set<GlobalPropertyId> validPropertyIds = globalDataManager.getGlobalPropertyIds();
+		final Set<GlobalPropertyId> validPropertyIds = globalPropertiesDataManager.getGlobalPropertyIds();
 		for (final GlobalPropertyId globalPropertyId : globalPropertyIds) {
 			if (!validPropertyIds.contains(globalPropertyId)) {
-				throw new ContractException(GlobalError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+				throw new ContractException(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
 			}
 		}
 
-		if (globalPropertyIds.equals(globalDataManager.getGlobalPropertyIds())) {
+		if (globalPropertyIds.equals(globalPropertiesDataManager.getGlobalPropertyIds())) {
 			actorContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
 		} else {
 			for (GlobalPropertyId globalPropertyId : globalPropertyIds) {
@@ -101,7 +101,7 @@ public final class GlobalPropertyReport {
 		}
 
 		for (final GlobalPropertyId globalPropertyId : globalPropertyIds) {
-			Object globalPropertyValue = globalDataManager.getGlobalPropertyValue(globalPropertyId);
+			Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
 			writeProperty(actorContext, globalPropertyId,globalPropertyValue);
 		}
 	}

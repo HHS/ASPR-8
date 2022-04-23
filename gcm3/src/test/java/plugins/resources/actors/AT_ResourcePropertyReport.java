@@ -33,7 +33,7 @@ import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
@@ -132,36 +132,36 @@ public class AT_ResourcePropertyReport {
 			 * note that this is time 0 and should show that property initial
 			 * values are still reported correctly
 			 */
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, "A");
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, "A");
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
 			// two settings of the same property
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 45);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 36.7);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 45);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 36.7);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, false);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, false);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true);
 			
 
 			// note the duplicated value
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5);
 			
 
 			// and now a third setting of the same property to a new value
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 100);
-			resourceDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 60);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 100);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 60);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();

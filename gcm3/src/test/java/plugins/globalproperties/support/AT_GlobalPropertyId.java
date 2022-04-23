@@ -1,4 +1,4 @@
-package plugins.globals.support;
+package plugins.globalproperties.support;
 
 import org.junit.jupiter.api.Test;
 

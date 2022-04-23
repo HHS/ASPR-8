@@ -1,8 +1,8 @@
-package plugins.globals.testsupport;
+package plugins.globalproperties.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.globals.support.GlobalPropertyId;
+import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 

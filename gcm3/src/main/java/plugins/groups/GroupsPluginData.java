@@ -32,7 +32,7 @@ import plugins.util.properties.PropertyDefinition;
  *
  */
 @Immutable
-public final class GroupPluginData implements PluginData {
+public final class GroupsPluginData implements PluginData {
 
 	private static class Data {
 
@@ -90,7 +90,7 @@ public final class GroupPluginData implements PluginData {
 
 	private final Data data;
 
-	private GroupPluginData(Data data) {
+	private GroupsPluginData(Data data) {
 		this.data = data;
 	}
 
@@ -210,10 +210,10 @@ public final class GroupPluginData implements PluginData {
 		 *             value
 		 * 
 		 */
-		public GroupPluginData build() {
+		public GroupsPluginData build() {
 			try {
 				validate(data);
-				return new GroupPluginData(data);
+				return new GroupsPluginData(data);
 			} finally {
 				data = new Data();
 			}

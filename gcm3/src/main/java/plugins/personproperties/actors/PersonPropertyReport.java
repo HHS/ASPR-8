@@ -7,14 +7,14 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import nucleus.EventLabel;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
@@ -144,7 +144,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private void handlePersonAdditionEvent(ActorContext context, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
-		final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
@@ -156,7 +156,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		if (personPropertyIds.contains(personPropertyId)) {
 			PersonId personId = personPropertyUpdateEvent.getPersonId();
 			Object previousPropertyValue = personPropertyUpdateEvent.getPreviousPropertyValue();
-			final RegionId regionId = regionDataManager.getPersonRegion(personId);
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			final Object currentValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, currentValue);
 			decrement(regionId, personPropertyId, previousPropertyValue);
@@ -165,7 +165,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private void handlePersonImminentRemovalEvent(ActorContext context, PersonImminentRemovalEvent personImminentRemovalEvent) {
 		PersonId personId = personImminentRemovalEvent.getPersonId();
-		RegionId regionId = regionDataManager.getPersonRegion(personId);
+		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (PersonPropertyId personPropertyId : personPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			decrement(regionId, personPropertyId, personPropertyValue);
@@ -192,7 +192,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private PersonPropertiesDataManager personPropertiesDataManager;
 
-	private RegionDataManager regionDataManager;
+	private RegionsDataManager regionsDataManager;
 
 	@Override
 	public void init(final ActorContext actorContext) {
@@ -202,9 +202,9 @@ public final class PersonPropertyReport extends PeriodicReport {
 		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
-		regionDataManager = actorContext.getDataManager(RegionDataManager.class);
+		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 
 		/*
 		 * If no person properties were specified, then assume all are wanted
@@ -241,7 +241,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		 */
 
 		// Map<RegionId, Map<PersonPropertyId, Map<Object, Counter>>>
-		final Set<RegionId> regionIds = actorContext.getDataManager(RegionDataManager.class).getRegionIds();
+		final Set<RegionId> regionIds = actorContext.getDataManager(RegionsDataManager.class).getRegionIds();
 		for (final RegionId regionId : regionIds) {
 			final Map<PersonPropertyId, Map<Object, Counter>> propertyIdMap = new LinkedHashMap<>();
 			tupleMap.put(regionId, propertyIdMap);
@@ -251,8 +251,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 			}
 		}
 
-		for (PersonId personId : personDataManager.getPeople()) {
-			final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			for (final PersonPropertyId personPropertyId : personPropertyIds) {
 				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 				increment(regionId,  personPropertyId, personPropertyValue);

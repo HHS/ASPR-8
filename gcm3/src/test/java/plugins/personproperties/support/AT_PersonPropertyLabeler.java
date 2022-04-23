@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.support.LabelerSensitivity;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
@@ -95,7 +95,7 @@ public class AT_PersonPropertyLabeler {
 		 */
 		PersonPropertiesActionSupport.testConsumer(10, 6445109933336671672L, (c) -> {
 			// establish data views
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -107,7 +107,7 @@ public class AT_PersonPropertyLabeler {
 			 * Assign random values to the people so that we can get some
 			 * variety in the labels
 			 */
-			List<PersonId> people = personDataManager.getPeople();
+			List<PersonId> people = peopleDataManager.getPeople();
 			for (PersonId personId : people) {
 				personPropertiesDataManager.setPersonPropertyValue(personId, personPropertyId, randomGenerator.nextBoolean());
 			}

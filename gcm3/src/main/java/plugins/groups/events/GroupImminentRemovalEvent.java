@@ -7,7 +7,7 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
@@ -43,8 +43,8 @@ public class GroupImminentRemovalEvent implements Event {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
-		if (!groupDataManager.groupExists(groupId)) {
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+		if (!groupsDataManager.groupExists(groupId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 	}
@@ -53,8 +53,8 @@ public class GroupImminentRemovalEvent implements Event {
 		if (groupTypeId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 		}
-		GroupDataManager groupDataManager = simulationContext.getDataManager(GroupDataManager.class);
-		if (!groupDataManager.groupTypeIdExists(groupTypeId)) {
+		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
+		if (!groupsDataManager.groupTypeIdExists(groupTypeId)) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
@@ -134,10 +134,10 @@ public class GroupImminentRemovalEvent implements Event {
 	 * Returns an event labeler for {@link GroupImminentRemovalEvent} events
 	 * that uses group type id. Automatically added at initialization.
 	 */
-	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForGroupType(GroupDataManager groupDataManager) {
+	public static EventLabeler<GroupImminentRemovalEvent> getEventLabelerForGroupType(GroupsDataManager groupsDataManager) {
 		return EventLabeler	.builder(GroupImminentRemovalEvent.class).setEventLabelerId(LabelerId.GROUPTYPE)//
 							.setLabelFunction((context, event) -> {
-								GroupTypeId groupTypeId = groupDataManager.getGroupType(event.getGroupId());
+								GroupTypeId groupTypeId = groupsDataManager.getGroupType(event.getGroupId());
 								return _getEventLabelByGroupType(groupTypeId);
 							})//
 							.build();

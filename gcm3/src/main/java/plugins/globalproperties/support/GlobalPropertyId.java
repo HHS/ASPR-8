@@ -1,4 +1,4 @@
-package plugins.globals.support;
+package plugins.globalproperties.support;
 
 import net.jcip.annotations.ThreadSafe;
 

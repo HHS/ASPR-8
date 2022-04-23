@@ -1,6 +1,7 @@
 package plugins.people;
 
 import nucleus.Plugin;
+import plugins.people.datamanagers.PeopleDataManager;
 
 
 /**
@@ -29,7 +30,7 @@ public final class PeoplePlugin {
 	 * <P>
 	 * Provides data mangers:
 	 * <ul>
-	 * <li>{@linkplain PersonDataManager}</li>
+	 * <li>{@linkplain PeopleDataManager}</li>
 	 * </ul>
 	 * </P>
 	 * 
@@ -49,7 +50,7 @@ public final class PeoplePlugin {
 						.setPluginId(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class);
-							c.addDataManager(new PersonDataManager(pluginData));							
+							c.addDataManager(new PeopleDataManager(pluginData));							
 						})//
 						.build();
 	}

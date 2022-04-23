@@ -12,14 +12,14 @@ import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.people.support.PersonId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 
 public final class ResourceFilter extends Filter {
 	private final ResourceId resourceId;
 	private final long resourceValue;
 	private final Equality equality;
-	private ResourceDataManager resourceDataManager;
+	private ResourcesDataManager resourcesDataManager;
 
 	private void validateResourceId(SimulationContext simulationContext, final ResourceId resourceId) {
 		if (resourceId == null) {
@@ -30,11 +30,11 @@ public final class ResourceFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
-		if (resourceDataManager == null) {
-			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
+		if (resourcesDataManager == null) {
+			resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
 		}
 
-		if (!resourceDataManager.resourceIdExists(resourceId)) {
+		if (!resourcesDataManager.resourceIdExists(resourceId)) {
 			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 		}
 	}
@@ -63,11 +63,11 @@ public final class ResourceFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
-		if (resourceDataManager == null) {
-			resourceDataManager = simulationContext.getDataManager(ResourceDataManager.class);
+		if (resourcesDataManager == null) {
+			resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
 		}
 		
-		final long level = resourceDataManager.getPersonResourceLevel(resourceId, personId);
+		final long level = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 		return equality.isCompatibleComparisonValue(Long.compare(level, resourceValue));
 	}
 

@@ -75,7 +75,7 @@ import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
@@ -3869,19 +3869,19 @@ public class AT_MaterialsDataManager {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 					MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-					ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+					ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 					RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 					long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
 					if (materialsProducerResourceLevel > 0) {
 						long amountToTransfer = randomGenerator.nextInt((int) materialsProducerResourceLevel) + 1;
 						TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
-						long regionResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, testResourceId);
+						long regionResourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
 						materialsDataManager.transferResourceToRegion(testMaterialsProducerId, testResourceId, regionId, amountToTransfer);
 
 						// show that the resource was transfered
 						long currentProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId);
-						long currentRegionResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, testResourceId);
+						long currentRegionResourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
 
 						assertEquals(materialsProducerResourceLevel - amountToTransfer, currentProducerResourceLevel);
 						assertEquals(regionResourceLevel + amountToTransfer, currentRegionResourceLevel);
@@ -4274,7 +4274,7 @@ public class AT_MaterialsDataManager {
 		// loaded as reflected in the data view
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			// show that the correct materials producer ids are present
 			assertEquals(materialsPluginData.getMaterialsProducerIds(), materialsDataManager.getMaterialsProducerIds());
@@ -4284,7 +4284,7 @@ public class AT_MaterialsDataManager {
 
 			// show that the resource ids used for initial resource levels are
 			// all contained in the resource plugin
-			assertTrue(resourceDataManager.getResourceIds().containsAll(materialsPluginData.getResourceIds()));
+			assertTrue(resourcesDataManager.getResourceIds().containsAll(materialsPluginData.getResourceIds()));
 
 			// show that the material property ids are correct
 			assertEquals(materialsPluginData.getMaterialsProducerPropertyIds(), materialsDataManager.getMaterialsProducerPropertyIds());
@@ -4305,7 +4305,7 @@ public class AT_MaterialsDataManager {
 					Object actualValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 					assertEquals(expectedValue, actualValue);
 				}
-				for (ResourceId resourceId : resourceDataManager.getResourceIds()) {
+				for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 					Long expectedResourceLevel = materialsPluginData.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 					Long actualResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 					assertEquals(expectedResourceLevel, actualResourceLevel);

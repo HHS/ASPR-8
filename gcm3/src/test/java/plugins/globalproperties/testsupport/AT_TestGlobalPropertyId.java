@@ -1,4 +1,4 @@
-package plugins.globals.testsupport;
+package plugins.globalproperties.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.globals.support.GlobalPropertyId;
+import plugins.globalproperties.support.GlobalPropertyId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 

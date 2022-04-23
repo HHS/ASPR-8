@@ -13,7 +13,7 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
@@ -55,7 +55,7 @@ public class AT_GroupAdditionEvent {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 296314827017119408L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			
 			Set<EventLabel<GroupAdditionEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -71,7 +71,7 @@ public class AT_GroupAdditionEvent {
 
 				// show that the event label has the same id as its
 				// associated labeler
-				EventLabeler<GroupAdditionEvent> eventLabeler = GroupAdditionEvent.getEventLabelerForGroupType(groupDataManager);
+				EventLabeler<GroupAdditionEvent> eventLabeler = GroupAdditionEvent.getEventLabelerForGroupType(groupsDataManager);
 				assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 				// show that two event labels with the same inputs are equal
@@ -105,10 +105,10 @@ public class AT_GroupAdditionEvent {
 
 		GroupsActionSupport.testConsumer(0, 3, 5, 4044175875975004087L, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// create an event labeler
-			EventLabeler<GroupAdditionEvent> eventLabeler = GroupAdditionEvent.getEventLabelerForGroupType(groupDataManager);
+			EventLabeler<GroupAdditionEvent> eventLabeler = GroupAdditionEvent.getEventLabelerForGroupType(groupsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(GroupAdditionEvent.class, eventLabeler.getEventClass());
@@ -124,7 +124,7 @@ public class AT_GroupAdditionEvent {
 				// values
 				assertEquals(expectedEventLabel.getLabelerId(), eventLabeler.getEventLabelerId());
 
-				GroupId groupId = groupDataManager.addGroup(testGroupTypeId);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
 
 				// create an event
 				GroupAdditionEvent event = new GroupAdditionEvent(groupId);

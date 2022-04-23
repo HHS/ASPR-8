@@ -12,9 +12,9 @@ import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MutableBoolean;
 
@@ -28,24 +28,24 @@ public class AT_GroupsActionSupport {
 		GroupsActionSupport.testConsumer(100, 3, 5, 234L, (c) -> {
 
 			// show that there are 100 people
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			assertEquals(100, personDataManager.getPopulationCount());
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// show that there are 60 groups
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			assertEquals(60, groupDataManager.getGroupIds().size());
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			assertEquals(60, groupsDataManager.getGroupIds().size());
 
 			// show that there are 300 group memberships
 			int membershipCount = 0;
-			for (GroupId groupId : groupDataManager.getGroupIds()) {
-				membershipCount += groupDataManager.getPersonCountForGroup(groupId);
+			for (GroupId groupId : groupsDataManager.getGroupIds()) {
+				membershipCount += groupsDataManager.getPersonCountForGroup(groupId);
 
 			}
 			assertEquals(300, membershipCount);
 
 			// show that the group properties exist
 			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-				assertTrue(groupDataManager.getGroupPropertyExists(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId));
+				assertTrue(groupsDataManager.getGroupPropertyExists(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId));
 			}
 
 			executed.setValue(true);

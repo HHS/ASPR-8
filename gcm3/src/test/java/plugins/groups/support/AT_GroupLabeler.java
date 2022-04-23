@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.groups.GroupDataManager;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.LabelerSensitivity;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
@@ -85,8 +85,8 @@ public final class AT_GroupLabeler {
 	public void testGetLabel() {
 
 		GroupsActionSupport.testConsumer(30, 3, 5, 5880749882920317232L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
 			Function<GroupTypeCountMap, Object> func = (g) -> {
 				int result = 0;
@@ -99,10 +99,10 @@ public final class AT_GroupLabeler {
 
 			GroupLabeler groupLabeler = new GroupLabeler(func);
 
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-				for(GroupTypeId groupTypeId : groupDataManager.getGroupTypeIds()){
-					builder.setCount(groupTypeId, groupDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
+				for(GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()){
+					builder.setCount(groupTypeId, groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
 				}
 				GroupTypeCountMap groupTypeCountMap = builder.build();
 				Object expectedLabel = func.apply(groupTypeCountMap);	

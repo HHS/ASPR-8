@@ -20,7 +20,7 @@ import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
@@ -313,7 +313,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private double[] weights;
 
 	private Key[] weightedKeys;
-	private final PersonDataManager personDataManager;
+	private final PeopleDataManager peopleDataManager;
 
 	/**
 	 * Constructs a PopulationPartitionImpl
@@ -328,12 +328,12 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		this.simulationContext = simulationContext;
 		
 		retainPersonKeys = partition.retainPersonKeys();
-		personDataManager = simulationContext.getDataManager(PersonDataManager.class);
+		peopleDataManager = simulationContext.getDataManager(PeopleDataManager.class);
 
 		if (retainPersonKeys) {
-			personToKeyMap = new ArrayList<>(personDataManager.getPersonIdLimit());
+			personToKeyMap = new ArrayList<>(peopleDataManager.getPersonIdLimit());
 		} else {
-			personMembership = new BitSet(personDataManager.getPersonIdLimit());
+			personMembership = new BitSet(peopleDataManager.getPersonIdLimit());
 		}
 
 		filter = partition.getFilter().orElse(Filter.allPeople());
@@ -379,10 +379,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			labelManagers[i] = new LabelManager(labeler);
 		}
 
-		final int personIdLimit = personDataManager.getPersonIdLimit();
+		final int personIdLimit = peopleDataManager.getPersonIdLimit();
 		for (int i = 0; i < personIdLimit; i++) {
-			if (personDataManager.personIndexExists(i)) {
-				final PersonId personId = personDataManager.getBoxedPersonId(i).get();
+			if (peopleDataManager.personIndexExists(i)) {
+				final PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
 				if (filter.evaluate(simulationContext, personId)) {
 					/*
 					 * By contract, we know that the person id should not
@@ -678,14 +678,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			int n = personToKeyMap.size();
 			for (int i = 0; i < n; i++) {
 				if(personToKeyMap.get(i)!=null) {
-					result.add(personDataManager.getBoxedPersonId(i).get());
+					result.add(peopleDataManager.getBoxedPersonId(i).get());
 				}
 			}			
 		} else {
-			int n = personDataManager.getPersonIdLimit();
+			int n = peopleDataManager.getPersonIdLimit();
 			for (int i = 0; i < n; i++) {
 				if(personMembership.get(i)) {
-					result.add(personDataManager.getBoxedPersonId(i).get());
+					result.add(peopleDataManager.getBoxedPersonId(i).get());
 				}
 			}
 		}

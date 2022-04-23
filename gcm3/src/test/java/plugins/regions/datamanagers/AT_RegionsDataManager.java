@@ -32,7 +32,7 @@ import nucleus.util.ContractException;
 import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -66,16 +66,16 @@ import util.wrappers.MultiKey;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = RegionDataManager.class)
-public class AT_RegionDataManager {
+@UnitTest(target = RegionsDataManager.class)
+public class AT_RegionsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
 		RegionsActionSupport.testConsumer(20, 3161087621160007875L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			// show that a negative growth causes an exception
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.expandCapacity(-1));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.expandCapacity(-1));
 			assertEquals(PersonError.NEGATIVE_GROWTH_PROJECTION, contractException.getErrorType());
 		});
 
@@ -86,7 +86,7 @@ public class AT_RegionDataManager {
 	@UnitTestConstructor(args = { RegionPluginData.class })
 	public void testConstructor() {
 		// this test is covered by the remaining tests
-		ContractException contractException = assertThrows(ContractException.class, () -> new RegionDataManager(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> new RegionsDataManager(null));
 		assertEquals(RegionError.NULL_REGION_PLUGIN_DATA, contractException.getErrorType());
 	}
 
@@ -104,30 +104,30 @@ public class AT_RegionDataManager {
 
 		// show that each region is empty at time zero
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(0, regionDataManager.getPeopleInRegion(testRegionId).size());
+				assertEquals(0, regionsDataManager.getPeopleInRegion(testRegionId).size());
 			}
 		}));
 
 		// add some people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			for (int i = 0; i < 100; i++) {
 				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-				PersonId personId = personDataManager.addPerson(personConstructionData);
+				PersonId personId = peopleDataManager.addPerson(personConstructionData);
 				expectedPeopelInRegions.get(regionId).add(personId);
 			}
 		}));
 
 		// show that the people in the regions match expectations
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				Set<PersonId> expectedPeople = expectedPeopelInRegions.get(testRegionId);
-				LinkedHashSet<PersonId> actualPeople = new LinkedHashSet<>(regionDataManager.getPeopleInRegion(testRegionId));
+				LinkedHashSet<PersonId> actualPeople = new LinkedHashSet<>(regionsDataManager.getPeopleInRegion(testRegionId));
 				assertEquals(expectedPeople, actualPeople);
 			}
 		}));
@@ -139,18 +139,18 @@ public class AT_RegionDataManager {
 
 		// precondition test: if the region id is null
 		RegionsActionSupport.testConsumer(0, 9052181434511982170L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPeopleInRegion(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPeopleInRegion(null));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the region id is unknown
 		RegionsActionSupport.testConsumer(0, 1410190102298165957L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// if the region id is unknown
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPeopleInRegion(TestRegionId.getUnknownRegionId()));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPeopleInRegion(TestRegionId.getUnknownRegionId()));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 
@@ -172,16 +172,16 @@ public class AT_RegionDataManager {
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a region at random
 				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-				PersonId personId = personDataManager.addPerson(personConstructionData);
+				PersonId personId = peopleDataManager.addPerson(personConstructionData);
 				// show that the person has the correct region
-				assertEquals(regionId, regionDataManager.getPersonRegion(personId));
+				assertEquals(regionId, regionsDataManager.getPersonRegion(personId));
 				// add the person to the expectations
 				expectedPersonRegions.put(personId, regionId);
 			}
@@ -190,22 +190,22 @@ public class AT_RegionDataManager {
 		// move people over time and show that each time they are moved the
 		// correct region is reported
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			double planTime = 0;
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				c.addPlan((c2) -> {
 					// determine the person's current region
-					RegionDataManager regionDataManager = c2.getDataManager(RegionDataManager.class);
-					TestRegionId regionId = regionDataManager.getPersonRegion(personId);
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
+					TestRegionId regionId = regionsDataManager.getPersonRegion(personId);
 					// select the next region for the person
 					regionId = regionId.next();
 					// move the person
-					regionDataManager.setPersonRegion(personId, regionId);
+					regionsDataManager.setPersonRegion(personId, regionId);
 					/*
 					 * show that the region arrival time for the person is the
 					 * current time in the simulation
 					 */
-					assertEquals(regionId, regionDataManager.getPersonRegion(personId));
+					assertEquals(regionId, regionsDataManager.getPersonRegion(personId));
 					// update the expectations
 					expectedPersonRegions.put(personId, regionId);
 				}, planTime);
@@ -219,11 +219,11 @@ public class AT_RegionDataManager {
 		 * Show that the people region arrival times are maintained over time
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(postPersonMovementTime, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			for (PersonId personId : personDataManager.getPeople()) {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				RegionId expectedRegionId = expectedPersonRegions.get(personId);
-				RegionId actualRegionId = regionDataManager.getPersonRegion(personId);
+				RegionId actualRegionId = regionsDataManager.getPersonRegion(personId);
 				assertEquals(expectedRegionId, actualRegionId);
 			}
 		}));
@@ -235,15 +235,15 @@ public class AT_RegionDataManager {
 
 		// precondition test: if the person id is null
 		RegionsActionSupport.testConsumer(0, 1490027040692903854L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPersonRegion(null));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegion(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the person id is unknown
 		RegionsActionSupport.testConsumer(0, 2144445839100475443L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPersonRegion(new PersonId(-1)));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegion(new PersonId(-1)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 	}
@@ -264,17 +264,17 @@ public class AT_RegionDataManager {
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a region at random
 				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-				PersonId personId = personDataManager.addPerson(personConstructionData);
+				PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
 				// show that the person has a region arrival time of zero
-				assertEquals(0.0, regionDataManager.getPersonRegionArrivalTime(personId));
+				assertEquals(0.0, regionsDataManager.getPersonRegionArrivalTime(personId));
 
 				// add the person to the expectations
 				expectedPersonRegionArrivalTimes.put(personId, new MutableDouble());
@@ -284,22 +284,22 @@ public class AT_RegionDataManager {
 		// move people over time and show that each time they are moved the
 		// their arrival time is correct
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			double planTime = 0;
-			for (PersonId personId : personDataManager.getPeople()) {
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				c.addPlan((c2) -> {
 					// determine the person's current region
-					RegionDataManager regionDataManager = c2.getDataManager(RegionDataManager.class);
-					TestRegionId regionId = regionDataManager.getPersonRegion(personId);
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
+					TestRegionId regionId = regionsDataManager.getPersonRegion(personId);
 					// select the next region for the person
 					regionId = regionId.next();
 					// move the person
-					regionDataManager.setPersonRegion(personId, regionId);
+					regionsDataManager.setPersonRegion(personId, regionId);
 					/*
 					 * show that the region arrival time for the person is the
 					 * current time in the simulation
 					 */
-					assertEquals(c2.getTime(), regionDataManager.getPersonRegionArrivalTime(personId));
+					assertEquals(c2.getTime(), regionsDataManager.getPersonRegionArrivalTime(personId));
 					// update the expectations
 					expectedPersonRegionArrivalTimes.get(personId).setValue(c2.getTime());
 				}, planTime);
@@ -313,11 +313,11 @@ public class AT_RegionDataManager {
 		 * Show that the people region arrival times are maintained over time
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(postPersonMovementTime, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			for (PersonId personId : personDataManager.getPeople()) {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			for (PersonId personId : peopleDataManager.getPeople()) {
 				double expectedArrivalTime = expectedPersonRegionArrivalTimes.get(personId).getValue();
-				double actualArrivalTime = regionDataManager.getPersonRegionArrivalTime(personId);
+				double actualArrivalTime = regionsDataManager.getPersonRegionArrivalTime(personId);
 				assertEquals(expectedArrivalTime, actualArrivalTime);
 			}
 		}));
@@ -329,14 +329,14 @@ public class AT_RegionDataManager {
 
 		// precondition test: if region arrival times are not being tracked		
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			for (int i = 0; i < numberOfPeople; i++) {
 				// select a region at random
 				TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 				// create the person
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-				personDataManager.addPerson(personConstructionData);
+				peopleDataManager.addPerson(personConstructionData);
 			}
 		}));
 
@@ -349,24 +349,24 @@ public class AT_RegionDataManager {
 
 		// precondition test: if region arrival times are not being tracked
 		RegionsActionSupport.testConsumer(10, 1906010286127446114L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {		
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// if region arrival times are not being tracked
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPersonRegionArrivalTime(new PersonId(0)));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegionArrivalTime(new PersonId(0)));
 			assertEquals(RegionError.REGION_ARRIVAL_TIMES_NOT_TRACKED, contractException.getErrorType());
 		});
 
 		// precondition test: if the person id is null
 		RegionsActionSupport.testConsumer(0, 9214210856215652451L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPersonRegionArrivalTime(null));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegionArrivalTime(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the person id is unknown
 		RegionsActionSupport.testConsumer(0, 9132391945335483479L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPersonRegionArrivalTime(new PersonId(-1)));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegionArrivalTime(new PersonId(-1)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -378,8 +378,8 @@ public class AT_RegionDataManager {
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2934280155665825436L);
 			RegionsActionSupport.testConsumer(0, randomGenerator.nextLong(), timeTrackingPolicy, (c) -> {
-				RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-				assertEquals(timeTrackingPolicy, regionDataManager.getPersonRegionArrivalTrackingPolicy());
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				assertEquals(timeTrackingPolicy, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
 			});
 		}
 	}
@@ -388,13 +388,13 @@ public class AT_RegionDataManager {
 	@UnitTestMethod(name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
 		RegionsActionSupport.testConsumer(0, 9132391945335483479L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			Set<RegionId> expectedRegionIds = new LinkedHashSet<>();
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				expectedRegionIds.add(testRegionId);
 			}
-			assertEquals(expectedRegionIds, regionDataManager.getRegionIds());
+			assertEquals(expectedRegionIds, regionsDataManager.getRegionIds());
 		});
 	}
 
@@ -406,26 +406,26 @@ public class AT_RegionDataManager {
 
 		// show that each region has no people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(0, regionDataManager.getRegionPopulationCount(testRegionId));
+				assertEquals(0, regionsDataManager.getRegionPopulationCount(testRegionId));
 			}
 		}));
 
 		// show that adding people results in the correct population counts
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			int n = TestRegionId.values().length;
 			for (int i = 0; i < 3 * n; i++) {
 				TestRegionId regionId = TestRegionId.values()[i % n];
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-				personDataManager.addPerson(personConstructionData);
+				peopleDataManager.addPerson(personConstructionData);
 			}
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(3, regionDataManager.getRegionPopulationCount(testRegionId));
+				assertEquals(3, regionsDataManager.getRegionPopulationCount(testRegionId));
 			}
 
 		}));
@@ -433,14 +433,14 @@ public class AT_RegionDataManager {
 		// precondition tests
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// if the region id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPopulationCount(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPopulationCount(null));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 			// if the region id is unknown
-			contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPopulationCount(TestRegionId.getUnknownRegionId()));
+			contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPopulationCount(TestRegionId.getUnknownRegionId()));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		}));
@@ -460,9 +460,9 @@ public class AT_RegionDataManager {
 
 		// show that each region has a zero population time
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertEquals(0, regionDataManager.getRegionPopulationTime(testRegionId));
+				assertEquals(0, regionsDataManager.getRegionPopulationTime(testRegionId));
 			}
 
 		}));
@@ -480,13 +480,13 @@ public class AT_RegionDataManager {
 			for (int i = 0; i < numberOfPeople; i++) {
 				double planTime = i;
 				c.addPlan((c2) -> {
-					RegionDataManager regionDataManager = c2.getDataManager(RegionDataManager.class);
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
 					StochasticsDataManager stochasticsDataManager = c2.getDataManager(StochasticsDataManager.class);
 					TestRegionId regionId = TestRegionId.getRandomRegionId(stochasticsDataManager.getRandomGenerator());
 					PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-					PersonDataManager personDataManager = c2.getDataManager(PersonDataManager.class);
-					personDataManager.addPerson(personConstructionData);
-					assertEquals(c2.getTime(), regionDataManager.getRegionPopulationTime(regionId), 0);
+					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
+					peopleDataManager.addPerson(personConstructionData);
+					assertEquals(c2.getTime(), regionsDataManager.getRegionPopulationTime(regionId), 0);
 					expectedAssignmentTimes.get(regionId).setValue(c2.getTime());
 				}, planTime);
 			}
@@ -497,10 +497,10 @@ public class AT_RegionDataManager {
 		double postPersonAdditionTime = numberOfPeople;
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(postPersonAdditionTime, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				double expectedRegionPopulationTime = expectedAssignmentTimes.get(testRegionId).getValue();
-				double actualRegionPopulationTime = regionDataManager.getRegionPopulationTime(testRegionId);
+				double actualRegionPopulationTime = regionsDataManager.getRegionPopulationTime(testRegionId);
 				assertEquals(expectedRegionPopulationTime, actualRegionPopulationTime);
 			}
 		}));
@@ -512,16 +512,16 @@ public class AT_RegionDataManager {
 
 		// precondition test: if the region id is null
 		RegionsActionSupport.testConsumer(numberOfPeople, 3091951498637393024L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPopulationTime(null));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPopulationTime(null));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
 
 		// precondition tests: if the region id is unknown
 		RegionsActionSupport.testConsumer(numberOfPeople, 2415744693759237392L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPopulationTime(TestRegionId.getUnknownRegionId()));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPopulationTime(TestRegionId.getUnknownRegionId()));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		});
@@ -532,13 +532,13 @@ public class AT_RegionDataManager {
 	@UnitTestMethod(name = "getRegionPropertyDefinition", args = { RegionPropertyId.class })
 	public void testGetRegionPropertyDefinition() {
 		RegionsActionSupport.testConsumer(0, 8915683065425449883L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			Set<TestRegionPropertyId> regionPropertyIds = regionDataManager.getRegionPropertyIds();
+			Set<TestRegionPropertyId> regionPropertyIds = regionsDataManager.getRegionPropertyIds();
 			assertEquals(TestRegionPropertyId.size(), regionPropertyIds.size());
 			for (TestRegionPropertyId testRegionPropertyId : regionPropertyIds) {
 				PropertyDefinition expectedPropertyDefinition = testRegionPropertyId.getPropertyDefinition();
-				PropertyDefinition actualPropertyDefinition = regionDataManager.getRegionPropertyDefinition(testRegionPropertyId);
+				PropertyDefinition actualPropertyDefinition = regionsDataManager.getRegionPropertyDefinition(testRegionPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 
@@ -546,15 +546,15 @@ public class AT_RegionDataManager {
 
 		// precondition check: if the region property id is null
 		RegionsActionSupport.testConsumer(0, 4217775232224320101L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyDefinition(null));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyDefinition(null));
 			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is unknown
 		RegionsActionSupport.testConsumer(0, 1425794836864585647L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyDefinition(TestRegionPropertyId.getUnknownRegionPropertyId()));
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyDefinition(TestRegionPropertyId.getUnknownRegionPropertyId()));
 			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
 		});
 	}
@@ -563,12 +563,12 @@ public class AT_RegionDataManager {
 	@UnitTestMethod(name = "getRegionPropertyIds", args = {})
 	public void testGetRegionPropertyIds() {
 		RegionsActionSupport.testConsumer(0, 2658585233315606268L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			Set<RegionPropertyId> expectedRegionPropertyIds = new LinkedHashSet<>();
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 				expectedRegionPropertyIds.add(testRegionPropertyId);
 			}
-			assertEquals(expectedRegionPropertyIds, regionDataManager.getRegionPropertyIds());
+			assertEquals(expectedRegionPropertyIds, regionsDataManager.getRegionPropertyIds());
 		});
 		// no precondition tests
 
@@ -592,7 +592,7 @@ public class AT_RegionDataManager {
 
 		for (int i = 0; i < 300; i++) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
@@ -602,11 +602,11 @@ public class AT_RegionDataManager {
 				MultiKey multiKey = new MultiKey(testRegionId, testRegionPropertyId);
 				Object expectedPropertyValue = expectedPropertyValues.get(multiKey);
 
-				Object actualPropertyValue = regionDataManager.getRegionPropertyValue(testRegionId, testRegionPropertyId);
+				Object actualPropertyValue = regionsDataManager.getRegionPropertyValue(testRegionId, testRegionPropertyId);
 				assertEquals(expectedPropertyValue, actualPropertyValue);
 
 				Object newPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
-				regionDataManager.setRegionPropertyValue(testRegionId, testRegionPropertyId, newPropertyValue);
+				regionsDataManager.setRegionPropertyValue(testRegionId, testRegionPropertyId, newPropertyValue);
 				expectedPropertyValues.put(multiKey, newPropertyValue);
 
 			}));
@@ -618,35 +618,35 @@ public class AT_RegionDataManager {
 
 		// precondition check: if the region id is null
 		RegionsActionSupport.testConsumer(0, 8784099691519492811L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyValue(null, knownRegionPropertyId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyValue(null, knownRegionPropertyId));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region id is not known
 		RegionsActionSupport.testConsumer(0, 1546629608367614750L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 			RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyValue(unknownRegionId, knownRegionPropertyId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyValue(unknownRegionId, knownRegionPropertyId));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is null
 		RegionsActionSupport.testConsumer(0, 2997323471294141386L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId knownRegionId = TestRegionId.REGION_1;
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyValue(knownRegionId, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyValue(knownRegionId, null));
 			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is unknown
 		RegionsActionSupport.testConsumer(0, 3797498566412748237L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId knownRegionId = TestRegionId.REGION_1;
 			RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyValue(knownRegionId, unknownRegionPropertyId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyValue(knownRegionId, unknownRegionPropertyId));
 			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
 		});
 
@@ -665,12 +665,12 @@ public class AT_RegionDataManager {
 
 		// show that the property times are currently zero
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			assertTrue(regionDataManager.getRegionIds().size() > 0);
-			assertTrue(regionDataManager.getRegionPropertyIds().size() > 0);
-			for (RegionId regionId : regionDataManager.getRegionIds()) {
-				for (RegionPropertyId regionPropertyId : regionDataManager.getRegionPropertyIds()) {
-					double regionPropertyTime = regionDataManager.getRegionPropertyTime(regionId, regionPropertyId);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			assertTrue(regionsDataManager.getRegionIds().size() > 0);
+			assertTrue(regionsDataManager.getRegionPropertyIds().size() > 0);
+			for (RegionId regionId : regionsDataManager.getRegionIds()) {
+				for (RegionPropertyId regionPropertyId : regionsDataManager.getRegionPropertyIds()) {
+					double regionPropertyTime = regionsDataManager.getRegionPropertyTime(regionId, regionPropertyId);
 					assertEquals(0, regionPropertyTime, 0);
 				}
 			}
@@ -681,7 +681,7 @@ public class AT_RegionDataManager {
 
 		for (int i = 0; i < 300; i++) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
-				RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 				TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
@@ -690,13 +690,13 @@ public class AT_RegionDataManager {
 				// show that the property has the correct time
 				MutableDouble mutableDouble = expectedPropertyTimes.get(new MultiKey(testRegionId, testRegionPropertyId));
 				double expectedPropertyTime = mutableDouble.getValue();
-				double actualPropertyTime = regionDataManager.getRegionPropertyTime(testRegionId, testRegionPropertyId);
+				double actualPropertyTime = regionsDataManager.getRegionPropertyTime(testRegionId, testRegionPropertyId);
 				assertEquals(expectedPropertyTime, actualPropertyTime);
 
 				Object newPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
 
-				regionDataManager.setRegionPropertyValue(testRegionId, testRegionPropertyId, newPropertyValue);
-				assertEquals(c.getTime(), regionDataManager.getRegionPropertyTime(testRegionId, testRegionPropertyId));
+				regionsDataManager.setRegionPropertyValue(testRegionId, testRegionPropertyId, newPropertyValue);
+				assertEquals(c.getTime(), regionsDataManager.getRegionPropertyTime(testRegionId, testRegionPropertyId));
 				mutableDouble.setValue(c.getTime());
 			}));
 		}
@@ -707,35 +707,35 @@ public class AT_RegionDataManager {
 
 		// precondition check: if the region id is null
 		RegionsActionSupport.testConsumer(0, 9165213921588406384L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyTime(null, knownRegionPropertyId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyTime(null, knownRegionPropertyId));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region id is not known
 		RegionsActionSupport.testConsumer(0, 1546629608367614750L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 			RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyTime(unknownRegionId, knownRegionPropertyId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyTime(unknownRegionId, knownRegionPropertyId));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is null
 		RegionsActionSupport.testConsumer(0, 7141175136643291537L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId knownRegionId = TestRegionId.REGION_1;
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyTime(knownRegionId, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyTime(knownRegionId, null));
 			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is unknown
 		RegionsActionSupport.testConsumer(0, 2200230008116664966L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId knownRegionId = TestRegionId.REGION_1;
 			RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getRegionPropertyTime(knownRegionId, unknownRegionPropertyId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyTime(knownRegionId, unknownRegionPropertyId));
 			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
 		});
 
@@ -745,18 +745,18 @@ public class AT_RegionDataManager {
 	@UnitTestMethod(name = "regionIdExists", args = { RegionId.class })
 	public void testRegionIdExists() {
 		RegionsActionSupport.testConsumer(0, 3797498566412748237L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// show that null region ids do not exist
-			assertFalse(regionDataManager.regionIdExists(null));
+			assertFalse(regionsDataManager.regionIdExists(null));
 
 			// show that the region ids added do exist
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				assertTrue(regionDataManager.regionIdExists(testRegionId));
+				assertTrue(regionsDataManager.regionIdExists(testRegionId));
 			}
 
 			// show that an unknown region id does not exist
-			assertFalse(regionDataManager.regionIdExists(TestRegionId.getUnknownRegionId()));
+			assertFalse(regionsDataManager.regionIdExists(TestRegionId.getUnknownRegionId()));
 
 		});
 
@@ -766,18 +766,18 @@ public class AT_RegionDataManager {
 	@UnitTestMethod(name = "regionPropertyIdExists", args = { RegionPropertyId.class })
 	public void testRegionPropertyIdExists() {
 		RegionsActionSupport.testConsumer(0, 3797498566412748237L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// show that the property ids exist
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				assertTrue(regionDataManager.regionPropertyIdExists(testRegionPropertyId));
+				assertTrue(regionsDataManager.regionPropertyIdExists(testRegionPropertyId));
 			}
 
 			// show that null references return false
-			assertFalse(regionDataManager.regionPropertyIdExists(null));
+			assertFalse(regionsDataManager.regionPropertyIdExists(null));
 
 			// show that unknown region property ids return false
-			assertFalse(regionDataManager.regionPropertyIdExists(TestRegionPropertyId.getUnknownRegionPropertyId()));
+			assertFalse(regionsDataManager.regionPropertyIdExists(TestRegionPropertyId.getUnknownRegionPropertyId()));
 
 		});
 
@@ -818,27 +818,27 @@ public class AT_RegionDataManager {
 			 * Make sure that there are actually people in the simulation so
 			 * that test is actually testing something
 			 */
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			List<PersonId> people = personDataManager.getPeople();
+			List<PersonId> people = peopleDataManager.getPeople();
 			assertTrue(people.size() > 0);
 
 			// schedule a time for each person to be moved to a new region
 			double planTime = 10;
 			for (final PersonId personId : people) {
 				c.addPlan((c2) -> {
-					TestRegionId regionId = regionDataManager.getPersonRegion(personId);
+					TestRegionId regionId = regionsDataManager.getPersonRegion(personId);
 					TestRegionId nextRegionId = regionId.next();
-					regionDataManager.setPersonRegion(personId, nextRegionId);
+					regionsDataManager.setPersonRegion(personId, nextRegionId);
 
 					// show that the person's region is updated
-					assertEquals(nextRegionId, regionDataManager.getPersonRegion(personId));
+					assertEquals(nextRegionId, regionsDataManager.getPersonRegion(personId));
 					expectedObservations.add(new MultiKey(regionId, nextRegionId, personId, c2.getTime()));
 
 					// show that the person's region arrival time is
 					// updated
-					assertEquals(c2.getTime(), regionDataManager.getPersonRegionArrivalTime(personId));
+					assertEquals(c2.getTime(), regionsDataManager.getPersonRegionArrivalTime(personId));
 
 				}, planTime);
 				planTime += 5;
@@ -864,16 +864,16 @@ public class AT_RegionDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 
 			// establish the person's current region and next region
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			TestRegionId currentRegionId = regionDataManager.getPersonRegion(personId);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			TestRegionId currentRegionId = regionsDataManager.getPersonRegion(personId);
 			TestRegionId nextRegionId = currentRegionId.next();
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setPersonRegion(null, nextRegionId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setPersonRegion(null, nextRegionId));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		});
@@ -888,17 +888,17 @@ public class AT_RegionDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 			PersonId badPersonId = new PersonId(people.size());
 
 			// establish the person's current region and next region
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			TestRegionId currentRegionId = regionDataManager.getPersonRegion(personId);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			TestRegionId currentRegionId = regionsDataManager.getPersonRegion(personId);
 			TestRegionId nextRegionId = currentRegionId.next();
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setPersonRegion(badPersonId, nextRegionId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setPersonRegion(badPersonId, nextRegionId));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -912,15 +912,15 @@ public class AT_RegionDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 
 			// establish the person's current region and next region
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			//
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setPersonRegion(personId, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setPersonRegion(personId, null));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -935,17 +935,17 @@ public class AT_RegionDataManager {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
 			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 
 			// establish the person's current region and next region
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// create a non-existent region id
 			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setPersonRegion(personId, unknownRegionId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setPersonRegion(personId, unknownRegionId));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		});
@@ -988,12 +988,12 @@ public class AT_RegionDataManager {
 				c.addPlan((c2) -> {
 					StochasticsDataManager stochasticsDataManager2 = c.getDataManager(StochasticsDataManager.class);
 					RandomGenerator randomGenerator2 = stochasticsDataManager2.getRandomGenerator();
-					RegionDataManager regionDataManager = c2.getDataManager(RegionDataManager.class);
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
 					Integer newValue = randomGenerator2.nextInt();
-					regionDataManager.setRegionPropertyValue(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE, newValue);
-					Integer actualValue = regionDataManager.getRegionPropertyValue(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
+					regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE, newValue);
+					Integer actualValue = regionsDataManager.getRegionPropertyValue(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 					assertEquals(newValue, actualValue);
-					double valueTime = regionDataManager.getRegionPropertyTime(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
+					double valueTime = regionsDataManager.getRegionPropertyTime(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 					assertEquals(c2.getTime(), valueTime);
 					expectedObservations.add(new MultiKey(c2.getTime(), TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE, newValue));
 				}, randomGenerator.nextDouble() * 1000);
@@ -1003,12 +1003,12 @@ public class AT_RegionDataManager {
 				c.addPlan((c2) -> {
 					StochasticsDataManager stochasticsDataManager2 = c.getDataManager(StochasticsDataManager.class);
 					RandomGenerator randomGenerator2 = stochasticsDataManager2.getRandomGenerator();
-					RegionDataManager regionDataManager = c2.getDataManager(RegionDataManager.class);
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
 					Double newValue = randomGenerator2.nextDouble();
-					regionDataManager.setRegionPropertyValue(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE, newValue);
-					Double actualValue = regionDataManager.getRegionPropertyValue(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
+					regionsDataManager.setRegionPropertyValue(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE, newValue);
+					Double actualValue = regionsDataManager.getRegionPropertyValue(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
 					assertEquals(newValue, actualValue);
-					double valueTime = regionDataManager.getRegionPropertyTime(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
+					double valueTime = regionsDataManager.getRegionPropertyTime(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
 					assertEquals(c2.getTime(), valueTime);
 					expectedObservations.add(new MultiKey(c2.getTime(), TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE, newValue));
 				}, randomGenerator.nextDouble() * 1000);
@@ -1029,9 +1029,9 @@ public class AT_RegionDataManager {
 		RegionsActionSupport.testConsumer(0, 7347707922069273812L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 			Object propertyValue = 67;
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(null, regionPropertyId, propertyValue));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(null, regionPropertyId, propertyValue));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -1042,9 +1042,9 @@ public class AT_RegionDataManager {
 			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 			RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 			Object propertyValue = 67;
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(unknownRegionId, regionPropertyId, propertyValue));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(unknownRegionId, regionPropertyId, propertyValue));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		});
@@ -1053,9 +1053,9 @@ public class AT_RegionDataManager {
 		RegionsActionSupport.testConsumer(0, 4169934733913962790L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionId regionId = TestRegionId.REGION_1;
 			Object propertyValue = 67;
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(regionId, null, propertyValue));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, null, propertyValue));
 			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
 
 		});
@@ -1065,9 +1065,9 @@ public class AT_RegionDataManager {
 			RegionId regionId = TestRegionId.REGION_1;
 			RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
 			Object propertyValue = 67;
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(regionId, unknownRegionPropertyId, propertyValue));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, unknownRegionPropertyId, propertyValue));
 			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
 
 		});
@@ -1076,9 +1076,9 @@ public class AT_RegionDataManager {
 		RegionsActionSupport.testConsumer(0, 217279748753596418L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionId regionId = TestRegionId.REGION_1;
 			RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(regionId, regionPropertyId, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, regionPropertyId, null));
 			assertEquals(RegionError.NULL_REGION_PROPERTY_VALUE, contractException.getErrorType());
 
 		});
@@ -1089,9 +1089,9 @@ public class AT_RegionDataManager {
 			RegionId regionId = TestRegionId.REGION_1;
 			RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 			Object incompatiblePropertyValue = "incompatible value";
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(regionId, regionPropertyId, incompatiblePropertyValue));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, regionPropertyId, incompatiblePropertyValue));
 			assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		});
@@ -1101,9 +1101,9 @@ public class AT_RegionDataManager {
 			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 			RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
 			Object propertyValue = 67;
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(unknownRegionId, regionPropertyId, propertyValue));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(unknownRegionId, regionPropertyId, propertyValue));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 		});
@@ -1112,9 +1112,9 @@ public class AT_RegionDataManager {
 		RegionsActionSupport.testConsumer(0, 8501593854721316109L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionId regionId = TestRegionId.REGION_1;
 			RegionPropertyId immutableRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_5_INTEGER_IMMUTABLE;			
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.setRegionPropertyValue(regionId, immutableRegionPropertyId, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, immutableRegionPropertyId, null));
 			assertEquals(RegionError.NULL_REGION_PROPERTY_VALUE, contractException.getErrorType());
 
 		});
@@ -1182,22 +1182,22 @@ public class AT_RegionDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			// show that the initial state of the region data manager matches
 			// the state of the region plugin data
 
-			assertEquals(regionPluginData.getPersonRegionArrivalTrackingPolicy(), regionDataManager.getPersonRegionArrivalTrackingPolicy());
-			assertEquals(regionPluginData.getRegionIds(), regionDataManager.getRegionIds());
-			assertEquals(regionPluginData.getRegionPropertyIds(), regionDataManager.getRegionPropertyIds());
+			assertEquals(regionPluginData.getPersonRegionArrivalTrackingPolicy(), regionsDataManager.getPersonRegionArrivalTrackingPolicy());
+			assertEquals(regionPluginData.getRegionIds(), regionsDataManager.getRegionIds());
+			assertEquals(regionPluginData.getRegionPropertyIds(), regionsDataManager.getRegionPropertyIds());
 			for (RegionPropertyId regionPropertyId : regionPluginData.getRegionPropertyIds()) {
 				PropertyDefinition expectedPropertyDefinition = regionPluginData.getRegionPropertyDefinition(regionPropertyId);
-				PropertyDefinition actualPropertyDefinition = regionDataManager.getRegionPropertyDefinition(regionPropertyId);
+				PropertyDefinition actualPropertyDefinition = regionsDataManager.getRegionPropertyDefinition(regionPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 			for (RegionId regionId : regionPluginData.getRegionIds()) {
 				for (RegionPropertyId regionPropertyId : regionPluginData.getRegionPropertyIds()) {
 					Object expectedValue = regionPluginData.getRegionPropertyValue(regionId, regionPropertyId);
-					Object actualValue = regionDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+					Object actualValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
 					assertEquals(expectedValue, actualValue);
 				}
 			}
@@ -1322,9 +1322,9 @@ public class AT_RegionDataManager {
 		// add the test plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0,(c)->{
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for(PersonId personId : people) {
-				RegionId actualRegionId = regionDataManager.getPersonRegion(personId);
+				RegionId actualRegionId = regionsDataManager.getPersonRegion(personId);
 				RegionId expectedRegionId = regionPluginData.getPersonRegion(personId);
 				assertEquals(actualRegionId, expectedRegionId);
 			}
@@ -1362,8 +1362,8 @@ public class AT_RegionDataManager {
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
 					StochasticsDataManager stochasticsDataManager2 = c2.getDataManager(StochasticsDataManager.class);
-					RegionDataManager regionDataManager = c2.getDataManager(RegionDataManager.class);
-					PersonDataManager personDataManager = c2.getDataManager(PersonDataManager.class);
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
+					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
 
 					/*
 					 * Generate a random region to for the new person and add
@@ -1371,15 +1371,15 @@ public class AT_RegionDataManager {
 					 */
 					TestRegionId randomRegionId = TestRegionId.getRandomRegionId(stochasticsDataManager2.getRandomGenerator());
 					PersonConstructionData personConstructionData = PersonConstructionData.builder().add(randomRegionId).build();
-					PersonId personId = personDataManager.addPerson(personConstructionData);
+					PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
 					/*
 					 * Show that the person is in the correct region with the
 					 * correct region arrival time
 					 */
-					RegionId personRegionId = regionDataManager.getPersonRegion(personId);
+					RegionId personRegionId = regionsDataManager.getPersonRegion(personId);
 					assertEquals(randomRegionId, personRegionId);
-					assertEquals(c2.getTime(), regionDataManager.getPersonRegionArrivalTime(personId));
+					assertEquals(c2.getTime(), regionsDataManager.getPersonRegionArrivalTime(personId));
 
 				}, randomGenerator.nextDouble() * 1000);
 			}
@@ -1388,17 +1388,17 @@ public class AT_RegionDataManager {
 
 		// precondition check: if no region data was included in the event
 		RegionsActionSupport.testConsumer(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addPerson(personConstructionData));
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addPerson(personConstructionData));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region in the event is unknown
 		RegionsActionSupport.testConsumer(0, 2879410509293373914L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.getUnknownRegionId()).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addPerson(personConstructionData));
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addPerson(personConstructionData));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 
@@ -1420,9 +1420,9 @@ public class AT_RegionDataManager {
 			 * Note : it is not possible to force the PersonDataManager to
 			 * release such an event, so we release it from an actor
 			 */
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
-			PersonId personId = personDataManager.addPerson(personConstructionData);
+			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
 			PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
 
@@ -1447,8 +1447,8 @@ public class AT_RegionDataManager {
 			for (int i = 0; i < 100; i++) {
 				c.addPlan((c2) -> {
 					StochasticsDataManager stochasticsDataManager2 = c2.getDataManager(StochasticsDataManager.class);
-					RegionDataManager regionDataManager = c2.getDataManager(RegionDataManager.class);
-					PersonDataManager personDataManager = c2.getDataManager(PersonDataManager.class);
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
+					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
 
 					RandomGenerator rng = stochasticsDataManager2.getRandomGenerator();
 					/*
@@ -1467,7 +1467,7 @@ public class AT_RegionDataManager {
 						bulkBuilder.add(personBuilder.build());
 					}
 					BulkPersonConstructionData bulkPersonConstructionData = bulkBuilder.build();
-					PersonId personId = personDataManager.addBulkPeople(bulkPersonConstructionData).get();
+					PersonId personId = peopleDataManager.addBulkPeople(bulkPersonConstructionData).get();
 
 					int basePersonIndex = personId.getValue();
 
@@ -1477,10 +1477,10 @@ public class AT_RegionDataManager {
 					 */
 					for (int j = 0; j < personCount; j++) {
 						personId = new PersonId(j + basePersonIndex);
-						RegionId personRegionId = regionDataManager.getPersonRegion(personId);
+						RegionId personRegionId = regionsDataManager.getPersonRegion(personId);
 						RegionId randomRegionId = expectedRegions.get(j);
 						assertEquals(randomRegionId, personRegionId);
-						assertEquals(c2.getTime(), regionDataManager.getPersonRegionArrivalTime(personId));
+						assertEquals(c2.getTime(), regionsDataManager.getPersonRegionArrivalTime(personId));
 					}
 
 				}, randomGenerator.nextDouble() * 1000);
@@ -1491,19 +1491,19 @@ public class AT_RegionDataManager {
 		// precondition check:
 		// precondition check: if no region data was included in the event
 		RegionsActionSupport.testConsumer(0, 7059505726403414171L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addBulkPeople(bulkPersonConstructionData));
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addBulkPeople(bulkPersonConstructionData));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region in the event is unknown
 		RegionsActionSupport.testConsumer(0, 5120242925932651968L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.getUnknownRegionId()).build();
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> personDataManager.addBulkPeople(bulkPersonConstructionData));
+			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addBulkPeople(bulkPersonConstructionData));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 
@@ -1526,9 +1526,9 @@ public class AT_RegionDataManager {
 			 * Note : it is not possible to force the PersonDataManager to
 			 * release such an event, so we release it from an actor
 			 */
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
-			PersonId personId = personDataManager.addPerson(personConstructionData);
+			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
 			BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(personId, bulkPersonConstructionData);
@@ -1550,17 +1550,17 @@ public class AT_RegionDataManager {
 		 * of 0 time for the person to be removed.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
-			PersonId personId = personDataManager.addPerson(personConstructionData);
+			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 			pId.setValue(personId.getValue());
 
-			int regionPopulationCount = regionDataManager.getRegionPopulationCount(TestRegionId.REGION_1);
+			int regionPopulationCount = regionsDataManager.getRegionPopulationCount(TestRegionId.REGION_1);
 			assertEquals(1, regionPopulationCount);
-			assertEquals(TestRegionId.REGION_1, regionDataManager.getPersonRegion(personId));
-			personDataManager.removePerson(personId);
+			assertEquals(TestRegionId.REGION_1, regionsDataManager.getPersonRegion(personId));
+			peopleDataManager.removePerson(personId);
 
 		}));
 
@@ -1570,12 +1570,12 @@ public class AT_RegionDataManager {
 		 * 
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			PersonId personId = new PersonId(pId.getValue());
 
-			int regionPopulationCount = regionDataManager.getRegionPopulationCount(TestRegionId.REGION_1);
+			int regionPopulationCount = regionsDataManager.getRegionPopulationCount(TestRegionId.REGION_1);
 			assertEquals(0, regionPopulationCount);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionDataManager.getPersonRegion(personId));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegion(personId));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		}));
@@ -1600,9 +1600,9 @@ public class AT_RegionDataManager {
 		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			RegionsActionSupport.testConsumer(0, 2314376445339268382L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-				PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-				PersonId personId = personDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
-				personDataManager.removePerson(personId);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
+				peopleDataManager.removePerson(personId);
 				PersonImminentRemovalEvent personImminentRemovalEvent = new PersonImminentRemovalEvent(personId);
 				c.releaseEvent(personImminentRemovalEvent);
 			});

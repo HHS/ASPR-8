@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 
 import nucleus.ActorContext;
 import nucleus.EventLabel;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
@@ -21,7 +21,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.support.ResourceId;
@@ -191,9 +191,9 @@ public final class ResourceReport extends PeriodicReport {
 
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
-		final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (final ResourceId resourceId : resourceIds) {
-			final long personResourceLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
+			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				increment(regionId, resourceId, Activity.PERSON_ARRIVAL, personResourceLevel);
 			}
@@ -203,10 +203,10 @@ public final class ResourceReport extends PeriodicReport {
 	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 
 		PersonId personId = personImminentRemovalEvent.getPersonId();
-		RegionId regionId = regionDataManager.getPersonRegion(personId);
+		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 
 		for (ResourceId resourceId : resourceIds) {
-			final Long personResourceLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
+			final Long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				increment(regionId, resourceId, Activity.PERSON_DEPARTURE, personResourceLevel);
 			}
@@ -224,11 +224,11 @@ public final class ResourceReport extends PeriodicReport {
 		}
 		long amount = currentLevel - previousLevel;
 		if (amount > 0) {
-			final RegionId regionId = regionDataManager.getPersonRegion(personId);
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, resourceId, Activity.PERSON_RESOURCE_ADDITION, amount);
 		} else {
 			amount = -amount;
-			final RegionId regionId = regionDataManager.getPersonRegion(personId);
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, resourceId, Activity.REMOVE_RESOURCE_FROM_PERSON, amount);
 		}
 	}
@@ -239,7 +239,7 @@ public final class ResourceReport extends PeriodicReport {
 		RegionId currentRegionId = personRegionUpdateEvent.getCurrentRegionId();
 
 		for (final ResourceId resourceId : resourceIds) {
-			final long personResourceLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
+			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				increment(currentRegionId, resourceId, Activity.PERSON_REGION_ARRIVAL, personResourceLevel);
 				increment(previousRegionId, resourceId, Activity.PERSON_REGION_DEPARTURE, personResourceLevel);
@@ -276,8 +276,8 @@ public final class ResourceReport extends PeriodicReport {
 		counter.itemCount += count;
 	}
 
-	private RegionDataManager regionDataManager;
-	private ResourceDataManager resourceDataManager;
+	private RegionsDataManager regionsDataManager;
+	private ResourcesDataManager resourcesDataManager;
 
 	@Override
 	public void init(final ActorContext actorContext) {
@@ -288,18 +288,18 @@ public final class ResourceReport extends PeriodicReport {
 		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 		actorContext.subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);
 
-		resourceDataManager = actorContext.getDataManager(ResourceDataManager.class);
-		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
-		RegionDataManager regionDataManager = actorContext.getDataManager(RegionDataManager.class);
-		regionDataManager = actorContext.getDataManager(RegionDataManager.class);
+		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
 		if (resourceIds.size() == 0) {
-			resourceIds.addAll(resourceDataManager.getResourceIds());
+			resourceIds.addAll(resourcesDataManager.getResourceIds());
 		}
 		/*
 		 * Ensure that every client supplied resource identifier is valid
 		 */
-		final Set<ResourceId> validResourceIds = resourceDataManager.getResourceIds();
+		final Set<ResourceId> validResourceIds = resourcesDataManager.getResourceIds();
 		for (final ResourceId resourceId : resourceIds) {
 			if (!validResourceIds.contains(resourceId)) {
 				throw new RuntimeException("invalid resource id " + resourceId);
@@ -308,7 +308,7 @@ public final class ResourceReport extends PeriodicReport {
 
 		// If all the resources are included in the report, then subscribe to
 		// the event, otherwise subscribe to each resource
-		if (resourceIds.stream().collect(Collectors.toSet()).equals(resourceDataManager.getResourceIds())) {
+		if (resourceIds.stream().collect(Collectors.toSet()).equals(resourcesDataManager.getResourceIds())) {
 			actorContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
 		} else {
 			for (ResourceId resourceId : resourceIds) {
@@ -320,7 +320,7 @@ public final class ResourceReport extends PeriodicReport {
 		/*
 		 * Filling the region map with empty counters
 		 */
-		for (final RegionId regionId : regionDataManager.getRegionIds()) {
+		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
 			final Map<ResourceId, Map<Activity, Counter>> resourceMap = new LinkedHashMap<>();
 			regionMap.put(regionId, resourceMap);			
 			for (final ResourceId resourceId : resourceIds) {
@@ -333,20 +333,20 @@ public final class ResourceReport extends PeriodicReport {
 			}
 		}
 
-		for (PersonId personId : personDataManager.getPeople()) {
-			final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			
 			for (final ResourceId resourceId : resourceIds) {
-				final long personResourceLevel = resourceDataManager.getPersonResourceLevel(resourceId, personId);
+				final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 				if (personResourceLevel > 0) {
 					increment(regionId, resourceId, Activity.PERSON_ARRIVAL, personResourceLevel);
 				}
 			}
 		}
 
-		for (RegionId regionId : regionDataManager.getRegionIds()) {
-			for (ResourceId resourceId : resourceDataManager.getResourceIds()) {
-				long regionResourceLevel = resourceDataManager.getRegionResourceLevel(regionId, resourceId);
+		for (RegionId regionId : regionsDataManager.getRegionIds()) {
+			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+				long regionResourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, resourceId);
 				if (resourceIds.contains(resourceId)) {
 					increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, regionResourceLevel);
 				}

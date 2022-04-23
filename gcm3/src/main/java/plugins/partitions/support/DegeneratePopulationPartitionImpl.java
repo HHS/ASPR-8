@@ -13,7 +13,7 @@ import nucleus.SimulationContext;
 import nucleus.util.ContractException;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
@@ -68,11 +68,11 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 		peopleContainer = new BasePeopleContainer(simulationContext);
 
-		final PersonDataManager personDataManager = simulationContext.getDataManager(PersonDataManager.class);
-		final int personIdLimit = personDataManager.getPersonIdLimit();
+		final PeopleDataManager peopleDataManager = simulationContext.getDataManager(PeopleDataManager.class);
+		final int personIdLimit = peopleDataManager.getPersonIdLimit();
 		for (int i = 0; i < personIdLimit; i++) {
-			if (personDataManager.personIndexExists(i)) {
-				final PersonId personId = personDataManager.getBoxedPersonId(i).get();
+			if (peopleDataManager.personIndexExists(i)) {
+				final PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
 				if (filter.evaluate(simulationContext, personId)) {
 					/*
 					 * Using unsafe add since this is in the constructor, we are

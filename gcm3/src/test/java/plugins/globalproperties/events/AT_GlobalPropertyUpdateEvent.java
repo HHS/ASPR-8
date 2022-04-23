@@ -1,4 +1,4 @@
-package plugins.globals.events;
+package plugins.globalproperties.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,11 +19,11 @@ import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.globals.GlobalPlugin;
-import plugins.globals.GlobalPluginData;
-import plugins.globals.support.GlobalPropertyId;
-import plugins.globals.support.SimpleGlobalPropertyId;
-import plugins.globals.testsupport.TestGlobalPropertyId;
+import plugins.globalproperties.GlobalPropertiesPlugin;
+import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.globalproperties.support.SimpleGlobalPropertyId;
+import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.util.properties.PropertyDefinition;
@@ -160,15 +160,15 @@ public class AT_GlobalPropertyUpdateEvent {
 
 		Builder builder = Simulation.builder();
 
-		GlobalPluginData.Builder initialDatabuilder = GlobalPluginData.builder();
+		GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();
 		int defaultValue = 0;
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(defaultValue++).setType(Integer.class).build();
 			initialDatabuilder.defineGlobalProperty(testGlobalPropertyId, propertyDefinition);
 		}
-		GlobalPluginData globalInitialData = initialDatabuilder.build();
+		GlobalPropertiesPluginData globalInitialData = initialDatabuilder.build();
 
-		builder.addPlugin(GlobalPlugin.getPlugin(globalInitialData));
+		builder.addPlugin(GlobalPropertiesPlugin.getPlugin(globalInitialData));
 		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
 		
 		

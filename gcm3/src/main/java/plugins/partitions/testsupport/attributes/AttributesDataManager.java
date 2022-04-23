@@ -12,7 +12,7 @@ import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -99,12 +99,12 @@ public final class AttributesDataManager extends DataManager {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if (!personDataManager.personExists(personId)) {
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
-	private PersonDataManager personDataManager;
+	private PeopleDataManager peopleDataManager;
 
 	/**
 	 * Returns true if and only if the attribute is contained
@@ -130,7 +130,7 @@ public final class AttributesDataManager extends DataManager {
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
-		personDataManager = dataManagerContext.getDataManager(PersonDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		dataManagerContext.addEventLabeler(AttributeUpdateEvent.getEventLabeler());
 
@@ -216,7 +216,7 @@ public final class AttributesDataManager extends DataManager {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if (!personDataManager.personExists(personId)) {
+		if (!peopleDataManager.personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}

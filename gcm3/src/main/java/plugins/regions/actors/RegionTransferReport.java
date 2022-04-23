@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ActorContext;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
@@ -100,7 +100,7 @@ public final class RegionTransferReport extends PeriodicReport {
 
 	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
-		final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		increment(regionId, regionId);
 	}
 
@@ -118,7 +118,7 @@ public final class RegionTransferReport extends PeriodicReport {
 		counter.count++;
 	}
 
-	private RegionDataManager regionDataManager;
+	private RegionsDataManager regionsDataManager;
 
 	@Override
 	public void init(final ActorContext ActorContext) {
@@ -127,11 +127,11 @@ public final class RegionTransferReport extends PeriodicReport {
 		ActorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		ActorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
-		PersonDataManager personDataManager = ActorContext.getDataManager(PersonDataManager.class);
-		regionDataManager = ActorContext.getDataManager(RegionDataManager.class);
-		RegionDataManager regionDataManager = ActorContext.getDataManager(RegionDataManager.class);
+		PeopleDataManager peopleDataManager = ActorContext.getDataManager(PeopleDataManager.class);
+		regionsDataManager = ActorContext.getDataManager(RegionsDataManager.class);
+		RegionsDataManager regionsDataManager = ActorContext.getDataManager(RegionsDataManager.class);
 
-		final Set<RegionId> regionIds = regionDataManager.getRegionIds();
+		final Set<RegionId> regionIds = regionsDataManager.getRegionIds();
 
 		/*
 		 * Fill the base map with empty counters
@@ -146,8 +146,8 @@ public final class RegionTransferReport extends PeriodicReport {
 			}
 		}
 
-		for (PersonId personId : personDataManager.getPeople()) {
-			final RegionId regionId = regionDataManager.getPersonRegion(personId);
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, regionId);
 		}
 	}

@@ -3,7 +3,7 @@ package plugins.regions;
 import nucleus.Plugin;
 import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.reports.ReportsPluginId;
 
 public final class RegionPlugin {
@@ -21,7 +21,7 @@ public final class RegionPlugin {
 						.addPluginDependency(ReportsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							RegionPluginData pluginData = c.getPluginData(RegionPluginData.class);
-							c.addDataManager(new RegionDataManager(pluginData));
+							c.addDataManager(new RegionsDataManager(pluginData));
 						})//
 						.build();
 

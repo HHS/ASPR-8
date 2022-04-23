@@ -19,7 +19,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
@@ -110,38 +110,38 @@ public class AT_RegionPropertyReport {
 			 * note that this is time 0 and should show that property initial
 			 * values are still reported correctly
 			 */
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "move");
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "move");
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
 			// two settings of the same property
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			regionDataManager.setRegionPropertyValue(regionA, prop_age, 45);
-			regionDataManager.setRegionPropertyValue(regionA, prop_age, 45);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.setRegionPropertyValue(regionA, prop_age, 45);
+			regionsDataManager.setRegionPropertyValue(regionA, prop_age, 45);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			regionDataManager.setRegionPropertyValue(regionA, prop_age, 100);
-			regionDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
-			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "hold");
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.setRegionPropertyValue(regionA, prop_age, 100);
+			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
+			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "hold");
 
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
-			regionDataManager.setRegionPropertyValue(regionC, prop_policy, "terminate");
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "terminate");
 
 			// note the duplicated value
 
-			regionDataManager.setRegionPropertyValue(regionB, prop_height, 99.7);
-			regionDataManager.setRegionPropertyValue(regionB, prop_height, 99.7);
+			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 99.7);
+			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 99.7);
 
 			// and now a third setting of the same property to a new value
-			regionDataManager.setRegionPropertyValue(regionB, prop_height, 100.0);
-			regionDataManager.setRegionPropertyValue(regionB, prop_length, 60.0);
+			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 100.0);
+			regionsDataManager.setRegionPropertyValue(regionB, prop_length, 60.0);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();

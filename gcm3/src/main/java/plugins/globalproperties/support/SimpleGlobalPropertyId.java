@@ -1,4 +1,4 @@
-package plugins.globals.support;
+package plugins.globalproperties.support;
 
 import nucleus.util.ContractException;
 /**
@@ -14,12 +14,12 @@ public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 	 * Creates a global property id from the given value.  The value must implement a proper equals contract.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalError#NULL_GLOBAL_PROPERTY_VALUE} if
+	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_VALUE} if
 	 *             the value is null</li>
 	 */
 	public SimpleGlobalPropertyId(Object value) {
 		if (value == null) {
-			throw new ContractException(GlobalError.NULL_GLOBAL_PROPERTY_VALUE);
+			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_VALUE);
 		}
 		this.value = value;
 	}

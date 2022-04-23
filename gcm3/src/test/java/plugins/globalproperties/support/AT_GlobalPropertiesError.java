@@ -1,4 +1,4 @@
-package plugins.globals.support;
+package plugins.globalproperties.support;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,20 +11,20 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GlobalError.class)
-public class AT_GlobalError {
+@UnitTest(target = GlobalPropertiesError.class)
+public class AT_GlobalPropertiesError {
 
 	@Test
 	@UnitTestMethod(name = "getDescription", args = {})
 	public void test() {
 		//show that each description is a unique, non-null and non-empty string 
 		Set<String> descriptions = new LinkedHashSet<>();
-		for(GlobalError globalError : GlobalError.values()) {
-			String description = globalError.getDescription();			
-			assertNotNull(description,"null description for "+globalError);			
-			assertTrue(description.length()>0, "empty string for "+globalError);
+		for(GlobalPropertiesError globalPropertiesError : GlobalPropertiesError.values()) {
+			String description = globalPropertiesError.getDescription();			
+			assertNotNull(description,"null description for "+globalPropertiesError);			
+			assertTrue(description.length()>0, "empty string for "+globalPropertiesError);
 			boolean unique = descriptions.add(description);
-			assertTrue(unique,"description for "+globalError+" is not unique");
+			assertTrue(unique,"description for "+globalPropertiesError+" is not unique");
 		}
 	}
 }

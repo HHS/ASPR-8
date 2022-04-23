@@ -1,7 +1,8 @@
-package plugins.globals;
+package plugins.globalproperties;
 
 import nucleus.Plugin;
-import plugins.globals.actors.GlobalPropertyReport;
+import plugins.globalproperties.actors.GlobalPropertyReport;
+import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.reports.ReportsPluginId;
 
 /**
@@ -10,9 +11,9 @@ import plugins.reports.ReportsPluginId;
  * @author Shawn Hatch
  *
  */
-public final class GlobalPlugin {
+public final class GlobalPropertiesPlugin {
 
-	private GlobalPlugin() {
+	private GlobalPropertiesPlugin() {
 	}
 
 	/**
@@ -32,7 +33,7 @@ public final class GlobalPlugin {
 	 * <P>
 	 * Provides data mangers:
 	 * <ul>
-	 * <li>{@linkplain GlobalDataManager}</li>
+	 * <li>{@linkplain GlobalPropertiesDataManager}</li>
 	 * </ul>
 	 * </P>
 	 * 
@@ -44,15 +45,15 @@ public final class GlobalPlugin {
 	 * </P>
 	 * 
 	 */
-	public static Plugin getPlugin(GlobalPluginData globalPluginData) {
+	public static Plugin getPlugin(GlobalPropertiesPluginData globalPropertiesPluginData) {
 		return Plugin	.builder()//
-						.addPluginData(globalPluginData)//
+						.addPluginData(globalPropertiesPluginData)//
 						.addPluginDependency(ReportsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							GlobalPluginData data = c.getPluginData(GlobalPluginData.class);
-							c.addDataManager(new GlobalDataManager(data));
+							GlobalPropertiesPluginData data = c.getPluginData(GlobalPropertiesPluginData.class);
+							c.addDataManager(new GlobalPropertiesDataManager(data));
 						})//
-						.setPluginId(GlobalsPluginId.PLUGIN_ID)//
+						.setPluginId(GlobalPropertiesPluginId.PLUGIN_ID)//
 						.build();
 	}
 

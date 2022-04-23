@@ -17,11 +17,11 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.ContractException;
 import plugins.partitions.support.LabelerSensitivity;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
@@ -71,7 +71,7 @@ public class AT_RegionLabeler {
 		// add a few people to the simulation spread across the various
 		// regions		
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			int numberOfPeople = 2 * TestRegionId.size();
 
 			// show that there will be people
@@ -80,7 +80,7 @@ public class AT_RegionLabeler {
 			for (int i = 0; i < numberOfPeople; i++) {
 				RegionId regionId = TestRegionId.values()[i % TestRegionId.size()];
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-				personDataManager.addPerson(personConstructionData);				
+				peopleDataManager.addPerson(personConstructionData);				
 			}
 		}));
 		
@@ -92,14 +92,14 @@ public class AT_RegionLabeler {
 		 * passed to the region labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			
-			List<PersonId> people = personDataManager.getPeople();
+			List<PersonId> people = peopleDataManager.getPeople();
 			for (PersonId personId : people) {
 
 				// get the person's region and apply the function directly
-				RegionId regionId = regionDataManager.getPersonRegion(personId);
+				RegionId regionId = regionsDataManager.getPersonRegion(personId);
 				Object expectedLabel = function.apply(regionId);
 
 				// get the label from the person id

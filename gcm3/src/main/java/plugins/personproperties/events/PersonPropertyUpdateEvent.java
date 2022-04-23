@@ -7,13 +7,13 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesDataManager;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 
@@ -212,11 +212,11 @@ public class PersonPropertyUpdateEvent implements Event {
 	 * that uses the region id and person property id. Automatically added at
 	 * initialization.
 	 */
-	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForRegionAndProperty(RegionDataManager regionDataManager) {
+	public static EventLabeler<PersonPropertyUpdateEvent> getEventLabelerForRegionAndProperty(RegionsDataManager regionsDataManager) {
 		return EventLabeler	.builder(PersonPropertyUpdateEvent.class)//
 							.setEventLabelerId(LabelerId.REGION_PROPERTY)//
 							.setLabelFunction((context, event) -> {
-								RegionId regionId = regionDataManager.getPersonRegion(event.getPersonId());
+								RegionId regionId = regionsDataManager.getPersonRegion(event.getPersonId());
 								return _getEventLabelByRegionAndProperty(regionId, event.getPersonPropertyId());
 							}).build();
 	}
@@ -236,7 +236,7 @@ public class PersonPropertyUpdateEvent implements Event {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
 
-		if (!simulationContext.getDataManager(RegionDataManager.class).regionIdExists(regionId)) {
+		if (!simulationContext.getDataManager(RegionsDataManager.class).regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
@@ -246,7 +246,7 @@ public class PersonPropertyUpdateEvent implements Event {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
 
-		if (!simulationContext.getDataManager(PersonDataManager.class).personExists(personId)) {
+		if (!simulationContext.getDataManager(PeopleDataManager.class).personExists(personId)) {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}

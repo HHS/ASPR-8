@@ -10,14 +10,14 @@ import nucleus.util.ContractException;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 
 public final class RegionFilter extends Filter {
 
 	private final Set<RegionId> regionIds = new LinkedHashSet<>();
 
-	private RegionDataManager regionDataManager;
+	private RegionsDataManager regionsDataManager;
 
 	private void validateRegionId( final RegionId regionId) {
 
@@ -25,7 +25,7 @@ public final class RegionFilter extends Filter {
 			throw new ContractException(RegionError.NULL_REGION_ID);
 		}
 
-		if (!regionDataManager.regionIdExists(regionId)) {
+		if (!regionsDataManager.regionIdExists(regionId)) {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId);
 		}
 	}
@@ -42,8 +42,8 @@ public final class RegionFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
-		if (regionDataManager == null) {
-			regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
+		if (regionsDataManager == null) {
+			regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
 		}
 		
 		for (RegionId regionId : regionIds) {
@@ -62,10 +62,10 @@ public final class RegionFilter extends Filter {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 
-		if (regionDataManager == null) {
-			regionDataManager = simulationContext.getDataManager(RegionDataManager.class);
+		if (regionsDataManager == null) {
+			regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
 		}
-		return regionIds.contains(regionDataManager.getPersonRegion(personId));
+		return regionIds.contains(regionsDataManager.getPersonRegion(personId));
 	}
 
 	@Override

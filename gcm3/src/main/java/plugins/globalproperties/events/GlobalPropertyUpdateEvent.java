@@ -1,4 +1,4 @@
-package plugins.globals.events;
+package plugins.globalproperties.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
@@ -7,9 +7,9 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import nucleus.util.ContractException;
-import plugins.globals.GlobalDataManager;
-import plugins.globals.support.GlobalError;
-import plugins.globals.support.GlobalPropertyId;
+import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import plugins.globalproperties.support.GlobalPropertiesError;
+import plugins.globalproperties.support.GlobalPropertyId;
 
 /**
  * 
@@ -81,9 +81,9 @@ public class GlobalPropertyUpdateEvent implements Event {
 	 *
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain GlobalError#NULL_GLOBAL_PROPERTY_ID} if the
+	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID} if the
 	 *             global property id is null</li>
-	 *             <li>{@linkplain GlobalError#UNKNOWN_GLOBAL_PROPERTY_ID} if
+	 *             <li>{@linkplain GlobalPropertiesError#UNKNOWN_GLOBAL_PROPERTY_ID} if
 	 *             the global property id is unknown</li>
 	 */
 	public static EventLabel<GlobalPropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
@@ -110,7 +110,7 @@ public class GlobalPropertyUpdateEvent implements Event {
 	}
 
 	private static void validateGlobalProperty(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
-		simulationContext.getDataManager(GlobalDataManager.class).getGlobalPropertyDefinition(globalPropertyId);
+		simulationContext.getDataManager(GlobalPropertiesDataManager.class).getGlobalPropertyDefinition(globalPropertyId);
 	}
 
 	/**

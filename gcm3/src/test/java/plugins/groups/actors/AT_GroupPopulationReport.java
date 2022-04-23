@@ -1,4 +1,4 @@
-package plugins.groups.reports;
+package plugins.groups.actors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,9 +17,9 @@ import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.groups.GroupDataManager;
-import plugins.groups.GroupPlugin;
-import plugins.groups.GroupPluginData;
+import plugins.groups.GroupsPlugin;
+import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
@@ -58,44 +58,44 @@ public class AT_GroupPopulationReport {
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 0, 0), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			assertEquals(3, groupId.getValue());
-			groupDataManager.addPersonToGroup(new PersonId(4),groupId);
-			groupDataManager.addPersonToGroup(new PersonId(5),groupId);
-			groupDataManager.addPersonToGroup(new PersonId(6),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(4),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(5),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(6),groupId);
 		}));
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(1, 1, 15), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.removePersonFromGroup(new PersonId(4),new GroupId(3));
-			groupDataManager.removeGroup(new GroupId(0));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removePersonFromGroup(new PersonId(4),new GroupId(3));
+			groupsDataManager.removeGroup(new GroupId(0));
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(1, 2, 48), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.removeGroup(new GroupId(2));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removeGroup(new GroupId(2));
 
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(1, 5, 14), (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.addPersonToGroup( new PersonId(7),new GroupId(3));
-			groupDataManager.addPersonToGroup(new PersonId(8),new GroupId(3));
-			groupDataManager.addPersonToGroup(new PersonId(9),new GroupId(3));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.addPersonToGroup( new PersonId(7),new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(8),new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(9),new GroupId(3));
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(1, 5, 34), (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			assertEquals(4, groupId.getValue());
-			groupDataManager.addPersonToGroup(new PersonId(3),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(4),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(5),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(6),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(7),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(3),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(4),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(5),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(6),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(7),new GroupId(4));
 
 		}));
 
@@ -161,47 +161,47 @@ public class AT_GroupPopulationReport {
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 
 			assertEquals(3, groupId.getValue());
-			groupDataManager.addPersonToGroup(new PersonId(4),groupId);
-			groupDataManager.addPersonToGroup(new PersonId(5),groupId);
-			groupDataManager.addPersonToGroup(new PersonId(6),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(4),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(5),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(6),groupId);
 
 		}));
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.removePersonFromGroup(new PersonId(4),new GroupId(3));
-			groupDataManager.removeGroup(new GroupId(0));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removePersonFromGroup(new PersonId(4),new GroupId(3));
+			groupsDataManager.removeGroup(new GroupId(0));
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.5, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.removeGroup(new GroupId(2));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removeGroup(new GroupId(2));
 
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(5.7, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.addPersonToGroup(new PersonId(7),new GroupId(3));
-			groupDataManager.addPersonToGroup(new PersonId(8),new GroupId(3));
-			groupDataManager.addPersonToGroup(new PersonId(9),new GroupId(3) );
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.addPersonToGroup(new PersonId(7),new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(8),new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(9),new GroupId(3) );
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(5.8, (c) -> {
 
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			assertEquals(4, groupId.getValue());
 
-			groupDataManager.addPersonToGroup(new PersonId(3),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(4),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(5),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(6),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(7),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(3),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(4),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(5),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(6),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(7),new GroupId(4));
 
 		}));
 
@@ -252,43 +252,43 @@ public class AT_GroupPopulationReport {
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			assertEquals(3, groupId.getValue());
-			groupDataManager.addPersonToGroup(new PersonId(4),groupId);
-			groupDataManager.addPersonToGroup(new PersonId(5),groupId);
-			groupDataManager.addPersonToGroup(new PersonId(6),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(4),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(5),groupId);
+			groupsDataManager.addPersonToGroup(new PersonId(6),groupId);
 		}));
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.1, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.removePersonFromGroup(new PersonId(4),new GroupId(3));
-			groupDataManager.removeGroup(new GroupId(0));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removePersonFromGroup(new PersonId(4),new GroupId(3));
+			groupsDataManager.removeGroup(new GroupId(0));
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.5, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.removeGroup(new GroupId(2));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.removeGroup(new GroupId(2));
 
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(5.7, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			groupDataManager.addPersonToGroup(new PersonId(7),new GroupId(3));
-			groupDataManager.addPersonToGroup(new PersonId(8),new GroupId(3));
-			groupDataManager.addPersonToGroup(new PersonId(9),new GroupId(3));
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.addPersonToGroup(new PersonId(7),new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(8),new GroupId(3));
+			groupsDataManager.addPersonToGroup(new PersonId(9),new GroupId(3));
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(5.8, (c) -> {
-			GroupDataManager groupDataManager = c.getDataManager(GroupDataManager.class);
-			GroupId groupId = groupDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			assertEquals(4, groupId.getValue());
-			groupDataManager.addPersonToGroup(new PersonId(3),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(4),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(5),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(6),new GroupId(4));
-			groupDataManager.addPersonToGroup(new PersonId(7),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(3),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(4),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(5),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(6),new GroupId(4));
+			groupsDataManager.addPersonToGroup(new PersonId(7),new GroupId(4));
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -315,7 +315,7 @@ public class AT_GroupPopulationReport {
 		Experiment.Builder builder = Experiment.builder();
 
 		// add the group plugin
-		GroupPluginData.Builder groupBuilder = GroupPluginData.builder();
+		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 		// add group types
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			groupBuilder.addGroupTypeId(testGroupTypeId);
@@ -338,8 +338,8 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(1));
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(2));
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
-		GroupPluginData groupPluginData = groupBuilder.build();
-		Plugin groupPlugin = GroupPlugin.getGroupPlugin(groupPluginData);
+		GroupsPluginData groupsPluginData = groupBuilder.build();
+		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
 		builder.addPlugin(groupPlugin);
 
 		// add the partitions plugin

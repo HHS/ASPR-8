@@ -8,7 +8,7 @@ import nucleus.PluginId;
  *
  */
 
-public final class GroupPluginId implements PluginId {
-	public final static PluginId PLUGIN_ID = new GroupPluginId();
-	private GroupPluginId() {};
+public final class GroupsPluginId implements PluginId {
+	public final static PluginId PLUGIN_ID = new GroupsPluginId();
+	private GroupsPluginId() {};
 }

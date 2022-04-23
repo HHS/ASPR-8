@@ -17,14 +17,14 @@ import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.util.ContractException;
-import plugins.people.PersonDataManager;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionDataManager;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.resources.datamanagers.ResourceDataManager;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.ResourcesActionSupport;
@@ -93,11 +93,11 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	public void testGetEventLabelByRegionAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			Set<RegionId> regionIds = regionDataManager.getRegionIds();
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 
 			Set<EventLabel<PersonResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -114,7 +114,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 
 					// show that the event label has the same id as its
 					// associated labeler
-					EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager);
+					EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionsDataManager);
 					assertEquals(eventLabeler.getEventLabelerId(), eventLabel.getLabelerId());
 
 					// show that two event labels with the same inputs are equal
@@ -158,16 +158,16 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForRegionAndResource", args = {})
 	public void testGetEventLabelerForRegionAndResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			RegionDataManager regionDataManager = c.getDataManager(RegionDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			Set<RegionId> regionIds = regionDataManager.getRegionIds();
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// create an event labeler
-			EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionDataManager);
+			EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionsDataManager);
 
 			// show that the event labeler has the correct event class
 			assertEquals(PersonResourceUpdateEvent.class, eventLabeler.getEventClass());
@@ -175,7 +175,7 @@ public class AT_PersonResourceUpdateEvent implements Event {
 			// show that the event labeler produces the expected event label
 
 			for (RegionId regionId : regionIds) {
-				List<PersonId> peopleInRegion = regionDataManager.getPeopleInRegion(regionId);
+				List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
 				if (peopleInRegion.size() > 0) {
 					for (ResourceId resourceId : resourceIds) {
 						PersonId personId = peopleInRegion.get(randomGenerator.nextInt(peopleInRegion.size()));
@@ -211,10 +211,10 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	public void testGetEventLabelByPersonAndResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 
 			Set<EventLabel<PersonResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -274,10 +274,10 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForPersonAndResource", args = {})
 	public void testGetEventLabelerForPersonAndResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			PersonDataManager personDataManager = c.getDataManager(PersonDataManager.class);
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			List<PersonId> people = personDataManager.getPeople();
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 
 			// create an event labeler
 			EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForPersonAndResource();
@@ -321,8 +321,8 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	public void testGetEventLabelByResource() {
 		ResourcesActionSupport.testConsumer(10, 7912737444879496875L, (c) -> {
 
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 
 			Set<EventLabel<PersonResourceUpdateEvent>> eventLabels = new LinkedHashSet<>();
 
@@ -370,8 +370,8 @@ public class AT_PersonResourceUpdateEvent implements Event {
 	@UnitTestMethod(name = "getEventLabelerForResource", args = {})
 	public void testGetEventLabelerForResource() {
 		ResourcesActionSupport.testConsumer(30, 5829392632134617932L, (c) -> {
-			ResourceDataManager resourceDataManager = c.getDataManager(ResourceDataManager.class);
-			Set<ResourceId> resourceIds = resourceDataManager.getResourceIds();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			Set<ResourceId> resourceIds = resourcesDataManager.getResourceIds();
 
 			// create an event labeler
 			EventLabeler<PersonResourceUpdateEvent> eventLabeler = PersonResourceUpdateEvent.getEventLabelerForResource();
