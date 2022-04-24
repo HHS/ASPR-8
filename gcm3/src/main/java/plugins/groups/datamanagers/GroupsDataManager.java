@@ -399,12 +399,6 @@ public final class GroupsDataManager extends DataManager {
 		dataManagerContext.releaseEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 	}
 
-	private static void validateGroupPropertyValueNotNull(Object groupPropertyValue) {
-		if (groupPropertyValue == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
-		}
-	}
-
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
 			throw new ContractException(PropertyError.IMMUTABLE_VALUE);
@@ -458,16 +452,16 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public GroupId addGroup(GroupConstructionInfo groupConstructionInfo) {
-		validateGroupConstructionInfoNotNull(dataManagerContext, groupConstructionInfo);
+		validateGroupConstructionInfoNotNull(groupConstructionInfo);
 		final GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
-		validateGroupTypeId(dataManagerContext, groupConstructionInfo.getGroupTypeId());
+		validateGroupTypeId(groupConstructionInfo.getGroupTypeId());
 
 		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
 		for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
 			validateGroupPropertyId(groupTypeId, groupPropertyId);
 			final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
 			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
-			validateGroupPropertyValueNotNull(dataManagerContext, groupPropertyValue);
+			validateGroupPropertyValueNotNull(groupPropertyValue);
 			validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 		}
 
@@ -499,33 +493,13 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	private void validateGroupPropertyValueNotNull(final DataManagerContext dataManagerContext, final Object propertyValue) {
+	private void validateGroupPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
 			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
 		}
 	}
 
-	/*
-	 * Validates the group type id
-	 *
-	 * @throws ContractException
-	 *
-	 * <li>{@link NucleusError#NULL_GROUP_TYPE_ID} if the group type id is null
-	 *
-	 * <li>{@link NucleusError#UNKNOWN_GROUP_TYPE_ID} if the group type id is
-	 * unknown
-	 */
-	private void validateGroupTypeId(final DataManagerContext dataManagerContext, final GroupTypeId groupTypeId) {
-
-		if (groupTypeId == null) {
-			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
-		}
-
-		if (!typesToIndexesMap.keySet().contains(groupTypeId)) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
-		}
-
-	}
+	
 
 	/*
 	 * Validates the group type id
@@ -535,7 +509,7 @@ public final class GroupsDataManager extends DataManager {
 	 * <li>{@link NucleusError#NULL_GROUP_CONSTRUCTION_INFO} if the group
 	 * construction info is null
 	 */
-	private void validateGroupConstructionInfoNotNull(final DataManagerContext dataManagerContext, final GroupConstructionInfo groupConstructionInfo) {
+	private void validateGroupConstructionInfoNotNull(final GroupConstructionInfo groupConstructionInfo) {
 		if (groupConstructionInfo == null) {
 			throw new ContractException(GroupError.NULL_GROUP_CONSTRUCTION_INFO);
 		}
@@ -1420,7 +1394,7 @@ public final class GroupsDataManager extends DataManager {
 			int groupCount = bulkGroupMembershipData.getGroupCount();
 			for (int i = 0; i < groupCount; i++) {
 				GroupTypeId groupTypeId = bulkGroupMembershipData.getGroupTypeId(i);
-				validateGroupTypeId(dataManagerContext, groupTypeId);
+				validateGroupTypeId(groupTypeId);
 			}
 			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
 				validatePersonIndexExists(personIndex + basePersonIndex);
