@@ -10,7 +10,7 @@ import nucleus.util.ContractException;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesDataManager;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;

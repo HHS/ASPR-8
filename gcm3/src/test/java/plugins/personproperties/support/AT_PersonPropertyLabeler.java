@@ -19,7 +19,7 @@ import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesDataManager;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;

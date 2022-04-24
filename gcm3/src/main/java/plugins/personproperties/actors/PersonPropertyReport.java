@@ -11,7 +11,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesDataManager;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;

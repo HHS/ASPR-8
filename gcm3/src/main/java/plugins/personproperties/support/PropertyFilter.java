@@ -12,7 +12,7 @@ import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesDataManager;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;

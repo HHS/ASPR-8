@@ -3,6 +3,7 @@ package plugins.personproperties;
 import nucleus.Plugin;
 import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.RegionPluginId;
 
 /**

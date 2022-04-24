@@ -1,4 +1,4 @@
-package plugins.personproperties;
+package plugins.personproperties.datamanagers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,6 +19,7 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;

@@ -1,4 +1,4 @@
-package plugins.personproperties;
+package plugins.personproperties.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,6 +39,9 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import plugins.personproperties.PersonPropertiesPlugin;
+import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;

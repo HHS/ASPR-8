@@ -12,7 +12,7 @@ import nucleus.util.ContractException;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
-import plugins.personproperties.PersonPropertiesDataManager;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 
 /**
