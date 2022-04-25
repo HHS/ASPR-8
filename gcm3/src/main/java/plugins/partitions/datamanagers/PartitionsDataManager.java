@@ -42,22 +42,21 @@ import plugins.stochastics.support.StochasticsError;
  * Subscribes to the following events for all partitions:
  * </P>
  * <ul>
- * <li>{@linkplain PersonAdditionEvent} <blockquote>Adds the person
- * to all relevant population partitions after event validation and execution
- * phases are complete. </blockquote></li>
+ * <li>{@linkplain PersonAdditionEvent} <blockquote>Adds the person to all
+ * relevant population partitions after event validation and execution phases
+ * are complete. </blockquote></li>
  *
  *
- * <li>{@linkplain BulkPersonAdditionEvent} <blockquote>Adds the
- * people to the relevant population partitions after event validation and
- * execution phases are complete. </blockquote></li>
+ * <li>{@linkplain BulkPersonAdditionEvent} <blockquote>Adds the people to the
+ * relevant population partitions after event validation and execution phases
+ * are complete. </blockquote></li>
  *
  *
- * <li>{@linkplain PersonImminentRemovalEvent} <blockquote>Removes
- * the person from all population partitions by scheduling the removal for the
- * current time. This allows references and partition memberships to remain long
- * enough for resolvers, agents and reports to have final reference to the
- * person while still associated with any relevant partitions.
- * </blockquote></li>
+ * <li>{@linkplain PersonImminentRemovalEvent} <blockquote>Removes the person
+ * from all population partitions by scheduling the removal for the current
+ * time. This allows references and partition memberships to remain long enough
+ * for resolvers, agents and reports to have final reference to the person while
+ * still associated with any relevant partitions. </blockquote></li>
  * </ul>
  * 
  * <P>
@@ -343,7 +342,6 @@ public final class PartitionsDataManager extends DataManager {
 			validatePersonExists(excludedPersonId);
 		}
 
-
 	}
 
 	/*
@@ -370,7 +368,6 @@ public final class PartitionsDataManager extends DataManager {
 			throw new ContractException(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, key);
 		}
 	}
-
 
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
@@ -491,10 +488,10 @@ public final class PartitionsDataManager extends DataManager {
 		validatePopulationPartitionKeyNotNull(key);
 		validatePopulationPartitionDoesNotExist(key);
 
-		// final AgentId agentId = dataManagerContext.getCurrentAgentId();
-
-		// determine the event classes that will trigger refreshes on the
-		// partition
+		/*
+		 * determine the event classes that will trigger refreshes on the
+		 * partition
+		 */
 		final Set<Class<? extends Event>> eventClasses = new LinkedHashSet<>();
 
 		final Filter filter = partition.getFilter().orElse(Filter.allPeople());
@@ -574,7 +571,6 @@ public final class PartitionsDataManager extends DataManager {
 		validatePopulationPartitionKeyNotNull(key);
 		validatePopulationPartitionExists(key);
 		keyToPopulationPartitionMap.remove(key);
-		
 
 		final Set<Class<? extends Event>> eventClasses = keyToEventClassesMap.get(key);
 		for (final Class<? extends Event> eventClass : eventClasses) {
@@ -584,7 +580,7 @@ public final class PartitionsDataManager extends DataManager {
 				eventClassToKeyMap.remove(eventClass);
 				dataManagerContext.unSubscribe(eventClass);
 			}
-		}		
+		}
 	}
 
 }
