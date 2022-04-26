@@ -80,8 +80,8 @@ public class AT_Experiment {
 								}).build();//
 
 		Experiment	.builder()//
-					.setExperimentProgressConsole(false)//
-					.setReportScenarioFailureToConsole(false)//
+					.reportProgressToConsole(false)//
+					.reportFailuresToConsole(false)//
 
 					.addOutputHandler(c -> {
 						c.subscribeToOutput(Object.class, (c2, s, e) -> {
@@ -194,8 +194,8 @@ public class AT_Experiment {
 										.build();//
 
 		Experiment	.builder()//
-					.setExperimentProgressConsole(false)//
-					.setReportScenarioFailureToConsole(false)//
+					.reportProgressToConsole(false)//
+					.reportFailuresToConsole(false)//
 
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
@@ -283,8 +283,8 @@ public class AT_Experiment {
 
 		// create the simulation
 		Experiment	.builder()//
-					.setExperimentProgressConsole(false)//
-					.setReportScenarioFailureToConsole(false)//
+					.reportProgressToConsole(false)//
+					.reportFailuresToConsole(false)//
 
 					.addPlugin(pluginA)//
 					.addPlugin(pluginB)//
@@ -301,8 +301,8 @@ public class AT_Experiment {
 	public void testBuild() {
 		// show that an empty experiment will executed
 		Experiment experiment = Experiment	.builder()//
-											.setExperimentProgressConsole(false)//
-											.setReportScenarioFailureToConsole(false)//
+											.reportProgressToConsole(false)//
+											.reportFailuresToConsole(false)//
 											.build();//
 		experiment.execute();
 
@@ -368,8 +368,8 @@ public class AT_Experiment {
 
 		// Run the experiment using several threads
 		Experiment	.builder()//
-					.setExperimentProgressConsole(false)//
-					.setReportScenarioFailureToConsole(false)//
+					.reportProgressToConsole(false)//
+					.reportFailuresToConsole(false)//
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//

@@ -95,8 +95,8 @@ public final class Experiment {
 		 * Default value is true.
 		 *
 		 */
-		public Builder setExperimentProgressConsole(final boolean reportExperimentProgessToConsole) {
-			data.reportExperimentProgessToConsole = reportExperimentProgessToConsole;
+		public Builder reportProgressToConsole(final boolean reportProgressToConsole) {
+			data.reportProgressToConsole = reportProgressToConsole;
 			return this;
 		}
 
@@ -142,8 +142,8 @@ public final class Experiment {
 		/**
 		 * Sets the policy on reporting scenario failures. Defaults to true.
 		 */
-		public Builder setReportScenarioFailureToConsole(final boolean reportScenarioFailureToConsole) {
-			data.reportScenarioFailureToConsole = reportScenarioFailureToConsole;
+		public Builder reportFailuresToConsole(final boolean reportFailuresToConsole) {
+			data.reportFailuresToConsole = reportFailuresToConsole;
 			return this;
 		}
 
@@ -157,8 +157,8 @@ public final class Experiment {
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
-		private boolean reportScenarioFailureToConsole = true;
-		private boolean reportExperimentProgessToConsole = true;
+		private boolean reportFailuresToConsole = true;
+		private boolean reportProgressToConsole = true;
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
 
@@ -228,7 +228,7 @@ public final class Experiment {
 			try {
 				simulation.execute();
 				success = true;
-			} catch (final Exception e) {
+			} catch (final Exception e) {				
 				failureCause = e;
 				if (reportScenarioFailureToConsole) {
 					System.err.println("Simulation failure for scenario " + scenarioId);
@@ -278,7 +278,7 @@ public final class Experiment {
 
 		builder.setExperimentMetaData(experimentMetaData);
 
-		if (data.reportExperimentProgessToConsole) {
+		if (data.reportProgressToConsole) {
 			data.experimentContextConsumers.add(new ExperimentStatusConsole()::init);
 		}
 
@@ -345,7 +345,7 @@ public final class Experiment {
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = preSimActions(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportExperimentProgessToConsole));
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportFailuresToConsole));
 			jobIndex++;
 		}
 
@@ -359,7 +359,7 @@ public final class Experiment {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = preSimActions(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportExperimentProgessToConsole));
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportFailuresToConsole));
 				jobIndex++;
 			}
 
@@ -434,7 +434,7 @@ public final class Experiment {
 				success = true;
 			} catch (final Exception e) {
 				failureCause = e;
-				if (data.reportScenarioFailureToConsole) {
+				if (data.reportFailuresToConsole) {
 					System.err.println("Simulation failure for scenario " + scenarioId);
 					e.printStackTrace();
 				}

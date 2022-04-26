@@ -125,7 +125,7 @@ public class AT_TestReportItemOutputConsumer {
 		experimentBuilder.addDimension(dimension);
 		experimentBuilder.addPlugin(testPlugin);
 		experimentBuilder.setThreadCount(0);
-		experimentBuilder.setExperimentProgressConsole(false);
+		experimentBuilder.reportProgressToConsole(false);
 		experimentBuilder.build().execute();
 
 		Map<Integer, Map<ReportItem, Integer>> actualReportItems = testReportItemOutputConsumer.getReportItems();

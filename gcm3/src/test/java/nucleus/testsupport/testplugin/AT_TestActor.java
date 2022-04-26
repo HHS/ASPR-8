@@ -62,8 +62,8 @@ public class AT_TestActor {
 
 		// build and execute the engine
 		Experiment	.builder()//
-					.setExperimentProgressConsole(false)//
-					.setReportScenarioFailureToConsole(false)//
+					.reportProgressToConsole(false)//
+					.reportFailuresToConsole(false)//
 					.addOutputHandler(experimentPlanCompletionObserver::init)//
 					.addPlugin(testPlugin)//
 					.build()//

@@ -186,7 +186,7 @@ public class MaterialsActionSupport {
 		builder.addOutputHandler(testReportItemOutputConsumer::init);
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 		builder.addOutputHandler(experimentPlanCompletionObserver::init);
-		builder.setExperimentProgressConsole(false);
+		builder.reportProgressToConsole(false);
 
 		// build and execute the engine
 		

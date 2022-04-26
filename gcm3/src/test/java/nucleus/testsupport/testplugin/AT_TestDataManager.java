@@ -74,8 +74,8 @@ public class AT_TestDataManager {
 
 		// build and execute the engine
 		Experiment	.builder()//
-					.setExperimentProgressConsole(false)//
-					.setReportScenarioFailureToConsole(false)//
+					.reportProgressToConsole(false)//
+					.reportFailuresToConsole(false)//
 					.addOutputHandler(experimentPlanCompletionObserver::init)//
 					.addPlugin(testPlugin)//
 					.build()//

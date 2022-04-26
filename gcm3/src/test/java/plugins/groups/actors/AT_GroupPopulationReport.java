@@ -373,7 +373,7 @@ public class AT_GroupPopulationReport {
 
 		builder.addOutputHandler(testReportItemOutputConsumer::init);
 		builder.addOutputHandler(experimentPlanCompletionObserver::init);
-		builder.setExperimentProgressConsole(false);
+		builder.reportProgressToConsole(false);
 		
 
 		// build and execute the engine
