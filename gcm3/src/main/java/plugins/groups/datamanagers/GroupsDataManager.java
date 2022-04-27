@@ -54,7 +54,7 @@ import plugins.util.properties.arraycontainers.ObjectValueContainer;
 
 /**
  * <p>
- * Mutable data manager that backs the {@linkplain PersonGroupDataView}. 
+ * Mutable data manager that backs the {@linkplain PersonGroupDataView}.
  * </p>
  *
  * <b>Implementation Notes</b>
@@ -161,10 +161,10 @@ public final class GroupsDataManager extends DataManager {
 	 * <li>Subscribes to the following events:
 	 * <ul>
 	 * 
-	 * {@linkplain BulkPersonAdditionEvent} Assigns the newly created
-	 * people into newly created groups on the basis of auxiliary data carried
-	 * in the event as a BulkGroupMembershipData. Publishes the groups to the
-	 * person group data view. Generates the corresponding
+	 * {@linkplain BulkPersonAdditionEvent} Assigns the newly created people
+	 * into newly created groups on the basis of auxiliary data carried in the
+	 * event as a BulkGroupMembershipData. Publishes the groups to the person
+	 * group data view. Generates the corresponding
 	 * {@linkplain GroupAdditionEvent} events. <BR>
 	 * <BR>
 	 * Throws {@link ContractException}
@@ -176,13 +176,17 @@ public final class GroupsDataManager extends DataManager {
 	 * index</li>
 	 * <li>{@link GroupError#UNKNOWN_GROUP_TYPE_ID} if the BulkMembership data
 	 * exists and contains an unknown group type id</li>
+	 * <li>{@link GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the BulkMembership
+	 * data exists and contains an unknown group property id</li>
+	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the BulkMembership data
+	 * exists and contains an incompatible group property value</li>
 	 * </ul>
 	 * 
-	 * {@linkplain PersonImminentRemovalEvent} Removes the person
-	 * from all groups by scheduling the removal for the current time. This
-	 * allows references and group memberships to remain long enough for
-	 * resolvers, agents and reports to have final reference to the person while
-	 * still associated with any relevant groups.
+	 * {@linkplain PersonImminentRemovalEvent} Removes the person from all
+	 * groups by scheduling the removal for the current time. This allows
+	 * references and group memberships to remain long enough for resolvers,
+	 * agents and reports to have final reference to the person while still
+	 * associated with any relevant groups.
 	 *
 	 * 
 	 * <BR>
@@ -274,7 +278,6 @@ public final class GroupsDataManager extends DataManager {
 	private void loadGroupMembership() {
 		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
 			for (final PersonId personId : groupsPluginData.getGroupMembers(groupId)) {
-
 
 				List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 				if (people == null) {
@@ -425,8 +428,8 @@ public final class GroupsDataManager extends DataManager {
 	/**
 	 * Adds groups with any group property initialization that is contained in
 	 * the events's auxiliary data. Generates the corresponding
-	 * {@linkplain GroupAdditionEvent} event. Returns the id of the
-	 * first group added.
+	 * {@linkplain GroupAdditionEvent} event. Returns the id of the first group
+	 * added.
 	 * 
 	 * 
 	 * @throws ContractException
@@ -499,8 +502,6 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	
-
 	/*
 	 * Validates the group type id
 	 *
@@ -517,9 +518,8 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Adds a group. Generates the corresponding
-	 * {@linkplain GroupAdditionEvent} event. Returns the id of the
-	 * new group.
+	 * Adds a group. Generates the corresponding {@linkplain GroupAdditionEvent}
+	 * event. Returns the id of the new group.
 	 * 
 	 * @throws {@link
 	 *             ContractException}
@@ -1117,7 +1117,7 @@ public final class GroupsDataManager extends DataManager {
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is unknown</li>
 	 */
-	public boolean isPersonInGroup(final PersonId personId,final GroupId groupId) {
+	public boolean isPersonInGroup(final PersonId personId, final GroupId groupId) {
 		validatePersonExists(personId);
 		validateGroupExists(groupId);
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
@@ -1148,7 +1148,7 @@ public final class GroupsDataManager extends DataManager {
 	public void removeGroup(final GroupId groupId) {
 
 		validateGroupExists(groupId);
-		
+
 		dataManagerContext.addPlan((context) -> {
 
 			final GroupTypeId groupTypeId = getGroupType(groupId);
@@ -1176,7 +1176,7 @@ public final class GroupsDataManager extends DataManager {
 			}
 
 		}, dataManagerContext.getTime());
-		
+
 		dataManagerContext.releaseEvent(new GroupImminentRemovalEvent(groupId));
 	}
 
@@ -1192,14 +1192,14 @@ public final class GroupsDataManager extends DataManager {
 	 *             unknown</li>
 	 *             <li>{@link GroupError#NULL_GROUP_ID} if the group id is
 	 *             null</li>
-	 *             <li>{@link GroupError#UNKNOWN_GROUP_ID} if the group
-	 *             id is unknown</li>
+	 *             <li>{@link GroupError#UNKNOWN_GROUP_ID} if the group id is
+	 *             unknown</li>
 	 *             <li>{@link GroupError#NON_GROUP_MEMBERSHIP} if the person is
 	 *             not a member of the group</li>
 	 * 
 	 * 
 	 */
-	public void removePersonFromGroup(final PersonId personId,final GroupId groupId) {
+	public void removePersonFromGroup(final PersonId personId, final GroupId groupId) {
 
 		validatePersonExists(personId);
 		validateGroupExists(groupId);
@@ -1277,7 +1277,7 @@ public final class GroupsDataManager extends DataManager {
 		final GroupWeightingFunction groupWeightingFunction = groupSampler.getWeightingFunction().orElse(null);
 		final PersonId excludedPersonId = groupSampler.getExcludedPerson().orElse(null);
 
-		final boolean exclude = (excludedPersonId != null) && isPersonInGroup(excludedPersonId,groupId);
+		final boolean exclude = (excludedPersonId != null) && isPersonInGroup(excludedPersonId, groupId);
 		PersonId selectedPersonId = null;
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 
@@ -1384,7 +1384,7 @@ public final class GroupsDataManager extends DataManager {
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonConstructionData.getValue(BulkGroupMembershipData.class);
 		if (optional.isPresent()) {
-			int personCount = bulkPersonConstructionData.getPersonConstructionDatas().size();			
+			int personCount = bulkPersonConstructionData.getPersonConstructionDatas().size();
 			int basePersonIndex = bulkPersonAdditionEvent.getPersonId().getValue();
 
 			for (int i = 0; i < personCount; i++) {
@@ -1419,6 +1419,17 @@ public final class GroupsDataManager extends DataManager {
 				groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
 
 				newGroups.add(groupId);
+
+				for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
+					Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
+					validateGroupPropertyId(groupTypeId, groupPropertyId);
+					final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+					validateGroupPropertyValueNotNull(groupPropertyValue);
+					validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
+					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+					final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+					indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+				}
 
 				if (groupCreationSubscribersExist) {
 					dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));

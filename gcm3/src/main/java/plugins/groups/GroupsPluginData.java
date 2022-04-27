@@ -16,6 +16,7 @@ import plugins.groups.support.GroupTypeId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 
 /**
  * An immutable container of the initial state of groups. It contains: <BR>
@@ -393,7 +394,7 @@ public final class GroupsPluginData implements PluginData {
 				}
 				Object propertyValue = valueMap.get(groupPropertyId);
 				if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-					throw new ContractException(GroupError.INCOMPATIBLE_VALUE, groupId + ": " + groupPropertyId + ": " + propertyValue);
+					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, groupId + ": " + groupPropertyId + ": " + propertyValue);
 				}
 			}
 

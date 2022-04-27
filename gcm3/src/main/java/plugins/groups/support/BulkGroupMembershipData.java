@@ -3,8 +3,11 @@ package plugins.groups.support;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
@@ -12,9 +15,26 @@ import plugins.people.support.PersonError;
 public class BulkGroupMembershipData {
 
 	private static class Data {
+
+		/*
+		 * Map from int(group id) -> Group type id
+		 */
 		private List<GroupTypeId> groupTypes = new ArrayList<>();
+
+		/*
+		 * Integer(PersonId)->List(GroupId)
+		 */
 		private Map<Integer, List<Integer>> groupMemberships = new LinkedHashMap<>();
+
+		/*
+		 * An empty list of Group id values used as the groups for a person when
+		 * that person was not added to the group memberships.
+		 */
 		private final List<Integer> emptyGroupIndicesList = Collections.unmodifiableList(new ArrayList<>());
+
+		private final Set<GroupPropertyId> emptyGroupPropertySet = Collections.unmodifiableSet(new LinkedHashSet<>());
+
+		private Map<Integer, Map<GroupPropertyId, Object>> groupPropertyValues = new LinkedHashMap<>();
 	}
 
 	private final Data data;
@@ -37,6 +57,7 @@ public class BulkGroupMembershipData {
 	 *
 	 */
 	public static class Builder {
+
 		private Builder() {
 
 		}
@@ -48,7 +69,11 @@ public class BulkGroupMembershipData {
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if a group
-		 *             membership was added for an unknown group index</li>
+		 *             membership was a negative group index</li>
+		 * 
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if a group
+		 *             membership was added for a group index that was not added
+		 *             as a group</li>
 		 */
 		public BulkGroupMembershipData build() {
 			try {
@@ -60,6 +85,8 @@ public class BulkGroupMembershipData {
 		}
 
 		private void validate() {
+			// show that the group indexes for each person are in bounds.
+			// Negative indexes are rejected when entered.
 			int maxGroupIndex = data.groupTypes.size();
 			for (Integer personIndex : data.groupMemberships.keySet()) {
 				List<Integer> groupIndices = data.groupMemberships.get(personIndex);
@@ -67,6 +94,14 @@ public class BulkGroupMembershipData {
 					if (groupIndex >= maxGroupIndex) {
 						throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 					}
+				}
+			}
+
+			// show that the collected group property values are associated with
+			// valid group id values
+			for (Integer groupIndex : data.groupPropertyValues.keySet()) {
+				if (groupIndex >= maxGroupIndex) {
+					throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 				}
 			}
 
@@ -90,6 +125,38 @@ public class BulkGroupMembershipData {
 		}
 
 		/**
+		 * Set a group property value
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group
+		 *             index is negative</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+		 *             group property id is null</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_VALUE} if
+		 *             the property value is null</li>
+		 * 
+		 * 
+		 */
+		public Builder setGroupPropertyValue(int groupIndex, GroupPropertyId groupPropertyId, Object propertyValue) {
+			if (groupIndex < 0) {
+				throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
+			}
+			if (groupPropertyId == null) {
+				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			}
+			if (propertyValue == null) {
+				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
+			}
+			Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupIndex);
+			if (map == null) {
+				map = new LinkedHashMap<>();
+				data.groupPropertyValues.put(groupIndex, map);
+			}
+			map.put(groupPropertyId, propertyValue);
+			return this;
+		}
+
+		/**
 		 * Add a person to a group
 		 * 
 		 * @throws ContractException
@@ -97,6 +164,9 @@ public class BulkGroupMembershipData {
 		 *             person index is negative</li>
 		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group
 		 *             index is negative</li>
+		 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_MEMBERSHIP} if
+		 *             the person index is already associated with the group
+		 *             index</li>
 		 * 
 		 * 
 		 */
@@ -114,6 +184,9 @@ public class BulkGroupMembershipData {
 				list = new ArrayList<>();
 				data.groupMemberships.put(personIndex, list);
 			}
+			if (list.contains(groupIndex)) {
+				throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP);
+			}
 			list.add(groupIndex);
 			return this;
 		}
@@ -130,11 +203,19 @@ public class BulkGroupMembershipData {
 	/**
 	 * Returns the group type id for the given group index.
 	 * 
-	 * @throws IndexOutOfBoundsException
-	 *             <li>if the index is < 0</li>
-	 *             <li>if the index is >= getGroupCount()</li>
+	 * @throws ContractException
+	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_ID} if the index is
+	 *             < 0</li>
+	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_ID} if the index is
+	 *             >= getGroupCount()</li>
 	 */
 	public GroupTypeId getGroupTypeId(int groupIndex) {
+		if (groupIndex < 0) {
+			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
+		}
+		if (groupIndex >= data.groupTypes.size()) {
+			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
+		}
 		return data.groupTypes.get(groupIndex);
 	}
 
@@ -156,6 +237,24 @@ public class BulkGroupMembershipData {
 	 */
 	public List<Integer> getPersonIndices() {
 		return new ArrayList<>(data.groupMemberships.keySet());
+	}
+
+	public Set<GroupPropertyId> getGroupPropertyIds(int groupIndex) {
+		Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupIndex);
+		if (map != null) {
+			return Collections.unmodifiableSet(map.keySet());
+		}
+		return data.emptyGroupPropertySet;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Optional<T> getGroupPropertyValue(int groupIndex, GroupPropertyId groupPropertyId) {
+		Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupIndex);
+		Object propertyValue = null;
+		if (map != null) {
+			propertyValue = map.get(groupPropertyId);
+		}
+		return Optional.ofNullable((T) propertyValue);
 	}
 
 }

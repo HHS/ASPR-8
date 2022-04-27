@@ -1,6 +1,7 @@
 package plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,7 +19,9 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.util.ContractException;
+import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
+import plugins.people.support.PersonError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -34,9 +37,72 @@ public class AT_BulkGroupMembershipData {
 	}
 
 	@Test
+	@UnitTestMethod(target = BulkGroupMembershipData.Builder.class, name = "setGroupPropertyValue", args = { int.class, GroupPropertyId.class, Object.class })
+	public void testSetGroupPropertyValue() {
+
+		BulkGroupMembershipData bulkGroupMembershipData = BulkGroupMembershipData//
+																					.builder()//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_1)//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_2)//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_3)//
+																					.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 23.4)//
+																					.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 19)//
+																					.setGroupPropertyValue(1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, true)//
+																					.setGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 88)//
+																					.setGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 14.7)//
+																					.build();//
+
+		assertEquals(23.4, bulkGroupMembershipData.getGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK).get());
+		assertEquals(19, bulkGroupMembershipData.getGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK).get());
+		assertEquals(true, bulkGroupMembershipData.getGroupPropertyValue(1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK).get());
+		assertEquals(88, bulkGroupMembershipData.getGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK).get());
+		assertEquals(14.7, bulkGroupMembershipData.getGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK).get());
+
+		// precondition test: if the group id is negative
+		ContractException contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData//
+																													.builder()//
+																													.addGroup(TestGroupTypeId.GROUP_TYPE_1)//
+																													.setGroupPropertyValue(-1,
+																															TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 23.4)//
+																													.build());
+
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the group property id is null
+		contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData//
+																								.builder()//
+																								.addGroup(TestGroupTypeId.GROUP_TYPE_1)//
+																								.setGroupPropertyValue(0, null, 23.4)//
+																								.build());
+
+		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+
+		// precondition test: if the property value is null
+		contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData//
+																								.builder()//
+																								.addGroup(TestGroupTypeId.GROUP_TYPE_1)//
+																								.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, null)//
+																								.build());
+
+		assertEquals(GroupError.NULL_GROUP_PROPERTY_VALUE, contractException.getErrorType());
+
+	}
+
+	@Test
 	@UnitTestMethod(target = BulkGroupMembershipData.Builder.class, name = "build", args = {})
 	public void testBuild() {
+
+		/*
+		 * precondition : if a group membership was a negative group index
+		 */
 		ContractException contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addPersonToGroup(0, 0).build());
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+
+		/*
+		 * precondition : if a group membership was added for a group index that
+		 * was not added as a group
+		 */
+		contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addPersonToGroup(0, -1).build());
 		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 	}
 
@@ -59,6 +125,9 @@ public class AT_BulkGroupMembershipData {
 
 		assertEquals(TestGroupTypeId.GROUP_TYPE_3, bulkGroupMembershipData.getGroupTypeId(2));
 
+		// precondition test : if the group type id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addGroup(null));
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -114,6 +183,18 @@ public class AT_BulkGroupMembershipData {
 		// pairings
 		assertEquals(expectedPairs, actualPairs);
 
+		// precondition test if the person index is negative
+		ContractException contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addPersonToGroup(-1, 0));
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+
+		// precondition test: if the group index is negative
+		contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addPersonToGroup(0, -1));
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the person is already associated with the group
+		contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addPersonToGroup(0, 0).addPersonToGroup(0, 0));
+		assertEquals(GroupError.DUPLICATE_GROUP_MEMBERSHIP, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -154,10 +235,14 @@ public class AT_BulkGroupMembershipData {
 			assertEquals(expectedGroupTypes.get(index), bulkGroupMembershipData.getGroupTypeId(index));
 		}
 
-		// precondition tests
-		assertThrows(IndexOutOfBoundsException.class, () -> bulkGroupMembershipData.getGroupTypeId(-1));
-		assertThrows(IndexOutOfBoundsException.class, () -> bulkGroupMembershipData.getGroupTypeId(30));
+		// precondition test: if the group index is negative
+		ContractException contractException = assertThrows(ContractException.class, () -> bulkGroupMembershipData.getGroupTypeId(-1));
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
+		// precondition test: if the group index >= the number of groups that
+		// were added
+		contractException = assertThrows(ContractException.class, () -> bulkGroupMembershipData.getGroupTypeId(30));
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -207,6 +292,7 @@ public class AT_BulkGroupMembershipData {
 			for (Integer groupIndex : groupIndices) {
 				actualPairs.add(new MultiKey(personIndex, groupIndex));
 			}
+			assertThrows(UnsupportedOperationException.class, ()->groupIndices.add(1234));
 		}
 
 		// show that the bulk group membership data contains the expected
@@ -223,8 +309,9 @@ public class AT_BulkGroupMembershipData {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7269766947053474864L);
 		BulkGroupMembershipData.Builder builder = BulkGroupMembershipData.builder();
-		
-		//show that the getPersonIndices returns an empty list if no people were added
+
+		// show that the getPersonIndices returns an empty list if no people
+		// were added
 		List<Integer> people = builder.build().getPersonIndices();
 		assertNotNull(people);
 		assertTrue(people.isEmpty());
@@ -233,7 +320,6 @@ public class AT_BulkGroupMembershipData {
 
 		// create a container to hold expected people
 		Set<Integer> expectedPeople = new LinkedHashSet<>();
-		
 
 		// add the 10 groups
 		for (int i = 0; i < 10; i++) {
@@ -267,6 +353,66 @@ public class AT_BulkGroupMembershipData {
 		assertEquals(expectedPeople, new LinkedHashSet<>(actualPeople));
 
 		// precondition tests -- none
+	}
+
+	@Test
+	@UnitTestMethod(name = "getGroupPropertyIds", args = { int.class })
+	public void testGetGroupPropertyIds() {
+		BulkGroupMembershipData bulkGroupMembershipData = BulkGroupMembershipData//
+																					.builder()//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_1)//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_2)//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_3)//
+																					.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 23.4)//
+																					.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 19)//
+																					.setGroupPropertyValue(1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, true)//
+																					.setGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 88)//
+																					.setGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 14.7)//
+																					.build();//
+
+		// show that property values that were set can be retrieved
+		Set<GroupPropertyId> expectedGroupPropertyIds = new LinkedHashSet<>();
+		expectedGroupPropertyIds.add(TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK);
+		expectedGroupPropertyIds.add(TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK);
+		assertEquals(expectedGroupPropertyIds, bulkGroupMembershipData.getGroupPropertyIds(0));
+
+		expectedGroupPropertyIds = new LinkedHashSet<>();
+		expectedGroupPropertyIds.add(TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK);
+		assertEquals(expectedGroupPropertyIds, bulkGroupMembershipData.getGroupPropertyIds(1));
+
+		expectedGroupPropertyIds = new LinkedHashSet<>();
+		expectedGroupPropertyIds.add(TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK);
+		expectedGroupPropertyIds.add(TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK);
+		assertEquals(expectedGroupPropertyIds, bulkGroupMembershipData.getGroupPropertyIds(2));
+	}
+
+	@Test
+	@UnitTestMethod(name = "getGroupPropertyValue", args = { int.class, GroupPropertyId.class })
+	public void testGetGroupPropertyValue() {
+		BulkGroupMembershipData bulkGroupMembershipData = BulkGroupMembershipData//
+																					.builder()//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_1)//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_2)//
+																					.addGroup(TestGroupTypeId.GROUP_TYPE_3)//
+																					.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 23.4)//
+																					.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 19)//
+																					.setGroupPropertyValue(1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, true)//
+																					.setGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 88)//
+																					.setGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 14.7)//
+																					.build();//
+
+		// show that property values that were set can be retrieved
+		assertEquals(23.4, bulkGroupMembershipData.getGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK).get());
+		assertEquals(19, bulkGroupMembershipData.getGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK).get());
+		assertEquals(true, bulkGroupMembershipData.getGroupPropertyValue(1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK).get());
+		assertEquals(88, bulkGroupMembershipData.getGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK).get());
+		assertEquals(14.7, bulkGroupMembershipData.getGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK).get());
+
+		// show that property values that were not set cannot be retrieved
+		assertFalse(bulkGroupMembershipData.getGroupPropertyValue(2, TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK).isPresent());
+		assertFalse(bulkGroupMembershipData.getGroupPropertyValue(1, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK).isPresent());
+		assertFalse(bulkGroupMembershipData.getGroupPropertyValue(1, TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK).isPresent());
+
 	}
 
 }

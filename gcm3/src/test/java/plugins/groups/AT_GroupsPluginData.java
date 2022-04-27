@@ -29,6 +29,7 @@ import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -117,7 +118,7 @@ public class AT_GroupsPluginData {
 			builder.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
 			builder.build();
 		});
-		assertEquals(GroupError.INCOMPATIBLE_VALUE, contractException.getErrorType());
+		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		// if a group property definition does not contain a default value
 		contractException = assertThrows(ContractException.class, () -> {
