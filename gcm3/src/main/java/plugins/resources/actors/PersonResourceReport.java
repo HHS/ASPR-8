@@ -21,7 +21,9 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
+import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
+import util.errors.ContractException;
 
 /**
  * A periodic Report that displays number of people who have/do not have any
@@ -34,11 +36,11 @@ import plugins.resources.support.ResourceId;
  *
  * Resource -- the resource identifier
  *
- * people_with_resource -- the number of people in the region who
- * have at least one unit of the given resource
+ * people_with_resource -- the number of people in the region who have at least
+ * one unit of the given resource
  *
- * people_without_resource -- the number of people in the region pair
- * who do not have any units of the given resource
+ * people_without_resource -- the number of people in the region pair who do not
+ * have any units of the given resource
  *
  * @author Shawn Hatch
  *
@@ -95,9 +97,9 @@ public final class PersonResourceReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			addTimeFieldHeaders(reportHeaderBuilder)//
-			.add("region")//			
-			.add("resource")//
-			.add("people_with_resource");
+													.add("region")//
+													.add("resource")//
+													.add("people_with_resource");
 			if (reportPeopleWithoutResources) {
 				reportHeaderBuilder.add("people_without_resource");
 			}
@@ -241,6 +243,14 @@ public final class PersonResourceReport extends PeriodicReport {
 	private RegionsDataManager regionsDataManager;
 	private ResourcesDataManager resourcesDataManager;
 
+	/**
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
+	 *             resource id passed to the constructor is unknown
+	 *             <li>
+	 * 
+	 */
 	@Override
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
@@ -267,7 +277,7 @@ public final class PersonResourceReport extends PeriodicReport {
 		final Set<ResourceId> validResourceIds = resourcesDataManager.getResourceIds();
 		for (final ResourceId resourceId : resourceIds) {
 			if (!validResourceIds.contains(resourceId)) {
-				throw new RuntimeException("invalid resource id " + resourceId);
+				throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 			}
 		}
 

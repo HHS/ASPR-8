@@ -20,7 +20,6 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.util.ContractException;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
@@ -34,6 +33,7 @@ import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = AttributesDataManager.class)
 public class AT_AttributesDataManager {

@@ -2,9 +2,9 @@ package plugins.people.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 /**
  * Indicates that the given person will be removed from the simulation

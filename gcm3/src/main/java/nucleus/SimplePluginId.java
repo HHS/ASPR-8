@@ -1,6 +1,6 @@
 package nucleus;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A convenience class for representing PluginId as a wrapped object.

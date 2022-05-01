@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
@@ -22,6 +21,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = PersonPropertiesPluginData.class)

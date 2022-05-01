@@ -8,12 +8,12 @@ import java.util.function.Function;
 import nucleus.Event;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
+import util.errors.ContractException;
 
 /**
  * A a labeler for resources. The dimension of the labeler is the given

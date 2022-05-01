@@ -6,7 +6,6 @@ import java.util.Set;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -16,6 +15,7 @@ import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
+import util.errors.ContractException;
 
 public final class PropertyFilter extends Filter {
 

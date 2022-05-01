@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.awt.Event;
+
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,8 +18,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
+import nucleus.Event;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
@@ -33,6 +33,7 @@ import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = DegeneratePopulationPartitionImpl.class)

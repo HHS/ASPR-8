@@ -1,11 +1,11 @@
 package plugins.partitions.testsupport.attributes;
 
 import nucleus.Plugin;
-import nucleus.util.ContractError;
-import nucleus.util.ContractException;
 import plugins.partitions.PartitionsPluginId;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.people.PeoplePluginId;
+import util.errors.ContractError;
+import util.errors.ContractException;
 
 /**
  *

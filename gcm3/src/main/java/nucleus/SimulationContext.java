@@ -2,7 +2,7 @@ package nucleus;
 
 import java.util.function.Consumer;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A context provides basic access to the nucleus simulation and the data

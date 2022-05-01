@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import net.jcip.annotations.ThreadSafe;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A plugin is the main compositional element of an experiment. Plugins contain

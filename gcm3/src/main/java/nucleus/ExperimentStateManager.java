@@ -22,8 +22,8 @@ import java.util.function.Consumer;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.util.ContractException;
 import nucleus.util.TriConsumer;
+import util.errors.ContractException;
 import util.time.TimeElapser;
 
 /**
@@ -205,6 +205,7 @@ public final class ExperimentStateManager {
 				writer.write(LINE_SEPARATOR);
 				writer.flush();
 			} catch (final IOException e) {
+				// re-thrown as runtime exception
 				throw new RuntimeException(e);
 			}
 		}
@@ -241,7 +242,6 @@ public final class ExperimentStateManager {
 			consumer.accept(experimentContext, scenarioId);
 		}
 
-		
 	}
 
 	/**
@@ -631,6 +631,7 @@ public final class ExperimentStateManager {
 		try {
 			out = Files.newOutputStream(data.progressLogFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (final IOException e) {
+			// re-thrown as runtime exception
 			throw new RuntimeException(e);
 		}
 		writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
@@ -656,6 +657,7 @@ public final class ExperimentStateManager {
 			}
 			writer.flush();
 		} catch (final IOException e) {
+			// re-thrown as runtime exception
 			throw new RuntimeException(e);
 		}
 	}
@@ -684,13 +686,14 @@ public final class ExperimentStateManager {
 	 *             if a scenario id is encountered that is not valid for the the
 	 *             current experiment</li>
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if the experiment status manager is not currently in the
-	 *             ready state</li>
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#DUPLICATE_EXPERIMENT_OPEN} if
+	 *             the experiment status manager is not currently in the ready
+	 *             state</li>
 	 */
 	public synchronized void openExperiment() {
 		if (experimentStatus != ExperimentStatus.READY) {
-			throw new RuntimeException("The experiment can only be opened once");
+			throw new ContractException(NucleusError.DUPLICATE_EXPERIMENT_OPEN);
 		}
 		experimentStatus = ExperimentStatus.OPENED;
 
@@ -714,14 +717,15 @@ public final class ExperimentStateManager {
 	 * Announces the closure of the experiment to subscribed experiment context
 	 * consumers. Closes the experiment progress file if it is being used.
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if the experiment status manager is not currently in the
-	 *             open state</li>
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#UNCLOSABLE_EXPERIMENT} if the
+	 *             experiment status manager is not currently in the open
+	 *             state</li>
 	 */
 	public synchronized void closeExperiment() {
 
-		if (experimentStatus != ExperimentStatus.OPENED) {
-			throw new RuntimeException("Cannot close an experiment not in the open state");
+		if (experimentStatus != ExperimentStatus.OPENED) {			
+			throw new ContractException(NucleusError.UNCLOSABLE_EXPERIMENT);
 		}
 		experimentStatus = ExperimentStatus.CLOSED;
 
@@ -734,6 +738,7 @@ public final class ExperimentStateManager {
 				writer.close();
 			}
 		} catch (final IOException e) {
+			// deception
 			throw new RuntimeException(e);
 		}
 	}

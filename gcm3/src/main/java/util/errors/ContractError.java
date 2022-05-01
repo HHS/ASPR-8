@@ -1,5 +1,5 @@
 
-package nucleus.util;
+package util.errors;
 
 /**
  * Marker interface for the descriptions of runtime exceptions where the source

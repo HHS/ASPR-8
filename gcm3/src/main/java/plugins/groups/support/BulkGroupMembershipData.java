@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
+import util.errors.ContractException;
 
 public class BulkGroupMembershipData {
 

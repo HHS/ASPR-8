@@ -9,7 +9,6 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.support.RegionError;
@@ -19,6 +18,7 @@ import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
+import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state of resources. It contains: <BR>

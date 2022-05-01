@@ -6,7 +6,6 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -16,6 +15,7 @@ import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
+import util.errors.ContractException;
 
 /**
  * An observation event indicating that a person's resource level has changed.

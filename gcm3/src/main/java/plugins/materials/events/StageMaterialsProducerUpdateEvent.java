@@ -6,11 +6,11 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
+import util.errors.ContractException;
 
 @Immutable
 public class StageMaterialsProducerUpdateEvent implements Event {

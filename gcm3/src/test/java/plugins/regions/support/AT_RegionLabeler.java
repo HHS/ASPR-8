@@ -15,7 +15,6 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.util.ContractException;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
@@ -29,6 +28,7 @@ import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = RegionLabeler.class)
 public class AT_RegionLabeler {

@@ -93,6 +93,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 				}
 				break;
 			default:
+				
 				throw new RuntimeException("unhandled case " + maxMode);
 			}
 
@@ -107,6 +108,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 				sMaxSizes[index] = (short) size;
 				break;
 			default:
+				
 				throw new RuntimeException("unhandled case " + maxMode);
 			}
 		}
@@ -122,6 +124,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			case SHORT:
 				return sMaxSizes[index];
 			default:
+				
 				throw new RuntimeException("unhandled case " + maxMode);
 			}
 		}

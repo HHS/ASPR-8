@@ -2,7 +2,7 @@ package nucleus;
 
 import java.util.function.Consumer;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A plugin context provides plugin's the ability to add actors and data

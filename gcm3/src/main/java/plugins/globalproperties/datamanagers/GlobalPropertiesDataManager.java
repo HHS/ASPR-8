@@ -7,7 +7,6 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.util.ContractException;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertiesError;
@@ -15,6 +14,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.PropertyValueRecord;
+import util.errors.ContractException;
 
 /**
  * A mutable data manager for global properties.

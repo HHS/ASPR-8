@@ -2,8 +2,8 @@ package plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
 
-import nucleus.util.ContractException;
 import plugins.util.properties.PropertyError;
+import util.errors.ContractException;
 
 /**
  * A container that maps non-negative int index values to bytes, shorts, ints or

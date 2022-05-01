@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import plugins.groups.testsupport.TestGroupTypeId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
-
 
 /**
  * Test class for {@link GroupTypeCountMap}
@@ -26,14 +26,14 @@ import util.random.RandomGeneratorProvider;
  */
 @UnitTest(target = GroupTypeCountMap.class)
 public class AT_GroupTypeCountMap {
-	
+
 	/**
 	 * Tests {@linkplain GroupTypeCountMap#equals(Object)
 	 */
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
-//		4832988525233013426L
+		// 4832988525233013426L
 		/*
 		 * Show various cases demonstrating that build order and implied zero
 		 * values do not influence the equals contract
@@ -137,7 +137,7 @@ public class AT_GroupTypeCountMap {
 
 		String expectedValue = "GroupTypeCountMap [GROUP_TYPE_1=1, GROUP_TYPE_2=2, GROUP_TYPE_3=3]";
 		String actualValue = groupTypeCountMap.toString();
-		
+
 		assertEquals(expectedValue, actualValue);
 	}
 
@@ -147,9 +147,7 @@ public class AT_GroupTypeCountMap {
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		
 
-		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1353590720789078598L);
 
 		for (int i = 0; i < 20; i++) {
@@ -174,8 +172,13 @@ public class AT_GroupTypeCountMap {
 		}
 
 		// precondition checks
-		assertThrows(IllegalArgumentException.class, () -> GroupTypeCountMap.builder().setCount(null, 10));
-		assertThrows(IllegalArgumentException.class, () -> GroupTypeCountMap.builder().setCount(TestGroupTypeId.GROUP_TYPE_1, -1));
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupTypeCountMap.builder().setCount(null, 10));
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+		
+		contractException = assertThrows(ContractException.class, () -> GroupTypeCountMap.builder().setCount(TestGroupTypeId.GROUP_TYPE_1, -1));
+		assertEquals(GroupError.NEGATIVE_GROUP_COUNT, contractException.getErrorType());
+
+
 
 	}
 

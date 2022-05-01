@@ -8,12 +8,12 @@ import java.util.function.Function;
 import nucleus.Event;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
+import util.errors.ContractException;
 
 /**
  * A labeler for person properties. The dimension of the labeler is the given

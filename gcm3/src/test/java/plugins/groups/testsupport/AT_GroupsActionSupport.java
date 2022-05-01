@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.util.ContractException;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.people.datamanagers.PeopleDataManager;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
 //@UnitTest(target = GroupsActionSupport.class)

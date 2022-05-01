@@ -1,7 +1,7 @@
 package plugins.reports.support;
 
 import net.jcip.annotations.Immutable;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A convenience implementor of ReportId that wraps a value.

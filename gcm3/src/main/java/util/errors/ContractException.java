@@ -1,4 +1,4 @@
-package nucleus.util;
+package util.errors;
 
 /**
  * A {@link RuntimeException} that indicates that the cause of the error is very

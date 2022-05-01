@@ -5,7 +5,6 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import nucleus.EventLabel;
-import nucleus.util.ContractException;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertiesError;
@@ -13,6 +12,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
+import util.errors.ContractException;
 
 /**
  * A Report that displays assigned global property values over time.

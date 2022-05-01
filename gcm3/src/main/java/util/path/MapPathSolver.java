@@ -39,15 +39,33 @@ public class MapPathSolver<N, E> implements PathSolver<N, E> {
 
 	private EdgeCostEvaluator<E> edgeCostEvaluator;
 
-	private TravelCostEvaluator<N> pathCostBoundEvaluator;
+	private TravelCostEvaluator<N> travelCostEvaluator;
 
-	public MapPathSolver(Graph<N, E> graph, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> pathCostBoundEvaluator) {
+	/**
+	 * Create a path solver for the given graph using the edge cost evaluator
+	 * and travel cost evaluator
+	 * 
+	 * @throws NullPointerException
+	 *             <li>if the graph is null</li>
+	 *             <li>if the edge cost evaluator is null</li>
+	 *             <li>if the travel cost evaluator is null</li>
+	 * 
+	 * 
+	 */
+	public MapPathSolver(Graph<N, E> graph, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
 		if (graph == null) {
-			throw new IllegalArgumentException("graph cannot be null");
+			throw new NullPointerException("graph is null");
 		}
+		if (edgeCostEvaluator == null) {
+			throw new NullPointerException("edge cost evaluator is null");
+		}
+		if (travelCostEvaluator == null) {
+			throw new NullPointerException("travel cost evaluator is null");
+		}
+
 		this.graph = graph;
 		this.edgeCostEvaluator = edgeCostEvaluator;
-		this.pathCostBoundEvaluator = pathCostBoundEvaluator;
+		this.travelCostEvaluator = travelCostEvaluator;
 	}
 
 	@Override
@@ -68,7 +86,7 @@ public class MapPathSolver<N, E> implements PathSolver<N, E> {
 			}
 			result = subPath.solvedPath;
 		} else {
-			Optional<Path<E>> optional = Paths.getPath(graph, originNode, destinationNode, edgeCostEvaluator, pathCostBoundEvaluator);
+			Optional<Path<E>> optional = Paths.getPath(graph, originNode, destinationNode, edgeCostEvaluator, travelCostEvaluator);
 			if (!optional.isPresent()) {
 				return Optional.empty();
 			}

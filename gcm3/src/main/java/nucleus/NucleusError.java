@@ -1,7 +1,7 @@
 package nucleus;
 
-import nucleus.util.ContractError;
-import nucleus.util.ContractException;
+import util.errors.ContractError;
+import util.errors.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general
@@ -19,6 +19,7 @@ public enum NucleusError implements ContractError {
 	DATA_MANAGER_DUPLICATE_INITIALIZATION("Data manager was already initialized"),
 	DATA_MANAGER_INITIALIZATION_FAILURE("Data manager base class was not properly initialized, be sure to call super()"),
 	DUPLICATE_DATA_MANAGER_TYPE("Duplicate data manager type"),
+	DUPLICATE_EXPERIMENT_OPEN("Duplicate opening of experiment"),
 	DUPLICATE_LABELER_ID_IN_EVENT_LABELER("Duplicate labeler id in labeler"),
 	DUPLICATE_PLAN_KEY("There is an existing plan currently scheduled with the same key"),
 	DUPLICATE_PLUGIN("There are two or more plugins with the same id"),
@@ -51,6 +52,7 @@ public enum NucleusError implements ContractError {
 	NULL_PLAN("Null plan"),
 	NULL_PLAN_KEY("Null planning key"),
 	NULL_PLUGIN("Null plugin"),
+	NULL_PLUGIN_CONTEXT("Null plugin context"),
 	NULL_PLUGIN_DATA("Null plugin data"),
 	NULL_PLUGIN_DATA_BUILDER("A null plugin data builder instance was added to the context"),
 	NULL_PLUGIN_DATA_CLASS("Null plugin data class"),
@@ -64,6 +66,7 @@ public enum NucleusError implements ContractError {
 	PLUGIN_INITIALIZATION_CLOSED("Plugin context is no longer valid"),
 	REPEATED_EXECUTION("Attempted repeat execution of simulation engine"),
 	SCENARIO_CANNOT_BE_EXECUTED("Scenario cannot be executed"),
+	UNCLOSABLE_EXPERIMENT("Cannot close an experiment not in the open state"),
 	UNKNOWN_ACTOR_ID("Actor id does not correspond to a known actor"),
 	UNKNOWN_DATA_MANAGER("Unknown data manager"),
 	UNKNOWN_EVENT_LABELER("The labeler id an event label does not match a registered event labeler"),

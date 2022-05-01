@@ -16,7 +16,6 @@ import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.util.ContractException;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
@@ -27,6 +26,7 @@ import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = AttributeLabeler.class)
 public final class AT_AttributeLabeler {

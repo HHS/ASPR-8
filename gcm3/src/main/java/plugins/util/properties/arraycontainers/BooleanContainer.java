@@ -2,8 +2,8 @@ package plugins.util.properties.arraycontainers;
 
 import java.util.BitSet;
 
-import nucleus.util.ContractException;
 import plugins.util.properties.PropertyError;
+import util.errors.ContractException;
 
 /**
  * A container that maps non-negative int index values to booleans by storing
@@ -87,7 +87,7 @@ public final class BooleanContainer {
 	 * @param value
 	 */
 	public void set(int index, boolean value) {
-		if (index < 0) {
+		if (index < 0) {			
 			throw new IndexOutOfBoundsException("index = " + index);
 		}
 		// if the index is new to us, then fill the bitSet with the default from

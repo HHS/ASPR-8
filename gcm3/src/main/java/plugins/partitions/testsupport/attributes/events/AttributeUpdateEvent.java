@@ -6,11 +6,11 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 @Immutable
 public class AttributeUpdateEvent implements Event {

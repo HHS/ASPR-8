@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * An actor context provides access to the nucleus engine and published data

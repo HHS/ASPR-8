@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
-import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.StochasticsActionSupport;
@@ -22,6 +21,7 @@ import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = StochasticsDataManager.class)
 public class AT_StochasticsDataManager {

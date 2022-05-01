@@ -87,7 +87,7 @@ public enum TestResourcePropertyId implements ResourcePropertyId {
 			return randomGenerator.nextDouble();
 		case ResourceProperty_5_1_INTEGER_IMMUTABLE:
 			return randomGenerator.nextInt();
-		default:
+		default:			
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

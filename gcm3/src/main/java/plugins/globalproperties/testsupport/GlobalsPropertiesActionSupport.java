@@ -10,11 +10,11 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.util.ContractException;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
+import util.errors.ContractException;
 
 /**
  * A static test support class for the globals plugin. Provides convenience

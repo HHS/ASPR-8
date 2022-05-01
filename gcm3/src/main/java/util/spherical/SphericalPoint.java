@@ -37,6 +37,7 @@ public final class SphericalPoint {
 	 * Creates a new {@link SphericalPoint} from the given {@link muVector3D}
 	 * 
 	 * @throws MalformedSphericalPointException
+	 *             <li>if the given {@link Vector3D} is not normalizable
 	 */
 	public SphericalPoint(MutableVector3D v) {
 		position = new Vector3D(v).normalize();

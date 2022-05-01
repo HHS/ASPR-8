@@ -53,7 +53,7 @@ public final class ImmutableStat implements Stat {
 		/**
 		 * Builds the ImmutableStat
 		 * 
-		 * @throws RuntimeException
+		 * @throws IllegalArgumentException
 		 *             <li>if the size is negative
 		 *             <li>if the size value is one and the min mean and max are
 		 *             not equal
@@ -119,7 +119,7 @@ public final class ImmutableStat implements Stat {
 		/*
 		 * Validates the content of the Stat
 		 * 
-		 * @throws RuntimeException
+		 * @throws IllegalArgumentException
 		 * 
 		 * <li>if the size is negative
 		 * 
@@ -140,33 +140,33 @@ public final class ImmutableStat implements Stat {
 		 */
 		private void validateScaffold() {
 			if (scaffold.size < 0) {
-				throw new RuntimeException("negative size");
+				throw new IllegalArgumentException("negative size");
 			}
 			if (scaffold.size == 1) {
 				// min, max and mean must be equal and variance must be zero
 				if (scaffold.min != scaffold.max) {
-					throw new RuntimeException("size = 1 implies min=max");
+					throw new IllegalArgumentException("size = 1 implies min=max");
 				}
 				if (scaffold.min != scaffold.mean) {
-					throw new RuntimeException("size = 1 implies min=mean=max");
+					throw new IllegalArgumentException("size = 1 implies min=mean=max");
 				}
 				if (scaffold.variance != 0) {
-					throw new RuntimeException("size = 1 implies variance = 0");
+					throw new IllegalArgumentException("size = 1 implies variance = 0");
 				}
 			} else if (scaffold.size > 1) {
 				if (scaffold.min > scaffold.max) {
-					throw new RuntimeException("min exceeds max");
+					throw new IllegalArgumentException("min exceeds max");
 				}
 				if (scaffold.min > scaffold.mean) {
 					throw new RuntimeException("min exceeds mean");
 				}
 
 				if (scaffold.mean > scaffold.max) {
-					throw new RuntimeException("mean exceeds max");
+					throw new IllegalArgumentException("mean exceeds max");
 				}
 
 				if (scaffold.variance < 0) {
-					throw new RuntimeException("variance cannot be negative");
+					throw new IllegalArgumentException("variance cannot be negative");
 				}
 			}
 		}

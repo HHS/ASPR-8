@@ -10,13 +10,13 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.Event;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
+import util.errors.ContractException;
 
 /**
  * Implementation of PopulationPartition for degenerate partitions having only a

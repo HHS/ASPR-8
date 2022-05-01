@@ -1,8 +1,8 @@
 package plugins.util.properties;
 
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.util.properties.arraycontainers.EnumContainer;
+import util.errors.ContractException;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Enum property values

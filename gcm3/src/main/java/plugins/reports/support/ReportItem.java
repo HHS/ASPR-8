@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A thread safe(immutable), container that supports output lines for multiple

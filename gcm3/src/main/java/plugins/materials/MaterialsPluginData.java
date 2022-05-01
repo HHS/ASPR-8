@@ -8,7 +8,6 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
@@ -20,6 +19,7 @@ import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
+import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state materials producers. It contains:

@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import nucleus.ActorContext;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * Test Support class that describes an action for an actor as a scheduled plan

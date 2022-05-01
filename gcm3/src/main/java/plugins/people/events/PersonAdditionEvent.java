@@ -2,10 +2,10 @@ package plugins.people.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.util.ContractException;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 @Immutable
 public final class PersonAdditionEvent implements Event {

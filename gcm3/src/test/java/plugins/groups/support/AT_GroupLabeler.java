@@ -13,7 +13,6 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
@@ -26,6 +25,7 @@ import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = GroupLabeler.class)
 public final class AT_GroupLabeler {

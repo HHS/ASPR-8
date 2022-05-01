@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * An experiment provides a means for executing the simulation over variants of
@@ -377,6 +377,8 @@ public final class Experiment {
 			} catch (final InterruptedException | ExecutionException e) {
 				// Note that this is the completion service failing and
 				// not the simulation
+				
+				//re-thrown as runtime exception
 				throw new RuntimeException(e);
 			}
 

@@ -114,7 +114,7 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 			return randomGenerator.nextInt();
 		case PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
-		default:
+		default:			
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

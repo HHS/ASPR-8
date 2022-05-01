@@ -6,7 +6,6 @@ import java.util.Set;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -14,6 +13,7 @@ import plugins.partitions.support.PartitionError;
 import plugins.people.support.PersonId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
+import util.errors.ContractException;
 
 public final class ResourceFilter extends Filter {
 	private final ResourceId resourceId;

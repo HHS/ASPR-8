@@ -6,13 +6,13 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
+import util.errors.ContractException;
 
 @Immutable
 public final class PersonRegionUpdateEvent implements Event {

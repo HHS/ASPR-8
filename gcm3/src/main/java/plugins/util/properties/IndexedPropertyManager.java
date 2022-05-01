@@ -1,6 +1,6 @@
 package plugins.util.properties;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * Common interface to all property managers. A property manager manages

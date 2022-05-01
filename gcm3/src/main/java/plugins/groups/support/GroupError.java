@@ -1,7 +1,7 @@
 package plugins.groups.support;
 
-import nucleus.util.ContractError;
-import nucleus.util.ContractException;
+import util.errors.ContractError;
+import util.errors.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general
@@ -12,6 +12,7 @@ import nucleus.util.ContractException;
  */
 public enum GroupError implements ContractError {
 
+	NEGATIVE_GROUP_COUNT("group count is negative"),
 	NULL_GROUP_INITIALIZATION_DATA("Null group initialization data"),	
 	NULL_GROUP_DATA_MANAGER("Null group data manager"),
 	DUPLICATE_GROUP_MEMBERSHIP("Person was previously assigned to group"),

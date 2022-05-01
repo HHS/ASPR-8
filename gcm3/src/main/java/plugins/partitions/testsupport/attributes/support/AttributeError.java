@@ -1,7 +1,7 @@
 package plugins.partitions.testsupport.attributes.support;
 
-import nucleus.util.ContractError;
-import nucleus.util.ContractException;
+import util.errors.ContractError;
+import util.errors.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general

@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import nucleus.DataManagerContext;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * Test Support class that describes an action for a data manager as a scheduled

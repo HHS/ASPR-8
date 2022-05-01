@@ -1,8 +1,8 @@
 package plugins.util.properties;
 
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
+import util.errors.ContractException;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Double property values

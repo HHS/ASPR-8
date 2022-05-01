@@ -205,7 +205,7 @@ public class Node<T> {
 				}
 			}
 			return;
-		default:
+		default:			
 			throw new RuntimeException("unhandled shape intersection type " + shapeIntersectionType);
 		}
 	}

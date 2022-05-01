@@ -7,10 +7,10 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.util.ContractException;
 import plugins.partitions.support.PartitionError;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 
 /**

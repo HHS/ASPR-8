@@ -23,7 +23,7 @@ public class AT_SimpleRegionId {
 	public void testConstructor() {
 		assertNotNull(new SimpleRegionId(5));
 
-		assertThrows(RuntimeException.class, () -> new SimpleRegionId(null));
+		assertThrows(NullPointerException.class, () -> new SimpleRegionId(null));
 	}
 
 	@Test

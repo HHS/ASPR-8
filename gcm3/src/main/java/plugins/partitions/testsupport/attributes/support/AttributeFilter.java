@@ -6,7 +6,6 @@ import java.util.Set;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -14,6 +13,7 @@ import plugins.partitions.support.PartitionError;
 import plugins.partitions.testsupport.attributes.AttributesDataManager;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 public final class AttributeFilter extends Filter {
 

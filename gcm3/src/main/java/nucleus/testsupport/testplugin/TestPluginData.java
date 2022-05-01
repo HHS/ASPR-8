@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * Thread safe plugin data container for associating plans with actor and data

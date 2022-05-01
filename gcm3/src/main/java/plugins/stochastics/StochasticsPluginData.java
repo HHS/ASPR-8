@@ -6,9 +6,9 @@ import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
+import util.errors.ContractException;
 
 /**
  * A thread-safe container for the initial state of random generators.

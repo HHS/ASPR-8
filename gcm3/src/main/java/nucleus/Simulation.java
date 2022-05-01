@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.NotThreadSafe;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;
@@ -305,8 +305,8 @@ public class Simulation {
 			case DATA_MANAGER:
 				builder.append(dataManagerId);
 				break;
-			default:
-				throw new RuntimeException("unhandled case");
+			default:				
+				throw new RuntimeException("unhandled planner case");
 
 			}
 			builder.append(LINE_SEPARATOR);
@@ -885,7 +885,7 @@ public class Simulation {
 					executeActorQueue();
 				}
 				break;
-			default:
+			default:				
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
@@ -1131,7 +1131,7 @@ public class Simulation {
 
 			try {
 				eventConsumer.accept(context, (T) event);
-			} catch (ClassCastException e) {
+			} catch (ClassCastException e) {				
 				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}
 
@@ -1393,7 +1393,7 @@ public class Simulation {
 
 			try {
 				dataManagerEventConsumer.accept(context, (T) event);
-			} catch (ClassCastException e) {
+			} catch (ClassCastException e) {				
 				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}
 

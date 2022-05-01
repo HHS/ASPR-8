@@ -8,7 +8,6 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
@@ -17,6 +16,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
+import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state of groups. It contains: <BR>

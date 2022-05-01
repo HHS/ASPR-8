@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * 

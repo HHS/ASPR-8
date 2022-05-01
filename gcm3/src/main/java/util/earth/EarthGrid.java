@@ -38,17 +38,17 @@ public final class EarthGrid {
 	 * 0 degrees will align the y axis to the north and an azimuth of 90 degrees
 	 * will align the positive y axis to the east.
 	 * 
-	 * @throws RuntimeException
+	 * @throws IllegalArgumentException
 	 *             <li>if the center point is closer than
 	 *             EarthGrid.MIN_ANGLE_FROM_POLE=0.001 degrees from one of the
-	 *             poles.
+	 *             poles.</li>
 	 * 
 	 * @param center
 	 * @param azimuthDegrees
 	 */
 	public EarthGrid(LatLon center, double azimuthDegrees) {
 		if ((FastMath.abs(center.getLatitude()) - 90) < MIN_ANGLE_FROM_POLE) {
-			throw new RuntimeException("Grid cannot be constructed within " + MIN_ANGLE_FROM_POLE + " degrees of a pole");
+			throw new IllegalArgumentException("Grid cannot be constructed within " + MIN_ANGLE_FROM_POLE + " degrees of a pole");
 		}
 		earth = Earth.fromLatitude(center.getLatitude());
 

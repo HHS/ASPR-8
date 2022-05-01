@@ -162,7 +162,7 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 			return randomGenerator.nextInt();
 		case GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
-		default:
+		default:			
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

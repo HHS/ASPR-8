@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 import util.wrappers.MultiKey;
 
 /**

@@ -8,12 +8,12 @@ import java.util.function.Function;
 import nucleus.Event;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Labeler;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
+import util.errors.ContractException;
 
 /**
  * A labeler for regions. The dimension of the labeler is the

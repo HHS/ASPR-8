@@ -10,7 +10,6 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.util.ContractException;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
@@ -32,6 +31,7 @@ import plugins.util.properties.PropertyValueRecord;
 import plugins.util.properties.TimeTrackingPolicy;
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer;
+import util.errors.ContractException;
 
 /**
  * Mutable data manager that backs the {@linkplain RegionDataView}. This data

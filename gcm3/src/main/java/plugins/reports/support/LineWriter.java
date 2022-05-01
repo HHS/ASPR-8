@@ -49,6 +49,9 @@ public final class LineWriter {
 	 * ungraceful halt to the previous execution are tolerated. If the file does
 	 * not exist, then its parent directory must exist.
 	 * 
+	 * @throws RuntimeException
+	 *             <li>if an {@link IOException} is thrown</li>
+	 * 
 	 */
 
 	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports) {
@@ -120,6 +123,9 @@ public final class LineWriter {
 
 	/**
 	 * Closes the writer, flushing all buffered outputs.
+	 * 
+	 * @throws RuntimeException
+	 * <li>if an {@link IOException} is thrown</li>
 	 */
 	public void close() {
 
@@ -132,6 +138,9 @@ public final class LineWriter {
 
 	/**
 	 * Writes the report item to file recorded under the given scenario.
+	 * 
+	 * @throws RuntimeException
+	 *             <li>if an {@link IOException} is thrown</li> 
 	 */
 	public void write(ExperimentContext experimentContext, int scenarioId, ReportItem reportItem) {
 
@@ -178,7 +187,7 @@ public final class LineWriter {
 			}
 			sb.append(lineSeparator);
 			writer.write(sb.toString());
-		} catch (IOException e) {
+		} catch (IOException e) {			
 			throw new RuntimeException(e);
 		}
 	}
@@ -186,11 +195,14 @@ public final class LineWriter {
 	/**
 	 * Flushes buffered output. Generally used to force the last the full
 	 * reporting of a closed scenario.
+	 * 
+	 * @throws RuntimeException
+	 *             <li>if an {@link IOException} is thrown</li> 
 	 */
 	public void flush() {
 		try {
 			writer.flush();
-		} catch (IOException e) {
+		} catch (IOException e) {			
 			throw new RuntimeException(e);
 		}
 	}

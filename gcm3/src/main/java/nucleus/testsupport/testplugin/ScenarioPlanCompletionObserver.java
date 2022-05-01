@@ -1,6 +1,7 @@
 package nucleus.testsupport.testplugin;
 
 import net.jcip.annotations.ThreadSafe;
+import util.errors.ContractException;
 
 /**
  * A threadsafe output handler that handles all output from a simulation. A
@@ -21,13 +22,14 @@ public final class ScenarioPlanCompletionObserver {
 	 * Handles all output from a simulation, but processes only
 	 * TestScenarioReport items.
 	 * 
-	 * @throws UnsupportedOperationException
-	 *             if multiple TestScenarioReport items are received
+	 * @throws ContractException
+	 *             <li>{@linkplain TestError#DUPLICATE_TEST_SCENARIO_REPORTS} if
+	 *             multiple TestScenarioReport items are received</li>
 	 */
 	public synchronized void handleOutput(Object output) {
 		if (output instanceof TestScenarioReport) {
 			if (executed != null) {
-				throw new UnsupportedOperationException("duplicate scenario reports");
+				throw new ContractException(TestError.DUPLICATE_TEST_SCENARIO_REPORTS);
 			}
 			TestScenarioReport testScenarioReport = (TestScenarioReport) output;
 			executed = testScenarioReport.isComplete();

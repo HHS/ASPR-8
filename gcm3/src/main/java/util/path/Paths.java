@@ -95,9 +95,36 @@ public final class Paths {
 
 	/**
 	 * Returns an Optional containing a Path of E if such path could be found.
-	 * Requires a non-null EdgeCostEvaluator.
+	 * 
+	 * @throws NullPointerException
+	 *             <li>if the graph is null</li>
+	 *             <li>if the origin node is null</li>
+	 *             <li>if the destination node null</li>
+	 *             <li>if the edge cost evaluator is null</li>
+	 *             <li>if the travel cost evaluator is null</li>
+	 * 
 	 */
 	public static <N, E> Optional<Path<E>> getPath(Graph<N, E> graph, N originNode, N destinationNode, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
+
+		if (graph == null) {
+			throw new NullPointerException("graph is null");
+		}
+
+		if (originNode == null) {
+			throw new NullPointerException("origin node is null");
+		}
+
+		if (destinationNode == null) {
+			throw new NullPointerException("destination node is null");
+		}
+
+		if (edgeCostEvaluator == null) {
+			throw new NullPointerException("edge cost evaluator is null");
+		}
+
+		if (travelCostEvaluator == null) {
+			throw new NullPointerException("travel cost evaluator is null");
+		}
 
 		if (!graph.containsNode(originNode)) {
 			return Optional.empty();

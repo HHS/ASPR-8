@@ -10,7 +10,6 @@ import java.util.Set;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
@@ -35,6 +34,7 @@ import plugins.util.properties.ObjectPropertyManager;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
+import util.errors.ContractException;
 
 /**
  * Mutable data manager for person properties

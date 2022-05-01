@@ -93,7 +93,7 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 		case GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE:
 			Double d6 = randomGenerator.nextDouble();
 			return (T) d6;
-		default:
+		default:			
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

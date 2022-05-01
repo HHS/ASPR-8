@@ -93,7 +93,7 @@ public class Circle2D {
 
 	private Circle2D(Vector2D a, double radius) {
 		center = a;
-		if (radius < 0) {
+		if (radius < 0) {			
 			throw new RuntimeException("negative radius");
 		}
 		this.radius = radius;
@@ -173,7 +173,7 @@ public class Circle2D {
 			case COLLAPSING_BUBBLE:
 				c = getCollapsingBubbleSolution(points);
 				break;
-			default:
+			default:				
 				throw new RuntimeException("unhandled case " + solutionAlgorithm);
 			}
 			break;

@@ -6,11 +6,11 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
+import util.errors.ContractException;
 
 /**
  * An observation event indicating that a resource property has changed.

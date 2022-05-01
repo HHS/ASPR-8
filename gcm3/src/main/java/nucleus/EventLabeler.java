@@ -2,7 +2,7 @@ package nucleus;
 
 import java.util.function.BiFunction;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A generics-based class that is used to filter event observations.

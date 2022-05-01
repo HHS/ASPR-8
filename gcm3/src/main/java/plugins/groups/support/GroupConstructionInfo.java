@@ -6,7 +6,7 @@ import java.util.Map;
 
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * Represents the information to add a group, but not its relationship to

@@ -205,6 +205,7 @@ public final class BinContainer {
 	private static class MutableBinContainer {
 		private MutableBinContainer(double binSize) {
 			if (binSize <= 0) {
+				// deception
 				throw new RuntimeException("bin size must be positive");
 			}
 			this.binSize = binSize;
@@ -218,9 +219,15 @@ public final class BinContainer {
 
 		private int highIndex = Integer.MIN_VALUE;
 
+		/**
+		 * Adds a value to the container
+		 * 
+		 * @throws IllegalArgumentException
+		 *             <li>if the count is negative</li>
+		 */
 		public void addValue(double value, int count) {
 			if (count < 0) {
-				throw new RuntimeException("count cannot be negative");
+				throw new IllegalArgumentException("count cannot be negative");
 			}
 			int index = (int) FastMath.floor(value / binSize);
 			MutableBin mutableBin = map.get(index);
@@ -247,9 +254,11 @@ public final class BinContainer {
 	 */
 	public Bin getBin(int index) {
 		if (index < 0) {
+			// deception
 			throw new RuntimeException("bin index out of bounds: " + index);
 		}
 		if (index > highIndex - lowIndex) {
+			// deception
 			throw new RuntimeException("bin index out of bounds: " + index);
 		}
 		int adjustedIndex = lowIndex + index;

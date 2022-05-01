@@ -11,14 +11,17 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupPropertyUpdateEvent;
+import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport;
+import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
+import util.errors.ContractException;
 
 /**
  * A periodic Report that displays the number of groups having particular values
@@ -77,17 +80,17 @@ public final class GroupPropertyReport extends PeriodicReport {
 		/**
 		 * Sets the report period for this report
 		 * 
-		 * @throws RuntimeException
-		 *             <li>if the report period is null
-		 *             <li>if the report period END_OF_SIMULATION
+		 * @throws ContractException
+		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the report period is null</li>
+		 *             <li>if the report period END_OF_SIMULATION</li>
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
-			if (reportPeriod == null) {
-				throw new RuntimeException("null report period");
+			if (reportPeriod == null) {				
+				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
 			}
 
-			if (reportPeriod == ReportPeriod.END_OF_SIMULATION) {
-				throw new RuntimeException("cannot be " + ReportPeriod.END_OF_SIMULATION);
+			if (reportPeriod == ReportPeriod.END_OF_SIMULATION) {				
+				throw new ContractException(ReportError.UNSUPPORTED_REPORT_PERIOD, ReportPeriod.END_OF_SIMULATION);				
 			}
 			scaffold.reportPeriod = reportPeriod;
 			return this;
@@ -96,13 +99,13 @@ public final class GroupPropertyReport extends PeriodicReport {
 		/**
 		 * Sets the report period for this report
 		 * 
-		 * @throws RuntimeException
-		 *             <li>if the report period is null
-		 *             <li>if the report period END_OF_SIMULATION
+		 * @throws ContractException
+		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report period is null</li>
+		 *            
 		 */
 		public Builder setReportId(ReportId reportId) {
-			if (reportId == null) {
-				throw new RuntimeException("null report id");
+			if (reportId == null) {				
+				throw new ContractException(ReportError.NULL_REPORT_ID);
 			}
 			
 			scaffold.reportId = reportId;
@@ -112,12 +115,12 @@ public final class GroupPropertyReport extends PeriodicReport {
 		/**
 		 * Adds all properties for the given group type id
 		 * 
-		 * @throws RuntimeException
-		 *             <li>if the group type id is null
+		 * @throws ContractException
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
 		 */
 		public Builder addAllProperties(GroupTypeId groupTypeId) {
 			if (groupTypeId == null) {
-				throw new RuntimeException("null group type id");
+				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
 			scaffold.allProperties.add(groupTypeId);
 			return this;
@@ -126,16 +129,16 @@ public final class GroupPropertyReport extends PeriodicReport {
 		/**
 		 * Adds all properties for the given group type id
 		 * 
-		 * @throws RuntimeException
-		 *             <li>if the group type id is null
-		 *             <li>if the group property id is null
+		 		 * @throws ContractException
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the group property id is null</li>
 		 */
 		public Builder addProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 			if (groupTypeId == null) {
-				throw new RuntimeException("null group type id");
+				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
 			if (groupPropertyId == null) {
-				throw new RuntimeException("null group property id");
+				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);				
 			}
 			Set<GroupPropertyId> set = scaffold.clientPropertyMap.get(groupTypeId);
 			if (set == null) {

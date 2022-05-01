@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
@@ -22,6 +21,7 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = GroupImminentRemovalEvent.class)
 public class AT_GroupImminentRemovalEvent {

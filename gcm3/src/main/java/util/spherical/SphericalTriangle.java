@@ -49,19 +49,24 @@ public class SphericalTriangle {
 	/**
 	 * Constructs a {@link SphericalTriangle} from the given
 	 * {@link SphericalPoint} values.
+	 * 
+	 * @throws MalformedSphericalTriangleException
+	 * <li>if a spherical point is null</li>
+	 * 
+	 * 
 	 */
 	public SphericalTriangle(SphericalPoint sphericalPoint1, SphericalPoint sphericalPoint2, SphericalPoint sphericalPoint3) {
 
 		if (sphericalPoint1 == null) {
-			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
+			throw new MalformedSphericalTriangleException("null spherical point");
 		}
 
 		if (sphericalPoint2 == null) {
-			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
+			throw new MalformedSphericalTriangleException("null spherical point");
 		}
 
 		if (sphericalPoint3 == null) {
-			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
+			throw new MalformedSphericalTriangleException("null spherical point");
 		}
 
 		sphericalPoints = new SphericalPoint[] { sphericalPoint1, sphericalPoint2, sphericalPoint3 };

@@ -1,7 +1,7 @@
 package nucleus.testsupport.testplugin;
 
-import nucleus.util.ContractError;
-import nucleus.util.ContractException;
+import util.errors.ContractError;
+import util.errors.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general
@@ -11,6 +11,7 @@ import nucleus.util.ContractException;
  *
  */
 public enum TestError implements ContractError {
+	DUPLICATE_TEST_SCENARIO_REPORTS("Duplicate test scenario reports"),
 	NULL_ALIAS("Null alias value"),
 	NULL_DATA_MANAGER_SUPPLIER("Null data manager supplier"),
 	NEGATIVE_PLANNING_TIME("Negative test planning time"),

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import net.jcip.annotations.Immutable;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 
 /**
@@ -80,8 +80,8 @@ public final class BulkPersonConstructionData {
 		 *             auxiliary data is null</li>
 		 */
 		public Builder addAuxiliaryData(Object auxiliaryData) {
-			if (auxiliaryData == null) {
-				throw new NullPointerException("only non-null values allowed");
+			if (auxiliaryData == null) {				
+				throw new ContractException(PersonError.NULL_AUXILIARY_DATA);
 			}
 			data.values.add(auxiliaryData);
 			return this;

@@ -16,12 +16,12 @@ import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.util.ContractException;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 

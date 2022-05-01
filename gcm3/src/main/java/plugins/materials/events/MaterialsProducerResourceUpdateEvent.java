@@ -6,13 +6,13 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
+import util.errors.ContractException;
 
 @Immutable
 public class MaterialsProducerResourceUpdateEvent implements Event {

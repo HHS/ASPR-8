@@ -1,6 +1,6 @@
 package nucleus;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * Base class for all data managers.

@@ -5,9 +5,9 @@ import java.util.Set;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 public abstract class Filter {
 

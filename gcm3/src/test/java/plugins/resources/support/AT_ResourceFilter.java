@@ -12,7 +12,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -29,6 +28,7 @@ import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 /**
  * Test unit for {@link ResourceFilter}.

@@ -89,7 +89,7 @@ public class AT_MultiKey {
 	public void testGetKey() {
 
 		MultiKey multiKey = new MultiKey(3, "B", false);
-		assertEquals(multiKey.getKey(0), new Integer(3));
+		assertEquals(multiKey.getKey(0), Integer.valueOf(3));
 		assertEquals(multiKey.getKey(1), "B");
 		assertEquals(multiKey.getKey(2), false);
 		assertEquals(3, multiKey.size());
@@ -97,13 +97,13 @@ public class AT_MultiKey {
 		multiKey = new MultiKey("X", "X", 17, 44);
 		assertEquals(multiKey.getKey(0), "X");
 		assertEquals(multiKey.getKey(1), "X");
-		assertEquals(multiKey.getKey(2), new Integer(17));
-		assertEquals(multiKey.getKey(3), new Integer(44));
+		assertEquals(multiKey.getKey(2), Integer.valueOf(17));
+		assertEquals(multiKey.getKey(3), Integer.valueOf(44));
 		assertEquals(4, multiKey.size());
 
 		multiKey = new MultiKey("A", 2.75, true);
 		assertEquals(multiKey.getKey(0), "A");
-		assertEquals(multiKey.getKey(1), new Double(2.75));
+		assertEquals(multiKey.getKey(1), Double.valueOf(2.75));
 		assertEquals(multiKey.getKey(2), true);
 		assertEquals(3, multiKey.size());
 
@@ -148,7 +148,7 @@ public class AT_MultiKey {
 											.addKey(false)//
 											.build();//
 
-		assertEquals(builderMultiKey.getKey(0), new Integer(3));
+		assertEquals(builderMultiKey.getKey(0), Integer.valueOf(3));
 		assertEquals(builderMultiKey.getKey(1), "B");
 		assertEquals(builderMultiKey.getKey(2), false);
 		assertEquals(3, builderMultiKey.size());
@@ -162,8 +162,8 @@ public class AT_MultiKey {
 									.build();//
 		assertEquals(builderMultiKey.getKey(0), "X");
 		assertEquals(builderMultiKey.getKey(1), "X");
-		assertEquals(builderMultiKey.getKey(2), new Integer(17));
-		assertEquals(builderMultiKey.getKey(3), new Integer(44));
+		assertEquals(builderMultiKey.getKey(2), Integer.valueOf(17));
+		assertEquals(builderMultiKey.getKey(3), Integer.valueOf(44));
 		assertEquals(4, builderMultiKey.size());
 		constructorMultiKey = new MultiKey("X", "X", 17, 44);
 		assertEquals(constructorMultiKey, builderMultiKey);
@@ -175,7 +175,7 @@ public class AT_MultiKey {
 									.build();//
 
 		assertEquals(builderMultiKey.getKey(0), "A");
-		assertEquals(builderMultiKey.getKey(1), new Double(2.75));
+		assertEquals(builderMultiKey.getKey(1), Double.valueOf(2.75));
 		assertEquals(builderMultiKey.getKey(2), true);
 		assertEquals(3, builderMultiKey.size());
 		constructorMultiKey = new MultiKey("A", 2.75, true);
@@ -213,7 +213,7 @@ public class AT_MultiKey {
 		 */
 
 		MultiKey multiKey = new MultiKey(3, "B", false);
-		assertEquals(multiKey.getKey(0), new Integer(3));
+		assertEquals(multiKey.getKey(0), Integer.valueOf(3));
 		assertEquals(multiKey.getKey(1), "B");
 		assertEquals(multiKey.getKey(2), false);
 		assertEquals(3, multiKey.size());
@@ -221,15 +221,16 @@ public class AT_MultiKey {
 		multiKey = new MultiKey("X", "X", 17, 44);
 		assertEquals(multiKey.getKey(0), "X");
 		assertEquals(multiKey.getKey(1), "X");
-		assertEquals(multiKey.getKey(2), new Integer(17));
-		assertEquals(multiKey.getKey(3), new Integer(44));
+		assertEquals(multiKey.getKey(2), Integer.valueOf(17));
+		assertEquals(multiKey.getKey(3), Integer.valueOf(44));
 		assertEquals(4, multiKey.size());
 
 		multiKey = new MultiKey("A", 2.75, true);
 		assertEquals(multiKey.getKey(0), "A");
-		assertEquals(multiKey.getKey(1), new Double(2.75));
+		assertEquals(multiKey.getKey(1), Double.valueOf(2.75));
 		assertEquals(multiKey.getKey(2), true);
 		assertEquals(3, multiKey.size());
+		
 	}
 
 	/**

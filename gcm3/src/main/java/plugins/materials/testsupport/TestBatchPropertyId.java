@@ -193,6 +193,7 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 		case BATCH_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
 		default:
+			
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

@@ -1,7 +1,7 @@
 package plugins.partitions.testsupport.attributes.support;
 
 import net.jcip.annotations.ThreadSafe;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 
 /**

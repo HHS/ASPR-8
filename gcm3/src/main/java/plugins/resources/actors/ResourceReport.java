@@ -24,12 +24,14 @@ import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
+import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
+import util.errors.ContractException;
 
 /**
  * A periodic Report that displays the creation, transfer or consumption of
- * resources within a region. Only
- * activities with non-zero action counts are reported.
+ * resources within a region. Only activities with non-zero action counts are
+ * reported.
  *
  *
  * Fields
@@ -136,9 +138,9 @@ public final class ResourceReport extends PeriodicReport {
 	private final List<ResourceId> resourceIds = new ArrayList<>();
 
 	/*
-	 * The mapping of (Region, Resource, Activity) tuples to
-	 * counters that record the number of actions and the number of items
-	 * handled across those actions.
+	 * The mapping of (Region, Resource, Activity) tuples to counters that
+	 * record the number of actions and the number of items handled across those
+	 * actions.
 	 */
 	private final Map<RegionId, Map<ResourceId, Map<Activity, Counter>>> regionMap = new LinkedHashMap<>();
 
@@ -150,7 +152,7 @@ public final class ResourceReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)	.add("region")//																	
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)	.add("region")//
 																	.add("resource")//
 																	.add("activity")//
 																	.add("actions")//
@@ -279,6 +281,13 @@ public final class ResourceReport extends PeriodicReport {
 	private RegionsDataManager regionsDataManager;
 	private ResourcesDataManager resourcesDataManager;
 
+	/**
+	 * @throws ContractException
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
+	 *             resource id passed to the constructor is unknown
+	 *             <li>
+	 * 
+	 */
 	@Override
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
@@ -302,7 +311,7 @@ public final class ResourceReport extends PeriodicReport {
 		final Set<ResourceId> validResourceIds = resourcesDataManager.getResourceIds();
 		for (final ResourceId resourceId : resourceIds) {
 			if (!validResourceIds.contains(resourceId)) {
-				throw new RuntimeException("invalid resource id " + resourceId);
+				throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 			}
 		}
 
@@ -322,7 +331,7 @@ public final class ResourceReport extends PeriodicReport {
 		 */
 		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
 			final Map<ResourceId, Map<Activity, Counter>> resourceMap = new LinkedHashMap<>();
-			regionMap.put(regionId, resourceMap);			
+			regionMap.put(regionId, resourceMap);
 			for (final ResourceId resourceId : resourceIds) {
 				final Map<Activity, Counter> activityMap = new LinkedHashMap<>();
 				resourceMap.put(resourceId, activityMap);
@@ -335,7 +344,7 @@ public final class ResourceReport extends PeriodicReport {
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-			
+
 			for (final ResourceId resourceId : resourceIds) {
 				final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 				if (personResourceLevel > 0) {

@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 
 @UnitTest(target = Filter.class)

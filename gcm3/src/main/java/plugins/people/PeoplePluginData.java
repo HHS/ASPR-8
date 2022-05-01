@@ -6,9 +6,9 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state of people containing person ids.

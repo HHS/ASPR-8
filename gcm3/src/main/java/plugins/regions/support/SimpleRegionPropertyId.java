@@ -7,11 +7,11 @@ public final class SimpleRegionPropertyId implements RegionPropertyId {
 	/**
 	 * Creates a region property id from the given value
 	 * 
-	 * @throws RuntimeException if the value is null
+	 * @throws NullPointerException if the value is null
 	 */
 	public SimpleRegionPropertyId(Object value) {
-		if (value == null) {
-			throw new RuntimeException("null value");
+		if (value == null) {			
+			throw new NullPointerException("null value in simple region property id");
 		}
 		this.value = value;
 	}

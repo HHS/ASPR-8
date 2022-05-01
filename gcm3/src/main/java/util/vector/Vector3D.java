@@ -343,7 +343,7 @@ public final class Vector3D {
 			return y;
 		case 2:
 			return z;
-		default:
+		default:			
 			throw new RuntimeException("index out of bounds " + index);
 		}
 	}

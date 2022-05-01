@@ -6,12 +6,12 @@ import java.util.Set;
 
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
+import util.errors.ContractException;
 
 public final class RegionFilter extends Filter {
 

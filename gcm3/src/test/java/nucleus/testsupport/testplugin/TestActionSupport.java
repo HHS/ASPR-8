@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 public final class TestActionSupport {
 	private TestActionSupport() {

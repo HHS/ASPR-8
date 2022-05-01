@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
-import nucleus.util.ContractException;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = BulkPersonAdditionEvent.class)
 public class AT_BulkPersonAdditionEvent implements Event {

@@ -8,6 +8,7 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
 import plugins.partitions.support.Partition;
+import util.errors.ContractException;
 
 /**
  * Represents the mapping from the various {@link GroupTypeId} values to the
@@ -131,17 +132,17 @@ public final class GroupTypeCountMap {
 		/**
 		 * Sets the count for the given group type id
 		 * 
-		 * @throws IllegalArgumentException
-		 *             <li>if groupTypeId is null
-		 *             <li>if the count is negative
+		 * @throws ContractException
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if groupTypeId is null</li>
+		 *             <li>{@linkplain GroupError#NEGATIVE_GROUP_COUNT}if the count is negative</li>
 		 * 
 		 */
 		public Builder setCount(GroupTypeId groupTypeId, int count) {
 			if (groupTypeId == null) {
-				throw new IllegalArgumentException("null group type id");
+				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
 			if (count < 0) {
-				throw new IllegalArgumentException("negative count");
+				throw new ContractException(GroupError.NEGATIVE_GROUP_COUNT);				
 			}
 			scaffold.map.put(groupTypeId, count);
 			return this;

@@ -12,7 +12,6 @@ import java.util.Set;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.Event;
-import nucleus.util.ContractException;
 import plugins.partitions.support.DegeneratePopulationPartitionImpl;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -32,6 +31,7 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.support.StochasticsError;
+import util.errors.ContractException;
 
 /**
  * Mutable data manager for managing population partitions that are maintained
@@ -550,7 +550,7 @@ public final class PartitionsDataManager extends DataManager {
 				final PopulationPartition populationPartition = getPopulationPartition(key);
 				populationPartition.handleEvent(event);
 			}
-		} else {
+		} else {			
 			throw new RuntimeException("received unhandled event " + event);
 		}
 	}

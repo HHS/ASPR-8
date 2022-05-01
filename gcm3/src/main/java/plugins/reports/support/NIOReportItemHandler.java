@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ExperimentContext;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * An experiment-level output management utility for writing report items to

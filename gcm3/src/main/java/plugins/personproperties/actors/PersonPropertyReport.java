@@ -13,6 +13,7 @@ import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
+import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
@@ -22,11 +23,12 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
+import util.errors.ContractException;
 
 /**
  * A periodic Report that displays the number of people exhibiting a particular
- * value for each person property for a given region pair. Only
- * non-zero person counts are reported.
+ * value for each person property for a given region pair. Only non-zero person
+ * counts are reported.
  *
  *
  * Fields
@@ -53,8 +55,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	/*
-	 * A counter for people having the tuple (Region, Person
-	 * Property, Property Value)
+	 * A counter for people having the tuple (Region, Person Property, Property
+	 * Value)
 	 */
 	private final static class Counter {
 		int count;
@@ -194,6 +196,12 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private RegionsDataManager regionsDataManager;
 
+	/**
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID}
+	 *             if a person property specified in construction is unknown</li>
+	 */
 	@Override
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
@@ -219,7 +227,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		final Set<PersonPropertyId> validPropertyIds = personPropertiesDataManager.getPersonPropertyIds();
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {
 			if (!validPropertyIds.contains(personPropertyId)) {
-				throw new RuntimeException("invalid property id " + personPropertyId);
+				throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
 			}
 		}
 
@@ -255,7 +263,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			for (final PersonPropertyId personPropertyId : personPropertyIds) {
 				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
-				increment(regionId,  personPropertyId, personPropertyValue);
+				increment(regionId, personPropertyId, personPropertyValue);
 			}
 		}
 

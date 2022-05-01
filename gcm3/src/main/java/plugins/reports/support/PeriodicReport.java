@@ -4,7 +4,7 @@ import java.util.function.BiConsumer;
 
 import nucleus.ActorContext;
 import nucleus.Event;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * The abstract base class for reports that aggregate reporting aligned to a
@@ -77,7 +77,7 @@ public abstract class PeriodicReport {
 			reportHeaderBuilder.add("day");
 			reportHeaderBuilder.add("hour");
 			break;
-		default:
+		default:			
 			throw new RuntimeException("unknown report period " + reportPeriod);
 		}
 		return reportHeaderBuilder;
@@ -105,7 +105,7 @@ public abstract class PeriodicReport {
 			reportItemBuilder.addValue(reportingDay);
 			reportItemBuilder.addValue(reportingHour % 24);
 			break;
-		default:
+		default:			
 			throw new RuntimeException("unknown report period " + reportPeriod);
 		}
 	}
@@ -159,7 +159,7 @@ public abstract class PeriodicReport {
 		case HOURLY:
 			nextPlanTime = reportingDay + (double) (reportingHour + 1) / 24;
 			break;
-		default:
+		default:			
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
 	}
@@ -199,7 +199,7 @@ public abstract class PeriodicReport {
 				reportingDay++;
 			}
 			break;
-		default:
+		default:			
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
 

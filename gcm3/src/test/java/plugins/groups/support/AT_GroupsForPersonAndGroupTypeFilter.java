@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
@@ -31,6 +30,7 @@ import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = GroupsForPersonAndGroupTypeFilter.class)
 public class AT_GroupsForPersonAndGroupTypeFilter {

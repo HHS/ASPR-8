@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.util.ContractException;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
@@ -27,6 +26,7 @@ import plugins.resources.testsupport.TestResourceId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = RegionResourceUpdateEvent.class)
 public class AT_RegionResourceUpdateEvent implements Event {

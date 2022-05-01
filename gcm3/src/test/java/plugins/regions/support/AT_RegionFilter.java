@@ -9,7 +9,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -22,6 +21,7 @@ import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = RegionFilter.class)
 public class AT_RegionFilter {

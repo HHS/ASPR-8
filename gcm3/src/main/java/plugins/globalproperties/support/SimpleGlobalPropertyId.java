@@ -1,6 +1,6 @@
 package plugins.globalproperties.support;
 
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 /**
  * A simple implementor of {@link GlobalPropertyId} that wraps a value. 
  * @author Shawn Hatch

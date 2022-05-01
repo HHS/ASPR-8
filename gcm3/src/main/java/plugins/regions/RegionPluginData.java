@@ -8,7 +8,6 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import nucleus.util.ContractException;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.regions.support.RegionError;
@@ -17,6 +16,7 @@ import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
+import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state of regions. It contains: <BR>

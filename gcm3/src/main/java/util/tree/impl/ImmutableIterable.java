@@ -33,12 +33,13 @@ public final class ImmutableIterable<T> implements Iterable<T> {
 		
 		@Override
 		public K next() {
-			if (iterator == null) {				
+			if (iterator == null) {
 				throw new NoSuchElementException();				
 			}
 			return iterator.next();
 		}
 		
+		@Override
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}

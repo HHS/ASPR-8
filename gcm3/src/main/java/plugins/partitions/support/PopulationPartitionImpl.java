@@ -17,13 +17,13 @@ import org.apache.commons.math3.util.FastMath;
 import nucleus.Event;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.containers.BasePeopleContainer;
 import plugins.partitions.support.containers.PeopleContainer;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.support.RandomNumberGeneratorId;
+import util.errors.ContractException;
 
 /**
  * Primary implementor for {@link PopulationPartition}
@@ -255,7 +255,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		@Override
 		public Key next() {
-			if (nextKey == null) {
+			if (nextKey == null) {				
 				throw new NoSuchElementException();
 			}
 			final Key result = nextKey;
@@ -1011,6 +1011,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void releaseWeightsLock() {
 		if (!weightsAreLocked) {
+			
 			throw new RuntimeException("cannot release sample locking when lock not present");
 		}
 		weightsAreLocked = false;

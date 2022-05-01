@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import net.jcip.annotations.Immutable;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * Container for values used to in the construction of an agent. Values are

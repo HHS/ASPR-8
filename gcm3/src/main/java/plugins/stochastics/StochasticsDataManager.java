@@ -8,9 +8,9 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.DataManager;
-import nucleus.util.ContractException;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
+import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 /**

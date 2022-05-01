@@ -20,7 +20,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.util.ContractException;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
@@ -43,6 +42,7 @@ import plugins.stochastics.StochasticsPluginData;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = AttributeFilter.class)
 public final class AT_AttributeFilter {

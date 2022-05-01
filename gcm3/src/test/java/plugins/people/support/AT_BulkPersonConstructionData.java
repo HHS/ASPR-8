@@ -3,6 +3,7 @@ package plugins.people.support;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.Event;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = BulkPersonConstructionData.class)
 public final class AT_BulkPersonConstructionData implements Event {
@@ -80,8 +82,8 @@ public final class AT_BulkPersonConstructionData implements Event {
 		}
 
 		/*
-		 * Show that the bulk construction data returns the auxiliary data by type
-		 * and in the correct order
+		 * Show that the bulk construction data returns the auxiliary data by
+		 * type and in the correct order
 		 */
 		BulkPersonConstructionData bulkPersonConstructionData = builder.build();
 		for (Class<?> c : expectedValues.keySet()) {
@@ -89,9 +91,13 @@ public final class AT_BulkPersonConstructionData implements Event {
 			List<?> actualList = bulkPersonConstructionData.getValues(c);
 			assertEquals(expectedList, actualList);
 		}
-		
-		//show that types that have no values return an empty list
+
+		// show that types that have no values return an empty list
 		assertTrue(bulkPersonConstructionData.getValues(Double.class).isEmpty());
+
+		ContractException contractException = assertThrows(ContractException.class, () -> BulkPersonConstructionData.builder().addAuxiliaryData(null));
+		assertEquals(PersonError.NULL_AUXILIARY_DATA, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -142,7 +148,8 @@ public final class AT_BulkPersonConstructionData implements Event {
 		}
 
 		/*
-		 * Show that the bulk construction data returns the first auxiliary data by type
+		 * Show that the bulk construction data returns the first auxiliary data
+		 * by type
 		 * 
 		 */
 		BulkPersonConstructionData bulkPersonConstructionData = builder.build();
@@ -150,15 +157,15 @@ public final class AT_BulkPersonConstructionData implements Event {
 			Object expectedValue = expectedValues.get(c).get(0);
 			Optional<?> optional = bulkPersonConstructionData.getValue(c);
 			assertTrue(optional.isPresent());
-			Object actualValue = optional.get(); 
+			Object actualValue = optional.get();
 			assertEquals(expectedValue, actualValue);
 		}
-		
-		//show that types not contained return 
-		
+
+		// show that types not contained return
+
 		Optional<Double> optional = bulkPersonConstructionData.getValue(Double.class);
 		assertFalse(optional.isPresent());
-		
+
 	}
 
 	@Test
@@ -190,8 +197,8 @@ public final class AT_BulkPersonConstructionData implements Event {
 		}
 
 		/*
-		 * Show that the bulk construction data returns the auxiliary data by type
-		 * and in the correct order
+		 * Show that the bulk construction data returns the auxiliary data by
+		 * type and in the correct order
 		 */
 		BulkPersonConstructionData bulkPersonConstructionData = builder.build();
 		for (Class<?> c : expectedValues.keySet()) {
@@ -199,8 +206,8 @@ public final class AT_BulkPersonConstructionData implements Event {
 			List<?> actualList = bulkPersonConstructionData.getValues(c);
 			assertEquals(expectedList, actualList);
 		}
-		
-		//show that types that have no values return an empty list
+
+		// show that types that have no values return an empty list
 		assertTrue(bulkPersonConstructionData.getValues(Double.class).isEmpty());
 	}
 }

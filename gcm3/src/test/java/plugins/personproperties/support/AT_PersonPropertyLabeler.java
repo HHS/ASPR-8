@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
@@ -27,6 +26,7 @@ import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = PersonPropertyLabeler.class)
 public class AT_PersonPropertyLabeler {

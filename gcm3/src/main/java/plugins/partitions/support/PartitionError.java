@@ -1,7 +1,7 @@
 package plugins.partitions.support;
 
-import nucleus.util.ContractError;
-import nucleus.util.ContractException;
+import util.errors.ContractError;
+import util.errors.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general
@@ -21,6 +21,8 @@ public enum PartitionError implements ContractError {
 	NULL_EQUALITY_OPERATOR("Null equality operator"),
 	NULL_LABEL_SET("Null label set"),
 	NULL_PARTITION("Null partition"),
+	NULL_PARTITION_LABEL("Null partition label"),
+	NULL_PARTITION_LABEL_DIMENSION("Null partition label dimension"),
 	NULL_FILTER("Null filter"),
 	NULL_PARTITION_KEY("Null population partition key"),	
 	NULL_POPULATION_PARTITION("Null population partition"),

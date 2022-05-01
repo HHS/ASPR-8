@@ -204,7 +204,7 @@ public final class Vector2D {
 			return x;
 		case 1:
 			return y;
-		default:
+		default:			
 			throw new RuntimeException("index out of bounds " + index);
 		}
 	}

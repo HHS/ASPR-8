@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.util.ContractException;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
@@ -26,6 +25,7 @@ import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 @UnitTest(target = ResourcePropertyUpdateEvent.class)
 

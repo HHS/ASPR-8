@@ -35,7 +35,7 @@ public class LatLon {
 	/**
 	 * Constructs a LatLon from the given latitude and longitude
 	 * 
-	 * @throws RuntimeException
+	 * @throws IllegalArgumentException
 	 *             <li>if the latitude is not in the interval [-90,90]
 	 *             <li>if the longitude is not in the interval [-180,180]
 	 * 
@@ -44,16 +44,16 @@ public class LatLon {
 	 */
 	public LatLon(double latitude, double longitude) {
 		if (latitude > 90) {
-			throw new RuntimeException("Latitude > 90 degrees");
+			throw new IllegalArgumentException("Latitude > 90 degrees");
 		}
 		if (latitude < -90) {
-			throw new RuntimeException("Latitude < -90 degrees");
+			throw new IllegalArgumentException("Latitude < -90 degrees");
 		}
 		if (longitude > 180) {
-			throw new RuntimeException("Longitude > 180 degrees");
+			throw new IllegalArgumentException("Longitude > 180 degrees");
 		}
 		if (longitude < -180) {
-			throw new RuntimeException("Longitude < -180 degrees");
+			throw new IllegalArgumentException("Longitude < -180 degrees");
 		}
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -62,13 +62,13 @@ public class LatLon {
 	/**
 	 * Constructs a LatLon from the given LatLonAlt
 	 * 
-	 * @throws RuntimeException
+	 * @throws NullPointerException 
 	 *             <li>if the latLonAlt is null
 	 * @param latLonAlt
 	 */
 	public LatLon(LatLonAlt latLonAlt) {
 		if (latLonAlt == null) {
-			throw new RuntimeException("null latLonAlt");
+			throw new NullPointerException("null latLonAlt");
 		}
 		this.latitude = latLonAlt.getLatitude();
 		this.longitude = latLonAlt.getLongitude();

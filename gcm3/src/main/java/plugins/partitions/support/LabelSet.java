@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import util.errors.ContractException;
+
 /**
  * A {@linkplain LabelSet} is a set of labels that are used to specify a sub-set
  * of the cell space of a partition during sampling.
@@ -87,13 +89,19 @@ public final class LabelSet {
 
 		/**
 		 * Sets the dimension label
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PartitionError#NULL_PARTITION_LABEL_DIMENSION}
+		 *             if the dimension is null</li>
+		 *             <li>{@linkplain PartitionError#NULL_PARTITION_LABEL} if
+		 *             the label is null</li>
 		 */
 		public Builder setLabel(Object dimension, Object label) {
 			if (dimension == null) {
-				throw new RuntimeException("null dimension");
+				throw new ContractException(PartitionError.NULL_PARTITION_LABEL_DIMENSION);
 			}
 			if (label == null) {
-				throw new RuntimeException("null label");
+				throw new ContractException(PartitionError.NULL_PARTITION_LABEL);
 			}
 			scaffold.labels.put(dimension, label);
 			return this;
@@ -136,7 +144,7 @@ public final class LabelSet {
 	}
 
 	private LabelSet(Scaffold scaffold) {
-		this.labels = scaffold.labels;		
+		this.labels = scaffold.labels;
 		this.dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(labels.keySet()));
 	}
 

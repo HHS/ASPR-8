@@ -25,11 +25,24 @@ public final class MutableStat implements Stat {
 		return combineStats(result);
 	}
 
+	/**
+	 * Combines several stats
+	 * 
+	 * @throws NullPointerException
+	 *             <li>if the stats are null</li>
+	 * 
+	 */
 	public static Stat combineStats(Stat... stats) {
 
 		if (stats == null) {
-			throw new RuntimeException();
+			throw new NullPointerException();
 		}
+		for (Stat stat : stats) {
+			if (stat == null) {
+				throw new NullPointerException();
+			}
+		}
+
 		if (stats.length == 0) {
 			return new MutableStat();
 		}

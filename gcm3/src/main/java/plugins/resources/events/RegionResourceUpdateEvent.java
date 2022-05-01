@@ -6,13 +6,13 @@ import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
+import util.errors.ContractException;
 
 /**
  * An observation event indicating that a region's resource level has changed.

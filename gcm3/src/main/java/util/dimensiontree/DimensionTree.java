@@ -14,6 +14,7 @@ import util.dimensiontree.internal.Node;
 import util.dimensiontree.internal.Rectanguloid;
 import util.dimensiontree.internal.Shape;
 import util.dimensiontree.internal.Sphere;
+import util.errors.ContractException;
 
 /**
  * <P>
@@ -123,13 +124,22 @@ public final class DimensionTree<T> {
 		 * Builds a {@link DimensionTree} from the contributed parameters.
 		 * 
 		 * 
-		 * @throws RuntimeException
-		 *             <li>if the selected leaf size is not positive
-		 *             <li>if the lower bounds were not contributed or were null
-		 *             <li>if the upper bounds were not contributed or were null
-		 *             <li>if the lower and upper bounds do not match in length
-		 *             <li>if any of the lower bounds exceed the corresponding
-		 *             upper bounds
+		 * @throws ContractException
+		 *             <li>{@linkplain DimensionTreeError#NON_POSITIVE_LEAF_SIZE}
+		 *             if the selected leaf size is not positive</li>
+		 *             <li>{@linkplain DimensionTreeError#LOWER_BOUNDS_ARE_NULL}
+		 *             if the lower bounds were not contributed or were
+		 *             null</li>
+		 *             <li>{@linkplain DimensionTreeError#UPPER_BOUNDS_ARE_NULL}
+		 *             if the upper bounds were not contributed or were
+		 *             null</li>
+		 *             <li>{@linkplain DimensionTreeError#BOUNDS_MISMATCH} if
+		 *             the lower and upper bounds do not match in length</li>
+		 *             <li>{@linkplain DimensionTreeError#LOWER_BOUNDS_EXCEED_UPPER_BOUNDS}
+		 *             if any of the lower bounds exceed the corresponding upper
+		 *             bounds</li>
+		 * 
+		 * 
 		 */
 		public <T> DimensionTree<T> build() {
 
@@ -152,26 +162,26 @@ public final class DimensionTree<T> {
 	private DimensionTree(Scaffold scaffold) {
 
 		if (scaffold.leafSize < 1) {
-			throw new RuntimeException("non-positive leaf size");
+			throw new ContractException(DimensionTreeError.NON_POSITIVE_LEAF_SIZE);
 		}
 
 		if (scaffold.lowerBounds == null) {
-			throw new RuntimeException("lower bounds is null");
+			throw new ContractException(DimensionTreeError.LOWER_BOUNDS_ARE_NULL);
 		}
 
 		if (scaffold.upperBounds == null) {
-			throw new RuntimeException("upper bounds is null");
+			throw new ContractException(DimensionTreeError.UPPER_BOUNDS_ARE_NULL);
 		}
 
 		int dimension = scaffold.lowerBounds.length;
 
 		if (scaffold.upperBounds.length != dimension) {
-			throw new RuntimeException("dimensional mismatch between bounds");
+			throw new ContractException(DimensionTreeError.BOUNDS_MISMATCH);
 		}
 
 		for (int i = 0; i < dimension; i++) {
 			if (scaffold.lowerBounds[i] > scaffold.upperBounds[i]) {
-				throw new RuntimeException("lower bounds exceed upper bounds");
+				throw new ContractException(DimensionTreeError.LOWER_BOUNDS_EXCEED_UPPER_BOUNDS);
 			}
 		}
 
@@ -334,12 +344,15 @@ public final class DimensionTree<T> {
 	public boolean add(double[] position, T member) {
 
 		if (position == null) {
+			// deception
 			throw new RuntimeException("null position");
 		}
 		if (position.length != commonState.dimension) {
+			// deception
 			throw new RuntimeException("dimensional mismatch");
 		}
 		if (member == null) {
+			// deception
 			throw new RuntimeException("null value being added");
 		}
 		expandRootToFitPosition(position);
@@ -374,9 +387,11 @@ public final class DimensionTree<T> {
 	 */
 	public Optional<T> getNearestMember(double[] position) {
 		if (position == null) {
+			// deception
 			throw new RuntimeException("null position");
 		}
 		if (commonState.dimension != position.length) {
+			// deception
 			throw new RuntimeException("dimensional mismatch");
 		}
 
@@ -440,19 +455,24 @@ public final class DimensionTree<T> {
 
 	public List<T> getMembersInRectanguloid(double[] lowerBounds, double[] upperBounds) {
 		if (lowerBounds == null) {
+			// deception
 			throw new RuntimeException("null lower bounds");
 		}
 		if (upperBounds == null) {
+			// deception
 			throw new RuntimeException("null lower bounds");
 		}
 		if (lowerBounds.length != this.commonState.dimension) {
+			// deception
 			throw new RuntimeException("lower bounds do not match dimension of tree");
 		}
 		if (upperBounds.length != this.commonState.dimension) {
+			// deception
 			throw new RuntimeException("upper bounds do not match dimension of tree");
 		}
 		for (int i = 0; i < upperBounds.length; i++) {
 			if (lowerBounds[i] > upperBounds[i]) {
+				// deception
 				throw new RuntimeException("lower bounds exceed upper bounds");
 			}
 		}
@@ -477,12 +497,15 @@ public final class DimensionTree<T> {
 	 */
 	public List<T> getMembersInSphere(double radius, double[] position) {
 		if (position == null) {
+			// deception
 			throw new RuntimeException("null position");
 		}
 		if (this.commonState.dimension != position.length) {
+			// deception
 			throw new RuntimeException("dimensional mismatch");
 		}
 		if (radius < 0) {
+			// deception
 			throw new RuntimeException("negative radius");
 		}
 		return getObjectsInDimensionalShape(new Sphere(radius, position));

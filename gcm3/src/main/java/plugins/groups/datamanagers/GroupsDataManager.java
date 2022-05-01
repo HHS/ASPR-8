@@ -16,7 +16,6 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -51,6 +50,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
+import util.errors.ContractException;
 
 /**
  * <p>
@@ -1128,7 +1128,7 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private void releaseSamplingLock() {
-		if (!samplingIsLocked) {
+		if (!samplingIsLocked) {			
 			throw new RuntimeException("cannot release sample locking when lock not present");
 		}
 		samplingIsLocked = false;

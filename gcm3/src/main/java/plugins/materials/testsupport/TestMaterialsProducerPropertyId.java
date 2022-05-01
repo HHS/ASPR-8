@@ -147,6 +147,7 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 		case MATERIALS_PRODUCER_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
 		default:
+			
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

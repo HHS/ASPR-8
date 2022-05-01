@@ -7,7 +7,6 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.util.ContractException;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
@@ -16,6 +15,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 /**
  * Published data view that provides attribute information.

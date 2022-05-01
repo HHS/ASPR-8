@@ -14,7 +14,6 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchAdditionEvent;
@@ -45,6 +44,7 @@ import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.PropertyValueRecord;
+import util.errors.ContractException;
 
 /**
  * General manager for all material activities.
@@ -98,7 +98,7 @@ public final class MaterialsDataManager extends DataManager {
 		}
 
 		public void decrementAmount(final long amount) {
-			if (amount < 0) {
+			if (amount < 0) {				
 				throw new RuntimeException("negative amount");
 			}
 
@@ -293,25 +293,6 @@ public final class MaterialsDataManager extends DataManager {
 			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
 		}
 
-		// for (final MaterialId materialId :
-		// materialsPluginData.getMaterialIds()) {
-		// materialToBatchPropertyIdsMap.put(materialId,
-		// materialsPluginData.getBatchPropertyIds(materialId));
-		// }
-
-		// RegionDataManager regionDataManager =
-		// dataManagerContext.getDataManager(RegionDataManager.class);
-		// regionIds = regionDataManager.getRegionIds();
-		// materialsProducerIds = materialsPluginData.getMaterialsProducerIds();
-
-		// for (final MaterialId materialId :
-		// materialsPluginData.getMaterialIds()) {
-		// materialIds.put(materialId,
-		// materialsPluginData.getBatchPropertyIds(materialId));
-		// }
-		// materialsProducerPropertyIds =
-		// materialsPluginData.getMaterialsProducerPropertyIds();
-
 		/*
 		 * Load the remaining data from the scenario that generally corresponds
 		 * to mutations available to components so that reporting will properly
@@ -371,7 +352,7 @@ public final class MaterialsDataManager extends DataManager {
 			for (final BatchId batchId : batches) {
 				final BatchRecord batchRecord = batchRecords.get(batchId);
 				if (batchRecord.stageRecord != null) {
-					throw new RuntimeException("batch already staged");
+					throw new ContractException(MaterialsError.BATCH_ALREADY_STAGED);
 				}
 				final StageRecord stageRecord = stageRecords.get(stageId);
 				

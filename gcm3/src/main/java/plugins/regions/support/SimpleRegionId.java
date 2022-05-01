@@ -6,12 +6,12 @@ public final class SimpleRegionId implements RegionId {
 	/**
 	 * Creates a region id from the given value
 	 * 
-	 * @throws RuntimeException
+	 * @throws NullPointerException
 	 *             if the value is null
 	 */
 	public SimpleRegionId(Object value) {
-		if (value == null) {
-			throw new RuntimeException("null value");
+		if (value == null) {			
+			throw new NullPointerException("null value for simple region id");
 		}
 		this.value = value;
 	}

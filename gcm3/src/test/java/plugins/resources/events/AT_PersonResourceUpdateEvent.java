@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.Event;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.util.ContractException;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -33,6 +32,7 @@ import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 
 @UnitTest(target = PersonResourceUpdateEvent.class)

@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.SimulationContext;
-import nucleus.util.ContractException;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
@@ -14,6 +13,7 @@ import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
 import plugins.partitions.support.PartitionError;
 import plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	private final GroupTypeId groupTypeId;

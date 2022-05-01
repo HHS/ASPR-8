@@ -3,7 +3,7 @@ package plugins.util.properties;
 import java.util.Optional;
 
 import net.jcip.annotations.ThreadSafe;
-import nucleus.util.ContractException;
+import util.errors.ContractException;
 
 /**
  * A thread-safe, immutable class that defines a property, but does not indicate
