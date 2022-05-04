@@ -20,8 +20,8 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
@@ -90,15 +90,15 @@ public class AT_ResourcePropertyReport {
 		builder.addPlugin(peoplePlugin);
 		
 		// add the regions plugin
-		RegionPluginData.Builder regionsBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionsBuilder.addRegion(testRegionId);
 		}
 		for (PersonId personId : people) {
 			regionsBuilder.setPersonRegion(personId, TestRegionId.getRandomRegionId(randomGenerator));
 		}
-		RegionPluginData regionPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
+		RegionsPluginData regionsPluginData = regionsBuilder.build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 		builder.addPlugin(regionPlugin);
 
 		// add the report plugin

@@ -14,21 +14,21 @@ import plugins.people.PeoplePluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = RegionPlugin.class)
+@UnitTest(target = RegionsPlugin.class)
 public class AT_RegionPlugin {
 
 	
 
 	@Test
-	@UnitTestMethod(name = "getRegionPlugin", args = {RegionPluginData.class})
+	@UnitTestMethod(name = "getRegionPlugin", args = {RegionsPluginData.class})
 	public void testGetRegionPlugin() {
-		RegionPluginData regionPluginData = RegionPluginData.builder().build();
-		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
+		RegionsPluginData regionsPluginData = RegionsPluginData.builder().build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 
 		assertEquals(1,regionPlugin.getPluginDatas().size());
-		assertTrue(regionPlugin.getPluginDatas().contains(regionPluginData));
+		assertTrue(regionPlugin.getPluginDatas().contains(regionsPluginData));
 
-		assertEquals(RegionPluginId.PLUGIN_ID, regionPlugin.getPluginId());
+		assertEquals(RegionsPluginId.PLUGIN_ID, regionPlugin.getPluginId());
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);

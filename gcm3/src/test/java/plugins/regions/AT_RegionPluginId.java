@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import tools.annotations.UnitTest;
 
-@UnitTest(target = RegionPluginId.class)
+@UnitTest(target = RegionsPluginId.class)
 public class AT_RegionPluginId {
 
 	public void test() {
-		assertNotNull(RegionPluginId.PLUGIN_ID);
+		assertNotNull(RegionsPluginId.PLUGIN_ID);
 	}
 }

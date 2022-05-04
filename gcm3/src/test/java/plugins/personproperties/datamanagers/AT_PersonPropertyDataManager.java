@@ -45,8 +45,8 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsDataManager;
@@ -573,7 +573,7 @@ public final class AT_PersonPropertyDataManager {
 		builder.addPlugin(personPropertyPlugin);
 
 		// add the regions plugin
-		RegionPluginData.Builder regionBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
 
 		// add the regions
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -583,8 +583,8 @@ public final class AT_PersonPropertyDataManager {
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
 			regionBuilder.setPersonRegion(personId, randomRegionId);
 		}
-		RegionPluginData regionPluginData = regionBuilder.build();
-		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
+		RegionsPluginData regionsPluginData = regionBuilder.build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 
 		builder.addPlugin(regionPlugin);
 

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.people.PeoplePluginId;
-import plugins.regions.RegionPluginId;
+import plugins.regions.RegionsPluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
@@ -34,7 +34,7 @@ public class AT_ResourcesPlugin {
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);
-		expectedDependencies.add(RegionPluginId.PLUGIN_ID);
+		expectedDependencies.add(RegionsPluginId.PLUGIN_ID);
 		
 		assertEquals(expectedDependencies, resourcesPlugin.getPluginDependencies());
 

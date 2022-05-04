@@ -8,7 +8,7 @@ import nucleus.PluginId;
  *
  */
 
-public final class RegionPluginId implements PluginId {
-	public final static PluginId PLUGIN_ID = new RegionPluginId();
-	private RegionPluginId() {};
+public final class RegionsPluginId implements PluginId {
+	public final static PluginId PLUGIN_ID = new RegionsPluginId();
+	private RegionsPluginId() {};
 }

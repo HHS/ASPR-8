@@ -16,8 +16,8 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.TimeTrackingPolicy;
@@ -41,7 +41,7 @@ public final class RegionsActionSupport {
 		Builder builder = Simulation.builder();
 
 		// add the region plugin
-		RegionPluginData.Builder regionPluginBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
 		for (TestRegionId regionId : TestRegionId.values()) {
 			regionPluginBuilder.addRegion(regionId);
 		}
@@ -55,7 +55,7 @@ public final class RegionsActionSupport {
 			regionPluginBuilder.setPersonRegion(personId, testRegionId);
 			testRegionId = testRegionId.next();
 		}
-		builder.addPlugin(RegionPlugin.getRegionPlugin(regionPluginBuilder.build()));
+		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionPluginBuilder.build()));
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();

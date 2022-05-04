@@ -36,7 +36,7 @@ import util.errors.ContractException;
  */
 
 @Immutable
-public class RegionPluginData implements PluginData {
+public class RegionsPluginData implements PluginData {
 
 	private static class Data {
 
@@ -217,13 +217,13 @@ public class RegionPluginData implements PluginData {
 		 *             that default.
 		 * 
 		 */
-		public RegionPluginData build() {
+		public RegionsPluginData build() {
 			try {
 				if (data.regionArrivalTimeTrackingPolicy == null) {
 					data.regionArrivalTimeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
 				}
 				validateData(data);
-				return new RegionPluginData(data);
+				return new RegionsPluginData(data);
 			} finally {
 				data = new Data();
 			}
@@ -345,7 +345,7 @@ public class RegionPluginData implements PluginData {
 
 	private final Data data;
 
-	private RegionPluginData(Data data) {
+	private RegionsPluginData(Data data) {
 		this.data = data;
 	}
 

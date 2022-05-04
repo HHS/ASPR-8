@@ -16,8 +16,8 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -55,7 +55,7 @@ public class AT_RegionPropertyReport {
 
 		Experiment.Builder builder = Experiment.builder();
 
-		RegionPluginData.Builder regionBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
 
 		// add regions A, B and C
 		RegionId regionA = new SimpleRegionId("Region_A");
@@ -86,7 +86,7 @@ public class AT_RegionPropertyReport {
 		propertyDefinition = PropertyDefinition.builder().setDefaultValue("start").setType(String.class).build();
 		regionBuilder.defineRegionProperty(prop_policy, propertyDefinition);
 
-		builder.addPlugin(RegionPlugin.getRegionPlugin(regionBuilder.build()));
+		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionBuilder.build()));
 
 		// add the report
 		ReportsPluginData reportsPluginData = ReportsPluginData	.builder()//

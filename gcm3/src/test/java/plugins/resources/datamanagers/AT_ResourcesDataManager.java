@@ -34,8 +34,8 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
@@ -2652,15 +2652,15 @@ public final class AT_ResourcesDataManager {
 
 
 		// add the regions plugin
-		RegionPluginData.Builder regionsBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionsBuilder.addRegion(testRegionId);
 		}
 		for (PersonId personId : people) {
 			regionsBuilder.setPersonRegion(personId, TestRegionId.getRandomRegionId(randomGenerator));
 		}
-		RegionPluginData regionPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
+		RegionsPluginData regionsPluginData = regionsBuilder.build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 		builder.addPlugin(regionPlugin);
 
 

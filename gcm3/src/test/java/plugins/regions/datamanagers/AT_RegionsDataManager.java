@@ -38,8 +38,8 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionError;
@@ -80,7 +80,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { RegionPluginData.class })
+	@UnitTestConstructor(args = { RegionsPluginData.class })
 	public void testConstructor() {
 		// this test is covered by the remaining tests
 		ContractException contractException = assertThrows(ContractException.class, () -> new RegionsDataManager(null));
@@ -1132,7 +1132,7 @@ public class AT_RegionsDataManager {
 		Builder builder = Simulation.builder();
 
 		// add the region plugin
-		RegionPluginData.Builder regionPluginBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
 		for (TestRegionId regionId : TestRegionId.values()) {
 			regionPluginBuilder.addRegion(regionId);
 		}
@@ -1155,8 +1155,8 @@ public class AT_RegionsDataManager {
 		}
 
 		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		RegionPluginData regionPluginData = regionPluginBuilder.build();
-		builder.addPlugin(RegionPlugin.getRegionPlugin(regionPluginData));
+		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
+		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionsPluginData));
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();		
@@ -1177,17 +1177,17 @@ public class AT_RegionsDataManager {
 			// show that the initial state of the region data manager matches
 			// the state of the region plugin data
 
-			assertEquals(regionPluginData.getPersonRegionArrivalTrackingPolicy(), regionsDataManager.getPersonRegionArrivalTrackingPolicy());
-			assertEquals(regionPluginData.getRegionIds(), regionsDataManager.getRegionIds());
-			assertEquals(regionPluginData.getRegionPropertyIds(), regionsDataManager.getRegionPropertyIds());
-			for (RegionPropertyId regionPropertyId : regionPluginData.getRegionPropertyIds()) {
-				PropertyDefinition expectedPropertyDefinition = regionPluginData.getRegionPropertyDefinition(regionPropertyId);
+			assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(), regionsDataManager.getPersonRegionArrivalTrackingPolicy());
+			assertEquals(regionsPluginData.getRegionIds(), regionsDataManager.getRegionIds());
+			assertEquals(regionsPluginData.getRegionPropertyIds(), regionsDataManager.getRegionPropertyIds());
+			for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
+				PropertyDefinition expectedPropertyDefinition = regionsPluginData.getRegionPropertyDefinition(regionPropertyId);
 				PropertyDefinition actualPropertyDefinition = regionsDataManager.getRegionPropertyDefinition(regionPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
-			for (RegionId regionId : regionPluginData.getRegionIds()) {
-				for (RegionPropertyId regionPropertyId : regionPluginData.getRegionPropertyIds()) {
-					Object expectedValue = regionPluginData.getRegionPropertyValue(regionId, regionPropertyId);
+			for (RegionId regionId : regionsPluginData.getRegionIds()) {
+				for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
+					Object expectedValue = regionsPluginData.getRegionPropertyValue(regionId, regionPropertyId);
 					Object actualValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
 					assertEquals(expectedValue, actualValue);
 				}
@@ -1276,7 +1276,7 @@ public class AT_RegionsDataManager {
 		Builder builder = Simulation.builder();
 
 		// add the region plugin
-		RegionPluginData.Builder regionPluginBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
 		for (TestRegionId regionId : TestRegionId.values()) {
 			regionPluginBuilder.addRegion(regionId);
 		}
@@ -1290,8 +1290,8 @@ public class AT_RegionsDataManager {
 			regionPluginBuilder.setPersonRegion(personId, testRegionId);
 			testRegionId = testRegionId.next();
 		}
-		RegionPluginData regionPluginData = regionPluginBuilder.build();
-		builder.addPlugin(RegionPlugin.getRegionPlugin(regionPluginData));
+		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
+		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionsPluginData));
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -1316,7 +1316,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for(PersonId personId : people) {
 				RegionId actualRegionId = regionsDataManager.getPersonRegion(personId);
-				RegionId expectedRegionId = regionPluginData.getPersonRegion(personId);
+				RegionId expectedRegionId = regionsPluginData.getPersonRegion(personId);
 				assertEquals(actualRegionId, expectedRegionId);
 			}
 			

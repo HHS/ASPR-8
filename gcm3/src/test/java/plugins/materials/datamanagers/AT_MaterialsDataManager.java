@@ -64,8 +64,8 @@ import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
@@ -4241,12 +4241,12 @@ public class AT_MaterialsDataManager {
 		builder.addPlugin(peoplePlugin);
 
 		// add the regions plugin
-		RegionPluginData.Builder regionsBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionsBuilder.addRegion(testRegionId);
 		}
-		RegionPluginData regionPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
+		RegionsPluginData regionsPluginData = regionsBuilder.build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 		builder.addPlugin(regionPlugin);
 
 		// add the stochastics plugin

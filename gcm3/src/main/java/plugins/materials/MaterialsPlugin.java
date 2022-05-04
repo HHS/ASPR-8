@@ -2,7 +2,7 @@ package plugins.materials;
 
 import nucleus.Plugin;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.regions.RegionPluginId;
+import plugins.regions.RegionsPluginId;
 import plugins.resources.ResourcesPluginId;
 
 /**
@@ -20,7 +20,7 @@ public final class MaterialsPlugin {
 		return Plugin	.builder()//
 						.setPluginId(MaterialsPluginId.PLUGIN_ID)//
 						.addPluginData(materialsPluginData)//
-						.addPluginDependency(RegionPluginId.PLUGIN_ID)//
+						.addPluginDependency(RegionsPluginId.PLUGIN_ID)//
 						.addPluginDependency(ResourcesPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							MaterialsPluginData pluginData = c.getPluginData(MaterialsPluginData.class);

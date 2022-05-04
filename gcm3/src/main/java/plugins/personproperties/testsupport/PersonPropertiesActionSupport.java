@@ -20,8 +20,8 @@ import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -66,7 +66,7 @@ public class PersonPropertiesActionSupport {
 		builder.addPlugin(personPropertyPlugin);
 
 		// add the regions plugin
-		RegionPluginData.Builder regionBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
 		// add the regions
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionBuilder.addRegion(testRegionId);
@@ -75,8 +75,8 @@ public class PersonPropertiesActionSupport {
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
 			regionBuilder.setPersonRegion(personId, randomRegionId);
 		}
-		RegionPluginData regionPluginData = regionBuilder.build();
-		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
+		RegionsPluginData regionsPluginData = regionBuilder.build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 		builder.addPlugin(regionPlugin);
 
 		// add the stochastics plugin

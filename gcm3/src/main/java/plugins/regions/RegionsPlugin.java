@@ -4,19 +4,19 @@ import nucleus.Plugin;
 import plugins.people.PeoplePluginId;
 import plugins.regions.datamanagers.RegionsDataManager;
 
-public final class RegionPlugin {
+public final class RegionsPlugin {
 
-	private RegionPlugin() {
+	private RegionsPlugin() {
 	}
 
-	public static Plugin getRegionPlugin(RegionPluginData regionPluginData) {
+	public static Plugin getRegionsPlugin(RegionsPluginData regionsPluginData) {
 
 		return Plugin	.builder()//
-						.addPluginData(regionPluginData)//
-						.setPluginId(RegionPluginId.PLUGIN_ID)//
+						.addPluginData(regionsPluginData)//
+						.setPluginId(RegionsPluginId.PLUGIN_ID)//
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
-							RegionPluginData pluginData = c.getPluginData(RegionPluginData.class);
+							RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class);
 							c.addDataManager(new RegionsDataManager(pluginData));
 						})//
 						.build();

@@ -18,8 +18,8 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionError;
@@ -35,7 +35,7 @@ import util.errors.ContractException;
 
 /**
  * Mutable data manager that backs the {@linkplain RegionDataView}. This data
- * manager is for internal use by the {@link RegionPlugin} and should not be
+ * manager is for internal use by the {@link RegionsPlugin} and should not be
  * published.
  * 
  * All regions and region properties are established during construction and
@@ -49,17 +49,17 @@ import util.errors.ContractException;
 public final class RegionsDataManager extends DataManager {
 	private DataManagerContext dataManagerContext;
 
-	private final RegionPluginData regionPluginData;
+	private final RegionsPluginData regionsPluginData;
 
 	/**
 	 * Creates a Region Data Manager from the given resolver context.
 	 * Preconditions: The context must be a valid and non-null.
 	 */
-	public RegionsDataManager(RegionPluginData regionPluginData) {
-		if (regionPluginData == null) {
+	public RegionsDataManager(RegionsPluginData regionsPluginData) {
+		if (regionsPluginData == null) {
 			throw new ContractException(RegionError.NULL_REGION_PLUGIN_DATA);
 		}
-		this.regionPluginData = regionPluginData;
+		this.regionsPluginData = regionsPluginData;
 	}
 
 	private PeopleDataManager peopleDataManager;
@@ -162,12 +162,12 @@ public final class RegionsDataManager extends DataManager {
 		 */
 		regionValues = new IntValueContainer(0);
 
-		regionArrivalTrackingPolicy = regionPluginData.getPersonRegionArrivalTrackingPolicy();
+		regionArrivalTrackingPolicy = regionsPluginData.getPersonRegionArrivalTrackingPolicy();
 		if (regionArrivalTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
 			regionArrivalTimes = new DoubleValueContainer(0);
 		}
 
-		final Set<RegionId> regionIds = regionPluginData.getRegionIds();
+		final Set<RegionId> regionIds = regionsPluginData.getRegionIds();
 		for (final RegionId regionId : regionIds) {
 			regionPopulationRecordMap.put(regionId, new PopulationRecord());
 		}
@@ -184,8 +184,8 @@ public final class RegionsDataManager extends DataManager {
 			indexToRegionMap[index++] = regionId;
 		}
 
-		for (RegionPropertyId regionPropertyId : regionPluginData.getRegionPropertyIds()) {
-			PropertyDefinition propertyDefinition = regionPluginData.getRegionPropertyDefinition(regionPropertyId);
+		for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
+			PropertyDefinition propertyDefinition = regionsPluginData.getRegionPropertyDefinition(regionPropertyId);
 			regionPropertyIds.add(regionPropertyId);
 			regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 		}
@@ -194,7 +194,7 @@ public final class RegionsDataManager extends DataManager {
 			Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 			regionPropertyMap.put(regionId, map);
 			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
-				final Object regionPropertyValue = regionPluginData.getRegionPropertyValue(regionId, regionPropertyId);
+				final Object regionPropertyValue = regionsPluginData.getRegionPropertyValue(regionId, regionPropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
 				propertyValueRecord.setPropertyValue(regionPropertyValue);
 				map.put(regionPropertyId,propertyValueRecord);
@@ -203,14 +203,14 @@ public final class RegionsDataManager extends DataManager {
 		
 		List<PersonId> people = peopleDataManager.getPeople();
 		for (PersonId personId : people) {
-			RegionId regionId = regionPluginData.getPersonRegion(personId);
+			RegionId regionId = regionsPluginData.getPersonRegion(personId);
 			final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
 			populationRecord.populationCount++;
 			Integer regionIndex = regionToIndexMap.get(regionId).intValue();
 			regionValues.setIntValue(personId.getValue(), regionIndex);
 		}
 		
-		if(regionPluginData.getPersonIds().size()>people.size()) {		
+		if(regionsPluginData.getPersonIds().size()>people.size()) {		
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID,"There are people in the region plugin data that are not contained in the person data manager");
 		}
 
@@ -303,7 +303,7 @@ public final class RegionsDataManager extends DataManager {
 
 	/**
 	 * Returns the set of {@link RegionId} values that are defined by the
-	 * {@link RegionPluginData}.
+	 * {@link RegionsPluginData}.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RegionId> Set<T> getRegionIds() {

@@ -18,8 +18,8 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.regions.RegionPlugin;
-import plugins.regions.RegionPluginData;
+import plugins.regions.RegionsPlugin;
+import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
@@ -117,7 +117,7 @@ public class ResourcesActionSupport {
 		builder.addPlugin(peoplePlugin);
 
 		// add the regions plugin
-		RegionPluginData.Builder regionsBuilder = RegionPluginData.builder();
+		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionsBuilder.addRegion(testRegionId);
 		}
@@ -125,8 +125,8 @@ public class ResourcesActionSupport {
 			regionsBuilder.setPersonRegion(personId, TestRegionId.getRandomRegionId(randomGenerator));
 		}
 		
-		RegionPluginData regionPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
+		RegionsPluginData regionsPluginData = regionsBuilder.build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 
 		builder.addPlugin(regionPlugin);
 
