@@ -23,7 +23,6 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -341,9 +340,6 @@ public class AT_GroupPopulationReport {
 		GroupsPluginData groupsPluginData = groupBuilder.build();
 		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
 		builder.addPlugin(groupPlugin);
-
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();

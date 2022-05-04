@@ -37,8 +37,8 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchAdditionEvent;
+import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;
 import plugins.materials.events.BatchPropertyUpdateEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
@@ -62,7 +62,6 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.regions.RegionPlugin;
@@ -70,8 +69,6 @@ import plugins.regions.RegionPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
@@ -4236,9 +4233,6 @@ public class AT_MaterialsDataManager {
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
 		builder.addPlugin(resourcesPlugin);
 
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
-
 		// add the people plugin
 
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -4254,12 +4248,6 @@ public class AT_MaterialsDataManager {
 		RegionPluginData regionPluginData = regionsBuilder.build();
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
 		builder.addPlugin(regionPlugin);
-
-		// add the report plugin
-		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
-		ReportsPluginData reportsPluginData = reportsBuilder.build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
 
 		// add the stochastics plugin
 		StochasticsPluginData.Builder stochasticsBuilder = StochasticsPluginData.builder();

@@ -15,15 +15,12 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.stochastics.StochasticsPlugin;
@@ -109,10 +106,6 @@ public class ResourcesActionSupport {
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
 		builder.addPlugin(resourcesPlugin);
 		
-
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
-
 		// add the people plugin
 
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -136,13 +129,6 @@ public class ResourcesActionSupport {
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
 
 		builder.addPlugin(regionPlugin);
-
-		// add the report plugin
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
-
-		
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();

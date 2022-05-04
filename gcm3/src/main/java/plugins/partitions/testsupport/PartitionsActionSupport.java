@@ -18,8 +18,6 @@ import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.errors.ContractException;
@@ -63,10 +61,6 @@ public class PartitionsActionSupport {
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
-
-		//add the report plugin
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build());
-		builder.addPlugin(reportPlugin);
 
 		//add the stochastics plugin
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build());

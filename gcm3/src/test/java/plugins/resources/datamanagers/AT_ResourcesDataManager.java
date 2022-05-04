@@ -27,7 +27,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -41,8 +40,6 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
@@ -2641,9 +2638,6 @@ public final class AT_ResourcesDataManager {
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
 		builder.addPlugin(resourcesPlugin);
 
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
-
 		// add the people plugin
 
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -2669,10 +2663,6 @@ public final class AT_ResourcesDataManager {
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
 		builder.addPlugin(regionPlugin);
 
-		// add the report plugin
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
 
 
 		// add the stochastics plugin

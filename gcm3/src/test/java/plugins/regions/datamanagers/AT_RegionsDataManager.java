@@ -28,7 +28,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -49,8 +48,6 @@ import plugins.regions.support.RegionPropertyId;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -1169,14 +1166,8 @@ public class AT_RegionsDataManager {
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
 
-		// add the report plugin
-		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
-
 		// add the stochastics plugin
 		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
-
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		// add the test plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1311,13 +1302,13 @@ public class AT_RegionsDataManager {
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
 
 		// add the report plugin
-		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
+//		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
 
 		// add the stochastics plugin
 		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build()));
 
 		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
+		//builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		// add the test plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();

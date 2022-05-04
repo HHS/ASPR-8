@@ -36,8 +36,6 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalsPropertiesActionSupport;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
@@ -120,8 +118,7 @@ public final class AT_GlobalPropertiesDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		Simulation	.builder()//
-					.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()))//
+		Simulation	.builder()//					
 					.addPlugin(globalsPlugin)//
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPlugin(testPlugin)//
 					.build()//

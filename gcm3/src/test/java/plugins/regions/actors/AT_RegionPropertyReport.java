@@ -14,7 +14,6 @@ import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.regions.RegionPlugin;
@@ -99,7 +98,6 @@ public class AT_RegionPropertyReport {
 		// add remaining plugins
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(8833508541323194123L).build()));
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

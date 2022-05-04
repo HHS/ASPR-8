@@ -10,9 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
-import plugins.reports.ReportsPluginId;
 import plugins.stochastics.StochasticsPluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -34,9 +32,7 @@ public class AT_GroupsPlugin {
 		assertEquals(GroupsPluginId.PLUGIN_ID, groupPlugin.getPluginId());
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();
-		expectedDependencies.add(PartitionsPluginId.PLUGIN_ID);
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);
-		expectedDependencies.add(ReportsPluginId.PLUGIN_ID);
 		expectedDependencies.add(StochasticsPluginId.PLUGIN_ID);
 		
 		assertEquals(expectedDependencies, groupPlugin.getPluginDependencies());

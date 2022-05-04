@@ -1,7 +1,6 @@
 package plugins.personproperties;
 
 import nucleus.Plugin;
-import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.RegionPluginId;
@@ -24,7 +23,6 @@ public final class PersonPropertiesPlugin {
 		return Plugin	.builder()//
 						.setPluginId(PersonPropertiesPluginId.PLUGIN_ID)//
 						.addPluginData(personPropertiesPluginData)//
-						.addPluginDependency(PartitionsPluginId.PLUGIN_ID)//
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.addPluginDependency(RegionPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {

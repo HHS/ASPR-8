@@ -3,7 +3,6 @@ package plugins.globalproperties;
 import nucleus.Plugin;
 import plugins.globalproperties.actors.GlobalPropertyReport;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.reports.ReportsPluginId;
 
 /**
  * A plugin providing a global property data manager to the simulation.
@@ -48,7 +47,6 @@ public final class GlobalPropertiesPlugin {
 	public static Plugin getPlugin(GlobalPropertiesPluginData globalPropertiesPluginData) {
 		return Plugin	.builder()//
 						.addPluginData(globalPropertiesPluginData)//
-						.addPluginDependency(ReportsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							GlobalPropertiesPluginData data = c.getPluginData(GlobalPropertiesPluginData.class);
 							c.addDataManager(new GlobalPropertiesDataManager(data));

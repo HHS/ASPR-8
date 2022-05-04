@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
 import plugins.regions.RegionPluginId;
 import tools.annotations.UnitTest;
@@ -21,7 +20,7 @@ public class AT_PersonPropertiesPlugin {
 
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyPlugin", args = {PersonPropertiesPluginData.class})
-	public void testgetPersonPropertyPlugin() {
+	public void testGetPersonPropertyPlugin() {
 		PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder().build();
 		Plugin personPropertiesPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
 
@@ -31,7 +30,6 @@ public class AT_PersonPropertiesPlugin {
 		assertEquals(PersonPropertiesPluginId.PLUGIN_ID, personPropertiesPlugin.getPluginId());
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();
-		expectedDependencies.add(PartitionsPluginId.PLUGIN_ID);
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);
 		expectedDependencies.add(RegionPluginId.PLUGIN_ID);
 		

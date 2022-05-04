@@ -21,12 +21,9 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.errors.ContractException;
@@ -129,9 +126,6 @@ public class GroupsActionSupport {
 		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
 		builder.addPlugin(groupPlugin);
 
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
-		
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 		for (PersonId personId : people) {
@@ -141,9 +135,6 @@ public class GroupsActionSupport {
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
 
-		// add the report plugin
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build());
-		builder.addPlugin(reportPlugin);
 
 
 		// add the stochastics plugin

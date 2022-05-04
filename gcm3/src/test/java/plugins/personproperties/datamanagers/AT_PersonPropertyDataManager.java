@@ -30,7 +30,6 @@ import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -50,8 +49,6 @@ import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -548,9 +545,6 @@ public final class AT_PersonPropertyDataManager {
 
 		Builder builder = Simulation.builder();
 
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
-
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 		for (PersonId personId : people) {
@@ -593,11 +587,6 @@ public final class AT_PersonPropertyDataManager {
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
 
 		builder.addPlugin(regionPlugin);
-
-		// add the report plugin
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();

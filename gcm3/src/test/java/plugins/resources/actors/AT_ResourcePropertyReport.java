@@ -17,7 +17,6 @@ import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -78,9 +77,6 @@ public class AT_ResourcePropertyReport {
 		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
 		builder.addPlugin(resourcesPlugin);
-
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		// add the people plugin
 

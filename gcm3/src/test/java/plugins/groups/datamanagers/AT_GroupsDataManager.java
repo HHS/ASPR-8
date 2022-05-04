@@ -50,7 +50,6 @@ import plugins.groups.support.GroupWeightingFunction;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -58,8 +57,6 @@ import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -2702,9 +2699,6 @@ public class AT_GroupsDataManager {
 
 		builder.addPlugin(GroupsPlugin.getGroupPlugin(groupsPluginData));
 
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
-
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 
@@ -2716,11 +2710,6 @@ public class AT_GroupsDataManager {
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 
 		builder.addPlugin(peoplePlugin);
-
-		// add the report plugin
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();

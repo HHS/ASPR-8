@@ -15,7 +15,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -24,8 +23,6 @@ import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.regions.RegionPlugin;
 import plugins.regions.RegionPluginData;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.errors.ContractException;
@@ -68,9 +65,6 @@ public class PersonPropertiesActionSupport {
 		Plugin personPropertyPlugin = PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
 		builder.addPlugin(personPropertyPlugin);
 
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
-
 		// add the regions plugin
 		RegionPluginData.Builder regionBuilder = RegionPluginData.builder();
 		// add the regions
@@ -84,11 +78,6 @@ public class PersonPropertiesActionSupport {
 		RegionPluginData regionPluginData = regionBuilder.build();
 		Plugin regionPlugin = RegionPlugin.getRegionPlugin(regionPluginData);
 		builder.addPlugin(regionPlugin);
-
-		// add the report plugin
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(seed).build();

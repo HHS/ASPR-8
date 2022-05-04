@@ -18,7 +18,6 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.regions.RegionPlugin;
@@ -143,9 +142,6 @@ public class MaterialsActionSupport {
 		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
 		builder.addPlugin(resourcesPlugin);
-
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		// add the people plugin
 

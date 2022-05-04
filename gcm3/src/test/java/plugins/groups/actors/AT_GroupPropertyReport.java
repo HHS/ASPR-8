@@ -23,7 +23,6 @@ import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.partitions.PartitionsPlugin;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.reports.ReportsPlugin;
@@ -357,9 +356,6 @@ public class AT_GroupPropertyReport {
 		GroupsPluginData groupsPluginData = groupBuilder.build();
 		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
 		builder.addPlugin(groupPlugin);
-
-		// add the partitions plugin
-		builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
 
 		// add the people plugin
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));

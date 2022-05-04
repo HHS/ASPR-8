@@ -34,8 +34,6 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -114,8 +112,6 @@ public final class AT_AttributeFilter {
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
-
-		builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
 
 		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(7698506335486677498L).build()));
 

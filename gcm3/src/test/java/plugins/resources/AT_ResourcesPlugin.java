@@ -10,10 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePluginId;
 import plugins.regions.RegionPluginId;
-import plugins.reports.ReportsPluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
@@ -24,7 +22,7 @@ public class AT_ResourcesPlugin {
 
 	@Test
 	@UnitTestMethod(name = "getResourcesPlugin(ResourcesPluginData)", args = { ResourcesPluginData.class })
-	public void testInit() {
+	public void testGetResourcesPlugin() {
 
 		ResourcesPluginData resourcesPluginData = ResourcesPluginData.builder().build();
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
@@ -35,14 +33,10 @@ public class AT_ResourcesPlugin {
 		assertEquals(ResourcesPluginId.PLUGIN_ID, resourcesPlugin.getPluginId());
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();
-		expectedDependencies.add(PartitionsPluginId.PLUGIN_ID);
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);
-		expectedDependencies.add(ReportsPluginId.PLUGIN_ID);
 		expectedDependencies.add(RegionPluginId.PLUGIN_ID);
 		
 		assertEquals(expectedDependencies, resourcesPlugin.getPluginDependencies());
-
-		
 
 	}
 

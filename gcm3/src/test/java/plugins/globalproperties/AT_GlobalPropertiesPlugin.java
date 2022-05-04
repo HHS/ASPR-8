@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
 import nucleus.PluginId;
-import plugins.reports.ReportsPluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
@@ -31,7 +30,6 @@ public class AT_GlobalPropertiesPlugin {
 		assertEquals(GlobalPropertiesPluginId.PLUGIN_ID, globalsPlugin.getPluginId());
 
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();		
-		expectedDependencies.add(ReportsPluginId.PLUGIN_ID);
 		assertEquals(expectedDependencies, globalsPlugin.getPluginDependencies());
 
 	}
