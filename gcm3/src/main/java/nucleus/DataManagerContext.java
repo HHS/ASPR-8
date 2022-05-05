@@ -127,23 +127,6 @@ public interface DataManagerContext extends SimulationContext {
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer);
 
 	/**
-	 * Subscribes the data manager to events of the given type for handling
-	 * after the execution phase is complete. This should only be used for
-	 * special cases where order of resolution is difficult to determine and the
-	 * data manager needs to take action after all other data managers.
-	 * Dependency ordering in this phase is indeterminate and thus should only
-	 * be used when the data manager will not generate observation events that
-	 * might be consumed by other data managers.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
-	 */
-	public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer);
-
-	/**
 	 * Unsubscribes the data manager from events of the given type for all
 	 * phases of event handling.
 	 * 

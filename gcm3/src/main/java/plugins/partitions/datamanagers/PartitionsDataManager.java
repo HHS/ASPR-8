@@ -373,11 +373,11 @@ public final class PartitionsDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
-		dataManagerContext.subscribePostOrder(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
-		dataManagerContext.subscribePostOrder(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 
-		dataManagerContext.subscribePostOrder(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}
 
@@ -515,7 +515,7 @@ public final class PartitionsDataManager extends DataManager {
 			if (keys == null) {
 				keys = new LinkedHashSet<>();
 				eventClassToKeyMap.put(eventClass, keys);
-				dataManagerContext.subscribePostOrder(eventClass, this::handleEvent);
+				dataManagerContext.subscribe(eventClass, this::handleEvent);
 			}
 			keys.add(key);
 		}

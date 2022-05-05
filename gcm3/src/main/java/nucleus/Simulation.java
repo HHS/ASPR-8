@@ -2,6 +2,7 @@ package nucleus;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
@@ -485,13 +486,8 @@ public class Simulation {
 		}
 
 		@Override
-		public <T extends Event> void subscribePostOrder(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-			simulation.subscribeDataManagerToEventPostPhase(dataManagerId, eventClass, eventConsumer);
-		}
-
-		@Override
 		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-			simulation.subscribeDataManagerToEventExecutionPhase(dataManagerId, eventClass, eventConsumer);
+			simulation.subscribeDataManagerToEvent(dataManagerId, eventClass, eventConsumer);
 		}
 
 		@Override
@@ -1200,11 +1196,7 @@ public class Simulation {
 		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
 	}
 
-	private static enum EventPhase {
-		EXECUTION, POST_EXECUTION
-	}
-
-	private <T extends Event> void subscribeDataManagerToEventExecutionPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+	private <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1218,43 +1210,10 @@ public class Simulation {
 			dataManagerEventMap.put(eventClass, list);
 		}
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
-		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
-
-		int insertionIndex = -1;
-
-		for (int i = 0; i < list.size(); i++) {
-			MetaDataManagerEventConsumer<?> m = list.get(i);
-			if (m.eventPhase == EventPhase.POST_EXECUTION) {
-				insertionIndex = i;
-				break;
-			}
-		}
-
-		if (insertionIndex < 0) {
-			list.add(metaDataManagerEventConsumer);
-		} else {
-			list.add(insertionIndex, metaDataManagerEventConsumer);
-		}
-	}
-
-	private <T extends Event> void subscribeDataManagerToEventPostPhase(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
-		}
-		if (eventConsumer == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
-		}
-
-		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(eventClass);
-		if (list == null) {
-			list = new ArrayList<>();
-			dataManagerEventMap.put(eventClass, list);
-		}
-		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
-		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.POST_EXECUTION);
-
+		//MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
+		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer);
 		list.add(metaDataManagerEventConsumer);
-
+		Collections.sort(list);
 	}
 
 	private void unSubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
@@ -1456,7 +1415,7 @@ public class Simulation {
 
 	private int masterDataManagerIndex;
 
-	private static class MetaDataManagerEventConsumer<T extends Event> implements Comparable<MetaDataManagerEventConsumer>{
+	private static class MetaDataManagerEventConsumer<T extends Event> implements Comparable<MetaDataManagerEventConsumer<T>>{
 
 		private final BiConsumer<DataManagerContext, T> dataManagerEventConsumer;
 
@@ -1464,13 +1423,11 @@ public class Simulation {
 
 		private final DataManagerId dataManagerId;
 
-		private final EventPhase eventPhase;
 
-		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext, T> eventConsumer, EventPhase eventPhase) {
+		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext, T> eventConsumer) {
 			this.dataManagerEventConsumer = eventConsumer;
 			this.context = context;
 			this.dataManagerId = dataManagerId;
-			this.eventPhase = eventPhase;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -1484,9 +1441,9 @@ public class Simulation {
 
 		}
 
-		@SuppressWarnings("rawtypes")
+		
 		@Override
-		public int compareTo(MetaDataManagerEventConsumer other) {
+		public int compareTo(MetaDataManagerEventConsumer<T> other) {
 			return this.dataManagerId.compareTo(other.dataManagerId);
 		}
 	}
