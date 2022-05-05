@@ -12,7 +12,7 @@ import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -593,7 +593,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each person's
+	 * <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote> Sets each person's
 	 * initial resource levels in the {@linkplain ResourcesDataManager} from the
 	 * ResourceInitialization references in the auxiliary data of the event.
 	 * 
@@ -756,7 +756,7 @@ public final class ResourcesDataManager extends DataManager {
 		}
 
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
-		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 	}
 
@@ -1209,9 +1209,9 @@ public final class ResourcesDataManager extends DataManager {
 		}
 	}
 
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
-		PersonId personId = bulkPersonAdditionEvent.getPersonId();
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
+		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {
 			List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);

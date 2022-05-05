@@ -31,7 +31,7 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
@@ -1506,8 +1506,8 @@ public class AT_RegionsDataManager {
 			 */
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(new PersonId(45), bulkPersonConstructionData);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonAdditionEvent));
+			BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(new PersonId(45), bulkPersonConstructionData);
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonImminentAdditionEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -1522,9 +1522,9 @@ public class AT_RegionsDataManager {
 			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
 			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(personId, bulkPersonConstructionData);
+			BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(personId, bulkPersonConstructionData);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonAdditionEvent));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonImminentAdditionEvent));
 			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
 		});
 	}

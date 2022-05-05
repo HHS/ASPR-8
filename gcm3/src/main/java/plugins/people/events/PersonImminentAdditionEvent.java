@@ -7,6 +7,14 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
+/**
+ * An event for notifying plugins that a person is being added to the
+ * simulation. During this process, the person is not fully formed until all
+ * subscribers to the event have been invoked.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @Immutable
 public final class PersonImminentAdditionEvent implements Event {
 	private final PersonId personId;
@@ -48,5 +56,4 @@ public final class PersonImminentAdditionEvent implements Event {
 		return personConstructionData;
 	}
 
-	
 }

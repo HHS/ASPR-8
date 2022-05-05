@@ -6,7 +6,7 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonImminentAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
@@ -98,8 +98,8 @@ public final class RegionTransferReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonImminentAdditionEvent personImminentAdditionEvent) {
-		PersonId personId = personImminentAdditionEvent.getPersonId();
+	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
+		PersonId personId = personAdditionEvent.getPersonId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		increment(regionId, regionId);
 	}
@@ -124,7 +124,7 @@ public final class RegionTransferReport extends PeriodicReport {
 	public void init(final ActorContext ActorContext) {
 		super.init(ActorContext);
 
-		ActorContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
+		ActorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		ActorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		PeopleDataManager peopleDataManager = ActorContext.getDataManager(PeopleDataManager.class);

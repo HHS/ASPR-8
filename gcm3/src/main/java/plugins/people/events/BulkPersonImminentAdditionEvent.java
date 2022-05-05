@@ -8,14 +8,13 @@ import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
 /**
- * An event for observing the construction multiple people from a
- * {@linkplain BulkPersonCreationEvent} event.
+ * An event for notifying plugins of the ongoing construction of multiple people.
  * 
  * @author Shawn Hatch
  *
  */
 @Immutable
-public final class BulkPersonAdditionEvent implements Event {
+public final class BulkPersonImminentAdditionEvent implements Event {
 	private final PersonId personId;
 	private final BulkPersonConstructionData bulkPersonConstructionData;
 
@@ -25,7 +24,7 @@ public final class BulkPersonAdditionEvent implements Event {
 	 * BulkPersonConstructionData.
 	 * 
 	 */
-	public BulkPersonAdditionEvent(final PersonId personId, BulkPersonConstructionData bulkPersonConstructionData) {
+	public BulkPersonImminentAdditionEvent(final PersonId personId, BulkPersonConstructionData bulkPersonConstructionData) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}

@@ -20,6 +20,8 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.BulkPersonImminentAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -115,6 +117,7 @@ public final class AT_PeopleDataManager {
 
 		// create containers to hold observations
 		Set<PersonId> observedPersonIds = new LinkedHashSet<>();
+		Set<PersonId> observedImminentPersonIds = new LinkedHashSet<>();
 		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
 
 		for (int i = 0; i < 10; i++) {
@@ -123,7 +126,8 @@ public final class AT_PeopleDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(PersonImminentAdditionEvent.class, (c2, e) -> observedPersonIds.add(e.getPersonId()));
+			c.subscribe(PersonImminentAdditionEvent.class, (c2, e) -> observedImminentPersonIds.add(e.getPersonId()));
+			c.subscribe(PersonAdditionEvent.class, (c2, e) -> observedPersonIds.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people and show they were added
@@ -150,14 +154,17 @@ public final class AT_PeopleDataManager {
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedPersonIds, observedPersonIds);
+		assertEquals(expectedPersonIds, observedImminentPersonIds);
 	}
 
 	@Test
 	@UnitTestMethod(name = "addBulkPeople", args = { BulkPersonConstructionData.class })
-	public void testBulkPersonCreationEvent() {
+	public void testAddBulkPeople() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// create containers to hold observations
+		Set<PersonId> expectedBulkAddedPeople = new LinkedHashSet<>();
+		Set<PersonId> observedBulkAddedPeople = new LinkedHashSet<>();
 		Set<BulkPersonConstructionData> observedBulkPersonConstructionData = new LinkedHashSet<>();
 		Set<BulkPersonConstructionData> expectedBulkPersonConstructionData = new LinkedHashSet<>();
 
@@ -174,7 +181,8 @@ public final class AT_PeopleDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BulkPersonAdditionEvent.class, (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
+			c.subscribe(BulkPersonImminentAdditionEvent.class, (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
+			c.subscribe(BulkPersonAdditionEvent.class, (c2, e) -> observedBulkAddedPeople.addAll(e.getPeople()));
 		}));
 
 		// have the agent add a bulk people and show the people were added
@@ -189,6 +197,8 @@ public final class AT_PeopleDataManager {
 				postPeople.removeAll(priorPeople);
 				int expectedNewPeople = bulkPersonConstructionData.getPersonConstructionDatas().size();
 				assertEquals(expectedNewPeople, postPeople.size());
+				
+				expectedBulkAddedPeople.addAll(postPeople);
 			}
 		}));
 
@@ -206,6 +216,8 @@ public final class AT_PeopleDataManager {
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedBulkPersonConstructionData, observedBulkPersonConstructionData);
+		assertEquals(expectedBulkAddedPeople, observedBulkAddedPeople);
+		
 	}
 
 	@Test

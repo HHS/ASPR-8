@@ -9,6 +9,8 @@ import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.BulkPersonImminentAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -65,15 +67,19 @@ public final class PeopleDataManager extends DataManager {
 		final List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 		PersonId result = null;
 		final int count = personConstructionDatas.size();
-		for (int i = 0; i < count; i++) {
-			final PersonId personId = addPersonId();
-			if (result == null) {
-				result = personId;
+		if (count > 0) {
+			BulkPersonAdditionEvent.Builder eventBuilder = BulkPersonAdditionEvent.builder();
+			for (int i = 0; i < count; i++) {
+				final PersonId personId = addPersonId();
+				eventBuilder.addPersonId(personId);
+				if (result == null) {
+					result = personId;
+				}
 			}
-		}
+			BulkPersonAdditionEvent bulkPersonAdditionEvent = eventBuilder.build();
 
-		if (result != null) {
-			final BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(result, bulkPersonConstructionData);
+			final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(result, bulkPersonConstructionData);
+			dataManagerContext.releaseEvent(bulkPersonImminentAdditionEvent);
 			dataManagerContext.releaseEvent(bulkPersonAdditionEvent);
 		}
 
@@ -97,7 +103,7 @@ public final class PeopleDataManager extends DataManager {
 
 		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
 		dataManagerContext.releaseEvent(personImminentAdditionEvent);
-
+		dataManagerContext.releaseEvent(new PersonAdditionEvent(personId));
 		return personId;
 	}
 
@@ -214,8 +220,8 @@ public final class PeopleDataManager extends DataManager {
 
 		for (PersonId personId : peoplePluginData.getPersonIds()) {
 			personIds.add(personId);
-		}		
-		globalPopulationRecord.projectedPopulationCount = personIds.size();		
+		}
+		globalPopulationRecord.projectedPopulationCount = personIds.size();
 		globalPopulationRecord.populationCount = personIds.size();
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 	}
@@ -258,14 +264,14 @@ public final class PeopleDataManager extends DataManager {
 	 */
 	public void removePerson(final PersonId personId) {
 		validatePersonExists(personId);
-		
+
 		dataManagerContext.addPlan((context) -> {
 			globalPopulationRecord.populationCount--;
 			globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 			personIds.set(personId.getValue(), null);
 			context.releaseEvent(new PersonRemovalEvent(personId));
 		}, dataManagerContext.getTime());
-		
+
 		dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
 
 	}

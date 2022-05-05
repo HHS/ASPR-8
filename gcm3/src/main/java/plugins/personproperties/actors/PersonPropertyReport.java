@@ -8,7 +8,7 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonImminentAdditionEvent;
+import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -144,8 +144,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	}
 
-	private void handlePersonAdditionEvent(ActorContext context, PersonImminentAdditionEvent personImminentAdditionEvent) {
-		PersonId personId = personImminentAdditionEvent.getPersonId();
+	private void handlePersonAdditionEvent(ActorContext context, PersonAdditionEvent personAdditionEvent) {
+		PersonId personId = personAdditionEvent.getPersonId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
@@ -206,7 +206,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
+		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 

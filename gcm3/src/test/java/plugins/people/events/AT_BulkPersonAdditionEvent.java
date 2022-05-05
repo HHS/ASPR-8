@@ -14,7 +14,7 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = BulkPersonAdditionEvent.class)
+@UnitTest(target = BulkPersonImminentAdditionEvent.class)
 public class AT_BulkPersonAdditionEvent implements Event {
 
 	@Test
@@ -25,10 +25,10 @@ public class AT_BulkPersonAdditionEvent implements Event {
 		PersonId personId = new PersonId(0);
 		BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().build();
 
-		ContractException contractException = assertThrows(ContractException.class, () -> new BulkPersonAdditionEvent(null, bulkPersonConstructionData));
+		ContractException contractException = assertThrows(ContractException.class, () -> new BulkPersonImminentAdditionEvent(null, bulkPersonConstructionData));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new BulkPersonAdditionEvent(personId, null));
+		contractException = assertThrows(ContractException.class, () -> new BulkPersonImminentAdditionEvent(personId, null));
 		assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 
 	}
@@ -41,8 +41,8 @@ public class AT_BulkPersonAdditionEvent implements Event {
 
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
-			BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(personId, bulkPersonConstructionData);
-			assertEquals(personId, bulkPersonAdditionEvent.getPersonId());
+			BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(personId, bulkPersonConstructionData);
+			assertEquals(personId, bulkPersonImminentAdditionEvent.getPersonId());
 		}
 
 	}
@@ -52,8 +52,8 @@ public class AT_BulkPersonAdditionEvent implements Event {
 	public void testGetBulkPersonConstructionData() {
 		PersonId personId = new PersonId(45);
 		BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().build();
-		BulkPersonAdditionEvent bulkPersonAdditionEvent = new BulkPersonAdditionEvent(personId, bulkPersonConstructionData);
-		assertEquals(bulkPersonConstructionData, bulkPersonAdditionEvent.getBulkPersonConstructionData());
+		BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(personId, bulkPersonConstructionData);
+		assertEquals(bulkPersonConstructionData, bulkPersonImminentAdditionEvent.getBulkPersonConstructionData());
 	}
 
 	

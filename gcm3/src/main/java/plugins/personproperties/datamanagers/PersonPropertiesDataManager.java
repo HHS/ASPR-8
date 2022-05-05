@@ -11,7 +11,7 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
@@ -73,7 +73,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			}
 		}
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
-		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
 	}
@@ -444,11 +444,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	}
 
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
-		PersonId personId = bulkPersonAdditionEvent.getPersonId();
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
 		int pId = personId.getValue();
 
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
+		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {

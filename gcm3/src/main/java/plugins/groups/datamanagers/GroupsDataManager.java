@@ -31,7 +31,7 @@ import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
+import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
@@ -161,7 +161,7 @@ public final class GroupsDataManager extends DataManager {
 	 * <li>Subscribes to the following events:
 	 * <ul>
 	 * 
-	 * {@linkplain BulkPersonAdditionEvent} Assigns the newly created people
+	 * {@linkplain BulkPersonImminentAdditionEvent} Assigns the newly created people
 	 * into newly created groups on the basis of auxiliary data carried in the
 	 * event as a BulkGroupMembershipData. Publishes the groups to the person
 	 * group data view. Generates the corresponding
@@ -246,7 +246,7 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupMembership();
 		loadGroupPropertyValues();
 
-		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}
@@ -1380,12 +1380,12 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonAdditionEvent.getBulkPersonConstructionData();
+	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonConstructionData.getValue(BulkGroupMembershipData.class);
 		if (optional.isPresent()) {
 			int personCount = bulkPersonConstructionData.getPersonConstructionDatas().size();
-			int basePersonIndex = bulkPersonAdditionEvent.getPersonId().getValue();
+			int basePersonIndex = bulkPersonImminentAdditionEvent.getPersonId().getValue();
 
 			for (int i = 0; i < personCount; i++) {
 				validatePersonIndexExists(i + basePersonIndex);
