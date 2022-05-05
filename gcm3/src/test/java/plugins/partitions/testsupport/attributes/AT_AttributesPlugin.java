@@ -19,7 +19,6 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginData.Builder;
 import plugins.partitions.PartitionsPlugin;
-import plugins.partitions.PartitionsPluginId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
@@ -53,7 +52,6 @@ public class AT_AttributesPlugin {
 		// show that the plugin has the correct dependencies
 		Set<PluginId> expectedDependencies = new LinkedHashSet<>();
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);
-		expectedDependencies.add(PartitionsPluginId.PLUGIN_ID);
 		Set<PluginId> actualDependencies = attributesPlugin.getPluginDependencies();
 		assertEquals(expectedDependencies, actualDependencies);
 		

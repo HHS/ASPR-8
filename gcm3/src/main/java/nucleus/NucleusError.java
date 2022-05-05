@@ -12,6 +12,7 @@ import util.errors.ContractException;
  */
 public enum NucleusError implements ContractError {
 	ACCESS_VIOLATION("A contributed behavior is accessing locked state during a state change"),
+	DATA_MANAGER_ACCESS_VIOLATION("A data manager is attempting to access another data manager that is incompatible with the plugin dependencies"),
 	AMBIGUOUS_DATA_MANAGER_CLASS("Multiple data manager matches found"),
 	AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS("Multiple plugin data builder matches found"),
 	AMBIGUOUS_PLUGIN_DATA_CLASS("Multiple plugin data object matches found"),

@@ -24,6 +24,8 @@ import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;
 import util.graph.MutableGraph;
+import util.path.MapPathSolver;
+import util.path.Path;
 
 /**
  * An instance of the Simulation orchestrates the execution of a scenario from a
@@ -71,7 +73,8 @@ public class Simulation {
 			dataManagerIdToContextMap.put(dataManagerId, dataManagerContext);
 			baseClassToDataManagerMap.put(dataManager.getClass(), dataManager);
 			dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
-
+			dataManagerToDataManagerIdMap.put(dataManager, dataManagerId);
+			dataManagerIdToPluginIdMap.put(dataManagerId, focalPluginId);
 		}
 
 		@Override
@@ -170,7 +173,7 @@ public class Simulation {
 
 		@Override
 		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
-			return Simulation.this.getDataManager(dataManagerClass);
+			return Simulation.this.getDataManagerForActor(dataManagerClass);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -305,7 +308,7 @@ public class Simulation {
 			case DATA_MANAGER:
 				builder.append(dataManagerId);
 				break;
-			default:				
+			default:
 				throw new RuntimeException("unhandled planner case");
 
 			}
@@ -416,7 +419,7 @@ public class Simulation {
 
 		@Override
 		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
-			return simulation.getDataManager(dataManagerClass);
+			return simulation.getDataManagerForDataManager(dataManagerClass, dataManagerId);
 		}
 
 		@SuppressWarnings("unchecked")
@@ -664,9 +667,11 @@ public class Simulation {
 
 	}
 
+	private Graph<PluginId, Object> pluginDependencyGraph;
+
 	private List<Plugin> getOrderedPlugins() {
 
-		MutableGraph<PluginId, Object> pluginDependencyGraph = new MutableGraph<>();
+		MutableGraph<PluginId, Object> mutableGraph = new MutableGraph<>();
 
 		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
 
@@ -678,10 +683,10 @@ public class Simulation {
 			focalPluginId = plugin.getPluginId();
 			pluginMap.put(focalPluginId, plugin);
 			// ensure that there are no duplicate plugins
-			if (pluginDependencyGraph.containsNode(focalPluginId)) {
+			if (mutableGraph.containsNode(focalPluginId)) {
 				throw new ContractException(NucleusError.DUPLICATE_PLUGIN, focalPluginId);
 			}
-			pluginDependencyGraph.addNode(focalPluginId);
+			mutableGraph.addNode(focalPluginId);
 			focalPluginId = null;
 		}
 
@@ -689,7 +694,7 @@ public class Simulation {
 		for (Plugin plugin : data.plugins) {
 			focalPluginId = plugin.getPluginId();
 			for (PluginId pluginId : plugin.getPluginDependencies()) {
-				pluginDependencyGraph.addEdge(new Object(), focalPluginId, pluginId);
+				mutableGraph.addEdge(new Object(), focalPluginId, pluginId);
 			}
 			focalPluginId = null;
 		}
@@ -698,9 +703,9 @@ public class Simulation {
 		 * Check for missing plugins from the plugin dependencies that were
 		 * collected from the known plugins.
 		 */
-		for (PluginId pluginId : pluginDependencyGraph.getNodes()) {
+		for (PluginId pluginId : mutableGraph.getNodes()) {
 			if (!pluginMap.containsKey(pluginId)) {
-				List<Object> inboundEdges = pluginDependencyGraph.getInboundEdges(pluginId);
+				List<Object> inboundEdges = mutableGraph.getInboundEdges(pluginId);
 				StringBuilder sb = new StringBuilder();
 				sb.append("cannot locate instance of ");
 				sb.append(pluginId);
@@ -712,7 +717,7 @@ public class Simulation {
 					} else {
 						sb.append(", ");
 					}
-					PluginId dependentPluginId = pluginDependencyGraph.getOriginNode(edge);
+					PluginId dependentPluginId = mutableGraph.getOriginNode(edge);
 					sb.append(dependentPluginId);
 				}
 				throw new ContractException(NucleusError.MISSING_PLUGIN, sb.toString());
@@ -724,14 +729,14 @@ public class Simulation {
 		 * evaluator for the graph so that we can determine the order of
 		 * initialization.
 		 */
-		Optional<GraphDepthEvaluator<PluginId>> optional = GraphDepthEvaluator.getGraphDepthEvaluator(pluginDependencyGraph.toGraph());
+		Optional<GraphDepthEvaluator<PluginId>> optional = GraphDepthEvaluator.getGraphDepthEvaluator(mutableGraph.toGraph());
 
 		if (!optional.isPresent()) {
 			/*
 			 * Explain in detail why there is a circular dependency
 			 */
 
-			Graph<PluginId, Object> g = pluginDependencyGraph.toGraph();
+			Graph<PluginId, Object> g = mutableGraph.toGraph();
 			g = Graphs.getSourceSinkReducedGraph(g);
 			List<Graph<PluginId, Object>> cutGraphs = Graphs.cutGraph(g);
 			StringBuilder sb = new StringBuilder();
@@ -777,6 +782,9 @@ public class Simulation {
 		for (PluginId pluginId : orderedPluginIds) {
 			orderedPlugins.add(pluginMap.get(pluginId));
 		}
+
+		pluginDependencyGraph = mutableGraph.toGraph();
+
 		return orderedPlugins;
 	}
 
@@ -840,6 +848,31 @@ public class Simulation {
 			}
 			focalPluginId = null;
 		}
+		int dataManagerCount = dataManagerIdToPluginIdMap.size();
+		dataManagerAccessPermissions = new boolean[dataManagerCount][dataManagerCount];
+
+		MapPathSolver<PluginId, Object> mapPathSolver = new MapPathSolver<>(pluginDependencyGraph,(e) -> 1, (a, b) -> 0);
+		
+		// determine the access allowed between data managers
+		for (DataManagerId dataManagerId1 : dataManagerIdToPluginIdMap.keySet()) {
+			PluginId pluginId1 = dataManagerIdToPluginIdMap.get(dataManagerId1);
+			for (DataManagerId dataManagerId2 : dataManagerIdToPluginIdMap.keySet()) {
+				PluginId pluginId2 = dataManagerIdToPluginIdMap.get(dataManagerId2);
+				//Optional<Path<Object>> optionalPath = Paths.getPath(pluginDependencyGraph, pluginId1, pluginId2, (e) -> 1, (a, b) -> 0);
+				Optional<Path<Object>> optionalPath  = mapPathSolver.getPath(pluginId1, pluginId2);
+				if (optionalPath.isPresent()) {
+					dataManagerAccessPermissions[dataManagerId1.getValue()][dataManagerId2.getValue()] = true;
+				} else {
+					// within a plugin, data managers have access to previously
+					// added data managers in the same plugin.
+					if (pluginId1.equals(pluginId2)) {
+						if (dataManagerId1.getValue() > dataManagerId2.getValue()) {
+							dataManagerAccessPermissions[dataManagerId1.getValue()][dataManagerId2.getValue()] = true;
+						}
+					}
+				}
+			}
+		}
 
 		// initialize the data managers
 		for (DataManagerId dataManagerId : dataManagerIdToDataManagerMap.keySet()) {
@@ -885,7 +918,7 @@ public class Simulation {
 					executeActorQueue();
 				}
 				break;
-			default:				
+			default:
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
@@ -1131,7 +1164,7 @@ public class Simulation {
 
 			try {
 				eventConsumer.accept(context, (T) event);
-			} catch (ClassCastException e) {				
+			} catch (ClassCastException e) {
 				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}
 
@@ -1325,7 +1358,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
+	private <T extends DataManager> T getDataManagerForActor(Class<T> dataManagerClass) {
 
 		if (dataManagerClass == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
@@ -1365,13 +1398,65 @@ public class Simulation {
 		return (T) dataManager;
 	}
 
+	@SuppressWarnings("unchecked")
+	private <T extends DataManager> T getDataManagerForDataManager(Class<T> dataManagerClass, DataManagerId dataManagerId) {
+
+		if (dataManagerClass == null) {
+			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
+		}
+
+		DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
+		/*
+		 * If the working map does not contain the data manager, try to find a
+		 * single match from the base map that was collected from the plugins.
+		 * 
+		 * If two or more matches are found, then throw an exception.
+		 * 
+		 * If exactly one match is found, update the working map.
+		 * 
+		 * If no matches are found, nothing is done, but we are vulnerable to
+		 * somewhat slower performance if the data manager is sought repeatedly.
+		 */
+		if (dataManager == null) {
+			List<Class<?>> candidates = new ArrayList<>();
+			for (Class<?> c : baseClassToDataManagerMap.keySet()) {
+				if (dataManagerClass.isAssignableFrom(c)) {
+					candidates.add(c);
+				}
+			}
+			if (candidates.size() > 1) {
+				throw new ContractException(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS);
+			}
+			if (candidates.size() == 1) {
+				dataManager = baseClassToDataManagerMap.get(candidates.get(0));
+				workingClassToDataManagerMap.put(dataManagerClass, dataManager);
+			}
+		}
+
+		if (dataManager == null) {
+			throw new ContractException(NucleusError.UNKNOWN_DATA_MANAGER, " : " + dataManagerClass.getSimpleName());
+		}
+
+		int requestorId = dataManagerId.getValue();
+		DataManagerId dataManagerId2 = dataManagerToDataManagerIdMap.get(dataManager);
+		int requesteeId = dataManagerId2.getValue();
+
+		boolean accessGranted = dataManagerAccessPermissions[requestorId][requesteeId];
+
+		if (!accessGranted) {
+			String dmName1 = dataManagerIdToDataManagerMap.get(dataManagerId).getClass().getSimpleName();
+			String dmName2 = dataManagerClass.getSimpleName();
+			throw new ContractException(NucleusError.DATA_MANAGER_ACCESS_VIOLATION, dmName1 + "-->" + dmName2);
+		}
+		return (T) dataManager;
+	}
 	/////////////////////////////////
 	// data manager support
 	/////////////////////////////////
 
 	private int masterDataManagerIndex;
 
-	private static class MetaDataManagerEventConsumer<T extends Event> {
+	private static class MetaDataManagerEventConsumer<T extends Event> implements Comparable<MetaDataManagerEventConsumer>{
 
 		private final BiConsumer<DataManagerContext, T> dataManagerEventConsumer;
 
@@ -1393,10 +1478,16 @@ public class Simulation {
 
 			try {
 				dataManagerEventConsumer.accept(context, (T) event);
-			} catch (ClassCastException e) {				
+			} catch (ClassCastException e) {
 				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}
 
+		}
+
+		@SuppressWarnings("rawtypes")
+		@Override
+		public int compareTo(MetaDataManagerEventConsumer other) {
+			return this.dataManagerId.compareTo(other.dataManagerId);
 		}
 	}
 
@@ -1413,8 +1504,12 @@ public class Simulation {
 	// map of contexts for each data manager
 	private Map<DataManagerId, DataManagerContext> dataManagerIdToContextMap = new LinkedHashMap<>();
 
-	// map of data manager id to data manager instances
+	// maps of data manager id <--> data manager instances
 	private Map<DataManagerId, DataManager> dataManagerIdToDataManagerMap = new LinkedHashMap<>();
+	private Map<DataManager, DataManagerId> dataManagerToDataManagerIdMap = new LinkedHashMap<>();
+
+	private Map<DataManagerId, PluginId> dataManagerIdToPluginIdMap = new LinkedHashMap<>();
+	private boolean[][] dataManagerAccessPermissions;
 
 	//////////////////////////////
 	// actor support

@@ -7,7 +7,7 @@ package nucleus;
  * @author Shawn Hatch
  *
  */
-public final class DataManagerId {
+public final class DataManagerId implements Comparable<DataManagerId> {
 	private final int id;
 
 	/**
@@ -64,6 +64,11 @@ public final class DataManagerId {
 		builder.append(id);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	@Override
+	public int compareTo(DataManagerId dataManagerId) {
+		return Integer.compare(this.id, dataManagerId.id);
 	}
 
 }

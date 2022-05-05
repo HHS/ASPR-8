@@ -14,6 +14,7 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.partitions.PartitionsPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPlugin;
 import plugins.partitions.testsupport.attributes.AttributesPluginData;
+import plugins.partitions.testsupport.attributes.AttributesPluginId;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
@@ -67,7 +68,7 @@ public class PartitionsActionSupport {
 		builder.addPlugin(stochasticsPlugin);
 
 		//add the partitions plugin
-		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin();
+		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin(AttributesPluginId.PLUGIN_ID);
 		builder.addPlugin(partitionsPlugin);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();

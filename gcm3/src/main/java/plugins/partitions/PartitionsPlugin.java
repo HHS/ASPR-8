@@ -1,6 +1,7 @@
 package plugins.partitions;
 
 import nucleus.Plugin;
+import nucleus.PluginId;
 import plugins.partitions.datamanagers.PartitionsDataManager;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPluginId;
@@ -42,16 +43,21 @@ public final class PartitionsPlugin {
 	 * </P>
 	 * 
 	 */
-	public static Plugin getPartitionsPlugin() {
+	public static Plugin getPartitionsPlugin(PluginId... pluginDependencies) {
 
-		return Plugin	.builder()//
-						.setPluginId(PartitionsPluginId.PLUGIN_ID).//
-						setInitializer((c) -> {
-							c.addDataManager(new PartitionsDataManager());
-						})//
-						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
-						.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
-						.build();
+		Plugin.Builder builder = Plugin	.builder()//
+										.setPluginId(PartitionsPluginId.PLUGIN_ID)//
+										.setInitializer((c) -> {
+											c.addDataManager(new PartitionsDataManager());
+										})//
+										.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
+										.addPluginDependency(StochasticsPluginId.PLUGIN_ID);//
+
+		for (PluginId pluginId : pluginDependencies) {
+			builder.addPluginDependency(pluginId);//
+		}
+		return builder.build();
+
 	}
 
 }

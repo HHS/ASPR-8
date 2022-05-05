@@ -1,7 +1,6 @@
 package plugins.partitions.testsupport.attributes;
 
 import nucleus.Plugin;
-import plugins.partitions.PartitionsPluginId;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.people.PeoplePluginId;
 import util.errors.ContractError;
@@ -106,7 +105,6 @@ public final class AttributesPlugin {
 		return Plugin	.builder()//
 						.setPluginId(AttributesPluginId.PLUGIN_ID)//
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
-						.addPluginDependency(PartitionsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							AttributesPluginData pluginData = c.getPluginData(AttributesPluginData.class);
 							c.addDataManager(new AttributesDataManager(pluginData));
