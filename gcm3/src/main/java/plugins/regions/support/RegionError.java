@@ -25,7 +25,6 @@ public enum RegionError implements ContractError {
 	NULL_REGION_PROPERTY_VALUE("Null region property value"),	
 	DUPLICATE_PERSON_REGION_ASSIGNMENT("Duplicate person region assignment"),
 	DUPLICATE_PERSON_ADDITION("Duplicate person region addition"),
-	DUPLICATE_PERSON_REMOVAL("Duplicate person region removal"),
 	DUPLICATE_REGION_PROPERTY_VALUE("Duplicate region property value"),	
 	DUPLICATE_REGION_PROPERTY_DEFINITION_ASSIGNMENT("Duplicate region property definition assignment"),
 

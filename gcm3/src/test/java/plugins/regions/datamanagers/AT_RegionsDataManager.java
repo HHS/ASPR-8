@@ -33,7 +33,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -1531,7 +1531,7 @@ public class AT_RegionsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
-	public void testPersonImminentRemovalEvent() {
+	public void testPersonRemovalEvent() {
 
 		MutableInteger pId = new MutableInteger();
 
@@ -1578,8 +1578,8 @@ public class AT_RegionsDataManager {
 
 		// precondition test: if the person id is unknown
 		RegionsActionSupport.testConsumer(0, 2314376445339268382L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PersonImminentRemovalEvent personImminentRemovalEvent = new PersonImminentRemovalEvent(new PersonId(1000));
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personImminentRemovalEvent));
+			PersonRemovalEvent personRemovalEvent = new PersonRemovalEvent(new PersonId(1000));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personRemovalEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -1594,11 +1594,11 @@ public class AT_RegionsDataManager {
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().add(TestRegionId.REGION_1).build());
 				peopleDataManager.removePerson(personId);
-				PersonImminentRemovalEvent personImminentRemovalEvent = new PersonImminentRemovalEvent(personId);
-				c.releaseEvent(personImminentRemovalEvent);
+				PersonRemovalEvent personRemovalEvent = new PersonRemovalEvent(personId);
+				c.releaseEvent(personRemovalEvent);
 			});
 		});
-		assertEquals(RegionError.DUPLICATE_PERSON_REMOVAL, contractException.getErrorType());
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 	}
 

@@ -14,6 +14,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -77,14 +78,14 @@ public final class RegionsDataManager extends DataManager {
 	 * Subscribes the following events:
 	 * <ul>
 	 * 
-	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the
-	 * person's initial region in the {@linkplain RegionLocationDataView} from
-	 * the region reference in the auxiliary data of the event.
+	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the person's
+	 * initial region in the {@linkplain RegionLocationDataView} from the region
+	 * reference in the auxiliary data of the event.
 	 * 
 	 * <BR>
 	 * <BR>
 	 * Throws {@link ContractException}
-	 * <ul> 
+	 * <ul>
 	 * <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person does not
 	 * exist</li>
 	 * <li>{@linkplain RegionError#NULL_REGION_ID} if no region data was
@@ -97,14 +98,14 @@ public final class RegionsDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * 
-	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each
-	 * person's initial region in the {@linkplain RegionLocationDataView} from
-	 * the region references in the auxiliary data of the event.
+	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each person's
+	 * initial region in the {@linkplain RegionLocationDataView} from the region
+	 * references in the auxiliary data of the event.
 	 * 
 	 * <BR>
 	 * <BR>
 	 * Throws {@link ContractException}
-	 * <ul> 
+	 * <ul>
 	 * <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person does not
 	 * exist</li>
 	 * 
@@ -121,15 +122,15 @@ public final class RegionsDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * 
-	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote>
-	 * Removes the region assignment data for the person from the
+	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote> Removes the
+	 * region assignment data for the person from the
 	 * {@linkplain RegionDataView} <BR>
 	 * <BR>
 	 * Throws {@linkplain ContractException}
 	 * <ul>
 	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is
 	 * unknown</li>
-	 * <li>{@linkplain RegionError#DUPLICATE_PERSON_REMOVAL} if the person was
+	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person was
 	 * previously removed. Note : this exception will be delayed until the
 	 * person is finally removed and cannot be found due to a previous
 	 * removal</li>
@@ -197,10 +198,10 @@ public final class RegionsDataManager extends DataManager {
 				final Object regionPropertyValue = regionsPluginData.getRegionPropertyValue(regionId, regionPropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
 				propertyValueRecord.setPropertyValue(regionPropertyValue);
-				map.put(regionPropertyId,propertyValueRecord);
+				map.put(regionPropertyId, propertyValueRecord);
 			}
 		}
-		
+
 		List<PersonId> people = peopleDataManager.getPeople();
 		for (PersonId personId : people) {
 			RegionId regionId = regionsPluginData.getPersonRegion(personId);
@@ -209,14 +210,14 @@ public final class RegionsDataManager extends DataManager {
 			Integer regionIndex = regionToIndexMap.get(regionId).intValue();
 			regionValues.setIntValue(personId.getValue(), regionIndex);
 		}
-		
-		if(regionsPluginData.getPersonIds().size()>people.size()) {		
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID,"There are people in the region plugin data that are not contained in the person data manager");
+
+		if (regionsPluginData.getPersonIds().size() > people.size()) {
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID, "There are people in the region plugin data that are not contained in the person data manager");
 		}
 
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForProperty());
 		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty());
@@ -403,10 +404,10 @@ public final class RegionsDataManager extends DataManager {
 	}
 
 	/*
-	 * Record for maintaining the number of people either globally or regionally.
-	 * Also maintains the time when the population count was
-	 * last changed. PopulationRecords are maintained to eliminate iterations
-	 * over other tracking structures to answer queries about population counts.
+	 * Record for maintaining the number of people either globally or
+	 * regionally. Also maintains the time when the population count was last
+	 * changed. PopulationRecords are maintained to eliminate iterations over
+	 * other tracking structures to answer queries about population counts.
 	 */
 	private static class PopulationRecord {
 		private int populationCount;
@@ -446,10 +447,10 @@ public final class RegionsDataManager extends DataManager {
 	 * region. List elements are unique.
 	 * 
 	 * @throws ContractException
-	 *                          <li>{@linkplain RegionError#NULL_REGION_ID} if
-	 *                          the c id is null
-	 *                          <li>{@linkplain RegionError#UNKNOWN_REGION_ID}
-	 *                          if the region id is not known
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the c id is
+	 *             null
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             id is not known
 	 */
 	public List<PersonId> getPeopleInRegion(final RegionId regionId) {
 		validateRegionId(regionId);
@@ -546,8 +547,6 @@ public final class RegionsDataManager extends DataManager {
 		return regionPopulationRecordMap.get(regionId).assignmentTime;
 	}
 
-	
-
 	/**
 	 * 
 	 * Updates the person's current region and region arrival time. Generates a
@@ -569,7 +568,6 @@ public final class RegionsDataManager extends DataManager {
 
 		validatePersonExists(personId);
 		validateRegionId(regionId);
-		
 
 		/*
 		 * Retrieve the int value that represents the current region of the
@@ -658,7 +656,7 @@ public final class RegionsDataManager extends DataManager {
 
 		int regionIndex = regionValues.getValueAsInt(personId.getValue());
 		if (regionIndex == 0) {
-			throw new ContractException(RegionError.DUPLICATE_PERSON_REMOVAL);
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 
@@ -733,13 +731,8 @@ public final class RegionsDataManager extends DataManager {
 	 * if the person id is unknown</li>
 	 * 
 	 */
-	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
-		PersonId personId = personImminentRemovalEvent.getPersonId();
-		validatePersonExists(personId);
-		dataManagerContext.addPlan((context) -> removePerson(personId), dataManagerContext.getTime());
-	}
-
-	private void removePerson(final PersonId personId) {
+	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
+		PersonId personId = personRemovalEvent.getPersonId();
 		validatePersonContained(personId);
 		final int regionIndex = regionValues.getValueAsInt(personId.getValue());
 		final RegionId oldRegionId = indexToRegionMap[regionIndex];
