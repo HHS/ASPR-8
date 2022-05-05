@@ -1204,14 +1204,14 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
-		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(eventClass);
+		List<MetaDataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
 			list = new ArrayList<>();
 			dataManagerEventMap.put(eventClass, list);
 		}
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 		//MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer, EventPhase.EXECUTION);
-		MetaDataManagerEventConsumer<T> metaDataManagerEventConsumer = new MetaDataManagerEventConsumer<>(dataManagerContext, dataManagerId, eventConsumer);
+		MetaDataManagerEventConsumer metaDataManagerEventConsumer = new MetaDataManagerEventConsumer(dataManagerContext, dataManagerId, eventConsumer);
 		list.add(metaDataManagerEventConsumer);
 		Collections.sort(list);
 	}
@@ -1221,12 +1221,12 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 
-		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(eventClass);
+		List<MetaDataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 
 		if (list != null) {
-			Iterator<MetaDataManagerEventConsumer<?>> iterator = list.iterator();
+			Iterator<MetaDataManagerEventConsumer> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				MetaDataManagerEventConsumer<?> metaDataManagerEventConsumer = iterator.next();
+				MetaDataManagerEventConsumer metaDataManagerEventConsumer = iterator.next();
 				if (metaDataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
 					iterator.remove();
 				}
@@ -1266,9 +1266,9 @@ public class Simulation {
 
 		broadcastEventToActorSubscribers(event);
 
-		List<MetaDataManagerEventConsumer<?>> list = dataManagerEventMap.get(event.getClass());
+		List<MetaDataManagerEventConsumer> list = dataManagerEventMap.get(event.getClass());
 		if (list != null) {
-			for (MetaDataManagerEventConsumer<?> metaDataManagerEventConsumer : list) {
+			for (MetaDataManagerEventConsumer metaDataManagerEventConsumer : list) {
 				metaDataManagerEventConsumer.handleEvent(event);
 			}
 		}
@@ -1415,17 +1415,17 @@ public class Simulation {
 
 	private int masterDataManagerIndex;
 
-	private static class MetaDataManagerEventConsumer<T extends Event> implements Comparable<MetaDataManagerEventConsumer<T>>{
+	private static class MetaDataManagerEventConsumer implements Comparable<MetaDataManagerEventConsumer>{
 
-		private final BiConsumer<DataManagerContext, T> dataManagerEventConsumer;
+		private final Consumer<Event> dataManagerEventConsumer;
 
 		private final DataManagerContext context;
 
 		private final DataManagerId dataManagerId;
 
 
-		public MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext, T> eventConsumer) {
-			this.dataManagerEventConsumer = eventConsumer;
+		public <T extends Event> MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext, T> eventConsumer) {
+			this.dataManagerEventConsumer = event -> eventConsumer.accept(context, (T) event);
 			this.context = context;
 			this.dataManagerId = dataManagerId;
 		}
@@ -1434,7 +1434,7 @@ public class Simulation {
 		public void handleEvent(Event event) {
 
 			try {
-				dataManagerEventConsumer.accept(context, (T) event);
+				dataManagerEventConsumer.accept(event);
 			} catch (ClassCastException e) {
 				throw new RuntimeException("Class cast exception likely due to improperly formed event label", e);
 			}
@@ -1443,13 +1443,13 @@ public class Simulation {
 
 		
 		@Override
-		public int compareTo(MetaDataManagerEventConsumer<T> other) {
+		public int compareTo(MetaDataManagerEventConsumer other) {
 			return this.dataManagerId.compareTo(other.dataManagerId);
 		}
 	}
 
 	// used for subscriptions
-	private final Map<Class<? extends Event>, List<MetaDataManagerEventConsumer<?>>> dataManagerEventMap = new LinkedHashMap<>();
+	private final Map<Class<? extends Event>, List<MetaDataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
 
 	// used for retrieving and canceling plans owned by data managers
 	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
