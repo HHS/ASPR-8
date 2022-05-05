@@ -11,6 +11,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -262,6 +263,7 @@ public final class PeopleDataManager extends DataManager {
 			globalPopulationRecord.populationCount--;
 			globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 			personIds.set(personId.getValue(), null);
+			context.releaseEvent(new PersonRemovalEvent(personId));
 		}, dataManagerContext.getTime());
 		
 		dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));

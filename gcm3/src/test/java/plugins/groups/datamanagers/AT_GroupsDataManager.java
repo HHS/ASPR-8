@@ -525,69 +525,6 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removePerson", args = { PersonId.class })
-	public void testRemovePerson() {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		// create containers for observations
-		Set<GroupId> actualObservations = new LinkedHashSet<>();
-		Set<GroupId> expectedObservations = new LinkedHashSet<>();
-
-		// add an agent to observe the group removals
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupImminentRemovalEvent.class, (c2, e) -> {
-				actualObservations.add(e.getGroupId());
-			});
-
-		}));
-
-		// add an agent that removes groups
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			List<GroupId> groupIds = groupsDataManager.getGroupIds();
-			assertTrue(groupIds.size() > 5);
-			for (int i = 0; i < 5; i++) {
-				GroupId groupId = groupIds.get(i);
-				groupsDataManager.removeGroup(groupId);
-				expectedObservations.add(groupId);
-			}
-		}));
-
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			for (GroupId groupId : expectedObservations) {
-				assertFalse(groupsDataManager.groupExists(groupId));
-			}
-		}));
-
-		// have the observer verify that the observations were correct
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
-			assertTrue(expectedObservations.size() > 0);
-			assertEquals(expectedObservations, actualObservations);
-		}));
-
-		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		GroupsActionSupport.testConsumers(30, 3, 10, 1454752128175396298L, testPlugin);
-
-		// precondition test: if the group id is null
-		GroupsActionSupport.testConsumer(30, 3, 10, 7796647463624453709L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removeGroup(null));
-			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-		});
-
-		// precondition test: if the group id is unknown
-		GroupsActionSupport.testConsumer(30, 3, 10, 8368986779885621446L, (c) -> {
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.removeGroup(new GroupId(10000)));
-			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-		});
-
-	}
-
-	@Test
 	@UnitTestMethod(name = "groupExists", args = { GroupId.class })
 	public void testGroupExists() {
 
@@ -2579,7 +2516,7 @@ public class AT_GroupsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
-	public void testPersonImminentRemovalEvent() {
+	public void testPersonRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		MutableObject<PersonId> pId = new MutableObject<>();

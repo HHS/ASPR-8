@@ -15,6 +15,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -129,11 +130,12 @@ public final class ResourcesDataManager extends DataManager {
 	 * Constructs the PersonResourceManager from the context
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_RESOURCE_PLUGIN_DATA} if the plugin data is null</li>
+	 *             <li>{@linkplain NucleusError#NULL_RESOURCE_PLUGIN_DATA} if
+	 *             the plugin data is null</li>
 	 */
 	public ResourcesDataManager(final ResourcesPluginData resourcesPluginData) {
-		if(resourcesPluginData == null) {
-			throw new  ContractException(ResourceError.NULL_RESOURCE_PLUGIN_DATA);
+		if (resourcesPluginData == null) {
+			throw new ContractException(ResourceError.NULL_RESOURCE_PLUGIN_DATA);
 		}
 		this.resourcesPluginData = resourcesPluginData;
 	}
@@ -568,10 +570,9 @@ public final class ResourcesDataManager extends DataManager {
 	 * <ul>
 	 *
 	 *
-	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the
-	 * person's initial resource levels in the {@linkplain ResourcesDataManager}
-	 * from the ResourceInitialization references in the auxiliary data of the
-	 * event.
+	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the person's
+	 * initial resource levels in the {@linkplain ResourcesDataManager} from the
+	 * ResourceInitialization references in the auxiliary data of the event.
 	 * 
 	 * <BR>
 	 * <BR>
@@ -592,10 +593,9 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each
-	 * person's initial resource levels in the {@linkplain ResourcesDataManager}
-	 * from the ResourceInitialization references in the auxiliary data of the
-	 * event.
+	 * <li>{@linkplain BulkPersonAdditionEvent}<blockquote> Sets each person's
+	 * initial resource levels in the {@linkplain ResourcesDataManager} from the
+	 * ResourceInitialization references in the auxiliary data of the event.
 	 * 
 	 * <BR>
 	 * <BR>
@@ -615,8 +615,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote>
-	 * Removes the resource assignment data for the person from the
+	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote> Removes the
+	 * resource assignment data for the person from the
 	 * {@linkplain ResourcesDataManager} by scheduling the removal for the
 	 * current time. This allows the person and their resource levels to remain
 	 * long enough for resolvers, agents and reports to have final reference to
@@ -757,7 +757,7 @@ public final class ResourcesDataManager extends DataManager {
 
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 	}
 
 	/**
@@ -846,8 +846,8 @@ public final class ResourcesDataManager extends DataManager {
 
 	/**
 	 * Transfers resources from one region to another. Generates the
-	 * corresponding {@linkplain RegionResourceUpdateEvent} events
-	 * for each region.
+	 * corresponding {@linkplain RegionResourceUpdateEvent} events for each
+	 * region.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the source
@@ -1236,14 +1236,12 @@ public final class ResourcesDataManager extends DataManager {
 
 	}
 
-	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
-		validatePersonExists(personImminentRemovalEvent.getPersonId());
+	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
 
-		dataManagerContext.addPlan((context) -> {
-			PersonId personId = personImminentRemovalEvent.getPersonId();
-			for (final IntValueContainer intValueContainer : personResourceValues.values()) {
-				intValueContainer.setLongValue(personId.getValue(), 0);
-			}
-		}, dataManagerContext.getTime());
+		PersonId personId = personRemovalEvent.getPersonId();
+		for (final IntValueContainer intValueContainer : personResourceValues.values()) {
+			intValueContainer.setLongValue(personId.getValue(), 0);
+		}
+
 	}
 }

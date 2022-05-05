@@ -72,7 +72,7 @@ import util.wrappers.MutableObject;
 public final class AT_ResourcesDataManager {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
-	public void testPersonImminentRemovalEvent() {
+	public void testPersonRemovalEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// Have an actor add a person with resources and then remove that person

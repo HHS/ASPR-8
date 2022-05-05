@@ -32,7 +32,7 @@ import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -182,7 +182,7 @@ public final class GroupsDataManager extends DataManager {
 	 * exists and contains an incompatible group property value</li>
 	 * </ul>
 	 * 
-	 * {@linkplain PersonImminentRemovalEvent} Removes the person from all
+	 * {@linkplain PersonRemovalEvent} Removes the person from all
 	 * groups by scheduling the removal for the current time. This allows
 	 * references and group memberships to remain long enough for resolvers,
 	 * agents and reports to have final reference to the person while still
@@ -247,7 +247,7 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupPropertyValues();
 
 		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}
 
@@ -1462,18 +1462,12 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
-		validatePersonExists(personImminentRemovalEvent.getPersonId());
-		dataManagerContext.addPlan((context) -> {
-			removePerson(personImminentRemovalEvent.getPersonId());
-		}, dataManagerContext.getTime());
-	}
-
 	/**
 	 * Removes the person from all group tracking.
 	 * 
 	 */
-	private void removePerson(final PersonId personId) {
+	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
+		PersonId personId = personRemovalEvent.getPersonId();
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		peopleToGroupsMap.setValue(personId.getValue(), null);
 		if (groups != null) {
