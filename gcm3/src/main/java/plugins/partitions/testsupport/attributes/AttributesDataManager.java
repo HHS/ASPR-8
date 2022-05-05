@@ -12,7 +12,7 @@ import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
 import plugins.partitions.testsupport.attributes.support.AttributeId;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
@@ -139,17 +139,14 @@ public final class AttributesDataManager extends DataManager {
 			addAttribute(attributeId, attributeDefinition);
 		}
 
-		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}
 
-	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
-		validatePersonExists(dataManagerContext, personImminentRemovalEvent.getPersonId());
-		dataManagerContext.addPlan((c) -> {
-			for (AttributeId attributeId : attributeValues.keySet()) {
-				attributeValues.get(attributeId).remove(personImminentRemovalEvent.getPersonId());
-			}
-		}, dataManagerContext.getTime());
+	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
+		for (AttributeId attributeId : attributeValues.keySet()) {
+			attributeValues.get(attributeId).remove(personRemovalEvent.getPersonId());
+		}
 	}
 
 	/*
