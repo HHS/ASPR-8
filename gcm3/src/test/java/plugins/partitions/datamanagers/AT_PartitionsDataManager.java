@@ -1543,7 +1543,7 @@ public final class AT_PartitionsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonImminentRemovalEvent() {
+	public void testPersonRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

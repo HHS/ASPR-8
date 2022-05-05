@@ -22,6 +22,7 @@ import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -290,6 +291,7 @@ public final class AT_PeopleDataManager {
 
 		// add a container to collect the observed removals
 		Set<PersonId> observedRemovals = new LinkedHashSet<>();
+		Set<PersonId> observedImminentRemovals = new LinkedHashSet<>();
 		Set<PersonId> expectedRemovals = new LinkedHashSet<>();
 		for (int i = 0; i < 5; i++) {
 			expectedRemovals.add(new PersonId(i));
@@ -298,7 +300,8 @@ public final class AT_PeopleDataManager {
 		// have the observer subscribe to the removals and record them onto the
 		// observed removals
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-			c.subscribe(PersonImminentRemovalEvent.class, (c2, e) -> observedRemovals.add(e.getPersonId()));
+			c.subscribe(PersonRemovalEvent.class, (c2, e) -> observedRemovals.add(e.getPersonId()));
+			c.subscribe(PersonImminentRemovalEvent.class, (c2, e) -> observedImminentRemovals.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people
@@ -336,6 +339,7 @@ public final class AT_PeopleDataManager {
 
 		// show that the observed removals match the expected removals
 		assertEquals(expectedRemovals, observedRemovals);
+		assertEquals(expectedRemovals, observedImminentRemovals);
 	}
 
 	@Test

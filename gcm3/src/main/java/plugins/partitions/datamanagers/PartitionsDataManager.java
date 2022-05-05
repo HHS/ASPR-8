@@ -27,6 +27,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -379,7 +380,7 @@ public final class PartitionsDataManager extends DataManager {
 
 		dataManagerContext.subscribePostOrder(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 
-		dataManagerContext.subscribePostOrder(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		dataManagerContext.subscribePostOrder(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}
 
@@ -458,13 +459,13 @@ public final class PartitionsDataManager extends DataManager {
 
 	}
 
-	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
-		dataManagerContext.addPlan((context) -> {
-			for (final Object key : getKeys()) {
-				final PopulationPartition populationPartition = getPopulationPartition(key);
-				populationPartition.attemptPersonRemoval(personImminentRemovalEvent.getPersonId());
-			}
-		}, dataManagerContext.getTime());
+	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
+
+		for (final Object key : getKeys()) {
+			final PopulationPartition populationPartition = getPopulationPartition(key);
+			populationPartition.attemptPersonRemoval(personRemovalEvent.getPersonId());
+		}
+
 	}
 
 	/**
@@ -550,7 +551,7 @@ public final class PartitionsDataManager extends DataManager {
 				final PopulationPartition populationPartition = getPopulationPartition(key);
 				populationPartition.handleEvent(event);
 			}
-		} else {			
+		} else {
 			throw new RuntimeException("received unhandled event " + event);
 		}
 	}
