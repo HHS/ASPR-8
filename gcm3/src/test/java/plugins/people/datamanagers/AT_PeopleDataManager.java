@@ -20,7 +20,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
@@ -123,7 +123,7 @@ public final class AT_PeopleDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(PersonAdditionEvent.class, (c2, e) -> observedPersonIds.add(e.getPersonId()));
+			c.subscribe(PersonImminentAdditionEvent.class, (c2, e) -> observedPersonIds.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people and show they were added

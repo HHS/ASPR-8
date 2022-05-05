@@ -9,7 +9,7 @@ import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
@@ -95,8 +95,8 @@ public final class PeopleDataManager extends DataManager {
 
 		final PersonId personId = addPersonId();
 
-		final PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
-		dataManagerContext.releaseEvent(personAdditionEvent);
+		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
+		dataManagerContext.releaseEvent(personImminentAdditionEvent);
 
 		return personId;
 	}

@@ -12,7 +12,7 @@ import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
@@ -78,7 +78,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Subscribes the following events:
 	 * <ul>
 	 * 
-	 * <li>{@linkplain PersonAdditionEvent}<blockquote> Sets the person's
+	 * <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets the person's
 	 * initial region in the {@linkplain RegionLocationDataView} from the region
 	 * reference in the auxiliary data of the event.
 	 * 
@@ -215,7 +215,7 @@ public final class RegionsDataManager extends DataManager {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID, "There are people in the region plugin data that are not contained in the person data manager");
 		}
 
-		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
@@ -660,11 +660,11 @@ public final class RegionsDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
-		PersonConstructionData personConstructionData = personAdditionEvent.getPersonConstructionData();
+	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
+		PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
 		RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
 		validateRegionId(regionId);
-		PersonId personId = personAdditionEvent.getPersonId();
+		PersonId personId = personImminentAdditionEvent.getPersonId();
 
 		validatePersonExists(personId);
 		validateRegionId(regionId);

@@ -12,7 +12,7 @@ import nucleus.DataManagerContext;
 import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
@@ -72,7 +72,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 				propertyManager.setPropertyValue(pId, personPropertyValue);
 			}
 		}
-		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
@@ -424,10 +424,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
-		PersonConstructionData personConstructionData = personAdditionEvent.getPersonConstructionData();
+	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
+		PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
 
-		PersonId personId = personAdditionEvent.getPersonId();
+		PersonId personId = personImminentAdditionEvent.getPersonId();
 
 		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
 		for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {

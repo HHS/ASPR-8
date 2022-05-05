@@ -14,8 +14,8 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = PersonAdditionEvent.class)
-public class AT_PersonAdditionEvent implements Event {
+@UnitTest(target = PersonImminentAdditionEvent.class)
+public class AT_PersonImminentAdditionEvent implements Event {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, PersonConstructionData.class })
@@ -23,10 +23,10 @@ public class AT_PersonAdditionEvent implements Event {
 		PersonId personId = new PersonId(0);
 		PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
 
-		ContractException contractException = assertThrows(ContractException.class, () -> new PersonAdditionEvent(null, personConstructionData));
+		ContractException contractException = assertThrows(ContractException.class, () -> new PersonImminentAdditionEvent(null, personConstructionData));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new PersonAdditionEvent(personId, null));
+		contractException = assertThrows(ContractException.class, () -> new PersonImminentAdditionEvent(personId, null));
 		assertEquals(PersonError.NULL_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 	}
 
@@ -36,9 +36,9 @@ public class AT_PersonAdditionEvent implements Event {
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
-			PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
+			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
 
-			assertEquals(personId, personAdditionEvent.getPersonId());
+			assertEquals(personId, personImminentAdditionEvent.getPersonId());
 		}
 	}
 
@@ -47,8 +47,8 @@ public class AT_PersonAdditionEvent implements Event {
 	public void testGetPersonConstructionData() {
 		PersonId personId = new PersonId(0);
 		PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
-		PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
+		PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
 
-		assertEquals(personConstructionData, personAdditionEvent.getPersonConstructionData());
+		assertEquals(personConstructionData, personImminentAdditionEvent.getPersonConstructionData());
 	}
 }

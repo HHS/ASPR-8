@@ -32,7 +32,7 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
@@ -1341,7 +1341,7 @@ public class AT_RegionsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
-	public void testPersonAdditionEvent() {
+	public void testPersonImmimentAdditionEvent() {
 		/*
 		 * Have the agent create some people over time and show that each person
 		 * is in the correct region at the correct time
@@ -1400,8 +1400,8 @@ public class AT_RegionsDataManager {
 			 * release such an event, so we release it from an actor
 			 */
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
-			PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(new PersonId(10000), personConstructionData);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personAdditionEvent));
+			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(new PersonId(10000), personConstructionData);
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personImminentAdditionEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -1415,9 +1415,9 @@ public class AT_RegionsDataManager {
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
-			PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId, personConstructionData);
+			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personAdditionEvent));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personImminentAdditionEvent));
 			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
 		});
 

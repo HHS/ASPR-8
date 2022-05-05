@@ -25,7 +25,7 @@ import plugins.partitions.support.PopulationPartition;
 import plugins.partitions.support.PopulationPartitionImpl;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.PersonAdditionEvent;
+import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
@@ -43,7 +43,7 @@ import util.errors.ContractException;
  * Subscribes to the following events for all partitions:
  * </P>
  * <ul>
- * <li>{@linkplain PersonAdditionEvent} <blockquote>Adds the person to all
+ * <li>{@linkplain PersonImminentAdditionEvent} <blockquote>Adds the person to all
  * relevant population partitions after event validation and execution phases
  * are complete. </blockquote></li>
  *
@@ -376,7 +376,7 @@ public final class PartitionsDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
-		dataManagerContext.subscribePostOrder(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribePostOrder(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
 
 		dataManagerContext.subscribePostOrder(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 
@@ -419,8 +419,8 @@ public final class PartitionsDataManager extends DataManager {
 		}
 	}
 
-	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
-		final PersonId personId = personAdditionEvent.getPersonId();
+	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
+		final PersonId personId = personImminentAdditionEvent.getPersonId();
 		for (final Object key : getKeys()) {
 			final PopulationPartition populationPartition = getPopulationPartition(key);
 			populationPartition.attemptPersonAddition(personId);

@@ -8,7 +8,7 @@ import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
 @Immutable
-public final class PersonAdditionEvent implements Event {
+public final class PersonImminentAdditionEvent implements Event {
 	private final PersonId personId;
 	private final PersonConstructionData personConstructionData;
 
@@ -22,7 +22,7 @@ public final class PersonAdditionEvent implements Event {
 	 *             <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA} if
 	 *             the person construction data is null</li>
 	 */
-	public PersonAdditionEvent(final PersonId personId, PersonConstructionData personConstructionData) {
+	public PersonImminentAdditionEvent(final PersonId personId, PersonConstructionData personConstructionData) {
 
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
