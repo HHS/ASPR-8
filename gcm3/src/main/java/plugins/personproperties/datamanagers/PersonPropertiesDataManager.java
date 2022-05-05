@@ -13,7 +13,7 @@ import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
+import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
@@ -68,13 +68,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
 				Object personPropertyValue = personPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
 				int pId = personId.getValue();
-				IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);				
-				propertyManager.setPropertyValue(pId, personPropertyValue);				
+				IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
+				propertyManager.setPropertyValue(pId, personPropertyValue);
 			}
 		}
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
-		dataManagerContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
 	}
 
@@ -468,15 +468,14 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	}
 
-	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonImminentRemovalEvent personImminentRemovalEvent) {
-		PersonId personId = personImminentRemovalEvent.getPersonId();
-		validatePersonExists(personId);
-		dataManagerContext.addPlan((context) -> {
-			for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
-				final IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
-				indexedPropertyManager.removeId(personId.getValue());
-			}
-		}, dataManagerContext.getTime());
+	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
+		PersonId personId = personRemovalEvent.getPersonId();
+
+		for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
+			final IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+			indexedPropertyManager.removeId(personId.getValue());
+		}
+
 	}
 
 }
