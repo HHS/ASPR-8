@@ -957,7 +957,7 @@ public class Simulation {
 
 			focalActorId = actorContentRec.actorId;
 			if (actorContentRec.event != null) {
-				actorContentRec.metaActorEventConsumer.handleEvent(actorContentRec.event);
+				actorContentRec.eventConsumer.accept(actorContentRec.event);
 			} else {
 				actorContentRec.plan.accept(actorContext);
 			}
@@ -1093,13 +1093,16 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
-		Map<ActorId, MetaActorEventConsumer> map = actorEventMap.get(eventClass);
+		Map<ActorId, Consumer<Event>> map = actorEventMap.get(eventClass);
 		if (map == null) {
 			map = new LinkedHashMap<>();
 			actorEventMap.put(eventClass, map);
 		}
-		MetaActorEventConsumer metaActorEventConsumer = new MetaActorEventConsumer(actorContext, eventConsumer);
-		map.put(focalActorId, metaActorEventConsumer);
+		 
+		@SuppressWarnings("unchecked")
+		Consumer<Event> consumer = event-> eventConsumer.accept(actorContext, (T)event); 
+		
+		map.put(focalActorId, consumer);
 	}
 
 	private void releaseOutput(Object output) {
@@ -1222,7 +1225,7 @@ public class Simulation {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
-		Map<ActorId, MetaActorEventConsumer> map = actorEventMap.get(eventClass);
+		Map<ActorId, Consumer<Event>> map = actorEventMap.get(eventClass);
 		map.remove(focalActorId);
 	}
 
@@ -1232,14 +1235,14 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
 
-		Map<ActorId, MetaActorEventConsumer> consumerMap = actorEventMap.get(event.getClass());
+		Map<ActorId, Consumer<Event>> consumerMap = actorEventMap.get(event.getClass());
 		if (consumerMap != null) {
 			for (final ActorId actorId : consumerMap.keySet()) {
-				MetaActorEventConsumer metaActorEventConsumer = consumerMap.get(actorId);
+				Consumer<Event> consumer = consumerMap.get(actorId);
 				final ActorContentRec contentRec = new ActorContentRec();
 				contentRec.actorId = actorId;
 				contentRec.event = event;
-				contentRec.metaActorEventConsumer = metaActorEventConsumer;
+				contentRec.eventConsumer = consumer;
 				actorQueue.add(contentRec);
 			}
 		}
@@ -1395,19 +1398,6 @@ public class Simulation {
 
 	private int masterDataManagerIndex;
 
-	private static class MetaActorEventConsumer {
-
-		private final Consumer<Event> actorEventConsumer;
-
-		@SuppressWarnings("unchecked")
-		public <T extends Event> MetaActorEventConsumer(ActorContext context, BiConsumer<ActorContext, T> eventConsumer) {
-			this.actorEventConsumer = event-> eventConsumer.accept(context, (T)event);
-		}
-
-		public void handleEvent(Event event) {
-			actorEventConsumer.accept(event);
-		}
-	}
 
 	private static class MetaDataManagerEventConsumer implements Comparable<MetaDataManagerEventConsumer> {
 
@@ -1454,7 +1444,7 @@ public class Simulation {
 	// actor support
 	//////////////////////////////
 
-	private final Map<Class<? extends Event>, Map<ActorId, MetaActorEventConsumer>> actorEventMap = new LinkedHashMap<>();
+	private final Map<Class<? extends Event>, Map<ActorId, Consumer<Event>>> actorEventMap = new LinkedHashMap<>();
 
 	private final ActorContext actorContext = new ActorContextImpl();
 
@@ -1472,7 +1462,7 @@ public class Simulation {
 
 		private Event event;
 
-		private MetaActorEventConsumer metaActorEventConsumer;
+		private Consumer<Event> eventConsumer;
 
 		private Consumer<ActorContext> plan;
 
@@ -1501,12 +1491,12 @@ public class Simulation {
 	}
 
 	private void broadcastEventToActorSubscribers(final Event event) {
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>>>> map1 = actorPubSub.get(event.getClass());
+		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>> map1 = actorPubSub.get(event.getClass());
 		if (map1 == null) {
 			return;
 		}
 		Object primaryKeyValue = event.getPrimaryKeyValue();
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>>> map2 = map1.get(primaryKeyValue);
+		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>> map2 = map1.get(primaryKeyValue);
 		if (map2 == null) {
 			return;
 		}
@@ -1514,15 +1504,15 @@ public class Simulation {
 		for (EventLabelerId eventLabelerId : map2.keySet()) {
 			MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
 			EventLabel<?> eventLabel = metaEventLabeler.getEventLabel(actorContext, event);
-			Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>> map3 = map2.get(eventLabelerId);
-			Map<ActorId, MetaActorEventConsumer> map4 = map3.get(eventLabel);
+			Map<EventLabel<?>, Map<ActorId, Consumer<Event>>> map3 = map2.get(eventLabelerId);
+			Map<ActorId, Consumer<Event>> map4 = map3.get(eventLabel);
 			if (map4 != null) {
 				for (ActorId actorId : map4.keySet()) {
-					MetaActorEventConsumer metaConsumer = map4.get(actorId);
+					Consumer<Event> consumer = map4.get(actorId);
 					final ActorContentRec actorContentRec = new ActorContentRec();
 					actorContentRec.event = event;
 					actorContentRec.actorId = actorId;
-					actorContentRec.metaActorEventConsumer = metaConsumer;
+					actorContentRec.eventConsumer = consumer;
 					actorQueue.add(actorContentRec);
 
 				}
@@ -1549,32 +1539,34 @@ public class Simulation {
 
 		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
 
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>>>> map1 = actorPubSub.get(eventLabel.getEventClass());
+		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>> map1 = actorPubSub.get(eventLabel.getEventClass());
 		if (map1 == null) {
 			map1 = new LinkedHashMap<>();
 			actorPubSub.put(eventClass, map1);
 		}
 
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>>> map2 = map1.get(primaryKeyValue);
+		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>> map2 = map1.get(primaryKeyValue);
 		if (map2 == null) {
 			map2 = new LinkedHashMap<>();
 			map1.put(primaryKeyValue, map2);
 		}
 
-		Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>> map3 = map2.get(eventLabelerId);
+		Map<EventLabel<?>, Map<ActorId, Consumer<Event>>> map3 = map2.get(eventLabelerId);
 		if (map3 == null) {
 			map3 = new LinkedHashMap<>();
 			map2.put(eventLabelerId, map3);
 		}
 
-		Map<ActorId, MetaActorEventConsumer> map4 = map3.get(eventLabel);
+		Map<ActorId, Consumer<Event>> map4 = map3.get(eventLabel);
 		if (map4 == null) {
 			map4 = new LinkedHashMap<>();
 			map3.put(eventLabel, map4);
 		}
 
-		MetaActorEventConsumer metaEventConsumer = new MetaActorEventConsumer(actorContext, eventConsumer);
-		map4.put(focalActorId, metaEventConsumer);
+		@SuppressWarnings("unchecked")
+		Consumer<Event> consumer = event-> eventConsumer.accept(actorContext, (T)event);
+		
+		map4.put(focalActorId, consumer);
 
 	}
 
@@ -1593,25 +1585,25 @@ public class Simulation {
 
 		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
 
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>>>> map1 = actorPubSub.get(eventClass);
+		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>> map1 = actorPubSub.get(eventClass);
 
 		if (map1 == null) {
 			return;
 		}
 
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>>> map2 = map1.get(primaryKeyValue);
+		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>> map2 = map1.get(primaryKeyValue);
 
 		if (map2 == null) {
 			return;
 		}
 
-		Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>> map3 = map2.get(eventLabelerId);
+		Map<EventLabel<?>, Map<ActorId, Consumer<Event>>> map3 = map2.get(eventLabelerId);
 
 		if (map3 == null) {
 			return;
 		}
 
-		Map<ActorId, MetaActorEventConsumer> map4 = map3.get(eventLabel);
+		Map<ActorId, Consumer<Event>> map4 = map3.get(eventLabel);
 
 		if (map4 == null) {
 			return;
@@ -1639,6 +1631,21 @@ public class Simulation {
 
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
 
-	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, MetaActorEventConsumer>>>>> actorPubSub = new LinkedHashMap<>();
+	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>>> actorPubSub = new LinkedHashMap<>();
+	
+//	private static class MetaActorEventConsumer {
+//
+//		private final Consumer<Event> actorEventConsumer;
+//
+//		@SuppressWarnings("unchecked")
+//		public <T extends Event> MetaActorEventConsumer(ActorContext context, BiConsumer<ActorContext, T> eventConsumer) {
+//			this.actorEventConsumer = event-> eventConsumer.accept(context, (T)event);
+//		}
+//
+//		public void handleEvent(Event event) {
+//			actorEventConsumer.accept(event);
+//		}
+//	}
+
 
 }
