@@ -463,12 +463,12 @@ public final class Experiment {
 		 * Set up a map that will allow us to associate each data builder with
 		 * the plugin that should own that data
 		 */
-		Map<PluginDataBuilder, PluginId> humptyMap = new LinkedHashMap<>();
+		Map<PluginDataBuilder, PluginId> pluginBuilderToPluginIdMap = new LinkedHashMap<>();
 
 		for (final Plugin plugin : data.plugins) {
 			for (final PluginData pluginData : plugin.getPluginDatas()) {
 				PluginDataBuilder pluginDataBuilder = pluginData.getCloneBuilder();
-				humptyMap.put(pluginDataBuilder, plugin.getPluginId());
+				pluginBuilderToPluginIdMap.put(pluginDataBuilder, plugin.getPluginId());
 				contextBuilder.add(pluginDataBuilder);
 			}
 		}
@@ -527,7 +527,7 @@ public final class Experiment {
 		// added in the order that they were in in the original plugins
 		for (final PluginDataBuilder pluginDataBuilder : pluginDataBuilderContext.getContents()) {
 			final PluginData pluginData = pluginDataBuilder.build();
-			PluginId pluginId = humptyMap.get(pluginDataBuilder);
+			PluginId pluginId = pluginBuilderToPluginIdMap.get(pluginDataBuilder);
 			Plugin.Builder pluginBuilder = dumptyMap.get(pluginId);
 			pluginBuilder.addPluginData(pluginData);
 		}

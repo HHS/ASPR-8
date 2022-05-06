@@ -1471,8 +1471,6 @@ public class Simulation {
 
 	}
 
-	/////////////////////////////////////////////////////////////////////////
-
 	private <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
 		if (eventLabeler == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_LABELER);
