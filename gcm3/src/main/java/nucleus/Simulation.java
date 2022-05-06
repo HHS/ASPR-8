@@ -957,7 +957,7 @@ public class Simulation {
 
 			focalActorId = actorContentRec.actorId;
 			if (actorContentRec.event != null) {
-				actorContentRec.eventConsumer.accept(actorContentRec.event);
+				actorContentRec.consumer.accept(actorContentRec.event);
 			} else {
 				actorContentRec.plan.accept(actorContext);
 			}
@@ -1178,6 +1178,7 @@ public class Simulation {
 		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
@@ -1186,16 +1187,16 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
-		List<MetaDataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
+		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
 			list = new ArrayList<>();
 			dataManagerEventMap.put(eventClass, list);
 		}
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
+		
+		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
 
-		MetaDataManagerEventConsumer metaDataManagerEventConsumer = new MetaDataManagerEventConsumer(dataManagerContext, dataManagerId, eventConsumer);
-
-		list.add(metaDataManagerEventConsumer);
+		list.add(dataManagerEventConsumer);
 		Collections.sort(list);
 	}
 
@@ -1204,13 +1205,13 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 
-		List<MetaDataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
+		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 
 		if (list != null) {
-			Iterator<MetaDataManagerEventConsumer> iterator = list.iterator();
+			Iterator<DataManagerEventConsumer> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				MetaDataManagerEventConsumer metaDataManagerEventConsumer = iterator.next();
-				if (metaDataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
+				DataManagerEventConsumer dataManagerEventConsumer = iterator.next();
+				if (dataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
 					iterator.remove();
 				}
 			}
@@ -1242,17 +1243,17 @@ public class Simulation {
 				final ActorContentRec contentRec = new ActorContentRec();
 				contentRec.actorId = actorId;
 				contentRec.event = event;
-				contentRec.eventConsumer = consumer;
+				contentRec.consumer = consumer;
 				actorQueue.add(contentRec);
 			}
 		}
 
 		broadcastEventToActorSubscribers(event);
 
-		List<MetaDataManagerEventConsumer> list = dataManagerEventMap.get(event.getClass());
+		List<DataManagerEventConsumer> list = dataManagerEventMap.get(event.getClass());
 		if (list != null) {
-			for (MetaDataManagerEventConsumer metaDataManagerEventConsumer : list) {
-				metaDataManagerEventConsumer.handleEvent(event);
+			for (DataManagerEventConsumer dataManagerEventConsumer : list) {
+				dataManagerEventConsumer.accept(event);
 			}
 		}
 	}
@@ -1399,29 +1400,29 @@ public class Simulation {
 	private int masterDataManagerIndex;
 
 
-	private static class MetaDataManagerEventConsumer implements Comparable<MetaDataManagerEventConsumer> {
+	private static class DataManagerEventConsumer implements Consumer<Event>, Comparable<DataManagerEventConsumer> {
 
-		private final Consumer<Event> dataManagerEventConsumer;
+		private final Consumer<Event> consumer;
 		private final DataManagerId dataManagerId;
 
-		@SuppressWarnings("unchecked")
-		public <T extends Event> MetaDataManagerEventConsumer(DataManagerContext context, DataManagerId dataManagerId, BiConsumer<DataManagerContext, T> eventConsumer) {
-			this.dataManagerEventConsumer = event -> eventConsumer.accept(context, (T) event);
+		public <T extends Event> DataManagerEventConsumer(DataManagerId dataManagerId, Consumer<Event> consumer) {
+			this.consumer = consumer;
 			this.dataManagerId = dataManagerId;
 		}
-
-		public void handleEvent(Event event) {
-			dataManagerEventConsumer.accept(event);
+		
+		@Override
+		public int compareTo(DataManagerEventConsumer other) {
+			return this.dataManagerId.compareTo(other.dataManagerId);
 		}
 
 		@Override
-		public int compareTo(MetaDataManagerEventConsumer other) {
-			return this.dataManagerId.compareTo(other.dataManagerId);
+		public void accept(Event event) {
+			consumer.accept(event);			
 		}
 	}
 
 	// used for subscriptions
-	private final Map<Class<? extends Event>, List<MetaDataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
+	private final Map<Class<? extends Event>, List<DataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
 
 	// used for retrieving and canceling plans owned by data managers
 	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
@@ -1462,7 +1463,7 @@ public class Simulation {
 
 		private Event event;
 
-		private Consumer<Event> eventConsumer;
+		private Consumer<Event> consumer;
 
 		private Consumer<ActorContext> plan;
 
@@ -1512,7 +1513,7 @@ public class Simulation {
 					final ActorContentRec actorContentRec = new ActorContentRec();
 					actorContentRec.event = event;
 					actorContentRec.actorId = actorId;
-					actorContentRec.eventConsumer = consumer;
+					actorContentRec.consumer = consumer;
 					actorQueue.add(actorContentRec);
 
 				}
@@ -1632,20 +1633,5 @@ public class Simulation {
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
 
 	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>>> actorPubSub = new LinkedHashMap<>();
-	
-//	private static class MetaActorEventConsumer {
-//
-//		private final Consumer<Event> actorEventConsumer;
-//
-//		@SuppressWarnings("unchecked")
-//		public <T extends Event> MetaActorEventConsumer(ActorContext context, BiConsumer<ActorContext, T> eventConsumer) {
-//			this.actorEventConsumer = event-> eventConsumer.accept(context, (T)event);
-//		}
-//
-//		public void handleEvent(Event event) {
-//			actorEventConsumer.accept(event);
-//		}
-//	}
-
 
 }
