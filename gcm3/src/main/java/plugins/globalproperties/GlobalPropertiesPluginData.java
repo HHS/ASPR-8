@@ -261,7 +261,11 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	@SuppressWarnings("unchecked")
 	public <T> T getGlobalPropertyValue(final GlobalPropertyId globalPropertyId) {
 		validategGlobalPropertyIdExists(data, globalPropertyId);
-		return (T) data.globalPropertyValues.get(globalPropertyId);
+		T result = (T) data.globalPropertyValues.get(globalPropertyId);
+		if(result == null) {
+			result = (T) data.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();			
+		}
+		return result;
 	}
 
 	private static void validategGlobalPropertyIdExists(final Data data, final GlobalPropertyId globalPropertyId) {

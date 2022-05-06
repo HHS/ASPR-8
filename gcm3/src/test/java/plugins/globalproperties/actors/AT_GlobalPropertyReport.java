@@ -43,8 +43,7 @@ public class AT_GlobalPropertyReport {
 		 * various global properties over time. Report items from the report
 		 * will be collected in an output consumer. The expected report items
 		 * will be collected in a separate consumer and the consumers will be
-		 * compared for equality. The output consumers properly accounts for
-		 * report item duplications.
+		 * compared for equality. 
 		 */
 
 		Experiment.Builder builder = Experiment.builder();
@@ -69,6 +68,16 @@ public class AT_GlobalPropertyReport {
 		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
 		builder.addPlugin(GlobalPropertiesPlugin.getPlugin(globalPropertiesPluginData));
 
+		/*
+		 * Define two more properties that are not included in the plugin data and will be added by an actor
+		 */
+		GlobalPropertyId globalPropertyId_4 = new SimpleGlobalPropertyId("id_4");
+		PropertyDefinition propertyDefinition_4 = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
+
+		GlobalPropertyId globalPropertyId_5 = new SimpleGlobalPropertyId("id_5");
+		PropertyDefinition propertyDefinition_5 = PropertyDefinition.builder().setType(Double.class).setDefaultValue(199.16).build();
+
+		
 		// add the report
 		ReportsPluginData reportsInitialData = ReportsPluginData.builder()//
 																.addReport(() -> new GlobalPropertyReport(REPORT_ID)::init)//
@@ -103,6 +112,9 @@ public class AT_GlobalPropertyReport {
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_1, 100);
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 3.45);
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
+			
+			globalPropertiesDataManager.defineGlobalProperty(globalPropertyId_4, propertyDefinition_4);
+			
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
@@ -116,6 +128,8 @@ public class AT_GlobalPropertyReport {
 			// and now a third setting of the same property to a new value
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 100.0);
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
+			
+			globalPropertiesDataManager.defineGlobalProperty(globalPropertyId_5, propertyDefinition_5);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -147,14 +161,16 @@ public class AT_GlobalPropertyReport {
 		expectedReportItems.put(getReportItem(2.0, globalPropertyId_1, 100), 1);
 		expectedReportItems.put(getReportItem(2.0, globalPropertyId_2, 3.45), 1);
 		expectedReportItems.put(getReportItem(2.0, globalPropertyId_3, true), 1);
+		expectedReportItems.put(getReportItem(2.0, globalPropertyId_4, true), 1);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_3, false), 1);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_2, 99.7), 2);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_2, 100.0), 1);
 		expectedReportItems.put(getReportItem(3.0, globalPropertyId_3, true), 1);
+		expectedReportItems.put(getReportItem(3.0, globalPropertyId_5, 199.16), 1);
 
 		Map<ReportItem, Integer> actualReportItems = testReportItemOutputConsumer.getReportItems().get(0);
-		
 		assertEquals(expectedReportItems, actualReportItems);
+		
 	}
 
 	private static ReportItem getReportItem(Object... values) {
