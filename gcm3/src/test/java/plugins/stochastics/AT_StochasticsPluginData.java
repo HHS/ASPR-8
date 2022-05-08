@@ -82,7 +82,8 @@ public class AT_StochasticsPluginData {
 	@Test
 	@UnitTestMethod(target = StochasticsPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		// test covered by remaining tests
+		ContractException contractException = assertThrows(ContractException.class,()->StochasticsPluginData.builder().build());
+		assertEquals(StochasticsError.NULL_SEED,contractException.getErrorType());
 	}
 
 	@Test
