@@ -44,6 +44,7 @@ import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
+import plugins.personproperties.testsupport.TestAuxiliaryPersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
@@ -562,7 +563,7 @@ public final class AT_PersonPropertyDataManager {
 		}
 		for (PersonId personId : people) {
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				if(randomGenerator.nextBoolean()) {
+				if (randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
 				}
@@ -981,14 +982,81 @@ public final class AT_PersonPropertyDataManager {
 
 	}
 
-	//
-	// 3100440347097616280L
-	// 4627357002700907595L
-	// 3525837507821440138L
-	// 3404160152913070084L
-	// 8802528032031272978L
-	// 7460910928660168768L
-	// 1498052576475289605L
+	@Test
+	@UnitTestMethod(name = "definePersonProperty", args = { PersonPropertyId.class, PropertyDefinition.class })
+	public void testDefinePersonProperty() {
+
+		PersonPropertiesActionSupport.testConsumer(100, 3100440347097616280L, (c) -> {
+			double planTime = 1;
+			for (TestAuxiliaryPersonPropertyId auxPropertyId : TestAuxiliaryPersonPropertyId.values()) {
+
+				c.addPlan((c2) -> {
+					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
+					PersonPropertiesDataManager personPropertiesDataManager = c2.getDataManager(PersonPropertiesDataManager.class);
+					PropertyDefinition expectedPropertyDefinition = auxPropertyId.getPropertyDefinition();
+					personPropertiesDataManager.definePersonProperty(auxPropertyId, expectedPropertyDefinition);
+
+					// show that the definition was added
+					PropertyDefinition actualPopertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(auxPropertyId);
+					assertEquals(expectedPropertyDefinition, actualPopertyDefinition);
+
+					// show that the property has the correct initial value
+					// show that the property has the correct initial time
+					Object expectedValue = expectedPropertyDefinition.getDefaultValue().get();
+					double expectedTime = c2.getTime();
+					for (PersonId personId : peopleDataManager.getPeople()) {
+
+						Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, auxPropertyId);
+						assertEquals(expectedValue, actualValue);
+
+						if (expectedPropertyDefinition.getTimeTrackingPolicy().equals(TimeTrackingPolicy.TRACK_TIME)) {
+							double actualTime = personPropertiesDataManager.getPersonPropertyTime(personId, auxPropertyId);
+							assertEquals(expectedTime, actualTime);
+						}
+					}
+
+				}, planTime++);
+			}
+		});
+
+		// precondition test: if the person property id is null
+		PersonPropertiesActionSupport.testConsumer(0, 4627357002700907595L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertyId personPropertyId = null;
+			PropertyDefinition propertyDefinition = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
+			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// if the person property already exists
+		PersonPropertiesActionSupport.testConsumer(0, 8802528032031272978L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
+			assertEquals(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION, contractException.getErrorType());
+		});
+
+		// if the property definition is null
+		PersonPropertiesActionSupport.testConsumer(0, 7460910928660168768L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertyId personPropertyId = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
+			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+		});
+
+		// if the property definition has no default value
+		PersonPropertiesActionSupport.testConsumer(0, 1498052576475289605L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertyId personPropertyId = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
+			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+		});
+
+	}
+
 	// 3969826324474876300L
 	// 1426493903052832076L
 	// 15986402242167215L

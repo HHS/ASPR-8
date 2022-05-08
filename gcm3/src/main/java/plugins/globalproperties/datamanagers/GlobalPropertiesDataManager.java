@@ -186,9 +186,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *             if the global property id is null</li>
 	 *             <li>{@linkplain GlobalPropertiesError#DUPLICATE_GLOBAL_PROPERTY_DEFINITION}
 	 *             if the global property already exists</li>
-	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_DEFINITION} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
-	 *             <li>{@linkplain PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT}
+	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 	 *             if the property definition has no default value</li>
 	 *	 
 	 * 

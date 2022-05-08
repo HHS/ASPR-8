@@ -56,7 +56,7 @@ public abstract class AbstractIndexedPropertyManager implements IndexedPropertyM
 		if (initialSize < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INITIAL_SIZE);
 		}
-		timeTrackingContainer = new DoubleValueContainer(0, initialSize);
+		timeTrackingContainer = new DoubleValueContainer(simulationContext.getTime(), initialSize);
 	}
 
 	@Override

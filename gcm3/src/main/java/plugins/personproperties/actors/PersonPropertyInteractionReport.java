@@ -15,6 +15,7 @@ import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -62,6 +63,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	private final List<PersonPropertyId> propertyIds = new ArrayList<>();
+	private boolean subscribedToAllProperties;
 
 	/*
 	 * Map of <Region, Map<Property Value, ... Map<Property Value,Counter>...>>
@@ -267,16 +269,25 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		// class, otherwise subscribe to the individual property values
 		if (propertyIds.stream().collect(Collectors.toSet()).equals(personPropertiesDataManager.getPersonPropertyIds())) {
 			actorContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+			subscribedToAllProperties = true;
 		} else {
 			for (PersonPropertyId personPropertyId : propertyIds) {
 				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
 				actorContext.subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
 			}
 		}
+		
+		actorContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final Object regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, personId);
+		}
+	}
+	
+	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
+		if(subscribedToAllProperties) {
+			this.propertyIds.add(personPropertyDefinitionEvent.getPersonPropertyId());		
 		}
 	}
 

@@ -12,6 +12,7 @@ import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
@@ -67,6 +68,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	 * report. They are set during init()
 	 */
 	private final Set<PersonPropertyId> personPropertyIds = new LinkedHashSet<>();
+	private boolean subscribedToAllProperties;
 
 	/*
 	 * The tuple mapping to person counts that is maintained via handling of
@@ -217,7 +219,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		/*
 		 * If no person properties were specified, then assume all are wanted
 		 */
-		if (personPropertyIds.size() == 0) {
+		if (personPropertyIds.isEmpty()) {
 			personPropertyIds.addAll(personPropertiesDataManager.getPersonPropertyIds());
 		}
 
@@ -235,12 +237,16 @@ public final class PersonPropertyReport extends PeriodicReport {
 		// class, otherwise subscribe to the individual property values
 		if (personPropertyIds.equals(personPropertiesDataManager.getPersonPropertyIds())) {
 			actorContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+			subscribedToAllProperties = true;
 		} else {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
 				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
 				actorContext.subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
 			}
 		}
+		
+		
+		actorContext.subscribe(PersonPropertyDefinitionEvent.class,this::handlePersonPropertyDefinitionEvent);
 
 		/*
 		 * Fill the top layers of the regionMap. We do not yet know the set of
@@ -268,5 +274,13 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 
 	}
+	
+	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext,PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
+		if(subscribedToAllProperties) {
+			PersonPropertyId personPropertyId = personPropertyDefinitionEvent.getPersonPropertyId();
+			personPropertyIds.add(personPropertyId);	
+		}
+	}
+	
 
 }

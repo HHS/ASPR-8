@@ -19,6 +19,7 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
@@ -44,6 +45,60 @@ import util.errors.ContractException;
  */
 
 public final class PersonPropertiesDataManager extends DataManager {
+	private void validatePersonPropertyIdIsUnknown(final PersonPropertyId personPropertyId) {
+		if (personPropertyId == null) {
+			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+		}
+
+		if (personPropertyDefinitions.containsKey(personPropertyId)) {
+			throw new ContractException(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION, personPropertyId);
+		}
+	}
+
+	private void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
+		if (propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+
+	}
+
+	private void validatePropertyDefinitionHasDefaultValue(PropertyDefinition propertyDefinition) {
+		if (!propertyDefinition.getDefaultValue().isPresent()) {
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
+		}
+	}
+
+	/**
+	 * 
+	 * Defines a new person property
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             if the person property id is null</li>
+	 *             <li>{@linkplain PersonPropertyError#DUPLICATE_PERSON_PROPERTY_DEFINITION}
+	 *             if the person property already exists</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
+	 *             the property definition is null</li>
+	 *             <li>{@linkplain PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT}
+	 *             if the property definition has no default value</li>
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	public void definePersonProperty(PersonPropertyId personPropertyId, PropertyDefinition propertyDefinition) {
+
+		validatePersonPropertyIdIsUnknown(personPropertyId);
+		validatePropertyDefinitionNotNull(propertyDefinition);
+		validatePropertyDefinitionHasDefaultValue(propertyDefinition);
+		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
+		final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+		personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
+
+		dataManagerContext.releaseEvent(new PersonPropertyDefinitionEvent(personPropertyId));
+	}
+
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
