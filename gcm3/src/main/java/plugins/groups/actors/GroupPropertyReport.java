@@ -10,7 +10,9 @@ import nucleus.EventLabel;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
+import plugins.groups.events.GroupPropertyDefinitionEvent;
 import plugins.groups.events.GroupPropertyUpdateEvent;
+import plugins.groups.events.GroupTypeAdditionEvent;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
@@ -21,14 +23,14 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
+import plugins.util.properties.PropertyDefinition;
 import util.errors.ContractException;
 
 /**
  * A periodic Report that displays the number of groups having particular values
  * for each group property for a given group type. Only non-zero person counts
  * are reported. The report is further limited to the
- * (GroupType,GroupPropertyId) pairs contained in the
- * GroupPropertyReportSettings instance used to initialize this report.
+ * (GroupType,GroupPropertyId) pairs added to the builder.
  * 
  *
  *
@@ -53,6 +55,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		private final Map<GroupTypeId, Set<GroupPropertyId>> clientPropertyMap = new LinkedHashMap<>();
 		private final Set<GroupTypeId> allProperties = new LinkedHashSet<>();
 		private ReportId reportId;
+		private boolean includeNewProperties;
 	}
 
 	public static Builder builder() {
@@ -81,33 +84,35 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * Sets the report period for this report
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the report period is null</li>
+		 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 *             report period is null</li>
 		 *             <li>if the report period END_OF_SIMULATION</li>
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
-			if (reportPeriod == null) {				
+			if (reportPeriod == null) {
 				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
 			}
 
-			if (reportPeriod == ReportPeriod.END_OF_SIMULATION) {				
-				throw new ContractException(ReportError.UNSUPPORTED_REPORT_PERIOD, ReportPeriod.END_OF_SIMULATION);				
+			if (reportPeriod == ReportPeriod.END_OF_SIMULATION) {
+				throw new ContractException(ReportError.UNSUPPORTED_REPORT_PERIOD, ReportPeriod.END_OF_SIMULATION);
 			}
 			scaffold.reportPeriod = reportPeriod;
 			return this;
 		}
-		
+
 		/**
 		 * Sets the report period for this report
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report period is null</li>
-		 *            
+		 *             <li>{@linkplain ReportError#NULL_REPORT_ID} if the report
+		 *             period is null</li>
+		 * 
 		 */
 		public Builder setReportId(ReportId reportId) {
-			if (reportId == null) {				
+			if (reportId == null) {
 				throw new ContractException(ReportError.NULL_REPORT_ID);
 			}
-			
+
 			scaffold.reportId = reportId;
 			return this;
 		}
@@ -116,7 +121,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * Adds all properties for the given group type id
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+		 *             group type id is null</li>
 		 */
 		public Builder addAllProperties(GroupTypeId groupTypeId) {
 			if (groupTypeId == null) {
@@ -126,19 +132,26 @@ public final class GroupPropertyReport extends PeriodicReport {
 			return this;
 		}
 
+		public Builder includeNewProperties(boolean includeNewProperties) {
+			scaffold.includeNewProperties = includeNewProperties;
+			return this;
+		}
+
 		/**
 		 * Adds all properties for the given group type id
 		 * 
-		 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the group property id is null</li>
+		 * @throws ContractException
+		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+		 *             group type id is null</li>
+		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+		 *             group property id is null</li>
 		 */
 		public Builder addProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 			if (groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
 			if (groupPropertyId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);				
+				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
 			}
 			Set<GroupPropertyId> set = scaffold.clientPropertyMap.get(groupTypeId);
 			if (set == null) {
@@ -154,7 +167,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	private final Scaffold scaffold;
 
 	private GroupPropertyReport(Scaffold scaffold) {
-		super(scaffold.reportId,scaffold.reportPeriod);
+		super(scaffold.reportId, scaffold.reportPeriod);
 		this.scaffold = scaffold;
 	}
 
@@ -167,7 +180,9 @@ public final class GroupPropertyReport extends PeriodicReport {
 	 * GroupPropertyReportSettings supplied during initialization
 	 */
 	private final Map<GroupTypeId, Set<GroupPropertyId>> clientPropertyMap = new LinkedHashMap<>();
-
+	private boolean isSubscribedToAllGroupPropertyUpdateEvents;
+	private boolean isSubscribedToAllGroupAdditionEvents;
+	private boolean isSubscribedToAllGroupRemovalEvents;
 	/*
 	 * For each (GroupTypeId,GroupPropertyId,property value) triplet, count the
 	 * number of groups having that triplet
@@ -252,7 +267,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
 
-		// transfer all VALID property selections from the scaffold
+		// transfer all VALID property id selections from the scaffold
 		Set<GroupTypeId> groupTypeIds = groupsDataManager.getGroupTypeIds();
 		for (GroupTypeId groupTypeId : groupTypeIds) {
 			Set<GroupPropertyId> groupPropertyIds = new LinkedHashSet<>();
@@ -272,10 +287,11 @@ public final class GroupPropertyReport extends PeriodicReport {
 			clientPropertyMap.put(groupTypeId, groupPropertyIds);
 		}
 
-		// determine the subscriptions for group creation
+		// determine the subscriptions for group addition
 		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			
 			actorContext.subscribe(GroupAdditionEvent.class, getFlushingConsumer(this::handleGroupAdditionEvent));
+			isSubscribedToAllGroupAdditionEvents = true;
+
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
 				EventLabel<GroupAdditionEvent> eventLabelByGroupType = GroupAdditionEvent.getEventLabelByGroupType(actorContext, groupTypeId);
@@ -283,38 +299,41 @@ public final class GroupPropertyReport extends PeriodicReport {
 			}
 		}
 
-		//determine the subscriptions for group removal observations
+		// determine the subscriptions for group removal observations
 		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
 			actorContext.subscribe(GroupImminentRemovalEvent.class, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
+			isSubscribedToAllGroupRemovalEvents = true;
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
 				EventLabel<GroupImminentRemovalEvent> eventLabelByGroupType = GroupImminentRemovalEvent.getEventLabelByGroupType(actorContext, groupTypeId);
 				actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
 			}
 		}
-		
-		//determine the subscriptions for group property changes		
+
+		// determine the subscriptions for group property changes
 		boolean allPropertiesRequired = false;
 		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
 			allPropertiesRequired = true;
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				if(!clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
+				if (!clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
 					allPropertiesRequired = false;
 					break;
 				}
 			}
 		}
-		
-		if(allPropertiesRequired) {
-			actorContext.subscribe(GroupPropertyUpdateEvent.class, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));	
-		}else {
+
+		if (allPropertiesRequired) {
+			isSubscribedToAllGroupPropertyUpdateEvents = true;
+			actorContext.subscribe(GroupPropertyUpdateEvent.class, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
+		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				if(clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
+				if (clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
 					EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupType = GroupPropertyUpdateEvent.getEventLabelByGroupType(actorContext, groupTypeId);
 					actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
-				}else {
-					for(GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-						EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupTypeAndProperty = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(actorContext, groupTypeId, groupPropertyId);
+				} else {
+					for (GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
+						EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupTypeAndProperty = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(actorContext, groupTypeId,
+								groupPropertyId);
 						actorContext.subscribe(eventLabelByGroupTypeAndProperty, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
 					}
 				}
@@ -347,6 +366,100 @@ public final class GroupPropertyReport extends PeriodicReport {
 				}
 			}
 		}
+
+		if (scaffold.includeNewProperties) {
+			actorContext.subscribe(GroupTypeAdditionEvent.class, getFlushingConsumer(this::handleGroupTypeAdditionEvent));
+			actorContext.subscribe(GroupPropertyDefinitionEvent.class, getFlushingConsumer(this::handleGroupPropertyDefinitionEvent));
+		}
+
+	}
+
+	private void handleGroupTypeAdditionEvent(ActorContext actorContext, GroupTypeAdditionEvent groupTypeAdditionEvent) {
+		GroupTypeId groupTypeId = groupTypeAdditionEvent.getGroupTypeId();
+		/*
+		 * Are we subscribed to all group property assignments? if not then
+		 * subscribe to all where the group type id is new one
+		 */
+		if (!isSubscribedToAllGroupPropertyUpdateEvents) {
+
+			EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupType = GroupPropertyUpdateEvent.getEventLabelByGroupType(actorContext, groupTypeId);
+			actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
+		}
+
+		/*
+		 * If we are not subscribed to all group addition events then we will need to subscribe by type
+		 */
+		if (isSubscribedToAllGroupAdditionEvents) {
+			EventLabel<GroupAdditionEvent> eventLabelByGroupType = GroupAdditionEvent.getEventLabelByGroupType(actorContext, groupTypeId);
+			actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupAdditionEvent));
+		}
+		
+		/*
+		 * If we are not subscribed to all group removal events then we will need to subscribe by type
+		 */
+		if (isSubscribedToAllGroupRemovalEvents) {
+			EventLabel<GroupImminentRemovalEvent> eventLabelByGroupType = GroupImminentRemovalEvent.getEventLabelByGroupType(actorContext, groupTypeId);
+			actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
+		}
+
+		/*
+		 * update the client property map for the future addition of property
+		 * ids associated with the new group type
+		 */
+		clientPropertyMap.put(groupTypeId, new LinkedHashSet<>());
+
+		groupTypeMap.put(groupTypeId, new LinkedHashMap<>());
+
+	}
+
+	private void handleGroupPropertyDefinitionEvent(ActorContext actorContext, GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {
+		// should we get the default value and integrate that in for all
+		// existing groups of that type?
+
+		GroupTypeId groupTypeId = groupPropertyDefinitionEvent.getGroupTypeId();
+		GroupPropertyId groupPropertyId = groupPropertyDefinitionEvent.getGroupPropertyId();
+
+		// if the group type was not previously added, then we are done
+		Set<GroupPropertyId> groupPropertyIds = clientPropertyMap.get(groupTypeId);
+		if (groupPropertyIds == null) {
+			return;
+		}
+		// if the group property id was previously added, then we are done
+		if (groupPropertyIds.contains(groupPropertyId)) {
+			return;
+		}
+		groupPropertyIds.add(groupPropertyId);
+
+		/*
+		 * initialize the group type map with the initial counter of the number
+		 * of groups having the default value associated with the new property
+		 * id
+		 */
+
+		// build the needed structure into the groupTypeMap
+		Map<GroupPropertyId, Map<Object, Counter>> map = groupTypeMap.get(groupTypeId);
+		Map<Object, Counter> counterMap = new LinkedHashMap<>();
+		map.put(groupPropertyId, counterMap);
+
+		// determine how many groups of the given group type there are
+		int groupCountForGroupType = groupsDataManager.getGroupCountForGroupType(groupTypeId);
+
+		/*
+		 * Rather than asking for the current value of the property for each
+		 * group, we will assign the default value. We do this since there may
+		 * be property value updates already performed and we want to reflect
+		 * the expected conditions immediately after the property was added.
+		 * 
+		 */
+		PropertyDefinition groupPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+		Object defaultValue = groupPropertyDefinition.getDefaultValue().get();
+		// create the counter with the number of groups
+		Counter counter = new Counter();
+		counter.count = groupCountForGroupType;
+
+		// all groups will have the default value initially.
+		counterMap.put(defaultValue, counter);
+
 	}
 
 	private void handleGroupPropertyUpdateEvent(ActorContext actorContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {

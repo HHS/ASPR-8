@@ -20,6 +20,7 @@ public enum GroupError implements ContractError {
 	DUPLICATE_GROUP_PROPERTY_VALUE_ASSIGNMENT("Duplicate group property value assignment"),
 	DUPLICATE_GROUP_PROPERTY_DEFINITION("Duplicate group property definition"),
 	DUPLICATE_GROUP_ID("Duplicate group id"),
+	DUPLICATE_GROUP_PROPERTY_ID("Duplicate group property id"),
 	DUPLICATE_PERSON_GROUP_ASSIGNMENT("Duplicate person group assignment"),
 	MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION("Data used to form an enumerated distribution for group sampling was malformed"),
 	NON_GROUP_MEMBERSHIP("Person is not currently assigned to group"),

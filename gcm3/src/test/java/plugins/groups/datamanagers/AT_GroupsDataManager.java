@@ -38,7 +38,9 @@ import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
+import plugins.groups.events.GroupPropertyDefinitionEvent;
 import plugins.groups.events.GroupPropertyUpdateEvent;
+import plugins.groups.events.GroupTypeAdditionEvent;
 import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
@@ -48,6 +50,8 @@ import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
 import plugins.groups.testsupport.GroupsActionSupport;
+import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
+import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.PeoplePlugin;
@@ -2481,7 +2485,7 @@ public class AT_GroupsDataManager {
 		 */
 		GroupsActionSupport.testConsumer(10, 3, 5, 5431888419388886834L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();				
+				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
 				BulkGroupMembershipData.Builder membershipBuilder = BulkGroupMembershipData.builder();
 				builder.add(PersonConstructionData.builder().build());
 				membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_1);
@@ -2493,14 +2497,14 @@ public class AT_GroupsDataManager {
 			});
 			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
 		});
-		
+
 		/*
 		 * precondition test: if the BulkMembership data exists and contains an
 		 * incompatible group property value
 		 */
 		GroupsActionSupport.testConsumer(10, 3, 5, 5431888419388886834L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();				
+				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
 				BulkGroupMembershipData.Builder membershipBuilder = BulkGroupMembershipData.builder();
 				builder.add(PersonConstructionData.builder().build());
 				membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_1);
@@ -2727,6 +2731,172 @@ public class AT_GroupsDataManager {
 		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "addGroupType", args = { GroupTypeId.class })
+	public void testAddGroupType() {
+		Set<GroupTypeId> expectedGroupTypeIds = new LinkedHashSet<>();
+		Set<GroupTypeId> actualGroupTypeIds = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			c.subscribe(GroupTypeAdditionEvent.class, (c2, e) -> {
+				actualGroupTypeIds.add(e.getGroupTypeId());
+			});
+		}));
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			for (TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
+				expectedGroupTypeIds.add(testAuxiliaryGroupTypeId);
+				groupsDataManager.addGroupType(testAuxiliaryGroupTypeId);
+			}
+		}));
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+			assertEquals(expectedGroupTypeIds, actualGroupTypeIds);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GroupsActionSupport.testConsumers(100, 3, 10, 5324000203933399469L, testPlugin);
+
+		// precondition test: if the group type id is already present
+		GroupsActionSupport.testConsumer(100, 3, 10, 6531281946960607184L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.addGroupType(TestGroupTypeId.GROUP_TYPE_1));
+			assertEquals(GroupError.DUPLICATE_GROUP_TYPE, contractException.getErrorType());
+		});
+
+		// precondition test: if the group type id is null
+		GroupsActionSupport.testConsumer(100, 3, 10, 2160259964191783423L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.addGroupType(null));
+			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "defineGroupProperty", args = { GroupTypeId.class, GroupPropertyId.class, PropertyDefinition.class })
+	public void testDefineGroupProperty() {
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// have an observer observe new group property definitions being created
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			c.subscribe(GroupPropertyDefinitionEvent.class, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGroupTypeId(), e.getGroupPropertyId());
+				actualObservations.add(multiKey);
+			});
+		}));
+
+		// have an actor add group property definitions
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			for (TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
+				groupsDataManager.addGroupType(testAuxiliaryGroupTypeId);
+				for (TestAuxiliaryGroupPropertyId testAuxiliaryGroupPropertyId : TestAuxiliaryGroupPropertyId.getTestGroupPropertyIds(testAuxiliaryGroupTypeId)) {
+					PropertyDefinition propertyDefinition = testAuxiliaryGroupPropertyId.getPropertyDefinition();
+					groupsDataManager.defineGroupProperty(testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId, propertyDefinition);
+					MultiKey multiKey = new MultiKey(c.getTime(), testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					expectedObservations.add(multiKey);
+					PropertyDefinition actualPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					assertEquals(propertyDefinition, actualPropertyDefinition);
+				}
+			}
+		}));
+
+		// have the observer verify that the observations were correct
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GroupsActionSupport.testConsumers(100, 3, 10, 7089101878335134553L, testPlugin);
+
+		//precondition test: if the group type id is null
+		GroupsActionSupport.testConsumer(100, 3, 10, 797293366141439211L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);			  
+			GroupTypeId groupTypeId = null;
+			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+			
+			ContractException contractException = assertThrows(ContractException.class,()-> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
+			assertEquals(GroupError.NULL_GROUP_TYPE_ID,contractException.getErrorType());
+		});
+
+		//precondition test: if the group type id is unknown
+		GroupsActionSupport.testConsumer(100, 3, 10, 8347881582083929312L, (c) -> {			
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);			  
+			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+			
+			ContractException contractException = assertThrows(ContractException.class,()-> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
+			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID,contractException.getErrorType());
+		});
+		
+		//precondition test: if the group property id is null
+		GroupsActionSupport.testConsumer(100, 3, 10, 6880827587168820274L, (c) -> {			
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+			groupsDataManager.addGroupType(groupTypeId);
+			GroupPropertyId groupPropertyId = null;
+			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+			
+			ContractException contractException = assertThrows(ContractException.class,()-> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
+			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID,contractException.getErrorType());
+		});
+
+		//precondition test: if the group property id is already known
+		GroupsActionSupport.testConsumer(100, 3, 10, 3203453010151124575L, (c) -> {
+			
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+			groupsDataManager.addGroupType(groupTypeId);
+			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
+			groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
+			
+			ContractException contractException = assertThrows(ContractException.class,()-> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
+			assertEquals(GroupError.DUPLICATE_GROUP_PROPERTY_ID,contractException.getErrorType());
+
+		});
+
+		//precondition test: if the property definition is null
+		GroupsActionSupport.testConsumer(100, 3, 10, 5687890749568815128L, (c) -> {
+			
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+			groupsDataManager.addGroupType(groupTypeId);
+			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = null;
+			
+			ContractException contractException = assertThrows(ContractException.class,()-> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
+			assertEquals(GroupError.NULL_PROPERTY_DEFINITION,contractException.getErrorType());
+		});
+		
+		//precondition test: if the property definition does not have a default value
+		GroupsActionSupport.testConsumer(100, 3, 10, 4454114782918202996L, (c) -> {
+			
+			
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+			groupsDataManager.addGroupType(groupTypeId);
+			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
+			
+			ContractException contractException = assertThrows(ContractException.class,()-> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
+			assertEquals(GroupError.PROPERTY_DEFINITION_REQUIRES_DEFAULT,contractException.getErrorType());
+		});
 
 	}
 

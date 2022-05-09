@@ -21,6 +21,8 @@ import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
+import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
+import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.PeoplePlugin;
@@ -35,6 +37,7 @@ import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
@@ -78,6 +81,12 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
+	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "includeNewProperties", args = { boolean.class })
+	public void includeNewProperties() {
+		// test covered by the consumers-based tests in this class
+	}
+
+	@Test
 	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class, GroupPropertyId.class })
 	public void testSetReportPeriod() {
 		// test covered by the consumers-based tests in this class
@@ -98,6 +107,11 @@ public class AT_GroupPropertyReport {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testHourlySelectProperties() {
+		testHourlySelectProperties(false);
+		testHourlySelectProperties(true);
+	}
+
+	private void testHourlySelectProperties(boolean includeNewProperties) {
 
 		/*
 		 * We will add one agent to move assign property values to groups and
@@ -112,12 +126,12 @@ public class AT_GroupPropertyReport {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 0, 0), (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
-			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
-			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
-			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);// group 0
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);// group 1
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);// group 2
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);// group 3
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);// group 4
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);// group 5
 
 		}));
 
@@ -126,6 +140,26 @@ public class AT_GroupPropertyReport {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			groupsDataManager.setGroupPropertyValue(new GroupId(0), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true);
 			groupsDataManager.setGroupPropertyValue(new GroupId(3), TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 1, 15), (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
+			groupsDataManager.addGroupType(groupTypeId);
+
+			/*
+			 * Add three groups before we define the group property so that we
+			 * can show the report initializing values on first encountering the
+			 * new definition because the report skips reporting zero counts
+			 */
+
+			groupsDataManager.addGroup(groupTypeId);
+			groupsDataManager.addGroup(groupTypeId);
+			groupsDataManager.addGroup(groupTypeId);
+
+			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK.getPropertyDefinition();
+			groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 2, 3), (c) -> {
@@ -178,9 +212,23 @@ public class AT_GroupPropertyReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 5, TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 123, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 5, TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 77, 1), 1);
 
+		if (includeNewProperties) {
+			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 1, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 2, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 3, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 4, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 5, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+		}
+
 		// build the report
 		GroupPropertyReport.Builder builder = GroupPropertyReport.builder();
 		builder.setReportId(REPORT_ID);
+		builder.includeNewProperties(includeNewProperties);
 		builder.setReportPeriod(ReportPeriod.HOURLY);
 		builder.addProperty(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK);
 		builder.addProperty(TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK);
@@ -197,7 +245,7 @@ public class AT_GroupPropertyReport {
 	public void testDailyAllProperties() {
 
 		/*
-		 * We will add one agent to move assign property values to groups and
+		 * We will add one agent to move, assign property values to groups and
 		 * create and remove groups. Report items from the report will be
 		 * collected in an output consumer and compared to the expected output.
 		 */

@@ -21,6 +21,7 @@ import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
+import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.PeoplePlugin;
@@ -97,6 +98,19 @@ public class AT_GroupPopulationReport {
 			groupsDataManager.addPersonToGroup(new PersonId(7),new GroupId(4));
 
 		}));
+		
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(1, 6, 40), (c) -> {
+
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			groupsDataManager.addGroupType(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1);
+			GroupId groupId = groupsDataManager.addGroup(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1);
+			assertEquals(5, groupId.getValue());			
+			groupsDataManager.addPersonToGroup(new PersonId(4),new GroupId(5));
+			groupsDataManager.addPersonToGroup(new PersonId(5),new GroupId(5));
+			groupsDataManager.addPersonToGroup(new PersonId(6),new GroupId(5));
+			groupsDataManager.addPersonToGroup(new PersonId(7),new GroupId(5));
+
+		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
@@ -132,7 +146,14 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 5, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
+
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, 4, 1), 1);
+
+		
 		Map<ReportItem, Integer> actualReportItems = testConsumers(testPlugin, ReportPeriod.HOURLY, 5524610980534223950L);
+		
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 

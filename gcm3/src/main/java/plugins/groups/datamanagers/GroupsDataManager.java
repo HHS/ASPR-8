@@ -21,7 +21,9 @@ import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
+import plugins.groups.events.GroupPropertyDefinitionEvent;
 import plugins.groups.events.GroupPropertyUpdateEvent;
+import plugins.groups.events.GroupTypeAdditionEvent;
 import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
@@ -161,10 +163,10 @@ public final class GroupsDataManager extends DataManager {
 	 * <li>Subscribes to the following events:
 	 * <ul>
 	 * 
-	 * {@linkplain BulkPersonImminentAdditionEvent} Assigns the newly created people
-	 * into newly created groups on the basis of auxiliary data carried in the
-	 * event as a BulkGroupMembershipData. Publishes the groups to the person
-	 * group data view. Generates the corresponding
+	 * {@linkplain BulkPersonImminentAdditionEvent} Assigns the newly created
+	 * people into newly created groups on the basis of auxiliary data carried
+	 * in the event as a BulkGroupMembershipData. Publishes the groups to the
+	 * person group data view. Generates the corresponding
 	 * {@linkplain GroupAdditionEvent} events. <BR>
 	 * <BR>
 	 * Throws {@link ContractException}
@@ -182,11 +184,11 @@ public final class GroupsDataManager extends DataManager {
 	 * exists and contains an incompatible group property value</li>
 	 * </ul>
 	 * 
-	 * {@linkplain PersonRemovalEvent} Removes the person from all
-	 * groups by scheduling the removal for the current time. This allows
-	 * references and group memberships to remain long enough for resolvers,
-	 * agents and reports to have final reference to the person while still
-	 * associated with any relevant groups.
+	 * {@linkplain PersonRemovalEvent} Removes the person from all groups by
+	 * scheduling the removal for the current time. This allows references and
+	 * group memberships to remain long enough for resolvers, agents and reports
+	 * to have final reference to the person while still associated with any
+	 * relevant groups.
 	 *
 	 * 
 	 * <BR>
@@ -273,6 +275,106 @@ public final class GroupsDataManager extends DataManager {
 			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
 			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
 		}
+	}
+
+	/**
+	 * Adds a group type id.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_TYPE} if the group
+	 *             type id is already present</li>
+	 */
+	public void addGroupType(GroupTypeId groupTypeId) {
+		validateGroupTypeIdIsUnknown(groupTypeId);
+		final int index = typesToIndexesMap.size();
+		typesToIndexesMap.put(groupTypeId, index);
+		indexesToTypesMap.add(groupTypeId);
+		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
+		groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
+
+		dataManagerContext.releaseEvent(new GroupTypeAdditionEvent(groupTypeId));
+	}
+
+	private void validatePropertyDefinitionHasDefault(PropertyDefinition propertyDefinition) {
+		if (propertyDefinition.getDefaultValue().isEmpty()) {
+			throw new ContractException(GroupError.PROPERTY_DEFINITION_REQUIRES_DEFAULT);
+		}
+	}
+
+	/**
+	 * Defines a new group property
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 * 
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is unknown</li>
+	 * 
+	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             group property id is null</li>
+	 *
+	 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_PROPERTY_ID} if
+	 *             the group property id is already known</li>
+	 * 
+	 *             <li>{@linkplain GroupError#NULL_PROPERTY_DEFINITION} if the
+	 *             property definition is null</li>
+	 * 
+	 *             <li>{@linkplain GroupError#PROPERTY_DEFINITION_REQUIRES_DEFAULT}
+	 *             if the property definition does not have a default value</li>
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	public void defineGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId, PropertyDefinition propertyDefinition) {
+
+		validateGroupTypeId(groupTypeId);
+		validateNewGroupPropertyId(groupTypeId, groupPropertyId);
+		validatePropertyDefinitionNotNull(propertyDefinition);
+		validatePropertyDefinitionHasDefault(propertyDefinition);
+
+		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
+		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+		managerMap.put(groupPropertyId, indexedPropertyManager);
+		
+		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
+		map.put(groupPropertyId, propertyDefinition);
+
+		dataManagerContext.releaseEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
+	}
+
+	public void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
+		if(propertyDefinition == null) {
+			throw new ContractException(GroupError.NULL_PROPERTY_DEFINITION);
+		}
+	}
+
+	private void validateNewGroupPropertyId(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
+		if (groupPropertyId == null) {
+			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+		}
+
+		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+		if (map == null || map.containsKey(groupPropertyId)) {
+			throw new ContractException(GroupError.DUPLICATE_GROUP_PROPERTY_ID);
+		}
+
+	}
+
+	private void validateGroupTypeIdIsUnknown(final GroupTypeId groupTypeId) {
+
+		if (groupTypeId == null) {
+			throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+		}
+
+		if (typesToIndexesMap.keySet().contains(groupTypeId)) {
+			throw new ContractException(GroupError.DUPLICATE_GROUP_TYPE);
+		}
+
 	}
 
 	private void loadGroupMembership() {
@@ -1128,7 +1230,7 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private void releaseSamplingLock() {
-		if (!samplingIsLocked) {			
+		if (!samplingIsLocked) {
 			throw new RuntimeException("cannot release sample locking when lock not present");
 		}
 		samplingIsLocked = false;
