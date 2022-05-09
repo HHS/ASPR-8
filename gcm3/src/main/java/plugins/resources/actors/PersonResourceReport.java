@@ -255,9 +255,9 @@ public final class PersonResourceReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
+		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
 
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -284,11 +284,11 @@ public final class PersonResourceReport extends PeriodicReport {
 		// If all resources are covered by this report, then subscribe to the
 		// event, otherwise subscribe to each resource id
 		if (resourceIds.equals(resourcesDataManager.getResourceIds())) {
-			actorContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
+			actorContext.subscribe(PersonResourceUpdateEvent.class, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
 		} else {
 			for (ResourceId resourceId : resourceIds) {
 				EventLabel<PersonResourceUpdateEvent> eventLabelByResource = PersonResourceUpdateEvent.getEventLabelByResource(actorContext, resourceId);
-				actorContext.subscribe(eventLabelByResource, this::handlePersonResourceUpdateEvent);
+				actorContext.subscribe(eventLabelByResource, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
 			}
 		}
 

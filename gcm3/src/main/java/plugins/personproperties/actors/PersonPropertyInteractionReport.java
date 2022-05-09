@@ -236,9 +236,9 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
+		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
 
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -273,7 +273,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		} else {
 			for (PersonPropertyId personPropertyId : propertyIds) {
 				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
-				actorContext.subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
+				actorContext.subscribe(eventLabelByProperty, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
 			}
 		}
 		

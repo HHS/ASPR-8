@@ -208,9 +208,9 @@ public final class PersonPropertyReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
+		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
 
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
@@ -236,17 +236,17 @@ public final class PersonPropertyReport extends PeriodicReport {
 		// If all person properties are included, then subscribe to the event
 		// class, otherwise subscribe to the individual property values
 		if (personPropertyIds.equals(personPropertiesDataManager.getPersonPropertyIds())) {
-			actorContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+			actorContext.subscribe(PersonPropertyUpdateEvent.class, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
 			subscribedToAllProperties = true;
 		} else {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
 				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
-				actorContext.subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
+				actorContext.subscribe(eventLabelByProperty, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
 			}
 		}
 		
 		
-		actorContext.subscribe(PersonPropertyDefinitionEvent.class,this::handlePersonPropertyDefinitionEvent);
+		actorContext.subscribe(PersonPropertyDefinitionEvent.class,getFlushingConsumer(this::handlePersonPropertyDefinitionEvent));
 
 		/*
 		 * Fill the top layers of the regionMap. We do not yet know the set of

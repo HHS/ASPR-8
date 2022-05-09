@@ -292,10 +292,10 @@ public final class ResourceReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		actorContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		actorContext.subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		actorContext.subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);
+		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
+		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
+		actorContext.subscribe(RegionResourceUpdateEvent.class, getFlushingConsumer(this::handleRegionResourceUpdateEvent));
 
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -318,11 +318,11 @@ public final class ResourceReport extends PeriodicReport {
 		// If all the resources are included in the report, then subscribe to
 		// the event, otherwise subscribe to each resource
 		if (resourceIds.stream().collect(Collectors.toSet()).equals(resourcesDataManager.getResourceIds())) {
-			actorContext.subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
+			actorContext.subscribe(PersonResourceUpdateEvent.class, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
 		} else {
 			for (ResourceId resourceId : resourceIds) {
 				EventLabel<PersonResourceUpdateEvent> eventLabelByResource = PersonResourceUpdateEvent.getEventLabelByResource(actorContext, resourceId);
-				actorContext.subscribe(eventLabelByResource, this::handlePersonResourceUpdateEvent);
+				actorContext.subscribe(eventLabelByResource, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
 			}
 		}
 
