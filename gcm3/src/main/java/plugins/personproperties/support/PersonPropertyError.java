@@ -16,7 +16,6 @@ public enum PersonPropertyError implements ContractError {
 	NULL_PERSON_PROPERTY_ID("Null person property id"),//	
 	UNKNOWN_PERSON_ID("Unknow person id"), //
 	NULL_PERSON_PROPERTY_DEFINITION("Null person property definition"),//
-	PROPERTY_DEFINITION_REQUIRES_DEFAULT("Person property definition does not have an assigned default value"),//
 	NULL_PERSON_PROPERTY_VALUE("Null person property value"),//
 	PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED("Property assignment time not actively tracked"),//
 	UNKNOWN_PERSON_PROPERTY_ID("Unknown person property id"),//	

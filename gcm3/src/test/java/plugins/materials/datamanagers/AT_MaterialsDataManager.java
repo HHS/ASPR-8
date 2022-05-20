@@ -82,6 +82,7 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
+import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -4125,6 +4126,28 @@ public class AT_MaterialsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	public void testResourceIdAddition() {
+		/*
+		 * Have the actor add a resource id and show that the materials data
+		 * manager will support the addition
+		 */
+		MaterialsActionSupport.testConsumer(7336173642619419311L, (c) -> {
+			ResourceId newResourceId = TestResourceId.getUnknownResourceId();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
+
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			Set<MaterialsProducerId> materialsProducerIds = materialsDataManager.getMaterialsProducerIds();
+			assertTrue(materialsProducerIds.size() > 0);
+			for (MaterialsProducerId materialsProducerId : materialsProducerIds) {
+				long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, newResourceId);
+				assertEquals(0, materialsProducerResourceLevel);
+			}
+		});
+	}
+
+	@Test
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testMaterialsDataManagerInitialState() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5272599676969321594L);
@@ -4405,5 +4428,3 @@ public class AT_MaterialsDataManager {
 	}
 
 }
-
-

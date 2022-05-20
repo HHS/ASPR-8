@@ -18,6 +18,7 @@ import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -104,7 +105,7 @@ public class AT_PersonPropertyPluginData {
 			builder.definePersonProperty(testPersonPropertyId, propertyDefinition);
 
 		});
-		assertEquals(PersonPropertyError.PROPERTY_DEFINITION_REQUIRES_DEFAULT, contractException.getErrorType());
+		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 	}
 

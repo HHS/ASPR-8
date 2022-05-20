@@ -27,6 +27,8 @@ import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
+import plugins.resources.events.ResourceIdAdditionEvent;
+import plugins.resources.events.ResourcePropertyAdditionEvent;
 import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
@@ -419,6 +421,126 @@ public final class ResourcesDataManager extends DataManager {
 		return result;
 	}
 
+	private void validateResourceTypeIsUnknown(final ResourceId resourceId) {
+		if (resourceId == null) {
+			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
+		}
+		if (personResourceValues.containsKey(resourceId)) {
+			throw new ContractException(ResourceError.DUPLICATE_RESOURCE_ID, resourceId);
+		}
+	}
+
+	private void validateTimeTrackingPolicy(TimeTrackingPolicy timeTrackingPolicy) {
+		if (timeTrackingPolicy == null) {
+			throw new ContractException(PropertyError.NULL_TIME_TRACKING_POLICY);
+		}
+	}
+	
+	
+	/*
+	 * Precondition : the resource id must exist
+	 */
+	private void validateNewResourcePropertyId(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+		if (resourcePropertyId == null) {
+			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+		}
+
+		final Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
+
+		if ((map != null) && map.containsKey(resourcePropertyId)) {
+			throw new ContractException(ResourceError.DUPLICATE_RESOURCE_PROPERTY_DEFINITION, resourcePropertyId);
+		}
+	}
+	
+	private void validateNewPropertyDefinition(PropertyDefinition propertyDefinition) {
+		if(propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+		if(propertyDefinition.getDefaultValue().isEmpty()) {
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
+		}
+	}
+
+	/**
+	 * Defines a new resource property. Generates the corresponding ResourcePropertyAdditionEvent.
+	 * 
+	 * @throw {@link ContractException}
+	 * <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the resource id is null</li>
+	 * <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the resource id is unknown</li>
+	 * <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if the resource property id is unknown</li>
+	 * <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_PROPERTY_DEFINITION} if the resource property is already defined</li>
+	 * <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if the property definition is null</li>
+	 * <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT} if the property definition does not have a default value</li>
+	 * 
+	 */
+	public void defineResourceProperty(ResourceId resourceId, ResourcePropertyId resourcePropertyId, PropertyDefinition propertyDefinition) {
+
+		validateResourceId(resourceId);
+		validateNewResourcePropertyId(resourceId, resourcePropertyId);
+		validateNewPropertyDefinition(propertyDefinition);
+		
+		Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
+		if (defMap == null) {
+			defMap = new LinkedHashMap<>();
+			resourcePropertyDefinitions.put(resourceId, defMap);
+		}
+		defMap.put(resourcePropertyId, propertyDefinition);
+		Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
+		if (map == null) {
+			map = new LinkedHashMap<>();
+			resourcePropertyMap.put(resourceId, map);
+		}
+		final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+		propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
+		map.put(resourcePropertyId, propertyValueRecord);
+		
+		dataManagerContext.releaseEvent(new ResourcePropertyAdditionEvent(resourceId, resourcePropertyId));
+	}
+
+	/**
+	 * Adds a resource type. Generates a corresponding ResourceIdAdditionEvent. 
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_ID} if the
+	 *             resource type is already present</li>
+	 *             <li>{@linkplain PropertyError#NULL_TIME_TRACKING_POLICY} if
+	 *             the time tracking policy is null</li>
+	 */
+	public void addResourceId(ResourceId resourceId, TimeTrackingPolicy timeTrackingPolicy) {
+
+		validateResourceTypeIsUnknown(resourceId);
+
+		validateTimeTrackingPolicy(timeTrackingPolicy);
+
+		// record the tracking policy
+		resourceTimeTrackingPolicies.put(resourceId, timeTrackingPolicy);
+
+		// if times for this resource will be tracked, then initialize tracking
+		// times to the current time
+		if (timeTrackingPolicy == TimeTrackingPolicy.TRACK_TIME) {
+			final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime());
+			personResourceTimes.put(resourceId, doubleValueContainer);
+		}
+
+		// add a container to record person resource values, initializing all
+		// people to have 0.
+		final IntValueContainer intValueContainer = new IntValueContainer(0L);
+		personResourceValues.put(resourceId, intValueContainer);
+
+		// add a record to record each region's resource level, initializing to
+		// 0.
+		for (final RegionId regionId : regionResources.keySet()) {
+			final Map<ResourceId, RegionResourceRecord> map = regionResources.get(regionId);
+			map.put(resourceId, new RegionResourceRecord(dataManagerContext));
+		}
+
+		// release notice that a new resource id has been added
+		dataManagerContext.releaseEvent(new ResourceIdAdditionEvent(resourceId, timeTrackingPolicy));
+
+	}
+
 	/**
 	 * Returns the property definition for the given resource id and resource
 	 * property id
@@ -570,9 +692,10 @@ public final class ResourcesDataManager extends DataManager {
 	 * <ul>
 	 *
 	 *
-	 * <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets the person's
-	 * initial resource levels in the {@linkplain ResourcesDataManager} from the
-	 * ResourceInitialization references in the auxiliary data of the event.
+	 * <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets the
+	 * person's initial resource levels in the {@linkplain ResourcesDataManager}
+	 * from the ResourceInitialization references in the auxiliary data of the
+	 * event.
 	 * 
 	 * <BR>
 	 * <BR>
@@ -593,9 +716,10 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote> Sets each person's
-	 * initial resource levels in the {@linkplain ResourcesDataManager} from the
-	 * ResourceInitialization references in the auxiliary data of the event.
+	 * <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote> Sets each
+	 * person's initial resource levels in the {@linkplain ResourcesDataManager}
+	 * from the ResourceInitialization references in the auxiliary data of the
+	 * event.
 	 * 
 	 * <BR>
 	 * <BR>
@@ -653,8 +777,7 @@ public final class ResourcesDataManager extends DataManager {
 		// load resource property definitions, property values and time tracking
 		// policies
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			// private final Map<ResourceId, TimeTrackingPolicy>
-			// resourceTimeTrackingPolicies = new LinkedHashMap<>();
+
 			TimeTrackingPolicy timeTrackingPolicy = resourcesPluginData.getPersonResourceTimeTrackingPolicy(resourceId);
 			resourceTimeTrackingPolicies.put(resourceId, timeTrackingPolicy);
 
@@ -662,13 +785,6 @@ public final class ResourcesDataManager extends DataManager {
 				final DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0D);
 				personResourceTimes.put(resourceId, doubleValueContainer);
 			}
-
-			// private final Map<ResourceId, Map<ResourcePropertyId,
-			// PropertyValueRecord>> resourcePropertyMap = new
-			// LinkedHashMap<>();
-			// private final Map<ResourceId, Map<ResourcePropertyId,
-			// PropertyDefinition>> resourcePropertyDefinitions = new
-			// LinkedHashMap<>();
 
 			final IntValueContainer intValueContainer = new IntValueContainer(0L);
 			personResourceValues.put(resourceId, intValueContainer);
@@ -706,14 +822,13 @@ public final class ResourcesDataManager extends DataManager {
 		}
 
 		// load the region resources
-		// private final Map<RegionId, Map<ResourceId, RegionResourceRecord>>
-		// regionResources = new LinkedHashMap<>();
 		Set<RegionId> regionIds = regionsDataManager.getRegionIds();
 
 		for (RegionId regionId : regionIds) {
 			final Map<ResourceId, RegionResourceRecord> map = new LinkedHashMap<>();
 			regionResources.put(regionId, map);
 		}
+
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
 			for (final RegionId regionId : regionResources.keySet()) {
 				final Map<ResourceId, RegionResourceRecord> map = regionResources.get(regionId);
@@ -734,11 +849,6 @@ public final class ResourcesDataManager extends DataManager {
 			}
 		}
 
-		// load the person resources
-		// private final Map<ResourceId, IntValueContainer> personResourceValues
-		// = new LinkedHashMap<>();
-		// private final Map<ResourceId, DoubleValueContainer>
-		// personResourceTimes = new LinkedHashMap<>();
 		for (final PersonId personId : resourcesPluginData.getPersonIds()) {
 			if (!peopleDataManager.personExists(personId)) {
 				throw new ContractException(PersonError.UNKNOWN_PERSON_ID, personId);

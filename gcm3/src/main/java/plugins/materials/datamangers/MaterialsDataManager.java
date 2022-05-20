@@ -39,6 +39,7 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.resources.datamanagers.ResourcesDataManager;
+import plugins.resources.events.ResourceIdAdditionEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.util.properties.PropertyDefinition;
@@ -387,6 +388,20 @@ public final class MaterialsDataManager extends DataManager {
 				}
 			}
 		}
+		dataManagerContext.subscribe(ResourceIdAdditionEvent.class,this::handleResourceIdAdditionEvent);
+	}
+	
+	private void handleResourceIdAdditionEvent(DataManagerContext dataManagerContext,ResourceIdAdditionEvent resourceIdAdditionEvent) {
+		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+		if(resourceId == null || resourceIds.contains(resourceId)) {
+			return;
+		}
+		
+		resourceIds.add(resourceId);
+		
+		for(MaterialsProducerRecord materialsProducerRecord : materialsProducerMap.values()) {
+			materialsProducerRecord.materialProducerResources.put(resourceId, new ComponentResourceRecord(dataManagerContext));
+		}				
 	}
 
 	/**

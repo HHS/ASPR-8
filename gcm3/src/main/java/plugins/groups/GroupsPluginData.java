@@ -206,7 +206,7 @@ public final class GroupsPluginData implements PluginData {
 		 *             group property value is added that is incompatible with
 		 *             the corresponding property definition
 		 * 
-		 *             <li>{@linkplain GroupError#PROPERTY_DEFINITION_REQUIRES_DEFAULT}</li>
+		 *             <li>{@linkplain PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT}</li>
 		 *             if a group property definition does not contain a default
 		 *             value
 		 * 
@@ -410,7 +410,7 @@ public final class GroupsPluginData implements PluginData {
 				for (GroupPropertyId groupPropertyId : propertyDefinitionMap.keySet()) {
 					PropertyDefinition propertyDefinition = propertyDefinitionMap.get(groupPropertyId);
 					if (!propertyDefinition.getDefaultValue().isPresent()) {
-						throw new ContractException(GroupError.PROPERTY_DEFINITION_REQUIRES_DEFAULT, groupTypeId + ": " + groupPropertyId);
+						throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, groupTypeId + ": " + groupPropertyId);
 					}
 				}
 			}

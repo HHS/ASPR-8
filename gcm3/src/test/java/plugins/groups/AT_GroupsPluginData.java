@@ -127,7 +127,7 @@ public class AT_GroupsPluginData {
 			builder.defineGroupProperty(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, PropertyDefinition.builder().setType(Boolean.class).build());
 			builder.build();
 		});
-		assertEquals(GroupError.PROPERTY_DEFINITION_REQUIRES_DEFAULT, contractException.getErrorType());
+		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 	}
 

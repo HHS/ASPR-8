@@ -24,6 +24,7 @@ import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
+import plugins.resources.events.ResourceIdAdditionEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import util.errors.ContractException;
@@ -137,6 +138,8 @@ public final class ResourceReport extends PeriodicReport {
 	 */
 	private final List<ResourceId> resourceIds = new ArrayList<>();
 
+	private boolean subscribedToAllResources;
+
 	/*
 	 * The mapping of (Region, Resource, Activity) tuples to counters that
 	 * record the number of actions and the number of items handled across those
@@ -249,6 +252,24 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
+	private void handleResourceIdAdditionEvent(ActorContext actorContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
+
+		if (subscribedToAllResources) {
+			ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+			if (resourceId != null && !resourceIds.contains(resourceId)) {
+				resourceIds.add(resourceId);
+				for (RegionId regionId : regionMap.keySet()) {
+					Map<ResourceId, Map<Activity, Counter>> map = regionMap.get(regionId);
+					Map<Activity, Counter> activityMap = new LinkedHashMap<>();
+					for (Activity activity : Activity.values()) {
+						activityMap.put(activity, new Counter());
+					}
+					map.put(resourceId, activityMap);
+				}
+			}
+		}
+	}
+
 	private void handleRegionResourceUpdateEvent(ActorContext actorContext, RegionResourceUpdateEvent regionResourceUpdateEvent) {
 
 		ResourceId resourceId = regionResourceUpdateEvent.getResourceId();
@@ -319,12 +340,15 @@ public final class ResourceReport extends PeriodicReport {
 		// the event, otherwise subscribe to each resource
 		if (resourceIds.stream().collect(Collectors.toSet()).equals(resourcesDataManager.getResourceIds())) {
 			actorContext.subscribe(PersonResourceUpdateEvent.class, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
+			subscribedToAllResources = true;
 		} else {
 			for (ResourceId resourceId : resourceIds) {
 				EventLabel<PersonResourceUpdateEvent> eventLabelByResource = PersonResourceUpdateEvent.getEventLabelByResource(actorContext, resourceId);
 				actorContext.subscribe(eventLabelByResource, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
 			}
 		}
+
+		actorContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 
 		/*
 		 * Filling the region map with empty counters

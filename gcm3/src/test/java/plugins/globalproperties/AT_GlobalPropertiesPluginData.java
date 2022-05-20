@@ -18,6 +18,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -65,7 +66,7 @@ public class AT_GlobalPropertiesPluginData {
 		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(GlobalPropertiesError.INSUFFICIENT_GLOBAL_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 	}
 

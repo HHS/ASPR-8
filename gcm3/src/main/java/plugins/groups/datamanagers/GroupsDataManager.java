@@ -299,7 +299,7 @@ public final class GroupsDataManager extends DataManager {
 
 	private void validatePropertyDefinitionHasDefault(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition.getDefaultValue().isEmpty()) {
-			throw new ContractException(GroupError.PROPERTY_DEFINITION_REQUIRES_DEFAULT);
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
 		}
 	}
 
@@ -323,7 +323,7 @@ public final class GroupsDataManager extends DataManager {
 	 *             <li>{@linkplain GroupError#NULL_PROPERTY_DEFINITION} if the
 	 *             property definition is null</li>
 	 * 
-	 *             <li>{@linkplain GroupError#PROPERTY_DEFINITION_REQUIRES_DEFAULT}
+	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 	 *             if the property definition does not have a default value</li>
 	 * 
 	 * 

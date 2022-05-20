@@ -11,6 +11,7 @@ import nucleus.PluginDataBuilder;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -67,7 +68,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 *             property id that is incompatible with the corresponding
 		 *             property definition.
 		 * 
-		 *             <li>{@linkplain GlobalPropertiesError#INSUFFICIENT_GLOBAL_PROPERTY_VALUE_ASSIGNMENT}</li>
+		 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}</li>
 		 *             if a global property definition does not have a default
 		 *             value and there are no property values added to replace
 		 *             that default.
@@ -180,7 +181,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			if (!propertyDefinition.getDefaultValue().isPresent()) {
 				Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
 				if (propertyValue == null) {
-					throw new ContractException(GlobalPropertiesError.INSUFFICIENT_GLOBAL_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId);
+					throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, globalPropertyId);
 				}
 				propertyDefinition = //
 						PropertyDefinition	.builder()//

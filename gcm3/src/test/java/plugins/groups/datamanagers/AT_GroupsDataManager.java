@@ -2895,7 +2895,7 @@ public class AT_GroupsDataManager {
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
 			
 			ContractException contractException = assertThrows(ContractException.class,()-> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
-			assertEquals(GroupError.PROPERTY_DEFINITION_REQUIRES_DEFAULT,contractException.getErrorType());
+			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT,contractException.getErrorType());
 		});
 
 	}

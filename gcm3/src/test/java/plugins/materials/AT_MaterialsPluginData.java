@@ -100,7 +100,7 @@ public class AT_MaterialsPluginData {
 								.addMaterial(materialId)//
 								.defineBatchProperty(materialId, propertyId, propertyDefinition).build();//
 		});
-		assertEquals(MaterialsError.PROPERTY_DEFINITION_REQUIRES_DEFAULT, contractException.getErrorType());
+		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 		/*
 		 * if a materials property value is associated with a materials producer

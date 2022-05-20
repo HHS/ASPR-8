@@ -33,6 +33,7 @@ import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
+import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
@@ -44,6 +45,29 @@ import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = ResourcePropertyReport.class)
 public class AT_ResourcePropertyReport {
+
+	public enum TestAuxiliaryResourcePropertyId implements ResourcePropertyId {
+
+		AUX_RESOURCE_PROPERTY_1_BOOLEAN_MUTABLE(TestResourceId.RESOURCE_1, PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build()),
+		AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE(TestResourceId.RESOURCE_2, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build());
+
+		private final TestResourceId testResourceId;
+		private final PropertyDefinition propertyDefinition;
+
+		public PropertyDefinition getPropertyDefinition() {
+			return propertyDefinition;
+		}
+
+		private TestAuxiliaryResourcePropertyId(TestResourceId testResourceId, PropertyDefinition propertyDefinition) {
+			this.testResourceId = testResourceId;
+			this.propertyDefinition = propertyDefinition;
+		}
+
+		public TestResourceId getTestResourceId() {
+			return testResourceId;
+		}
+
+	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
@@ -88,7 +112,7 @@ public class AT_ResourcePropertyReport {
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
-		
+
 		// add the regions plugin
 		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -109,21 +133,19 @@ public class AT_ResourcePropertyReport {
 		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
 		builder.addPlugin(reportPlugin);
 
-
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		builder.addPlugin(stochasticsPlugin);
 
-		
-
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		// // create an agent and have it assign various resource properties at
-		// // various times
-		
+		/*
+		 * create an agent and have it assign various resource properties at
+		 * various times
+		 */
 
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {			
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
 			/*
 			 * note that this is time 0 and should show that property initial
 			 * values are still reported correctly
@@ -143,21 +165,31 @@ public class AT_ResourcePropertyReport {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, false);
+
+			//add new property definitions
+			for (TestAuxiliaryResourcePropertyId propertyId : TestAuxiliaryResourcePropertyId.values()) {
+				TestResourceId testResourceId = propertyId.getTestResourceId();
+				PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();
+				resourcesDataManager.defineResourceProperty(testResourceId, propertyId, propertyDefinition);
+			}
+
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true);
-			
 
 			// note the duplicated value
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5);
-			
 
 			// and now a third setting of the same property to a new value
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 100);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 60);
+			
+
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_1_BOOLEAN_MUTABLE, true);
+			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 137);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -179,28 +211,31 @@ public class AT_ResourcePropertyReport {
 		 * Collect the expected report items. Note that order does not matter. *
 		 */
 		Map<ReportItem, Integer> expectedMap = new LinkedHashMap<>();
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, true),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 1673029105),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 0.9762970538942173),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, true),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 1818034648),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE, true),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, 319183829),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, 704893369),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_DOUBLE_IMMUTABLE, 0.7547798894049567),1);
-		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, "A"),1);
-		expectedMap.put(getReportItem(1.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 45),1);
-		expectedMap.put(getReportItem(1.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 36.7),1);
-		expectedMap.put(getReportItem(2.0, TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true),1);
-		expectedMap.put(getReportItem(2.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, false),1);
-		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true),1);
-		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5),2);
-		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 100),1);
-		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 60),1);
-
-		Map<ReportItem, Integer> actualMap = testReportItemOutputConsumer.getReportItems().get(0);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_1_BOOLEAN_MUTABLE, true), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 1673029105), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 0.9762970538942173), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, true), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 1818034648), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE, true), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, 319183829), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, 704893369), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_DOUBLE_IMMUTABLE, 0.7547798894049567), 1);
+		expectedMap.put(getReportItem(0.0, TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE, "A"), 1);
+		expectedMap.put(getReportItem(1.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE, 45), 1);
+		expectedMap.put(getReportItem(1.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 36.7), 1);
+		expectedMap.put(getReportItem(2.0, TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true), 1);
+		expectedMap.put(getReportItem(2.0, TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, false), 1);
+		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true), 1);
+		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 2.5), 2);
+		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 100), 1);
+		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 60), 1);
+		expectedMap.put(getReportItem(2.0, TestResourceId.RESOURCE_1, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_1_BOOLEAN_MUTABLE, false), 1);
+		expectedMap.put(getReportItem(2.0, TestResourceId.RESOURCE_2, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 0), 1);
+		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_1_BOOLEAN_MUTABLE, true), 1);
+		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_2, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 137), 1);
 		
+		Map<ReportItem, Integer> actualMap = testReportItemOutputConsumer.getReportItems().get(0);
 		
 		assertEquals(expectedMap, actualMap);
 

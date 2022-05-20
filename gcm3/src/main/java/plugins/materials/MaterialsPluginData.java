@@ -167,7 +167,7 @@ public final class MaterialsPluginData implements PluginData {
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if a
 		 *             batch property is associated with a material id that was
 		 *             not properly added</li>
-		 *             <li>{@linkplain MaterialsError#PROPERTY_DEFINITION_REQUIRES_DEFAULT}
+		 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 		 *             if a batch property is defined without a default
 		 *             value</li>
 		 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -600,7 +600,7 @@ public final class MaterialsPluginData implements PluginData {
 				for (final BatchPropertyId batchPropertyId : propertyDefinitionMap.keySet()) {
 					final PropertyDefinition propertyDefinition = propertyDefinitionMap.get(batchPropertyId);
 					if (!propertyDefinition.getDefaultValue().isPresent()) {
-						throw new ContractException(MaterialsError.PROPERTY_DEFINITION_REQUIRES_DEFAULT, batchPropertyId);
+						throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, batchPropertyId);
 					}
 				}
 			}

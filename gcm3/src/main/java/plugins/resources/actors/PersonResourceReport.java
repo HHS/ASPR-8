@@ -21,6 +21,7 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.PersonResourceUpdateEvent;
+import plugins.resources.events.ResourceIdAdditionEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import util.errors.ContractException;
@@ -71,6 +72,8 @@ public final class PersonResourceReport extends PeriodicReport {
 	 * values passed in the init() method.
 	 */
 	private Set<ResourceId> resourceIds = new LinkedHashSet<>();
+
+	private boolean subscribedToAllResources;
 
 	/*
 	 * Boolean for controlling the reporting of people with out resources. Set
@@ -285,12 +288,14 @@ public final class PersonResourceReport extends PeriodicReport {
 		// event, otherwise subscribe to each resource id
 		if (resourceIds.equals(resourcesDataManager.getResourceIds())) {
 			actorContext.subscribe(PersonResourceUpdateEvent.class, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
+			subscribedToAllResources = true;
 		} else {
 			for (ResourceId resourceId : resourceIds) {
 				EventLabel<PersonResourceUpdateEvent> eventLabelByResource = PersonResourceUpdateEvent.getEventLabelByResource(actorContext, resourceId);
 				actorContext.subscribe(eventLabelByResource, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
 			}
 		}
+		actorContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 
 		/*
 		 * Build the tuple map to empty sets of people in preparation for people
@@ -340,6 +345,21 @@ public final class PersonResourceReport extends PeriodicReport {
 		if (resourceIds.contains(resourceId)) {
 			final Set<PersonId> people = regionMap.get(regionId).get(resourceId).get(inventoryType);
 			people.remove(personId);
+		}
+	}
+
+	private void handleResourceIdAdditionEvent(ActorContext actorContext,ResourceIdAdditionEvent resourceIdAdditionEvent) {
+		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+		if(subscribedToAllResources && resourceId != null && !resourceIds.contains(resourceId)) {
+			resourceIds.add(resourceId);
+			for(RegionId regionID : regionMap.keySet()) {
+				Map<ResourceId, Map<InventoryType, Set<PersonId>>> map = regionMap.get(regionID);
+				Map<InventoryType, Set<PersonId>> invMap =  new LinkedHashMap<>();
+				for(InventoryType inventoryType : InventoryType.values()) {
+					invMap.put(inventoryType, new LinkedHashSet<>());
+				}
+				map.put(resourceId, invMap);			
+			}
 		}
 	}
 

@@ -5,6 +5,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.resources.datamanagers.ResourcesDataManager;
+import plugins.resources.events.ResourcePropertyAdditionEvent;
 import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
@@ -58,7 +59,7 @@ public final class ResourcePropertyReport {
 	public void init(final ActorContext actorContext) {
 
 		actorContext.subscribe(ResourcePropertyUpdateEvent.class,this::handleResourcePropertyUpdateEvent);
-
+		actorContext.subscribe(ResourcePropertyAdditionEvent.class, this::handleResourcePropertyAdditionEvent);
 		
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
@@ -66,12 +67,17 @@ public final class ResourcePropertyReport {
 				Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
 				writeProperty(actorContext,resourceId, resourcePropertyId,resourcePropertyValue);
 			}
-		}
+		}				
+	}
+	
+	private void handleResourcePropertyAdditionEvent(ActorContext actorContext, ResourcePropertyAdditionEvent resourcePropertyAdditionEvent) {
+		ResourceId resourceId = resourcePropertyAdditionEvent.getResourceId();
+		ResourcePropertyId resourcePropertyId = resourcePropertyAdditionEvent.getResourcePropertyId();
+		Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
+		writeProperty(actorContext,resourceId, resourcePropertyId,resourcePropertyValue);
 	}
 
 	private void writeProperty(ActorContext actorContext,final ResourceId resourceId, final ResourcePropertyId resourcePropertyId,Object resourcePropertyValue) {
-
-		
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportId(reportId);

@@ -44,6 +44,8 @@ import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
+import plugins.resources.events.ResourceIdAdditionEvent;
+import plugins.resources.events.ResourcePropertyAdditionEvent;
 import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
@@ -536,7 +538,8 @@ public final class AT_ResourcesDataManager {
 		/* precondition test: if the resource id is unknown */
 		ResourcesActionSupport.testConsumer(20, 7954290176104108412L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.getUnknownResourceId()));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.getRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.getUnknownResourceId()));
 			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 		});
 
@@ -550,7 +553,8 @@ public final class AT_ResourcesDataManager {
 		/* precondition test: if the region id is unknown */
 		ResourcesActionSupport.testConsumer(20, 8256630838791330328L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getRegionResourceLevel(TestRegionId.getUnknownRegionId(), TestResourceId.RESOURCE_1));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.getRegionResourceLevel(TestRegionId.getUnknownRegionId(), TestResourceId.RESOURCE_1));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 	}
@@ -1054,6 +1058,184 @@ public final class AT_ResourcesDataManager {
 			assertFalse(resourcesDataManager.resourcePropertyIdExists(TestResourceId.getUnknownResourceId(), TestResourcePropertyId.getUnknownResourcePropertyId()));
 
 		});
+	}
+
+	@Test
+	@UnitTestMethod(name = "defineResourceProperty", args = { ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class })
+	public void testDefineResourceProperty() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		
+		//have an actor observe the ResourcePropertyAdditionEvent events
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0,(c)->{
+			c.subscribe(ResourcePropertyAdditionEvent.class, (c2,e)->{
+				MultiKey multiKey = new MultiKey(c2.getTime(),e.getResourceId(), e.getResourcePropertyId());
+				actualObservations.add(multiKey);
+			});
+		}));
+		
+		//have an actor define a new resource property
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1,(c)->{
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(34.6).build();
+			resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1, newResourcePropertyId, propertyDefinition);
+			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1, newResourcePropertyId));
+			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, newResourcePropertyId);
+			assertEquals(propertyDefinition, actualDefinition);
+			MultiKey multiKey = new MultiKey(c.getTime(),TestResourceId.RESOURCE_1, newResourcePropertyId);
+			expectedObservations.add(multiKey);
+		}));
+		
+		//have an actor define a new resource property
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2,(c)->{
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
+			resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_2, newResourcePropertyId, propertyDefinition);
+			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_2, newResourcePropertyId));
+			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_2, newResourcePropertyId);
+			assertEquals(propertyDefinition, actualDefinition);
+			MultiKey multiKey = new MultiKey(c.getTime(),TestResourceId.RESOURCE_2, newResourcePropertyId);
+			expectedObservations.add(multiKey);
+		}));
+
+		//have the observer verify the observations were correct
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3,(c)->{
+			assertTrue(expectedObservations.size()>0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(5, 4535415202634885293L,testPlugin);
+
+
+		/* precondition test: if the resource id is null */
+		ResourcesActionSupport.testConsumer(5, 6716391419322588145L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(null,
+					TestResourcePropertyId.getUnknownResourcePropertyId(), PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
+			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource id is unknown */
+		ResourcesActionSupport.testConsumer(5, 6361316703720629700L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.getUnknownResourceId(),
+					TestResourcePropertyId.getUnknownResourcePropertyId(), PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
+			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource property id is null */
+		ResourcesActionSupport.testConsumer(5, 5844702145510871357L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1,
+					null, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
+			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource property is already defined */
+		ResourcesActionSupport.testConsumer(5, 3114198987897928160L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1,
+					TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
+			assertEquals(ResourceError.DUPLICATE_RESOURCE_PROPERTY_DEFINITION, contractException.getErrorType());
+		});
+
+		/* precondition test: if the property definition is null */
+		ResourcesActionSupport.testConsumer(5, 8200088554784341155L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1,
+					TestResourcePropertyId.getUnknownResourcePropertyId(), null));
+			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the property definition does not have a default
+		 * value
+		 */
+		ResourcesActionSupport.testConsumer(5, 2010775120480241857L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1,
+					TestResourcePropertyId.getUnknownResourcePropertyId(), PropertyDefinition.builder().setType(Integer.class).build()));
+			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "addResourceId", args = { ResourceId.class, TimeTrackingPolicy.class })
+	public void testAddResourceId() {
+
+		ResourceId newResourceId1 = TestResourceId.getUnknownResourceId();
+		ResourceId newResourceId2 = TestResourceId.getUnknownResourceId();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			c.subscribe(ResourceIdAdditionEvent.class, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getTimeTrackingPolicy());
+				actualObservations.add(multiKey);
+			});
+
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
+			assertFalse(resourcesDataManager.resourceIdExists(newResourceId1));
+			resourcesDataManager.addResourceId(newResourceId1, timeTrackingPolicy);
+			assertTrue(resourcesDataManager.resourceIdExists(newResourceId1));
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId1, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			expectedObservations.add(multiKey);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
+			assertFalse(resourcesDataManager.resourceIdExists(newResourceId2));
+			resourcesDataManager.addResourceId(newResourceId2, timeTrackingPolicy);
+			assertTrue(resourcesDataManager.resourceIdExists(newResourceId2));
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId2, TimeTrackingPolicy.TRACK_TIME);
+			expectedObservations.add(multiKey);
+		}));
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(5, 3128266603988900429L, testPlugin);
+
+		// precondition test: if the resource id is null
+		ResourcesActionSupport.testConsumer(5, 3016555021220987436L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceId(null, TimeTrackingPolicy.DO_NOT_TRACK_TIME));
+			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the resource type is already present
+		ResourcesActionSupport.testConsumer(5, 9097839209339012193L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceId(TestResourceId.RESOURCE_1, TimeTrackingPolicy.DO_NOT_TRACK_TIME));
+			assertEquals(ResourceError.DUPLICATE_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the time tracking policy is null
+		ResourcesActionSupport.testConsumer(5, 5786650172226277505L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.addResourceId(TestResourceId.getUnknownResourceId(), null));
+			assertEquals(PropertyError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
+		});
+
 	}
 
 	@Test
@@ -2588,7 +2770,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 	}
-	
+
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testInitializeResourceDataManager() {
@@ -2649,8 +2831,6 @@ public final class AT_ResourcesDataManager {
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
 
-
-
 		// add the regions plugin
 		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -2663,8 +2843,6 @@ public final class AT_ResourcesDataManager {
 		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 		builder.addPlugin(regionPlugin);
 
-
-
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
@@ -2672,7 +2850,6 @@ public final class AT_ResourcesDataManager {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
@@ -2713,19 +2890,19 @@ public final class AT_ResourcesDataManager {
 				Set<ResourcePropertyId> expectedResourcePropertyIds = resourcesPluginData.getResourcePropertyIds(resourceId);
 				Set<ResourcePropertyId> actualResourcePropertyIds = resourcesDataManager.getResourcePropertyIds(resourceId);
 				assertEquals(expectedResourcePropertyIds, actualResourcePropertyIds);
-				
-				for(ResourcePropertyId resourcePropertyId : expectedResourcePropertyIds) {
+
+				for (ResourcePropertyId resourcePropertyId : expectedResourcePropertyIds) {
 					PropertyDefinition expectedDefinition = resourcesPluginData.getResourcePropertyDefinition(resourceId, resourcePropertyId);
 					PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(resourceId, resourcePropertyId);
 					assertEquals(expectedDefinition, actualDefinition);
-					
+
 					Object expectedValue = resourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
 					Object actualValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
 					assertEquals(expectedValue, actualValue);
-					
+
 				}
 			}
-			
+
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -2744,7 +2921,6 @@ public final class AT_ResourcesDataManager {
 		}
 
 	}
-	
 
 	// 4043641365602447479L
 	// 5107085853667531414L

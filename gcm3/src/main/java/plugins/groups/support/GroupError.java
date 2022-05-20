@@ -33,8 +33,7 @@ public enum GroupError implements ContractError {
 	NULL_GROUP_TYPE_ID("Null group type id"),
 	UNKNOWN_GROUP_ID("Unknown group id"),
 	UNKNOWN_GROUP_PROPERTY_ID("Unknown group property id"),
-	UNKNOWN_GROUP_TYPE_ID("Unknown group type id"),
-	PROPERTY_DEFINITION_REQUIRES_DEFAULT("Group property definition does not have an assigned default value"),
+	UNKNOWN_GROUP_TYPE_ID("Unknown group type id"),	
 	INSUFFICIENT_GROUP_PROPERTY_VALUE_ASSIGNMENT("A group property definition default value is null and not replaced with sufficient property value assignments");
 	;
 

@@ -32,7 +32,6 @@ public enum GlobalPropertiesError implements ContractError {
 	
 	DUPLICATE_GLOBAL_PROPERTY_VALUE_ASSIGNMENT("Duplicate global property value assignment"),
 	
-	INSUFFICIENT_GLOBAL_PROPERTY_VALUE_ASSIGNMENT("A global property definition default value is null and not replaced with sufficient property value assignments")
 	;
 
 	private final String description;

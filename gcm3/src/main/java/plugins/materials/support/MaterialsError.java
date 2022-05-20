@@ -52,7 +52,6 @@ public enum MaterialsError implements ContractError {
 	DUPLICATE_BATCH_PROPERTY_DEFINITION("Duplicate batch property definition"),
 	DUPLICATE_BATCH_ID("Duplicate batch id"),
 	DUPLICATE_MATERIALS_PRODUCER_PROPERTY_DEFINITION("Duplicate materials producer property definition"),
-	PROPERTY_DEFINITION_REQUIRES_DEFAULT("Batch property definition does not have an assigned default value"),
 	INCOMPATIBLE_MATERIALS_PRODUCER_PROPERTY_VALUE("Materials producer property value is incompatible with the property definition"),
 	INCOMPATIBLE_BATCH_PROPERTY_VALUE("Batch property value is incompatible with the property definition"),;
 

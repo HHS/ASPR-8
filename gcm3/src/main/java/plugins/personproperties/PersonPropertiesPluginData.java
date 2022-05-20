@@ -92,7 +92,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		 *             if the person property definition value is null</li>
 		 *             <li>{@linkplain PersonPropertyError#DUPLICATE_PERSON_PROPERTY_DEFINITION}
 		 *             if the person property definition is already added</li>
-		 *             <li>{@linkplain PersonPropertyError#PROPERTY_DEFINITION_REQUIRES_DEFAULT}
+		 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 		 *             if the person property definition does not have a default
 		 *             value</li>
 		 * 
@@ -149,7 +149,7 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	private static void validatePersonPropertyDefinitionHasDefault(PropertyDefinition propertyDefinition) {
 		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PersonPropertyError.PROPERTY_DEFINITION_REQUIRES_DEFAULT);
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
 		}
 	}
 
