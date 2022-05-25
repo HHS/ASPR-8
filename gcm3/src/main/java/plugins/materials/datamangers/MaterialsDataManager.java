@@ -15,10 +15,11 @@ import nucleus.DataManagerContext;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.materials.MaterialsPluginData;
-import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchAdditionEvent;
+import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;
 import plugins.materials.events.BatchPropertyUpdateEvent;
+import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.events.StageAdditionEvent;
@@ -96,10 +97,11 @@ public final class MaterialsDataManager extends DataManager {
 
 		public ComponentResourceRecord(final SimulationContext simulationContext) {
 			this.simulationContext = simulationContext;
+			assignmentTime = simulationContext.getTime();
 		}
 
 		public void decrementAmount(final long amount) {
-			if (amount < 0) {				
+			if (amount < 0) {
 				throw new RuntimeException("negative amount");
 			}
 
@@ -174,6 +176,8 @@ public final class MaterialsDataManager extends DataManager {
 			stageId = new StageId(index);
 		}
 	}
+
+	private boolean allProducerPropertyDefinitionsHaveDefaultValues = true;
 
 	private final Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = new LinkedHashSet<>();
 
@@ -250,7 +254,7 @@ public final class MaterialsDataManager extends DataManager {
 		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForStage());
 		dataManagerContext.addEventLabeler(MaterialsProducerPropertyUpdateEvent.getEventLabelerForMaterialsProducerAndProperty());
 		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource());
-		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource());		
+		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource());
 
 		for (final MaterialId materialId : materialsPluginData.getMaterialIds()) {
 			materialIds.add(materialId);
@@ -285,6 +289,7 @@ public final class MaterialsDataManager extends DataManager {
 
 		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
 			PropertyDefinition propertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+			allProducerPropertyDefinitionsHaveDefaultValues &= propertyDefinition.getDefaultValue().isPresent();
 			materialsProducerPropertyIds.add(materialsProducerPropertyId);
 			for (final MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {
 				final Map<MaterialsProducerPropertyId, PropertyValueRecord> map = materialsProducerPropertyMap.get(materialsProducerId);
@@ -314,11 +319,11 @@ public final class MaterialsDataManager extends DataManager {
 			final MaterialsProducerId materialsProducerId = materialsPluginData.getStageMaterialsProducer(stageId);
 			final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 			final StageRecord stageRecord = new StageRecord(stageId.getValue());
-			nextStageRecordId = FastMath.max(nextStageRecordId,stageRecord.stageId.getValue());
+			nextStageRecordId = FastMath.max(nextStageRecordId, stageRecord.stageId.getValue());
 			stageRecord.materialsProducerRecord = materialsProducerRecord;
 			stageRecord.offered = materialsPluginData.isStageOffered(stageId);
 			materialsProducerRecord.stageRecords.add(stageRecord);
-			stageRecords.put(stageRecord.stageId, stageRecord);			
+			stageRecords.put(stageRecord.stageId, stageRecord);
 		}
 		nextStageRecordId++;
 
@@ -356,7 +361,7 @@ public final class MaterialsDataManager extends DataManager {
 					throw new ContractException(MaterialsError.BATCH_ALREADY_STAGED);
 				}
 				final StageRecord stageRecord = stageRecords.get(stageId);
-				
+
 				batchRecord.stageRecord = stageRecord;
 				stageRecord.batchRecords.add(batchRecord);
 				batchRecord.materialsProducerRecord.inventory.remove(batchRecord);
@@ -388,20 +393,20 @@ public final class MaterialsDataManager extends DataManager {
 				}
 			}
 		}
-		dataManagerContext.subscribe(ResourceIdAdditionEvent.class,this::handleResourceIdAdditionEvent);
+		dataManagerContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 	}
-	
-	private void handleResourceIdAdditionEvent(DataManagerContext dataManagerContext,ResourceIdAdditionEvent resourceIdAdditionEvent) {
+
+	private void handleResourceIdAdditionEvent(DataManagerContext dataManagerContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
 		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
-		if(resourceId == null || resourceIds.contains(resourceId)) {
+		if (resourceId == null || resourceIds.contains(resourceId)) {
 			return;
 		}
-		
+
 		resourceIds.add(resourceId);
-		
-		for(MaterialsProducerRecord materialsProducerRecord : materialsProducerMap.values()) {
+
+		for (MaterialsProducerRecord materialsProducerRecord : materialsProducerMap.values()) {
 			materialsProducerRecord.materialProducerResources.put(resourceId, new ComponentResourceRecord(dataManagerContext));
-		}				
+		}
 	}
 
 	/**
@@ -422,7 +427,6 @@ public final class MaterialsDataManager extends DataManager {
 		}
 		return map.containsKey(batchPropertyId);
 	}
-
 
 	/**
 	 * Returns the amount of material in the batch.
@@ -713,6 +717,61 @@ public final class MaterialsDataManager extends DataManager {
 		return result;
 	}
 
+	private void validateNewMaterialsProducerId(final MaterialsProducerId materialsProducerId) {
+		if (materialsProducerId == null) {
+			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
+		}
+
+		if (materialsProducerMap.containsKey(materialsProducerId)) {
+			throw new ContractException(MaterialsError.DUPLICATE_MATERIALS_PRODUCER_ID, materialsProducerId);
+		}
+	}
+
+	private void validateAllMaterialsProducerPropertiesHaveDefaultValues() {
+		if (!allProducerPropertyDefinitionsHaveDefaultValues) {
+			throw new ContractException(MaterialsError.MATERIALS_PRODUCER_ADDITION_BLOCKED);
+		}
+	}
+
+	/**
+	 * Add a material producer
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
+	 *             the materials producer id is null</li>
+	 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_ID}
+	 *             if the materials producer id is already present</li>
+	 *             <li>{@linkplain MaterialsError#MATERIALS_PRODUCER_ADDITION_BLOCKED}
+	 *             if any of the the materials producer properties does not have
+	 *             a default value</li>
+	 */	
+	public void addMaterialsProducer(MaterialsProducerId materialsProducerId) {
+		validateNewMaterialsProducerId(materialsProducerId);
+		validateAllMaterialsProducerPropertiesHaveDefaultValues();
+
+		// integrate the new producer into the resources
+		final MaterialsProducerRecord materialsProducerRecord = new MaterialsProducerRecord();
+		materialsProducerRecord.materialProducerId = materialsProducerId;
+		for (final ResourceId resourceId : resourceIds) {
+			materialsProducerRecord.materialProducerResources.put(resourceId, new ComponentResourceRecord(dataManagerContext));
+		}
+		materialsProducerMap.put(materialsProducerId, materialsProducerRecord);
+
+		// integrate the new producer into the property values
+		Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyValueMap = new LinkedHashMap<>();
+		materialsProducerPropertyMap.put(materialsProducerId, propertyValueMap);
+		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions.keySet()) {
+			PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+			Object defaultValue = propertyDefinition.getDefaultValue().get();
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueRecord.setPropertyValue(defaultValue);
+			propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
+		}
+
+		// release notification of the materials producer addition
+		dataManagerContext.releaseEvent(new MaterialsProducerAdditionEvent(materialsProducerId));
+	}
+
 	/**
 	 * Returns the property definition for the given
 	 * {@link MaterialsProducerPropertyId}
@@ -959,7 +1018,6 @@ public final class MaterialsDataManager extends DataManager {
 		return result;
 	}
 
-
 	/**
 	 * Returns true if and only if the stage is offered.
 	 * 
@@ -998,8 +1056,6 @@ public final class MaterialsDataManager extends DataManager {
 		return materialsProducerPropertyIds.contains(materialsProducerPropertyId);
 	}
 
-
-
 	/**
 	 * Returns true if and only if the stage exists. Null tolerant.
 	 */
@@ -1010,8 +1066,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Creates a batch from the {@linkplain BatchConstructionInfo} contained in
 	 * the event. Sets batch properties found in the batch construction info.
-	 * Generates a corresponding {@linkplain BatchAdditionEvent}
-	 * event
+	 * Generates a corresponding {@linkplain BatchAdditionEvent} event
 	 * 
 	 * @throws ContractException
 	 *
@@ -1386,8 +1441,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Assigns a property value to a materials producer. Generates a
-	 * corresponding
-	 * {@linkplain MaterialsProducerPropertyUpdateEvent}
+	 * corresponding {@linkplain MaterialsProducerPropertyUpdateEvent}
 	 * 
 	 * @throws ContractException
 	 *
@@ -1644,8 +1698,7 @@ public final class MaterialsDataManager extends DataManager {
 		componentResourceRecord.decrementAmount(amount);
 		long currentMaterialsProducerResourceLevel = componentResourceRecord.getAmount();
 		resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
-		dataManagerContext.releaseEvent(
-				new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
+		dataManagerContext.releaseEvent(new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
 	}
 
 	private void validateResourceAdditionValue(final long currentResourceLevel, final long amount) {
@@ -1781,8 +1834,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * 
 	 * Converts a non-offered stage, including its associated batches, into a
 	 * new batch of the given material. The new batch is placed into inventory.
-	 * Generates a corresponding
-	 * {@linkplain BatchImminentRemovalEvent},
+	 * Generates a corresponding {@linkplain BatchImminentRemovalEvent},
 	 * {@linkplain BatchAdditionEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events
 	 * 
@@ -1892,18 +1944,18 @@ public final class MaterialsDataManager extends DataManager {
 	 * 
 	 */
 	public void convertStageToResource(StageId stageId, ResourceId resourceId, long amount) {
-		
-		validateResourceId( resourceId);
-		validateStageId( stageId);		
+
+		validateResourceId(resourceId);
+		validateStageId(stageId);
 		validateStageIsNotOffered(stageId);
 		StageRecord stageRecord = stageRecords.get(stageId);
 		final MaterialsProducerId materialsProducerId = stageRecord.materialsProducerRecord.materialProducerId;
-		validateNonnegativeResourceAmount( amount);
+		validateNonnegativeResourceAmount(amount);
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 		final ComponentResourceRecord componentResourceRecord = materialsProducerRecord.materialProducerResources.get(resourceId);
-		long previousResourceLevel = componentResourceRecord.getAmount();		
-		validateResourceAdditionValue( previousResourceLevel, amount);
-		
+		long previousResourceLevel = componentResourceRecord.getAmount();
+		validateResourceAdditionValue(previousResourceLevel, amount);
+
 		dataManagerContext.addPlan((context) -> {
 			for (final BatchRecord batchRecord : stageRecord.batchRecords) {
 				batchPropertyMap.remove(batchRecord.batchId);
@@ -1914,16 +1966,15 @@ public final class MaterialsDataManager extends DataManager {
 
 		}, dataManagerContext.getTime());
 		componentResourceRecord.incrementAmount(amount);
-		
+
 		long currentResourceLevel = componentResourceRecord.getAmount();
-		dataManagerContext.releaseEvent(new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousResourceLevel, currentResourceLevel));		
-		
+		dataManagerContext.releaseEvent(new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousResourceLevel, currentResourceLevel));
+
 		for (BatchRecord batchRecord : stageRecord.batchRecords) {
 			dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
 		}
 		dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
-		
-		
+
 	}
 
 }

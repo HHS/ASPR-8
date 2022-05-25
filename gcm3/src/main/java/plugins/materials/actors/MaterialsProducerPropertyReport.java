@@ -2,6 +2,7 @@ package plugins.materials.actors;
 
 import nucleus.ActorContext;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
@@ -58,6 +59,7 @@ public final class MaterialsProducerPropertyReport {
 	public void init(final ActorContext actorContext) {
 
 		actorContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
+		actorContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
 
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 
@@ -66,6 +68,15 @@ public final class MaterialsProducerPropertyReport {
 				final Object materialsProducerPropertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 				writeProperty(actorContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
 			}
+		}
+	}
+
+	private void handleMaterialsProducerAdditionEvent(ActorContext actorContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
+		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
+		MaterialsProducerId materialsProducerId = materialsProducerAdditionEvent.getMaterialsProducerId();
+		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataManager.getMaterialsProducerPropertyIds()) {
+			final Object materialsProducerPropertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+			writeProperty(actorContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
 		}
 	}
 

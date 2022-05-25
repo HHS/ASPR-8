@@ -2,6 +2,7 @@ package plugins.materials.actors;
 
 import nucleus.ActorContext;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.reports.support.ReportHeader;
@@ -112,6 +113,7 @@ public final class MaterialsProducerResourceReport {
 
 		actorContext.subscribe(MaterialsProducerResourceUpdateEvent.class, this::handleMaterialsProducerResourceUpdateEvent);
 		actorContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+		actorContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
 
 		ResourcesDataManager resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
@@ -120,6 +122,16 @@ public final class MaterialsProducerResourceReport {
 				long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 				writeReportItem(actorContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
 			}
+		}
+	}
+
+	public void handleMaterialsProducerAdditionEvent(ActorContext actorContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
+		MaterialsProducerId materialsProducerId = materialsProducerAdditionEvent.getMaterialsProducerId();
+		ResourcesDataManager resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
+		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
+		for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+			long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+			writeReportItem(actorContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
 		}
 	}
 

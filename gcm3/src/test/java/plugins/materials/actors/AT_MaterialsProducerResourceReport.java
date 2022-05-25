@@ -35,7 +35,6 @@ import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
-import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = MaterialsProducerResourceReport.class)
 public final class AT_MaterialsProducerResourceReport {
@@ -62,8 +61,8 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		RandomGenerator rg = RandomGeneratorProvider.getRandomGenerator(8635270533185454765L);
-
+		MaterialsProducerId newMaterialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
+		
 		double actionTime = 0;
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
@@ -82,19 +81,29 @@ public final class AT_MaterialsProducerResourceReport {
 
 		}));
 
-		List<TestMaterialsProducerId> producerIds = new ArrayList<>();
-		for (int i = 0; i < 100; i++) {
-			TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(rg);
-			producerIds.add(testMaterialsProducerId);
-		}
+		//add a new materials producer just before time 20
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(19.5, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			materialsDataManager.addMaterialsProducer(newMaterialsProducerId);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+				expectedReportItems.add(getReportItemFromResourceId(c, newMaterialsProducerId, resourceId, 0L));
+			}
 
-		for (TestMaterialsProducerId testMaterialsProducerId : producerIds) {
+		}));
+
+		
+
+		for (int i = 0; i < 100; i++) {
 
 			// set a resource value
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				List<MaterialsProducerId> mats = new ArrayList<>(materialsDataManager.getMaterialsProducerIds());
+				
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsProducerId materialsProducerId = mats.get(randomGenerator.nextInt(mats.size()));
 				ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 				List<ResourceId> resourceIds = new ArrayList<>(resourcesDataManager.getResourceIds());
 				Random random = new Random(randomGenerator.nextLong());
@@ -103,16 +112,16 @@ public final class AT_MaterialsProducerResourceReport {
 
 				if (randomGenerator.nextBoolean()) {
 					long amount = randomGenerator.nextInt(100) + 1;
-					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
+					StageId stageId = materialsDataManager.addStage(materialsProducerId);
 					materialsDataManager.convertStageToResource(stageId, resourceId, amount);
-					expectedReportItems.add(getReportItemFromResourceId(c, testMaterialsProducerId, resourceId, amount));
+					expectedReportItems.add(getReportItemFromResourceId(c, materialsProducerId, resourceId, amount));
 				} else {
-					long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId);
+					long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 					if (resourceLevel > 0) {
 						long amount = randomGenerator.nextInt((int) resourceLevel) + 1;
 						TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-						materialsDataManager.transferResourceToRegion(testMaterialsProducerId, resourceId, testRegionId, amount);
-						expectedReportItems.add(getReportItemFromResourceId(c, testMaterialsProducerId, resourceId, -amount));
+						materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, testRegionId, amount);
+						expectedReportItems.add(getReportItemFromResourceId(c, materialsProducerId, resourceId, -amount));
 					}
 				}
 			}));

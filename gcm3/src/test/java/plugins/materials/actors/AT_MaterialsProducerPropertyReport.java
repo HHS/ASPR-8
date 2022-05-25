@@ -2,7 +2,9 @@ package plugins.materials.actors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -49,13 +51,13 @@ public final class AT_MaterialsProducerPropertyReport {
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testInit() {
-		
+
 		Set<ReportItem> expectedReportItems = new LinkedHashSet<>();
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		double actionTime = 0;
-		
+		MaterialsProducerId newMaterialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
@@ -65,18 +67,28 @@ public final class AT_MaterialsProducerPropertyReport {
 			}
 		}));
 
+		//add a new materials producer at time 30
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(30, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			materialsDataManager.addMaterialsProducer(newMaterialsProducerId);
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+				expectedReportItems.add(getReportItemFromPropertyId(c, newMaterialsProducerId, testMaterialsProducerPropertyId));
+			}
+		}));
+
 		for (int i = 0; i < 100; i++) {
 
 			// set a property value
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				List<MaterialsProducerId> materialsProducerIds = new ArrayList<>(materialsDataManager.getMaterialsProducerIds());
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				MaterialsProducerId materialsProducerId = materialsProducerIds.get(randomGenerator.nextInt(materialsProducerIds.size()));
 				TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.getRandomMutableMaterialsProducerPropertyId(randomGenerator);
 				Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsDataManager.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
-				expectedReportItems.add(getReportItemFromPropertyId(c, testMaterialsProducerId, testMaterialsProducerPropertyId));
+				materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId, testMaterialsProducerPropertyId, propertyValue);
+				expectedReportItems.add(getReportItemFromPropertyId(c, materialsProducerId, testMaterialsProducerPropertyId));
 
 			}));
 
@@ -84,7 +96,7 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(8759226038479000135L, testPlugin,  new MaterialsProducerPropertyReport(REPORT_ID)::init);
+		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(8759226038479000135L, testPlugin, new MaterialsProducerPropertyReport(REPORT_ID)::init);
 
 		assertEquals(expectedReportItems, actualReportItems);
 	}
