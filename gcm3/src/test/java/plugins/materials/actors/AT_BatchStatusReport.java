@@ -20,6 +20,7 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.BatchId;
+import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
@@ -43,7 +44,7 @@ public final class AT_BatchStatusReport {
 	private ReportItem getReportItemFromBatch(ActorContext agentContext, BatchId batchId) {
 		MaterialsDataManager materialsDataManager = agentContext.getDataManager(MaterialsDataManager.class);
 		MaterialsProducerId batchProducer = materialsDataManager.getBatchProducer(batchId);
-		MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
+		MaterialId batchMaterialId = materialsDataManager.getBatchMaterial(batchId);
 		double amount = materialsDataManager.getBatchAmount(batchId);
 		Optional<StageId> optionalStageId = materialsDataManager.getBatchStageId(batchId);
 		String stageString = "";
@@ -51,21 +52,38 @@ public final class AT_BatchStatusReport {
 			stageString = optionalStageId.get().toString();
 		}
 
-		ReportItem reportItem = getReportItem(agentContext.getTime(), //
-				batchId, //
-				batchProducer, //
-				stageString, //
-				materialId, //
-				amount//
-		);//
-
+		List<Object> elements =  new ArrayList<>();
+		
+		elements.add(agentContext.getTime());
+		elements.add(batchId);
+		elements.add(batchProducer);
+		elements.add(stageString);
+		elements.add(batchMaterialId);
+		elements.add(amount);
+		
+		
+		for (MaterialId materialId : materialsDataManager.getMaterialIds()) {
+			boolean matchingMaterial = batchMaterialId.equals(materialId);
+			Set<BatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
+			for (BatchPropertyId batchPropertyId : batchPropertyIds) {
+				if (matchingMaterial) {
+					elements.add(materialsDataManager.getBatchPropertyValue(batchId, batchPropertyId));
+				} else {
+					elements.add("");
+				}
+			}
+		}
+		
+		ReportItem reportItem = getReportItem(elements);
+				
+		
 		return reportItem;
 	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testInit() {
-		
+
 		Set<ReportItem> expectedReportItems = new LinkedHashSet<>();
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -83,7 +101,7 @@ public final class AT_BatchStatusReport {
 				for (int i = 0; i < 20; i++) {
 					TestMaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 					double amount = randomGenerator.nextDouble();
-					BatchId batchId = materialsDataManager.addBatch(testMaterialsProducerId,materialId, amount);				
+					BatchId batchId = materialsDataManager.addBatch(testMaterialsProducerId, materialId, amount);
 					expectedReportItems.add(getReportItemFromBatch(c, batchId));
 				}
 
@@ -111,7 +129,7 @@ public final class AT_BatchStatusReport {
 							double portion = randomGenerator.nextDouble();
 							double amount = materialsDataManager.getBatchAmount(batchId1);
 							double transferAmount = amount *= portion;
-							materialsDataManager.transferMaterialBetweenBatches(batchId1, batchId2, transferAmount);							
+							materialsDataManager.transferMaterialBetweenBatches(batchId1, batchId2, transferAmount);
 							expectedReportItems.add(getReportItemFromBatch(c, batchId1));
 							expectedReportItems.add(getReportItemFromBatch(c, batchId2));
 						}
@@ -131,7 +149,7 @@ public final class AT_BatchStatusReport {
 				for (int i = 0; i < destructionCount; i++) {
 					BatchId batchId = inventoryBatches.get(i);
 					expectedReportItems.add(getReportItemFromBatch(c, batchId));
-					materialsDataManager.removeBatch(batchId);					
+					materialsDataManager.removeBatch(batchId);
 				}
 			}));
 
@@ -147,7 +165,7 @@ public final class AT_BatchStatusReport {
 					TestMaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
 					TestBatchPropertyId propertyId = TestBatchPropertyId.getRandomMutableBatchPropertyId(materialId, randomGenerator);
 					Object value = propertyId.getRandomPropertyValue(randomGenerator);
-					materialsDataManager.setBatchPropertyValue(batchId, propertyId, value);					
+					materialsDataManager.setBatchPropertyValue(batchId, propertyId, value);
 					expectedReportItems.add(getReportItemFromBatch(c, batchId));
 				}
 			}));
@@ -160,7 +178,7 @@ public final class AT_BatchStatusReport {
 
 				List<StageId> stageIds = new ArrayList<>();
 				for (int i = 0; i < 3; i++) {
-					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);					 
+					StageId stageId = materialsDataManager.addStage(testMaterialsProducerId);
 					stageIds.add(stageId);
 				}
 
@@ -168,7 +186,7 @@ public final class AT_BatchStatusReport {
 				for (BatchId batchId : inventoryBatches) {
 					if (randomGenerator.nextBoolean()) {
 						StageId stageId = stageIds.get(randomGenerator.nextInt(stageIds.size()));
-						materialsDataManager.moveBatchToStage(batchId, stageId);						
+						materialsDataManager.moveBatchToStage(batchId, stageId);
 						expectedReportItems.add(getReportItemFromBatch(c, batchId));
 					}
 				}
@@ -187,7 +205,7 @@ public final class AT_BatchStatusReport {
 					List<BatchId> batches = materialsDataManager.getStageBatches(stageId);
 					for (BatchId batchId : batches) {
 						if (randomGenerator.nextBoolean()) {
-							materialsDataManager.moveBatchToInventory(batchId);							
+							materialsDataManager.moveBatchToInventory(batchId);
 							expectedReportItems.add(getReportItemFromBatch(c, batchId));
 						}
 					}
@@ -199,11 +217,11 @@ public final class AT_BatchStatusReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(8914112012010329946L, testPlugin, new BatchStatusReport(REPORT_ID)::init);
-		
+
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 
-	private static ReportItem getReportItem(Object... values) {
+	private static ReportItem getReportItem(List<Object> values) {
 		Builder builder = ReportItem.builder();
 		builder.setReportId(REPORT_ID);
 		builder.setReportHeader(REPORT_HEADER);

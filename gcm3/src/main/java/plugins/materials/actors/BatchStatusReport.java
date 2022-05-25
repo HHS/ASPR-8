@@ -23,7 +23,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 
 /**
- * A Report that displays the state of batches over time.
+ * A Report that displays the state of batches over time. The batch properties included in this report are limited to those present during initialization.
  *
  *
  * Fields
@@ -217,6 +217,10 @@ public final class BatchStatusReport {
 		actorContext.subscribe(StageMembershipRemovalEvent.class, this::handleStageMembershipRemovalEvent);
 
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
+		
+		for(MaterialId materialId : materialsDataManager.getMaterialIds()) {
+			this.batchPropertyMap.put(materialId, materialsDataManager.getBatchPropertyIds(materialId));
+		}
 
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (BatchId inventoryBatchId : materialsDataManager.getInventoryBatches(materialsProducerId)) {
