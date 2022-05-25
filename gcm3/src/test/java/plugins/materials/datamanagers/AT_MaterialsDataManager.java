@@ -45,6 +45,7 @@ import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.BatchAdditionEvent;
 import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;
+import plugins.materials.events.BatchPropertyDefinitionEvent;
 import plugins.materials.events.BatchPropertyUpdateEvent;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
@@ -4510,7 +4511,7 @@ public class AT_MaterialsDataManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialsProducer(newMaterialsProducerId));
 			assertEquals(MaterialsError.DUPLICATE_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
-		
+
 		/*
 		 * precondition test: if any of the the materials producer properties
 		 * does not have a default value
@@ -4550,7 +4551,7 @@ public class AT_MaterialsDataManager {
 			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition);
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId,testMaterialsProducerPropertyId,randomPropertyValue);
+				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, randomPropertyValue);
 			}
 		}
 
@@ -4602,7 +4603,7 @@ public class AT_MaterialsDataManager {
 
 		// add the report plugin
 
-		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();		
+		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
 		ReportsPluginData reportsPluginData = reportsBuilder.build();
 		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
 		builder.addPlugin(reportPlugin);
@@ -4641,5 +4642,134 @@ public class AT_MaterialsDataManager {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 		return result;
+	}
+
+	@Test
+	@UnitTestMethod(name = "defineBatchProperty", args = { MaterialId.class, BatchPropertyId.class, PropertyDefinition.class })
+	public void testDefineBatchProperty() {
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			c.subscribe(BatchPropertyDefinitionEvent.class, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialId(), e.getBatchPropertyId());
+				actualObservations.add(multiKey);
+			});
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12).build();
+			BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+			MaterialId materialId = TestMaterialId.MATERIAL_1;
+			materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+			MultiKey multiKey = new MultiKey(c.getTime(), materialId, batchPropertyId);
+			expectedObservations.add(multiKey);
+			
+			assertTrue(materialsDataManager.getBatchPropertyIds(materialId).contains(batchPropertyId));
+			PropertyDefinition actualPropertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
+			assertEquals(propertyDefinition, actualPropertyDefinition);
+			
+		}));
+		
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
+			BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+			MaterialId materialId = TestMaterialId.MATERIAL_2;
+			materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+			MultiKey multiKey = new MultiKey(c.getTime(), materialId, batchPropertyId);
+			expectedObservations.add(multiKey);
+			
+			assertTrue(materialsDataManager.getBatchPropertyIds(materialId).contains(batchPropertyId));
+			PropertyDefinition actualPropertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
+			assertEquals(propertyDefinition, actualPropertyDefinition);
+		}));
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertFalse(expectedObservations.isEmpty());
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(2434116219643564071L, testPlugin);
+
+		/*
+		 * precondition test: if the material id is null
+		 */
+		MaterialsActionSupport.testConsumer(6835782331062297488L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12).build();
+			BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+			MaterialId materialId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition));
+			assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the material id is unknown
+		 */
+		MaterialsActionSupport.testConsumer(3376758409444036216L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12).build();
+			BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+			MaterialId materialId = TestMaterialId.getUnknownMaterialId();
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition));
+			assertEquals(MaterialsError.UNKNOWN_MATERIAL_ID, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the batch property id is null
+		 */
+		MaterialsActionSupport.testConsumer(4228412431467129957L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12).build();
+			BatchPropertyId batchPropertyId = null;
+			MaterialId materialId = TestMaterialId.MATERIAL_1;
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition));
+			assertEquals(MaterialsError.NULL_BATCH_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the batch property id is already present
+		 */
+		MaterialsActionSupport.testConsumer(7152319084879177681L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12).build();
+			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK;
+			MaterialId materialId = TestMaterialId.MATERIAL_1;
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition));
+			assertEquals(MaterialsError.DUPLICATE_BATCH_PROPERTY_DEFINITION, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the property definition is null
+		 */
+		MaterialsActionSupport.testConsumer(3819681796302663757L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = null;
+			BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+			MaterialId materialId = TestMaterialId.MATERIAL_1;
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition));
+			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the property definition does not have a default
+		 * value
+		 */
+		MaterialsActionSupport.testConsumer(8540977102873288312L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
+			BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+			MaterialId materialId = TestMaterialId.MATERIAL_1;
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition));
+			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+		});
+
 	}
 }
