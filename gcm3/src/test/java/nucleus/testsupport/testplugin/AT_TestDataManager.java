@@ -76,7 +76,7 @@ public class AT_TestDataManager {
 		Experiment	.builder()//
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
-					.addOutputHandler(experimentPlanCompletionObserver::init)//
+					.addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
 					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//

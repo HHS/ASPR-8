@@ -83,6 +83,7 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
+import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -91,12 +92,12 @@ import util.wrappers.MultiKey;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableLong;
 
+@UnitTest(target = MaterialsDataManager.class)
 public class AT_MaterialsDataManager {
 
 	@Test
 	@UnitTestConstructor(args = { MaterialsPluginData.class })
 	public void testConstructor() {
-
 		ContractException contractException = assertThrows(ContractException.class, () -> new MaterialsDataManager(null));
 		assertEquals(MaterialsError.NULL_MATERIALS_PLUGIN_DATA, contractException.getErrorType());
 	}

@@ -56,7 +56,7 @@ public class AT_TestReportItemOutputConsumer {
 		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
 
 		Experiment.Builder experimentBuilder = Experiment.builder();
-		experimentBuilder.addOutputHandler(testReportItemOutputConsumer::init);
+		experimentBuilder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("scenario tracker", new TestActorPlan(0, (c) -> {

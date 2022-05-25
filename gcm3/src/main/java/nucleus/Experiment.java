@@ -62,7 +62,7 @@ public final class Experiment {
 		 *             <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER} if the
 		 *             output item handler is null</li>
 		 */
-		public Builder addOutputHandler(final Consumer<ExperimentContext> experimentContextConsumer) {
+		public Builder addExperimentContextConsumer(final Consumer<ExperimentContext> experimentContextConsumer) {
 			if (experimentContextConsumer == null) {
 				throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER);
 			}

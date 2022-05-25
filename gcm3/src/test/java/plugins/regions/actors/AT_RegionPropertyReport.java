@@ -64,6 +64,8 @@ public class AT_RegionPropertyReport {
 		regionBuilder.addRegion(regionB);
 		RegionId regionC = new SimpleRegionId("Region_C");
 		regionBuilder.addRegion(regionC);
+		
+		RegionId regionD = new SimpleRegionId("Region_D");
 
 		// add the region properties
 		RegionPropertyId prop_age = new SimpleRegionPropertyId("prop_age");
@@ -85,6 +87,9 @@ public class AT_RegionPropertyReport {
 		RegionPropertyId prop_policy = new SimpleRegionPropertyId("prop_policy");
 		propertyDefinition = PropertyDefinition.builder().setDefaultValue("start").setType(String.class).build();
 		regionBuilder.defineRegionProperty(prop_policy, propertyDefinition);
+		
+		RegionPropertyId prop_vaccine = new SimpleRegionPropertyId("prop_vaccine");
+		
 
 		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionBuilder.build()));
 
@@ -124,13 +129,18 @@ public class AT_RegionPropertyReport {
 			regionsDataManager.setRegionPropertyValue(regionA, prop_age, 100);
 			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
 			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "hold");
+			regionsDataManager.addRegionId(regionD);
 
+			PropertyDefinition def = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
+			regionsDataManager.defineRegionProperty(prop_vaccine, def);
+			
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
 
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "terminate");
+			regionsDataManager.setRegionPropertyValue(regionA, prop_vaccine, 5);
 
 			// note the duplicated value
 
@@ -140,6 +150,9 @@ public class AT_RegionPropertyReport {
 			// and now a third setting of the same property to a new value
 			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 100.0);
 			regionsDataManager.setRegionPropertyValue(regionB, prop_length, 60.0);
+			
+			regionsDataManager.setRegionPropertyValue(regionD, prop_height, 70.0);
+			regionsDataManager.setRegionPropertyValue(regionD, prop_length, 45.0);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -150,13 +163,14 @@ public class AT_RegionPropertyReport {
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 
 		TestReportItemOutputConsumer reportItemOutputConsumer = new TestReportItemOutputConsumer();
-		builder.addOutputHandler(reportItemOutputConsumer::init);
-		builder.addOutputHandler(experimentPlanCompletionObserver::init);
+		builder.addExperimentContextConsumer(reportItemOutputConsumer::init);
+		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
 		builder.reportProgressToConsole(false);
 		builder.reportFailuresToConsole(false);
 		builder.build().execute();
 
 		// show that all actions were executed
+		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).isPresent());
 		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete());
 
 		/*
@@ -188,9 +202,22 @@ public class AT_RegionPropertyReport {
 		expectedReportItems.put(getReportItem(0.0, regionC, prop_infected, false), 1);
 		expectedReportItems.put(getReportItem(0.0, regionC, prop_length, 10.0), 1);
 		expectedReportItems.put(getReportItem(0.0, regionC, prop_height, 5.0), 1);
+		expectedReportItems.put(getReportItem(2.0, regionA, prop_vaccine, 0), 1);
+		expectedReportItems.put(getReportItem(2.0, regionB, prop_vaccine, 0), 1);
+		expectedReportItems.put(getReportItem(2.0, regionC, prop_vaccine, 0), 1);
+		expectedReportItems.put(getReportItem(3.0, regionA, prop_vaccine, 5), 1);
+		expectedReportItems.put(getReportItem(2.0, regionD, prop_age, 3), 1);
+		expectedReportItems.put(getReportItem(2.0, regionD, prop_infected, false), 1);
+		expectedReportItems.put(getReportItem(2.0, regionD, prop_length, 10.0), 1);
+		expectedReportItems.put(getReportItem(2.0, regionD, prop_height, 5.0), 1);
+		expectedReportItems.put(getReportItem(2.0, regionD, prop_policy, "start"), 1);
+		expectedReportItems.put(getReportItem(2.0, regionD, prop_vaccine, 0), 1);
+		expectedReportItems.put(getReportItem(3.0, regionD, prop_height, 70.0), 1);
+		expectedReportItems.put(getReportItem(3.0, regionD, prop_length, 45.0), 1);
+
 
 		Map<ReportItem, Integer> actualReportItems = reportItemOutputConsumer.getReportItems().get(0);
-
+		
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 

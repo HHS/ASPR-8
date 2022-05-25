@@ -140,12 +140,14 @@ public class AT_GlobalPropertyReport {
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
 
-		builder.addOutputHandler(testReportItemOutputConsumer::init);
-		builder.addOutputHandler(experimentPlanCompletionObserver::init);
+		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
+		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
 		builder.build().execute();
 
 		// show that all actions were executed
+		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).isPresent());
 		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete());
+		
 
 		/*
 		 * Collect the expected report items. Note that order does not matter. *

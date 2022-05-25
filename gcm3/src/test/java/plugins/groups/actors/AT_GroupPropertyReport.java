@@ -420,16 +420,17 @@ public class AT_GroupPropertyReport {
 
 		// add the output consumer for the actual report items
 		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
-		builder.addOutputHandler(testReportItemOutputConsumer::init);
+		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
 
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
-		builder.addOutputHandler(experimentPlanCompletionObserver::init);
+		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
 		builder.reportProgressToConsole(false);
 
 		// build and execute the engine
 		builder.build().execute();
 
 		// show that all actions were executed
+		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).isPresent());
 		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete());
 
 		return testReportItemOutputConsumer.getReportItems().get(0);

@@ -22,6 +22,8 @@ import plugins.people.support.PersonId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.events.PersonRegionUpdateEvent;
+import plugins.regions.events.RegionAdditionEvent;
+import plugins.regions.events.RegionPropertyAdditionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
@@ -78,9 +80,9 @@ public final class RegionsDataManager extends DataManager {
 	 * Subscribes the following events:
 	 * <ul>
 	 * 
-	 * <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets the person's
-	 * initial region in the {@linkplain RegionLocationDataView} from the region
-	 * reference in the auxiliary data of the event.
+	 * <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets the
+	 * person's initial region in the {@linkplain RegionLocationDataView} from
+	 * the region reference in the auxiliary data of the event.
 	 * 
 	 * <BR>
 	 * <BR>
@@ -98,9 +100,9 @@ public final class RegionsDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * 
-	 * <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote> Sets each person's
-	 * initial region in the {@linkplain RegionLocationDataView} from the region
-	 * references in the auxiliary data of the event.
+	 * <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote> Sets each
+	 * person's initial region in the {@linkplain RegionLocationDataView} from
+	 * the region references in the auxiliary data of the event.
 	 * 
 	 * <BR>
 	 * <BR>
@@ -178,15 +180,12 @@ public final class RegionsDataManager extends DataManager {
 			regionToIndexMap.put(regionId, index++);
 		}
 
-		indexToRegionMap = new RegionId[regionIds.size() + 1];
-
-		index = 1;
-		for (final RegionId regionId : regionIds) {
-			indexToRegionMap[index++] = regionId;
-		}
+		indexToRegionMap.add(null);
+		indexToRegionMap.addAll(regionIds);
 
 		for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
 			PropertyDefinition propertyDefinition = regionsPluginData.getRegionPropertyDefinition(regionPropertyId);
+			allPropertyDefinitionsHaveDefaultValues &= propertyDefinition.getDefaultValue().isPresent();
 			regionPropertyIds.add(regionPropertyId);
 			regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 		}
@@ -253,6 +252,8 @@ public final class RegionsDataManager extends DataManager {
 		}
 	}
 
+	private boolean allPropertyDefinitionsHaveDefaultValues = true;
+
 	private Map<RegionId, Map<RegionPropertyId, PropertyValueRecord>> regionPropertyMap = new LinkedHashMap<>();
 
 	private Set<RegionPropertyId> regionPropertyIds = new LinkedHashSet<>();
@@ -313,6 +314,57 @@ public final class RegionsDataManager extends DataManager {
 			result.add((T) regionId);
 		}
 		return result;
+
+	}
+
+	private void validateNewRegionId(final RegionId regionId) {
+
+		if (regionId == null) {
+			throw new ContractException(RegionError.NULL_REGION_ID);
+		}
+
+		if (regionIdExists(regionId)) {
+			throw new ContractException(RegionError.DUPLICATE_REGION_ID, regionId);
+		}
+	}
+
+	private void validateAllRegionPropertiesHaveDefaultValues() {
+		if (!allPropertyDefinitionsHaveDefaultValues) {
+			throw new ContractException(RegionError.REGION_ADDITION_BLOCKED);
+		}
+	}
+
+	/**
+	 * Adds a new region id
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError#DUPLICATE_REGION_ID} if the
+	 *             region is already present</li>
+	 *             <li>{@linkplain RegionError#REGION_ADDITION_BLOCKED} if not
+	 *             all region properties have default values</li>
+	 * 
+	 */
+	public void addRegionId(RegionId regionId) {
+
+		validateNewRegionId(regionId);
+		validateAllRegionPropertiesHaveDefaultValues();
+
+		regionPopulationRecordMap.put(regionId, new PopulationRecord());
+		regionToIndexMap.put(regionId, regionToIndexMap.size() + 1);
+		indexToRegionMap.add(regionId);
+
+		Map<RegionPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
+		regionPropertyMap.put(regionId, map);
+		for (RegionPropertyId regionPropertyId : regionPropertyDefinitions.keySet()) {
+			PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
+			final Object regionPropertyValue = propertyDefinition.getDefaultValue().get();
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueRecord.setPropertyValue(regionPropertyValue);
+			map.put(regionPropertyId, propertyValueRecord);
+		}
+		dataManagerContext.releaseEvent(new	RegionAdditionEvent(regionId));
 
 	}
 
@@ -427,7 +479,7 @@ public final class RegionsDataManager extends DataManager {
 	/*
 	 * Supports conversion of int into RegionId values
 	 */
-	private RegionId[] indexToRegionMap;
+	private List<RegionId> indexToRegionMap = new ArrayList<>();
 
 	/*
 	 * Stores region identifiers as int values indexed by person id values
@@ -488,7 +540,7 @@ public final class RegionsDataManager extends DataManager {
 	public <T extends RegionId> T getPersonRegion(final PersonId personId) {
 		validatePersonExists(personId);
 		final int r = regionValues.getValueAsInt(personId.getValue());
-		return (T) indexToRegionMap[r];
+		return (T) indexToRegionMap.get(r);
 	}
 
 	/**
@@ -574,7 +626,7 @@ public final class RegionsDataManager extends DataManager {
 		 * person
 		 */
 		int regionIndex = regionValues.getValueAsInt(personId.getValue());
-		RegionId oldRegionId = indexToRegionMap[regionIndex];
+		RegionId oldRegionId = indexToRegionMap.get(regionIndex);
 		PopulationRecord populationRecord = regionPopulationRecordMap.get(oldRegionId);
 		/*
 		 * Update the population count associated with the old region
@@ -735,11 +787,59 @@ public final class RegionsDataManager extends DataManager {
 		PersonId personId = personRemovalEvent.getPersonId();
 		validatePersonContained(personId);
 		final int regionIndex = regionValues.getValueAsInt(personId.getValue());
-		final RegionId oldRegionId = indexToRegionMap[regionIndex];
+		final RegionId oldRegionId = indexToRegionMap.get(regionIndex);
 		final PopulationRecord populationRecord = regionPopulationRecordMap.get(oldRegionId);
 		populationRecord.populationCount--;
 		populationRecord.assignmentTime = dataManagerContext.getTime();
 		regionValues.setIntValue(personId.getValue(), 0);
+	}
+
+	private void validateNewRegionPropertyId(final RegionPropertyId regionPropertyId) {
+		if (regionPropertyId == null) {
+			throw new ContractException(RegionError.NULL_REGION_PROPERTY_ID);
+		}
+		if (regionPropertyIdExists(regionPropertyId)) {
+			throw new ContractException(RegionError.DUPLICATE_REGION_PROPERTY_VALUE, regionPropertyId);
+		}
+	}
+
+	private void validateNewPropertyDefinition(PropertyDefinition propertyDefinition) {
+		if (propertyDefinition == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
+		}
+		if (propertyDefinition.getDefaultValue().isEmpty()) {
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
+		}
+	}
+
+	/**
+	 * Adds a new region property
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID} if the
+	 *             region property is null</li>
+	 *             <li>{@linkplain RegionError#DUPLICATE_REGION_PROPERTY_VALUE}
+	 *             if the region property is already defined</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
+	 *             the property definition is null</li>
+	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
+	 *             if the property definition does not have a default value</li>
+	 */
+	public void defineRegionProperty(RegionPropertyId regionPropertyId, PropertyDefinition propertyDefinition) {
+
+		validateNewRegionPropertyId(regionPropertyId);
+		validateNewPropertyDefinition(propertyDefinition);
+
+		regionPropertyIds.add(regionPropertyId);
+		regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
+		for (final RegionId regionId : regionPropertyMap.keySet()) {
+			Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
+			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
+			map.put(regionPropertyId, propertyValueRecord);
+		}
+
+		dataManagerContext.releaseEvent(new RegionPropertyAdditionEvent(regionPropertyId));
 	}
 
 }

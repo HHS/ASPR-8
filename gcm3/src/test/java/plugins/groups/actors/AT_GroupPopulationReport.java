@@ -388,8 +388,8 @@ public class AT_GroupPopulationReport {
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
 
-		builder.addOutputHandler(testReportItemOutputConsumer::init);
-		builder.addOutputHandler(experimentPlanCompletionObserver::init);
+		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
+		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
 		builder.reportProgressToConsole(false);
 		
 
@@ -397,6 +397,8 @@ public class AT_GroupPopulationReport {
 		builder.build().execute();
 
 		// show that all actions were executed
+		
+		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).isPresent());
 		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete());
 
 		return testReportItemOutputConsumer.getReportItems().get(0);

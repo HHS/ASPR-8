@@ -8,7 +8,7 @@ import plugins.resources.support.ResourcePropertyId;
 import util.errors.ContractException;
 
 @Immutable
-public class ResourcePropertyAdditionEvent implements Event {
+public class ResourcePropertyDefinitionEvent implements Event {
 	private final ResourceId resourceId;
 	private final ResourcePropertyId resourcePropertyId;
 
@@ -20,7 +20,7 @@ public class ResourcePropertyAdditionEvent implements Event {
 	 * <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if the resource property id is null</li>
 	 * 
 	 */
-	public ResourcePropertyAdditionEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
+	public ResourcePropertyDefinitionEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
 		if(resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}

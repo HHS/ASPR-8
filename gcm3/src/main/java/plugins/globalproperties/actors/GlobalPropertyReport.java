@@ -39,7 +39,6 @@ public final class GlobalPropertyReport {
 	 * report. They are set during init()
 	 */
 	private final Set<GlobalPropertyId> globalPropertyIds = new LinkedHashSet<>();
-	private boolean subscribedToAllProperties;
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
@@ -61,10 +60,8 @@ public final class GlobalPropertyReport {
 
 	private void handleGlobalPropertyDefinitionEvent(ActorContext actorContext, GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
 		GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.getGlobalPropertyId();
-		if(subscribedToAllProperties) {
-			globalPropertyIds.add(globalPropertyId);
-			writeProperty(actorContext, globalPropertyId, globalPropertyDefinitionEvent.getInitialPropertyValue());
-		}
+		globalPropertyIds.add(globalPropertyId);
+		writeProperty(actorContext, globalPropertyId, globalPropertyDefinitionEvent.getInitialPropertyValue());
 	}
 
 	private final ReportId reportId;
@@ -83,10 +80,10 @@ public final class GlobalPropertyReport {
 
 		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 
-		if(globalPropertyIds.isEmpty()) {
+		if (globalPropertyIds.isEmpty()) {
 			globalPropertyIds.addAll(globalPropertiesDataManager.getGlobalPropertyIds());
 		}
-		
+
 		/*
 		 * Ensure that every client supplied property identifier is valid
 		 */
@@ -99,15 +96,13 @@ public final class GlobalPropertyReport {
 
 		if (globalPropertyIds.equals(globalPropertiesDataManager.getGlobalPropertyIds())) {
 			actorContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
-			subscribedToAllProperties = true;
+			actorContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 		} else {
 			for (GlobalPropertyId globalPropertyId : globalPropertyIds) {
 				EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(actorContext, globalPropertyId);
 				actorContext.subscribe(eventLabel, this::handleGlobalPropertyUpdateEvent);
 			}
 		}
-
-		actorContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 
 		if (globalPropertyIds.isEmpty()) {
 			for (final GlobalPropertyId globalPropertyId : validPropertyIds) {

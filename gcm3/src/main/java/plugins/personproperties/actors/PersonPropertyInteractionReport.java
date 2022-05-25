@@ -63,7 +63,6 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	private final List<PersonPropertyId> propertyIds = new ArrayList<>();
-	private boolean subscribedToAllProperties;
 
 	/*
 	 * Map of <Region, Map<Property Value, ... Map<Property Value,Counter>...>>
@@ -136,8 +135,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	private Counter getCounter(final Object regionId, final PersonId personId, final Object selectedPropertyId, final Object formerPropertyValue) {
 
 		/*
-		 * First, push through the region map with the region  to
-		 * arrive at a nested map of maps for the properties
+		 * First, push through the region map with the region to arrive at a
+		 * nested map of maps for the properties
 		 */
 
 		@SuppressWarnings("unchecked")
@@ -221,8 +220,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	/*
-	 * Increments the Counter for the given region and person
-	 * property values associated with the person
+	 * Increments the Counter for the given region and person property values
+	 * associated with the person
 	 */
 	private void increment(final Object regionId, final PersonId personId) {
 		getCounter(regionId, personId, null, null).count++;
@@ -269,26 +268,22 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		// class, otherwise subscribe to the individual property values
 		if (propertyIds.stream().collect(Collectors.toSet()).equals(personPropertiesDataManager.getPersonPropertyIds())) {
 			actorContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
-			subscribedToAllProperties = true;
+			actorContext.subscribe(PersonPropertyDefinitionEvent.class, getFlushingConsumer(this::handlePersonPropertyDefinitionEvent));
 		} else {
 			for (PersonPropertyId personPropertyId : propertyIds) {
 				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
 				actorContext.subscribe(eventLabelByProperty, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
 			}
 		}
-		
-		actorContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final Object regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, personId);
 		}
 	}
-	
+
 	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
-		if(subscribedToAllProperties) {
-			this.propertyIds.add(personPropertyDefinitionEvent.getPersonPropertyId());		
-		}
+		propertyIds.add(personPropertyDefinitionEvent.getPersonPropertyId());
 	}
 
 	/*

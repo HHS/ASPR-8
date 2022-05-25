@@ -3,6 +3,7 @@ package plugins.materials.testsupport;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -10,12 +11,14 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.ActorContext;
 import nucleus.Experiment;
+import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestScenarioReport;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
 import plugins.people.PeoplePlugin;
@@ -179,9 +182,9 @@ public class MaterialsActionSupport {
 
 		// set the output consumer
 		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
-		builder.addOutputHandler(testReportItemOutputConsumer::init);
+		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
-		builder.addOutputHandler(experimentPlanCompletionObserver::init);
+		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
 		builder.reportProgressToConsole(false);
 
 		// build and execute the engine
@@ -194,7 +197,11 @@ public class MaterialsActionSupport {
 		}
 
 		// show that all actions were executed
-		boolean complete = experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete();
+		Optional<TestScenarioReport> optionalTestScenarioReport = experimentPlanCompletionObserver.getActionCompletionReport(0);
+		if(optionalTestScenarioReport.isEmpty()) {
+			throw new ContractException(NucleusError.SCENARIO_FAILED);
+		}
+		boolean complete = optionalTestScenarioReport.get().isComplete();
 		if(!complete) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}		

@@ -45,7 +45,7 @@ import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.events.ResourceIdAdditionEvent;
-import plugins.resources.events.ResourcePropertyAdditionEvent;
+import plugins.resources.events.ResourcePropertyDefinitionEvent;
 import plugins.resources.events.ResourcePropertyUpdateEvent;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
@@ -1065,20 +1065,20 @@ public final class AT_ResourcesDataManager {
 	public void testDefineResourceProperty() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		
+
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
-		
-		//have an actor observe the ResourcePropertyAdditionEvent events
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0,(c)->{
-			c.subscribe(ResourcePropertyAdditionEvent.class, (c2,e)->{
-				MultiKey multiKey = new MultiKey(c2.getTime(),e.getResourceId(), e.getResourcePropertyId());
+
+		// have an actor observe the ResourcePropertyAdditionEvent events
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			c.subscribe(ResourcePropertyDefinitionEvent.class, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getResourcePropertyId());
 				actualObservations.add(multiKey);
 			});
 		}));
-		
-		//have an actor define a new resource property
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1,(c)->{
+
+		// have an actor define a new resource property
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(34.6).build();
@@ -1086,12 +1086,12 @@ public final class AT_ResourcesDataManager {
 			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1, newResourcePropertyId));
 			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, newResourcePropertyId);
 			assertEquals(propertyDefinition, actualDefinition);
-			MultiKey multiKey = new MultiKey(c.getTime(),TestResourceId.RESOURCE_1, newResourcePropertyId);
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_1, newResourcePropertyId);
 			expectedObservations.add(multiKey);
 		}));
-		
-		//have an actor define a new resource property
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2,(c)->{
+
+		// have an actor define a new resource property
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
@@ -1099,27 +1099,25 @@ public final class AT_ResourcesDataManager {
 			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_2, newResourcePropertyId));
 			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_2, newResourcePropertyId);
 			assertEquals(propertyDefinition, actualDefinition);
-			MultiKey multiKey = new MultiKey(c.getTime(),TestResourceId.RESOURCE_2, newResourcePropertyId);
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_2, newResourcePropertyId);
 			expectedObservations.add(multiKey);
 		}));
 
-		//have the observer verify the observations were correct
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3,(c)->{
-			assertTrue(expectedObservations.size()>0);
+		// have the observer verify the observations were correct
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
 			assertEquals(expectedObservations, actualObservations);
 		}));
 
-		
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		ResourcesActionSupport.testConsumers(5, 4535415202634885293L,testPlugin);
-
+		ResourcesActionSupport.testConsumers(5, 4535415202634885293L, testPlugin);
 
 		/* precondition test: if the resource id is null */
 		ResourcesActionSupport.testConsumer(5, 6716391419322588145L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(null,
-					TestResourcePropertyId.getUnknownResourcePropertyId(), PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(null, TestResourcePropertyId.getUnknownResourcePropertyId(),
+					PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
@@ -1134,8 +1132,8 @@ public final class AT_ResourcesDataManager {
 		/* precondition test: if the resource property id is null */
 		ResourcesActionSupport.testConsumer(5, 5844702145510871357L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1,
-					null, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1, null, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
 			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
 		});
 
@@ -1150,8 +1148,8 @@ public final class AT_ResourcesDataManager {
 		/* precondition test: if the property definition is null */
 		ResourcesActionSupport.testConsumer(5, 8200088554784341155L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1,
-					TestResourcePropertyId.getUnknownResourcePropertyId(), null));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId(), null));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
 
@@ -2769,6 +2767,34 @@ public final class AT_ResourcesDataManager {
 			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 		});
 
+	}
+
+	@Test
+	@UnitTestMethod(name = "init", args = {})
+	public void testRegionAdditionEvent() {
+
+		/*
+		 * show that an unknown region will cause the resource data manager to
+		 * throw an exception when retrieving a resource level for that region
+		 */
+		ResourcesActionSupport.testConsumer(0, 4192802703078518338L, (c) -> {
+			RegionId newRegionId = TestRegionId.getUnknownRegionId();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			assertThrows(ContractException.class, () -> resourcesDataManager.getRegionResourceLevel(newRegionId, TestResourceId.RESOURCE_1));
+		});
+		
+		/*
+		 * show that a newly added region will cause the resource data manager to
+		 * return a 0 resource level
+		 */
+		ResourcesActionSupport.testConsumer(0, 4192802703078518338L, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			RegionId newRegionId = TestRegionId.getUnknownRegionId();
+			regionsDataManager.addRegionId(newRegionId);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			long regionResourceLevel = resourcesDataManager.getRegionResourceLevel(newRegionId, TestResourceId.RESOURCE_1);
+			assertEquals(0, regionResourceLevel);
+		});
 	}
 
 	@Test

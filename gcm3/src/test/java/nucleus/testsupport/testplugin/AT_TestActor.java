@@ -64,7 +64,7 @@ public class AT_TestActor {
 		Experiment	.builder()//
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
-					.addOutputHandler(experimentPlanCompletionObserver::init)//
+					.addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
 					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//

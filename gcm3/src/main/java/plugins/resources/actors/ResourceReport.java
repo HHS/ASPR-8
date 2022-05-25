@@ -15,6 +15,7 @@ import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
+import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
@@ -317,6 +318,7 @@ public final class ResourceReport extends PeriodicReport {
 		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
 		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
 		actorContext.subscribe(RegionResourceUpdateEvent.class, getFlushingConsumer(this::handleRegionResourceUpdateEvent));
+		actorContext.subscribe(RegionAdditionEvent.class, getFlushingConsumer(this::handleRegionAdditionEvent));
 
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -348,7 +350,7 @@ public final class ResourceReport extends PeriodicReport {
 			}
 		}
 
-		actorContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+		actorContext.subscribe(ResourceIdAdditionEvent.class, getFlushingConsumer(this::handleResourceIdAdditionEvent));
 
 		/*
 		 * Filling the region map with empty counters
@@ -385,5 +387,21 @@ public final class ResourceReport extends PeriodicReport {
 				}
 			}
 		}
+	}
+
+	private void handleRegionAdditionEvent(ActorContext actorContext, RegionAdditionEvent regionAdditionEvent) {
+		RegionId regionId = regionAdditionEvent.getRegionId();
+
+		final Map<ResourceId, Map<Activity, Counter>> resourceMap = new LinkedHashMap<>();
+		regionMap.put(regionId, resourceMap);
+		for (final ResourceId resourceId : resourceIds) {
+			final Map<Activity, Counter> activityMap = new LinkedHashMap<>();
+			resourceMap.put(resourceId, activityMap);
+			for (final Activity activity : Activity.values()) {
+				final Counter counter = new Counter();
+				activityMap.put(activity, counter);
+			}
+		}
+
 	}
 }

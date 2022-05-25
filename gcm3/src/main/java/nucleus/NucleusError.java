@@ -67,6 +67,7 @@ public enum NucleusError implements ContractError {
 	PLUGIN_INITIALIZATION_CLOSED("Plugin context is no longer valid"),
 	REPEATED_EXECUTION("Attempted repeat execution of simulation engine"),
 	SCENARIO_CANNOT_BE_EXECUTED("Scenario cannot be executed"),
+	SCENARIO_FAILED("Scenario failed to complete execution"),
 	UNCLOSABLE_EXPERIMENT("Cannot close an experiment not in the open state"),
 	UNKNOWN_ACTOR_ID("Actor id does not correspond to a known actor"),
 	UNKNOWN_DATA_MANAGER("Unknown data manager"),

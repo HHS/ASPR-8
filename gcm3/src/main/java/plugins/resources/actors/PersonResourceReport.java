@@ -13,6 +13,7 @@ import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
+import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
@@ -72,8 +73,6 @@ public final class PersonResourceReport extends PeriodicReport {
 	 * values passed in the init() method.
 	 */
 	private Set<ResourceId> resourceIds = new LinkedHashSet<>();
-
-	private boolean subscribedToAllResources;
 
 	/*
 	 * Boolean for controlling the reporting of people with out resources. Set
@@ -261,6 +260,7 @@ public final class PersonResourceReport extends PeriodicReport {
 		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
 		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
 		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
+		actorContext.subscribe(RegionAdditionEvent.class, getFlushingConsumer(this::handleRegionAdditionEvent));
 
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -288,14 +288,13 @@ public final class PersonResourceReport extends PeriodicReport {
 		// event, otherwise subscribe to each resource id
 		if (resourceIds.equals(resourcesDataManager.getResourceIds())) {
 			actorContext.subscribe(PersonResourceUpdateEvent.class, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
-			subscribedToAllResources = true;
+			actorContext.subscribe(ResourceIdAdditionEvent.class, getFlushingConsumer(this::handleResourceIdAdditionEvent));
 		} else {
 			for (ResourceId resourceId : resourceIds) {
 				EventLabel<PersonResourceUpdateEvent> eventLabelByResource = PersonResourceUpdateEvent.getEventLabelByResource(actorContext, resourceId);
 				actorContext.subscribe(eventLabelByResource, getFlushingConsumer(this::handlePersonResourceUpdateEvent));
 			}
 		}
-		actorContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 
 		/*
 		 * Build the tuple map to empty sets of people in preparation for people
@@ -338,6 +337,26 @@ public final class PersonResourceReport extends PeriodicReport {
 
 	}
 
+	private void handleRegionAdditionEvent(ActorContext actorContext, RegionAdditionEvent regionAdditionEvent) {
+		RegionId regionId = regionAdditionEvent.getRegionId();
+
+		if (!regionMap.containsKey(regionId)) {
+
+			final Map<ResourceId, Map<InventoryType, Set<PersonId>>> resourceMap = new LinkedHashMap<>();
+			regionMap.put(regionId, resourceMap);
+
+			for (final ResourceId resourceId : resourceIds) {
+				final Map<InventoryType, Set<PersonId>> inventoryMap = new LinkedHashMap<>();
+				resourceMap.put(resourceId, inventoryMap);
+				for (final InventoryType inventoryType : InventoryType.values()) {
+					final Set<PersonId> people = new LinkedHashSet<>();
+					inventoryMap.put(inventoryType, people);
+				}
+			}
+		}
+
+	}
+
 	/*
 	 * Removes a person to the set of people associated with the given tuple
 	 */
@@ -348,17 +367,17 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handleResourceIdAdditionEvent(ActorContext actorContext,ResourceIdAdditionEvent resourceIdAdditionEvent) {
+	private void handleResourceIdAdditionEvent(ActorContext actorContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
 		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
-		if(subscribedToAllResources && resourceId != null && !resourceIds.contains(resourceId)) {
+		if (!resourceIds.contains(resourceId)) {
 			resourceIds.add(resourceId);
-			for(RegionId regionID : regionMap.keySet()) {
+			for (RegionId regionID : regionMap.keySet()) {
 				Map<ResourceId, Map<InventoryType, Set<PersonId>>> map = regionMap.get(regionID);
-				Map<InventoryType, Set<PersonId>> invMap =  new LinkedHashMap<>();
-				for(InventoryType inventoryType : InventoryType.values()) {
+				Map<InventoryType, Set<PersonId>> invMap = new LinkedHashMap<>();
+				for (InventoryType inventoryType : InventoryType.values()) {
 					invMap.put(inventoryType, new LinkedHashSet<>());
 				}
-				map.put(resourceId, invMap);			
+				map.put(resourceId, invMap);
 			}
 		}
 	}

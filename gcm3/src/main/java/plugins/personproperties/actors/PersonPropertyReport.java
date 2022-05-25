@@ -68,7 +68,6 @@ public final class PersonPropertyReport extends PeriodicReport {
 	 * report. They are set during init()
 	 */
 	private final Set<PersonPropertyId> personPropertyIds = new LinkedHashSet<>();
-	private boolean subscribedToAllProperties;
 
 	/*
 	 * The tuple mapping to person counts that is maintained via handling of
@@ -136,7 +135,16 @@ public final class PersonPropertyReport extends PeriodicReport {
 	 * not already exist.
 	 */
 	private Counter getCounter(final RegionId regionId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
-		final Map<Object, Counter> propertyValueMap = tupleMap.get(regionId).get(personPropertyId);
+		Map<PersonPropertyId, Map<Object, Counter>> propertyIdMap = tupleMap.get(regionId);
+		if (propertyIdMap == null) {
+			propertyIdMap = new LinkedHashMap<>();
+			tupleMap.put(regionId, propertyIdMap);
+		}
+		Map<Object, Counter> propertyValueMap = propertyIdMap.get(personPropertyId);
+		if (propertyValueMap == null) {
+			propertyValueMap = new LinkedHashMap<>();
+			propertyIdMap.put(personPropertyId, propertyValueMap);
+		}
 		Counter counter = propertyValueMap.get(personPropertyValue);
 		if (counter == null) {
 			counter = new Counter();
@@ -202,7 +210,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 	 * @throws ContractException
 	 * 
 	 *             <li>{@linkplain PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID}
-	 *             if a person property specified in construction is unknown</li>
+	 *             if a person property specified in construction is
+	 *             unknown</li>
 	 */
 	@Override
 	public void init(final ActorContext actorContext) {
@@ -237,31 +246,12 @@ public final class PersonPropertyReport extends PeriodicReport {
 		// class, otherwise subscribe to the individual property values
 		if (personPropertyIds.equals(personPropertiesDataManager.getPersonPropertyIds())) {
 			actorContext.subscribe(PersonPropertyUpdateEvent.class, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
-			subscribedToAllProperties = true;
+			//since we are subscribing to all person properties, we must subscribe to the PersonPropertyDefinitionEvent as well
+			actorContext.subscribe(PersonPropertyDefinitionEvent.class, getFlushingConsumer(this::handlePersonPropertyDefinitionEvent));
 		} else {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
 				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
 				actorContext.subscribe(eventLabelByProperty, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
-			}
-		}
-		
-		
-		actorContext.subscribe(PersonPropertyDefinitionEvent.class,getFlushingConsumer(this::handlePersonPropertyDefinitionEvent));
-
-		/*
-		 * Fill the top layers of the regionMap. We do not yet know the set of
-		 * property values, so we leave that layer empty.
-		 *
-		 */
-
-		// Map<RegionId, Map<PersonPropertyId, Map<Object, Counter>>>
-		final Set<RegionId> regionIds = actorContext.getDataManager(RegionsDataManager.class).getRegionIds();
-		for (final RegionId regionId : regionIds) {
-			final Map<PersonPropertyId, Map<Object, Counter>> propertyIdMap = new LinkedHashMap<>();
-			tupleMap.put(regionId, propertyIdMap);
-			for (final PersonPropertyId personPropertyId : personPropertyIds) {
-				final Map<Object, Counter> propertyValueMap = new LinkedHashMap<>();
-				propertyIdMap.put(personPropertyId, propertyValueMap);
 			}
 		}
 
@@ -274,13 +264,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 
 	}
-	
-	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext,PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
-		if(subscribedToAllProperties) {
-			PersonPropertyId personPropertyId = personPropertyDefinitionEvent.getPersonPropertyId();
-			personPropertyIds.add(personPropertyId);	
-		}
+
+	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
+		
+		PersonPropertyId personPropertyId = personPropertyDefinitionEvent.getPersonPropertyId();
+		personPropertyIds.add(personPropertyId);
 	}
-	
 
 }

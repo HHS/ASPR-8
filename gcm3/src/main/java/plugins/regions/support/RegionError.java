@@ -27,6 +27,7 @@ public enum RegionError implements ContractError {
 	DUPLICATE_PERSON_ADDITION("Duplicate person region addition"),
 	DUPLICATE_REGION_PROPERTY_VALUE("Duplicate region property value"),	
 	DUPLICATE_REGION_PROPERTY_DEFINITION_ASSIGNMENT("Duplicate region property definition assignment"),
+	REGION_ADDITION_BLOCKED("Region addition requires that all region properties have default values"),
 
 	
 	NULL_TIME_TRACKING_POLICY("Null time tracking policy"),

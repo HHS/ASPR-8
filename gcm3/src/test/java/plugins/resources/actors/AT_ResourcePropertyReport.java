@@ -199,12 +199,13 @@ public class AT_ResourcePropertyReport {
 		// build and execute the engine
 		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
-		builder.addOutputHandler(testReportItemOutputConsumer::init);
-		builder.addOutputHandler(experimentPlanCompletionObserver::init);
+		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
+		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
 		builder.reportProgressToConsole(false);
 		builder.build().execute();
 
 		// show that all actions were executed
+		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).isPresent());
 		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete());
 
 		/*

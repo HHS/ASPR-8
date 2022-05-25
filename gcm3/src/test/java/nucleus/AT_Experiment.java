@@ -83,7 +83,7 @@ public class AT_Experiment {
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
 
-					.addOutputHandler(c -> {
+					.addExperimentContextConsumer(c -> {
 						c.subscribeToOutput(Object.class, (c2, s, e) -> {
 							List<String> scenarioMetaData = c2.getScenarioMetaData(s).get();
 							MultiKey.Builder builder = MultiKey.builder();
@@ -103,8 +103,8 @@ public class AT_Experiment {
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "addOutputHandler", args = { Consumer.class })
-	public void testAddOutputHandler() {
+	@UnitTestMethod(target = Experiment.Builder.class, name = "addExperimentContextConsumer", args = { Consumer.class })
+	public void testAddExperimentContextConsumer() {
 
 		/*
 		 * Show that an output handler receives data released by the simulation
@@ -199,10 +199,10 @@ public class AT_Experiment {
 
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.addOutputHandler(integerOutputHandler)//
-					.addOutputHandler(stringOutputHandler)//
-					.addOutputHandler(doubleOutputHandler)//
-					.addOutputHandler(numberOutputHandler)//
+					.addExperimentContextConsumer(integerOutputHandler)//
+					.addExperimentContextConsumer(stringOutputHandler)//
+					.addExperimentContextConsumer(doubleOutputHandler)//
+					.addExperimentContextConsumer(numberOutputHandler)//
 					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//

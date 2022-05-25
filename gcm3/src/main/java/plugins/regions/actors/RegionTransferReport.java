@@ -2,7 +2,6 @@ package plugins.regions.actors;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import nucleus.ActorContext;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -16,6 +15,8 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
+import util.wrappers.MultiKey;
+import util.wrappers.MutableInteger;
 
 /**
  * A periodic Report that displays the number of times a person transferred from
@@ -30,7 +31,7 @@ import plugins.reports.support.ReportPeriod;
  * DestinationRegion -- the destination region property identifier
  *
  * Transfers -- the number of transfers from the source region to the
- * destination region 
+ * destination region
  *
  * @author Shawn Hatch
  *
@@ -42,19 +43,10 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 	/*
-	 * 
-	 * A counter of the number of people transferring between regions.
-	 *
-	 */
-	private static class Counter {
-		int count;
-	}
-
-	/*
 	 * A mapping from a (Region, Region) tuple to a count of the number of
 	 * transfers.
 	 */
-	private final Map<RegionId, Map<RegionId, Counter>> baseMap = new LinkedHashMap<>();
+	private final Map<MultiKey, MutableInteger> baseMap = new LinkedHashMap<>();
 
 	/*
 	 * The derived header for this report
@@ -79,23 +71,21 @@ public final class RegionTransferReport extends PeriodicReport {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
-		for (final RegionId sourceRegionId : baseMap.keySet()) {
-			final Map<RegionId, Counter> destinationRegionMap = baseMap.get(sourceRegionId);
-			for (final RegionId destinationRegionId : destinationRegionMap.keySet()) {
-				final Counter counter = destinationRegionMap.get(destinationRegionId);
-				if (counter.count > 0) {
-					reportItemBuilder.setReportHeader(getReportHeader());
-					reportItemBuilder.setReportId(getReportId());
-					fillTimeFields(reportItemBuilder);					
-					reportItemBuilder.addValue(sourceRegionId.toString());
-					reportItemBuilder.addValue(destinationRegionId.toString());
-					reportItemBuilder.addValue(counter.count);
-					ActorContext.releaseOutput(reportItemBuilder.build());
-					counter.count = 0;
-				}
-			}
-
+		for (final MultiKey multiKey : baseMap.keySet()) {
+			RegionId sourceRegionId = multiKey.getKey(0);
+			RegionId destinationRegionId = multiKey.getKey(1);
+			MutableInteger mutableInteger = baseMap.get(multiKey);
+			reportItemBuilder.setReportHeader(getReportHeader());
+			reportItemBuilder.setReportId(getReportId());
+			fillTimeFields(reportItemBuilder);
+			reportItemBuilder.addValue(sourceRegionId.toString());
+			reportItemBuilder.addValue(destinationRegionId.toString());
+			reportItemBuilder.addValue(mutableInteger.getValue());
+			ActorContext.releaseOutput(reportItemBuilder.build());
 		}
+		
+		baseMap.clear();
+
 	}
 
 	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
@@ -114,8 +104,13 @@ public final class RegionTransferReport extends PeriodicReport {
 	 * Increments the number of region transfers for the give tuple
 	 */
 	private void increment(final RegionId sourceRegionId, final RegionId destinationRegionId) {
-		final Counter counter = baseMap.get(sourceRegionId).get(destinationRegionId);
-		counter.count++;
+		MultiKey multiKey = new MultiKey(sourceRegionId, destinationRegionId);
+		MutableInteger mutableInteger = baseMap.get(multiKey);
+		if (mutableInteger == null) {
+			mutableInteger = new MutableInteger();
+			baseMap.put(multiKey, mutableInteger);
+		}
+		mutableInteger.increment();
 	}
 
 	private RegionsDataManager regionsDataManager;
@@ -129,26 +124,11 @@ public final class RegionTransferReport extends PeriodicReport {
 
 		PeopleDataManager peopleDataManager = ActorContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = ActorContext.getDataManager(RegionsDataManager.class);
-		RegionsDataManager regionsDataManager = ActorContext.getDataManager(RegionsDataManager.class);
-
-		final Set<RegionId> regionIds = regionsDataManager.getRegionIds();
-
-		/*
-		 * Fill the base map with empty counters
-		 */
-
-		for (final RegionId sourceRegionId : regionIds) {
-			final Map<RegionId, Counter> destinationRegionMap = new LinkedHashMap<>();
-			baseMap.put(sourceRegionId, destinationRegionMap);
-			for (final RegionId destinationRegionId : regionIds) {
-				final Counter counter = new Counter();
-				destinationRegionMap.put(destinationRegionId, counter);
-			}
-		}
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, regionId);
 		}
 	}
+
 }

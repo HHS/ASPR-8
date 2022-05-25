@@ -36,7 +36,7 @@ public class AT_ExperimentContext {
 		Experiment	.builder()//
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
-					.addOutputHandler(c -> {
+					.addExperimentContextConsumer(c -> {
 						elapsedSeconds.setValue(c.getElapsedSeconds());
 					}).build()//
 					.execute();//
@@ -53,7 +53,7 @@ public class AT_ExperimentContext {
 		Experiment	.builder()//
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
-					.addOutputHandler(c -> {
+					.addExperimentContextConsumer(c -> {
 						actualMetaData.addAll(c.getExperimentMetaData());
 					}).build()//
 					.execute();//
@@ -71,7 +71,7 @@ public class AT_ExperimentContext {
 					.reportFailuresToConsole(false)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.addOutputHandler(c -> {
+					.addExperimentContextConsumer(c -> {
 						actualMetaData.addAll(c.getExperimentMetaData());
 					}).build()//
 					.execute();//
@@ -105,7 +105,7 @@ public class AT_ExperimentContext {
 					.reportFailuresToConsole(false)//
 					.addDimension(dimension2)//
 					.addDimension(dimension1)//
-					.addOutputHandler(c -> {
+					.addExperimentContextConsumer(c -> {
 						actualMetaData.addAll(c.getExperimentMetaData());
 					}).build()//
 					.execute();//
@@ -126,7 +126,7 @@ public class AT_ExperimentContext {
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
 
-					.addOutputHandler((c) -> {
+					.addExperimentContextConsumer((c) -> {
 						scenarioCount.setValue(c.getScenarioCount());
 					})//
 					.build()//
@@ -162,7 +162,7 @@ public class AT_ExperimentContext {
 
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.addOutputHandler((c) -> {
+					.addExperimentContextConsumer((c) -> {
 						scenarioCount.setValue(c.getScenarioCount());
 					})//
 					.build()//
@@ -227,7 +227,7 @@ public class AT_ExperimentContext {
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.addOutputHandler(c -> {
+					.addExperimentContextConsumer(c -> {
 						c.subscribeToOutput(Object.class, (c2, s, e) -> {
 							MultiKey.Builder builder = MultiKey.builder();
 							builder.addKey(s);
@@ -331,7 +331,7 @@ public class AT_ExperimentContext {
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
-					.addOutputHandler(c -> {
+					.addExperimentContextConsumer(c -> {
 						c.subscribeToOutput(Object.class, (c2, s, e) -> {
 							actualScenarioIds.add(s);
 						});
@@ -407,7 +407,7 @@ public class AT_ExperimentContext {
 					.addDimension(dimension)//
 					.addPlugin(plugin)//
 					.reportFailuresToConsole(false)//
-					.addOutputHandler((c) -> {
+					.addExperimentContextConsumer((c) -> {
 						c.subscribeToExperimentOpen((c2) -> {
 							int scenarioCount = c2.getScenarioCount();
 							for (int scenarioId = 0; scenarioId < scenarioCount; scenarioId++) {
@@ -497,7 +497,7 @@ public class AT_ExperimentContext {
 		 * experiment and respond by incrementing a counter
 		 */
 		for (int i = 0; i < expectedCloseExperimentCount; i++) {
-			builder.addOutputHandler((c) -> {
+			builder.addExperimentContextConsumer((c) -> {
 				c.subscribeToExperimentClose((c2) -> {
 					simulationCloseExperimentCount.increment();
 				});
@@ -535,7 +535,7 @@ public class AT_ExperimentContext {
 		 * experiment and respond by incrementing a counter
 		 */
 		for (int i = 0; i < expectedOpenExperimentCount; i++) {
-			builder.addOutputHandler((c) -> {
+			builder.addExperimentContextConsumer((c) -> {
 				c.subscribeToExperimentOpen((c2) -> {
 					simulationOpenExperimentCount.increment();
 				});
@@ -583,12 +583,12 @@ public class AT_ExperimentContext {
 					.reportFailuresToConsole(false)//
 
 					.addPlugin(plugin)//
-					.addOutputHandler((c) -> {
+					.addExperimentContextConsumer((c) -> {
 						c.subscribeToOutput(Integer.class, (c2, s, o) -> {
 							observedOutput.add(new MultiKey("int handler", o));
 						});
 					})//
-					.addOutputHandler((c) -> {
+					.addExperimentContextConsumer((c) -> {
 						c.subscribeToOutput(String.class, (c2, s, o) -> {
 							observedOutput.add(new MultiKey("string handler", o));
 						});
@@ -628,7 +628,7 @@ public class AT_ExperimentContext {
 		 * simulation and respond by incrementing a counter
 		 */
 		for (int i = 0; i < expectedCloseObservationCount; i++) {
-			builder.addOutputHandler((c) -> {
+			builder.addExperimentContextConsumer((c) -> {
 				c.subscribeToSimulationClose((c2, s) -> {
 					simulationCloseObservationCount.increment();
 				});
@@ -667,7 +667,7 @@ public class AT_ExperimentContext {
 		 * simulation and respond by incrementing a counter
 		 */
 		for (int i = 0; i < expectedOpenObservationCount; i++) {
-			builder.addOutputHandler((c) -> {
+			builder.addExperimentContextConsumer((c) -> {
 				c.subscribeToSimulationOpen((c2, s) -> {
 					simulationOpenObservationCount.increment();
 				});
