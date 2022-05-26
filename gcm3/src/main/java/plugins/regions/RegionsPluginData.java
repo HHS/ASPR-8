@@ -110,7 +110,7 @@ public class RegionsPluginData implements PluginData {
 		/*
 		 * For every region property definition that has a null default value,
 		 * ensure that there all corresponding region property values are not
-		 * null and repair the definition.
+		 * null.
 		 */
 		for (RegionPropertyId regionPropertyId : data.regionPropertyDefinitions.keySet()) {
 			PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
