@@ -20,6 +20,7 @@ import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;
 import plugins.materials.events.BatchPropertyDefinitionEvent;
 import plugins.materials.events.BatchPropertyUpdateEvent;
+import plugins.materials.events.MaterialIdAdditionEvent;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
@@ -186,8 +187,6 @@ public final class MaterialsDataManager extends DataManager {
 
 	private final Map<BatchId, Map<BatchPropertyId, PropertyValueRecord>> batchPropertyMap = new LinkedHashMap<>();
 
-	
-
 	/*
 	 * The identifier for the next created batch
 	 */
@@ -213,9 +212,8 @@ public final class MaterialsDataManager extends DataManager {
 	private final Map<MaterialsProducerPropertyId, PropertyDefinition> materialsProducerPropertyDefinitions = new LinkedHashMap<>();
 
 	private final Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> batchPropertyDefinitions = new LinkedHashMap<>();
-	
+
 	private final Map<MaterialId, Set<BatchPropertyId>> batchPropertyIdMap = new LinkedHashMap<>();
-	
 
 	private final Set<MaterialId> materialIds = new LinkedHashSet<>();
 
@@ -2035,6 +2033,35 @@ public final class MaterialsDataManager extends DataManager {
 			dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
 		}
 		dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
+
+	}
+	
+	private void validateNewMaterialId(final MaterialId materialId) {
+		if (materialId == null) {
+			throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
+		}
+
+		if (materialIds.contains(materialId)) {
+			throw new ContractException(MaterialsError.DUPLICATE_MATERIAL, materialId);
+		}
+	}
+
+	/**
+	 * Adds a new material type
+	 * 
+	 * @throws ContractException
+	 * <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the material id is null</li>
+	 * <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL} if the material id is already present</li>
+	 * 
+	 */
+	public void addMaterialId(MaterialId materialId) {
+		validateNewMaterialId(materialId);
+
+		materialIds.add(materialId);
+		batchPropertyIdMap.put(materialId, new LinkedHashSet<>());
+		batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());
+		
+		dataManagerContext.releaseEvent(new MaterialIdAdditionEvent(materialId));
 
 	}
 

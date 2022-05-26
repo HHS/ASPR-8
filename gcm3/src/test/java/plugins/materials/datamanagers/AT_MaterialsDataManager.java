@@ -47,6 +47,7 @@ import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;
 import plugins.materials.events.BatchPropertyDefinitionEvent;
 import plugins.materials.events.BatchPropertyUpdateEvent;
+import plugins.materials.events.MaterialIdAdditionEvent;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
@@ -4668,13 +4669,13 @@ public class AT_MaterialsDataManager {
 			materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
 			MultiKey multiKey = new MultiKey(c.getTime(), materialId, batchPropertyId);
 			expectedObservations.add(multiKey);
-			
+
 			assertTrue(materialsDataManager.getBatchPropertyIds(materialId).contains(batchPropertyId));
 			PropertyDefinition actualPropertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
 			assertEquals(propertyDefinition, actualPropertyDefinition);
-			
+
 		}));
-		
+
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
@@ -4683,7 +4684,7 @@ public class AT_MaterialsDataManager {
 			materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
 			MultiKey multiKey = new MultiKey(c.getTime(), materialId, batchPropertyId);
 			expectedObservations.add(multiKey);
-			
+
 			assertTrue(materialsDataManager.getBatchPropertyIds(materialId).contains(batchPropertyId));
 			PropertyDefinition actualPropertyDefinition = materialsDataManager.getBatchPropertyDefinition(materialId, batchPropertyId);
 			assertEquals(propertyDefinition, actualPropertyDefinition);
@@ -4769,6 +4770,67 @@ public class AT_MaterialsDataManager {
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.defineBatchProperty(materialId, batchPropertyId, propertyDefinition));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "addMaterialId", args = { MaterialId.class })
+	public void testAddMaterialId() {
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			c.subscribe(MaterialIdAdditionEvent.class, (c2,e)->{
+				MultiKey multiKey = new MultiKey(c2.getTime(),e.getMaterialId());
+				actualObservations.add(multiKey);
+			});
+		}));
+		
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			MaterialId newMaterialId = TestMaterialId.getUnknownMaterialId();
+			materialsDataManager.addMaterialId(newMaterialId);
+			MultiKey multiKey = new MultiKey(c.getTime(),newMaterialId);
+			expectedObservations.add(multiKey);
+		}));
+		
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			MaterialId newMaterialId = TestMaterialId.getUnknownMaterialId();
+			materialsDataManager.addMaterialId(newMaterialId);
+			MultiKey multiKey = new MultiKey(c.getTime(),newMaterialId);
+			expectedObservations.add(multiKey);
+		}));
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertFalse(expectedObservations.isEmpty());
+			assertEquals(expectedObservations, actualObservations);
+		}));
+		
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(2713286843450316570L, testPlugin);
+
+		/*
+		 * precondition test: if the material id is null
+		 */
+		MaterialsActionSupport.testConsumer(801838096204060748L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialId(null));
+			assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the material id is already present
+		 */
+		MaterialsActionSupport.testConsumer(4318358212946306160L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialId(TestMaterialId.MATERIAL_1));
+			assertEquals(MaterialsError.DUPLICATE_MATERIAL, contractException.getErrorType());
 		});
 
 	}
