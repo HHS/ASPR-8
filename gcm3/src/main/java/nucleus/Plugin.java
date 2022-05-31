@@ -24,7 +24,7 @@ public final class Plugin {
 		private PluginId pluginId;
 		private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 		private Set<PluginData> pluginDatas = new LinkedHashSet<>();
-		private Consumer<PluginContext> initializer;
+		private Consumer<PluginContext> initializer;		
 	}
 
 	/**

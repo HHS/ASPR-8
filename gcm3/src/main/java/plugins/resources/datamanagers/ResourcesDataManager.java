@@ -42,6 +42,8 @@ import plugins.util.properties.TimeTrackingPolicy;
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import util.errors.ContractException;
+import util.time.StopwatchManager;
+import util.time.Watch;
 
 /**
  * Mutable data manager that backs the {@linkplain ResourcesDataManager}. This
@@ -767,6 +769,7 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {
+		StopwatchManager.start(Watch.RESOURCES_DM_INIT);
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
@@ -830,6 +833,7 @@ public final class ResourcesDataManager extends DataManager {
 				map.put(resourcePropertyId, propertyValueRecord);
 
 			}
+			
 		}
 
 		// load the region resources
@@ -880,6 +884,7 @@ public final class ResourcesDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
+		StopwatchManager.stop(Watch.RESOURCES_DM_INIT);
 	}
 
 	private void handleRegionAdditionEvent(DataManagerContext dataManagerContext, RegionAdditionEvent regionAdditionEvent) {
@@ -1343,6 +1348,7 @@ public final class ResourcesDataManager extends DataManager {
 	}
 
 	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+		StopwatchManager.start(Watch.RESOURCES_BULK);
 		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
@@ -1366,7 +1372,7 @@ public final class ResourcesDataManager extends DataManager {
 			}
 			pId++;
 		}
-
+		StopwatchManager.stop(Watch.RESOURCES_BULK);
 	}
 
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {

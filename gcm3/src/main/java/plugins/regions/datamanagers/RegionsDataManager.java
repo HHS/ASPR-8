@@ -35,6 +35,8 @@ import plugins.util.properties.TimeTrackingPolicy;
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import util.errors.ContractException;
+import util.time.StopwatchManager;
+import util.time.Watch;
 
 /**
  * Mutable data manager that backs the {@linkplain RegionDataView}. This data
@@ -148,7 +150,7 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 */
 	public void init(DataManagerContext dataManagerContext) {
-
+		StopwatchManager.start(Watch.REGIONS_DM_INIT);
 		super.init(dataManagerContext);
 
 		this.dataManagerContext = dataManagerContext;
@@ -223,6 +225,7 @@ public final class RegionsDataManager extends DataManager {
 		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForArrivalRegion());
 		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForDepartureRegion());
 		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForPerson());
+		StopwatchManager.stop(Watch.REGIONS_DM_INIT);
 	}
 
 	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
@@ -739,19 +742,18 @@ public final class RegionsDataManager extends DataManager {
 	}
 
 	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+		StopwatchManager.start(Watch.REGIONS_BULK);
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
-		for (PersonConstructionData personConstructionData : personConstructionDatas) {
-			RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
-			validateRegionId(regionId);
-		}
+
 
 		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
 		validatePersonExists(personId);
 		int pId = personId.getValue();
 
 		for (PersonConstructionData personConstructionData : personConstructionDatas) {
-			RegionId regionId = personConstructionData.getValue(RegionId.class).get();
+			RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
+			validateRegionId(regionId);
 			Optional<PersonId> optionalBoxedPersonId = peopleDataManager.getBoxedPersonId(pId);
 			if (!optionalBoxedPersonId.isPresent()) {
 				throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
@@ -771,6 +773,7 @@ public final class RegionsDataManager extends DataManager {
 			}
 			pId++;
 		}
+		StopwatchManager.stop(Watch.REGIONS_BULK);
 	}
 
 	/*

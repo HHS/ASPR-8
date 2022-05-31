@@ -53,6 +53,8 @@ import plugins.util.properties.PropertyError;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
 import util.errors.ContractException;
+import util.time.StopwatchManager;
+import util.time.Watch;
 
 /**
  * <p>
@@ -207,6 +209,7 @@ public final class GroupsDataManager extends DataManager {
 	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
+		StopwatchManager.start(Watch.GROUPS_DM_INIT);
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
@@ -248,9 +251,9 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupMembership();
 		loadGroupPropertyValues();
 
-		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
+		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonImminentAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
-
+		StopwatchManager.stop(Watch.GROUPS_DM_INIT);
 	}
 
 	private void loadGroupPropertyDefinitions() {
@@ -1482,33 +1485,33 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+	private void handleBulkPersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+		StopwatchManager.start(Watch.GROUPS_BULK);
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonConstructionData.getValue(BulkGroupMembershipData.class);
 		if (optional.isPresent()) {
-			int personCount = bulkPersonConstructionData.getPersonConstructionDatas().size();
+			int personCount = bulkPersonConstructionData.getPersonCount();
 			int basePersonIndex = bulkPersonImminentAdditionEvent.getPersonId().getValue();
 
-			for (int i = 0; i < personCount; i++) {
-				validatePersonIndexExists(i + basePersonIndex);
-			}
 			BulkGroupMembershipData bulkGroupMembershipData = optional.get();
-			int groupCount = bulkGroupMembershipData.getGroupCount();
-			for (int i = 0; i < groupCount; i++) {
-				GroupTypeId groupTypeId = bulkGroupMembershipData.getGroupTypeId(i);
-				validateGroupTypeId(groupTypeId);
+			List<GroupTypeId> groupTypeIds = bulkGroupMembershipData.getGroupTypeIds();
+			Optional<Integer> optionalMaxPersonIndex = bulkGroupMembershipData.getMaxPersonIndex();
+			if(optionalMaxPersonIndex.isPresent()) {
+				Integer maxPersonIndex = optionalMaxPersonIndex.get();
+				if (maxPersonIndex>=personCount) {
+					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+				}
 			}
-			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
-				validatePersonIndexExists(personIndex + basePersonIndex);
-			}
+
 
 			boolean groupCreationSubscribersExist = dataManagerContext.subscribersExist(GroupAdditionEvent.class);
 
-			List<GroupId> newGroups = new ArrayList<>();
-
+			
+			int groupCount = groupTypeIds.size();
+			List<GroupId> newGroups = new ArrayList<>(groupCount);
 			for (int i = 0; i < groupCount; i++) {
-				GroupTypeId groupTypeId = bulkGroupMembershipData.getGroupTypeId(i);
-
+				GroupTypeId groupTypeId = groupTypeIds.get(i);
+				validateGroupTypeId(groupTypeId);				
 				final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 				List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
 				if (groups == null) {
@@ -1538,30 +1541,31 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 
-			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
-				PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
-				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
-				for (Integer groupIndex : groupIndices) {
-					GroupId groupId = newGroups.get(groupIndex);
-					validatePersonNotInGroup(boxedPersonId, groupId);
-
-					List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-					if (people == null) {
-						people = new ArrayList<>();
-						groupsToPeopleMap.setValue(groupId.getValue(), people);
-					}
-					people.add(boxedPersonId);
-
-					List<GroupId> groups = peopleToGroupsMap.getValue(boxedPersonId.getValue());
-					if (groups == null) {
-						groups = new ArrayList<>(1);
-						peopleToGroupsMap.setValue(boxedPersonId.getValue(), groups);
-					}
-					groups.add(groupId);
-				}
-			}
+//			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
+//				PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
+//				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
+//				for (Integer groupIndex : groupIndices) {
+//					GroupId groupId = newGroups.get(groupIndex);
+//					validatePersonNotInGroup(boxedPersonId, groupId);
+//
+//					List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
+//					if (people == null) {
+//						people = new ArrayList<>();
+//						groupsToPeopleMap.setValue(groupId.getValue(), people);
+//					}
+//					people.add(boxedPersonId);
+//
+//					List<GroupId> groups = peopleToGroupsMap.getValue(boxedPersonId.getValue());
+//					if (groups == null) {
+//						groups = new ArrayList<>(1);
+//						peopleToGroupsMap.setValue(boxedPersonId.getValue(), groups);
+//					}
+//					groups.add(groupId);
+//				}
+//			}
 
 		}
+		StopwatchManager.stop(Watch.GROUPS_BULK);
 	}
 
 	/**

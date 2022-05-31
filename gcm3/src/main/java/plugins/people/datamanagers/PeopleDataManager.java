@@ -19,6 +19,8 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import util.errors.ContractException;
+import util.time.StopwatchManager;
+import util.time.Watch;
 
 /**
  * Mutable data manager for people.
@@ -62,6 +64,7 @@ public final class PeopleDataManager extends DataManager {
 	 *
 	 */
 	public Optional<PersonId> addBulkPeople(final BulkPersonConstructionData bulkPersonConstructionData) {
+		StopwatchManager.start(Watch.PEOPLE_BULK);
 		validateBulkPersonConstructionData(bulkPersonConstructionData);
 
 		final List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
@@ -79,10 +82,13 @@ public final class PeopleDataManager extends DataManager {
 			BulkPersonAdditionEvent bulkPersonAdditionEvent = eventBuilder.build();
 
 			final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(result, bulkPersonConstructionData);
+			StopwatchManager.stop(Watch.PEOPLE_BULK);
 			dataManagerContext.releaseEvent(bulkPersonImminentAdditionEvent);
 			dataManagerContext.releaseEvent(bulkPersonAdditionEvent);
+			StopwatchManager.start(Watch.PEOPLE_BULK);
 		}
 
+		StopwatchManager.stop(Watch.PEOPLE_BULK);
 		return Optional.ofNullable(result);
 	}
 
@@ -215,6 +221,7 @@ public final class PeopleDataManager extends DataManager {
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {
+		StopwatchManager.start(Watch.PEOPLE_DM_INIT);
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
@@ -224,6 +231,7 @@ public final class PeopleDataManager extends DataManager {
 		globalPopulationRecord.projectedPopulationCount = personIds.size();
 		globalPopulationRecord.populationCount = personIds.size();
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
+		StopwatchManager.stop(Watch.PEOPLE_DM_INIT);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package plugins.groups;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -544,10 +545,10 @@ public final class GroupsPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the collected group idd
+	 * Returns the unmodifiable collected group ids
 	 */
 	public Set<GroupId> getGroupIds() {
-		return new LinkedHashSet<>(data.groupIds);
+		return Collections.unmodifiableSet(data.groupIds);		
 	}
 
 	/**
@@ -572,7 +573,7 @@ public final class GroupsPluginData implements PluginData {
 		return new Builder(new Data(data));
 	}
 	/**
-	 * Returns the set of people associated with the group id
+	 * Returns the unmodifiable set of people associated with the group id
 	 * 
 	 * @throws ContractException
 	 *             
@@ -584,10 +585,10 @@ public final class GroupsPluginData implements PluginData {
 	 */
 	public Set<PersonId> getGroupMembers(final GroupId groupId) {
 		validateGroupExists(data, groupId);
-		final Set<PersonId> result = new LinkedHashSet<>();
+		Set<PersonId> result = new LinkedHashSet<>();
 		final Set<PersonId> set = data.groupMemberships.get(groupId);
 		if (set != null) {
-			result.addAll(set);
+			result = Collections.unmodifiableSet(set);			
 		}
 		return result;
 	}

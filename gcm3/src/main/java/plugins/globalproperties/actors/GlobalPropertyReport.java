@@ -59,9 +59,9 @@ public final class GlobalPropertyReport {
 	}
 
 	private void handleGlobalPropertyDefinitionEvent(ActorContext actorContext, GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
-		GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.getGlobalPropertyId();
+		GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.globalPropertyId();
 		globalPropertyIds.add(globalPropertyId);
-		writeProperty(actorContext, globalPropertyId, globalPropertyDefinitionEvent.getInitialPropertyValue());
+		writeProperty(actorContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
 	}
 
 	private final ReportId reportId;

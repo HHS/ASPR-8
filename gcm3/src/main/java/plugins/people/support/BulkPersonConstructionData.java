@@ -96,6 +96,13 @@ public final class BulkPersonConstructionData {
 	public List<PersonConstructionData> getPersonConstructionDatas() {
 		return Collections.unmodifiableList(data.personConstructionDatas);
 	}
+	
+	/**
+	 * Returns the number of people in this bulk person construction data
+	 */
+	public int getPersonCount() {
+		return data.personConstructionDatas.size();
+	}
 
 	/**
 	 * Returns the first auxiliary object that is an instance of the given

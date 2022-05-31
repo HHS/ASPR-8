@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.math3.util.FastMath;
+
 import plugins.people.support.PersonError;
 import util.errors.ContractException;
 
@@ -25,6 +27,10 @@ public class BulkGroupMembershipData {
 		 * Integer(PersonId)->List(GroupId)
 		 */
 		private Map<Integer, List<Integer>> groupMemberships = new LinkedHashMap<>();
+
+		private int maxPersonIndex = -1;
+
+		
 
 		/*
 		 * An empty list of Group id values used as the groups for a person when
@@ -183,6 +189,7 @@ public class BulkGroupMembershipData {
 			if (list == null) {
 				list = new ArrayList<>();
 				data.groupMemberships.put(personIndex, list);
+				data.maxPersonIndex = FastMath.max(data.maxPersonIndex, personIndex);
 			}
 			if (list.contains(groupIndex)) {
 				throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP);
@@ -191,7 +198,7 @@ public class BulkGroupMembershipData {
 			return this;
 		}
 	}
-
+	
 	/**
 	 * Returns the number of groups contained in this
 	 * {@link BulkGroupMembershipData}
@@ -218,6 +225,10 @@ public class BulkGroupMembershipData {
 		}
 		return data.groupTypes.get(groupIndex);
 	}
+	
+	public List<GroupTypeId> getGroupTypeIds(){
+		return Collections.unmodifiableList(data.groupTypes);
+	}
 
 	/**
 	 * Returns the list of group indices associated with the given person index.
@@ -237,6 +248,13 @@ public class BulkGroupMembershipData {
 	 */
 	public List<Integer> getPersonIndices() {
 		return new ArrayList<>(data.groupMemberships.keySet());
+	}
+	
+	public Optional<Integer> getMaxPersonIndex() {
+		if (data.maxPersonIndex >= 0) {
+			return Optional.of(data.maxPersonIndex);
+		}
+		return Optional.empty();
 	}
 
 	public Set<GroupPropertyId> getGroupPropertyIds(int groupIndex) {

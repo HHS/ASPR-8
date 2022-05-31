@@ -36,6 +36,8 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
+import util.time.StopwatchManager;
+import util.time.Watch;
 
 /**
  * Mutable data manager for person properties
@@ -101,6 +103,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
+		StopwatchManager.start(Watch.PERSON_PROPERTIES_DM_INIT);
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
@@ -130,7 +133,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-
+		StopwatchManager.stop(Watch.PERSON_PROPERTIES_DM_INIT);
 	}
 
 	private final Map<PersonPropertyId, PropertyDefinition> personPropertyDefinitions = new LinkedHashMap<>();
@@ -500,6 +503,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
+		StopwatchManager.start(Watch.PERSON_PROPERTIES_BULK);
 		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
 		int pId = personId.getValue();
 
@@ -520,6 +524,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			}
 			pId++;
 		}
+		StopwatchManager.stop(Watch.PERSON_PROPERTIES_BULK);
 
 	}
 
