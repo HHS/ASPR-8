@@ -1541,28 +1541,28 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 
-//			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
-//				PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
-//				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
-//				for (Integer groupIndex : groupIndices) {
-//					GroupId groupId = newGroups.get(groupIndex);
-//					validatePersonNotInGroup(boxedPersonId, groupId);
-//
-//					List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-//					if (people == null) {
-//						people = new ArrayList<>();
-//						groupsToPeopleMap.setValue(groupId.getValue(), people);
-//					}
-//					people.add(boxedPersonId);
-//
-//					List<GroupId> groups = peopleToGroupsMap.getValue(boxedPersonId.getValue());
-//					if (groups == null) {
-//						groups = new ArrayList<>(1);
-//						peopleToGroupsMap.setValue(boxedPersonId.getValue(), groups);
-//					}
-//					groups.add(groupId);
-//				}
-//			}
+			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
+				PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
+				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
+				for (Integer groupIndex : groupIndices) {
+					GroupId groupId = newGroups.get(groupIndex);
+					validatePersonNotInGroup(boxedPersonId, groupId);
+
+					List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
+					if (people == null) {
+						people = new ArrayList<>();
+						groupsToPeopleMap.setValue(groupId.getValue(), people);
+					}
+					people.add(boxedPersonId);
+
+					List<GroupId> groups = peopleToGroupsMap.getValue(boxedPersonId.getValue());
+					if (groups == null) {
+						groups = new ArrayList<>(1);
+						peopleToGroupsMap.setValue(boxedPersonId.getValue(), groups);
+					}
+					groups.add(groupId);
+				}
+			}
 
 		}
 		StopwatchManager.stop(Watch.GROUPS_BULK);
