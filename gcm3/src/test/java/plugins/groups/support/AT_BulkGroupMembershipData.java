@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import plugins.groups.testsupport.TestGroupPropertyId;
@@ -115,9 +116,9 @@ public class AT_BulkGroupMembershipData {
 																					.build();//
 
 		List<GroupTypeId> groupTypeIds = bulkGroupMembershipData.getGroupTypeIds();
-		
+
 		assertEquals(3, groupTypeIds.size());
-		
+
 		assertEquals(TestGroupTypeId.GROUP_TYPE_1, groupTypeIds.get(0));
 
 		assertEquals(TestGroupTypeId.GROUP_TYPE_2, groupTypeIds.get(1));
@@ -137,6 +138,9 @@ public class AT_BulkGroupMembershipData {
 		BulkGroupMembershipData.Builder builder = BulkGroupMembershipData.builder();
 
 		// using 10 groups and 25 people, select 50 unique, random pairings
+		int gCount = 10;
+		int pCount = 25;
+		int sCount = 50;
 
 		// create containers to hold expected group memberships and actual group
 		// memberships
@@ -144,21 +148,21 @@ public class AT_BulkGroupMembershipData {
 		Set<MultiKey> actualPairs = new LinkedHashSet<>();
 
 		// add the 10 groups
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < gCount; i++) {
 			builder.addGroup(TestGroupTypeId.getRandomGroupTypeId(randomGenerator));
 		}
 
 		// create the 250 pairs
 		List<MultiKey> pairs = new ArrayList<>();
-		for (int i = 0; i < 25; i++) {
-			for (int j = 0; j < 10; j++) {
+		for (int i = 0; i < pCount; i++) {
+			for (int j = 0; j < gCount; j++) {
 				pairs.add(new MultiKey(i, j));
 			}
 		}
 
 		// select 50 of the pairs at random to add to the builder
 		Collections.shuffle(pairs, new Random(randomGenerator.nextLong()));
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < sCount; i++) {
 			MultiKey multiKey = (pairs.get(i));
 			Integer personIndex = multiKey.getKey(0);
 			Integer groupIndex = multiKey.getKey(1);
@@ -170,8 +174,8 @@ public class AT_BulkGroupMembershipData {
 		BulkGroupMembershipData bulkGroupMembershipData = builder.build();//
 
 		// determine the actual pairing from the bulk group membership data
-		int personCount = bulkGroupMembershipData.getGroupTypeIds().size();
-		for (int personIndex = 0; personIndex < personCount; personCount++) {
+		int personCount = bulkGroupMembershipData.getPersonCount();
+		for (int personIndex = 0; personIndex < personCount; personIndex++) {
 			List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
 			for (Integer groupIndex : groupIndices) {
 				actualPairs.add(new MultiKey(personIndex, groupIndex));
@@ -180,6 +184,7 @@ public class AT_BulkGroupMembershipData {
 
 		// show that the bulk group membership data contains the expected
 		// pairings
+
 		assertEquals(expectedPairs, actualPairs);
 
 		// precondition test if the person index is negative
@@ -238,7 +243,7 @@ public class AT_BulkGroupMembershipData {
 
 		// determine the actual pairing from the bulk group membership data
 		int personCount = bulkGroupMembershipData.getPersonCount();
-		for (int personIndex = 0;personIndex< personCount;personIndex++) {
+		for (int personIndex = 0; personIndex < personCount; personIndex++) {
 			List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
 			for (Integer groupIndex : groupIndices) {
 				actualPairs.add(new MultiKey(personIndex, groupIndex));
@@ -264,44 +269,35 @@ public class AT_BulkGroupMembershipData {
 		// show that the getPersonIndices returns an empty list if no people
 		// were added
 		int personCount = builder.build().getPersonCount();
-		
-		assertEquals(0,personCount);
 
-		// using 10 groups and 25 people, select 50 unique, random pairings
+		assertEquals(0, personCount);
 
-		// create a container to hold expected people
-		Set<Integer> expectedPeople = new LinkedHashSet<>();
-
-		// add the 10 groups
-		for (int i = 0; i < 10; i++) {
-			builder.addGroup(TestGroupTypeId.getRandomGroupTypeId(randomGenerator));
-		}
-
-		// create the 250 pairs
-		List<MultiKey> pairs = new ArrayList<>();
-		for (int i = 0; i < 25; i++) {
-			for (int j = 0; j < 10; j++) {
-				pairs.add(new MultiKey(i, j));
+		for (int j = 0; j < 30; j++) {
+			// add the 10 groups
+			for (int i = 0; i < 10; i++) {
+				builder.addGroup(TestGroupTypeId.getRandomGroupTypeId(randomGenerator));
 			}
+
+			int maxPersonIndex = Integer.MIN_VALUE;
+			Set<MultiKey> knownPairs = new LinkedHashSet<>();
+			for (int i = 0; i < 10; i++) {
+				Integer personIndex = randomGenerator.nextInt(100);
+				Integer groupIndex = randomGenerator.nextInt(10);
+				MultiKey pair = new MultiKey(personIndex, groupIndex);
+				if (knownPairs.add(pair)) {
+					maxPersonIndex = FastMath.max(maxPersonIndex, personIndex);
+					builder.addPersonToGroup(personIndex, groupIndex);
+				}
+			}
+
+			// build the bulk group membership data
+			BulkGroupMembershipData bulkGroupMembershipData = builder.build();//
+
+			// determine the actual people from the bulk group membership data
+			int expectedPeopleCount = maxPersonIndex + 1;
+			int actualPeopleCount = bulkGroupMembershipData.getPersonCount();
+			assertEquals(expectedPeopleCount, actualPeopleCount);
 		}
-
-		// select 50 of the pairs at random to add to the builder
-		Collections.shuffle(pairs, new Random(randomGenerator.nextLong()));
-		for (int i = 0; i < 50; i++) {
-			MultiKey multiKey = (pairs.get(i));
-			Integer personIndex = multiKey.getKey(0);
-			Integer groupIndex = multiKey.getKey(1);
-			builder.addPersonToGroup(personIndex, groupIndex);
-			expectedPeople.add(personIndex);
-		}
-
-		// build the bulk group membership data
-		BulkGroupMembershipData bulkGroupMembershipData = builder.build();//
-
-		// determine the actual people from the bulk group membership data
-		int actualPeopleCount = bulkGroupMembershipData.getPersonCount();
-		assertEquals(expectedPeople.size(), actualPeopleCount);
-		
 
 		// precondition tests -- none
 	}
