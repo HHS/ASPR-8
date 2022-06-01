@@ -1,7 +1,10 @@
 package temp;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -17,8 +20,10 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupId;
+import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
@@ -70,6 +75,9 @@ public class MT_Bulk {
 		private int workplaceSize;
 		private double schoolAgeProportion;
 		private double activeWorkerProportion;
+		private int housePropertyCount;
+		private int schoolPropertyCount;
+		private int workPropertyCount;
 
 		// regions
 		private boolean useRegions;
@@ -261,6 +269,18 @@ public class MT_Bulk {
 				throw new ContractException(BulkTestError.BAD_POPULATION_PROPORTION);
 			}
 
+			if (data.housePropertyCount < 0) {
+				throw new ContractException(BulkTestError.NEGATIVE_PROPERTY_COUNT);
+			}
+
+			if (data.schoolPropertyCount < 0) {
+				throw new ContractException(BulkTestError.NEGATIVE_PROPERTY_COUNT);
+			}
+
+			if (data.workPropertyCount < 0) {
+				throw new ContractException(BulkTestError.NEGATIVE_PROPERTY_COUNT);
+			}
+
 		}
 
 		private void report() {
@@ -367,6 +387,21 @@ public class MT_Bulk {
 			return this;
 		}
 
+		public Builder setHousePropertyCount(int housePropertyCount) {
+			data.housePropertyCount = housePropertyCount;
+			return this;
+		}
+
+		public Builder setSchoolPropertyCount(int schoolPropertyCount) {
+			data.schoolPropertyCount = schoolPropertyCount;
+			return this;
+		}
+
+		public Builder setWorkPropertyCount(int workerPropertyCount) {
+			data.workPropertyCount = workerPropertyCount;
+			return this;
+		}
+
 	}
 
 	private static class LocalRegionId implements RegionId {
@@ -404,6 +439,56 @@ public class MT_Bulk {
 			StringBuilder builder = new StringBuilder();
 			builder.append("LocalRegionId [id=");
 			builder.append(id);
+			builder.append("]");
+			return builder.toString();
+		}
+
+	}
+
+	private static class LocalGroupPropertyId implements GroupPropertyId {
+		private final int id;
+		private LocalGroupType localGroupType;
+
+		public LocalGroupPropertyId(LocalGroupType localGroupType, int id) {
+			super();
+			this.localGroupType = localGroupType;
+			this.id = id;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + id;
+			result = prime * result + ((localGroupType == null) ? 0 : localGroupType.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof LocalGroupPropertyId)) {
+				return false;
+			}
+			LocalGroupPropertyId other = (LocalGroupPropertyId) obj;
+			if (id != other.id) {
+				return false;
+			}
+			if (localGroupType != other.localGroupType) {
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("LocalGroupPropertyId [id=");
+			builder.append(id);
+			builder.append(", localGroupType=");
+			builder.append(localGroupType);
 			builder.append("]");
 			return builder.toString();
 		}
@@ -470,12 +555,12 @@ public class MT_Bulk {
 			return;
 		}
 		StopwatchManager.start(Watch.PLC_PERSON_PROPERTIES);
-		List<Pair<PersonPropertyId, Class<?>>> initProperties = new ArrayList<>();
+		List<Pair<PersonPropertyId, Class<?>>> personPropertyToTypeMap = new ArrayList<>();
 		if (data.usePersonProperties) {
 			PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 			for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
 				PropertyDefinition personPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
-				initProperties.add(new Pair<>(personPropertyId, personPropertyDefinition.getType()));
+				personPropertyToTypeMap.add(new Pair<>(personPropertyId, personPropertyDefinition.getType()));
 			}
 		}
 		StopwatchManager.stop(Watch.PLC_PERSON_PROPERTIES);
@@ -494,7 +579,7 @@ public class MT_Bulk {
 			if (data.usePersonProperties) {
 				StopwatchManager.start(Watch.PLC_PERSON_PROPERTIES);
 				for (int j = 0; j < data.initializedPersonPropertyCount; j++) {
-					Pair<PersonPropertyId, Class<?>> pair = initProperties.get(j);
+					Pair<PersonPropertyId, Class<?>> pair = personPropertyToTypeMap.get(j);
 					PersonPropertyId personPropertyId = pair.getFirst();
 					Class<?> c = pair.getSecond();
 					Object randomPropertyValue = getRandomPropertyValue(c);
@@ -502,7 +587,7 @@ public class MT_Bulk {
 				}
 				StopwatchManager.stop(Watch.PLC_PERSON_PROPERTIES);
 			}
-			
+
 			if (regionIds != null) {
 				StopwatchManager.start(Watch.PLC_REGIONS);
 				RegionId regionId = regionIds.get(state.randomGenerator.nextInt(regionIds.size()));
@@ -514,7 +599,7 @@ public class MT_Bulk {
 
 		if (data.useGroups) {
 			StopwatchManager.start(Watch.PLC_GROUPS);
-			BulkGroupMembershipData.Builder bulkGroupBuilder = BulkGroupMembershipData.builder();
+			BulkGroupMembershipData.Builder bulkGroupMembershipBuilder = BulkGroupMembershipData.builder();
 
 			int schoolAgedChildrenCount = (int) (data.schoolAgeProportion * data.populationSize);
 			int activeWorkerCount = (int) (data.activeWorkerProportion * (data.populationSize - schoolAgedChildrenCount));
@@ -525,38 +610,51 @@ public class MT_Bulk {
 
 			// create the household groups
 			for (int i = 0; i < householdCount; i++) {
-				bulkGroupBuilder.addGroup(LocalGroupType.HOME);
+				bulkGroupMembershipBuilder.addGroup(LocalGroupType.HOME);
 			}
 
 			// create the work groups
 			for (int i = 0; i < workplaceCount; i++) {
-				bulkGroupBuilder.addGroup(LocalGroupType.WORK);
+				bulkGroupMembershipBuilder.addGroup(LocalGroupType.WORK);
 			}
 
 			// create the school groups
 			for (int i = 0; i < schoolCount; i++) {
-				bulkGroupBuilder.addGroup(LocalGroupType.SCHOOL);
+				bulkGroupMembershipBuilder.addGroup(LocalGroupType.SCHOOL);
 			}
 
 			// put people in homes
 			for (int personId = 0; personId < data.populationSize; personId++) {
 				int groupId = state.randomGenerator.nextInt(householdCount);
-				bulkGroupBuilder.addPersonToGroup(personId, groupId);
+				bulkGroupMembershipBuilder.addPersonToGroup(personId, groupId);
 			}
 
 			// put people in work places
 			for (int personId = 0; personId < activeWorkerCount; personId++) {
 				int groupId = state.randomGenerator.nextInt(workplaceCount) + householdCount;
-				bulkGroupBuilder.addPersonToGroup(personId, groupId);
+				bulkGroupMembershipBuilder.addPersonToGroup(personId, groupId);
 			}
 
 			// put people in schools
 			for (int i = 0; i < schoolAgedChildrenCount; i++) {
 				int personId = i + activeWorkerCount;
 				int groupId = state.randomGenerator.nextInt(schoolCount) + householdCount + workplaceCount;
-				bulkGroupBuilder.addPersonToGroup(personId, groupId);
+				bulkGroupMembershipBuilder.addPersonToGroup(personId, groupId);
 			}
-			BulkGroupMembershipData bulkGroupMembershipData = bulkGroupBuilder.build();
+
+			if (data.useGroupProperties) {
+				GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+				Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(LocalGroupType.HOME);
+				for (int i = 0; i < householdCount; i++) {
+					for (GroupPropertyId groupPropertyId : groupPropertyIds) {
+						Class<?> type = groupsDataManager.getGroupPropertyDefinition(LocalGroupType.HOME, groupPropertyId).getType();
+						Object randomPropertyValue = getRandomPropertyValue(type);
+						bulkGroupMembershipBuilder.setGroupPropertyValue(i, groupPropertyId, randomPropertyValue);
+					}
+				}
+			}
+
+			BulkGroupMembershipData bulkGroupMembershipData = bulkGroupMembershipBuilder.build();
 			state.bulkPersonBuilder.addAuxiliaryData(bulkGroupMembershipData);
 			StopwatchManager.stop(Watch.PLC_GROUPS);
 		}
@@ -569,21 +667,22 @@ public class MT_Bulk {
 		state.randomGenerator = RandomGeneratorProvider.getRandomGenerator(data.seed);
 
 		testConsumer((c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			if (!data.loadPeopleInPlugins) {
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
-			StopwatchManager.start(Watch.POP_LOADER_CONSTRUCTION);
+				StopwatchManager.start(Watch.POP_LOADER_CONSTRUCTION);
 
-			loadPeople(c);
+				loadPeople(c);
 
-			BulkPersonConstructionData bulkPersonConstructionData = state.bulkPersonBuilder.build();
+				BulkPersonConstructionData bulkPersonConstructionData = state.bulkPersonBuilder.build();
 
-			StopwatchManager.stop(Watch.POP_LOADER_CONSTRUCTION);
+				StopwatchManager.stop(Watch.POP_LOADER_CONSTRUCTION);
 
-			StopwatchManager.start(Watch.POP_LOADER_PROCESSING);
-			peopleDataManager.addBulkPeople(bulkPersonConstructionData);
+				StopwatchManager.start(Watch.POP_LOADER_PROCESSING);
+				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
 
-			StopwatchManager.stop(Watch.POP_LOADER_PROCESSING);
-
+				StopwatchManager.stop(Watch.POP_LOADER_PROCESSING);
+			}
 		});
 	}
 
@@ -659,6 +758,35 @@ public class MT_Bulk {
 				groupBuilder.addGroupTypeId(localGroupType);
 			}
 
+			Map<LocalGroupType, Map<LocalGroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
+			if (data.useGroupProperties) {
+				Map<LocalGroupPropertyId, PropertyDefinition> propMap = new LinkedHashMap<>();
+				groupPropertyDefinitions.put(LocalGroupType.HOME, propMap);
+				for (int i = 0; i < data.housePropertyCount; i++) {
+					PropertyDefinition propertyDefinition = getRandomPropertyDefinition();
+					LocalGroupPropertyId localGroupPropertyId = new LocalGroupPropertyId(LocalGroupType.HOME, i);
+					groupBuilder.defineGroupProperty(LocalGroupType.HOME, localGroupPropertyId, propertyDefinition);
+					propMap.put(localGroupPropertyId, propertyDefinition);
+				}
+				propMap = new LinkedHashMap<>();
+				groupPropertyDefinitions.put(LocalGroupType.SCHOOL, propMap);
+				for (int i = 0; i < data.schoolPropertyCount; i++) {
+					PropertyDefinition propertyDefinition = getRandomPropertyDefinition();
+					LocalGroupPropertyId localGroupPropertyId = new LocalGroupPropertyId(LocalGroupType.SCHOOL, i);
+					groupBuilder.defineGroupProperty(LocalGroupType.SCHOOL, localGroupPropertyId, propertyDefinition);
+					propMap.put(localGroupPropertyId, propertyDefinition);
+				}
+
+				propMap = new LinkedHashMap<>();
+				groupPropertyDefinitions.put(LocalGroupType.WORK, propMap);
+				for (int i = 0; i < data.workPropertyCount; i++) {
+					PropertyDefinition propertyDefinition = getRandomPropertyDefinition();
+					LocalGroupPropertyId localGroupPropertyId = new LocalGroupPropertyId(LocalGroupType.WORK, i);
+					groupBuilder.defineGroupProperty(LocalGroupType.WORK, localGroupPropertyId, propertyDefinition);
+					propMap.put(localGroupPropertyId, propertyDefinition);
+				}
+			}
+
 			if (data.loadPeopleInPlugins) {
 				int schoolAgedChildrenCount = (int) (data.schoolAgeProportion * people.size());
 				int activeWorkerCount = (int) (data.activeWorkerProportion * (people.size() - schoolAgedChildrenCount));
@@ -723,15 +851,34 @@ public class MT_Bulk {
 					GroupId groupId = schoolGroups.get(state.randomGenerator.nextInt(schoolGroups.size()));
 					groupBuilder.addPersonToGroup(groupId, personId);
 				}
-			}
+				if (data.useGroupProperties) {
 
-			// define group properties
-			// for (TestGroupPropertyId testGroupPropertyId :
-			// TestGroupPropertyId.values()) {
-			// groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(),
-			// testGroupPropertyId,
-			// testGroupPropertyId.getPropertyDefinition());
-			// }
+					Map<LocalGroupPropertyId, PropertyDefinition> propMap = groupPropertyDefinitions.get(LocalGroupType.HOME);
+					for (GroupId groupId : houseHoldGroups) {
+						for (LocalGroupPropertyId localGroupPropertyId : propMap.keySet()) {
+							PropertyDefinition propertyDefinition = propMap.get(localGroupPropertyId);
+							Object randomPropertyValue = getRandomPropertyValue(propertyDefinition.getType());
+							groupBuilder.setGroupPropertyValue(groupId, localGroupPropertyId, randomPropertyValue);
+						}
+					}
+					propMap = groupPropertyDefinitions.get(LocalGroupType.WORK);
+					for (GroupId groupId : workGroups) {
+						for (LocalGroupPropertyId localGroupPropertyId : propMap.keySet()) {
+							PropertyDefinition propertyDefinition = propMap.get(localGroupPropertyId);
+							Object randomPropertyValue = getRandomPropertyValue(propertyDefinition.getType());
+							groupBuilder.setGroupPropertyValue(groupId, localGroupPropertyId, randomPropertyValue);
+						}
+					}
+					propMap = groupPropertyDefinitions.get(LocalGroupType.SCHOOL);
+					for (GroupId groupId : schoolGroups) {
+						for (LocalGroupPropertyId localGroupPropertyId : propMap.keySet()) {
+							PropertyDefinition propertyDefinition = propMap.get(localGroupPropertyId);
+							Object randomPropertyValue = getRandomPropertyValue(propertyDefinition.getType());
+							groupBuilder.setGroupPropertyValue(groupId, localGroupPropertyId, randomPropertyValue);
+						}
+					}
+				}
+			}
 
 			GroupsPluginData groupsPluginData = groupBuilder.build();
 			Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);

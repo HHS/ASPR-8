@@ -4,14 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -117,13 +114,15 @@ public class AT_BulkGroupMembershipData {
 																					.addGroup(TestGroupTypeId.GROUP_TYPE_3)//
 																					.build();//
 
-		assertEquals(3, bulkGroupMembershipData.getGroupCount());
+		List<GroupTypeId> groupTypeIds = bulkGroupMembershipData.getGroupTypeIds();
+		
+		assertEquals(3, groupTypeIds.size());
+		
+		assertEquals(TestGroupTypeId.GROUP_TYPE_1, groupTypeIds.get(0));
 
-		assertEquals(TestGroupTypeId.GROUP_TYPE_1, bulkGroupMembershipData.getGroupTypeId(0));
+		assertEquals(TestGroupTypeId.GROUP_TYPE_2, groupTypeIds.get(1));
 
-		assertEquals(TestGroupTypeId.GROUP_TYPE_2, bulkGroupMembershipData.getGroupTypeId(1));
-
-		assertEquals(TestGroupTypeId.GROUP_TYPE_3, bulkGroupMembershipData.getGroupTypeId(2));
+		assertEquals(TestGroupTypeId.GROUP_TYPE_3, groupTypeIds.get(2));
 
 		// precondition test : if the group type id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addGroup(null));
@@ -171,8 +170,8 @@ public class AT_BulkGroupMembershipData {
 		BulkGroupMembershipData bulkGroupMembershipData = builder.build();//
 
 		// determine the actual pairing from the bulk group membership data
-		List<Integer> personIndices = bulkGroupMembershipData.getPersonIndices();
-		for (Integer personIndex : personIndices) {
+		int personCount = bulkGroupMembershipData.getGroupTypeIds().size();
+		for (int personIndex = 0; personIndex < personCount; personCount++) {
 			List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
 			for (Integer groupIndex : groupIndices) {
 				actualPairs.add(new MultiKey(personIndex, groupIndex));
@@ -195,54 +194,6 @@ public class AT_BulkGroupMembershipData {
 		contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData.builder().addPersonToGroup(0, 0).addPersonToGroup(0, 0));
 		assertEquals(GroupError.DUPLICATE_GROUP_MEMBERSHIP, contractException.getErrorType());
 
-	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupCount", args = {})
-	public void testGetGroupCount() {
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6040970044186644538L);
-
-		// show that zero to nine groups result in the correct group count
-		for (int i = 0; i < 10; i++) {
-			BulkGroupMembershipData.Builder builder = BulkGroupMembershipData.builder();
-			for (int j = 0; j < i; j++) {
-				builder.addGroup(TestGroupTypeId.getRandomGroupTypeId(randomGenerator));
-			}
-			BulkGroupMembershipData bulkGroupMembershipData = builder.build();
-			assertEquals(i, bulkGroupMembershipData.getGroupCount());
-		}
-	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupTypeId", args = { int.class })
-	public void testGetGroupTypeId() {
-		Map<Integer, GroupTypeId> expectedGroupTypes = new LinkedHashMap<>();
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8757283026856511464L);
-
-		// Add 30 groups with randomized types
-		BulkGroupMembershipData.Builder builder = BulkGroupMembershipData.builder();
-		for (int i = 9; i < 30; i++) {
-			GroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
-			builder.addGroup(groupTypeId);
-			expectedGroupTypes.put(expectedGroupTypes.size(), groupTypeId);
-		}
-		BulkGroupMembershipData bulkGroupMembershipData = builder.build();
-
-		// show that the 30 groups have the correct type
-		for (Integer index : expectedGroupTypes.keySet()) {
-			assertEquals(expectedGroupTypes.get(index), bulkGroupMembershipData.getGroupTypeId(index));
-		}
-
-		// precondition test: if the group index is negative
-		ContractException contractException = assertThrows(ContractException.class, () -> bulkGroupMembershipData.getGroupTypeId(-1));
-		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-
-		// precondition test: if the group index >= the number of groups that
-		// were added
-		contractException = assertThrows(ContractException.class, () -> bulkGroupMembershipData.getGroupTypeId(30));
-		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -286,13 +237,13 @@ public class AT_BulkGroupMembershipData {
 		BulkGroupMembershipData bulkGroupMembershipData = builder.build();//
 
 		// determine the actual pairing from the bulk group membership data
-		List<Integer> personIndices = bulkGroupMembershipData.getPersonIndices();
-		for (Integer personIndex : personIndices) {
+		int personCount = bulkGroupMembershipData.getPersonCount();
+		for (int personIndex = 0;personIndex< personCount;personIndex++) {
 			List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
 			for (Integer groupIndex : groupIndices) {
 				actualPairs.add(new MultiKey(personIndex, groupIndex));
 			}
-			assertThrows(UnsupportedOperationException.class, ()->groupIndices.add(1234));
+			assertThrows(UnsupportedOperationException.class, () -> groupIndices.add(1234));
 		}
 
 		// show that the bulk group membership data contains the expected
@@ -304,17 +255,17 @@ public class AT_BulkGroupMembershipData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonIndices", args = {})
-	public void testGetPersonIndices() {
+	@UnitTestMethod(name = "getPersonCount", args = {})
+	public void testGetPersonCount() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7269766947053474864L);
 		BulkGroupMembershipData.Builder builder = BulkGroupMembershipData.builder();
 
 		// show that the getPersonIndices returns an empty list if no people
 		// were added
-		List<Integer> people = builder.build().getPersonIndices();
-		assertNotNull(people);
-		assertTrue(people.isEmpty());
+		int personCount = builder.build().getPersonCount();
+		
+		assertEquals(0,personCount);
 
 		// using 10 groups and 25 people, select 50 unique, random pairings
 
@@ -348,9 +299,9 @@ public class AT_BulkGroupMembershipData {
 		BulkGroupMembershipData bulkGroupMembershipData = builder.build();//
 
 		// determine the actual people from the bulk group membership data
-		List<Integer> actualPeople = bulkGroupMembershipData.getPersonIndices();
-		assertEquals(expectedPeople.size(), actualPeople.size());
-		assertEquals(expectedPeople, new LinkedHashSet<>(actualPeople));
+		int actualPeopleCount = bulkGroupMembershipData.getPersonCount();
+		assertEquals(expectedPeople.size(), actualPeopleCount);
+		
 
 		// precondition tests -- none
 	}

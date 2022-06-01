@@ -26,11 +26,9 @@ public class BulkGroupMembershipData {
 		/*
 		 * Integer(PersonId)->List(GroupId)
 		 */
-		private Map<Integer, List<Integer>> groupMemberships = new LinkedHashMap<>();
-
-		private int maxPersonIndex = -1;
-
+		private List<List<Integer>> groupMemberships = new ArrayList<>();
 		
+		private int maxGroupIndex = -1;
 
 		/*
 		 * An empty list of Group id values used as the groups for a person when
@@ -91,28 +89,13 @@ public class BulkGroupMembershipData {
 		}
 
 		private void validate() {
-			// show that the group indexes for each person are in bounds.
-			// Negative indexes are rejected when entered.
-			int maxGroupIndex = data.groupTypes.size();
-			for (Integer personIndex : data.groupMemberships.keySet()) {
-				List<Integer> groupIndices = data.groupMemberships.get(personIndex);
-				for (Integer groupIndex : groupIndices) {
-					if (groupIndex >= maxGroupIndex) {
-						throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
-					}
-				}
+			if(data.maxGroupIndex>=data.groupTypes.size()) {
+				throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 			}
-
-			// show that the collected group property values are associated with
-			// valid group id values
-			for (Integer groupIndex : data.groupPropertyValues.keySet()) {
-				if (groupIndex >= maxGroupIndex) {
-					throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
-				}
-			}
-
 		}
 
+		
+		
 		/**
 		 * Add a group with the given group type id.
 		 * 
@@ -153,6 +136,7 @@ public class BulkGroupMembershipData {
 			if (propertyValue == null) {
 				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
 			}
+			data.maxGroupIndex = FastMath.max(data.maxGroupIndex,groupIndex);
 			Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupIndex);
 			if (map == null) {
 				map = new LinkedHashMap<>();
@@ -184,12 +168,17 @@ public class BulkGroupMembershipData {
 			if (groupIndex < 0) {
 				throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 			}
+			
+			data.maxGroupIndex = FastMath.max(data.maxGroupIndex,groupIndex);
 
+			while(personIndex>=data.groupMemberships.size()) {
+				data.groupMemberships.add(null);
+			}
+			
 			List<Integer> list = data.groupMemberships.get(personIndex);
 			if (list == null) {
 				list = new ArrayList<>();
-				data.groupMemberships.put(personIndex, list);
-				data.maxPersonIndex = FastMath.max(data.maxPersonIndex, personIndex);
+				data.groupMemberships.set(personIndex, list);				
 			}
 			if (list.contains(groupIndex)) {
 				throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP);
@@ -199,32 +188,8 @@ public class BulkGroupMembershipData {
 		}
 	}
 	
-	/**
-	 * Returns the number of groups contained in this
-	 * {@link BulkGroupMembershipData}
-	 */
-	public int getGroupCount() {
-		return data.groupTypes.size();
-	}
-
-	/**
-	 * Returns the group type id for the given group index.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_ID} if the index is
-	 *             < 0</li>
-	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_ID} if the index is
-	 *             >= getGroupCount()</li>
-	 */
-	public GroupTypeId getGroupTypeId(int groupIndex) {
-		if (groupIndex < 0) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
-		}
-		if (groupIndex >= data.groupTypes.size()) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
-		}
-		return data.groupTypes.get(groupIndex);
-	}
+	
+	
 	
 	public List<GroupTypeId> getGroupTypeIds(){
 		return Collections.unmodifiableList(data.groupTypes);
@@ -236,25 +201,20 @@ public class BulkGroupMembershipData {
 	 * 
 	 */
 	public List<Integer> getGroupIndicesForPersonIndex(int personIndex) {
-		List<Integer> list = data.groupMemberships.get(personIndex);
-		if (list != null) {
-			return Collections.unmodifiableList(list);
+		if((personIndex<0)||personIndex>=data.groupMemberships.size()) {
+			return data.emptyGroupIndicesList;
 		}
-		return data.emptyGroupIndicesList;
+		List<Integer> list = data.groupMemberships.get(personIndex);
+		if (list == null) {
+			return data.emptyGroupIndicesList;			
+		}
+		return Collections.unmodifiableList(list);
 	}
 
-	/**
-	 * Returns the people associated with this {@link BulkGroupMembershipData}
-	 */
-	public List<Integer> getPersonIndices() {
-		return new ArrayList<>(data.groupMemberships.keySet());
-	}
+
 	
-	public Optional<Integer> getMaxPersonIndex() {
-		if (data.maxPersonIndex >= 0) {
-			return Optional.of(data.maxPersonIndex);
-		}
-		return Optional.empty();
+	public int getPersonCount() {		
+		return data.groupMemberships.size();
 	}
 
 	public Set<GroupPropertyId> getGroupPropertyIds(int groupIndex) {

@@ -343,7 +343,7 @@ public final class GroupsDataManager extends DataManager {
 		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
 		managerMap.put(groupPropertyId, indexedPropertyManager);
-		
+
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 		map.put(groupPropertyId, propertyDefinition);
 
@@ -351,7 +351,7 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	public void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
-		if(propertyDefinition == null) {
+		if (propertyDefinition == null) {
 			throw new ContractException(GroupError.NULL_PROPERTY_DEFINITION);
 		}
 	}
@@ -1479,12 +1479,6 @@ public final class GroupsDataManager extends DataManager {
 
 	}
 
-	private void validatePersonIndexExists(final int personIndex) {
-		if (!peopleDataManager.personIndexExists(personIndex)) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-		}
-	}
-
 	private void handleBulkPersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
 		StopwatchManager.start(Watch.GROUPS_BULK);
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
@@ -1495,24 +1489,22 @@ public final class GroupsDataManager extends DataManager {
 
 			BulkGroupMembershipData bulkGroupMembershipData = optional.get();
 			List<GroupTypeId> groupTypeIds = bulkGroupMembershipData.getGroupTypeIds();
-			Optional<Integer> optionalMaxPersonIndex = bulkGroupMembershipData.getMaxPersonIndex();
-			if(optionalMaxPersonIndex.isPresent()) {
-				Integer maxPersonIndex = optionalMaxPersonIndex.get();
-				if (maxPersonIndex>=personCount) {
-					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-				}
-			}
 
+			if (bulkGroupMembershipData.getPersonCount() > personCount) {
+				throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+			}
 
 			boolean groupCreationSubscribersExist = dataManagerContext.subscribersExist(GroupAdditionEvent.class);
 
-			
 			int groupCount = groupTypeIds.size();
 			List<GroupId> newGroups = new ArrayList<>(groupCount);
 			for (int i = 0; i < groupCount; i++) {
 				GroupTypeId groupTypeId = groupTypeIds.get(i);
-				validateGroupTypeId(groupTypeId);				
+				
 				final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
+				if(typeIndex == null) {
+					validateGroupTypeId(groupTypeId);	
+				}
 				List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
 				if (groups == null) {
 					groups = new ArrayList<>();
@@ -1527,9 +1519,10 @@ public final class GroupsDataManager extends DataManager {
 
 				for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
 					Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
-					validateGroupPropertyId(groupTypeId, groupPropertyId);
 					final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-					validateGroupPropertyValueNotNull(groupPropertyValue);
+					if(propertyDefinition == null) {
+						validateGroupPropertyId(groupTypeId, groupPropertyId);	
+					}
 					validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 					final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
@@ -1541,29 +1534,28 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 
-			for (Integer personIndex : bulkGroupMembershipData.getPersonIndices()) {
+			for (int personIndex = 0; personIndex < personCount; personIndex++) {
 				PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
 				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
-				for (Integer groupIndex : groupIndices) {
-					GroupId groupId = newGroups.get(groupIndex);
-					validatePersonNotInGroup(boxedPersonId, groupId);
-
-					List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-					if (people == null) {
-						people = new ArrayList<>();
-						groupsToPeopleMap.setValue(groupId.getValue(), people);
-					}
-					people.add(boxedPersonId);
-
+				if (!groupIndices.isEmpty()) {
 					List<GroupId> groups = peopleToGroupsMap.getValue(boxedPersonId.getValue());
 					if (groups == null) {
 						groups = new ArrayList<>(1);
 						peopleToGroupsMap.setValue(boxedPersonId.getValue(), groups);
 					}
-					groups.add(groupId);
+
+					for (Integer groupIndex : groupIndices) {
+						GroupId groupId = newGroups.get(groupIndex);						
+						groups.add(groupId);
+						List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
+						if (people == null) {
+							people = new ArrayList<>();
+							groupsToPeopleMap.setValue(groupId.getValue(), people);
+						}
+						people.add(boxedPersonId);
+					}
 				}
 			}
-
 		}
 		StopwatchManager.stop(Watch.GROUPS_BULK);
 	}
