@@ -122,6 +122,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 		}
 		List<PersonId> people = peopleDataManager.getPeople();
+		System.out.println("wtf "+people.size());
 		for (PersonId personId : people) {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
 				Object personPropertyValue = personPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
