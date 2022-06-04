@@ -622,14 +622,23 @@ public final class AT_PersonPropertyDataManager {
 			List<PersonId> personIds = peopleDataManager.getPeople();
 			assertTrue(personIds.size() > 0);
 			for (PersonId personId : people) {
-				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-					Object expectedValue = personPropertiesPluginData.getPersonPropertyValue(personId, testPersonPropertyId);
-					Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, testPersonPropertyId);
+				Map<PersonPropertyId,Object> expectedPropertyValues = new LinkedHashMap<>();
+				for (PersonPropertyId personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
+					PropertyDefinition propertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
+					expectedPropertyValues.put(personPropertyId, propertyDefinition.getDefaultValue().get());
+				}
+				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personId.getValue());
+				for(PersonPropertyInitialization personPropertyInitialization : propertyValues) {
+					expectedPropertyValues.put(personPropertyInitialization.getPersonPropertyId(), personPropertyInitialization.getValue());
+				}
+				for (PersonPropertyId personPropertyId : expectedPropertyValues.keySet()) {
+					Object expectedValue = expectedPropertyValues.get(personPropertyId);
+					Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 					assertEquals(expectedValue, actualValue);
-
-					boolean timeTrackingOn = testPersonPropertyId.getPropertyDefinition().getTimeTrackingPolicy().equals(TimeTrackingPolicy.TRACK_TIME);
+					PropertyDefinition personPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
+					boolean timeTrackingOn = personPropertyDefinition.getTimeTrackingPolicy().equals(TimeTrackingPolicy.TRACK_TIME);
 					if (timeTrackingOn) {
-						assertEquals(0.0, personPropertiesDataManager.getPersonPropertyTime(personId, testPersonPropertyId));
+						assertEquals(0.0, personPropertiesDataManager.getPersonPropertyTime(personId, personPropertyId));
 					}
 				}
 			}

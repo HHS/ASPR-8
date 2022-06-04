@@ -29,4 +29,39 @@ public class PersonPropertyInitialization {
 		return builder.toString();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((personPropertyId == null) ? 0 : personPropertyId.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof PersonPropertyInitialization)) {
+			return false;
+		}
+		PersonPropertyInitialization other = (PersonPropertyInitialization) obj;
+		if (personPropertyId == null) {
+			if (other.personPropertyId != null) {
+				return false;
+			}
+		} else if (!personPropertyId.equals(other.personPropertyId)) {
+			return false;
+		}
+		if (value == null) {
+			if (other.value != null) {
+				return false;
+			}
+		} else if (!value.equals(other.value)) {
+			return false;
+		}
+		return true;
+	}
+
 }

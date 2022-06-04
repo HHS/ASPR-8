@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -13,9 +15,11 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
+import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
@@ -206,20 +210,148 @@ public class AT_PersonPropertyPluginData {
 			PropertyDefinition actualPropertyDefinition = clonePersonPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
-		
+
 		// show that the two plugin datas have the same people
-		Set<PersonId> expectedPersonIds = personPropertiesPluginData.getPersonIds();
-		Set<PersonId> actualPersonIds = clonePersonPropertiesPluginData.getPersonIds();
-		assertEquals(expectedPersonIds, actualPersonIds);
+		int expectedPersonCount = personPropertiesPluginData.getPersonCount();
+		int actualPersonCount = clonePersonPropertiesPluginData.getPersonCount();
+		assertEquals(expectedPersonCount, actualPersonCount);
 
+		for (int personIndex = 0; personIndex < personPropertiesPluginData.getPersonCount(); personIndex++) {
+			List<PersonPropertyInitialization> expectedPropertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+			List<PersonPropertyInitialization> actualPropertyValues = clonePersonPropertiesPluginData.getPropertyValues(personIndex);
+			assertEquals(expectedPropertyValues, actualPropertyValues);
+		}
 
-		for(PersonId personId : personPropertiesPluginData.getPersonIds()) {
-			for(PersonPropertyId  personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
-				Object expectedPropertyValue = personPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
-				Object actualPropertyValue = clonePersonPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
-				assertEquals(expectedPropertyValue,actualPropertyValue);
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "setPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
+	public void testSetPersonPropertyValue() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6340277988168121078L);
+
+		// create a builder
+		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+
+		// fill the builder with property definitions
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+		}
+
+		List<List<PersonPropertyInitialization>> expectedPropertyValues = new ArrayList<>();
+
+		int personCount = 50;
+		for (int i = 0; i < personCount; i++) {
+			List<PersonPropertyInitialization> list = new ArrayList<>();
+			expectedPropertyValues.add(list);
+			PersonId personId = new PersonId(i);
+			int propertyCount = randomGenerator.nextInt(5);
+			for (int j = 0; j < propertyCount; j++) {
+				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
+				list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+			}
+		}
+
+		// build the person property initial data
+		PersonPropertiesPluginData personPropertyInitialData = personPropertyBuilder.build();
+
+		/*
+		 * Show that property values match expectations
+		 */
+
+		for (int i = 0; i < personCount; i++) {
+			List<PersonPropertyInitialization> expectedList = expectedPropertyValues.get(i);
+			List<PersonPropertyInitialization> actualList = personPropertyInitialData.getPropertyValues(i);
+			assertEquals(expectedList, actualList);
+
+		}
+
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			builder.setPersonPropertyValue(null, testPersonPropertyId, true);
+		});
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+
+		// precondition test: if the person id value is negative
+		contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			builder.setPersonPropertyValue(new PersonId(-1), testPersonPropertyId, true);
+		});
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+
+		// precondition test: if the person property value is null
+		contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			builder.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, null);
+		});
+		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE, contractException.getErrorType());
+
+		// precondition test: if the person property id is null
+		contractException = assertThrows(ContractException.class, () -> {
+			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+			builder.setPersonPropertyValue(new PersonId(0), null, true);
+		});
+		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPersonCount", args = {})
+	public void testGetPersonCount() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6340277988168121078L);
+
+		// create a builder
+		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
+
+		// fill the builder with property definitions
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+		}
+
+		List<List<PersonPropertyInitialization>> expectedPropertyValues = new ArrayList<>();
+
+		int personCount = 50;
+		int expectedPersonCount = 0;
+		for (int i = 0; i < personCount; i++) {
+			List<PersonPropertyInitialization> list = new ArrayList<>();
+			expectedPropertyValues.add(list);
+
+			if (randomGenerator.nextBoolean()) {
+				expectedPersonCount = i+1;
+				PersonId personId = new PersonId(i);
+				int propertyCount = randomGenerator.nextInt(5);
+				for (int j = 0; j < propertyCount; j++) {
+					TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
+					list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+				}
 			}
 		}
 		
+
+		// build the person property initial data
+		PersonPropertiesPluginData personPropertyInitialData = personPropertyBuilder.build();
+
+		/*
+		 * Show that the personCount matches expectations
+		 */
+		int actualPersonCount = personPropertyInitialData.getPersonCount(); 
+
+		assertEquals(expectedPersonCount,actualPersonCount);
+
 	}
+
+	@Test
+	@UnitTestMethod(name = "getPropertyValues", args = { int.class })
+	public void testGetPropertyValues() {
+		//covered by testSetPersonPropertyValues()
+	}
+
 }

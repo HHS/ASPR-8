@@ -12,7 +12,7 @@ public class MT_BulkRunner {
 				.setSeed(2227922522174256634L)//
 
 				// people
-				.setLoadPeopleViaPlugins(false)//
+				.setLoadPeopleViaPlugins(true)//
 				.setPopulationSize(10_000_000)//
 
 				// person properties

@@ -121,14 +121,19 @@ public final class PersonPropertiesDataManager extends DataManager {
 			final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, personPropertyDefinition, 0);
 			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 		}
-		List<PersonId> people = peopleDataManager.getPeople();
-		System.out.println("wtf "+people.size());
-		for (PersonId personId : people) {
-			for (PersonPropertyId personPropertyId : personPropertyIds) {
-				Object personPropertyValue = personPropertiesPluginData.getPersonPropertyValue(personId, personPropertyId);
-				int pId = personId.getValue();
+		
+		int n = personPropertiesPluginData.getPersonCount();
+		for (int personIndex =0; personIndex<n ; personIndex++) {		
+			if(!peopleDataManager.personIndexExists(personIndex)) {
+				throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+			}
+			List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+			
+			for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
+				Object personPropertyValue = personPropertyInitialization.getValue();
+				PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();				
 				IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-				propertyManager.setPropertyValue(pId, personPropertyValue);
+				propertyManager.setPropertyValue(personIndex, personPropertyValue);
 			}
 		}
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
