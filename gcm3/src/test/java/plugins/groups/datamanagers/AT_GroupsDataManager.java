@@ -2664,6 +2664,7 @@ public class AT_GroupsDataManager {
 		// reflects the contents of the group plugin data.
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager personGroupDataManager = c.getDataManager(GroupsDataManager.class);
 
 			// show the groups are as expected
@@ -2680,11 +2681,15 @@ public class AT_GroupsDataManager {
 			}
 
 			// show the group memberships are the same
-			for (GroupId groupId : personGroupDataManager.getGroupIds()) {
-				Set<PersonId> expectedPeople = groupsPluginData.getGroupMembers(groupId);
-				List<PersonId> actualPeople = personGroupDataManager.getPeopleForGroup(groupId);
-				assertEquals(expectedPeople.size(), actualPeople.size());
-				assertEquals(expectedPeople, new LinkedHashSet<>(actualPeople));
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				int expectedListSize = groupsPluginData.getGroupsForPerson(personId).size();
+				Set<GroupId> expectedGroups = new LinkedHashSet<>(groupsPluginData.getGroupsForPerson(personId));
+				
+				int actualListSize = personGroupDataManager.getGroupsForPerson(personId).size();
+				Set<GroupId> actualGroups = new LinkedHashSet<>(personGroupDataManager.getGroupsForPerson(personId));
+				
+				assertEquals(expectedListSize, actualListSize);
+				assertEquals(expectedGroups, actualGroups);
 			}
 
 			// show that the group types are the same

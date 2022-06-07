@@ -256,7 +256,7 @@ public class AT_GroupsPluginData {
 
 		Random random = new Random(7282493148489771700L);
 
-		Map<GroupId, Set<PersonId>> expectedGroupAssignments = new LinkedHashMap<>();
+		Set<MultiKey> expectedGroupAssignments = new LinkedHashSet<>();
 
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		// add in the group types
@@ -279,17 +279,15 @@ public class AT_GroupsPluginData {
 			// add the group
 			GroupId groupId = new GroupId(i);
 			builder.addGroup(groupId, testGroupTypeId);
-			Set<PersonId> peopleInGroup = new LinkedHashSet<>();
-			expectedGroupAssignments.put(groupId, peopleInGroup);
 			testGroupTypeId = testGroupTypeId.next();
-
 			// select some people and add them to the group
 			Collections.shuffle(people, random);
 			int count = random.nextInt(10);
 			for (int j = 0; j < count; j++) {
 				PersonId personId = people.get(j);
 				builder.addPersonToGroup(groupId, personId);
-				peopleInGroup.add(personId);
+				MultiKey multiKey = new MultiKey(groupId, personId);
+				expectedGroupAssignments.add(multiKey);
 			}
 		}
 
@@ -297,12 +295,18 @@ public class AT_GroupsPluginData {
 		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group memberships are as expected
-		assertEquals(expectedGroupAssignments.keySet(), groupInitialData.getGroupIds());
-		for (GroupId groupId : groupInitialData.getGroupIds()) {
-			Set<PersonId> actualGroupMembers = groupInitialData.getGroupMembers(groupId);
-			Set<PersonId> expectedGroupMembers = expectedGroupAssignments.get(groupId);
-			assertEquals(expectedGroupMembers, actualGroupMembers);
+		Set<MultiKey> actualGroupAssignments = new LinkedHashSet<>();
+
+		for (int i = 0; i < groupInitialData.getPersonCount(); i++) {
+			PersonId personId = new PersonId(i);
+
+			for (GroupId groupId : groupInitialData.getGroupsForPerson(personId)) {
+				MultiKey multiKey = new MultiKey(groupId, personId);
+				actualGroupAssignments.add(multiKey);
+			}
 		}
+
+		assertEquals(expectedGroupAssignments, actualGroupAssignments);
 
 	}
 
@@ -515,12 +519,12 @@ public class AT_GroupsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGroupMembers", args = { GroupId.class })
-	public void testGetGroupMembers() {
+	@UnitTestMethod(name = "getGroupsForPerson", args = { GroupId.class })
+	public void testGetGroupsForPerson() {
 
 		Random random = new Random(4685636461674441597L);
 
-		Map<GroupId, Set<PersonId>> expectedGroupAssignments = new LinkedHashMap<>();
+		Set<MultiKey> expectedGroupAssignments = new LinkedHashSet<>();
 
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		// add in the group types
@@ -543,8 +547,8 @@ public class AT_GroupsPluginData {
 			// add the group
 			GroupId groupId = new GroupId(i);
 			builder.addGroup(groupId, testGroupTypeId);
-			Set<PersonId> peopleInGroup = new LinkedHashSet<>();
-			expectedGroupAssignments.put(groupId, peopleInGroup);
+			
+
 			testGroupTypeId = testGroupTypeId.next();
 
 			// select some people and add them to the group
@@ -553,7 +557,8 @@ public class AT_GroupsPluginData {
 			for (int j = 0; j < count; j++) {
 				PersonId personId = people.get(j);
 				builder.addPersonToGroup(groupId, personId);
-				peopleInGroup.add(personId);
+				MultiKey multiKey = new MultiKey(groupId,personId);
+				expectedGroupAssignments.add(multiKey);				
 			}
 		}
 
@@ -561,21 +566,17 @@ public class AT_GroupsPluginData {
 		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the group memberships are as expected
-		assertEquals(expectedGroupAssignments.keySet(), groupInitialData.getGroupIds());
-		for (GroupId groupId : groupInitialData.getGroupIds()) {
-			Set<PersonId> actualGroupMembers = groupInitialData.getGroupMembers(groupId);
-			Set<PersonId> expectedGroupMembers = expectedGroupAssignments.get(groupId);
-			assertEquals(expectedGroupMembers, actualGroupMembers);
+		Set<MultiKey> actualGroupAssignments = new LinkedHashSet<>();
+		for (int i = 0;i< groupInitialData.getPersonCount();i++) {
+			PersonId personId = new PersonId(i);			
+			for(GroupId groupId : groupInitialData.getGroupsForPerson(personId)) {
+				MultiKey multiKey = new MultiKey(groupId, personId);
+				actualGroupAssignments.add(multiKey);
+			}
 		}
+		
+		assertEquals(expectedGroupAssignments,actualGroupAssignments);
 
-		// precondition tests
-
-		// if the group id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupMembers(null));
-		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-
-		contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupMembers(new GroupId(100000)));
-		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 	}
 
@@ -621,7 +622,7 @@ public class AT_GroupsPluginData {
 	@UnitTestMethod(name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9130589441333999144L);
-		
+
 		GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
@@ -673,32 +674,37 @@ public class AT_GroupsPluginData {
 		// show that the two plugin datas have the same group property ids
 		for (GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
 			assertEquals(groupsPluginData.getGroupPropertyIds(groupTypeId), cloneGroupPluginData.getGroupPropertyIds(groupTypeId));
-			//show that the two plugin datas have the same group property definitions
-			for(GroupPropertyId  groupPropertyId : groupsPluginData.getGroupPropertyIds(groupTypeId)) {
+			// show that the two plugin datas have the same group property
+			// definitions
+			for (GroupPropertyId groupPropertyId : groupsPluginData.getGroupPropertyIds(groupTypeId)) {
 				PropertyDefinition expectedPropertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 				PropertyDefinition actualPropertyDefinition = cloneGroupPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
-				assertEquals(expectedPropertyDefinition,actualPropertyDefinition);
+				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 		}
-		
+
 		// show that the two plugin datas have the same groups
 		assertEquals(groupsPluginData.getGroupIds(), cloneGroupPluginData.getGroupIds());
-		
-		//show that the groups have the same types
-		for(GroupId  groupId : groupsPluginData.getGroupIds()) {
+
+		// show that the groups have the same types
+		for (GroupId groupId : groupsPluginData.getGroupIds()) {
 			GroupTypeId expectedGroupTypeId = groupsPluginData.getGroupTypeId(groupId);
 			GroupTypeId actualGroupTypeId = cloneGroupPluginData.getGroupTypeId(groupId);
 			assertEquals(expectedGroupTypeId, actualGroupTypeId);
-			//show that the groups have the property values
-			for(GroupPropertyId  groupPropertyId : groupsPluginData.getGroupPropertyIds(expectedGroupTypeId)) {
+			// show that the groups have the property values
+			for (GroupPropertyId groupPropertyId : groupsPluginData.getGroupPropertyIds(expectedGroupTypeId)) {
 				Object expectedPropertyValue = groupsPluginData.getGroupPropertyValue(groupId, groupPropertyId);
 				Object actualPropertyValue = cloneGroupPluginData.getGroupPropertyValue(groupId, groupPropertyId);
 				assertEquals(expectedPropertyValue, actualPropertyValue);
 			}
-			//show that the groups have the members
-			Set<PersonId> expectedGroupMembers = groupsPluginData.getGroupMembers(groupId);
-			Set<PersonId> actualGroupMembers = cloneGroupPluginData.getGroupMembers(groupId);
-			assertEquals(expectedGroupMembers, actualGroupMembers);
+			// show that the groups have the members
+			assertEquals(groupsPluginData.getPersonCount(), cloneGroupPluginData.getPersonCount());
+			for (int i = 0; i < groupsPluginData.getPersonCount(); i++) {
+				PersonId personId = new PersonId(i);
+				Set<GroupId> expectedGroups = new LinkedHashSet<>( groupsPluginData.getGroupsForPerson(personId));
+				Set<GroupId> actualGroups = new LinkedHashSet<>( cloneGroupPluginData.getGroupsForPerson(personId));
+				assertEquals(expectedGroups, actualGroups);
+			}			
 		}
 	}
 

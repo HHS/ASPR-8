@@ -746,6 +746,15 @@ public class MT_Bulk {
 			int schoolCount = (int) ((double) schoolAgedChildrenCount / data.schoolSize) + 1;
 			int workplaceCount = (int) ((double) activeWorkerCount / data.workplaceSize) + 1;
 
+			
+//			System.out.println("total people "+data.populationSize);
+//			System.out.println("householdCount "+householdCount);
+//			System.out.println("worker count "+activeWorkerCount);
+//			System.out.println("workplaceCount "+workplaceCount);
+//			System.out.println("school aged children "+schoolAgedChildrenCount);
+//			System.out.println("schoolCount "+schoolCount);
+			
+			
 			// create the household groups
 			for (int i = 0; i < householdCount; i++) {
 				bulkGroupMembershipBuilder.addGroup(LocalGroupType.HOME);
@@ -981,6 +990,13 @@ public class MT_Bulk {
 			state.groupBuilder.addGroup(groupId, LocalGroupType.SCHOOL);
 		}
 
+//		System.out.println("total people "+state.people.size());
+//		System.out.println("householdCount "+householdCount);
+//		System.out.println("worker count "+workers.size());
+//		System.out.println("workplaceCount "+workplaceCount);
+//		System.out.println("school aged children "+schoolAgedChildren.size());
+//		System.out.println("schoolCount "+schoolCount);
+		
 		// put people in homes
 		for (PersonId personId : state.people) {
 			GroupId groupId = houseHoldGroups.get(state.randomGenerator.nextInt(houseHoldGroups.size()));

@@ -381,15 +381,17 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private void loadGroupMembership() {
-		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
-			for (final PersonId personId : groupsPluginData.getGroupMembers(groupId)) {
+		List<PersonId> people = peopleDataManager.getPeople();
+		for (final PersonId personId : people) {
+			List<GroupId> groupsForPerson = groupsPluginData.getGroupsForPerson(personId);
+			for (final GroupId groupId : groupsForPerson) {
 
-				List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-				if (people == null) {
-					people = new ArrayList<>();
-					groupsToPeopleMap.setValue(groupId.getValue(), people);
+				List<PersonId> peopleForGroup = groupsToPeopleMap.getValue(groupId.getValue());
+				if (peopleForGroup == null) {
+					peopleForGroup = new ArrayList<>();
+					groupsToPeopleMap.setValue(groupId.getValue(), peopleForGroup);
 				}
-				people.add(personId);
+				peopleForGroup.add(personId);
 
 				List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 				if (groups == null) {
@@ -1500,10 +1502,10 @@ public final class GroupsDataManager extends DataManager {
 			List<GroupId> newGroups = new ArrayList<>(groupCount);
 			for (int i = 0; i < groupCount; i++) {
 				GroupTypeId groupTypeId = groupTypeIds.get(i);
-				
+
 				final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
-				if(typeIndex == null) {
-					validateGroupTypeId(groupTypeId);	
+				if (typeIndex == null) {
+					validateGroupTypeId(groupTypeId);
 				}
 				List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
 				if (groups == null) {
@@ -1520,8 +1522,8 @@ public final class GroupsDataManager extends DataManager {
 				for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
 					Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
 					final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-					if(propertyDefinition == null) {
-						validateGroupPropertyId(groupTypeId, groupPropertyId);	
+					if (propertyDefinition == null) {
+						validateGroupPropertyId(groupTypeId, groupPropertyId);
 					}
 					validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
@@ -1545,7 +1547,7 @@ public final class GroupsDataManager extends DataManager {
 					}
 
 					for (Integer groupIndex : groupIndices) {
-						GroupId groupId = newGroups.get(groupIndex);						
+						GroupId groupId = newGroups.get(groupIndex);
 						groups.add(groupId);
 						List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 						if (people == null) {

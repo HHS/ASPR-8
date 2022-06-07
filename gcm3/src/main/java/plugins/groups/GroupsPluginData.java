@@ -1,10 +1,14 @@
 package plugins.groups;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -48,28 +52,32 @@ public final class GroupsPluginData implements PluginData {
 
 		private final Map<GroupId, GroupTypeId> groupTypes;
 
-		private final Map<GroupId, Set<PersonId>> groupMemberships;
-		
-		
+		private final List<List<GroupId>> groupMemberships;
+
+		private final List<GroupId> emptyGroupList = Collections.unmodifiableList(new ArrayList<>());
+
+		private int personCount;
+
 		public Data() {
 			groupPropertyDefinitions = new LinkedHashMap<>();
 			groupPropertyValues = new LinkedHashMap<>();
 			groupTypeIds = new LinkedHashSet<>();
 			groupIds = new LinkedHashSet<>();
 			groupTypes = new LinkedHashMap<>();
-			groupMemberships = new LinkedHashMap<>();
+			groupMemberships = new ArrayList<>();
 		}
-		
+
 		public Data(Data data) {
+			personCount = data.personCount;
 			groupPropertyDefinitions = new LinkedHashMap<>();
-			for(GroupTypeId groupTypeId : data.groupPropertyDefinitions.keySet()) {
+			for (GroupTypeId groupTypeId : data.groupPropertyDefinitions.keySet()) {
 				Map<GroupPropertyId, PropertyDefinition> map = data.groupPropertyDefinitions.get(groupTypeId);
 				Map<GroupPropertyId, PropertyDefinition> newMap = new LinkedHashMap<>();
 				newMap.putAll(map);
 				groupPropertyDefinitions.put(groupTypeId, newMap);
 			}
 			groupPropertyValues = new LinkedHashMap<>();
-			for(GroupId groupId : data.groupPropertyValues.keySet()) {
+			for (GroupId groupId : data.groupPropertyValues.keySet()) {
 				Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupId);
 				Map<GroupPropertyId, Object> newMap = new LinkedHashMap<>();
 				newMap.putAll(map);
@@ -78,14 +86,19 @@ public final class GroupsPluginData implements PluginData {
 			groupTypeIds = new LinkedHashSet<>(data.groupTypeIds);
 			groupIds = new LinkedHashSet<>(data.groupIds);
 			groupTypes = new LinkedHashMap<>(data.groupTypes);
-			
-			groupMemberships = new LinkedHashMap<>();
-			for(GroupId groupId : data.groupMemberships.keySet()) {
-				Set<PersonId> set = data.groupMemberships.get(groupId);
-				Set<PersonId> newSet = new LinkedHashSet<>(set);
-				groupMemberships.put(groupId, newSet);
+
+			int n = data.groupMemberships.size();
+			groupMemberships = new ArrayList<>(n);
+
+			for (int i = 0; i < n; i++) {
+				List<GroupId> list = data.groupMemberships.get(i);
+				List<GroupId> newList = null;
+				if (list != null) {
+					newList = new ArrayList<>(list);
+				}
+				groupMemberships.add(newList);
 			}
-			
+
 		}
 
 	}
@@ -152,7 +165,7 @@ public final class GroupsPluginData implements PluginData {
 			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
 		}
 	}
-	
+
 	private static void validateGroupIdNotNull(GroupId groupId) {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
@@ -171,8 +184,8 @@ public final class GroupsPluginData implements PluginData {
 	 * @author Shawn Hatch
 	 *
 	 */
-	public static class Builder implements PluginDataBuilder{
-		
+	public static class Builder implements PluginDataBuilder {
+
 		private Data data;
 
 		private Builder(Data data) {
@@ -185,7 +198,7 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             
+		 * 
 		 * 
 		 *             <li>{@linkplain PersonError#UNKNOWN_GROUP_TYPE_ID}</li>
 		 *             if a group was added with a group type id that was not
@@ -220,7 +233,7 @@ public final class GroupsPluginData implements PluginData {
 				data = new Data();
 			}
 		}
-		
+
 		/**
 		 * Adds a person to a group
 		 * 
@@ -237,19 +250,25 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 */
 		public Builder addPersonToGroup(final GroupId groupId, final PersonId personId) {
+			// StopwatchManager.start(Watch.GROUPS_PLUGIN_DATA_INTERNAL);
 			validateGroupIdNotNull(groupId);
-			validatePersonIdNotNull(personId);
+			validatePersonId(personId);
 			validatePersonNotInGroup(data, groupId, personId);
-			Set<PersonId> people = data.groupMemberships.get(groupId);
-			if (people == null) {
-				people = new LinkedHashSet<>();
-				data.groupMemberships.put(groupId, people);
+
+			int personIndex = personId.getValue();
+			data.personCount = FastMath.max(data.personCount, personIndex + 1);
+			while (personIndex >= data.groupMemberships.size()) {
+				data.groupMemberships.add(null);
 			}
-			people.add(personId);
+			List<GroupId> groups = data.groupMemberships.get(personIndex);
+			if (groups == null) {
+				groups = new ArrayList<>();
+				data.groupMemberships.set(personIndex, groups);
+			}
+			groups.add(groupId);
+			// StopwatchManager.stop(Watch.GROUPS_PLUGIN_DATA_INTERNAL);
 			return this;
 		}
-		
-		
 
 		/**
 		 * Adds a group type id
@@ -361,9 +380,13 @@ public final class GroupsPluginData implements PluginData {
 
 	private static void validate(Data data) {
 
-		for (GroupId groupId : data.groupMemberships.keySet()) {
-			if (!data.groupIds.contains(groupId)) {
-				throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group membership contains the unknown group " + groupId);
+		for (List<GroupId> groupIds : data.groupMemberships) {
+			if (groupIds != null) {
+				for (GroupId groupId : groupIds) {
+					if (!data.groupIds.contains(groupId)) {
+						throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group membership contains the unknown group " + groupId);
+					}
+				}
 			}
 		}
 
@@ -548,7 +571,7 @@ public final class GroupsPluginData implements PluginData {
 	 * Returns the unmodifiable collected group ids
 	 */
 	public Set<GroupId> getGroupIds() {
-		return Collections.unmodifiableSet(data.groupIds);		
+		return Collections.unmodifiableSet(data.groupIds);
 	}
 
 	/**
@@ -569,43 +592,57 @@ public final class GroupsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		
+
 		return new Builder(new Data(data));
 	}
+
 	/**
-	 * Returns the unmodifiable set of people associated with the group id
+	 * Returns the unmodifiable list of groups associated with the person id
 	 * 
-	 * @throws ContractException
-	 *             
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id
-	 *             is null</li>
 	 * 
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
-	 *             is unknown</li>
 	 */
-	public Set<PersonId> getGroupMembers(final GroupId groupId) {
-		validateGroupExists(data, groupId);
-		Set<PersonId> result = new LinkedHashSet<>();
-		final Set<PersonId> set = data.groupMemberships.get(groupId);
-		if (set != null) {
-			result = Collections.unmodifiableSet(set);			
+	public List<GroupId> getGroupsForPerson(final PersonId personId) {
+		if (personId == null) {
+			return data.emptyGroupList;
 		}
-		return result;
+		int personIndex = personId.getValue();
+		if (personIndex < 0 || personIndex >= data.groupMemberships.size()) {
+			return data.emptyGroupList;
+		}
+		List<GroupId> list = data.groupMemberships.get(personIndex);
+		if (list == null) {
+			return data.emptyGroupList;
+		}
+		return Collections.unmodifiableList(list);
 	}
-	
+
 	private static void validatePersonNotInGroup(Data data, GroupId groupId, PersonId personId) {
-		Set<PersonId> set = data.groupMemberships.get(groupId);
-		if (set != null) {
-			if (set.contains(personId)) {
-				throw new ContractException(GroupError.DUPLICATE_PERSON_GROUP_ASSIGNMENT, personId + ": " + groupId);
+		int personIndex = personId.getValue();
+		if ((personIndex >= 0) && (personIndex < data.groupMemberships.size())) {
+			List<GroupId> groups = data.groupMemberships.get(personIndex);
+			if (groups != null) {
+				if (groups.contains(groupId)) {
+					throw new ContractException(GroupError.DUPLICATE_PERSON_GROUP_ASSIGNMENT, personId + ": " + groupId);
+				}
 			}
 		}
 	}
-	
-	private static void validatePersonIdNotNull(PersonId personId) {
+
+	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
+		if (personId.getValue() < 0) {
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+		}
+	}
+
+	/**
+	 * Returns the int value that exceeds by one the highest person id value
+	 * encountered while associating people with groups.
+	 */
+	public int getPersonCount() {
+		return data.personCount;
 	}
 
 }
