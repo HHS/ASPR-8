@@ -18,20 +18,31 @@ public class AttributesPluginData implements PluginData {
 
 	private static class Data {
 		private Map<AttributeId, AttributeDefinition> attributeDefinitions = new LinkedHashMap<>();
-
+		public Data() {}
+		public Data(Data data) {
+			attributeDefinitions = new LinkedHashMap<>(data.attributeDefinitions);
+		}
 	}
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
-	public static class Builder {
+	public static class Builder implements PluginDataBuilder{
 		private Data data = new Data();
-
-		private Builder() {
-
+		private boolean dataIsMutable;
+		
+		private Builder(Data data) {
+			this.data = data;
 		}
 
+		private void ensureDataMutability() {
+			if(!dataIsMutable) {
+				data = new Data(data);
+				dataIsMutable = true;
+			}
+		}
+		
 		/**
 		 * Returns the {@linkplain AttributesPluginData} from the collected data
 		 */
@@ -55,6 +66,7 @@ public class AttributesPluginData implements PluginData {
 		 *             if the attribute id was previously added</li>
 		 */
 		public Builder defineAttribute(final AttributeId attributeId, final AttributeDefinition attributeDefinition) {
+			ensureDataMutability();
 			validateAttributeIdNotNull(attributeId);
 			validateAttributeDefinitionNotNull(attributeDefinition);
 			validateAttributeIsNotDefined(data, attributeId);
@@ -122,8 +134,8 @@ public class AttributesPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new Builder(data);
 	}
 
 }

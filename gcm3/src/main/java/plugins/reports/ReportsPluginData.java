@@ -43,7 +43,16 @@ public final class ReportsPluginData implements PluginData {
 
 	public final static class Builder implements PluginDataBuilder {
 		private Data data;
-
+		
+		private boolean dataIsMutable;
+		
+		private void ensureDataMutability() {
+			if(!dataIsMutable) {
+				data = new Data(data);
+				dataIsMutable = true;
+			}
+		}
+		
 		private Builder(Data data) {
 			this.data = data;
 		}
@@ -69,7 +78,7 @@ public final class ReportsPluginData implements PluginData {
 		 *             supplier is null</li>
 		 */
 		public Builder addReport(Supplier<Consumer<ActorContext>> supplier) {
-			
+			ensureDataMutability();
 			if (supplier == null) {
 				throw new ContractException(ReportError.NULL_SUPPLIER);
 			}
@@ -106,7 +115,7 @@ public final class ReportsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 }

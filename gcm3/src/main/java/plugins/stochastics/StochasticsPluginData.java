@@ -28,7 +28,7 @@ public final class StochasticsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 	/*
@@ -62,13 +62,23 @@ public final class StochasticsPluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
+		
+		private boolean dataIsMutable;
 
+		private void ensureDataMutability() {
+			if(!dataIsMutable) {
+				data = new Data(data);
+				dataIsMutable = true;
+			}
+		}
+		
 		private Builder(Data data) {
 			this.data = data;
 
 		}
 
 		private void validate() {
+			
 			if (data.seed == null) {
 				throw new ContractException(StochasticsError.NULL_SEED);
 			}
@@ -102,6 +112,7 @@ public final class StochasticsPluginData implements PluginData {
 		 *             if the id was previously added</li>
 		 */
 		public Builder addRandomGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
+			ensureDataMutability();
 			validateRandomNumberGeneratorIdNotNull(randomNumberGeneratorId);
 			validateRandomNumberGeneratorIdDoesNotExist(data, randomNumberGeneratorId);
 			data.randomNumberGeneratorIds.add(randomNumberGeneratorId);
@@ -112,6 +123,7 @@ public final class StochasticsPluginData implements PluginData {
 		 * Sets the seed value.
 		 */
 		public Builder setSeed(long seed) {
+			ensureDataMutability();
 			data.seed = seed;
 			return this;
 		}

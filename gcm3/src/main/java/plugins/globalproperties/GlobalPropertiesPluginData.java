@@ -49,6 +49,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
+		private boolean dataIsMutable;
 
 		private Builder(Data data) {
 			this.data = data;
@@ -75,7 +76,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 */
 		public GlobalPropertiesPluginData build() {
 			try {
-				validateData(data);
+				validateData();
 				return new GlobalPropertiesPluginData(data);
 			} finally {
 				data = new Data();
@@ -100,11 +101,19 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * 
 		 */
 		public Builder defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyDefinitionNotNull(propertyDefinition);
 			validateGlobalPropertyIsNotDefined(data, globalPropertyId);
 			data.globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 			return this;
+		}
+		
+		private void ensureDataMutability() {
+			if(!dataIsMutable) {
+				data = new Data(data);
+				dataIsMutable = true;
+			}
 		}
 
 		/**
@@ -125,11 +134,54 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * 
 		 */
 		public Builder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object propertyValue) {
+			ensureDataMutability();
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyValueNotNull(propertyValue);
 			validateGlobalPropertyValueNotAssigned(data, globalPropertyId);
 			data.globalPropertyValues.put(globalPropertyId, propertyValue);
 			return this;
+		}
+
+		private void validateData() {
+			if(!dataIsMutable) {
+				return;
+			}
+			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
+				if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
+					throw new ContractException(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+				}
+			}
+			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
+				final Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
+				final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
+				if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
+					throw new ContractException(GlobalPropertiesError.INCOMPATIBLE_VALUE, globalPropertyId + " = " + propertyValue);
+				}
+			}
+		
+			/*
+			 * For every global property definition that has a null default value,
+			 * ensure that there is a corresponding global property value assignment
+			 * and put that initial assignment on the property definition and repair
+			 * the definition.
+			 */
+			for (GlobalPropertyId globalPropertyId : data.globalPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
+				if (!propertyDefinition.getDefaultValue().isPresent()) {
+					Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
+					if (propertyValue == null) {
+						throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, globalPropertyId);
+					}
+					propertyDefinition = //
+							PropertyDefinition	.builder()//
+												.setPropertyValueMutability(propertyDefinition.propertyValuesAreMutable())//
+												.setDefaultValue(propertyValue)//
+												.setTimeTrackingPolicy(propertyDefinition.getTimeTrackingPolicy())//
+												.setType(propertyDefinition.getType())//
+												.build();//
+					data.globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+				}
+			}
 		}
 
 	}
@@ -154,45 +206,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 */
 	public static Builder builder() {
 		return new Builder(new Data());
-	}
-
-	private static void validateData(final Data data) {
-		for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
-			if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
-				throw new ContractException(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
-			}
-		}
-		for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
-			final Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
-			final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
-			if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-				throw new ContractException(GlobalPropertiesError.INCOMPATIBLE_VALUE, globalPropertyId + " = " + propertyValue);
-			}
-		}
-
-		/*
-		 * For every global property definition that has a null default value,
-		 * ensure that there is a corresponding global property value assignment
-		 * and put that initial assignment on the property definition and repair
-		 * the definition.
-		 */
-		for (GlobalPropertyId globalPropertyId : data.globalPropertyDefinitions.keySet()) {
-			PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
-			if (!propertyDefinition.getDefaultValue().isPresent()) {
-				Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
-				if (propertyValue == null) {
-					throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, globalPropertyId);
-				}
-				propertyDefinition = //
-						PropertyDefinition	.builder()//
-											.setPropertyValueMutability(propertyDefinition.propertyValuesAreMutable())//
-											.setDefaultValue(propertyValue)//
-											.setTimeTrackingPolicy(propertyDefinition.getTimeTrackingPolicy())//
-											.setType(propertyDefinition.getType())//
-											.build();//
-				data.globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
-			}
-		}
 	}
 
 	private static void validateGlobalPropertyDefinitionNotNull(final PropertyDefinition propertyDefinition) {
@@ -280,7 +293,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 }

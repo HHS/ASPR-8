@@ -9,17 +9,17 @@ public final class StopwatchManager {
 
 	public static void start(Watch key) {
 		
-//		Stopwatch stopwatch = stopwatches.get(key);
-//		if(stopwatch == null) {
-//			stopwatch = new Stopwatch();
-//			stopwatches.put(key,stopwatch);					
-//		}
-//		stopwatch.start();
+		Stopwatch stopwatch = stopwatches.get(key);
+		if(stopwatch == null) {
+			stopwatch = new Stopwatch();
+			stopwatches.put(key,stopwatch);					
+		}
+		stopwatch.start();
 	}
 
 	public static void stop(Watch key) {
-//		Stopwatch stopwatch = stopwatches.get(key);
-//		stopwatch.stop();
+		Stopwatch stopwatch = stopwatches.get(key);
+		stopwatch.stop();
 	}
 
 	public static void report() {

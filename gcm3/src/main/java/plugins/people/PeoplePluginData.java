@@ -45,7 +45,15 @@ public final class PeoplePluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-
+		private boolean dataIsMutable;
+		
+		private void ensureDataMutability() {
+			if(!dataIsMutable) {
+				data = new Data(data);
+				dataIsMutable = true;
+			}
+		}
+		
 		private Builder(Data data) {
 			this.data = data;
 
@@ -74,6 +82,7 @@ public final class PeoplePluginData implements PluginData {
 		 * 
 		 */
 		public Builder addPersonId(PersonId personId) {
+			ensureDataMutability();
 			validatePersonIdNotNull(personId);
 			validatePersonDoesNotExist(data, personId);
 			data.personIds.add(personId);
@@ -95,7 +104,7 @@ public final class PeoplePluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 	private static void validatePersonDoesNotExist(final Data data, final PersonId personId) {

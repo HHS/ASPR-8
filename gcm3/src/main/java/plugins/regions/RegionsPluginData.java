@@ -79,57 +79,6 @@ public class RegionsPluginData implements PluginData {
 		return new Builder(new Data());
 	}
 
-	private static void validateData(Data data) {
-
-		for (PersonId personId : data.personRegions.keySet()) {
-			RegionId regionId = data.personRegions.get(personId);
-			if (!data.regionIds.contains(regionId)) {
-				throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in person region assignments");
-			}
-		}
-		
-		for (RegionId regionId : data.regionPropertyValues.keySet()) {
-			if (!data.regionIds.contains(regionId)) {
-				throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in region property values");
-			}
-			Map<RegionPropertyId, Object> map = data.regionPropertyValues.get(regionId);
-			if (map != null) {
-				for (RegionPropertyId regionPropertyId : map.keySet()) {
-					PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
-					if (propertyDefinition == null) {
-						throw new ContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId + " for region " + regionId);
-					}
-					Object propertyValue = map.get(regionPropertyId);
-					if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, regionId + ":" + regionPropertyId + " = " + propertyValue);
-					}
-				}
-			}
-		}
-
-		/*
-		 * For every region property definition that has a null default value,
-		 * ensure that there all corresponding region property values are not
-		 * null.
-		 */
-		for (RegionPropertyId regionPropertyId : data.regionPropertyDefinitions.keySet()) {
-			PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
-			if (!propertyDefinition.getDefaultValue().isPresent()) {
-				for (RegionId regionId : data.regionIds) {
-					Object propertyValue = null;
-					Map<RegionPropertyId, Object> propertyValueMap = data.regionPropertyValues.get(regionId);
-					if (propertyValueMap != null) {
-						propertyValue = propertyValueMap.get(regionPropertyId);
-					}
-					if (propertyValue == null) {
-						throw new ContractException(RegionError.INSUFFICIENT_REGION_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId);
-					}
-				}
-			}
-		}
-
-	}
-
 	private static void validateTimeTrackingPolicyNotNull(TimeTrackingPolicy timeTrackingPolicy) {
 		if (timeTrackingPolicy == null) {
 			throw new ContractException(RegionError.NULL_TIME_TRACKING_POLICY);
@@ -186,7 +135,14 @@ public class RegionsPluginData implements PluginData {
 
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-
+		private boolean dataIsMutable;
+		
+		private void ensureDataMutability() {
+			if(!dataIsMutable) {
+				data = new Data(data);
+				dataIsMutable = true;
+			}
+		}
 		private Builder(Data data) {
 			this.data = data;
 		}
@@ -220,9 +176,10 @@ public class RegionsPluginData implements PluginData {
 		public RegionsPluginData build() {
 			try {
 				if (data.regionArrivalTimeTrackingPolicy == null) {
+					dataIsMutable = true;
 					data.regionArrivalTimeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
 				}
-				validateData(data);
+				validateData();
 				return new RegionsPluginData(data);
 			} finally {
 				data = new Data();
@@ -246,6 +203,7 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 */
 		public Builder setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+			ensureDataMutability();
 			validateRegionIdNotNull(regionId);
 			validateRegionPropertyIdNotNull(regionPropertyId);
 			validateRegionPropertyValueNotSet(data, regionId, regionPropertyId);
@@ -274,6 +232,7 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 */
 		public Builder setPersonRegion(final PersonId personId, final RegionId regionId) {
+			ensureDataMutability();
 			validatePersonIdNotNull(personId);
 			validateRegionIdNotNull(regionId);
 			validatePersonRegionNotAssigned(data, personId);
@@ -295,6 +254,7 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 */
 		public Builder setPersonRegionArrivalTracking(final TimeTrackingPolicy timeTrackingPolicy) {
+			ensureDataMutability();
 			validateTimeTrackingPolicyNotNull(timeTrackingPolicy);
 			validatePersonRegionArrivalTrackingNotSet(data);
 			data.regionArrivalTimeTrackingPolicy = timeTrackingPolicy;
@@ -312,6 +272,7 @@ public class RegionsPluginData implements PluginData {
 		 *             region id is null
 		 */
 		public Builder addRegion(final RegionId regionId) {
+			ensureDataMutability();
 			validateRegionIdNotNull(regionId);
 			data.regionIds.add(regionId);
 			return this;
@@ -334,11 +295,66 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 */
 		public Builder defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			validateRegionPropertyIdNotNull(regionPropertyId);
 			validateRegionPropertyDefinitionNotNull(propertyDefinition);
 			validateRegionPropertyIsNotDefined(data, regionPropertyId);
 			data.regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 			return this;
+		}
+		private void validateData() {
+		
+			if(!dataIsMutable) {
+				return;
+			}
+			
+			for (PersonId personId : data.personRegions.keySet()) {
+				RegionId regionId = data.personRegions.get(personId);
+				if (!data.regionIds.contains(regionId)) {
+					throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in person region assignments");
+				}
+			}
+			
+			for (RegionId regionId : data.regionPropertyValues.keySet()) {
+				if (!data.regionIds.contains(regionId)) {
+					throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in region property values");
+				}
+				Map<RegionPropertyId, Object> map = data.regionPropertyValues.get(regionId);
+				if (map != null) {
+					for (RegionPropertyId regionPropertyId : map.keySet()) {
+						PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
+						if (propertyDefinition == null) {
+							throw new ContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId + " for region " + regionId);
+						}
+						Object propertyValue = map.get(regionPropertyId);
+						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
+							throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, regionId + ":" + regionPropertyId + " = " + propertyValue);
+						}
+					}
+				}
+			}
+		
+			/*
+			 * For every region property definition that has a null default value,
+			 * ensure that there all corresponding region property values are not
+			 * null.
+			 */
+			for (RegionPropertyId regionPropertyId : data.regionPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
+				if (!propertyDefinition.getDefaultValue().isPresent()) {
+					for (RegionId regionId : data.regionIds) {
+						Object propertyValue = null;
+						Map<RegionPropertyId, Object> propertyValueMap = data.regionPropertyValues.get(regionId);
+						if (propertyValueMap != null) {
+							propertyValue = propertyValueMap.get(regionPropertyId);
+						}
+						if (propertyValue == null) {
+							throw new ContractException(RegionError.INSUFFICIENT_REGION_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId);
+						}
+					}
+				}
+			}
+		
 		}
 
 	}
@@ -441,7 +457,7 @@ public class RegionsPluginData implements PluginData {
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 	
 	private static void validatePersonIdNotNull(PersonId personId) {
