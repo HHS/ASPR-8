@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
+import plugins.resources.support.ResourceInitialization;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
@@ -246,38 +248,42 @@ public final class AT_ResourcesPluginData {
 			builder.addResource(testResourceId);
 		}
 
-		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
 
 		// add up to 30 people
+		int id = 0;
 		Set<PersonId> people = new LinkedHashSet<>();
+		
 		for (int i = 0; i < 30; i++) {
-			people.add(new PersonId(randomGenerator.nextInt()));
+			id += randomGenerator.nextInt(3)+1;
+			people.add(new PersonId(id));
 		}
 		assertTrue(people.size() > 20);
 		for (PersonId personId : people) {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				MultiKey multiKey = new MultiKey(personId, testResourceId);
-				MutableInteger mutableInteger = new MutableInteger();
-				expectedValues.put(multiKey, mutableInteger);
 				if (randomGenerator.nextBoolean()) {
-					int amount = randomGenerator.nextInt(10);
+					long amount = randomGenerator.nextInt(10);
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
-					mutableInteger.setValue(amount);
+					MultiKey multiKey = new MultiKey(personId, testResourceId, amount);
+					expectedValues.add(multiKey);
 				}
 			}
 		}
 
 		ResourcesPluginData resourceInitialData = builder.build();
 
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
 		for (PersonId personId : people) {
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				MultiKey multiKey = new MultiKey(personId, testResourceId);
-				MutableInteger mutableInteger = expectedValues.get(multiKey);
-				int expectedAmount = mutableInteger.getValue();
-				Long personResourceLevel = resourceInitialData.getPersonResourceLevel(personId, testResourceId);
-				assertEquals(expectedAmount, personResourceLevel);
+			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
+			for (ResourceInitialization resourceInitialization : personResourceLevels) {
+				ResourceId resourceId = resourceInitialization.getResourceId();
+				Long amount = resourceInitialization.getAmount();
+				MultiKey multiKey = new MultiKey(personId, resourceId, amount);
+				actualValues.add(multiKey);
 			}
 		}
+
+		assertEquals(expectedValues, actualValues);
 
 		// precondition tests
 		PersonId personId = new PersonId(0);
@@ -639,8 +645,8 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonResourceLevel", args = { PersonId.class, ResourceId.class })
-	public void testGetPersonResourceLevel() {
+	@UnitTestMethod(name = "getPersonResourceLevels", args = { PersonId.class, ResourceId.class })
+	public void testGetPersonResourceLevels() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2902745806851600371L);
 
@@ -650,54 +656,46 @@ public final class AT_ResourcesPluginData {
 			builder.addResource(testResourceId);
 		}
 
-		Map<MultiKey, MutableInteger> expectedValues = new LinkedHashMap<>();
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
 
 		// add up to 30 people
 		Set<PersonId> people = new LinkedHashSet<>();
+		int id = 0;
 		for (int i = 0; i < 30; i++) {
-			people.add(new PersonId(randomGenerator.nextInt()));
+			id +=randomGenerator.nextInt(3)+1;
+			people.add(new PersonId(id));
 		}
 		assertTrue(people.size() > 20);
 		for (PersonId personId : people) {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				MultiKey multiKey = new MultiKey(personId, testResourceId);
-				MutableInteger mutableInteger = new MutableInteger();
-				expectedValues.put(multiKey, mutableInteger);
+
 				if (randomGenerator.nextBoolean()) {
-					int amount = randomGenerator.nextInt(10);
+					long amount = randomGenerator.nextInt(10);
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
-					mutableInteger.setValue(amount);
+					MultiKey multiKey = new MultiKey(personId, testResourceId,amount);
+					expectedValues.add(multiKey);
 				}
 			}
 		}
 
 		ResourcesPluginData resourceInitialData = builder.build();
 
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
 		for (PersonId personId : people) {
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				MultiKey multiKey = new MultiKey(personId, testResourceId);
-				MutableInteger mutableInteger = expectedValues.get(multiKey);
-				int expectedAmount = mutableInteger.getValue();
-				Long personResourceLevel = resourceInitialData.getPersonResourceLevel(personId, testResourceId);
-				assertEquals(expectedAmount, personResourceLevel);
+			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
+			for (ResourceInitialization resourceInitialization : personResourceLevels) {
+				ResourceId resourceId = resourceInitialization.getResourceId();
+				Long amount = resourceInitialization.getAmount();
+				MultiKey multiKey = new MultiKey(personId, resourceId, amount);
+				actualValues.add(multiKey);
 			}
 		}
+		
+		assertEquals(expectedValues, actualValues);
 
-		// precondition tests
-		PersonId personId = new PersonId(0);
-		ResourceId resourceId = TestResourceId.RESOURCE_5;
-
-		// if the person id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceLevel(null, resourceId));
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceLevels(null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-
-		// if the resource id is null
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceLevel(personId, null));
-		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-
-		// if the resource id is unknown
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getPersonResourceLevel(personId, TestResourceId.getUnknownResourceId()));
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
@@ -835,8 +833,8 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonIds", args = {})
-	public void testGetPersonIds() {
+	@UnitTestMethod(name = "getPersonCount", args = {})
+	public void testGetPersonCount() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1188005474782684784L);
 
@@ -850,13 +848,16 @@ public final class AT_ResourcesPluginData {
 
 		// add up to 30 people
 		Set<PersonId> people = new LinkedHashSet<>();
+		int id = 0;
 		for (int i = 0; i < 30; i++) {
-			people.add(new PersonId(randomGenerator.nextInt()));
+			id += randomGenerator.nextInt(3)+1;
+			people.add(new PersonId(id));
 		}
 		assertTrue(people.size() > 20);
 
 		Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
+		int expectedPersonCount = 0;
 		for (PersonId personId : people) {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				MultiKey multiKey = new MultiKey(personId, testResourceId);
@@ -865,6 +866,7 @@ public final class AT_ResourcesPluginData {
 				if (randomGenerator.nextBoolean()) {
 					int amount = randomGenerator.nextInt(10);
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
+					expectedPersonCount = personId.getValue() + 1;
 					expectedPeople.add(personId);
 					mutableInteger.setValue(amount);
 				}
@@ -873,7 +875,7 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData resourceInitialData = builder.build();
 
-		assertEquals(expectedPeople, resourceInitialData.getPersonIds());
+		assertEquals(expectedPersonCount, resourceInitialData.getPersonCount());
 
 	}
 
@@ -963,14 +965,17 @@ public final class AT_ResourcesPluginData {
 
 		assertEquals(resourcesPluginData.getResourceIds(), cloneResourcesPluginData.getResourceIds());
 
-		assertEquals(resourcesPluginData.getPersonIds(), cloneResourcesPluginData.getPersonIds());
+		assertEquals(resourcesPluginData.getPersonCount(), cloneResourcesPluginData.getPersonCount());
 
-		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			for (PersonId personId : resourcesPluginData.getPersonIds()) {
-				Long expectedLevel = resourcesPluginData.getPersonResourceLevel(personId, resourceId);
-				Long actualLevel = cloneResourcesPluginData.getPersonResourceLevel(personId, resourceId);
-				assertEquals(expectedLevel, actualLevel);
-			}
+		for (int i = 0;i<resourcesPluginData.getPersonCount();i++) {
+			PersonId personId = new PersonId(i);
+			List<ResourceInitialization> expectedLevels = resourcesPluginData.getPersonResourceLevels(personId);
+			List<ResourceInitialization> actualLevels = cloneResourcesPluginData.getPersonResourceLevels(personId);
+			assertEquals(expectedLevels.size(), actualLevels.size());
+			
+			Set<ResourceInitialization> expectedSet = new LinkedHashSet<>(expectedLevels);
+			Set<ResourceInitialization> actualSet = new LinkedHashSet<>(actualLevels);
+			assertEquals(expectedSet, actualSet);
 		}
 
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
@@ -981,9 +986,9 @@ public final class AT_ResourcesPluginData {
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
 			assertEquals(resourcesPluginData.getResourcePropertyIds(resourceId), cloneResourcesPluginData.getResourcePropertyIds(resourceId));
 		}
-		
+
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			for(ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
+			for (ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
 				Object expectedValue = resourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
 				Object actualValue = cloneResourcesPluginData.getResourcePropertyValue(resourceId, resourcePropertyId);
 				assertEquals(expectedValue, actualValue);
@@ -991,26 +996,22 @@ public final class AT_ResourcesPluginData {
 		}
 
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-			for(ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
+			for (ResourcePropertyId resourcePropertyId : resourcesPluginData.getResourcePropertyIds(resourceId)) {
 				PropertyDefinition expectedPropertyDefinition = resourcesPluginData.getResourcePropertyDefinition(resourceId, resourcePropertyId);
 				PropertyDefinition actualPropertyDefinition = cloneResourcesPluginData.getResourcePropertyDefinition(resourceId, resourcePropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 		}
-		
+
 		assertEquals(resourcesPluginData.getRegionIds(), cloneResourcesPluginData.getRegionIds());
-		
-		for(RegionId regionId : resourcesPluginData.getRegionIds()) {
+
+		for (RegionId regionId : resourcesPluginData.getRegionIds()) {
 			for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-				Long expectedLevel = resourcesPluginData.getRegionResourceLevel(regionId, resourceId);		
+				Long expectedLevel = resourcesPluginData.getRegionResourceLevel(regionId, resourceId);
 				Long actualLevel = cloneResourcesPluginData.getRegionResourceLevel(regionId, resourceId);
 				assertEquals(expectedLevel, actualLevel);
 			}
 		}
-		
-		
- 
-		
 
 	}
 

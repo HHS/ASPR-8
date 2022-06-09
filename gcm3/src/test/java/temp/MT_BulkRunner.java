@@ -41,6 +41,8 @@ public class MT_BulkRunner {
 
 				// resources
 				.setUseResources(true)//
+				.setResourceCount(5)
+				.setInitializedResourceCount(2)
 
 				.build()//
 				.execute();

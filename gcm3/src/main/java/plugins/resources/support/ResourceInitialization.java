@@ -1,5 +1,8 @@
 package plugins.resources.support;
 
+import net.jcip.annotations.Immutable;
+
+@Immutable
 public class ResourceInitialization {
 	private final ResourceId resourceId;
 	private final Long amount;

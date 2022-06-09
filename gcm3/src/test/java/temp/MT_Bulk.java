@@ -699,6 +699,7 @@ public class MT_Bulk {
 		}
 		
 		
+		
 
 		PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 		for (int i = 0; i < data.populationSize; i++) {
@@ -1168,6 +1169,7 @@ public class MT_Bulk {
 					ResourceId resourceId = resourceIds.get(i);
 					long amount = state.randomGenerator.nextInt(1000) + 1;
 					builder.setPersonResourceLevel(personId, resourceId, amount);
+					//System.out.println(personId+"\t"+resourceId+"\t"+amount);
 				}
 			}
 		}

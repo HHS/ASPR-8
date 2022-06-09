@@ -2883,7 +2883,7 @@ public final class AT_ResourcesDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			List<PersonId> personIds = peopleDataManager.getPeople();
-			assertEquals(new LinkedHashSet<>(personIds), resourcesPluginData.getPersonIds());
+			assertEquals(personIds.size(), resourcesPluginData.getPersonCount());
 
 			Set<RegionId> expectedRegionIds = regionsDataManager.getRegionIds();
 			Set<RegionId> actualRegionIds = resourcesPluginData.getRegionIds();
@@ -2906,10 +2906,18 @@ public final class AT_ResourcesDataManager {
 			assertEquals(resourcesPluginData.getResourceIds(), resourcesDataManager.getResourceIds());
 
 			for (PersonId personId : personIds) {
+				List<ResourceInitialization> personResourceLevels = resourcesPluginData.getPersonResourceLevels(personId);
+				Map<ResourceId,Long> expectedAmounts = new LinkedHashMap<>();
 				for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-					long expectedPersonResourceLevel = resourcesPluginData.getPersonResourceLevel(personId, resourceId);
-					long actualPersonResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
-					assertEquals(expectedPersonResourceLevel, actualPersonResourceLevel);
+					expectedAmounts.put(resourceId, 0L);
+				}
+				for(ResourceInitialization resourceInitialization : personResourceLevels) {
+					expectedAmounts.put(resourceInitialization.getResourceId(), resourceInitialization.getAmount());
+				}
+				for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
+					Long expectedAmount = expectedAmounts.get(resourceId);
+					long actualAmount = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+					assertEquals(expectedAmount, actualAmount);
 				}
 			}
 			for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {

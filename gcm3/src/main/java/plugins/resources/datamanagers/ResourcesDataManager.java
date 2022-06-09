@@ -864,13 +864,13 @@ public final class ResourcesDataManager extends DataManager {
 			}
 		}
 
-		for (final PersonId personId : resourcesPluginData.getPersonIds()) {
-			if (!peopleDataManager.personExists(personId)) {
-				throw new ContractException(PersonError.UNKNOWN_PERSON_ID, personId);
-			}
-			for (final ResourceId resourceId : personResourceValues.keySet()) {
-				final Long resourceAmount = resourcesPluginData.getPersonResourceLevel(personId, resourceId);
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			
+			List<ResourceInitialization> personResourceLevels = resourcesPluginData.getPersonResourceLevels(personId);	
+			for (ResourceInitialization resourceInitialization: personResourceLevels) {
+				final Long resourceAmount = resourceInitialization.getAmount();
 				if (resourceAmount > 0) {
+					ResourceId resourceId = resourceInitialization.getResourceId();
 					personResourceValues.get(resourceId).incrementLongValue(personId.getValue(), resourceAmount);
 					final DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
 					if (doubleValueContainer != null) {
