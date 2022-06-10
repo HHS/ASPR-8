@@ -14,7 +14,6 @@ import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
@@ -64,7 +63,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Static utility class for tracking region resources.
 	 */
 	private static class RegionResourceRecord {
-		
+
 		private final SimulationContext simulationContext;
 
 		private long amount;
@@ -84,7 +83,7 @@ public final class ResourcesDataManager extends DataManager {
 			if (this.amount < amount) {
 				throw new ContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
 			}
-			
+
 			this.amount = Math.subtractExact(this.amount, amount);
 			assignmentTime = simulationContext.getTime();
 		}
@@ -109,7 +108,6 @@ public final class ResourcesDataManager extends DataManager {
 
 	private PeopleDataManager peopleDataManager;
 	private RegionsDataManager regionsDataManager;
-	
 
 	// resources
 	private final Map<ResourceId, Map<ResourcePropertyId, PropertyValueRecord>> resourcePropertyMap = new LinkedHashMap<>();
@@ -752,19 +750,9 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote> Removes the
-	 * resource assignment data for the person from the
-	 * {@linkplain ResourcesDataManager} by scheduling the removal for the
-	 * current time. This allows the person and their resource levels to remain
-	 * long enough for resolvers, agents and reports to have final reference to
-	 * the person while still associated with any relevant resources. <BR>
-	 * <BR>
-	 * Throws {@linkplain ContractException}
-	 * <ul>
-	 * <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id is null</li>
-	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is
-	 * unknown</li>
-	 * </ul>
+	 * <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the resource
+	 * assignment data for the person from the {@linkplain ResourcesDataManager}
+	 * 
 	 * 
 	 */
 	@Override
@@ -785,7 +773,7 @@ public final class ResourcesDataManager extends DataManager {
 		dataManagerContext.addEventLabeler(RegionResourceUpdateEvent.getEventLabelerForRegionAndResource());
 
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
-		
+
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		// load resource property definitions, property values and time tracking
@@ -833,7 +821,7 @@ public final class ResourcesDataManager extends DataManager {
 				map.put(resourcePropertyId, propertyValueRecord);
 
 			}
-			
+
 		}
 
 		// load the region resources
@@ -865,9 +853,9 @@ public final class ResourcesDataManager extends DataManager {
 		}
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
-			
-			List<ResourceInitialization> personResourceLevels = resourcesPluginData.getPersonResourceLevels(personId);	
-			for (ResourceInitialization resourceInitialization: personResourceLevels) {
+
+			List<ResourceInitialization> personResourceLevels = resourcesPluginData.getPersonResourceLevels(personId);
+			for (ResourceInitialization resourceInitialization : personResourceLevels) {
 				final Long resourceAmount = resourceInitialization.getAmount();
 				if (resourceAmount > 0) {
 					ResourceId resourceId = resourceInitialization.getResourceId();
@@ -890,7 +878,7 @@ public final class ResourcesDataManager extends DataManager {
 	private void handleRegionAdditionEvent(DataManagerContext dataManagerContext, RegionAdditionEvent regionAdditionEvent) {
 		RegionId regionId = regionAdditionEvent.getRegionId();
 		if (!regionResources.keySet().contains(regionId)) {
-			Map<ResourceId, RegionResourceRecord> resourceMap = new LinkedHashMap<>();			
+			Map<ResourceId, RegionResourceRecord> resourceMap = new LinkedHashMap<>();
 			for (ResourceId resourceId : personResourceValues.keySet()) {
 				resourceMap.put(resourceId, new RegionResourceRecord(dataManagerContext));
 			}

@@ -13,7 +13,6 @@ import nucleus.DataManagerContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
@@ -126,18 +125,14 @@ public final class RegionsDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * 
-	 * <li>{@linkplain PersonImminentRemovalEvent}<blockquote> Removes the
-	 * region assignment data for the person from the
-	 * {@linkplain RegionDataView} <BR>
+	 * <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the region
+	 * assignment data for the person from the {@linkplain RegionDataView} <BR>
 	 * <BR>
 	 * Throws {@linkplain ContractException}
 	 * <ul>
-	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is
-	 * unknown</li>
-	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person was
-	 * previously removed. Note : this exception will be delayed until the
-	 * person is finally removed and cannot be found due to a previous
-	 * removal</li>
+	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is not
+	 * currently tracked by the regions data manager</li>
+	 * 
 	 * 
 	 * 
 	 * </ul>
@@ -367,7 +362,7 @@ public final class RegionsDataManager extends DataManager {
 			propertyValueRecord.setPropertyValue(regionPropertyValue);
 			map.put(regionPropertyId, propertyValueRecord);
 		}
-		dataManagerContext.releaseEvent(new	RegionAdditionEvent(regionId));
+		dataManagerContext.releaseEvent(new RegionAdditionEvent(regionId));
 
 	}
 
@@ -745,7 +740,6 @@ public final class RegionsDataManager extends DataManager {
 		StopwatchManager.start(Watch.REGIONS_BULK);
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
-
 
 		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
 		validatePersonExists(personId);

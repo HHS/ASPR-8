@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.people.datamanagers.PeopleDataManager;
+import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
@@ -188,6 +189,13 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		return null;
 	}
 
+	private void handleBulkPersonAdditionEvent(ActorContext actorContext, BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		for (PersonId personId : bulkPersonAdditionEvent.getPeople()) {
+			final Object regionId = regionsDataManager.getPersonRegion(personId);
+			increment(regionId, personId);
+		}
+	}
+
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
 		final Object regionId = regionsDataManager.getPersonRegion(personId);
@@ -236,6 +244,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		super.init(actorContext);
 
 		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		actorContext.subscribe(BulkPersonAdditionEvent.class, getFlushingConsumer(this::handleBulkPersonAdditionEvent));
+		
 		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
 		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
 

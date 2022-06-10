@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.people.datamanagers.PeopleDataManager;
+import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
@@ -195,6 +196,18 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
+	private void handleBulkPersonAdditionEvent(ActorContext actorContext, BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		for (PersonId personId : bulkPersonAdditionEvent.getPeople()) {
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+			for (final ResourceId resourceId : resourceIds) {
+				final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+				if (personResourceLevel > 0) {
+					increment(regionId, resourceId, Activity.PERSON_ARRIVAL, personResourceLevel);
+				}
+			}
+		}
+	}
+
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
@@ -315,6 +328,7 @@ public final class ResourceReport extends PeriodicReport {
 		super.init(actorContext);
 
 		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		actorContext.subscribe(BulkPersonAdditionEvent.class, getFlushingConsumer(this::handleBulkPersonAdditionEvent));		
 		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
 		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
 		actorContext.subscribe(RegionResourceUpdateEvent.class, getFlushingConsumer(this::handleRegionResourceUpdateEvent));

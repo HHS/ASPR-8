@@ -8,6 +8,7 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventLabel;
 import plugins.people.datamanagers.PeopleDataManager;
+import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
@@ -163,6 +164,16 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 	}
 
+	private void handleBulkPersonAdditionEvent(ActorContext context, BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		for (PersonId personId : bulkPersonAdditionEvent.getPeople()) {
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+			for (final PersonPropertyId personPropertyId : personPropertyIds) {
+				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+				increment(regionId, personPropertyId, personPropertyValue);
+			}
+		}
+	}
+
 	private void handlePersonPropertyUpdateEvent(ActorContext context, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonPropertyId personPropertyId = personPropertyUpdateEvent.getPersonPropertyId();
 		if (personPropertyIds.contains(personPropertyId)) {
@@ -218,6 +229,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		super.init(actorContext);
 
 		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		actorContext.subscribe(BulkPersonAdditionEvent.class, getFlushingConsumer(this::handleBulkPersonAdditionEvent));
+		
 		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
 		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
 
@@ -246,7 +259,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		// class, otherwise subscribe to the individual property values
 		if (personPropertyIds.equals(personPropertiesDataManager.getPersonPropertyIds())) {
 			actorContext.subscribe(PersonPropertyUpdateEvent.class, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
-			//since we are subscribing to all person properties, we must subscribe to the PersonPropertyDefinitionEvent as well
+			// since we are subscribing to all person properties, we must
+			// subscribe to the PersonPropertyDefinitionEvent as well
 			actorContext.subscribe(PersonPropertyDefinitionEvent.class, getFlushingConsumer(this::handlePersonPropertyDefinitionEvent));
 		} else {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
@@ -266,7 +280,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
-		
+
 		PersonPropertyId personPropertyId = personPropertyDefinitionEvent.getPersonPropertyId();
 		personPropertyIds.add(personPropertyId);
 	}

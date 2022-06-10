@@ -5,6 +5,7 @@ import java.util.Map;
 
 import nucleus.ActorContext;
 import plugins.people.datamanagers.PeopleDataManager;
+import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -20,7 +21,9 @@ import util.wrappers.MutableInteger;
 
 /**
  * A periodic Report that displays the number of times a person transferred from
- * one region to another. Only non-zero transfers are reported.
+ * one region to another. Transfers from a region to itself are interpreted as
+ * the addition of people at that region. Removal of people is not reflected in
+ * this report.
  *
  *
  * Fields
@@ -83,9 +86,16 @@ public final class RegionTransferReport extends PeriodicReport {
 			reportItemBuilder.addValue(mutableInteger.getValue());
 			ActorContext.releaseOutput(reportItemBuilder.build());
 		}
-		
+
 		baseMap.clear();
 
+	}
+
+	private void handleBulkPersonAdditionEvent(ActorContext ActorContext, BulkPersonAdditionEvent bulkPersonAdditionEvent) {
+		for (PersonId personId : bulkPersonAdditionEvent.getPeople()) {			
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+			increment(regionId, regionId);
+		}
 	}
 
 	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
@@ -121,6 +131,7 @@ public final class RegionTransferReport extends PeriodicReport {
 
 		ActorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
 		ActorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
+		ActorContext.subscribe(BulkPersonAdditionEvent.class, getFlushingConsumer(this::handleBulkPersonAdditionEvent));
 
 		PeopleDataManager peopleDataManager = ActorContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = ActorContext.getDataManager(RegionsDataManager.class);
