@@ -23,9 +23,11 @@ import nucleus.PluginData;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
+import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
+import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
@@ -142,6 +144,19 @@ public class AT_GroupsPluginData {
 
 		// show that the group type ids exist in the groupInitialData
 		assertEquals(EnumSet.allOf(TestGroupTypeId.class), groupInitialData.getGroupTypeIds());
+
+		// precondition test: if the group type id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroupTypeId(null));
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+
+		// precondition test: if the group type was already added
+		contractException = assertThrows(ContractException.class, () -> {
+			GroupsPluginData.builder()//
+							.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
+							.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1);//
+		});
+		assertEquals(GroupError.DUPLICATE_GROUP_TYPE, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -165,7 +180,28 @@ public class AT_GroupsPluginData {
 
 		// show that the group ids that were added are present in the
 		// groupInitialData
-		assertEquals(expectedGroupIds, groupInitialData.getGroupIds());
+		assertEquals(expectedGroupIds, new LinkedHashSet<>(groupInitialData.getGroupIds()));
+
+		// precondition test: if the group id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(null, TestGroupTypeId.GROUP_TYPE_1));
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the group id value is negative
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(new GroupId(-1), TestGroupTypeId.GROUP_TYPE_1));
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the group type id is null
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(new GroupId(0), null));
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+
+		// precondition test: if the group was already added
+		contractException = assertThrows(ContractException.class, () -> {
+
+			GroupsPluginData.builder()//
+							.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1).addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
+		});
+		assertEquals(GroupError.DUPLICATE_GROUP_ID, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -191,6 +227,34 @@ public class AT_GroupsPluginData {
 			PropertyDefinition actualPropertyDefinition = groupInitialData.getGroupPropertyDefinition(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
+
+		TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+		TestGroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
+		PropertyDefinition propertyDefinition = groupPropertyId.getPropertyDefinition();
+
+		// precondition test: if the group type id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().defineGroupProperty(null, groupPropertyId, propertyDefinition));
+		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+
+		// precondition test: if the group property id is null
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().defineGroupProperty(testGroupTypeId, null, propertyDefinition));
+		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+
+		// precondition test: if the property definition is null
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().defineGroupProperty(testGroupTypeId, groupPropertyId, null));
+		assertEquals(GroupError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+
+		/*
+		 * precondition test: if a property definition for the given group type
+		 * id and property id was previously defined.
+		 */
+		contractException = assertThrows(ContractException.class, () -> {
+			GroupsPluginData.builder()//
+							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition)//
+							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);//
+		});
+		assertEquals(GroupError.DUPLICATE_GROUP_PROPERTY_DEFINITION, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -211,7 +275,7 @@ public class AT_GroupsPluginData {
 		}
 
 		// create a container to hold expected values
-		Map<MultiKey, Object> expectedValues = new LinkedHashMap<>();
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
 
 		/*
 		 * Add a few groups and set about half of the property values, leaving
@@ -228,10 +292,8 @@ public class AT_GroupsPluginData {
 				if (randomGenerator.nextBoolean()) {
 					Object value = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setGroupPropertyValue(groupId, testGroupPropertyId, value);
-					expectedValues.put(new MultiKey(groupId, testGroupPropertyId), value);
-				} else {
-					expectedValues.put(new MultiKey(groupId, testGroupPropertyId), testGroupPropertyId.getPropertyDefinition().getDefaultValue().get());
-				}
+					expectedValues.add(new MultiKey(groupId, testGroupPropertyId, value));
+				} 
 			}
 			// move to the next group type id
 			testGroupTypeId = testGroupTypeId.next();
@@ -241,13 +303,43 @@ public class AT_GroupsPluginData {
 		GroupsPluginData groupInitialData = builder.build();
 
 		// show that the expected group property values are present
-		for (MultiKey multiKey : expectedValues.keySet()) {
-			GroupId groupId = multiKey.getKey(0);
-			GroupPropertyId groupPropertyId = multiKey.getKey(1);
-			Object expectedValue = expectedValues.get(multiKey);
-			Object actualValue = groupInitialData.getGroupPropertyValue(groupId, groupPropertyId);
-			assertEquals(expectedValue, actualValue);
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
+		for (GroupId groupId : groupInitialData.getGroupIds()) {
+			for (GroupPropertyValue groupPropertyValue : groupInitialData.getGroupPropertyValues(groupId)) {
+				MultiKey multiKey = new MultiKey(groupId, groupPropertyValue.groupPropertyId(), groupPropertyValue.value());
+				actualValues.add(multiKey);
+			}
 		}
+
+		assertEquals(expectedValues, actualValues);
+
+		TestGroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
+
+		// precondition test: if the group id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(null, groupPropertyId, 10));
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the group id value is negative
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(-1), groupPropertyId, 10));
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the group property id is null
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(0), null, 10));
+		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+
+		// precondition test: if the group property value is null
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(0), groupPropertyId, null));
+		assertEquals(GroupError.NULL_GROUP_PROPERTY_VALUE, contractException.getErrorType());
+
+		// precondition test: if the group property value was previously
+		// assigned
+		contractException = assertThrows(ContractException.class, () -> {
+			GroupsPluginData.builder()//
+							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10)//
+							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10);//
+		});
+		assertEquals(GroupError.DUPLICATE_GROUP_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -307,6 +399,26 @@ public class AT_GroupsPluginData {
 		}
 
 		assertEquals(expectedGroupAssignments, actualGroupAssignments);
+
+		// precondition test: if the group id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(null, new PersonId(0)));
+		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the group id value is negative
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(new GroupId(-1), new PersonId(0)));
+		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+
+		// precondition test: if the person id is null
+		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(new GroupId(0), null));
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+
+		// precondition test: if the person is already a member of the group
+		contractException = assertThrows(ContractException.class, () -> {
+			GroupsPluginData.builder()//
+							.addPersonToGroup(new GroupId(0), new PersonId(0))//
+							.addPersonToGroup(new GroupId(0), new PersonId(0));//
+		});
+		assertEquals(GroupError.DUPLICATE_GROUP_MEMBERSHIP, contractException.getErrorType());
 
 	}
 
@@ -399,9 +511,8 @@ public class AT_GroupsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class })
-	public void testGetGroupPropertyValue() {
-
+	@UnitTestMethod(name = "getGroupPropertyValues", args = { GroupId.class })
+	public void testGetGroupPropertyValues() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8435308203966252001L);
 
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
@@ -417,15 +528,17 @@ public class AT_GroupsPluginData {
 		}
 
 		// create a container to hold expected values
-		Map<MultiKey, Object> expectedValues = new LinkedHashMap<>();
+		Set<MultiKey> expectedValues = new LinkedHashSet<>();
 
 		/*
 		 * Add a few groups and set about half of the property values, leaving
 		 * the other half to be defined by the default values of the
 		 * corresponding property definitions.
 		 */
+		int groupCount = 10;
+
 		TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < groupCount; i++) {
 			GroupId groupId = new GroupId(i);
 			builder.addGroup(groupId, testGroupTypeId);
 
@@ -434,9 +547,7 @@ public class AT_GroupsPluginData {
 				if (randomGenerator.nextBoolean()) {
 					Object value = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setGroupPropertyValue(groupId, testGroupPropertyId, value);
-					expectedValues.put(new MultiKey(groupId, testGroupPropertyId), value);
-				} else {
-					expectedValues.put(new MultiKey(groupId, testGroupPropertyId), testGroupPropertyId.getPropertyDefinition().getDefaultValue().get());
+					expectedValues.add(new MultiKey(groupId, testGroupPropertyId, value));
 				}
 			}
 			// move to the next group type id
@@ -444,40 +555,29 @@ public class AT_GroupsPluginData {
 		}
 
 		// build the group initial data
-		GroupsPluginData groupInitialData = builder.build();
+		GroupsPluginData groupsPluginData = builder.build();
 
 		// show that the expected group property values are present
-		for (MultiKey multiKey : expectedValues.keySet()) {
-			GroupId groupId = multiKey.getKey(0);
-			GroupPropertyId groupPropertyId = multiKey.getKey(1);
-			Object expectedValue = expectedValues.get(multiKey);
-			Object actualValue = groupInitialData.getGroupPropertyValue(groupId, groupPropertyId);
-			assertEquals(expectedValue, actualValue);
+		Set<MultiKey> actualValues = new LinkedHashSet<>();
+		for (GroupId groupId : groupsPluginData.getGroupIds()) {
+			for (GroupPropertyValue groupPropertyValue : groupsPluginData.getGroupPropertyValues(groupId)) {
+				MultiKey multiKey = new MultiKey(groupId, groupPropertyValue.groupPropertyId(), groupPropertyValue.value());
+				actualValues.add(multiKey);
+			}
 		}
+
+		
+		assertEquals(expectedValues, actualValues);
 
 		// precondition tests
 
 		// if the group id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> groupInitialData.getGroupPropertyValue(null, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+		ContractException contractException = assertThrows(ContractException.class, () -> groupsPluginData.getGroupPropertyValues(null));
 		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
 		// if the group id is unknown
-		contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupPropertyValue(new GroupId(10000), TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK));
+		contractException = assertThrows(ContractException.class, () -> groupsPluginData.getGroupPropertyValues(new GroupId(10000)));
 		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
-
-		// if the group property id is null
-		contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupPropertyValue(new GroupId(0), null));
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
-
-		// if the group property id is not associated with the group type id via
-		// a property definition
-		contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupPropertyValue(new GroupId(0), TestGroupPropertyId.getUnknownGroupPropertyId()));
-		assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
-
-		contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupPropertyValue(new GroupId(0), TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-		assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -514,7 +614,7 @@ public class AT_GroupsPluginData {
 
 		// show that the group ids that were added are present in the
 		// groupInitialData
-		assertEquals(expectedGroupIds, groupInitialData.getGroupIds());
+		assertEquals(expectedGroupIds, new LinkedHashSet<>(groupInitialData.getGroupIds()));
 
 	}
 
@@ -547,7 +647,6 @@ public class AT_GroupsPluginData {
 			// add the group
 			GroupId groupId = new GroupId(i);
 			builder.addGroup(groupId, testGroupTypeId);
-			
 
 			testGroupTypeId = testGroupTypeId.next();
 
@@ -557,8 +656,8 @@ public class AT_GroupsPluginData {
 			for (int j = 0; j < count; j++) {
 				PersonId personId = people.get(j);
 				builder.addPersonToGroup(groupId, personId);
-				MultiKey multiKey = new MultiKey(groupId,personId);
-				expectedGroupAssignments.add(multiKey);				
+				MultiKey multiKey = new MultiKey(groupId, personId);
+				expectedGroupAssignments.add(multiKey);
 			}
 		}
 
@@ -567,16 +666,15 @@ public class AT_GroupsPluginData {
 
 		// show that the group memberships are as expected
 		Set<MultiKey> actualGroupAssignments = new LinkedHashSet<>();
-		for (int i = 0;i< groupInitialData.getPersonCount();i++) {
-			PersonId personId = new PersonId(i);			
-			for(GroupId groupId : groupInitialData.getGroupsForPerson(personId)) {
+		for (int i = 0; i < groupInitialData.getPersonCount(); i++) {
+			PersonId personId = new PersonId(i);
+			for (GroupId groupId : groupInitialData.getGroupsForPerson(personId)) {
 				MultiKey multiKey = new MultiKey(groupId, personId);
 				actualGroupAssignments.add(multiKey);
 			}
 		}
-		
-		assertEquals(expectedGroupAssignments,actualGroupAssignments);
 
+		assertEquals(expectedGroupAssignments, actualGroupAssignments);
 
 	}
 
@@ -692,19 +790,28 @@ public class AT_GroupsPluginData {
 			GroupTypeId actualGroupTypeId = cloneGroupPluginData.getGroupTypeId(groupId);
 			assertEquals(expectedGroupTypeId, actualGroupTypeId);
 			// show that the groups have the property values
-			for (GroupPropertyId groupPropertyId : groupsPluginData.getGroupPropertyIds(expectedGroupTypeId)) {
-				Object expectedPropertyValue = groupsPluginData.getGroupPropertyValue(groupId, groupPropertyId);
-				Object actualPropertyValue = cloneGroupPluginData.getGroupPropertyValue(groupId, groupPropertyId);
-				assertEquals(expectedPropertyValue, actualPropertyValue);
+			Map<GroupPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
+			Map<GroupPropertyId, Object> actualPropertyValues = new LinkedHashMap<>();
+			for (GroupPropertyValue groupPropertyValue : groupsPluginData.getGroupPropertyValues(groupId)) {
+				GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
+				Object value = groupPropertyValue.value();
+				expectedPropertyValues.put(groupPropertyId, value);
 			}
+			for (GroupPropertyValue groupPropertyValue : cloneGroupPluginData.getGroupPropertyValues(groupId)) {
+				GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
+				Object value = groupPropertyValue.value();
+				actualPropertyValues.put(groupPropertyId, value);
+			}
+			assertEquals(expectedPropertyValues, actualPropertyValues);
+
 			// show that the groups have the members
 			assertEquals(groupsPluginData.getPersonCount(), cloneGroupPluginData.getPersonCount());
 			for (int i = 0; i < groupsPluginData.getPersonCount(); i++) {
 				PersonId personId = new PersonId(i);
-				Set<GroupId> expectedGroups = new LinkedHashSet<>( groupsPluginData.getGroupsForPerson(personId));
-				Set<GroupId> actualGroups = new LinkedHashSet<>( cloneGroupPluginData.getGroupsForPerson(personId));
+				Set<GroupId> expectedGroups = new LinkedHashSet<>(groupsPluginData.getGroupsForPerson(personId));
+				Set<GroupId> actualGroups = new LinkedHashSet<>(cloneGroupPluginData.getGroupsForPerson(personId));
 				assertEquals(expectedGroups, actualGroups);
-			}			
+			}
 		}
 	}
 

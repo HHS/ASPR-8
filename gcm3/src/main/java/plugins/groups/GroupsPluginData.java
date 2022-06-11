@@ -16,6 +16,7 @@ import nucleus.PluginDataBuilder;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
+import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupTypeId;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -24,7 +25,8 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * An immutable container of the initial state of groups. It contains: <BR>
+ * An immutable container of the initial state of the GroupDataManager. It
+ * contains: <BR>
  * <ul>
  * <li>group type ids</li>
  * <li>group ids</li>
@@ -40,34 +42,38 @@ import util.errors.ContractException;
 @Immutable
 public final class GroupsPluginData implements PluginData {
 
+	private static class GroupSpecification {
+		private GroupId groupId;
+		private GroupTypeId groupTypeId;
+		private List<GroupPropertyValue> groupPropertyValues;
+	}
+
 	private static class Data {
 
 		private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions;
-
-		private final Map<GroupId, Map<GroupPropertyId, Object>> groupPropertyValues;
-
 		private final Set<GroupTypeId> groupTypeIds;
-
-		private final Set<GroupId> groupIds;
-
-		private final Map<GroupId, GroupTypeId> groupTypes;
-
-		private final List<List<GroupId>> groupMemberships;
-
-		private final List<GroupId> emptyGroupList = Collections.unmodifiableList(new ArrayList<>());
-
+		private final List<GroupId> emptyGroupList;
 		private int personCount;
+
+		// indexed by group id
+		private List<GroupSpecification> groupSpecifications;
+		private List<GroupPropertyValue> emptyGroupPropertyValues;
+
+		// indexed by person id
+		private final List<List<GroupId>> groupMemberships;
 
 		public Data() {
 			groupPropertyDefinitions = new LinkedHashMap<>();
-			groupPropertyValues = new LinkedHashMap<>();
 			groupTypeIds = new LinkedHashSet<>();
-			groupIds = new LinkedHashSet<>();
-			groupTypes = new LinkedHashMap<>();
 			groupMemberships = new ArrayList<>();
+			groupSpecifications = new ArrayList<>();
+			emptyGroupList = Collections.unmodifiableList(new ArrayList<>());
+			emptyGroupPropertyValues = Collections.unmodifiableList(new ArrayList<>());
 		}
 
 		public Data(Data data) {
+			emptyGroupList = Collections.unmodifiableList(new ArrayList<>());
+			emptyGroupPropertyValues = Collections.unmodifiableList(new ArrayList<>());
 			personCount = data.personCount;
 			groupPropertyDefinitions = new LinkedHashMap<>();
 			for (GroupTypeId groupTypeId : data.groupPropertyDefinitions.keySet()) {
@@ -76,16 +82,18 @@ public final class GroupsPluginData implements PluginData {
 				newMap.putAll(map);
 				groupPropertyDefinitions.put(groupTypeId, newMap);
 			}
-			groupPropertyValues = new LinkedHashMap<>();
-			for (GroupId groupId : data.groupPropertyValues.keySet()) {
-				Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupId);
-				Map<GroupPropertyId, Object> newMap = new LinkedHashMap<>();
-				newMap.putAll(map);
-				groupPropertyValues.put(groupId, newMap);
-			}
 			groupTypeIds = new LinkedHashSet<>(data.groupTypeIds);
-			groupIds = new LinkedHashSet<>(data.groupIds);
-			groupTypes = new LinkedHashMap<>(data.groupTypes);
+
+			groupSpecifications = new ArrayList<>(data.groupSpecifications.size());
+			for (GroupSpecification groupSpecification : data.groupSpecifications) {
+				GroupSpecification newGroupSpecification = new GroupSpecification();
+				newGroupSpecification.groupId = groupSpecification.groupId;
+				newGroupSpecification.groupTypeId = groupSpecification.groupTypeId;
+				if (groupSpecification.groupPropertyValues != null) {
+					newGroupSpecification.groupPropertyValues = new ArrayList<>(groupSpecification.groupPropertyValues);
+				}
+				groupSpecifications.add(newGroupSpecification);
+			}
 
 			int n = data.groupMemberships.size();
 			groupMemberships = new ArrayList<>(n);
@@ -151,13 +159,21 @@ public final class GroupsPluginData implements PluginData {
 	}
 
 	private static void validateGroupPropertyValueNotSet(Data data, GroupId groupId, GroupPropertyId groupPropertyId) {
-		Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupId);
-		if (map != null) {
-			if (map.containsKey(groupPropertyId)) {
-				throw new ContractException(GroupError.DUPLICATE_GROUP_PROPERTY_VALUE_ASSIGNMENT, groupId + ": " + groupPropertyId);
+		int groupIndex = groupId.getValue();
+		if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+			return;
+		}
+		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+		if (groupSpecification == null) {
+			return;
+		}
+		if (groupSpecification.groupPropertyValues != null) {
+			for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
+				if (groupPropertyValue.groupPropertyId().equals(groupPropertyId)) {
+					throw new ContractException(GroupError.DUPLICATE_GROUP_PROPERTY_VALUE_ASSIGNMENT, groupId + ": " + groupPropertyId);
+				}
 			}
 		}
-
 	}
 
 	private static void validateGroupPropertyValueNotNull(Object groupPropertyValue) {
@@ -166,14 +182,22 @@ public final class GroupsPluginData implements PluginData {
 		}
 	}
 
-	private static void validateGroupIdNotNull(GroupId groupId) {
+	private static void validateGroupIdIsLegal(GroupId groupId) {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
+		}
+		if (groupId.getValue() < 0) {
+			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 		}
 	}
 
 	private static void validateGroupDoesNotExist(final Data data, final GroupId groupId) {
-		if (data.groupIds.contains(groupId)) {
+		int groupIndex = groupId.getValue();
+		if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+			return;
+		}
+		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+		if (groupSpecification != null && groupSpecification.groupTypeId != null) {
 			throw new ContractException(GroupError.DUPLICATE_GROUP_ID, groupId);
 		}
 	}
@@ -188,14 +212,14 @@ public final class GroupsPluginData implements PluginData {
 
 		private Data data;
 		boolean dataIsMutable;
-		
+
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (!dataIsMutable) {
 				data = new Data(data);
 				dataIsMutable = true;
 			}
 		}
-		
+
 		private Builder(Data data) {
 			this.data = data;
 
@@ -218,6 +242,10 @@ public final class GroupsPluginData implements PluginData {
 		 *
 		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if a
 		 *             group property value was set for a group id that was not
+		 *             defined.
+		 * 
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if a
+		 *             group membership was set for a group id that was not
 		 *             defined.
 		 * 
 		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID}</li>
@@ -250,6 +278,10 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if the
 		 *             group id is null
 		 * 
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if the
+		 *             group id value is negative
+		 * 
+		 * 
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
 		 *             person id is null
 		 * 
@@ -258,10 +290,10 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 */
 		public Builder addPersonToGroup(final GroupId groupId, final PersonId personId) {
-			
+
 			// StopwatchManager.start(Watch.GROUPS_PLUGIN_DATA_INTERNAL);
 			ensureDataMutability();
-			validateGroupIdNotNull(groupId);
+			validateGroupIdIsLegal(groupId);
 			validatePersonId(personId);
 			validatePersonNotInGroup(data, groupId, personId);
 
@@ -307,6 +339,9 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if the
 		 *             group id is null
 		 * 
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if the
+		 *             group id value is negative
+		 * 
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
 		 *             the group type id is null
 		 * 
@@ -316,11 +351,21 @@ public final class GroupsPluginData implements PluginData {
 		 */
 		public Builder addGroup(final GroupId groupId, final GroupTypeId groupTypeId) {
 			ensureDataMutability();
-			validateGroupIdNotNull(groupId);
+			validateGroupIdIsLegal(groupId);
 			validateGroupTypeIdNotNull(groupTypeId);
 			validateGroupDoesNotExist(data, groupId);
-			data.groupIds.add(groupId);
-			data.groupTypes.put(groupId, groupTypeId);
+			int groupIndex = groupId.getValue();
+			while (groupIndex >= data.groupSpecifications.size()) {
+				data.groupSpecifications.add(null);
+			}
+
+			GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+			if (groupSpecification == null) {
+				groupSpecification = new GroupSpecification();
+				groupSpecification.groupId = groupId;
+				data.groupSpecifications.set(groupIndex, groupSpecification);
+			}
+			groupSpecification.groupTypeId = groupTypeId;
 			return this;
 		}
 
@@ -366,6 +411,9 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li>if the
 		 *             group id is null
 		 * 
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if the
+		 *             group id value is negative
+		 * 
 		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID}</li>if
 		 *             the group property id is null
 		 * 
@@ -376,73 +424,94 @@ public final class GroupsPluginData implements PluginData {
 		 *             </li>if the group property value was previously assigned
 		 * 
 		 */
-		public Builder setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+		public Builder setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object value) {
 			ensureDataMutability();
-			validateGroupIdNotNull(groupId);
+			validateGroupIdIsLegal(groupId);
 			validateGroupPropertyIdNotNull(groupPropertyId);
-			validateGroupPropertyValueNotNull(groupPropertyValue);
+			validateGroupPropertyValueNotNull(value);
 			validateGroupPropertyValueNotSet(data, groupId, groupPropertyId);
-			Map<GroupPropertyId, Object> propertyMap = data.groupPropertyValues.get(groupId);
-			if (propertyMap == null) {
-				propertyMap = new LinkedHashMap<>();
-				data.groupPropertyValues.put(groupId, propertyMap);
+
+			int groupIndex = groupId.getValue();
+			while (groupIndex >= data.groupSpecifications.size()) {
+				data.groupSpecifications.add(null);
 			}
-			propertyMap.put(groupPropertyId, groupPropertyValue);
+
+			GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+			if (groupSpecification == null) {
+				groupSpecification = new GroupSpecification();
+				groupSpecification.groupId = groupId;
+				data.groupSpecifications.set(groupIndex, groupSpecification);
+			}
+
+			List<GroupPropertyValue> groupPropertyValues = groupSpecification.groupPropertyValues;
+			if (groupPropertyValues == null) {
+				groupPropertyValues = new ArrayList<>();
+				groupSpecification.groupPropertyValues = groupPropertyValues;
+			}
+			GroupPropertyValue groupPropertyValue = new GroupPropertyValue(groupPropertyId, value);
+			groupPropertyValues.add(groupPropertyValue);
+
 			return this;
 		}
 
 		private void validate() {
-		
-			if(!dataIsMutable) {
+
+			if (!dataIsMutable) {
 				return;
 			}
+
 			for (List<GroupId> groupIds : data.groupMemberships) {
 				if (groupIds != null) {
 					for (GroupId groupId : groupIds) {
-						if (!data.groupIds.contains(groupId)) {
+						int groupIndex = groupId.getValue();
+						if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+							throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group membership contains the unknown group " + groupId);
+						}
+						GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+						if (groupSpecification == null) {
 							throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group membership contains the unknown group " + groupId);
 						}
 					}
 				}
 			}
-		
-			for (GroupId groupId : data.groupTypes.keySet()) {
-				GroupTypeId groupTypeId = data.groupTypes.get(groupId);
+
+			for (GroupSpecification groupSpecification : data.groupSpecifications) {
+				GroupTypeId groupTypeId = groupSpecification.groupTypeId;
+				if (groupTypeId == null) {
+					throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group property contains the unknown group " + groupSpecification.groupId);
+				}
 				if (!data.groupTypeIds.contains(groupTypeId)) {
-					throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupId + " has unknown group type " + groupTypeId);
+					throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupSpecification.groupId + " has unknown group type " + groupTypeId);
 				}
 			}
-		
+
 			for (GroupTypeId groupTypeId : data.groupPropertyDefinitions.keySet()) {
 				if (!data.groupTypeIds.contains(groupTypeId)) {
 					throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, "group property definitions have unknown group type " + groupTypeId);
 				}
 			}
-		
-			for (GroupId groupId : data.groupPropertyValues.keySet()) {
-				if (!data.groupIds.contains(groupId)) {
-					throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group property value contains the unknown group " + groupId);
-				}
-				GroupTypeId groupTypeId = data.groupTypes.get(groupId);
-		
+
+			for (GroupSpecification groupSpecification : data.groupSpecifications) {
+				GroupTypeId groupTypeId = groupSpecification.groupTypeId;
 				Map<GroupPropertyId, PropertyDefinition> propDefMap = data.groupPropertyDefinitions.get(groupTypeId);
-				Map<GroupPropertyId, Object> valueMap = data.groupPropertyValues.get(groupId);
-				for (GroupPropertyId groupPropertyId : valueMap.keySet()) {
-					PropertyDefinition propertyDefinition = propDefMap.get(groupPropertyId);
-					if (propertyDefinition == null) {
-						throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupPropertyId + " under group type " + groupTypeId);
-					}
-					Object propertyValue = valueMap.get(groupPropertyId);
-					if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, groupId + ": " + groupPropertyId + ": " + propertyValue);
+				if (groupSpecification.groupPropertyValues != null) {
+					for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
+						GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
+						PropertyDefinition propertyDefinition = propDefMap.get(groupPropertyId);
+						if (propertyDefinition == null) {
+							throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupPropertyId + " under group type " + groupTypeId);
+						}
+						Object propertyValue = groupPropertyValue.value();
+						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
+							throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, groupSpecification.groupId + ": " + groupPropertyId + ": " + propertyValue);
+						}
 					}
 				}
-		
 			}
-		
+
 			/*
-			 * All group property definitions must have default values since groups
-			 * may be created dynamically in the simulation
+			 * All group property definitions must have default values since
+			 * groups may be created dynamically in the simulation
 			 */
 			for (GroupTypeId groupTypeId : data.groupTypeIds) {
 				Map<GroupPropertyId, PropertyDefinition> propertyDefinitionMap = data.groupPropertyDefinitions.get(groupTypeId);
@@ -528,7 +597,13 @@ public final class GroupsPluginData implements PluginData {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
-		if (!data.groupIds.contains(groupId)) {
+		int groupIndex = groupId.getValue();
+		if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
+		}
+		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+
+		if (groupSpecification == null) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 	}
@@ -542,33 +617,16 @@ public final class GroupsPluginData implements PluginData {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
 	 *             is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
-	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the
-	 *             group property id is not associated with the group type id
-	 *             via a property definition</li>
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId) {
+	public List<GroupPropertyValue> getGroupPropertyValues(final GroupId groupId) {
 		validateGroupExists(data, groupId);
-		validateGroupPropertyIdNotNull(groupPropertyId);
-
-		final GroupTypeId groupTypeId = data.groupTypes.get(groupId);
-		validateGroupPropertyIsDefined(data, groupTypeId, groupPropertyId);
-
-		Object result = null;
-		final Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupId);
-		if (map != null) {
-			result = map.get(groupPropertyId);
+		int groupIndex = groupId.getValue();
+		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+		if(groupSpecification.groupPropertyValues == null) {
+			return data.emptyGroupPropertyValues;
 		}
-		if (result == null) {
-			final Map<GroupPropertyId, PropertyDefinition> defMap = data.groupPropertyDefinitions.get(groupTypeId);
-			final PropertyDefinition propertyDefinition = defMap.get(groupPropertyId);
-			result = propertyDefinition.getDefaultValue().get();
-		}
-		return (T) result;
-
+		return Collections.unmodifiableList(groupSpecification.groupPropertyValues);
 	}
 
 	/**
@@ -585,10 +643,16 @@ public final class GroupsPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the unmodifiable collected group ids
+	 * Returns the group ids as a list
 	 */
-	public Set<GroupId> getGroupIds() {
-		return Collections.unmodifiableSet(data.groupIds);
+	public List<GroupId> getGroupIds() {
+		List<GroupId> result = new ArrayList<>();
+		for (GroupSpecification groupSpecification : data.groupSpecifications) {
+			if (groupSpecification != null) {
+				result.add(groupSpecification.groupId);
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -603,11 +667,11 @@ public final class GroupsPluginData implements PluginData {
 	@SuppressWarnings("unchecked")
 	public <T extends GroupTypeId> T getGroupTypeId(final GroupId groupId) {
 		validateGroupExists(data, groupId);
-		final GroupTypeId result = data.groupTypes.get(groupId);
+		int groupIndex = groupId.getValue();
+		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
+		final GroupTypeId result = groupSpecification.groupTypeId;
 		return (T) result;
 	}
-
-	
 
 	/**
 	 * Returns the unmodifiable list of groups associated with the person id
@@ -635,7 +699,7 @@ public final class GroupsPluginData implements PluginData {
 			List<GroupId> groups = data.groupMemberships.get(personIndex);
 			if (groups != null) {
 				if (groups.contains(groupId)) {
-					throw new ContractException(GroupError.DUPLICATE_PERSON_GROUP_ASSIGNMENT, personId + ": " + groupId);
+					throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP, personId + ": " + groupId);
 				}
 			}
 		}
@@ -657,10 +721,9 @@ public final class GroupsPluginData implements PluginData {
 	public int getPersonCount() {
 		return data.personCount;
 	}
-	
+
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
-
 		return new Builder(data);
 	}
 

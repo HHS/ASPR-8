@@ -29,6 +29,7 @@ import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
+import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
@@ -458,14 +459,16 @@ public final class GroupsDataManager extends DataManager {
 	private void loadGroupPropertyValues() {
 		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
 			final GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
-			for (final GroupPropertyId groupPropertyId : groupsPluginData.getGroupPropertyIds(groupTypeId)) {
-				final Object groupPropertyValue = groupsPluginData.getGroupPropertyValue(groupId, groupPropertyId);
-				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+			Map<GroupPropertyId, PropertyDefinition> defMap = groupPropertyDefinitions.get(groupTypeId);
+			for(GroupPropertyValue groupPropertyValue :groupsPluginData.getGroupPropertyValues(groupId)) {
+				GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
+				final Object value = groupPropertyValue.value();
+				final PropertyDefinition propertyDefinition = defMap.get(groupPropertyId);
 				Object defaultValue = propertyDefinition.getDefaultValue();
-				if (!groupPropertyValue.equals(defaultValue)) {
+				if (!value.equals(defaultValue)) {
 					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 					final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-					indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+					indexedPropertyManager.setPropertyValue(groupId.getValue(), value);
 				}
 			}
 		}
