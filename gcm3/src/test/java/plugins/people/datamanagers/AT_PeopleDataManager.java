@@ -15,9 +15,13 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
+import nucleus.Simulation;
+import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.BulkPersonImminentAdditionEvent;
@@ -38,11 +42,79 @@ import util.errors.ContractException;
 @UnitTest(target = PeopleDataManager.class)
 public final class AT_PeopleDataManager {
 
+	// the initial data is not being used correctly and will lead to errors,
+	// this is due to there not being a test for init(). That test will need to
+	// demonstrate that a non-contiguous set of person id values will work.
+
+	// init(DataManagerContext)
+
+	@Test
+	@UnitTestMethod(name = "init", args = { int.class })
+	public void testInit() {
+
+		// add a few people with gaps between id values
+		int numberOfPeople = 5;
+		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+		for (int i = 0; i < numberOfPeople; i++) {
+			PersonId personId = new PersonId(i * 3 + 10);
+			peoplePluginDataBuilder.addPersonId(personId);
+			expectedPersonIds.add(personId);
+		}
+
+		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
+		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+		// add an actor to test the people were properly loaded into the person
+		// data manger
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			assertEquals(numberOfPeople, peopleDataManager.getPopulationCount());
+			Set<PersonId> actualPersonIds = new LinkedHashSet<>(peopleDataManager.getPeople());
+			assertEquals(expectedPersonIds, actualPersonIds);
+
+			// show that the person id limit has the correct value
+			int maxPersonIndex = Integer.MIN_VALUE;
+			for (PersonId personId : expectedPersonIds) {
+				maxPersonIndex = FastMath.max(maxPersonIndex, personId.getValue());
+			}
+			assertEquals(maxPersonIndex + 1, peopleDataManager.getPersonIdLimit());
+
+			// show that the people who exist meet expectations
+			Set<PersonId> peopleByExistence = new LinkedHashSet<>();
+			for (int i = 0; i < maxPersonIndex + 10; i++) {
+				PersonId personId = new PersonId(i);
+				if (peopleDataManager.personExists(personId)) {
+					peopleByExistence.add(personId);
+				}
+			}
+			assertEquals(expectedPersonIds, peopleByExistence);
+
+		}));
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		Simulation	.builder()//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(testPlugin)//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.build()//
+					.execute();//
+
+		// show that all actions were executed
+		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
+			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
+		}
+
+	}
+
 	@Test
 	@UnitTestMethod(name = "personIndexExists", args = { int.class })
 	public void testPersonIndexExists() {
 
-		PeopleActionSupport.testConsumer(0,(c) -> {
+		PeopleActionSupport.testConsumer((c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			// initially there are no people despite the initial size
@@ -70,7 +142,7 @@ public final class AT_PeopleDataManager {
 	@Test
 	@UnitTestMethod(name = "getPersonIdLimit", args = {})
 	public void testGetPersonIdLimit() {
-		PeopleActionSupport.testConsumer(0,(c) -> {
+		PeopleActionSupport.testConsumer((c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			/*
 			 * Initially there are no people despite the initial size, so we
@@ -91,7 +163,7 @@ public final class AT_PeopleDataManager {
 	@Test
 	@UnitTestMethod(name = "getBoxedPersonId", args = { int.class })
 	public void testGetBoxedPersonId() {
-		PeopleActionSupport.testConsumer(0,(c) -> {
+		PeopleActionSupport.testConsumer((c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show that the boxed person id is correct
 			for (int i = 0; i < 10; i++) {
@@ -150,7 +222,7 @@ public final class AT_PeopleDataManager {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(0,plugin);
+		PeopleActionSupport.testConsumers(plugin);
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedPersonIds, observedPersonIds);
@@ -197,7 +269,7 @@ public final class AT_PeopleDataManager {
 				postPeople.removeAll(priorPeople);
 				int expectedNewPeople = bulkPersonConstructionData.getPersonConstructionDatas().size();
 				assertEquals(expectedNewPeople, postPeople.size());
-				
+
 				expectedBulkAddedPeople.addAll(postPeople);
 			}
 		}));
@@ -212,19 +284,19 @@ public final class AT_PeopleDataManager {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(0,plugin);
+		PeopleActionSupport.testConsumers(plugin);
 
 		// show that the expected and acutual observations match
 		assertEquals(expectedBulkPersonConstructionData, observedBulkPersonConstructionData);
 		assertEquals(expectedBulkAddedPeople, observedBulkAddedPeople);
-		
+
 	}
 
 	@Test
 	@UnitTestMethod(name = "personExists", args = { PersonId.class })
 	public void testPersonExists() {
 
-		PeopleActionSupport.testConsumer(0,(c) -> {
+		PeopleActionSupport.testConsumer((c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			for (int i = 0; i < 10; i++) {
@@ -292,7 +364,7 @@ public final class AT_PeopleDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(0,testPlugin);
+		PeopleActionSupport.testConsumers(testPlugin);
 	}
 
 	@Test
@@ -347,7 +419,7 @@ public final class AT_PeopleDataManager {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(0,testPlugin);
+		PeopleActionSupport.testConsumers(testPlugin);
 
 		// show that the observed removals match the expected removals
 		assertEquals(expectedRemovals, observedRemovals);
@@ -363,7 +435,7 @@ public final class AT_PeopleDataManager {
 	@Test
 	@UnitTestMethod(name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
-		PeopleActionSupport.testConsumer(0,(c) -> {
+		PeopleActionSupport.testConsumer((c) -> {
 			// show that a negative growth causes an exception
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.expandCapacity(-1));
@@ -377,7 +449,7 @@ public final class AT_PeopleDataManager {
 	@UnitTestMethod(name = "getPopulationCount", args = {})
 	public void testGetPopulationCount() {
 
-		PeopleActionSupport.testConsumer(0,(c) -> {
+		PeopleActionSupport.testConsumer((c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			// show the population count grows as we add people
 			for (int i = 0; i < 10; i++) {
@@ -393,7 +465,7 @@ public final class AT_PeopleDataManager {
 	@UnitTestMethod(name = "getProjectedPopulationCount", args = {})
 	public void testGetProjectedPopulationCount() {
 
-		PeopleActionSupport.testConsumer(0,(c) -> {
+		PeopleActionSupport.testConsumer((c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
@@ -473,7 +545,7 @@ public final class AT_PeopleDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PeopleActionSupport.testConsumers(0,testPlugin);
+		PeopleActionSupport.testConsumers(testPlugin);
 	}
 
 }

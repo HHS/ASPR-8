@@ -27,6 +27,8 @@ public final class AT_PeoplePluginData {
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
+		
+		
 		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
 		assertTrue(peoplePluginData.getPersonIds().isEmpty());
 		
@@ -52,7 +54,7 @@ public final class AT_PeoplePluginData {
 		
 		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
 		for(int i = 0;i<10;i++) {
-			expectedPersonIds.add(new PersonId(3*1+5));
+			expectedPersonIds.add(new PersonId(3*i+5));
 		}
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
 		for(PersonId personId : expectedPersonIds) {

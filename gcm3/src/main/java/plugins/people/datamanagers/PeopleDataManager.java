@@ -226,10 +226,14 @@ public final class PeopleDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 
 		for (PersonId personId : peoplePluginData.getPersonIds()) {
-			personIds.add(personId);
+			int personIndex = personId.getValue();
+			while (personIndex >= personIds.size()) {
+				personIds.add(null);
+			}
+			personIds.set(personIndex, personId);
+			globalPopulationRecord.populationCount++;
 		}
 		globalPopulationRecord.projectedPopulationCount = personIds.size();
-		globalPopulationRecord.populationCount = personIds.size();
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 		StopwatchManager.stop(Watch.PEOPLE_DM_INIT);
 	}
@@ -238,8 +242,11 @@ public final class PeopleDataManager extends DataManager {
 	 * Returns true if and only if the person exists in the simulation.
 	 */
 	public boolean personExists(final PersonId personId) {
-		if ((personId != null) && (personId.getValue() >= 0) && (personId.getValue() < personIds.size())) {
-			return personIds.get(personId.getValue()) != null;
+		if (personId != null) {
+			int personIndex = personId.getValue();
+			if ((personIndex >= 0) && (personIndex < personIds.size())) {
+				return personIds.get(personId.getValue()) != null;
+			}
 		}
 		return false;
 	}
