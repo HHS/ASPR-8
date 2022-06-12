@@ -132,7 +132,7 @@ public final class AT_PeoplePluginData {
 		PeoplePluginData peoplePluginData2 = (PeoplePluginData)peoplePluginData.getCloneBuilder().build();
 		
 		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
-		for(PersonId personId : peoplePluginData.getPersonIds()) {
+		for(PersonId personId : peoplePluginData2.getPersonIds()) {
 			if(personId != null) {
 				actualPersonIds.add(personId);
 			}
