@@ -1316,7 +1316,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (PersonId personId : people) {
 				RegionId actualRegionId = regionsDataManager.getPersonRegion(personId);
-				RegionId expectedRegionId = regionsPluginData.getPersonRegion(personId);
+				RegionId expectedRegionId = regionsPluginData.getPersonRegion(personId).get();
 				assertEquals(actualRegionId, expectedRegionId);
 			}
 

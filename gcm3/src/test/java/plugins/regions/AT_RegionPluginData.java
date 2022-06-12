@@ -8,9 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.PluginData;
@@ -122,7 +124,7 @@ public class AT_RegionPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyIds", args = { RegionId.class })
+	@UnitTestMethod(name = "getRegionPropertyIds", args = {})
 	public void testGetRegionPropertyIds() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 		/*
@@ -333,6 +335,53 @@ public class AT_RegionPluginData {
 	}
 
 	@Test
+	@UnitTestMethod(name = "getPersonRegion", args = { PersonId.class })
+	public void testGetPersonRegion() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8722606929396924838L);
+
+		RegionsPluginData.Builder builder = RegionsPluginData.builder();
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			builder.addRegion(testRegionId);
+		}
+
+		Map<PersonId, RegionId> expectedRegionAssignments = new LinkedHashMap<>();
+		int maxId = Integer.MIN_VALUE;
+		for (int i = 0; i < 20; i++) {
+			PersonId personId = new PersonId(3 * i + 5);
+			maxId = FastMath.max(maxId, personId.getValue());
+			RegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
+			builder.setPersonRegion(personId, regionId);
+			expectedRegionAssignments.put(personId, regionId);
+		}
+		maxId++;
+
+		RegionsPluginData regionsPluginData = builder.build();
+
+		for (int i = 0; i < maxId; i++) {
+			PersonId personId = new PersonId(i);
+			Optional<RegionId> optional = regionsPluginData.getPersonRegion(personId);
+			RegionId regionId = expectedRegionAssignments.get(personId);
+			if (regionId != null) {
+				assertTrue(optional.isPresent());
+				assertEquals(regionId, optional.get());
+			} else {
+				assertTrue(optional.isEmpty());
+			}
+		}
+
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> RegionsPluginData.builder().build().getPersonRegion(null));
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		
+		// precondition test: if the person id has a negative value
+		contractException = assertThrows(ContractException.class, () -> RegionsPluginData.builder().build().getPersonRegion(new PersonId(-1)));
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+
+
+	}
+
+	@Test
 	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class })
 	public void testSetRegionPropertyValue() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
@@ -345,6 +394,8 @@ public class AT_RegionPluginData {
 
 		builder.addRegion(regionId);
 		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
+
+		// non-precondition tests covered by testGetRegionPropertyValue
 
 		// if the region id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.setRegionPropertyValue(null, regionPropertyId, validValue));
@@ -387,6 +438,8 @@ public class AT_RegionPluginData {
 		PersonId personId = new PersonId(45);
 		RegionId regionId = TestRegionId.REGION_1;
 
+		// non-precondition tests covered by testGetPersonRegion
+
 		// if the person id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(null, regionId));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
@@ -424,7 +477,7 @@ public class AT_RegionPluginData {
 		}
 		int personCount = 100;
 		for (int i = 0; i < personCount; i++) {
-			PersonId personId = new PersonId(i);
+			PersonId personId = new PersonId(i * 2 + 5);
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
 			regionPluginDataBuilder.setPersonRegion(personId, randomRegionId);
 		}
@@ -463,16 +516,23 @@ public class AT_RegionPluginData {
 			}
 		}
 
-		// show that the two plugin datas have the same people
-		Set<PersonId> expectedPersonIds = regionsPluginData.getPersonIds();
-		Set<PersonId> actualPersonIds = cloneRegionPluginData.getPersonIds();
-		assertEquals(expectedPersonIds, actualPersonIds);
-		// show that the two plugin datas have assigned the people to the same
-		// regions
-		for (PersonId personId : expectedPersonIds) {
-			RegionId expectedRegionId = regionsPluginData.getPersonRegion(personId);
-			RegionId actualRegionId = cloneRegionPluginData.getPersonRegion(personId);
-			assertEquals(expectedRegionId, actualRegionId);
+		// show that the two plugin datas have the same people and region
+		// assignments
+
+		int pluginPersonCount = regionsPluginData.getPersonCount();
+		int clonePluginPersonCount = cloneRegionPluginData.getPersonCount();
+		assertEquals(pluginPersonCount, clonePluginPersonCount);
+
+		for (int i = 0; i < pluginPersonCount; i++) {
+			PersonId personId = new PersonId(i);
+			boolean isPresentInPluginData = regionsPluginData.getPersonRegion(personId).isPresent();
+			boolean isPresentInClonePluginData = cloneRegionPluginData.getPersonRegion(personId).isPresent();
+			assertEquals(isPresentInPluginData, isPresentInClonePluginData);
+			if (isPresentInPluginData) {
+				RegionId expectedRegionId = regionsPluginData.getPersonRegion(personId).get();
+				RegionId actualRegionId = cloneRegionPluginData.getPersonRegion(personId).get();
+				assertEquals(expectedRegionId, actualRegionId);
+			}
 		}
 
 	}

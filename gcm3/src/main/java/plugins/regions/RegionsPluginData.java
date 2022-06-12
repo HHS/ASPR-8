@@ -1,8 +1,12 @@
 package plugins.regions;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import net.jcip.annotations.Immutable;
@@ -47,8 +51,8 @@ public class RegionsPluginData implements PluginData {
 		private TimeTrackingPolicy regionArrivalTimeTrackingPolicy;
 
 		private final Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyValues = new LinkedHashMap<>();
-		
-		private final Map<PersonId, RegionId> personRegions = new LinkedHashMap<>();
+
+		private final List<RegionId> personRegions = new ArrayList<>();
 
 		public Data() {
 		}
@@ -61,8 +65,8 @@ public class RegionsPluginData implements PluginData {
 				Map<RegionPropertyId, Object> map = new LinkedHashMap<>(data.regionPropertyValues.get(regionId));
 				regionPropertyValues.put(regionId, map);
 			}
-			personRegions.putAll(data.personRegions);
-			
+			personRegions.addAll(data.personRegions);
+
 		}
 	}
 
@@ -100,7 +104,6 @@ public class RegionsPluginData implements PluginData {
 		}
 	}
 
-
 	private static void validateRegionIdNotNull(RegionId regionId) {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
@@ -136,13 +139,14 @@ public class RegionsPluginData implements PluginData {
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
 		private boolean dataIsMutable;
-		
+
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (!dataIsMutable) {
 				data = new Data(data);
 				dataIsMutable = true;
 			}
 		}
+
 		private Builder(Data data) {
 			this.data = data;
 		}
@@ -215,7 +219,7 @@ public class RegionsPluginData implements PluginData {
 			propertyMap.put(regionPropertyId, regionPropertyValue);
 			return this;
 		}
-		
+
 		/**
 		 * Sets the person's region
 		 * 
@@ -233,13 +237,16 @@ public class RegionsPluginData implements PluginData {
 		 */
 		public Builder setPersonRegion(final PersonId personId, final RegionId regionId) {
 			ensureDataMutability();
-			validatePersonIdNotNull(personId);
+			validatePersonId(personId);
 			validateRegionIdNotNull(regionId);
 			validatePersonRegionNotAssigned(data, personId);
-			data.personRegions.put(personId, regionId);
+			int personIndex = personId.getValue();
+			while (personIndex >= data.personRegions.size()) {
+				data.personRegions.add(null);
+			}
+			data.personRegions.set(personIndex, regionId);
 			return this;
 		}
-
 
 		/**
 		 * Sets the tracking policy for region arrival times
@@ -260,8 +267,6 @@ public class RegionsPluginData implements PluginData {
 			data.regionArrivalTimeTrackingPolicy = timeTrackingPolicy;
 			return this;
 		}
-
-		
 
 		/**
 		 * Adds the region id and its associated agent initial behavior.
@@ -302,19 +307,21 @@ public class RegionsPluginData implements PluginData {
 			data.regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 			return this;
 		}
+
 		private void validateData() {
-		
-			if(!dataIsMutable) {
+
+			if (!dataIsMutable) {
 				return;
 			}
-			
-			for (PersonId personId : data.personRegions.keySet()) {
-				RegionId regionId = data.personRegions.get(personId);
-				if (!data.regionIds.contains(regionId)) {
-					throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in person region assignments");
+
+			for (RegionId regionId : data.personRegions) {
+				if (regionId != null) {
+					if (!data.regionIds.contains(regionId)) {
+						throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in person region assignments");
+					}
 				}
 			}
-			
+
 			for (RegionId regionId : data.regionPropertyValues.keySet()) {
 				if (!data.regionIds.contains(regionId)) {
 					throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " in region property values");
@@ -333,11 +340,11 @@ public class RegionsPluginData implements PluginData {
 					}
 				}
 			}
-		
+
 			/*
-			 * For every region property definition that has a null default value,
-			 * ensure that there all corresponding region property values are not
-			 * null.
+			 * For every region property definition that has a null default
+			 * value, ensure that there all corresponding region property values
+			 * are not null.
 			 */
 			for (RegionPropertyId regionPropertyId : data.regionPropertyDefinitions.keySet()) {
 				PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
@@ -354,7 +361,7 @@ public class RegionsPluginData implements PluginData {
 					}
 				}
 			}
-		
+
 		}
 
 	}
@@ -431,19 +438,13 @@ public class RegionsPluginData implements PluginData {
 		return (T) result;
 	}
 
-	
 	/**
 	 * Returns the set of {@link RegionId} values contained in this initial
 	 * data. Each region id will correspond to a region agent that is
 	 * automatically added to the simulation during initialization.
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends RegionId> Set<T> getRegionIds() {
-		Set<T> result = new LinkedHashSet<>();
-		for(RegionId regionId : data.regionIds) {
-			result.add((T)regionId);
-		}
-		return result;
+	public Set<RegionId> getRegionIds() {
+		return Collections.unmodifiableSet(data.regionIds);
 	}
 
 	/**
@@ -459,27 +460,33 @@ public class RegionsPluginData implements PluginData {
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(data);
 	}
-	
-	private static void validatePersonIdNotNull(PersonId personId) {
+
+	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
+		if(personId.getValue()<0) {
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+		}
 	}
-	
+
 	private static void validatePersonRegionNotAssigned(Data data, PersonId personId) {
-		if (data.personRegions.containsKey(personId)) {
+		int personIndex = personId.getValue();
+		if (personIndex < 0 || personIndex >= data.personRegions.size()) {
+			return;
+		}
+		if (data.personRegions.get(personIndex) != null) {
 			throw new ContractException(RegionError.DUPLICATE_PERSON_REGION_ASSIGNMENT, personId);
 		}
+	}
 
-	}
-	
 	/**
-	 * Returns the set of {@link PersonId} collected by the builder.
+	 * Returns the largest id value of any person assigned a region.
 	 */
-	public Set<PersonId> getPersonIds() {
-		return new LinkedHashSet<>(data.personRegions.keySet());
+	public int getPersonCount() {
+		return data.personRegions.size();
 	}
-	
+
 	/**
 	 * Returns the {@link RegionId} for the given {@link PersonId}.
 	 * 
@@ -491,18 +498,16 @@ public class RegionsPluginData implements PluginData {
 	 *             person id is unknown
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends RegionId> T getPersonRegion(final PersonId personId) {
-		validatePersonExists(data, personId);
-		return (T) data.personRegions.get(personId);
+	public <T extends RegionId> Optional<T> getPersonRegion(final PersonId personId) {
+		validatePersonId(personId);
+
+		int personIndex = personId.getValue();
+		if (personIndex < data.personRegions.size()) {
+			return Optional.ofNullable((T)data.personRegions.get(personIndex));
+		}
+		return Optional.empty();
 	}
+
 	
-	private static void validatePersonExists(final Data data, final PersonId personId) {
-		if (personId == null) {
-			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}
-		if (!data.personRegions.containsKey(personId)) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID, personId);
-		}
-	}
 
 }

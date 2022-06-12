@@ -76,70 +76,78 @@ public final class RegionsDataManager extends DataManager {
 	 * {@linkplain PersonRegionUpdateEvent}
 	 * </P>
 	 * 
-	 * 
-	 * <P>
-	 * Subscribes the following events:
-	 * <ul>
-	 * 
-	 * <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets the
-	 * person's initial region in the {@linkplain RegionLocationDataView} from
-	 * the region reference in the auxiliary data of the event.
-	 * 
-	 * <BR>
-	 * <BR>
-	 * Throws {@link ContractException}
-	 * <ul>
-	 * <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person does not
-	 * exist</li>
-	 * <li>{@linkplain RegionError#NULL_REGION_ID} if no region data was
-	 * included in the event</li>
-	 * <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region in the event
-	 * is unknown</li>
-	 * <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if the person was
-	 * previously added</li>
-	 * </ul>
-	 * 
-	 * </blockquote></li>
-	 * 
-	 * <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote> Sets each
-	 * person's initial region in the {@linkplain RegionLocationDataView} from
-	 * the region references in the auxiliary data of the event.
-	 * 
-	 * <BR>
-	 * <BR>
-	 * Throws {@link ContractException}
-	 * <ul>
-	 * <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person does not
-	 * exist</li>
-	 * 
-	 * <li>{@linkplain RegionError#NULL_REGION_ID} if no region data was
-	 * included in the for some person in event</li>
-	 * 
-	 * <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region is unknown
-	 * for some person in the event</li>
-	 * </ul>
-	 * 
-	 * <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if a person was
-	 * previously added</li>
-	 * 
-	 * 
-	 * </blockquote></li>
-	 * 
-	 * <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the region
-	 * assignment data for the person from the {@linkplain RegionDataView} <BR>
-	 * <BR>
-	 * Throws {@linkplain ContractException}
-	 * <ul>
-	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is not
-	 * currently tracked by the regions data manager</li>
+	 * @throws ContractException
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if no region
+	 *             id is provided for a person id</li>
 	 * 
 	 * 
 	 * 
-	 * </ul>
+	 *             <P>
+	 *             Subscribes the following events:
+	 *             <ul>
 	 * 
-	 * </blockquote></li>
-	 * <ul>
-	 * </p>
+	 *             <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets
+	 *             the person's initial region in the
+	 *             {@linkplain RegionLocationDataView} from the region reference
+	 *             in the auxiliary data of the event.
+	 * 
+	 *             <BR>
+	 *             <BR>
+	 *             Throws {@link ContractException}
+	 *             <ul>
+	 *             <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person
+	 *             does not exist</li>
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if no region data
+	 *             was included in the event</li>
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             in the event is unknown</li>
+	 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if the
+	 *             person was previously added</li>
+	 *             </ul>
+	 * 
+	 *             </blockquote></li>
+	 * 
+	 *             <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote>
+	 *             Sets each person's initial region in the
+	 *             {@linkplain RegionLocationDataView} from the region
+	 *             references in the auxiliary data of the event.
+	 * 
+	 *             <BR>
+	 *             <BR>
+	 *             Throws {@link ContractException}
+	 *             <ul>
+	 *             <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person
+	 *             does not exist</li>
+	 * 
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if no region data
+	 *             was included in the for some person in event</li>
+	 * 
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             is unknown for some person in the event</li>
+	 *             </ul>
+	 * 
+	 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if a
+	 *             person was previously added</li>
+	 * 
+	 * 
+	 *             </blockquote></li>
+	 * 
+	 *             <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the
+	 *             region assignment data for the person from the
+	 *             {@linkplain RegionDataView} <BR>
+	 *             <BR>
+	 *             Throws {@linkplain ContractException}
+	 *             <ul>
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
+	 *             id is not currently tracked by the regions data manager</li>
+	 * 
+	 * 
+	 * 
+	 *             </ul>
+	 * 
+	 *             </blockquote></li>
+	 *             <ul>
+	 *             </p>
 	 * 
 	 * @author Shawn Hatch
 	 *
@@ -200,15 +208,15 @@ public final class RegionsDataManager extends DataManager {
 
 		List<PersonId> people = peopleDataManager.getPeople();
 		for (PersonId personId : people) {
-			RegionId regionId = regionsPluginData.getPersonRegion(personId);
+			Optional<RegionId> optional = regionsPluginData.getPersonRegion(personId);
+			if (optional.isEmpty()) {
+				throw new ContractException(RegionError.UNKNOWN_REGION_ID);
+			}
+			RegionId regionId = optional.get();
 			final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
 			populationRecord.populationCount++;
 			Integer regionIndex = regionToIndexMap.get(regionId).intValue();
 			regionValues.setIntValue(personId.getValue(), regionIndex);
-		}
-
-		if (regionsPluginData.getPersonIds().size() > people.size()) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID, "There are people in the region plugin data that are not contained in the person data manager");
 		}
 
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
