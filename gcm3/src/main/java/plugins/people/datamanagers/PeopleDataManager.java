@@ -34,7 +34,6 @@ public final class PeopleDataManager extends DataManager {
 
 	public PeopleDataManager(PeoplePluginData peoplePluginData) {
 		this.peoplePluginData = peoplePluginData;
-
 	}
 
 	private static class PopulationRecord {
@@ -225,13 +224,12 @@ public final class PeopleDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
-		for (PersonId personId : peoplePluginData.getPersonIds()) {
-			int personIndex = personId.getValue();
-			while (personIndex >= personIds.size()) {
-				personIds.add(null);
+		this.personIds.addAll(peoplePluginData.getPersonIds());
+		
+		for (PersonId personId : personIds) {
+			if(personId != null) {
+				globalPopulationRecord.populationCount++;
 			}
-			personIds.set(personIndex, personId);
-			globalPopulationRecord.populationCount++;
 		}
 		globalPopulationRecord.projectedPopulationCount = personIds.size();
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();

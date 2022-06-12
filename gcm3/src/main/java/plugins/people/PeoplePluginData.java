@@ -1,7 +1,8 @@
 package plugins.people;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
@@ -20,8 +21,7 @@ import util.errors.ContractException;
 @Immutable
 public final class PeoplePluginData implements PluginData {
 	private static class Data {
-		private Set<PersonId> personIds = new LinkedHashSet<>();
-		
+		private List<PersonId> personIds = new ArrayList<>();
 
 		public Data() {
 		}
@@ -46,14 +46,14 @@ public final class PeoplePluginData implements PluginData {
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
 		private boolean dataIsMutable;
-		
+
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (!dataIsMutable) {
 				data = new Data(data);
 				dataIsMutable = true;
 			}
 		}
-		
+
 		private Builder(Data data) {
 			this.data = data;
 
@@ -83,23 +83,28 @@ public final class PeoplePluginData implements PluginData {
 		 */
 		public Builder addPersonId(PersonId personId) {
 			ensureDataMutability();
-			validatePersonIdNotNull(personId);
+			validatePersonIdIsValid(personId);
 			validatePersonDoesNotExist(data, personId);
-			data.personIds.add(personId);
+			int personIndex = personId.getValue();
+			while (personIndex >= data.personIds.size()) {
+				data.personIds.add(null);
+			}
+			data.personIds.set(personIndex, personId);
 			return this;
 		}
 	}
-	
 
 	private PeoplePluginData(Data data) {
 		this.data = data;
 	}
 
 	/**
-	 * Returns the set of person ids stored in this container
+	 * Returns the list person ids such that each PersonId is located at the
+	 * index associated with the person id's value. Thus, this list may contain
+	 * null entries.
 	 */
-	public Set<PersonId> getPersonIds() {
-		return new LinkedHashSet<>(data.personIds);
+	public List<PersonId> getPersonIds() {
+		return Collections.unmodifiableList(data.personIds);
 	}
 
 	@Override
@@ -107,15 +112,25 @@ public final class PeoplePluginData implements PluginData {
 		return new Builder(data);
 	}
 
+	/*
+	 * precondition: person id is not null and has a non-negative value
+	 */
 	private static void validatePersonDoesNotExist(final Data data, final PersonId personId) {
-		if (data.personIds.contains(personId)) {
+		int personIndex = personId.getValue();
+		if (personIndex >= data.personIds.size()) {
+			return;
+		}
+		if (data.personIds.get(personIndex) != null) {
 			throw new ContractException(PersonError.DUPLICATE_PERSON_ID, personId);
 		}
 	}
 
-	private static void validatePersonIdNotNull(PersonId personId) {
+	private static void validatePersonIdIsValid(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
+		}
+		if (personId.getValue() < 0) {
+			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
 }

@@ -42,7 +42,13 @@ public final class AT_PeoplePluginData {
 		}
 		
 		peoplePluginData = builder.build();
-		assertEquals(expectedPersonIds, peoplePluginData.getPersonIds());
+		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
+		for(PersonId personId : peoplePluginData.getPersonIds()) {
+			if(personId != null) {
+				actualPersonIds.add(personId);
+			}
+		}
+		assertEquals(expectedPersonIds, actualPersonIds);
 		
 	}
 
@@ -62,7 +68,15 @@ public final class AT_PeoplePluginData {
 		}
 		
 		peoplePluginData = builder.build();
-		assertEquals(expectedPersonIds, peoplePluginData.getPersonIds());
+		
+		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
+		for(PersonId personId : peoplePluginData.getPersonIds()) {
+			if(personId != null) {
+				actualPersonIds.add(personId);
+			}
+		}
+		
+		assertEquals(expectedPersonIds, actualPersonIds);
 
 		//precondition tests
 		builder.addPersonId(new PersonId(5));
@@ -91,7 +105,13 @@ public final class AT_PeoplePluginData {
 		}
 		
 		peoplePluginData = builder.build();
-		assertEquals(expectedPersonIds, peoplePluginData.getPersonIds());
+		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
+		for(PersonId personId : peoplePluginData.getPersonIds()) {
+			if(personId != null) {
+				actualPersonIds.add(personId);
+			}
+		}
+		assertEquals(expectedPersonIds, actualPersonIds);
 
 	}
 	
@@ -111,7 +131,13 @@ public final class AT_PeoplePluginData {
 		PeoplePluginData peoplePluginData = builder.build();
 		PeoplePluginData peoplePluginData2 = (PeoplePluginData)peoplePluginData.getCloneBuilder().build();
 		
-		assertEquals(expectedPersonIds, peoplePluginData2.getPersonIds());
+		Set<PersonId> actualPersonIds = new LinkedHashSet<>();
+		for(PersonId personId : peoplePluginData.getPersonIds()) {
+			if(personId != null) {
+				actualPersonIds.add(personId);
+			}
+		}
+		assertEquals(expectedPersonIds, actualPersonIds);
 	}
 	
 
