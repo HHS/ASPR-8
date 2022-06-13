@@ -186,9 +186,6 @@ public class AT_GroupsPluginData {
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(null, TestGroupTypeId.GROUP_TYPE_1));
 		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
-		// precondition test: if the group id value is negative
-		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(new GroupId(-1), TestGroupTypeId.GROUP_TYPE_1));
-		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the group type id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(new GroupId(0), null));
@@ -319,9 +316,6 @@ public class AT_GroupsPluginData {
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(null, groupPropertyId, 10));
 		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
 
-		// precondition test: if the group id value is negative
-		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(-1), groupPropertyId, 10));
-		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the group property id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(0), null, 10));
@@ -403,10 +397,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the group id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(null, new PersonId(0)));
 		assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-
-		// precondition test: if the group id value is negative
-		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(new GroupId(-1), new PersonId(0)));
-		assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
 		// precondition test: if the person id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(new GroupId(0), null));

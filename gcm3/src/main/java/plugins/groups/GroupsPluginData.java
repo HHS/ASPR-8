@@ -160,7 +160,7 @@ public final class GroupsPluginData implements PluginData {
 
 	private static void validateGroupPropertyValueNotSet(Data data, GroupId groupId, GroupPropertyId groupPropertyId) {
 		int groupIndex = groupId.getValue();
-		if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+		if (groupIndex >= data.groupSpecifications.size()) {
 			return;
 		}
 		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
@@ -186,14 +186,12 @@ public final class GroupsPluginData implements PluginData {
 		if (groupId == null) {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
-		if (groupId.getValue() < 0) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
-		}
+		
 	}
 
 	private static void validateGroupDoesNotExist(final Data data, final GroupId groupId) {
 		int groupIndex = groupId.getValue();
-		if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+		if (groupIndex >= data.groupSpecifications.size()) {
 			return;
 		}
 		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
@@ -278,10 +276,6 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if the
 		 *             group id is null
 		 * 
-		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if the
-		 *             group id value is negative
-		 * 
-		 * 
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
 		 *             person id is null
 		 * 
@@ -338,9 +332,6 @@ public final class GroupsPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if the
 		 *             group id is null
-		 * 
-		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if the
-		 *             group id value is negative
 		 * 
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
 		 *             the group type id is null
@@ -411,9 +402,6 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li>if the
 		 *             group id is null
 		 * 
-		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID}</li> if the
-		 *             group id value is negative
-		 * 
 		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID}</li>if
 		 *             the group property id is null
 		 * 
@@ -464,7 +452,7 @@ public final class GroupsPluginData implements PluginData {
 				if (groupIds != null) {
 					for (GroupId groupId : groupIds) {
 						int groupIndex = groupId.getValue();
-						if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+						if (groupIndex >= data.groupSpecifications.size()) {
 							throw new ContractException(GroupError.UNKNOWN_GROUP_ID, "A group membership contains the unknown group " + groupId);
 						}
 						GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
@@ -598,7 +586,7 @@ public final class GroupsPluginData implements PluginData {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
 		int groupIndex = groupId.getValue();
-		if (groupIndex < 0 || groupIndex >= data.groupSpecifications.size()) {
+		if (	groupIndex >= data.groupSpecifications.size()) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
 		}
 		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);

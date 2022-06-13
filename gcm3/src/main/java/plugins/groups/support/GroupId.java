@@ -1,6 +1,7 @@
 package plugins.groups.support;
 
 import net.jcip.annotations.Immutable;
+import util.errors.ContractException;
 
 
 /**
@@ -14,7 +15,16 @@ public final class GroupId implements Comparable<GroupId>{
 
 	private final int id;
 
+	/**
+	 * Consructs the groupId
+	 * 
+	 * @throws ContractException
+	 * <li>{@linkplain GroupError#NEGATIVE_GROUP_ID} </li>
+	 */
 	public GroupId(int id) {
+		if(id<0) {
+			throw new ContractException(GroupError.NEGATIVE_GROUP_ID);
+		}
 		this.id = id;
 	}
 
