@@ -278,12 +278,6 @@ public final class AT_ResourcesDataManager {
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
-		/* precondition test: if the person id has a negative value */
-		ResourcesActionSupport.testConsumer(20, 3500853843230804485L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getPersonResourceLevel(TestResourceId.RESOURCE_1, new PersonId(-1)));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		});
 	}
 
 	@Test
@@ -464,12 +458,6 @@ public final class AT_ResourcesDataManager {
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
-		/* precondition test: if the person id has a negative value */
-		ResourcesActionSupport.testConsumer(30, 2970818265707036394L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getPersonResourceTime(TestResourceId.RESOURCE_1, new PersonId(-1)));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		});
 
 	}
 
@@ -702,12 +690,6 @@ public final class AT_ResourcesDataManager {
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
-		/* precondition test: if the person id has a negative value */
-		ResourcesActionSupport.testConsumer(30, 4010540244741787446L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getPersonResourceTime(TestResourceId.RESOURCE_1, new PersonId(-1)));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		});
 
 	}
 

@@ -913,7 +913,7 @@ public final class GroupsDataManager extends DataManager {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
 
-		if (groupId.getValue() < 0 || groupsToTypesMap.getValueAsLong(groupId.getValue()) < 0) {
+		if (groupsToTypesMap.getValueAsLong(groupId.getValue()) < 0) {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 		}
 	}
@@ -1201,7 +1201,7 @@ public final class GroupsDataManager extends DataManager {
 	 * Returns true if and only if the group exists. Null tolerant.
 	 */
 	public boolean groupExists(final GroupId groupId) {
-		if ((groupId == null) || (groupId.getValue() < 0)) {
+		if ((groupId == null)) {
 			return false;
 		}
 		return groupsToTypesMap.getValueAsLong(groupId.getValue()) >= 0;

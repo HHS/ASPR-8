@@ -671,7 +671,7 @@ public final class GroupsPluginData implements PluginData {
 			return data.emptyGroupList;
 		}
 		int personIndex = personId.getValue();
-		if (personIndex < 0 || personIndex >= data.groupMemberships.size()) {
+		if (personIndex >= data.groupMemberships.size()) {
 			return data.emptyGroupList;
 		}
 		List<GroupId> list = data.groupMemberships.get(personIndex);
@@ -683,7 +683,7 @@ public final class GroupsPluginData implements PluginData {
 
 	private static void validatePersonNotInGroup(Data data, GroupId groupId, PersonId personId) {
 		int personIndex = personId.getValue();
-		if ((personIndex >= 0) && (personIndex < data.groupMemberships.size())) {
+		if (personIndex < data.groupMemberships.size()) {
 			List<GroupId> groups = data.groupMemberships.get(personIndex);
 			if (groups != null) {
 				if (groups.contains(groupId)) {
@@ -696,10 +696,7 @@ public final class GroupsPluginData implements PluginData {
 	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}
-		if (personId.getValue() < 0) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-		}
+		}		
 	}
 
 	/**

@@ -155,7 +155,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *             <li>if the resource id is null</li>
 	 *             <li>if the resource id is unknown</li>
 	 *             <li>if the person id null</li>
-	 *             <li>if the person id has a negative value</li>
 	 *             <li>if the amount causes an overflow</li>
 	 */
 	private void decrementPersonResourceLevel(final ResourceId resourceId, final PersonId personId, final long resourceAmount) {
@@ -640,7 +639,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *             <li>if the resource id is null</li>
 	 *             <li>if the resource id is unknown</li>
 	 *             <li>if the person id null</li>
-	 *             <li>if the person id has a negative value</li>
 	 *             <li>if the amount causes an overflow</li>
 	 */
 	private void incrementPersonResourceLevel(final ResourceId resourceId, final PersonId personId, final long resourceAmount) {

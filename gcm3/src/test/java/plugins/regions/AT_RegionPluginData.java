@@ -373,10 +373,6 @@ public class AT_RegionPluginData {
 		// precondition test: if the person id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> RegionsPluginData.builder().build().getPersonRegion(null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-		
-		// precondition test: if the person id has a negative value
-		contractException = assertThrows(ContractException.class, () -> RegionsPluginData.builder().build().getPersonRegion(new PersonId(-1)));
-		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 
 	}

@@ -128,8 +128,6 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
 		 *             id is null</li>
-		 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the
-		 *             person id value is negative</li>
 		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
 		 *             if the person property id is null</li>
 		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
@@ -250,10 +248,7 @@ public class PersonPropertiesPluginData implements PluginData {
 	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}
-		if (personId.getValue() < 0) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-		}
+		}		
 	}
 
 	private static void validatePersonPropertyValueNotNull(Object personPropertyValue) {

@@ -112,7 +112,7 @@ public final class AT_AttributeLabeler {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, () -> attributeLabeler.getLabel(c, new PersonId(-1)));
+			ContractException contractException = assertThrows(ContractException.class, () -> attributeLabeler.getLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null

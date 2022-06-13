@@ -244,7 +244,7 @@ public class AT_RegionsDataManager {
 		// precondition test: if the person id is unknown
 		RegionsActionSupport.testConsumer(0, 2144445839100475443L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegion(new PersonId(-1)));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegion(new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 	}
@@ -365,7 +365,7 @@ public class AT_RegionsDataManager {
 		// precondition test: if the person id is unknown
 		RegionsActionSupport.testConsumer(0, 9132391945335483479L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegionArrivalTime(new PersonId(-1)));
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegionArrivalTime(new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 

@@ -465,14 +465,12 @@ public class RegionsPluginData implements PluginData {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
-		if(personId.getValue()<0) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-		}
+		
 	}
 
 	private static void validatePersonRegionNotAssigned(Data data, PersonId personId) {
 		int personIndex = personId.getValue();
-		if (personIndex < 0 || personIndex >= data.personRegions.size()) {
+		if (personIndex >= data.personRegions.size()) {
 			return;
 		}
 		if (data.personRegions.get(personIndex) != null) {
@@ -494,8 +492,7 @@ public class RegionsPluginData implements PluginData {
 	 * 
 	 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
 	 *             person id is null
-	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}</li> if the
-	 *             person id is unknown
+	 *           
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RegionId> Optional<T> getPersonRegion(final PersonId personId) {

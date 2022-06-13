@@ -113,7 +113,7 @@ public final class PeoplePluginData implements PluginData {
 	}
 
 	/*
-	 * precondition: person id is not null and has a non-negative value
+	 * precondition: person id is not null 
 	 */
 	private static void validatePersonDoesNotExist(final Data data, final PersonId personId) {
 		int personIndex = personId.getValue();
@@ -128,9 +128,6 @@ public final class PeoplePluginData implements PluginData {
 	private static void validatePersonIdIsValid(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}
-		if (personId.getValue() < 0) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-		}
+		}		
 	}
 }

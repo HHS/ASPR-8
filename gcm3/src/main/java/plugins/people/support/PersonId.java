@@ -1,6 +1,7 @@
 package plugins.people.support;
 
 import net.jcip.annotations.Immutable;
+import util.errors.ContractException;
 
 /**
  * Identifier for all people
@@ -9,11 +10,20 @@ import net.jcip.annotations.Immutable;
  *
  */
 @Immutable
-public final class PersonId implements Comparable<PersonId>{
+public final class PersonId implements Comparable<PersonId> {
 
 	private final int id;
 
+	/**
+	 * Consructs the person id
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain PersonError#NEGATIVE_PERSON_ID}</li>
+	 */
 	public PersonId(int id) {
+		if (id < 0) {
+			throw new ContractException(PersonError.NEGATIVE_PERSON_ID);
+		}
 		this.id = id;
 	}
 
@@ -23,7 +33,7 @@ public final class PersonId implements Comparable<PersonId>{
 
 	@Override
 	public int compareTo(PersonId personId) {
-		return Integer.compare(id,personId.id);
+		return Integer.compare(id, personId.id);
 	}
 
 	@Override
@@ -45,8 +55,8 @@ public final class PersonId implements Comparable<PersonId>{
 		}
 		return true;
 	}
-	
-	@Override	
+
+	@Override
 	public String toString() {
 		return Integer.toString(id);
 	}

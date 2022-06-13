@@ -115,7 +115,7 @@ public class AT_RegionLabeler {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			
 			//if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, ()->	regionLabeler.getLabel(c, new PersonId(-1)));
+			ContractException contractException = assertThrows(ContractException.class, ()->	regionLabeler.getLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 			
 			//if the person id is null

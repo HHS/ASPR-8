@@ -303,7 +303,7 @@ public final class AT_PeopleDataManager {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
 
-			assertFalse(peopleDataManager.personExists(new PersonId(-1)));
+			assertFalse(peopleDataManager.personExists(new PersonId(100000)));
 
 			for (int i = 0; i < 10; i++) {
 				assertTrue(peopleDataManager.personExists(new PersonId(i)));

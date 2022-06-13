@@ -12,6 +12,7 @@ import util.errors.ContractException;
  */
 public enum PersonError implements ContractError {
 	// person
+	NEGATIVE_PERSON_ID("Negative person id"),
 	NULL_PERSON_DATA_MANAGER("Null person data manager"),	
 	NULL_AUXILIARY_DATA("Null auxiliary data"),
 	NULL_BULK_PERSON_CONSTRUCTION_DATA("Null bulk person construction data"),

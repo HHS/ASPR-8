@@ -169,10 +169,7 @@ public final class ResourcesPluginData implements PluginData {
 	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}
-		if (personId.getValue() < 0) {
-			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-		}
+		}		
 	}
 
 	private static void validateResourceAmount(final long amount) {
@@ -183,7 +180,7 @@ public final class ResourcesPluginData implements PluginData {
 
 	private static void validatePersonResourceLevelNotSet(final Data data, final PersonId personId, final ResourceId resourceId) {
 		int personIndex = personId.getValue();
-		if (personIndex < 0 || personIndex >= data.personResourceLevels.size()) {
+		if (personIndex >= data.personResourceLevels.size()) {
 			return;
 		}
 		List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
@@ -707,7 +704,7 @@ public final class ResourcesPluginData implements PluginData {
 
 		validatePersonIdNotNull(personId);
 		int personIndex = personId.getValue();
-		if (personIndex < 0 || personIndex >= data.personResourceLevels.size()) {
+		if (personIndex >= data.personResourceLevels.size()) {
 			return data.emptyResourceInitializationList;
 		}
 

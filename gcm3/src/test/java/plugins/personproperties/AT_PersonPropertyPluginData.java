@@ -276,13 +276,6 @@ public class AT_PersonPropertyPluginData {
 		});
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-		// precondition test: if the person id value is negative
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			builder.setPersonPropertyValue(new PersonId(-1), testPersonPropertyId, true);
-		});
-		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		// precondition test: if the person property value is null
 		contractException = assertThrows(ContractException.class, () -> {

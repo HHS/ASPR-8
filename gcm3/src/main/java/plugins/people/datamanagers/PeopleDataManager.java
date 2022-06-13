@@ -149,7 +149,7 @@ public final class PeopleDataManager extends DataManager {
 	 */
 	public Optional<PersonId> getBoxedPersonId(final int personId) {
 		PersonId result = null;
-		if ((personId >= 0) && (personIds.size() > personId)) {
+		if (personIds.size() > personId) {
 			result = personIds.get(personId);
 		}
 		return Optional.ofNullable(result);
@@ -242,7 +242,7 @@ public final class PeopleDataManager extends DataManager {
 	public boolean personExists(final PersonId personId) {
 		if (personId != null) {
 			int personIndex = personId.getValue();
-			if ((personIndex >= 0) && (personIndex < personIds.size())) {
+			if (personIndex < personIds.size()) {
 				return personIds.get(personId.getValue()) != null;
 			}
 		}
@@ -255,7 +255,7 @@ public final class PeopleDataManager extends DataManager {
 	 */
 	public boolean personIndexExists(final int personId) {
 		boolean result = false;
-		if ((personId >= 0) && (personId < personIds.size())) {
+		if (personId>=0 && personId < personIds.size()) {
 			result = personIds.get(personId) != null;
 		}
 		return result;

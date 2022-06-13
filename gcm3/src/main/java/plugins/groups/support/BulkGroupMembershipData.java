@@ -72,8 +72,7 @@ public class BulkGroupMembershipData {
 		 * Builds the {@link BulkGroupMembershipData} from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if a group
-		 *             membership was a negative group index</li>
+		 *            
 		 * 
 		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if a group
 		 *             membership was added for a group index that was not added
