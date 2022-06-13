@@ -843,13 +843,14 @@ public final class ResourcesDataManager extends DataManager {
 			if (!regionIds.contains(regionId)) {
 				throw new ContractException(RegionError.UNKNOWN_REGION_ID, regionId + " is an unknown region with initial resources");
 			}
-			for (final ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-				final Long amount = resourcesPluginData.getRegionResourceLevel(regionId, resourceId);
-				if (amount != null) {
-					final RegionResourceRecord regionResourceRecord = regionResources.get(regionId).get(resourceId);
-					regionResourceRecord.incrementAmount(amount);
-				}
+
+			for (ResourceInitialization resourceInitialization : resourcesPluginData.getRegionResourceLevels(regionId)) {
+				ResourceId resourceId = resourceInitialization.getResourceId();
+				Long amount = resourceInitialization.getAmount();
+				final RegionResourceRecord regionResourceRecord = regionResources.get(regionId).get(resourceId);
+				regionResourceRecord.incrementAmount(amount);
 			}
+
 		}
 
 		for (PersonId personId : peopleDataManager.getPeople()) {

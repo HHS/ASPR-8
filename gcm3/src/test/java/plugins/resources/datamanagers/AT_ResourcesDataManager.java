@@ -2890,8 +2890,15 @@ public final class AT_ResourcesDataManager {
 			assertEquals(expectedRegionIds, actualRegionIds);
 
 			for (RegionId regionId : resourcesPluginData.getRegionIds()) {
+				Map<ResourceId,Long> expectedAmounts = new LinkedHashMap<>();
 				for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-					long expectedRegionResourceLevel = resourcesPluginData.getRegionResourceLevel(regionId, resourceId);
+					expectedAmounts.put(resourceId, 0L);
+				}
+				for(ResourceInitialization  resourceInitialization : resourcesPluginData.getRegionResourceLevels(regionId)) {
+					expectedAmounts.put(resourceInitialization.getResourceId(),resourceInitialization.getAmount());
+				}
+				for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
+					long expectedRegionResourceLevel = expectedAmounts.get(resourceId);
 					long actualRegionResourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, resourceId);
 					assertEquals(expectedRegionResourceLevel, actualRegionResourceLevel);
 				}

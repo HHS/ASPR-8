@@ -48,14 +48,14 @@ public final class ResourcesPluginData implements PluginData {
 		private final Map<ResourceId, Map<ResourcePropertyId, Object>> resourcePropertyValues;
 
 		private final List<List<ResourceInitialization>> personResourceLevels;
-		
-		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>()); 
+
+		private final List<ResourceInitialization> emptyResourceInitializationList = Collections.unmodifiableList(new ArrayList<>());
 
 		private int personCount;
 
 		private final Set<ResourceId> resourceIds;
 
-		private final Map<RegionId, Map<ResourceId, Long>> regionResourceLevels;
+		private final Map<RegionId, List<ResourceInitialization>> regionResourceLevels;
 
 		private final Map<ResourceId, TimeTrackingPolicy> resourceTimeTrackingPolicies;
 
@@ -69,7 +69,7 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		public Data(Data data) {
-		    personCount = data.personCount;
+			personCount = data.personCount;
 
 			resourcePropertyDefinitions = new LinkedHashMap<>();
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
@@ -101,9 +101,9 @@ public final class ResourcesPluginData implements PluginData {
 
 			regionResourceLevels = new LinkedHashMap<>();
 			for (RegionId regionId : data.regionResourceLevels.keySet()) {
-				Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
-				Map<ResourceId, Long> newMap = new LinkedHashMap<>(map);
-				regionResourceLevels.put(regionId, newMap);
+				List<ResourceInitialization> list = data.regionResourceLevels.get(regionId);
+				List<ResourceInitialization> newList = new ArrayList<>(list);				
+				regionResourceLevels.put(regionId, newList);
 			}
 
 			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
@@ -144,10 +144,12 @@ public final class ResourcesPluginData implements PluginData {
 	}
 
 	private static void validateRegionResourceNotSet(final Data data, final RegionId regionId, final ResourceId resourceId) {
-		final Map<ResourceId, Long> resourceLevelMap = data.regionResourceLevels.get(regionId);
-		if (resourceLevelMap != null) {
-			if (resourceLevelMap.containsKey(resourceId)) {
-				throw new ContractException(ResourceError.DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT, resourceId + ": " + regionId);
+		List<ResourceInitialization> resourceInitializations = data.regionResourceLevels.get(regionId);
+		if (resourceInitializations != null) {
+			for (ResourceInitialization resourceInitialization : resourceInitializations) {
+				if (resourceInitialization.getResourceId().equals(resourceId)) {
+					throw new ContractException(ResourceError.DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT, resourceId + ": " + regionId);
+				}
 			}
 		}
 	}
@@ -181,7 +183,7 @@ public final class ResourcesPluginData implements PluginData {
 
 	private static void validatePersonResourceLevelNotSet(final Data data, final PersonId personId, final ResourceId resourceId) {
 		int personIndex = personId.getValue();
-		if(personIndex<0||personIndex>=data.personResourceLevels.size()) {
+		if (personIndex < 0 || personIndex >= data.personResourceLevels.size()) {
 			return;
 		}
 		List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
@@ -247,14 +249,14 @@ public final class ResourcesPluginData implements PluginData {
 		private Data data;
 
 		private boolean dataIsMutable;
-		
+
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (!dataIsMutable) {
 				data = new Data(data);
 				dataIsMutable = true;
 			}
 		}
-		
+
 		private Builder(Data data) {
 			this.data = data;
 		}
@@ -437,12 +439,12 @@ public final class ResourcesPluginData implements PluginData {
 			validateResourceIdNotNull(resourceId);
 			validateRegionResourceNotSet(data, regionId, resourceId);
 			validateResourceAmount(amount);
-			Map<ResourceId, Long> resourceLevelMap = data.regionResourceLevels.get(regionId);
-			if (resourceLevelMap == null) {
-				resourceLevelMap = new LinkedHashMap<>();
-				data.regionResourceLevels.put(regionId, resourceLevelMap);
+			List<ResourceInitialization> resourceInitializations = data.regionResourceLevels.get(regionId);
+			if (resourceInitializations == null) {
+				resourceInitializations = new ArrayList<>();
+				data.regionResourceLevels.put(regionId, resourceInitializations);
 			}
-			resourceLevelMap.put(resourceId, amount);
+			resourceInitializations.add(new ResourceInitialization(resourceId, amount));			
 			return this;
 		}
 
@@ -498,53 +500,48 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		private void validateData() {
-		
-			if(!dataIsMutable) {
+
+			if (!dataIsMutable) {
 				return;
 			}
-			
-			// 1
+
 			for (ResourceId resourceId : data.resourceTimeTrackingPolicies.keySet()) {
 				if (!data.resourceIds.contains(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has a resource tracking policy but is not a known resource id");
 				}
 			}
-		
-			// 2
+
 			for (ResourceId resourceId : data.resourcePropertyDefinitions.keySet()) {
 				if (!data.resourceIds.contains(resourceId)) {
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has a property definitions but is not a known resource id");
 				}
 			}
-		
+
 			for (ResourceId resourceId : data.resourcePropertyValues.keySet()) {
 				if (!data.resourceIds.contains(resourceId)) {
-					// 3
 					throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId + " has a property values but is not a known resource id");
 				}
-		
+
 				Map<ResourcePropertyId, PropertyDefinition> propDefMap = data.resourcePropertyDefinitions.get(resourceId);
-		
+
 				Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
 				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
 					if (propDefMap == null || !propDefMap.containsKey(resourcePropertyId)) {
-						// 4
 						throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourceId + ": " + resourcePropertyId);
 					}
 					Object propertyValue = map.get(resourcePropertyId);
 					PropertyDefinition propertyDefinition = propDefMap.get(resourcePropertyId);
 					if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-						// 5
 						throw new ContractException(ResourceError.INCOMPATIBLE_VALUE, resourceId + ": " + resourcePropertyId + ": " + propertyValue);
 					}
 				}
-		
+
 			}
-		
+
 			/*
-			 * For every resource property definition that has a null default value,
-			 * ensure that there all corresponding resource property values are not
-			 * null.
+			 * For every resource property definition that has a null default
+			 * value, ensure that there all corresponding resource property
+			 * values are not null.
 			 */
 			for (ResourceId resourceId : data.resourceIds) {
 				Map<ResourcePropertyId, PropertyDefinition> propertyDefinitionMap = data.resourcePropertyDefinitions.get(resourceId);
@@ -558,37 +555,36 @@ public final class ResourcesPluginData implements PluginData {
 								propertyValue = propertyValueMap.get(resourcePropertyId);
 							}
 							if (propertyValue == null) {
-								// 6
 								throw new ContractException(ResourceError.INSUFFICIENT_RESOURCE_PROPERTY_VALUE_ASSIGNMENT, resourceId + ": " + resourcePropertyId);
 							}
 						}
 					}
 				}
 			}
-		
+
 			int n = data.personResourceLevels.size();
 			for (int i = 0; i < n; i++) {
 				List<ResourceInitialization> list = data.personResourceLevels.get(i);
 				if (list != null) {
 					for (ResourceInitialization resourceInitialization : list) {
 						if (!data.resourceIds.contains(resourceInitialization.getResourceId())) {
-							// 7
 							throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, new PersonId(i) + ": " + resourceInitialization.getResourceId());
 						}
 					}
 				}
 			}
-		
+
 			for (RegionId regionId : data.regionResourceLevels.keySet()) {
-				Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
-				for (ResourceId resourceId : map.keySet()) {
-					if (!data.resourceIds.contains(resourceId)) {
-						// 8
-						throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, regionId + ": " + resourceId);
+				List<ResourceInitialization> resourceInitializations = data.regionResourceLevels.get(regionId);
+				if (resourceInitializations != null) {
+					for (ResourceInitialization resourceInitialization : resourceInitializations) {
+						if (!data.resourceIds.contains(resourceInitialization.getResourceId())) {
+							throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, regionId + ": " + resourceInitialization.getResourceId());
+						}
 					}
 				}
 			}
-		
+
 		}
 
 	}
@@ -697,7 +693,7 @@ public final class ResourcesPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the person's initial resource levels. 
+	 * Returns the person's initial resource levels.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
@@ -708,18 +704,18 @@ public final class ResourcesPluginData implements PluginData {
 	 *             resource id is unknown</li>
 	 */
 	public List<ResourceInitialization> getPersonResourceLevels(final PersonId personId) {
-		
+
 		validatePersonIdNotNull(personId);
 		int personIndex = personId.getValue();
-		if(personIndex<0||personIndex>=data.personResourceLevels.size()) {
+		if (personIndex < 0 || personIndex >= data.personResourceLevels.size()) {
 			return data.emptyResourceInitializationList;
 		}
-		
+
 		List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
-		if (list==null) {
+		if (list == null) {
 			return data.emptyResourceInitializationList;
 		}
-	
+
 		return Collections.unmodifiableList(list);
 	}
 
@@ -742,27 +738,14 @@ public final class ResourcesPluginData implements PluginData {
 	 * @throws ContractException
 	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
 	 *             is null</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
 	 */
-	public Long getRegionResourceLevel(final RegionId regionId, final ResourceId resourceId) {
+	public List<ResourceInitialization> getRegionResourceLevels(final RegionId regionId) {
 		validateRegionIdNotNull(regionId);
-		validateResourceExists(data, resourceId);
-
-		Long result = null;
-		final Map<ResourceId, Long> map = data.regionResourceLevels.get(regionId);
-
-		if (map != null) {
-			result = map.get(resourceId);
+		List<ResourceInitialization> list = data.regionResourceLevels.get(regionId);
+		if(list==null) {
+			return data.emptyResourceInitializationList;
 		}
-
-		if (result == null) {
-			result = 0L;
-		}
-
-		return result;
+		return Collections.unmodifiableList(list);
 	}
 
 	/**

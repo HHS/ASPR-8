@@ -253,9 +253,9 @@ public final class AT_ResourcesPluginData {
 		// add up to 30 people
 		int id = 0;
 		Set<PersonId> people = new LinkedHashSet<>();
-		
+
 		for (int i = 0; i < 30; i++) {
-			id += randomGenerator.nextInt(3)+1;
+			id += randomGenerator.nextInt(3) + 1;
 			people.add(new PersonId(id));
 		}
 		assertTrue(people.size() > 20);
@@ -340,12 +340,20 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
+
+			Map<ResourceId, Long> actualAmounts = new LinkedHashMap<>();
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				actualAmounts.put(testResourceId, 0L);
+			}
+			for (ResourceInitialization resourceInitialization : resourceInitialData.getRegionResourceLevels(testRegionId)) {
+				actualAmounts.put(resourceInitialization.getResourceId(), resourceInitialization.getAmount());
+			}
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				MultiKey multiKey = new MultiKey(testRegionId, testResourceId);
 				MutableInteger mutableInteger = expectedValues.get(multiKey);
-				int expectedAmount = mutableInteger.getValue();
-				Long regionResourceLevel = resourceInitialData.getRegionResourceLevel(testRegionId, testResourceId);
-				assertEquals(expectedAmount, regionResourceLevel);
+				long expectedAmount = mutableInteger.getValue();
+				long actualAmount = actualAmounts.get(testResourceId);
+				assertEquals(expectedAmount, actualAmount);
 			}
 		}
 
@@ -662,7 +670,7 @@ public final class AT_ResourcesPluginData {
 		Set<PersonId> people = new LinkedHashSet<>();
 		int id = 0;
 		for (int i = 0; i < 30; i++) {
-			id +=randomGenerator.nextInt(3)+1;
+			id += randomGenerator.nextInt(3) + 1;
 			people.add(new PersonId(id));
 		}
 		assertTrue(people.size() > 20);
@@ -672,7 +680,7 @@ public final class AT_ResourcesPluginData {
 				if (randomGenerator.nextBoolean()) {
 					long amount = randomGenerator.nextInt(10);
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
-					MultiKey multiKey = new MultiKey(personId, testResourceId,amount);
+					MultiKey multiKey = new MultiKey(personId, testResourceId, amount);
 					expectedValues.add(multiKey);
 				}
 			}
@@ -690,7 +698,7 @@ public final class AT_ResourcesPluginData {
 				actualValues.add(multiKey);
 			}
 		}
-		
+
 		assertEquals(expectedValues, actualValues);
 
 		// precondition test: if the person id is null
@@ -744,30 +752,25 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
+			Map<ResourceId, Long> actualAmounts = new LinkedHashMap<>();
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				actualAmounts.put(testResourceId, 0L);
+			}
+			for (ResourceInitialization resourceInitialization : resourceInitialData.getRegionResourceLevels(testRegionId)) {
+				actualAmounts.put(resourceInitialization.getResourceId(), resourceInitialization.getAmount());
+			}
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				MultiKey multiKey = new MultiKey(testRegionId, testResourceId);
 				MutableInteger mutableInteger = expectedValues.get(multiKey);
-				int expectedAmount = mutableInteger.getValue();
-				Long regionResourceLevel = resourceInitialData.getRegionResourceLevel(testRegionId, testResourceId);
-				assertEquals(expectedAmount, regionResourceLevel);
+				long expectedAmount = mutableInteger.getValue();
+				long actualAmount = actualAmounts.get(testResourceId);
+				assertEquals(expectedAmount, actualAmount);
 			}
 		}
 
-		// precondition tests
-		RegionId regionId = TestRegionId.REGION_3;
-		ResourceId resourceId = TestResourceId.RESOURCE_5;
-
-		// if the region id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getRegionResourceLevel(null, resourceId));
+		// precondition test: if the region id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> resourceInitialData.getRegionResourceLevels(null));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-
-		// if the resource id is null
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getRegionResourceLevel(regionId, null));
-		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-
-		// if the resource id is unknown
-		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getRegionResourceLevel(regionId, TestResourceId.getUnknownResourceId()));
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
@@ -850,7 +853,7 @@ public final class AT_ResourcesPluginData {
 		Set<PersonId> people = new LinkedHashSet<>();
 		int id = 0;
 		for (int i = 0; i < 30; i++) {
-			id += randomGenerator.nextInt(3)+1;
+			id += randomGenerator.nextInt(3) + 1;
 			people.add(new PersonId(id));
 		}
 		assertTrue(people.size() > 20);
@@ -967,12 +970,12 @@ public final class AT_ResourcesPluginData {
 
 		assertEquals(resourcesPluginData.getPersonCount(), cloneResourcesPluginData.getPersonCount());
 
-		for (int i = 0;i<resourcesPluginData.getPersonCount();i++) {
+		for (int i = 0; i < resourcesPluginData.getPersonCount(); i++) {
 			PersonId personId = new PersonId(i);
 			List<ResourceInitialization> expectedLevels = resourcesPluginData.getPersonResourceLevels(personId);
 			List<ResourceInitialization> actualLevels = cloneResourcesPluginData.getPersonResourceLevels(personId);
 			assertEquals(expectedLevels.size(), actualLevels.size());
-			
+
 			Set<ResourceInitialization> expectedSet = new LinkedHashSet<>(expectedLevels);
 			Set<ResourceInitialization> actualSet = new LinkedHashSet<>(actualLevels);
 			assertEquals(expectedSet, actualSet);
@@ -1006,11 +1009,9 @@ public final class AT_ResourcesPluginData {
 		assertEquals(resourcesPluginData.getRegionIds(), cloneResourcesPluginData.getRegionIds());
 
 		for (RegionId regionId : resourcesPluginData.getRegionIds()) {
-			for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
-				Long expectedLevel = resourcesPluginData.getRegionResourceLevel(regionId, resourceId);
-				Long actualLevel = cloneResourcesPluginData.getRegionResourceLevel(regionId, resourceId);
-				assertEquals(expectedLevel, actualLevel);
-			}
+			List<ResourceInitialization> regionResourceLevels = resourcesPluginData.getRegionResourceLevels(regionId);
+			List<ResourceInitialization> cloneRegionResourceLevels = cloneResourcesPluginData.getRegionResourceLevels(regionId);
+			assertEquals(regionResourceLevels, cloneRegionResourceLevels);
 		}
 
 	}
