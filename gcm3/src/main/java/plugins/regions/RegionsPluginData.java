@@ -99,7 +99,7 @@ public class RegionsPluginData implements PluginData {
 		final Map<RegionPropertyId, Object> propertyMap = data.regionPropertyValues.get(regionId);
 		if (propertyMap != null) {
 			if (propertyMap.containsKey(regionPropertyId)) {
-				throw new ContractException(RegionError.DUPLICATE_REGION_PROPERTY_VALUE, regionPropertyId + " = " + regionId);
+				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId + " = " + regionId);
 			}
 		}
 	}
@@ -112,13 +112,13 @@ public class RegionsPluginData implements PluginData {
 
 	private static void validateRegionPropertyIdNotNull(RegionPropertyId regionPropertyId) {
 		if (regionPropertyId == null) {
-			throw new ContractException(RegionError.NULL_REGION_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 	}
 
 	private static void validateRegionPropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
-			throw new ContractException(RegionError.NULL_REGION_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 
 	}
@@ -126,13 +126,13 @@ public class RegionsPluginData implements PluginData {
 	private static void validateRegionPropertyIsDefined(Data data, RegionPropertyId regionPropertyId) {
 
 		if (!data.regionPropertyDefinitions.containsKey(regionPropertyId)) {
-			throw new ContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
 		}
 	}
 
 	private static void validateRegionPropertyIsNotDefined(Data data, RegionPropertyId regionPropertyId) {
 		if (data.regionPropertyDefinitions.containsKey(regionPropertyId)) {
-			throw new ContractException(RegionError.DUPLICATE_REGION_PROPERTY_DEFINITION_ASSIGNMENT);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION);
 		}
 	}
 
@@ -162,7 +162,7 @@ public class RegionsPluginData implements PluginData {
 		 *             that was not properly added with an initial agent
 		 *             behavior.
 		 * 
-		 *             <li>{@linkplain RegionError#UNKNOWN_REGION_PROPERTY_ID}</li>
+		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 		 *             if a region property value was associated with a region
 		 *             property id that was not defined
 		 * 
@@ -171,7 +171,7 @@ public class RegionsPluginData implements PluginData {
 		 *             region property id that is incompatible with the
 		 *             corresponding property definition.
 		 * 
-		 *             <li>{@linkplain RegionError#INSUFFICIENT_REGION_PROPERTY_VALUE_ASSIGNMENT}</li>
+		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
 		 *             if a region property definition does not have a default
 		 *             value and there are no property values added to replace
 		 *             that default.
@@ -199,10 +199,10 @@ public class RegionsPluginData implements PluginData {
 		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li>if the
 		 *             region id is null
 		 * 
-		 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 		 *             </li>if the region property id is null
 		 * 
-		 *             <li>{@linkplain RegionError#DUPLICATE_REGION_PROPERTY_VALUE}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 		 *             </li>if the region property value was previously defined
 		 * 
 		 */
@@ -288,13 +288,13 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID}</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 		 *             if the region property id is null
 		 * 
-		 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
 		 *
-		 *             <li>{@linkplain RegionError#DUPLICATE_REGION_PROPERTY_DEFINITION_ASSIGNMENT}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 		 *             </li> if a property definition for the given property id
 		 *             was previously defined.
 		 * 
@@ -331,7 +331,7 @@ public class RegionsPluginData implements PluginData {
 					for (RegionPropertyId regionPropertyId : map.keySet()) {
 						PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
 						if (propertyDefinition == null) {
-							throw new ContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId + " for region " + regionId);
+							throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, regionPropertyId + " for region " + regionId);
 						}
 						Object propertyValue = map.get(regionPropertyId);
 						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
@@ -356,7 +356,7 @@ public class RegionsPluginData implements PluginData {
 							propertyValue = propertyValueMap.get(regionPropertyId);
 						}
 						if (propertyValue == null) {
-							throw new ContractException(RegionError.INSUFFICIENT_REGION_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId);
+							throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId);
 						}
 					}
 				}
@@ -378,9 +378,9 @@ public class RegionsPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID}</li> if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
 	 *             the region property id is null
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_PROPERTY_ID}</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 	 *             if the region property id is known
 	 */
 	public PropertyDefinition getRegionPropertyDefinition(final RegionPropertyId regionPropertyId) {
@@ -412,9 +412,9 @@ public class RegionsPluginData implements PluginData {
 	 *             region id is null
 	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID}</li> if the
 	 *             region id is unknown
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID}</li> if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
 	 *             the region property id is null
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_PROPERTY_ID}</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 	 *             if the region property id is known
 	 */
 	@SuppressWarnings("unchecked")

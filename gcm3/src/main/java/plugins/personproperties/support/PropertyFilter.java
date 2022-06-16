@@ -31,11 +31,11 @@ public final class PropertyFilter extends Filter {
 		}
 		
 		if (personPropertyId == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (!personPropertiesDataManager.personPropertyIdExists(personPropertyId)) {
-			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
 		}
 	}
 
@@ -47,7 +47,7 @@ public final class PropertyFilter extends Filter {
 
 	private void validatePersonPropertyValueNotNull(SimulationContext simulationContext, final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 

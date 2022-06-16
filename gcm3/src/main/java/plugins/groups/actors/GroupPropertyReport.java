@@ -24,6 +24,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -143,7 +144,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
 		 *             group type id is null</li>
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             group property id is null</li>
 		 */
 		public Builder addProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
@@ -151,7 +152,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
 			if (groupPropertyId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
 			Set<GroupPropertyId> set = scaffold.clientPropertyMap.get(groupTypeId);
 			if (set == null) {

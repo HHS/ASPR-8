@@ -11,6 +11,7 @@ import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -93,23 +94,23 @@ public class GroupPropertyUpdateEvent implements Event {
 
 	private static void validateGroupPropertyId(SimulationContext simulationContext, GroupId groupId, GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (!groupsDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
 		}
 	}
 
 	private static void validateGroupPropertyId(SimulationContext simulationContext, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		GroupsDataManager groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 
 		if (!groupsDataManager.getGroupPropertyExists(groupTypeId, groupPropertyId)) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, groupTypeId + ": " + groupPropertyId);
 		}
 	}
 
@@ -126,9 +127,9 @@ public class GroupPropertyUpdateEvent implements Event {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
 	 *             is not known</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is not known</li>
 	 * 
 	 */
@@ -210,9 +211,9 @@ public class GroupPropertyUpdateEvent implements Event {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is not known</li>
 	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
 	 *             type id is null</li>

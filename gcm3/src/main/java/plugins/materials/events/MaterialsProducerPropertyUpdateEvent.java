@@ -10,6 +10,7 @@ import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 @Immutable
@@ -66,11 +67,11 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 
 	private static void validateMaterialsProducerPropertyId(SimulationContext simulationContext, MaterialsProducerPropertyId materialsProducerPropertyId) {
 		if (materialsProducerPropertyId == null) {
-			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class);
 		if (!materialsDataManager.materialsProducerPropertyIdExists(materialsProducerPropertyId)) {
-			throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
 		}
 	}
 

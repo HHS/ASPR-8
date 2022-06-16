@@ -497,9 +497,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             material id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the batch property id is unknown</li>
 	 */
 	public PropertyDefinition getBatchPropertyDefinition(final MaterialId materialId, final BatchPropertyId batchPropertyId) {
@@ -511,12 +511,12 @@ public final class MaterialsDataManager extends DataManager {
 
 	private void validateNewBatchPropertyId(final MaterialId materialId, final BatchPropertyId batchPropertyId) {
 		if (batchPropertyId == null) {
-			throw new ContractException(MaterialsError.NULL_BATCH_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		final Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);
 		if (map == null || map.containsKey(batchPropertyId)) {
-			throw new ContractException(MaterialsError.DUPLICATE_BATCH_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION);
 		}
 
 	}
@@ -538,9 +538,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             material id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>
-	 *             <li>{@linkplain MaterialsError#DUPLICATE_BATCH_PROPERTY_DEFINITION}
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the batch property id is already present</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
@@ -578,12 +578,12 @@ public final class MaterialsDataManager extends DataManager {
 
 	private void validateBatchPropertyId(final MaterialId materialId, final BatchPropertyId batchPropertyId) {
 		if (batchPropertyId == null) {
-			throw new ContractException(MaterialsError.NULL_BATCH_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		final Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);
 		if (map == null || !map.containsKey(batchPropertyId)) {
-			throw new ContractException(MaterialsError.UNKNOWN_BATCH_PROPERTY_ID);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
 		}
 
 	}
@@ -618,9 +618,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the batch property id is unknown</li>
 	 */
 	public double getBatchPropertyTime(BatchId batchId, BatchPropertyId batchPropertyId) {
@@ -641,9 +641,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the batch property id is unknown</li>
 	 */
 
@@ -836,9 +836,9 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerPropertyId}
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the materials producer property id is unknown</li>
 	 */
 	public PropertyDefinition getMaterialsProducerPropertyDefinition(final MaterialsProducerPropertyId materialsProducerPropertyId) {
@@ -848,11 +848,11 @@ public final class MaterialsDataManager extends DataManager {
 
 	private void validateMaterialsProducerPropertyId(final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		if (materialsProducerPropertyId == null) {
-			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (!materialsProducerPropertyIds.contains(materialsProducerPropertyId)) {
-			throw new ContractException(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, materialsProducerPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, materialsProducerPropertyId);
 		}
 	}
 
@@ -877,9 +877,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the materials producer id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the materials producer property id is unknown</li>
 	 */
 
@@ -897,9 +897,9 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the materials producer id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the materials producer property id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
@@ -1145,13 +1145,13 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the amount in the batch construction info is not finite</li>
 	 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT} if
 	 *             the amount in the batch construction info is negative</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch construction info contains a null batch property
 	 *             id</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the batch construction info contains an unknown batch
 	 *             property id</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_VALUE} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if
 	 *             the batch construction info contains a null batch property
 	 *             value</li>
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
@@ -1212,7 +1212,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	private void validateBatchPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(MaterialsError.NULL_BATCH_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -1456,13 +1456,13 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the batch property id is unknown</li>
 	 *             <li>{@linkplain PropertyError#IMMUTABLE_VALUE} if batch
 	 *             property is not mutable</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_VALUE} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if
 	 *             the batch property value is null</li>
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
 	 *             batch property value is not compatible with the corresponding
@@ -1509,13 +1509,13 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the materials producer id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the materials producer property id is unknown</li>
 	 *             <li>{@linkplain PropertyError#IMMUTABLE_VALUE} if the
 	 *             materials producer property is immutable</li>
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_VALUE}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *             if the property value is null</li>
 	 *             {@linkplain PropertyError#INCOMPATIBLE_VALUE} if the property
 	 *             value is incompatible with the corresponding property
@@ -1538,7 +1538,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	private void validateMaterialProducerPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 

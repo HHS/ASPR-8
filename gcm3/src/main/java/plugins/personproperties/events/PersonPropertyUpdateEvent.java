@@ -10,11 +10,11 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -102,9 +102,9 @@ public class PersonPropertyUpdateEvent implements Event {
 	 *             is null</li>
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is not known</li>
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is not known</li>
 	 * 
 	 */
@@ -142,9 +142,9 @@ public class PersonPropertyUpdateEvent implements Event {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is not known</li>
 	 * 
 	 */
@@ -186,9 +186,9 @@ public class PersonPropertyUpdateEvent implements Event {
 	 *             is null</li>
 	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
 	 *             id is not known</li>
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is not known</li>
 	 * 
 	 */
@@ -223,11 +223,11 @@ public class PersonPropertyUpdateEvent implements Event {
 
 	private static void validatePersonPropertyId(SimulationContext simulationContext, PersonPropertyId personPropertyId) {
 		if (personPropertyId == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (!simulationContext.getDataManager(PersonPropertiesDataManager.class).personPropertyIdExists(personPropertyId)) {
-			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
 		}
 	}
 

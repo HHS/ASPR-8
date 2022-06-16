@@ -1,5 +1,6 @@
 package plugins.globalproperties.support;
 
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 /**
  * A simple implementor of {@link GlobalPropertyId} that wraps a value. 
@@ -14,12 +15,12 @@ public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 	 * Creates a global property id from the given value.  The value must implement a proper equals contract.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_VALUE} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if
 	 *             the value is null</li>
 	 */
 	public SimpleGlobalPropertyId(Object value) {
 		if (value == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 		this.value = value;
 	}

@@ -5,6 +5,7 @@ import nucleus.Event;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsError;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -25,7 +26,7 @@ public class BatchPropertyDefinitionEvent implements Event{
 	 * @throws ContractException
 	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 	 *             material id is null</li>
-	 *             <li>{@linkplain MaterialsError#NULL_BATCH_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>
 	 */
 	public BatchPropertyDefinitionEvent(MaterialId materialId, BatchPropertyId batchPropertyId) {
@@ -33,7 +34,7 @@ public class BatchPropertyDefinitionEvent implements Event{
 			throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 		}
 		if (batchPropertyId == null) {
-			throw new ContractException(MaterialsError.NULL_BATCH_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		this.materialId = materialId;
 		this.batchPropertyId = batchPropertyId;

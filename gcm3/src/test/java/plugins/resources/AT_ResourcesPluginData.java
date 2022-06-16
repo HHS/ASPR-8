@@ -27,6 +27,7 @@ import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -97,7 +98,7 @@ public final class AT_ResourcesPluginData {
 			builder.setResourcePropertyValue(resourceId, resourcePropertyId, value);
 			builder.build();
 		});//
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
 		 * if a resource property value was collected for a resource property
@@ -114,7 +115,7 @@ public final class AT_ResourcesPluginData {
 			builder.setResourcePropertyValue(resourceId, resourcePropertyId, value);
 			builder.build();
 		});//
-		assertEquals(ResourceError.INCOMPATIBLE_VALUE, contractException.getErrorType());
+		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
 		 * if a resource property definition has a null default value and there
@@ -128,7 +129,7 @@ public final class AT_ResourcesPluginData {
 			builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
 			builder.build();
 		});//
-		assertEquals(ResourceError.INSUFFICIENT_RESOURCE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		/*
 		 * if a resource level was collected for a person that is an unknown
 		 * resource id
@@ -219,20 +220,20 @@ public final class AT_ResourcesPluginData {
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourcesPluginData.builder().defineResourceProperty(resourceId, null, propertyDefinition);
 		});
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, null);
 		});
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if a resource property definition for the given resource id and
 		// property id was previously defined.
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition).defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
 		});
-		assertEquals(ResourceError.DUPLICATE_RESOURCE_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
 
@@ -429,17 +430,17 @@ public final class AT_ResourcesPluginData {
 
 		// if the resource property id is null</li>
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property value was previously assigned
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourcesPluginData.builder().setResourcePropertyValue(resourceId, resourcePropertyId, 5).setResourcePropertyValue(resourceId, resourcePropertyId, 5);
 		});
-		assertEquals(ResourceError.DUPLICATE_RESOURCE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 	}
 
@@ -539,18 +540,18 @@ public final class AT_ResourcesPluginData {
 		contractException = assertThrows(ContractException.class, () -> {
 			resourceInitialData.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, null);
 		});
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property id is unknown
 		contractException = assertThrows(ContractException.class, () -> {
 			resourceInitialData.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId());
 		});
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		contractException = assertThrows(ContractException.class, () -> {
 			resourceInitialData.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE);
 		});
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
@@ -641,14 +642,14 @@ public final class AT_ResourcesPluginData {
 
 		// if the resource property id is null
 		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(resourceId, null));
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property id is unknown
 		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId()));
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		contractException = assertThrows(ContractException.class, () -> resourceInitialData.getResourcePropertyValue(resourceId, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE));
-		assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
@@ -821,17 +822,17 @@ public final class AT_ResourcesPluginData {
 
 		// if the resource property id is null</li>
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
-		assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the resource property value was previously assigned
 		contractException = assertThrows(ContractException.class, () -> {
 			ResourcesPluginData.builder().setResourcePropertyValue(resourceId, resourcePropertyId, 5).setResourcePropertyValue(resourceId, resourcePropertyId, 5);
 		});
-		assertEquals(ResourceError.DUPLICATE_RESOURCE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 	}
 

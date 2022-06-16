@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
+import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -140,7 +141,7 @@ public final class AT_GroupConstructionInfo {
 			.setGroupPropertyValue(null, 12)
 			.build();//
 		});
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		
 		//if a group property value is null
 		contractException = assertThrows(ContractException.class, () -> {
@@ -149,7 +150,7 @@ public final class AT_GroupConstructionInfo {
 			.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, null)
 			.build();//
 		});
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_VALUE, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 
 	}

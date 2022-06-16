@@ -2,8 +2,8 @@ package plugins.regions.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionPropertyId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -21,13 +21,13 @@ public class RegionPropertyAdditionEvent implements Event {
 	 * Constructs the event
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             region property id is null</li>
 	 * 
 	 */
 	public RegionPropertyAdditionEvent(RegionPropertyId regionPropertyId) {
 		if (regionPropertyId == null) {
-			throw new ContractException(RegionError.NULL_REGION_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		this.regionPropertyId = regionPropertyId;

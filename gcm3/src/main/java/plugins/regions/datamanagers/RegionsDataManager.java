@@ -270,9 +270,9 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns the property definition for the given {@link RegionPropertyId}
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             region property id is null</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the region property id is unknown
 	 * 
 	 */
@@ -382,11 +382,11 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 * <li>{@link RegionError#NULL_REGION_ID} if the region id is null
 	 * <li>{@link RegionError#UNKNOWN_REGION_ID} if the region id is unknown
-	 * <li>{@link RegionError#NULL_REGION_PROPERTY_ID} if the property id is
+	 * <li>{@link PropertyError#NULL_PROPERTY_ID} if the property id is
 	 * null
-	 * <li>{@link RegionError#UNKNOWN_REGION_PROPERTY_ID} if the property id is
+	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the property id is
 	 * unknown
-	 * <li>{@link RegionError#NULL_REGION_PROPERTY_VALUE} if the value is null
+	 * <li>{@link PropertyError#NULL_PROPERTY_VALUE} if the value is null
 	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the value is incompatible
 	 * with the defined type for the property
 	 * <li>{@link PropertyError#IMMUTABLE_VALUE} if the property has been
@@ -418,7 +418,7 @@ public final class RegionsDataManager extends DataManager {
 
 	private void validateRegionPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(RegionError.NULL_REGION_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -430,9 +430,9 @@ public final class RegionsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
 	 *             id is not known</li>
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             region property id is null</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the region property id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
@@ -450,9 +450,9 @@ public final class RegionsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
 	 *             id is not known</li>
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             region property id is null</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the region property id is unknown</li>
 	 */
 	public double getRegionPropertyTime(RegionId regionId, RegionPropertyId regionPropertyId) {
@@ -668,10 +668,10 @@ public final class RegionsDataManager extends DataManager {
 
 	private void validateRegionPropertyId(final RegionPropertyId regionPropertyId) {
 		if (regionPropertyId == null) {
-			throw new ContractException(RegionError.NULL_REGION_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		if (!regionPropertyIdExists(regionPropertyId)) {
-			throw new ContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, regionPropertyId);
 		}
 	}
 
@@ -801,10 +801,10 @@ public final class RegionsDataManager extends DataManager {
 
 	private void validateNewRegionPropertyId(final RegionPropertyId regionPropertyId) {
 		if (regionPropertyId == null) {
-			throw new ContractException(RegionError.NULL_REGION_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		if (regionPropertyIdExists(regionPropertyId)) {
-			throw new ContractException(RegionError.DUPLICATE_REGION_PROPERTY_VALUE, regionPropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId);
 		}
 	}
 
@@ -821,9 +821,9 @@ public final class RegionsDataManager extends DataManager {
 	 * Adds a new region property
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             region property is null</li>
-	 *             <li>{@linkplain RegionError#DUPLICATE_REGION_PROPERTY_VALUE}
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 	 *             if the region property is already defined</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>

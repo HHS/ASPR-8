@@ -17,7 +17,6 @@ import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -76,7 +75,7 @@ public class AT_PersonPropertyPluginData {
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			builder.definePersonProperty(null, testPersonPropertyId.getPropertyDefinition());
 		});
-		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the person property definition value is null
 		contractException = assertThrows(ContractException.class, () -> {
@@ -84,7 +83,7 @@ public class AT_PersonPropertyPluginData {
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			builder.definePersonProperty(testPersonPropertyId, null);
 		});
-		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if the person property definition is already added
 		contractException = assertThrows(ContractException.class, () -> {
@@ -93,7 +92,7 @@ public class AT_PersonPropertyPluginData {
 			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		});
-		assertEquals(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		// if the person property definition does not have a default value
 		contractException = assertThrows(ContractException.class, () -> {
@@ -141,11 +140,11 @@ public class AT_PersonPropertyPluginData {
 
 		// if the person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesPluginData.getPersonPropertyDefinition(null));
-		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the person property id is unknown
 		contractException = assertThrows(ContractException.class, () -> personPropertiesPluginData.getPersonPropertyDefinition(TestPersonPropertyId.getUnknownPersonPropertyId()));
-		assertEquals(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
@@ -283,14 +282,14 @@ public class AT_PersonPropertyPluginData {
 			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			builder.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, null);
 		});
-		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 		// precondition test: if the person property id is null
 		contractException = assertThrows(ContractException.class, () -> {
 			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 			builder.setPersonPropertyValue(new PersonId(0), null, true);
 		});
-		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 	}
 

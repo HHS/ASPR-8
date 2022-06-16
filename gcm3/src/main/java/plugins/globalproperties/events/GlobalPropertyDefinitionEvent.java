@@ -1,8 +1,8 @@
 package plugins.globalproperties.events;
 
 import nucleus.Event;
-import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 /**
  * An event released by the global data manager whenever a global property
@@ -19,19 +19,19 @@ public record GlobalPropertyDefinitionEvent(GlobalPropertyId globalPropertyId,Ob
 	 * Creates the event.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
 	 *             the property id is null</li>
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_VALUE}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *             if the initial property value is null</li>
 	 */
 	public GlobalPropertyDefinitionEvent {
 
 		if (globalPropertyId == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (initialPropertyValue == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 }

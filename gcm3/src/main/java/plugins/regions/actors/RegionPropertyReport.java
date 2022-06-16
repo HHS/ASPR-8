@@ -9,12 +9,12 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.events.RegionPropertyAdditionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
-import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -84,7 +84,7 @@ public final class RegionPropertyReport {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_PROPERTY_ID} if a
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
 	 *             region property id used in the constructor is unknown</li>
 	 */
 	public void init(final ActorContext actorContext) {
@@ -104,7 +104,7 @@ public final class RegionPropertyReport {
 		for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
 			if (!validPropertyIds.contains(regionPropertyId)) {
 
-				throw new ContractException(RegionError.UNKNOWN_REGION_PROPERTY_ID, regionPropertyId);
+				throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, regionPropertyId);
 			}
 		}
 

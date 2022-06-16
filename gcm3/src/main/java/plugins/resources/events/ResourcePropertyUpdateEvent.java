@@ -10,6 +10,7 @@ import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -80,11 +81,11 @@ public class ResourcePropertyUpdateEvent implements Event {
 
 	private static void validateResourcePropertyId(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		ResourcesDataManager resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
 		if (!resourcesDataManager.resourcePropertyIdExists(resourceId, resourcePropertyId)) {
-			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
 		}
 	}
 
@@ -101,9 +102,9 @@ public class ResourcePropertyUpdateEvent implements Event {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *             the resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the resource property id is unknown</li> *
 	 */
 	public static EventLabel<ResourcePropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, ResourceId resourceId, ResourcePropertyId resourcePropertyId) {

@@ -100,11 +100,11 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * Defines a person property definition
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 		 *             if the person property id is null</li>
-		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if the person property definition value is null</li>
-		 *             <li>{@linkplain PersonPropertyError#DUPLICATE_PERSON_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 		 *             if the person property definition is already added</li>
 		 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 		 *             if the person property definition does not have a default
@@ -128,7 +128,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
 		 *             id is null</li>
-		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 		 *             if the person property id is null</li>
 		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
 		 *             if the person property value is null</li>
@@ -162,7 +162,7 @@ public class PersonPropertiesPluginData implements PluginData {
 						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
 						PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
 						if (propertyDefinition == null) {
-							throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+							throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
 						}
 						Object propertyValue = personPropertyInitialization.getValue();
 						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
@@ -177,13 +177,13 @@ public class PersonPropertiesPluginData implements PluginData {
 	private static void validatePersonPropertyIsNotDefined(final Data data, final PersonPropertyId personPropertyId) {
 		final PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
 		if (propertyDefinition != null) {
-			throw new ContractException(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION, personPropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, personPropertyId);
 		}
 	}
 
 	private static void validatePersonPropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 	}
 
@@ -195,7 +195,7 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	private static void validatePersonPropertyIdNotNull(PersonPropertyId personPropertyId) {
 		if (personPropertyId == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 	}
 
@@ -211,9 +211,9 @@ public class PersonPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is unknown</li>
 	 * 
 	 */
@@ -221,7 +221,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		validatePersonPropertyIdNotNull(personPropertyId);
 		final PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
 		if (propertyDefinition == null) {
-			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
 		}
 		return propertyDefinition;
 	}
@@ -253,7 +253,7 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	private static void validatePersonPropertyValueNotNull(Object personPropertyValue) {
 		if (personPropertyValue == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 

@@ -54,6 +54,7 @@ import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyDefinitionInitialization;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
@@ -163,11 +164,11 @@ public final class AT_PersonPropertyDataManager {
 
 			// if the person property id is null
 			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getPersonPropertyDefinition(null));
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the person property id is unknown
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getPersonPropertyDefinition(TestPersonPropertyId.getUnknownPersonPropertyId()));
-			assertEquals(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 	}
@@ -266,11 +267,11 @@ public final class AT_PersonPropertyDataManager {
 
 			// if the person property id is null
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getPersonPropertyTime(personId, null));
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the person property id is unknown
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getPersonPropertyTime(personId, unknownPersonPropertyId));
-			assertEquals(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 			// if the person property does not have time tracking turned on in
 			// the associated property definition
@@ -330,11 +331,11 @@ public final class AT_PersonPropertyDataManager {
 
 			// if the person property id is null
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getPersonPropertyValue(personId, null));
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the person property id is unknown
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getPersonPropertyValue(personId, unknownPersonPropertyId));
-			assertEquals(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 	}
@@ -462,15 +463,15 @@ public final class AT_PersonPropertyDataManager {
 
 			// if the person property id is null
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.setPersonPropertyValue(personId, null, value));
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the person property id is unknown
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.setPersonPropertyValue(personId, unknownPersonPropertyId, value));
-			assertEquals(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 			// if the property value is null
 			contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.setPersonPropertyValue(personId, personPropertyId, null));
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 			// if the property value is not compatible with the corresponding
 			// property definition
@@ -749,7 +750,7 @@ public final class AT_PersonPropertyDataManager {
 				PersonConstructionData constructionData = personBuilder.build();
 				peopleDataManager.addPerson(constructionData);
 			});
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 		});
 
@@ -770,7 +771,7 @@ public final class AT_PersonPropertyDataManager {
 				PersonConstructionData constructionData = personBuilder.build();
 				peopleDataManager.addPerson(constructionData);
 			});
-			assertEquals(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 		/*
@@ -792,7 +793,7 @@ public final class AT_PersonPropertyDataManager {
 				PersonConstructionData constructionData = personBuilder.build();
 				peopleDataManager.addPerson(constructionData);
 			});
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 	}
@@ -896,7 +897,7 @@ public final class AT_PersonPropertyDataManager {
 				bulkBuilder.add(personBuilder.build());
 				peopleDataManager.addBulkPeople(bulkBuilder.build());
 			});
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the event contains a PersonPropertyInitialization that has an
 			// unknown person property id
@@ -906,7 +907,7 @@ public final class AT_PersonPropertyDataManager {
 				bulkBuilder.add(personBuilder.build());
 				peopleDataManager.addBulkPeople(bulkBuilder.build());
 			});
-			assertEquals(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 			// if the event contains a PersonPropertyInitialization that has a
 			// null person property value
@@ -916,7 +917,7 @@ public final class AT_PersonPropertyDataManager {
 				bulkBuilder.add(personBuilder.build());
 				peopleDataManager.addBulkPeople(bulkBuilder.build());
 			});
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 			// if the event contains a PersonPropertyInitialization that has a
 			// person property value that is not compatible with the
@@ -992,8 +993,9 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "definePersonProperty", args = { PersonPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(name = "definePersonProperty", args = { PropertyDefinitionInitialization.class})
 	public void testDefinePersonProperty() {
+		//fail();
 
 		PersonPropertiesActionSupport.testConsumer(100, 3100440347097616280L, (c) -> {
 			double planTime = 1;
@@ -1034,7 +1036,7 @@ public final class AT_PersonPropertyDataManager {
 			PersonPropertyId personPropertyId = null;
 			PropertyDefinition propertyDefinition = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
 			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
-			assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// if the person property already exists
@@ -1043,7 +1045,7 @@ public final class AT_PersonPropertyDataManager {
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
 			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
-			assertEquals(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION, contractException.getErrorType());
+			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
 
 		// if the property definition is null

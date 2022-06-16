@@ -49,11 +49,11 @@ import util.time.Watch;
 public final class PersonPropertiesDataManager extends DataManager {
 	private void validatePersonPropertyIdIsUnknown(final PersonPropertyId personPropertyId) {
 		if (personPropertyId == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (personPropertyDefinitions.containsKey(personPropertyId)) {
-			throw new ContractException(PersonPropertyError.DUPLICATE_PERSON_PROPERTY_DEFINITION, personPropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, personPropertyId);
 		}
 	}
 
@@ -64,11 +64,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	}
 
-	private void validatePropertyDefinitionHasDefaultValue(PropertyDefinition propertyDefinition) {
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
-		}
-	}
+	
 
 	/**
 	 * 
@@ -76,9 +72,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#DUPLICATE_PERSON_PROPERTY_DEFINITION}
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the person property already exists</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
@@ -89,6 +85,32 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * 
 	 * 
 	 */
+//	public void definePersonProperty(PropertyDefinitionInitialization<PersonPropertyId,PersonId> propertyDefinitionInitialization) {
+//		PersonPropertyId personPropertyId = propertyDefinitionInitialization.getPropertyId();
+//		PropertyDefinition propertyDefinition = propertyDefinitionInitialization.getPropertyDefinition();
+//		
+//		validatePersonPropertyIdIsUnknown(personPropertyId);
+//		if(propertyDefinition.getDefaultValue().isEmpty()) {
+//			
+//		}
+//		
+//		personPropertyDefinitions.put(personPropertyId, propertyDefinition);
+//		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
+//		personPropertyManagerMap.put(personPropertyId, propertyManager);
+//
+//		for(Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+//			PersonId personId = pair.getFirst();
+//			int pId = personId.getValue();
+//			Object value = pair.getSecond();
+//			propertyManager.setPropertyValue(pId, value);			
+//		}
+//
+//
+//		
+//
+//		dataManagerContext.releaseEvent(new PersonPropertyDefinitionEvent(personPropertyId));
+//	}
+	
 	public void definePersonProperty(PersonPropertyId personPropertyId, PropertyDefinition propertyDefinition) {
 
 		validatePersonPropertyIdIsUnknown(personPropertyId);
@@ -99,6 +121,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 		personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 
 		dataManagerContext.releaseEvent(new PersonPropertyDefinitionEvent(personPropertyId));
+	}
+
+	
+	private void validatePropertyDefinitionHasDefaultValue(PropertyDefinition propertyDefinition) {
+		if (!propertyDefinition.getDefaultValue().isPresent()) {
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
+		}
 	}
 
 	@Override
@@ -180,7 +209,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private void validatePersonPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -199,9 +228,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * value.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is unknown</li>
 	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
 	 *             if the person property value is null</li>
@@ -257,9 +286,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the number of people who have the given person property value.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is unknown</li>
 	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
 	 *             if the person property value is null</li>
@@ -300,9 +329,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the property definition for the given person property id
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is unknown</li>
 	 */
 	public PropertyDefinition getPersonPropertyDefinition(final PersonPropertyId personPropertyId) {
@@ -333,9 +362,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is unknown</li>
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is unknown</li>
 	 *             <li>{@linkplain PersonPropertyError#PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED}
 	 *             if the person property does not have time tracking turned on
@@ -367,9 +396,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is unknown</li>
-	 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the person property id is unknown</li>
 	 * 
 	 */
@@ -391,11 +420,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private void validatePersonPropertyId(final PersonPropertyId personPropertyId) {
 		if (personPropertyId == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (!personPropertyDefinitions.containsKey(personPropertyId)) {
-			throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
 		}
 	}
 
@@ -455,9 +484,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * <li>{@link PersonError#NULL_PERSON_ID} if the person id is null</li>
 	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is
 	 * unknown</li>
-	 * <li>{@link PersonPropertyError#NULL_PERSON_PROPERTY_ID} if the person
+	 * <li>{@link PropertyError#NULL_PROPERTY_ID} if the person
 	 * property id is null</li>
-	 * <li>{@link PersonPropertyError#UNKNOWN_PERSON_PROPERTY_ID} if the person
+	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the person
 	 * property id is unknown</li>
 	 * <li>{@link PersonPropertyError#NULL_PERSON_PROPERTY_VALUE} if the
 	 * property value is null</li>

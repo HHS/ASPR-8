@@ -23,6 +23,7 @@ import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
 
@@ -195,13 +196,13 @@ public final class ResourcesPluginData implements PluginData {
 
 	private static void validateResourcePropertyIdNotNull(ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 	}
 
 	private static void validateResourcePropertyValueNotNull(Object resourcePropertyValue) {
 		if (resourcePropertyValue == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -209,14 +210,14 @@ public final class ResourcesPluginData implements PluginData {
 		final Map<ResourcePropertyId, Object> propertyMap = data.resourcePropertyValues.get(resourceId);
 		if (propertyMap != null) {
 			if (propertyMap.containsKey(resourcePropertyId)) {
-				throw new ContractException(ResourceError.DUPLICATE_RESOURCE_PROPERTY_VALUE_ASSIGNMENT, resourcePropertyId + ": " + resourceId);
+				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, resourcePropertyId + ": " + resourceId);
 			}
 		}
 	}
 
 	private static void validateResourcePropertyDefintionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 	}
 
@@ -225,7 +226,7 @@ public final class ResourcesPluginData implements PluginData {
 		if (defMap != null) {
 			final PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
 			if (propertyDefinition != null) {
-				throw new ContractException(ResourceError.DUPLICATE_RESOURCE_PROPERTY_DEFINITION, resourcePropertyId);
+				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, resourcePropertyId);
 			}
 		}
 	}
@@ -275,24 +276,24 @@ public final class ResourcesPluginData implements PluginData {
 		 *             that was not added</li>
 		 * 
 		 *             3
-		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *             if a resource property value was collected for a resource
 		 *             that was not added</li>
 		 * 
 		 *             4
-		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *             if a resource property value was collected for a resource
 		 *             property that is not associated with the given resource
 		 *             id</li>
 		 * 
 		 *             5
-		 *             <li>{@linkplain ResourceError#INCOMPATIBLE_VALUE} if a
+		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
 		 *             resource property value was collected for a resource
 		 *             property that is not compatible with the associated
 		 *             resource property definition</li>
 		 * 
 		 *             6
-		 *             <li>{@linkplain ResourceError#INSUFFICIENT_RESOURCE_PROPERTY_VALUE_ASSIGNMENT}
+		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if a resource property definition has a null default
 		 *             value and there is no assigned resource property value
 		 *             for that resource</li>
@@ -349,13 +350,13 @@ public final class ResourcesPluginData implements PluginData {
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
 		 * 
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 		 *             </li> if the resource property id is null
 		 * 
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
 		 *
-		 *             <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 		 *             </li> if a resource property definition for the given
 		 *             resource id and property id was previously defined.
 		 * 
@@ -451,11 +452,11 @@ public final class ResourcesPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 		 *             if the resource property id is null</li>
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_VALUE}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *             if the resource property value is null</li>
-		 *             <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_PROPERTY_VALUE_ASSIGNMENT}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if the resource property value was previously
 		 *             assigned</li>
 		 */
@@ -524,12 +525,12 @@ public final class ResourcesPluginData implements PluginData {
 				Map<ResourcePropertyId, Object> map = data.resourcePropertyValues.get(resourceId);
 				for (ResourcePropertyId resourcePropertyId : map.keySet()) {
 					if (propDefMap == null || !propDefMap.containsKey(resourcePropertyId)) {
-						throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourceId + ": " + resourcePropertyId);
+						throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, resourceId + ": " + resourcePropertyId);
 					}
 					Object propertyValue = map.get(resourcePropertyId);
 					PropertyDefinition propertyDefinition = propDefMap.get(resourcePropertyId);
 					if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-						throw new ContractException(ResourceError.INCOMPATIBLE_VALUE, resourceId + ": " + resourcePropertyId + ": " + propertyValue);
+						throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, resourceId + ": " + resourcePropertyId + ": " + propertyValue);
 					}
 				}
 
@@ -552,7 +553,7 @@ public final class ResourcesPluginData implements PluginData {
 								propertyValue = propertyValueMap.get(resourcePropertyId);
 							}
 							if (propertyValue == null) {
-								throw new ContractException(ResourceError.INSUFFICIENT_RESOURCE_PROPERTY_VALUE_ASSIGNMENT, resourceId + ": " + resourcePropertyId);
+								throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, resourceId + ": " + resourcePropertyId);
 							}
 						}
 					}
@@ -589,11 +590,11 @@ public final class ResourcesPluginData implements PluginData {
 	private static void validateResourcePropertyIsDefined(final Data data, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
 		if (map == null) {
-			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourceId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, resourceId);
 		}
 
 		if (!map.containsKey(resourcePropertyId)) {
-			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, resourcePropertyId);
 		}
 	}
 
@@ -606,9 +607,9 @@ public final class ResourcesPluginData implements PluginData {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *             the resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the resource property id is unknown</li>
 	 * 
 	 */
@@ -662,9 +663,9 @@ public final class ResourcesPluginData implements PluginData {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the *
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *             the resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the resource property id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")

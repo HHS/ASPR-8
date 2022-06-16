@@ -547,14 +547,14 @@ public class AT_RegionsDataManager {
 		RegionsActionSupport.testConsumer(0, 4217775232224320101L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyDefinition(null));
-			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is unknown
 		RegionsActionSupport.testConsumer(0, 1425794836864585647L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyDefinition(TestRegionPropertyId.getUnknownRegionPropertyId()));
-			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 	}
 
@@ -637,7 +637,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId knownRegionId = TestRegionId.REGION_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyValue(knownRegionId, null));
-			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is unknown
@@ -646,7 +646,7 @@ public class AT_RegionsDataManager {
 			RegionId knownRegionId = TestRegionId.REGION_1;
 			RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyValue(knownRegionId, unknownRegionPropertyId));
-			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 	}
@@ -726,7 +726,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId knownRegionId = TestRegionId.REGION_1;
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyTime(knownRegionId, null));
-			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition check: if the region property id is unknown
@@ -735,7 +735,7 @@ public class AT_RegionsDataManager {
 			RegionId knownRegionId = TestRegionId.REGION_1;
 			RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyTime(knownRegionId, unknownRegionPropertyId));
-			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 	}
@@ -1055,7 +1055,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, null, propertyValue));
-			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		});
 
@@ -1067,7 +1067,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, unknownRegionPropertyId, propertyValue));
-			assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 
@@ -1078,7 +1078,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, regionPropertyId, null));
-			assertEquals(RegionError.NULL_REGION_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 		});
 
@@ -1114,7 +1114,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.setRegionPropertyValue(regionId, immutableRegionPropertyId, null));
-			assertEquals(RegionError.NULL_REGION_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 		});
 	}
@@ -1665,7 +1665,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> regionsDataManager.defineRegionProperty(null, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(7).build()));
-			assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/*
@@ -1675,7 +1675,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.defineRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE,
 					PropertyDefinition.builder().setType(Integer.class).setDefaultValue(7).build()));
-			assertEquals(RegionError.DUPLICATE_REGION_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		});
 
 		/*

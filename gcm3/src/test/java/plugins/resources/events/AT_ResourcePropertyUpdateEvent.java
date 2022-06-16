@@ -22,6 +22,7 @@ import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsDataManager;
+import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -131,12 +132,12 @@ public class AT_ResourcePropertyUpdateEvent implements Event {
 			// if the resource property id is null
 			contractException = assertThrows(ContractException.class,
 					() -> ResourcePropertyUpdateEvent.getEventLabel(c, TestResourceId.RESOURCE_1, null));
-			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the resource property id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> ResourcePropertyUpdateEvent.getEventLabel(c, TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 	}

@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.math3.util.FastMath;
 
 import plugins.people.support.PersonError;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 public class BulkGroupMembershipData {
@@ -118,9 +119,9 @@ public class BulkGroupMembershipData {
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group
 		 *             index is negative</li>
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             group property id is null</li>
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_VALUE} if
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if
 		 *             the property value is null</li>
 		 * 
 		 * 
@@ -130,10 +131,10 @@ public class BulkGroupMembershipData {
 				throw new ContractException(GroupError.UNKNOWN_GROUP_ID);
 			}
 			if (groupPropertyId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
 			if (propertyValue == null) {
-				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
+				throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 			}
 			data.maxGroupIndex = FastMath.max(data.maxGroupIndex,groupIndex);
 			Map<GroupPropertyId, Object> map = data.groupPropertyValues.get(groupIndex);

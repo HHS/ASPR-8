@@ -15,7 +15,6 @@ import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
-import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
@@ -25,6 +24,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -220,7 +220,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	/**
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID}
 	 *             if a person property specified in construction is
 	 *             unknown</li>
 	 */
@@ -251,7 +251,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		final Set<PersonPropertyId> validPropertyIds = personPropertiesDataManager.getPersonPropertyIds();
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {
 			if (!validPropertyIds.contains(personPropertyId)) {
-				throw new ContractException(PersonPropertyError.UNKNOWN_PERSON_PROPERTY_ID, personPropertyId);
+				throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, personPropertyId);
 			}
 		}
 

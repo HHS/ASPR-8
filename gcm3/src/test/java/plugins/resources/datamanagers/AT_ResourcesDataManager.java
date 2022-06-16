@@ -891,14 +891,14 @@ public final class AT_ResourcesDataManager {
 		ResourcesActionSupport.testConsumer(10, 5885550428859775099L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, null));
-			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 		/* precondition test: if the resource property id is unknown */
 		ResourcesActionSupport.testConsumer(10, 6053540186403572061L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource property id is unknown */
@@ -906,7 +906,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.getResourcePropertyTime(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 	}
@@ -980,7 +980,7 @@ public final class AT_ResourcesDataManager {
 		ResourcesActionSupport.testConsumer(10, 5544999164968796966L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, null));
-			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource property id unknown */
@@ -988,7 +988,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource property id unknown */
@@ -996,7 +996,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.getResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.getUnknownResourcePropertyId()));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 	}
 
@@ -1116,7 +1116,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1, null, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
-			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource property is already defined */
@@ -1124,7 +1124,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.defineResourceProperty(TestResourceId.RESOURCE_1,
 					TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(1).build()));
-			assertEquals(ResourceError.DUPLICATE_RESOURCE_PROPERTY_DEFINITION, contractException.getErrorType());
+			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
 
 		/* precondition test: if the property definition is null */
@@ -1302,7 +1302,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			Object value = 10;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.setResourcePropertyValue(resourceId, null, value));
-			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource property id is unknown */
@@ -1312,7 +1312,7 @@ public final class AT_ResourcesDataManager {
 			Object value = 10;
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.setResourcePropertyValue(resourceId, TestResourcePropertyId.getUnknownResourcePropertyId(), value));
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource property value is null */
@@ -1321,7 +1321,7 @@ public final class AT_ResourcesDataManager {
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.setResourcePropertyValue(resourceId, resourcePropertyId, null));
-			assertEquals(ResourceError.NULL_RESOURCE_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 		});
 
 		/*

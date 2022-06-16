@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.support.PersonError;
+import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -73,7 +74,7 @@ public class AT_BulkGroupMembershipData {
 																								.setGroupPropertyValue(0, null, 23.4)//
 																								.build());
 
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the property value is null
 		contractException = assertThrows(ContractException.class, () -> BulkGroupMembershipData//
@@ -82,7 +83,7 @@ public class AT_BulkGroupMembershipData {
 																								.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, null)//
 																								.build());
 
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_VALUE, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 	}
 

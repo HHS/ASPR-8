@@ -8,11 +8,11 @@ import nucleus.EventLabel;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
-import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -90,7 +90,7 @@ public final class GlobalPropertyReport {
 		final Set<GlobalPropertyId> validPropertyIds = globalPropertiesDataManager.getGlobalPropertyIds();
 		for (final GlobalPropertyId globalPropertyId : globalPropertyIds) {
 			if (!validPropertyIds.contains(globalPropertyId)) {
-				throw new ContractException(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+				throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 			}
 		}
 

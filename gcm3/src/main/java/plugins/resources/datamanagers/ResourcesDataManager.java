@@ -445,13 +445,13 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	private void validateNewResourcePropertyId(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		final Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
 
 		if ((map != null) && map.containsKey(resourcePropertyId)) {
-			throw new ContractException(ResourceError.DUPLICATE_RESOURCE_PROPERTY_DEFINITION, resourcePropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, resourcePropertyId);
 		}
 	}
 
@@ -473,9 +473,9 @@ public final class ResourcesDataManager extends DataManager {
 	 *        is null</li>
 	 *        <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the resource
 	 *        id is unknown</li>
-	 *        <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if the
+	 *        <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *        resource property id is unknown</li>
-	 *        <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_PROPERTY_DEFINITION}
+	 *        <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *        if the resource property is already defined</li>
 	 *        <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if the
 	 *        property definition is null</li>
@@ -560,9 +560,9 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *             the resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the resource property id is unknown</li>
 	 */
 	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
@@ -599,9 +599,9 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *             the resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the resource property id is unknown</li>
 	 */
 
@@ -619,9 +619,9 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *             the resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the resource property id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
@@ -797,7 +797,7 @@ public final class ResourcesDataManager extends DataManager {
 				Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
 				if (defMap != null) {
 					if (defMap.containsKey(resourcePropertyId)) {
-						throw new ContractException(ResourceError.DUPLICATE_RESOURCE_PROPERTY_DEFINITION, resourcePropertyId);
+						throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, resourcePropertyId);
 					}
 				}
 
@@ -958,13 +958,13 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	private void validateResourcePropertyId(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		final Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
 
 		if ((map == null) || !map.containsKey(resourcePropertyId)) {
-			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_PROPERTY_ID, resourcePropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, resourcePropertyId);
 		}
 
 	}
@@ -1179,11 +1179,11 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *             the resource property id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the resource property id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_VALUE}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *             if the resource property value is null</li>
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
 	 *             resource property value is incompatible with the
@@ -1208,7 +1208,7 @@ public final class ResourcesDataManager extends DataManager {
 
 	private void validateResourcePropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 

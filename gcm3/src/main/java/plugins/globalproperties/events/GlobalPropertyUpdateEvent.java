@@ -7,8 +7,8 @@ import nucleus.EventLabeler;
 import nucleus.EventLabelerId;
 import nucleus.SimulationContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -81,9 +81,9 @@ public class GlobalPropertyUpdateEvent implements Event {
 	 *
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             global property id is null</li>
-	 *             <li>{@linkplain GlobalPropertiesError#UNKNOWN_GLOBAL_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *             the global property id is unknown</li>
 	 */
 	public static EventLabel<GlobalPropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {

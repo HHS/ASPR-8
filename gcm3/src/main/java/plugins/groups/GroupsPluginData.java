@@ -128,20 +128,20 @@ public final class GroupsPluginData implements PluginData {
 		Map<GroupPropertyId, PropertyDefinition> map = data.groupPropertyDefinitions.get(groupTypeId);
 		if (map != null) {
 			if (map.containsKey(groupPropertyId)) {
-				throw new ContractException(GroupError.DUPLICATE_GROUP_PROPERTY_DEFINITION, groupTypeId + ": " + groupPropertyId);
+				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, groupTypeId + ": " + groupPropertyId);
 			}
 		}
 	}
 
 	private static void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
-			throw new ContractException(GroupError.NULL_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 	}
 
 	private static void validateGroupPropertyIdNotNull(GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 	}
 
@@ -170,7 +170,7 @@ public final class GroupsPluginData implements PluginData {
 		if (groupSpecification.groupPropertyValues != null) {
 			for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
 				if (groupPropertyValue.groupPropertyId().equals(groupPropertyId)) {
-					throw new ContractException(GroupError.DUPLICATE_GROUP_PROPERTY_VALUE_ASSIGNMENT, groupId + ": " + groupPropertyId);
+					throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, groupId + ": " + groupPropertyId);
 				}
 			}
 		}
@@ -178,7 +178,7 @@ public final class GroupsPluginData implements PluginData {
 
 	private static void validateGroupPropertyValueNotNull(Object groupPropertyValue) {
 		if (groupPropertyValue == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -246,11 +246,11 @@ public final class GroupsPluginData implements PluginData {
 		 *             group membership was set for a group id that was not
 		 *             defined.
 		 * 
-		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID}</li>
+		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 		 *             if a group property value is added for a group property
 		 *             id that is not associated with the group.
 		 * 
-		 *             <li>{@linkplain GroupError#INCOMPATIBLE_VALUE}</li> if a
+		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li> if a
 		 *             group property value is added that is incompatible with
 		 *             the corresponding property definition
 		 * 
@@ -367,13 +367,13 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
 		 *             the group type id is null
 		 * 
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID}</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 		 *             if the group property id is null
 		 * 
-		 *             <li>{@linkplain GroupError#NULL_PROPERTY_DEFINITION}</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}</li>
 		 *             if the property definition is null
 		 *
-		 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 		 *             </li> if a property definition for the given group type
 		 *             id and property id was previously defined.
 		 * 
@@ -402,13 +402,13 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li>if the
 		 *             group id is null
 		 * 
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID}</li>if
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>if
 		 *             the group property id is null
 		 * 
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_VALUE}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *             </li>if the group property value is null
 		 * 
-		 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_PROPERTY_VALUE_ASSIGNMENT}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 		 *             </li>if the group property value was previously assigned
 		 * 
 		 */
@@ -487,7 +487,7 @@ public final class GroupsPluginData implements PluginData {
 						GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
 						PropertyDefinition propertyDefinition = propDefMap.get(groupPropertyId);
 						if (propertyDefinition == null) {
-							throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupPropertyId + " under group type " + groupTypeId);
+							throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, groupPropertyId + " under group type " + groupTypeId);
 						}
 						Object propertyValue = groupPropertyValue.value();
 						if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
@@ -527,11 +527,11 @@ public final class GroupsPluginData implements PluginData {
 	private static void validateGroupPropertyIsDefined(final Data data, final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
 		final Map<GroupPropertyId, PropertyDefinition> map = data.groupPropertyDefinitions.get(groupTypeId);
 		if (map == null) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, groupPropertyId);
 		}
 		final PropertyDefinition propertyDefinition = map.get(groupPropertyId);
 		if (propertyDefinition == null) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID, groupPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, groupPropertyId);
 		}
 	}
 
@@ -544,9 +544,9 @@ public final class GroupsPluginData implements PluginData {
 	 *             type id is null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is not associated with the group type id
 	 *             via a property definition</li>
 	 */

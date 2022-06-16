@@ -181,7 +181,7 @@ public final class GroupsDataManager extends DataManager {
 	 * index</li>
 	 * <li>{@link GroupError#UNKNOWN_GROUP_TYPE_ID} if the BulkMembership data
 	 * exists and contains an unknown group type id</li>
-	 * <li>{@link GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the BulkMembership
+	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the BulkMembership
 	 * data exists and contains an unknown group property id</li>
 	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the BulkMembership data
 	 * exists and contains an incompatible group property value</li>
@@ -318,13 +318,13 @@ public final class GroupsDataManager extends DataManager {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is unknown</li>
 	 * 
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             group property id is null</li>
 	 *
 	 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_PROPERTY_ID} if
 	 *             the group property id is already known</li>
 	 * 
-	 *             <li>{@linkplain GroupError#NULL_PROPERTY_DEFINITION} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if the
 	 *             property definition is null</li>
 	 * 
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
@@ -353,18 +353,18 @@ public final class GroupsDataManager extends DataManager {
 
 	public void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
-			throw new ContractException(GroupError.NULL_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 	}
 
 	private void validateNewGroupPropertyId(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		if (map == null || map.containsKey(groupPropertyId)) {
-			throw new ContractException(GroupError.DUPLICATE_GROUP_PROPERTY_ID);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION);
 		}
 
 	}
@@ -483,14 +483,14 @@ public final class GroupsDataManager extends DataManager {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_ID } if the group id
 	 *             is unknown</li>
-	 *             <li>{@linkplain GroupError.NULL_GROUP_PROPERTY_ID } if the
+	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID } if the
 	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_PROPERTY_ID } if the
+	 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID } if the
 	 *             group property id is unknown</li>
 	 *             <li>{@linkplain PropertyError.IMMUTABLE_VALUE } if the
 	 *             corresponding property definition defines the property as
 	 *             immutable</li>
-	 *             <li>{@linkplain GroupError.NULL_GROUP_PROPERTY_VALUE } if the
+	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_VALUE } if the
 	 *             property value is null</li>
 	 *             <li>{@linkplain PropertyError.INCOMPATIBLE_VALUE } if
 	 *             property value is incompatible with the corresponding
@@ -554,7 +554,7 @@ public final class GroupsDataManager extends DataManager {
 	 *             group type id contained in the group construction info is
 	 *             unknown</li>
 	 * 
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if a
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
 	 *             group property id contained in the group construction info is
 	 *             unknown</li>
 	 * 
@@ -608,7 +608,7 @@ public final class GroupsDataManager extends DataManager {
 
 	private void validateGroupPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -828,9 +828,9 @@ public final class GroupsDataManager extends DataManager {
 	 *             type id is null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is unknown</li>
 	 */
 	public PropertyDefinition getGroupPropertyDefinition(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
@@ -842,12 +842,12 @@ public final class GroupsDataManager extends DataManager {
 
 	private void validateGroupPropertyId(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
 		if (groupPropertyId == null) {
-			throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		if (map == null || !map.containsKey(groupPropertyId)) {
-			throw new ContractException(GroupError.UNKNOWN_GROUP_PROPERTY_ID);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
 		}
 
 	}
@@ -893,9 +893,9 @@ public final class GroupsDataManager extends DataManager {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
 	 *             is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is unknown</li>
 	 * 
 	 */
@@ -926,9 +926,9 @@ public final class GroupsDataManager extends DataManager {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
 	 *             is unknown</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             group property id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_PROPERTY_ID} if the
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is unknown</li>
 	 * 
 	 */

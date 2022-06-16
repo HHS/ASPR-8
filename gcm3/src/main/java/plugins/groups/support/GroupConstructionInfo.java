@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -98,15 +99,15 @@ public final class GroupConstructionInfo {
 		 * Sets the group property value.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_ID} if the group property id is null</li>
-		 *             <li>{@linkplain GroupError#NULL_GROUP_PROPERTY_VALUE} if the group property value is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group property id is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the group property value is null</li>
 		 */
 		public Builder setGroupPropertyValue(GroupPropertyId groupPropertyId, Object groupPropertyValue) {
 			if (groupPropertyId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_ID);
+				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
 			if (groupPropertyValue == null) {
-				throw new ContractException(GroupError.NULL_GROUP_PROPERTY_VALUE);
+				throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 			}
 			scaffold.propertyValues.put(groupPropertyId, groupPropertyValue);
 			return this;

@@ -108,7 +108,7 @@ public class AT_GroupsPluginData {
 			builder.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
 			builder.build();
 		});
-		assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		// if a group property value is added that is incompatible with the
 		// corresponding property definition
@@ -235,11 +235,11 @@ public class AT_GroupsPluginData {
 
 		// precondition test: if the group property id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().defineGroupProperty(testGroupTypeId, null, propertyDefinition));
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().defineGroupProperty(testGroupTypeId, groupPropertyId, null));
-		assertEquals(GroupError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		/*
 		 * precondition test: if a property definition for the given group type
@@ -250,7 +250,7 @@ public class AT_GroupsPluginData {
 							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition)//
 							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);//
 		});
-		assertEquals(GroupError.DUPLICATE_GROUP_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
 
@@ -319,11 +319,11 @@ public class AT_GroupsPluginData {
 
 		// precondition test: if the group property id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(0), null, 10));
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// precondition test: if the group property value is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(0), groupPropertyId, null));
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_VALUE, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
 		// precondition test: if the group property value was previously
 		// assigned
@@ -332,7 +332,7 @@ public class AT_GroupsPluginData {
 							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10)//
 							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10);//
 		});
-		assertEquals(GroupError.DUPLICATE_GROUP_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 	}
 
@@ -451,18 +451,18 @@ public class AT_GroupsPluginData {
 
 		// if the group property id is null
 		contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null));
-		assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the group property id is not associated with the group type id via
 		// a property definition
 		contractException = assertThrows(ContractException.class, () -> groupInitialData.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
-		assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		// if the group property id is not associated with the group type id via
 		// a property definition
 		contractException = assertThrows(ContractException.class,
 				() -> groupInitialData.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-		assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 

@@ -345,7 +345,7 @@ public class AT_GroupsDataManager {
 																					.build();//
 				groupsDataManager.addGroup(groupConstructionInfo);
 			});
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/*
@@ -789,7 +789,7 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.setGroupPropertyValue(groupId, null, true));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test if the group property id is unknown */
@@ -797,7 +797,7 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.setGroupPropertyValue(groupId, TestGroupPropertyId.getUnknownGroupPropertyId(), true));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test if the property value is null */
@@ -806,7 +806,7 @@ public class AT_GroupsDataManager {
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, null));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_VALUE, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 		});
 
 		/*
@@ -997,17 +997,17 @@ public class AT_GroupsDataManager {
 
 			// if the group property id is null
 			contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 
@@ -1031,7 +1031,7 @@ public class AT_GroupsDataManager {
 		GroupsActionSupport.testConsumer(10, 0, 5, 9138791522018557245L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, null));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the group property id is unknown */
@@ -1039,7 +1039,7 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/* precondition tests: if the group property id is unknown */
@@ -1047,7 +1047,7 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupsDataManager.getGroupPropertyDefinition(TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 	}
 
@@ -1230,7 +1230,7 @@ public class AT_GroupsDataManager {
 		GroupsActionSupport.testConsumer(30, 3, 5, 4175298436277522063L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyTime(new GroupId(0), null));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/*
@@ -1240,7 +1240,7 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyTime(groupId, TestGroupPropertyId.getUnknownGroupPropertyId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/*
@@ -1251,7 +1251,7 @@ public class AT_GroupsDataManager {
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupsDataManager.getGroupPropertyTime(groupId, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 	}
@@ -1375,7 +1375,7 @@ public class AT_GroupsDataManager {
 		GroupsActionSupport.testConsumer(30, 3, 5, 2444842488298604050L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyValue(new GroupId(0), null));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/*
@@ -1385,7 +1385,7 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getGroupPropertyValue(groupId, TestGroupPropertyId.getUnknownGroupPropertyId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/*
@@ -1396,7 +1396,7 @@ public class AT_GroupsDataManager {
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> groupsDataManager.getGroupPropertyValue(groupId, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 	}
@@ -2496,7 +2496,7 @@ public class AT_GroupsDataManager {
 				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
 			});
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		/*
@@ -2869,7 +2869,7 @@ public class AT_GroupsDataManager {
 			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
 
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the group property id is already known
@@ -2883,7 +2883,7 @@ public class AT_GroupsDataManager {
 			groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
 
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
-			assertEquals(GroupError.DUPLICATE_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		});
 
@@ -2897,7 +2897,7 @@ public class AT_GroupsDataManager {
 			PropertyDefinition propertyDefinition = null;
 
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition));
-			assertEquals(GroupError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
 
 		// precondition test: if the property definition does not have a default

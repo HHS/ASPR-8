@@ -115,11 +115,11 @@ public class AT_RegionPluginData {
 
 		// if the region property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyDefinition(null));
-		assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the region property id is unknown
 		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyDefinition(TestRegionPropertyId.getUnknownRegionPropertyId()));
-		assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
@@ -228,11 +228,11 @@ public class AT_RegionPluginData {
 
 		// if the region property id is null
 		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValue(validRegionId, null));
-		assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the region property id is unknown
 		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValue(validRegionId, TestRegionPropertyId.getUnknownRegionPropertyId()));
-		assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -275,7 +275,7 @@ public class AT_RegionPluginData {
 		builder.addRegion(TestRegionId.REGION_1);
 		builder.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, 5);
 		contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(RegionError.UNKNOWN_REGION_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
 		 * if a region property value was associated with a region and region
@@ -296,7 +296,7 @@ public class AT_RegionPluginData {
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).build();
 		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
 		contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(RegionError.INSUFFICIENT_REGION_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 	}
 
 	@Test
@@ -309,11 +309,11 @@ public class AT_RegionPluginData {
 
 		// if the region property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineRegionProperty(null, propertyDefinition));
-		assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> builder.defineRegionProperty(regionPropertyId, null));
-		assertEquals(RegionError.NULL_REGION_PROPERTY_DEFINITION, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
 		/*
 		 * if a property definition for the given region id and property id was
@@ -321,7 +321,7 @@ public class AT_RegionPluginData {
 		 */
 		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
 		contractException = assertThrows(ContractException.class, () -> builder.defineRegionProperty(regionPropertyId, propertyDefinition));
-		assertEquals(RegionError.DUPLICATE_REGION_PROPERTY_DEFINITION_ASSIGNMENT, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 	}
 
 	@Test
@@ -399,12 +399,12 @@ public class AT_RegionPluginData {
 
 		// if the region property id is null
 		contractException = assertThrows(ContractException.class, () -> builder.setRegionPropertyValue(regionId, null, validValue));
-		assertEquals(RegionError.NULL_REGION_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the region property value was previously defined
 		builder.setRegionPropertyValue(regionId, regionPropertyId, validValue);
 		contractException = assertThrows(ContractException.class, () -> builder.setRegionPropertyValue(regionId, regionPropertyId, validValue));
-		assertEquals(RegionError.DUPLICATE_REGION_PROPERTY_VALUE, contractException.getErrorType());
+		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 		// Note: Invalid values will not throw an exception and are caught
 		// during the build invocation.

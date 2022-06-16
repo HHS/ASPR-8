@@ -5,6 +5,7 @@ import nucleus.Event;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 @Immutable
@@ -17,7 +18,7 @@ public class ResourcePropertyDefinitionEvent implements Event {
 	 * 
 	 * @throws ContractException
 	 * <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the resource id is null</li>
-	 * <li>{@linkplain ResourceError#NULL_RESOURCE_PROPERTY_ID} if the resource property id is null</li>
+	 * <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the resource property id is null</li>
 	 * 
 	 */
 	public ResourcePropertyDefinitionEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
@@ -25,7 +26,7 @@ public class ResourcePropertyDefinitionEvent implements Event {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
 		if(resourcePropertyId == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		this.resourceId = resourceId;
 		this.resourcePropertyId = resourcePropertyId;

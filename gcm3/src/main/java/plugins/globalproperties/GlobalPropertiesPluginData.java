@@ -8,7 +8,6 @@ import java.util.Set;
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
-import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
@@ -31,13 +30,13 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	private static void validateGlobalPropertyIsNotDefined(final Data data, final GlobalPropertyId globalPropertyId) {
 		final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
 		if (propertyDefinition != null) {
-			throw new ContractException(GlobalPropertiesError.DUPLICATE_GLOBAL_PROPERTY_DEFINITION, globalPropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, globalPropertyId);
 		}
 	}
 
 	private static void validateGlobalPropertyValueNotAssigned(final Data data, final GlobalPropertyId globalPropertyId) {
 		if (data.globalPropertyValues.containsKey(globalPropertyId)) {
-			throw new ContractException(GlobalPropertiesError.DUPLICATE_GLOBAL_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId);
 		}
 	}
 
@@ -60,11 +59,11 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * supplied to this builder. Clears the builder's state.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID}</li>
+		 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID}</li>
 		 *             if a global property value was associated with a global
 		 *             property id that was not defined
 		 * 
-		 *             <li>{@linkplain GlobalPropertiesError#INCOMPATIBLE_VALUE}</li> if a
+		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li> if a
 		 *             global property value was associated with a global
 		 *             property id that is incompatible with the corresponding
 		 *             property definition.
@@ -89,13 +88,13 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * @throws ContractException
 		 * 
 		 * 
-		 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 		 *             if the global property id is null
 		 * 
-		 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
 		 *
-		 *             <li>{@linkplain GlobalPropertiesError#DUPLICATE_GLOBAL_PROPERTY_DEFINITION}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 		 *             </li> if a property definition for the given global
 		 *             property id was previously defined.
 		 * 
@@ -122,13 +121,13 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 * 
-		 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 		 *             </li>if the global property id is null
 		 * 
-		 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_VALUE}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *             </li>if the global property value is null
 		 * 
-		 *             <li>{@linkplain GlobalPropertiesError#DUPLICATE_GLOBAL_PROPERTY_VALUE_ASSIGNMENT}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 		 *             </li>if the global property value was previously defined
 		 *             for the given global property id
 		 * 
@@ -148,14 +147,14 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			}
 			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
 				if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
-					throw new ContractException(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+					throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 				}
 			}
 			for (final GlobalPropertyId globalPropertyId : data.globalPropertyValues.keySet()) {
 				final Object propertyValue = data.globalPropertyValues.get(globalPropertyId);
 				final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
 				if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
-					throw new ContractException(GlobalPropertiesError.INCOMPATIBLE_VALUE, globalPropertyId + " = " + propertyValue);
+					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE, globalPropertyId + " = " + propertyValue);
 				}
 			}
 		
@@ -210,19 +209,19 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 	private static void validateGlobalPropertyDefinitionNotNull(final PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 	}
 
 	private static void validateGlobalPropertyIdNotNull(final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 	}
 
 	private static void validateGlobalPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -238,9 +237,9 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}</li> if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
 	 *             the global property id is null
-	 *             <li>{@linkplain GlobalPropertiesError#UNKNOWN_GLOBAL_PROPERTY_ID}</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 	 *             if the global property id is known
 	 */
 	public PropertyDefinition getGlobalPropertyDefinition(final GlobalPropertyId globalPropertyId) {
@@ -267,9 +266,9 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * @throws ContractException
 	 * 
 	 * 
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}</li> if
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
 	 *             the global property id is null
-	 *             <li>{@linkplain GlobalPropertiesError#UNKNOWN_GLOBAL_PROPERTY_ID}</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 	 *             if the global property id is known
 	 */
 	@SuppressWarnings("unchecked")
@@ -284,10 +283,10 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 	private static void validategGlobalPropertyIdExists(final Data data, final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
-			throw new ContractException(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 		}
 	}
 

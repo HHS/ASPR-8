@@ -33,15 +33,15 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	private void validateGlobalPropertyAddition(GlobalPropertyId globalPropertyId, PropertyDefinition propertyDefinition) {
 
 		if (globalPropertyId == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (propertyDefinition == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 
 		if (globalPropertyDefinitions.containsKey(globalPropertyId)) {
-			throw new ContractException(GlobalPropertiesError.DUPLICATE_GLOBAL_PROPERTY_DEFINITION);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION);
 		}
 
 	}
@@ -67,9 +67,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the property definition for the given {@link GlobalPropertyId}
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the global property id is null</li>
-	 *             <li>{@linkplain GlobalPropertiesError#UNKNOWN_GLOBAL_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the global property id is unknown</li>
 	 * 
 	 */
@@ -95,9 +95,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the value of the global property.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the global property id is null</li>
-	 *             <li>{@linkplain GlobalPropertiesError#UNKNOWN_GLOBAL_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the global property id is unknown</li>
 	 * 
 	 */
@@ -111,9 +111,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the time when the of the global property was last assigned.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the global property id is null</li>
-	 *             <li>{@linkplain GlobalPropertiesError#UNKNOWN_GLOBAL_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *             if the global property id is unknown</li>
 	 */
 
@@ -127,11 +127,11 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * time.
 	 *
 	 * @throw {@link ContractException}
-	 *        <li>{@link GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID} if the
+	 *        <li>{@link PropertyError.NULL_PROPERTY_ID} if the
 	 *        global property id is null
-	 *        <li>{@link GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID} if
+	 *        <li>{@link PropertyError.UNKNOWN_PROPERTY_ID} if
 	 *        the global property id is unknown
-	 *        <li>{@link GlobalPropertiesError.NULL_GLOBAL_PROPERTY_VALUE} if
+	 *        <li>{@link PropertyError.NULL_PROPERTY_VALUE} if
 	 *        the property value is null
 	 *        <li>{@link PropertyError.IMMUTABLE_VALUE} if the global property
 	 *        definition indicates the property is not mutable
@@ -182,9 +182,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_ID}
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 	 *             if the global property id is null</li>
-	 *             <li>{@linkplain GlobalPropertiesError#DUPLICATE_GLOBAL_PROPERTY_DEFINITION}
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the global property already exists</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
@@ -209,7 +209,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	private void validateGlobalPropertyValueNotNull(final Object propertyValue) {
 		if (propertyValue == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_VALUE);
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
 
@@ -228,21 +228,21 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	private void validateGlobalPropertyId(final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (!globalPropertyMap.containsKey(globalPropertyId)) {
-			throw new ContractException(GlobalPropertiesError.UNKNOWN_GLOBAL_PROPERTY_ID, globalPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 		}
 	}
 
 	private void validateGlobalPropertyIdIsUnknown(final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
-			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_ID);
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
 		if (globalPropertyMap.containsKey(globalPropertyId)) {
-			throw new ContractException(GlobalPropertiesError.DUPLICATE_GLOBAL_PROPERTY_DEFINITION, globalPropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, globalPropertyId);
 		}
 	}
 

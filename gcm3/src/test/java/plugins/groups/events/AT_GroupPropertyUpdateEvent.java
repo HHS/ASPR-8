@@ -22,6 +22,7 @@ import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
+import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -137,17 +138,17 @@ public class AT_GroupPropertyUpdateEvent {
 
 			// if the group property id is null
 			contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), null));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), TestGroupPropertyId.getUnknownGroupPropertyId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> GroupPropertyUpdateEvent.getEventLabelByGroupAndProperty(c, new GroupId(0), TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 	}
@@ -343,17 +344,17 @@ public class AT_GroupPropertyUpdateEvent {
 
 			// if the group property id is null
 			contractException = assertThrows(ContractException.class, () -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, null));
-			assertEquals(GroupError.NULL_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.getUnknownGroupPropertyId()));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 			// if the group property id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(c, TestGroupTypeId.GROUP_TYPE_1, TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK));
-			assertEquals(GroupError.UNKNOWN_GROUP_PROPERTY_ID, contractException.getErrorType());
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		});
 	}
