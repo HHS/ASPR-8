@@ -31,18 +31,15 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
-	 *             if the property definition's type is not a Byte, Short, Integer or Long</li>
+	 *             if the property definition's type is not a Byte, Short,
+	 *             Integer or Long</li>
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 	 *             if the property definition does not have a default value</li>
 	 */
 	public IntPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
 		super(simulationContext, propertyDefinition, initialSize);
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
-		}
 
-		Object defaultValue = propertyDefinition.getDefaultValue().get();
-		long longDefaultValue;
+		long longDefaultValue = 0L;
 		if (propertyDefinition.getType() == Byte.class) {
 			intValueType = IntValueType.BYTE;
 		} else if (propertyDefinition.getType() == Short.class) {
@@ -52,28 +49,31 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 		} else if (propertyDefinition.getType() == Long.class) {
 			intValueType = IntValueType.LONG;
 		} else {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE,"Requires a property definition type of Byte, Short, Integer or Long");
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition type of Byte, Short, Integer or Long");
 		}
-
-		switch (intValueType) {
-		case BYTE:
-			Byte b = (Byte) defaultValue;
-			longDefaultValue = b.longValue();
-			break;
-		case INT:
-			Integer i = (Integer) defaultValue;
-			longDefaultValue = i.longValue();
-			break;
-		case LONG:
-			Long l = (Long) defaultValue;
-			longDefaultValue = l.longValue();
-			break;
-		case SHORT:
-			Short s = (Short) defaultValue;
-			longDefaultValue = s.longValue();
-			break;
-		default:
-			throw new RuntimeException("unhandled type " + intValueType);
+		if (propertyDefinition.getDefaultValue().isPresent()) {
+			Object defaultValue = propertyDefinition.getDefaultValue().get();
+			
+			switch (intValueType) {
+			case BYTE:
+				Byte b = (Byte) defaultValue;
+				longDefaultValue = b.longValue();
+				break;
+			case INT:
+				Integer i = (Integer) defaultValue;
+				longDefaultValue = i.longValue();
+				break;
+			case LONG:
+				Long l = (Long) defaultValue;
+				longDefaultValue = l.longValue();
+				break;
+			case SHORT:
+				Short s = (Short) defaultValue;
+				longDefaultValue = s.longValue();
+				break;
+			default:
+				throw new RuntimeException("unhandled type " + intValueType);
+			}
 		}
 
 		intValueContainer = new IntValueContainer(longDefaultValue, initialSize);
@@ -82,7 +82,7 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getPropertyValue(int id) {
-		if(id<0) {
+		if (id < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 

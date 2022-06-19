@@ -70,14 +70,14 @@ public class PersonPropertiesPluginData implements PluginData {
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
 		private boolean dataIsMutable;
-		
+
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (!dataIsMutable) {
 				data = new Data(data);
 				dataIsMutable = true;
 			}
 		}
-		
+
 		private Builder(Data data) {
 			this.data = data;
 		}
@@ -85,6 +85,20 @@ public class PersonPropertiesPluginData implements PluginData {
 		/**
 		 * Builds the {@linkplain PersonPropertiesPluginData} from the collected
 		 * data.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
+		 *             person is assigned a property value for a property that
+		 *             was not defined</li>
+		 * 
+		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
+		 *             person is assigned a property value that is incompatible
+		 *             with the associated property definition</li>
+		 * 
+		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		 *             if a person is not assigned a property value for a
+		 *             property id where the associated property definition does
+		 *             not contain a default value</li>
 		 * 
 		 */
 		public PersonPropertiesPluginData build() {
@@ -100,15 +114,13 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * Defines a person property definition
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *             if the person property id is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *             person property id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if the person property definition value is null</li>
 		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 		 *             if the person property definition is already added</li>
-		 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-		 *             if the person property definition does not have a default
-		 *             value</li>
+		 * 
 		 * 
 		 * 
 		 */
@@ -117,7 +129,6 @@ public class PersonPropertiesPluginData implements PluginData {
 			validatePersonPropertyIdNotNull(personPropertyId);
 			validatePersonPropertyDefinitionNotNull(propertyDefinition);
 			validatePersonPropertyIsNotDefined(data, personPropertyId);
-			validatePersonPropertyDefinitionHasDefault(propertyDefinition);
 			data.personPropertyDefinitions.put(personPropertyId, propertyDefinition);
 			return this;
 		}
@@ -128,8 +139,8 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
 		 *             id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *             if the person property id is null</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *             person property id is null</li>
 		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
 		 *             if the person property value is null</li>
 		 */
@@ -155,7 +166,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 
 		private void validateData() {
-		
+
 			for (List<PersonPropertyInitialization> list : data.personPropertyValues) {
 				if (list != null) {
 					for (PersonPropertyInitialization personPropertyInitialization : list) {
@@ -171,6 +182,64 @@ public class PersonPropertiesPluginData implements PluginData {
 					}
 				}
 			}
+
+			Map<PersonPropertyId, Integer> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
+
+			for (PersonPropertyId personPropertyId : data.personPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
+				if (propertyDefinition.getDefaultValue().isEmpty()) {
+					nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
+				}
+			}
+			if (nonDefaultBearingPropertyIds.isEmpty()) {
+				return;
+			}
+
+			boolean[] nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
+
+			for (int i = 0; i < data.personPropertyValues.size(); i++) {
+				List<PersonPropertyInitialization> list = data.personPropertyValues.get(i);
+				for (int j = 0; j < nonDefaultChecks.length; j++) {
+					nonDefaultChecks[j] = false;
+				}
+
+				if (list != null) {
+					for (PersonPropertyInitialization personPropertyInitialization : list) {
+						PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
+						Integer index = nonDefaultBearingPropertyIds.get(personPropertyId);
+						if (index != null) {
+							nonDefaultChecks[index] = true;
+						}
+					}
+				}
+
+				boolean missingPropertyAssignments = false;
+				for (int j = 0; j < nonDefaultChecks.length; j++) {
+					if (!nonDefaultChecks[j]) {
+						missingPropertyAssignments = true;
+						break;
+					}
+				}
+
+				if (missingPropertyAssignments) {
+					StringBuilder sb = new StringBuilder();
+					int index = -1;
+					boolean firstMember = true;
+					for (PersonPropertyId personPropertyId : nonDefaultBearingPropertyIds.keySet()) {
+						index++;
+						if (!nonDefaultChecks[index]) {
+							if (firstMember) {
+								firstMember = false;
+							} else {
+								sb.append(", ");
+							}
+							sb.append(personPropertyId);
+						}
+					}
+					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, "person " + i + " is missing values for " + sb.toString());
+				}
+
+			}
 		}
 	}
 
@@ -184,12 +253,6 @@ public class PersonPropertiesPluginData implements PluginData {
 	private static void validatePersonPropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
-		}
-	}
-
-	private static void validatePersonPropertyDefinitionHasDefault(PropertyDefinition propertyDefinition) {
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
 		}
 	}
 
@@ -211,10 +274,10 @@ public class PersonPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *             if the person property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the person property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is unknown</li>
 	 * 
 	 */
 	public PropertyDefinition getPersonPropertyDefinition(final PersonPropertyId personPropertyId) {
@@ -248,7 +311,7 @@ public class PersonPropertiesPluginData implements PluginData {
 	private static void validatePersonId(PersonId personId) {
 		if (personId == null) {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
-		}		
+		}
 	}
 
 	private static void validatePersonPropertyValueNotNull(Object personPropertyValue) {
@@ -277,7 +340,7 @@ public class PersonPropertiesPluginData implements PluginData {
 			return data.emptyList;
 		}
 		List<PersonPropertyInitialization> list = data.personPropertyValues.get(personIndex);
-		if(list == null) {
+		if (list == null) {
 			return data.emptyList;
 		}
 		return Collections.unmodifiableList(list);

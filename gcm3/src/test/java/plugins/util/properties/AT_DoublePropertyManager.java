@@ -262,7 +262,6 @@ public class AT_DoublePropertyManager {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.3).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			PropertyDefinition badDoublePropertyDefinition = PropertyDefinition.builder().setType(Double.class).build();
 
 			// precondition tests
 
@@ -273,10 +272,6 @@ public class AT_DoublePropertyManager {
 			// if the property definition does not have a type of Double.class
 			contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(c, badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
-
-			// if the property definition does not contain a default value
-			contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(c, badDoublePropertyDefinition, 0));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new DoublePropertyManager(c, goodPropertyDefinition, -1));

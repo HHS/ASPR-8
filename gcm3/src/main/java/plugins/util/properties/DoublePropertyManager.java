@@ -39,13 +39,10 @@ public final class DoublePropertyManager extends AbstractIndexedPropertyManager 
 		if (propertyDefinition.getType() != Double.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition with Double type ");
 		}
-
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
+		Double defaultValue = 0D;
+		if (propertyDefinition.getDefaultValue().isPresent()) {			
+			defaultValue = (Double) propertyDefinition.getDefaultValue().get();
 		}
-
-		Double defaultValue = (Double) propertyDefinition.getDefaultValue().get();
-
 		doubleValueContainer = new DoubleValueContainer(defaultValue, initialSize);
 	}
 

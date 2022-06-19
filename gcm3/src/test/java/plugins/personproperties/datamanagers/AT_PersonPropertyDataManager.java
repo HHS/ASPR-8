@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -564,7 +565,8 @@ public final class AT_PersonPropertyDataManager {
 		}
 		for (PersonId personId : people) {
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
+				boolean doesNotHaveDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+				if (doesNotHaveDefaultValue || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
 				}
@@ -619,17 +621,19 @@ public final class AT_PersonPropertyDataManager {
 			}
 
 			// show that the person property values are set to the default
-			// values
+			// values for those properties that have default values
 			List<PersonId> personIds = peopleDataManager.getPeople();
 			assertTrue(personIds.size() > 0);
 			for (PersonId personId : people) {
-				Map<PersonPropertyId,Object> expectedPropertyValues = new LinkedHashMap<>();
+				Map<PersonPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 				for (PersonPropertyId personPropertyId : personPropertiesPluginData.getPersonPropertyIds()) {
 					PropertyDefinition propertyDefinition = personPropertiesPluginData.getPersonPropertyDefinition(personPropertyId);
-					expectedPropertyValues.put(personPropertyId, propertyDefinition.getDefaultValue().get());
+					if (propertyDefinition.getDefaultValue().isPresent()) {
+						expectedPropertyValues.put(personPropertyId, propertyDefinition.getDefaultValue().get());
+					}
 				}
 				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personId.getValue());
-				for(PersonPropertyInitialization personPropertyInitialization : propertyValues) {
+				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
 					expectedPropertyValues.put(personPropertyInitialization.getPersonPropertyId(), personPropertyInitialization.getValue());
 				}
 				for (PersonPropertyId personPropertyId : expectedPropertyValues.keySet()) {
@@ -677,12 +681,16 @@ public final class AT_PersonPropertyDataManager {
 			// create a container to hold expectations
 			Map<PersonPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 
-			// set the expectation to the default values of all the properties
+			// set the expectation to the default values of all the properties,
+			// for those that have defaults
 			Set<PersonPropertyId> personPropertyIds = personPropertiesDataManager.getPersonPropertyIds();
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
+
 				PropertyDefinition personPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
-				Object value = personPropertyDefinition.getDefaultValue().get();
-				expectedPropertyValues.put(personPropertyId, value);
+				if (personPropertyDefinition.getDefaultValue().isPresent()) {
+					Object value = personPropertyDefinition.getDefaultValue().get();
+					expectedPropertyValues.put(personPropertyId, value);
+				}
 			}
 
 			// set two properties to random values and record them in the
@@ -694,8 +702,18 @@ public final class AT_PersonPropertyDataManager {
 			double dValue = randomGenerator.nextDouble();
 			personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, dValue));
 			expectedPropertyValues.put(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, dValue);
+
+			// ensure that non-defaulted properties get a value assignment
+			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.getPropertiesWithoutDefaultValues()) {
+				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				personBuilder.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+				expectedPropertyValues.put(testPersonPropertyId, value);
+
+			}
+
 			personBuilder.add(TestRegionId.REGION_1);
 			PersonConstructionData personConstructionData = personBuilder.build();
+
 			// add the person and get its person id
 			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
@@ -801,6 +819,7 @@ public final class AT_PersonPropertyDataManager {
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testBulkPersonAdditionEvent() {
+
 		PersonPropertiesActionSupport.testConsumer(0, 2547218192811543040L, (c) -> {
 			// establish data views
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -835,8 +854,8 @@ public final class AT_PersonPropertyDataManager {
 				shouldBeAssigned.put(personId, propertyAssignmentMap);
 
 				for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-
-					if (randomGenerator.nextBoolean()) {
+					boolean hasDefaultValue = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+					if (randomGenerator.nextBoolean() || !hasDefaultValue) {
 						Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 						propertyValueMap.put(testPersonPropertyId, value);
 						propertyAssignmentMap.put(testPersonPropertyId, true);
@@ -846,7 +865,6 @@ public final class AT_PersonPropertyDataManager {
 						propertyValueMap.put(testPersonPropertyId, value);
 						propertyAssignmentMap.put(testPersonPropertyId, false);
 					}
-
 				}
 			}
 
@@ -888,9 +906,20 @@ public final class AT_PersonPropertyDataManager {
 				}
 			}
 
-			// precondition tests
-			// if the event contains a PersonPropertyInitialization that has a
-			// null person property id
+		});
+
+		/*
+		 * precondition test: if the event contains a
+		 * PersonPropertyInitialization that has a null person property id
+		 */
+		PersonPropertiesActionSupport.testConsumer(0, 7188222622434158819L, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			// get the random generator for use later
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
+			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
 				personBuilder.add(new PersonPropertyInitialization(null, false));
@@ -899,9 +928,23 @@ public final class AT_PersonPropertyDataManager {
 			});
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-			// if the event contains a PersonPropertyInitialization that has an
-			// unknown person property id
-			contractException = assertThrows(ContractException.class, () -> {
+		});
+
+		/*
+		 * precondition test: if the event contains a
+		 * PersonPropertyInitialization that has an unknown person property id
+		 * 
+		 */
+		PersonPropertiesActionSupport.testConsumer(0, 4503361815971020948L, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			// get the random generator for use later
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
+			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
+
+			ContractException contractException = assertThrows(ContractException.class, () -> {
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
 				personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.getUnknownPersonPropertyId(), false));
 				bulkBuilder.add(personBuilder.build());
@@ -909,9 +952,22 @@ public final class AT_PersonPropertyDataManager {
 			});
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
-			// if the event contains a PersonPropertyInitialization that has a
-			// null person property value
-			contractException = assertThrows(ContractException.class, () -> {
+		});
+
+		/*
+		 * precondition test: if the event contains a
+		 * PersonPropertyInitialization that has a null person property value
+		 */
+		PersonPropertiesActionSupport.testConsumer(0, 260661028674105229L, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			// get the random generator for use later
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
+			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
+
+			ContractException contractException = assertThrows(ContractException.class, () -> {
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
 				personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, null));
 				bulkBuilder.add(personBuilder.build());
@@ -919,10 +975,23 @@ public final class AT_PersonPropertyDataManager {
 			});
 			assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
-			// if the event contains a PersonPropertyInitialization that has a
-			// person property value that is not compatible with the
-			// corresponding property definition
-			contractException = assertThrows(ContractException.class, () -> {
+		});
+
+		/*
+		 * precondition test: if the event contains a
+		 * PersonPropertyInitialization that has a person property value that is
+		 * not compatible with the corresponding property definition
+		 */
+		PersonPropertiesActionSupport.testConsumer(0, 6544276117460134679L, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			// get the random generator for use later
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
+			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
+
+			ContractException contractException = assertThrows(ContractException.class, () -> {
 				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
 				personBuilder.add(new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45));
 				bulkBuilder.add(personBuilder.build());
@@ -993,10 +1062,13 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "definePersonProperty", args = { PropertyDefinitionInitialization.class})
+	@UnitTestMethod(name = "definePersonProperty", args = { PropertyDefinitionInitialization.class })
 	public void testDefinePersonProperty() {
-		//fail();
 
+		/*
+		 * Show that the PropertyDefinitionInitialization is handled correctly
+		 * when default values EXIST on the property definition
+		 */
 		PersonPropertiesActionSupport.testConsumer(100, 3100440347097616280L, (c) -> {
 			double planTime = 1;
 			for (TestAuxiliaryPersonPropertyId auxPropertyId : TestAuxiliaryPersonPropertyId.values()) {
@@ -1005,7 +1077,12 @@ public final class AT_PersonPropertyDataManager {
 					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
 					PersonPropertiesDataManager personPropertiesDataManager = c2.getDataManager(PersonPropertiesDataManager.class);
 					PropertyDefinition expectedPropertyDefinition = auxPropertyId.getPropertyDefinition();
-					personPropertiesDataManager.definePersonProperty(auxPropertyId, expectedPropertyDefinition);
+					PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
+					defBuilder.setPropertyId(auxPropertyId);
+					defBuilder.setPropertyDefinition(expectedPropertyDefinition);
+					PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+
+					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
 					// show that the definition was added
 					PropertyDefinition actualPopertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(auxPropertyId);
@@ -1030,13 +1107,80 @@ public final class AT_PersonPropertyDataManager {
 			}
 		});
 
+		/*
+		 * Show that the PropertyDefinitionInitialization is handled correctly
+		 * when default values DO NOT EXIST on the property definition
+		 * 
+		 */
+
+		PersonPropertiesActionSupport.testConsumer(10, 3969826324474876300L, (c) -> {
+			double planTime = 1;
+
+			for (TestAuxiliaryPersonPropertyId auxPropertyId : TestAuxiliaryPersonPropertyId.values()) {
+
+				c.addPlan((c2) -> {
+					StochasticsDataManager stochasticsDataManager = c2.getDataManager(StochasticsDataManager.class);
+					RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
+					PersonPropertiesDataManager personPropertiesDataManager = c2.getDataManager(PersonPropertiesDataManager.class);
+					PropertyDefinition expectedPropertyDefinition = auxPropertyId.getPropertyDefinition();
+					/*
+					 * All of the TestAuxiliaryPersonPropertyId associated
+					 * property definitions have default values. We will copy
+					 * the property definition, but leave the default out.
+					 */
+					expectedPropertyDefinition = PropertyDefinition	.builder()//
+																	.setDefaultValue(expectedPropertyDefinition.getDefaultValue().get())//
+																	.setPropertyValueMutability(expectedPropertyDefinition.propertyValuesAreMutable())//
+																	.setTimeTrackingPolicy(expectedPropertyDefinition.getTimeTrackingPolicy())//
+																	.setType(expectedPropertyDefinition.getType())//
+																	.build();
+
+					Map<PersonId, Object> expectedPropertyValues = new LinkedHashMap<>();
+
+					PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
+					defBuilder.setPropertyId(auxPropertyId);
+					defBuilder.setPropertyDefinition(expectedPropertyDefinition);
+					expectedPropertyDefinition.getType();
+					for (PersonId personId : peopleDataManager.getPeople()) {
+						Object randomPropertyValue = auxPropertyId.getRandomPropertyValue(randomGenerator);
+						defBuilder.addPropertyValue(personId, randomPropertyValue);
+						expectedPropertyValues.put(personId, randomPropertyValue);
+					}
+
+					PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+
+					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
+
+					// show that the definition was added
+					PropertyDefinition actualPopertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(auxPropertyId);
+					assertEquals(expectedPropertyDefinition, actualPopertyDefinition);
+
+					// show that the property has the correct initial value
+					// show that the property has the correct initial time
+
+					double expectedTime = c2.getTime();
+					for (PersonId personId : peopleDataManager.getPeople()) {
+						Object expectedValue = expectedPropertyValues.get(personId);
+
+						Object actualValue = personPropertiesDataManager.getPersonPropertyValue(personId, auxPropertyId);
+						assertEquals(expectedValue, actualValue);
+
+						if (expectedPropertyDefinition.getTimeTrackingPolicy().equals(TimeTrackingPolicy.TRACK_TIME)) {
+							double actualTime = personPropertiesDataManager.getPersonPropertyTime(personId, auxPropertyId);
+							assertEquals(expectedTime, actualTime);
+						}
+					}
+
+				}, planTime++);
+			}
+		});
+
 		// precondition test: if the person property id is null
 		PersonPropertiesActionSupport.testConsumer(0, 4627357002700907595L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			PersonPropertyId personPropertyId = null;
-			PropertyDefinition propertyDefinition = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(null));
+			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION_INITIALIZATION, contractException.getErrorType());
 		});
 
 		// if the person property already exists
@@ -1044,44 +1188,73 @@ public final class AT_PersonPropertyDataManager {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
+
+			PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
+			defBuilder.setPropertyId(personPropertyId);
+			defBuilder.setPropertyDefinition(propertyDefinition);
+			PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization));
 			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
 
-		// if the property definition is null
-		PersonPropertiesActionSupport.testConsumer(0, 7460910928660168768L, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			PersonPropertyId personPropertyId = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
-			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-		});
-
-		// if the property definition has no default value
+		/*
+		 * if the property definition has no default value and there is no
+		 * included value assignment for some extant person
+		 */
 		PersonPropertiesActionSupport.testConsumer(0, 1498052576475289605L, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			PersonPropertyId personPropertyId = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(personPropertyId, propertyDefinition));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+
+			// get the minimum set of properties that we will need to initialize
+			// for each new person
+			List<TestPersonPropertyId> requiredPropertyIds = new ArrayList<>();
+			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+				if (testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
+					requiredPropertyIds.add(testPersonPropertyId);
+				}
+			}
+
+			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
+
+			// add a first person
+			personBuilder.add(TestRegionId.REGION_1);
+			for (TestPersonPropertyId testPersonPropertyId : requiredPropertyIds) {
+				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(testPersonPropertyId, value);
+				personBuilder.add(personPropertyInitialization);
+			}
+			PersonConstructionData personConstructionData = personBuilder.build();
+			PersonId personId1 = peopleDataManager.addPerson(personConstructionData);
+
+			// add a second person
+			personBuilder.add(TestRegionId.REGION_2);
+			for (TestPersonPropertyId testPersonPropertyId : requiredPropertyIds) {
+				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(testPersonPropertyId, value);
+				personBuilder.add(personPropertyInitialization);
+			}
+			personConstructionData = personBuilder.build();
+			peopleDataManager.addPerson(personConstructionData);
+
+			/*
+			 * define a new property without a default value and only set the
+			 * value for one of the two people in the population
+			 */
+			PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
+			defBuilder.setPropertyId(personPropertyId);
+			defBuilder.setPropertyDefinition(propertyDefinition);
+			// only assign a value to one person
+			defBuilder.addPropertyValue(personId1, 12);
+			PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization));
+			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		});
 
 	}
-
-	// 3969826324474876300L
-	// 1426493903052832076L
-	// 15986402242167215L
-	// 6427460339373497496L
-	// 2948423500320063643L
-	// 4844530530516661042L
-	// 3419491894809824507L
-	// 598790801002069301L
-	// 1814619428719379985L
-	// 1992913840461043389L
-	// 2470473626116352915L
-	// 1697643618060460580L
-	// 4289247820442564478L
-	// 5464618450744160243L
-	// 6590208175805030029L
-	// 2042914967398742326L
 }

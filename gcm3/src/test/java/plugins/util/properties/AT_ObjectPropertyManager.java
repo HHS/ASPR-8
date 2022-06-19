@@ -274,16 +274,10 @@ public class AT_ObjectPropertyManager {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Object.class).setDefaultValue("BLUE").build();
 
-			PropertyDefinition badDoublePropertyDefinition = PropertyDefinition.builder().setType(Object.class).build();
-
 			// if the property definition is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(c, null, 0));
 			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-			// if the property definition does not contain a default value
-			contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(c, badDoublePropertyDefinition, 0));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
-
+			
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new ObjectPropertyManager(c, goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());

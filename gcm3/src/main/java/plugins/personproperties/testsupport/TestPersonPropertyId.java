@@ -1,5 +1,8 @@
 package plugins.personproperties.testsupport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.personproperties.support.PersonPropertyId;
@@ -76,11 +79,41 @@ public enum TestPersonPropertyId implements PersonPropertyId {
 	PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK(
 			PropertyDefinition	.builder()//
 								.setType(Double.class)//
-								.setDefaultValue(0.0)//
+								//.setDefaultValue(0.0)//
 								.setPropertyValueMutability(false)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
 	);//
+	
+	/**
+	 * Returns the test property ids associated with a default value
+	 */
+	public static List<TestPersonPropertyId> getPropertiesWithDefaultValues(){
+		List<TestPersonPropertyId> result = new ArrayList<>();
+		
+		for(TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			if(testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent()) {
+				result.add(testPersonPropertyId);
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns the test property ids not associated with a default value
+	 */
+	public static List<TestPersonPropertyId> getPropertiesWithoutDefaultValues(){
+		List<TestPersonPropertyId> result = new ArrayList<>();
+		
+		for(TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			if(testPersonPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
+				result.add(testPersonPropertyId);
+			}
+		}
+		
+		return result;
+	}
 
 	/**
 	 * Returns a randomly selected member of this enumeration

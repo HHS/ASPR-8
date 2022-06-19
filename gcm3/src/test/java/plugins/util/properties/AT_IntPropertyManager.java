@@ -241,7 +241,6 @@ public class AT_IntPropertyManager {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(2).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			PropertyDefinition badIntPropertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
 			// if the property definition is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, null, 0));
@@ -250,10 +249,6 @@ public class AT_IntPropertyManager {
 			// if the property definition does not have a type of Double.class
 			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
-
-			// if the property definition does not contain a default value
-			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, badIntPropertyDefinition, 0));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new IntPropertyManager(c, goodPropertyDefinition, -1));

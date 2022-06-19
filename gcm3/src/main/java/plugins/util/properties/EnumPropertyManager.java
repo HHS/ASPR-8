@@ -34,15 +34,17 @@ public final class EnumPropertyManager extends AbstractIndexedPropertyManager {
 	public EnumPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
 		super(simulationContext, propertyDefinition, initialSize);
 
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
+		
+		Object defaultValue = null;
+		if (propertyDefinition.getDefaultValue().isPresent()) {
+			defaultValue = propertyDefinition.getDefaultValue().get();
 		}
 
 		if (!Enum.class.isAssignableFrom(propertyDefinition.getType())) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "cannot construct from class " + propertyDefinition.getClass().getName());
 		}
 
-		enumContainer = new EnumContainer(propertyDefinition.getType(), propertyDefinition.getDefaultValue().get(), initialSize);
+		enumContainer = new EnumContainer(propertyDefinition.getType(),defaultValue, initialSize);
 	}
 
 	@Override

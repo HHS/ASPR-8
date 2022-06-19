@@ -28,8 +28,6 @@ public final class BooleanPropertyManager extends AbstractIndexedPropertyManager
 	 *             the property definition is null</li>
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not Boolean</li>
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *             if the property definition does not have a default value</li>
 	 * 
 	 */
 	public BooleanPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
@@ -37,10 +35,10 @@ public final class BooleanPropertyManager extends AbstractIndexedPropertyManager
 		if (propertyDefinition.getType() != Boolean.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition with Boolean type ");
 		}
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
-		}
-		boolean defaultValue = (Boolean) propertyDefinition.getDefaultValue().get();
+		boolean defaultValue = false;
+		if (propertyDefinition.getDefaultValue().isPresent()) {
+			defaultValue = (Boolean)propertyDefinition.getDefaultValue().get();			
+		}		
 
 		boolContainer = new BooleanContainer(defaultValue, initialSize);
 	}

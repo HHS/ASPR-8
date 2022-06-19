@@ -267,7 +267,7 @@ public class AT_EnumPropertyManager {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			PropertyDefinition badDoublePropertyDefinition = PropertyDefinition.builder().setType(Double.class).build();
+			
 
 			// if the property definition is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(c, null, 0));
@@ -276,11 +276,7 @@ public class AT_EnumPropertyManager {
 			// if the property definition does not have a type of Enum.class
 			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(c, badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
-
-			// if the property definition does not contain a default value
-			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(c, badDoublePropertyDefinition, 0));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
-
+			
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(c, goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());

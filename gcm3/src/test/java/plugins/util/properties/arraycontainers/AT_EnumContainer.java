@@ -43,9 +43,6 @@ public class AT_EnumContainer {
 		// if the class is not an enumeration
 		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Integer.class, Animal.DOG));
 
-		// if the default value is null
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, null));
-
 		// if the default is not a member of the enum
 		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, 234));
 
@@ -66,9 +63,6 @@ public class AT_EnumContainer {
 
 		// if the class is not an enumeration
 		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Integer.class, Animal.DOG, 100));
-
-		// if the default value is null
-		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, null, 100));
 
 		// if the default is not a member of the enum
 		assertThrows(IllegalArgumentException.class, () -> new EnumContainer(Animal.class, 234, 100));

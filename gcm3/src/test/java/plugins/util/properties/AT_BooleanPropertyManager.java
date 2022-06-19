@@ -246,7 +246,6 @@ public class AT_BooleanPropertyManager {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(2.3).build();
-			PropertyDefinition badBooleanPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
 
 			// precondition tests
 
@@ -257,11 +256,7 @@ public class AT_BooleanPropertyManager {
 			// if the property definition does not have a type of Boolean.class
 			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
-
-			// if the property definition does not contain a default value
-			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, badBooleanPropertyDefinition, 0));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
-
+			
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());

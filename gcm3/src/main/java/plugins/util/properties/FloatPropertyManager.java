@@ -32,10 +32,10 @@ public final class FloatPropertyManager extends AbstractIndexedPropertyManager {
 		if (propertyDefinition.getType() != Float.class) {
 			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE,"Requires a property definition with float type");
 		}
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
-		}
-		Float defaultValue = (Float) propertyDefinition.getDefaultValue().get();
+		Float defaultValue = 0F;
+		if (propertyDefinition.getDefaultValue().isPresent()) {			
+			defaultValue = (Float) propertyDefinition.getDefaultValue().get();
+		}		
 		floatValueContainer = new FloatValueContainer(defaultValue, initialSize);
 	}
 

@@ -16,6 +16,7 @@ public enum PropertyError implements ContractError {
 	INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT("A property definition lacks a default value and there are not sufficient property value assignments to cover the missing default value"),//
 	NULL_PROPERTY_ID("Null property id"),
 	NULL_PROPERTY_DEFINITION("Null property definition"),//
+	NULL_PROPERTY_DEFINITION_INITIALIZATION("Null property definition initialization"),//
 	NULL_PROPERTY_VALUE("Null property value"),
 	DUPLICATE_PROPERTY_DEFINITION("Duplicate assignment of a property definition to a property id"),
 	UNKNOWN_PROPERTY_ID("Unknown property id"),

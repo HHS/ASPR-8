@@ -254,7 +254,6 @@ public class AT_FloatPropertyManager {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(2.3F).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			PropertyDefinition badFloatPropertyDefinition = PropertyDefinition.builder().setType(Float.class).build();
 
 			// if the property definition is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, null, 0));
@@ -263,10 +262,6 @@ public class AT_FloatPropertyManager {
 			// if the property definition does not have a type of Float.class
 			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
-
-			// if the property definition does not contain a default value
-			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, badFloatPropertyDefinition, 0));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
 
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new FloatPropertyManager(c, goodPropertyDefinition, -1));

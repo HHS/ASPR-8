@@ -31,23 +31,22 @@ public final class EnumContainer {
 	 * 
 	 * @throws IllegalArgumentException
 	 *             <li>if the class is null
-	 *             <li>if the class is not an enumeration
-	 *             <li>if the default value is null
-	 *             <li>if the default is not a member of the enumeration
+	 *             <li>if the class is not an enumeration             
+	 *             <li>if the default is not null and not a member of the enumeration
 	 */
 	public EnumContainer(Class<?> c, Object defaultValue, int capacity) {
 		if (c == null) {
 			throw new IllegalArgumentException("null class reference");
 		}
+		
 		if (!Enum.class.isAssignableFrom(c)) {
 			throw new IllegalArgumentException("cannot construct from class " + c.getName());
 		}
-		if (defaultValue == null) {
-			throw new IllegalArgumentException("null default value");
-		}
-		if (defaultValue.getClass() != c) {
+		
+		if (defaultValue!=null && defaultValue.getClass() != c) {
 			throw new IllegalArgumentException("default value " + defaultValue + " does not match enum class " + c);
 		}
+		
 		if (capacity < 0) {
 			throw new IllegalArgumentException("capacity " + capacity + " is less than zero");
 		}

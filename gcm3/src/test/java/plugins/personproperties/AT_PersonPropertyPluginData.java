@@ -22,7 +22,6 @@ import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -40,12 +39,62 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
+		
 		assertNotNull(PersonPropertiesPluginData.builder().build());
+
+		/*
+		 * precondition test: if a person is assigned a property value for a
+		 * property that was not defined
+		 */
+		ContractException contractException = assertThrows(ContractException.class, //
+				() -> PersonPropertiesPluginData.builder()//
+												.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true)//
+												.build());//
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
+		/*
+		 * precondition test: if a person is assigned a property value that is
+		 * incompatible with the associated property definition
+		 */
+		contractException = assertThrows(ContractException.class, //
+				() -> {//
+					TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+					PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+					PersonPropertiesPluginData	.builder()//
+												.definePersonProperty(testPersonPropertyId, propertyDefinition)//
+												.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, 45)//
+												.build();//
+				});//
+		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
+
+		/*
+		 * precondition test: if a person is not assigned a property value for a property id where
+		 * the associated property definition does not contain a default value
+		 */
+		contractException = assertThrows(ContractException.class, //
+				() -> {//
+					
+					TestPersonPropertyId prop1 = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+					PropertyDefinition def1 = prop1.getPropertyDefinition();
+					
+					//this property has no associated default value
+					TestPersonPropertyId prop2 = TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK;
+					PropertyDefinition def2 = prop2.getPropertyDefinition();
+					
+					PersonPropertiesPluginData	.builder()//
+												.definePersonProperty(prop1, def1)//												
+												.definePersonProperty(prop2, def2)//
+												.setPersonPropertyValue(new PersonId(0), prop1, false)
+												.build();//
+				});//
+		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+
 	}
 
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "definePersonProperty", args = { PersonPropertyId.class, PropertyDefinition.class })
 	public void testDefinePersonProperty() {
+		
 		// create a builder
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 
@@ -93,23 +142,6 @@ public class AT_PersonPropertyPluginData {
 			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		});
 		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// if the person property definition does not have a default value
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																		.setType(Boolean.class)//
-																		// .setDefaultValue(false)//
-																		.setPropertyValueMutability(true)//
-																		.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
-																		.build();
-
-			builder.definePersonProperty(testPersonPropertyId, propertyDefinition);
-
-		});
-		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -183,7 +215,8 @@ public class AT_PersonPropertyPluginData {
 		for (int i = 0; i < personCount; i++) {
 			PersonId personId = new PersonId(i);
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
+				boolean hasDefault = testPersonPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+				if (!hasDefault || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					pluginBuilder.setPersonPropertyValue(personId, testPersonPropertyId, randomPropertyValue);
 				}
@@ -226,15 +259,17 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "setPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
 	public void testSetPersonPropertyValue() {
-
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6340277988168121078L);
 
 		// create a builder
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 
 		// fill the builder with property definitions
+		List<TestPersonPropertyId> propertiesWithoutDefaultValues = TestPersonPropertyId.getPropertiesWithoutDefaultValues();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, propertyDefinition);
 		}
 
 		List<List<PersonPropertyInitialization>> expectedPropertyValues = new ArrayList<>();
@@ -244,13 +279,19 @@ public class AT_PersonPropertyPluginData {
 			List<PersonPropertyInitialization> list = new ArrayList<>();
 			expectedPropertyValues.add(list);
 			PersonId personId = new PersonId(i);
-			int propertyCount = randomGenerator.nextInt(5);
+			int propertyCount = randomGenerator.nextInt(3);
 			for (int j = 0; j < propertyCount; j++) {
 				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
 				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
 				list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
 			}
+			for(TestPersonPropertyId  testPersonPropertyId : propertiesWithoutDefaultValues) {
+				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
+				list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
+			}
+			
 		}
 
 		// build the person property initial data
@@ -264,7 +305,6 @@ public class AT_PersonPropertyPluginData {
 			List<PersonPropertyInitialization> expectedList = expectedPropertyValues.get(i);
 			List<PersonPropertyInitialization> actualList = personPropertyInitialData.getPropertyValues(i);
 			assertEquals(expectedList, actualList);
-
 		}
 
 		// precondition test: if the person id is null
@@ -274,7 +314,6 @@ public class AT_PersonPropertyPluginData {
 			builder.setPersonPropertyValue(null, testPersonPropertyId, true);
 		});
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-
 
 		// precondition test: if the person property value is null
 		contractException = assertThrows(ContractException.class, () -> {
@@ -302,8 +341,12 @@ public class AT_PersonPropertyPluginData {
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 
 		// fill the builder with property definitions
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+
+		List<TestPersonPropertyId> propertiesWithDefaultValues = TestPersonPropertyId.getPropertiesWithDefaultValues();
+		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.getPropertiesWithDefaultValues()) {
+
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+
 		}
 
 		List<List<PersonPropertyInitialization>> expectedPropertyValues = new ArrayList<>();
@@ -315,18 +358,17 @@ public class AT_PersonPropertyPluginData {
 			expectedPropertyValues.add(list);
 
 			if (randomGenerator.nextBoolean()) {
-				expectedPersonCount = i+1;
+				expectedPersonCount = i + 1;
 				PersonId personId = new PersonId(i);
 				int propertyCount = randomGenerator.nextInt(5);
 				for (int j = 0; j < propertyCount; j++) {
-					TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+					TestPersonPropertyId testPersonPropertyId = propertiesWithDefaultValues.get(randomGenerator.nextInt(propertiesWithDefaultValues.size()));
 					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
 					list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
 				}
 			}
 		}
-		
 
 		// build the person property initial data
 		PersonPropertiesPluginData personPropertyInitialData = personPropertyBuilder.build();
@@ -334,16 +376,16 @@ public class AT_PersonPropertyPluginData {
 		/*
 		 * Show that the personCount matches expectations
 		 */
-		int actualPersonCount = personPropertyInitialData.getPersonCount(); 
+		int actualPersonCount = personPropertyInitialData.getPersonCount();
 
-		assertEquals(expectedPersonCount,actualPersonCount);
+		assertEquals(expectedPersonCount, actualPersonCount);
 
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPropertyValues", args = { int.class })
 	public void testGetPropertyValues() {
-		//covered by testSetPersonPropertyValues()
+		// covered by testSetPersonPropertyValues()
 	}
 
 }

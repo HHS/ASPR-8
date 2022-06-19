@@ -28,12 +28,14 @@ public final class ObjectPropertyManager extends AbstractIndexedPropertyManager 
 	 */
 	public ObjectPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
 		super(simulationContext, propertyDefinition, initialSize);
-
-		if (!propertyDefinition.getDefaultValue().isPresent()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);			
+		
+		if (propertyDefinition.getDefaultValue().isPresent()) {
+			defaultValue = propertyDefinition.getDefaultValue().get();			
+		}else {
+			defaultValue = null;	
 		}
 
-		defaultValue = propertyDefinition.getDefaultValue().get();
+		
 		objectValueContainer = new ObjectValueContainer(defaultValue, initialSize);
 	}
 
