@@ -114,29 +114,31 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 	public TestGroupTypeId getTestGroupTypeId() {
 		return testGroupTypeId;
 	}
-	
+
 	/**
 	 * Returns the TestGroupPropertyId associated with the given TestGroupTypeId
 	 * 
 	 * Preconditions: The TestGroupTypeId should not be null
 	 */
-	public static Set<TestGroupPropertyId> getTestGroupPropertyIds(TestGroupTypeId testGroupTypeId){
+	public static Set<TestGroupPropertyId> getTestGroupPropertyIds(TestGroupTypeId testGroupTypeId) {
 		Set<TestGroupPropertyId> result = new LinkedHashSet<>();
-		for(TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-			if(testGroupPropertyId.testGroupTypeId==testGroupTypeId) {
+		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+			if (testGroupPropertyId.testGroupTypeId == testGroupTypeId) {
 				result.add(testGroupPropertyId);
 			}
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns a unique GroupPropertyId instance that is not a member of this enumeration
+	 * Returns a unique GroupPropertyId instance that is not a member of this
+	 * enumeration
 	 */
 	public static GroupPropertyId getUnknownGroupPropertyId() {
-		return new GroupPropertyId() {};
+		return new GroupPropertyId() {
+		};
 	}
-	
+
 	/**
 	 * Returns a randomly selected value that is compatible with this member's
 	 * associated property definition.
@@ -162,7 +164,7 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 			return randomGenerator.nextInt();
 		case GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK:
 			return randomGenerator.nextDouble();
-		default:			
+		default:
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

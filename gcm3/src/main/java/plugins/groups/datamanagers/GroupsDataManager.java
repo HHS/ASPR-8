@@ -1,6 +1,7 @@
 package plugins.groups.datamanagers;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.GuardedBy;
 import nucleus.DataManager;
@@ -50,6 +52,7 @@ import plugins.util.properties.IndexedPropertyManager;
 import plugins.util.properties.IntPropertyManager;
 import plugins.util.properties.ObjectPropertyManager;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyDefinitionInitialization;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
@@ -124,6 +127,10 @@ public final class GroupsDataManager extends DataManager {
 
 	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
 
+	private final Map<GroupTypeId, Map<GroupPropertyId, Integer>> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
+	
+	private Map<GroupTypeId, boolean[]> nonDefaultChecks = new LinkedHashMap<>();
+
 	private final List<GroupTypeId> indexesToTypesMap = new ArrayList<>();
 
 	private StochasticsDataManager stochasticsDataManager;
@@ -181,8 +188,8 @@ public final class GroupsDataManager extends DataManager {
 	 * index</li>
 	 * <li>{@link GroupError#UNKNOWN_GROUP_TYPE_ID} if the BulkMembership data
 	 * exists and contains an unknown group type id</li>
-	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the BulkMembership
-	 * data exists and contains an unknown group property id</li>
+	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the BulkMembership data
+	 * exists and contains an unknown group property id</li>
 	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the BulkMembership data
 	 * exists and contains an incompatible group property value</li>
 	 * </ul>
@@ -262,12 +269,19 @@ public final class GroupsDataManager extends DataManager {
 			final Set<GroupPropertyId> propertyIds = groupsPluginData.getGroupPropertyIds(groupTypeId);
 			for (final GroupPropertyId groupPropertyId : propertyIds) {
 				final PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+				if (propertyDefinition.getDefaultValue().isEmpty()) {
+					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
+				}
 				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
 				managerMap.put(groupPropertyId, indexedPropertyManager);
 				map.put(groupPropertyId, propertyDefinition);
 			}
+		}
+		for (GroupTypeId groupTypeId : nonDefaultBearingPropertyIds.keySet()) {
+			Map<GroupPropertyId, Integer> map = nonDefaultBearingPropertyIds.get(groupTypeId);
+			nonDefaultChecks.put(groupTypeId, new boolean[map.size()]);
 		}
 	}
 
@@ -278,6 +292,7 @@ public final class GroupsDataManager extends DataManager {
 			indexesToTypesMap.add(groupTypeId);
 			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
 			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
+			nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());			
 		}
 	}
 
@@ -297,13 +312,54 @@ public final class GroupsDataManager extends DataManager {
 		indexesToTypesMap.add(groupTypeId);
 		groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
 		groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
+		nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
+		nonDefaultChecks.put(groupTypeId, new boolean[0]);
 
 		dataManagerContext.releaseEvent(new GroupTypeAdditionEvent(groupTypeId));
 	}
 
-	private void validatePropertyDefinitionHasDefault(PropertyDefinition propertyDefinition) {
-		if (propertyDefinition.getDefaultValue().isEmpty()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
+	private void clearNonDefaultChecks(GroupTypeId groupTypeId) {
+		boolean[] checkArray = nonDefaultChecks.get(groupTypeId);
+		for (int i = 0; i < checkArray.length; i++) {
+			checkArray[i] = false;
+		}
+	}
+
+	private void markAssigned(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+		Integer nonDefaultPropertyIndex = nonDefaultBearingPropertyIds.get(groupTypeId).get(groupPropertyId);
+		if (nonDefaultPropertyIndex != null) {
+			nonDefaultChecks.get(groupTypeId)[nonDefaultPropertyIndex] = true;
+		}
+	}
+
+	private void verifyNonDefaultChecks(GroupTypeId groupTypeId) {
+		boolean[] checkArray = nonDefaultChecks.get(groupTypeId);
+		boolean missingPropertyAssignments = false;
+
+		for (int i = 0; i < checkArray.length; i++) {
+			if (!checkArray[i]) {
+				missingPropertyAssignments = true;
+				break;
+			}
+		}
+
+		if (missingPropertyAssignments) {
+			StringBuilder sb = new StringBuilder();
+			int index = -1;
+			boolean firstMember = true;
+			Map<GroupPropertyId, Integer> map = nonDefaultBearingPropertyIds.get(groupTypeId);
+			for (GroupPropertyId groupPropertyId : map.keySet()) {
+				index++;
+				if (!checkArray[index]) {
+					if (firstMember) {
+						firstMember = false;
+					} else {
+						sb.append(", ");
+					}
+					sb.append(groupPropertyId);
+				}
+			}
+			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, sb.toString());
 		}
 	}
 
@@ -318,14 +374,14 @@ public final class GroupsDataManager extends DataManager {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is unknown</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             group property id is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
+	 *             property id is null</li>
 	 *
 	 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_PROPERTY_ID} if
 	 *             the group property id is already known</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if the
-	 *             property definition is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
+	 *             the property definition is null</li>
 	 * 
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
 	 *             if the property definition does not have a default value</li>
@@ -334,12 +390,21 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 * 
 	 */
-	public void defineGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId, PropertyDefinition propertyDefinition) {
+	public void defineGroupProperty(GroupTypeId groupTypeId, PropertyDefinitionInitialization<GroupPropertyId, GroupId> propertyDefinitionInitialization) {
+
+		GroupPropertyId groupPropertyId = propertyDefinitionInitialization.getPropertyId();
+		PropertyDefinition propertyDefinition = propertyDefinitionInitialization.getPropertyDefinition();
 
 		validateGroupTypeId(groupTypeId);
 		validateNewGroupPropertyId(groupTypeId, groupPropertyId);
 		validatePropertyDefinitionNotNull(propertyDefinition);
-		validatePropertyDefinitionHasDefault(propertyDefinition);
+
+		/*
+		 * Determine whether we will need to check that every group of the given
+		 * type has been assigned a value because the property definition does
+		 * not contain a default value.
+		 */
+		boolean checkAllGroupsHaveValues = propertyDefinition.getDefaultValue().isEmpty();
 
 		Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
 		IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
@@ -347,6 +412,81 @@ public final class GroupsDataManager extends DataManager {
 
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
 		map.put(groupPropertyId, propertyDefinition);
+		int requiredGroupTypeIndex = typesToIndexesMap.get(groupTypeId);
+
+		if (checkAllGroupsHaveValues) {
+			/*
+			 * update internal tracking mechanisms for properties not having
+			 * default values
+			 */
+			nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId, nonDefaultBearingPropertyIds.size());
+			nonDefaultChecks.put(groupTypeId, new boolean[nonDefaultBearingPropertyIds.size()]);
+
+			/*
+			 * create a bit set for tracking which groups received a property
+			 * value
+			 */
+			int idLimit = groupsToTypesMap.size();
+			BitSet coverageSet = new BitSet(idLimit);
+
+			/*
+			 * record the property values and update the bit set that is
+			 * tracking assignment coverate
+			 */
+			for (Pair<GroupId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+				GroupId groupId = pair.getFirst();
+				int gId = groupId.getValue();
+				int groupTypeIndex = groupsToTypesMap.getValueAsInt(gId);
+
+				if (groupTypeIndex < 0) {
+					throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
+				}
+				if (groupTypeIndex != requiredGroupTypeIndex) {
+					throw new ContractException(GroupError.INCORRECT_GROUP_TYPE_ID, groupId + " is not of type " + groupTypeId);
+				}
+
+				coverageSet.set(gId);
+				Object value = pair.getSecond();
+				/*
+				 * we do not have to validate the value since it is guaranteed
+				 * to be consistent with the property definition by contract.
+				 */
+				indexedPropertyManager.setPropertyValue(gId, value);
+			}
+
+			/*
+			 * Show that all groups of the of group type did indeed get a value
+			 * assignment
+			 */
+			for (int i = 0; i < idLimit; i++) {
+				// only check groups having the correct type
+				if (groupsToTypesMap.getValueAsInt(i) == requiredGroupTypeIndex) {
+					boolean groupCovered = coverageSet.get(i);
+					if (!groupCovered) {
+						throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
+					}
+				}
+			}
+		} else {
+			for (Pair<GroupId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+				GroupId groupId = pair.getFirst();
+				int gId = groupId.getValue();
+				int groupTypeIndex = groupsToTypesMap.getValueAsInt(gId);
+
+				if (groupTypeIndex < 0) {
+					throw new ContractException(GroupError.UNKNOWN_GROUP_ID, groupId);
+				}
+				if (groupTypeIndex != requiredGroupTypeIndex) {
+					throw new ContractException(GroupError.INCORRECT_GROUP_TYPE_ID, groupId + " is not of type " + groupTypeId);
+				}
+				/*
+				 * we do not have to validate the value since it is guaranteed
+				 * to be consistent with the property definition by contract.
+				 */
+				Object value = pair.getSecond();
+				indexedPropertyManager.setPropertyValue(gId, value);
+			}
+		}
 
 		dataManagerContext.releaseEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
 	}
@@ -460,7 +600,7 @@ public final class GroupsDataManager extends DataManager {
 		for (final GroupId groupId : groupsPluginData.getGroupIds()) {
 			final GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
 			Map<GroupPropertyId, PropertyDefinition> defMap = groupPropertyDefinitions.get(groupTypeId);
-			for(GroupPropertyValue groupPropertyValue :groupsPluginData.getGroupPropertyValues(groupId)) {
+			for (GroupPropertyValue groupPropertyValue : groupsPluginData.getGroupPropertyValues(groupId)) {
 				GroupPropertyId groupPropertyId = groupPropertyValue.groupPropertyId();
 				final Object value = groupPropertyValue.value();
 				final PropertyDefinition propertyDefinition = defMap.get(groupPropertyId);
@@ -483,8 +623,8 @@ public final class GroupsDataManager extends DataManager {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_ID } if the group id
 	 *             is unknown</li>
-	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID } if the
-	 *             group property id is null</li>
+	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID } if the group
+	 *             property id is null</li>
 	 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID } if the
 	 *             group property id is unknown</li>
 	 *             <li>{@linkplain PropertyError.IMMUTABLE_VALUE } if the
@@ -554,8 +694,8 @@ public final class GroupsDataManager extends DataManager {
 	 *             group type id contained in the group construction info is
 	 *             unknown</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
-	 *             group property id contained in the group construction info is
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a group
+	 *             property id contained in the group construction info is
 	 *             unknown</li>
 	 * 
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a group
@@ -568,15 +708,7 @@ public final class GroupsDataManager extends DataManager {
 		validateGroupConstructionInfoNotNull(groupConstructionInfo);
 		final GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
 		validateGroupTypeId(groupConstructionInfo.getGroupTypeId());
-
-		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
-		for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
-			validateGroupPropertyId(groupTypeId, groupPropertyId);
-			final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
-			validateGroupPropertyValueNotNull(groupPropertyValue);
-			validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
-		}
+		boolean checkPropertyCoverage = !nonDefaultBearingPropertyIds.get(groupTypeId).isEmpty();
 
 		final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 		List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
@@ -589,12 +721,34 @@ public final class GroupsDataManager extends DataManager {
 		groups.add(groupId);
 		groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
 
-		for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
-			final Object groupPropertyValue = propertyValues.get(groupPropertyId);
-			final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
-			final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+		final Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
+		if (checkPropertyCoverage) {
+			clearNonDefaultChecks(groupTypeId);
+			for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+				validateGroupPropertyId(groupTypeId, groupPropertyId);
+				markAssigned(groupTypeId, groupPropertyId);
+				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+				final Object groupPropertyValue = propertyValues.get(groupPropertyId);
+				validateGroupPropertyValueNotNull(groupPropertyValue);
+				validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
+				final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+				final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+				indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+			}
+			verifyNonDefaultChecks(groupTypeId);
+		} else {
+			for (final GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+				validateGroupPropertyId(groupTypeId, groupPropertyId);
+				final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+				final Object groupPropertyValue = propertyValues.get(groupPropertyId);
+				validateGroupPropertyValueNotNull(groupPropertyValue);
+				validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
+				final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+				final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+				indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+			}
 		}
+
 		dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
 		return groupId;
 	}
@@ -650,8 +804,12 @@ public final class GroupsDataManager extends DataManager {
 			groups = new ArrayList<>();
 			typesToGroupsMap.setValue(typeIndex, groups);
 		}
-		final GroupId result = new GroupId(masterGroupId++);
 
+		if (!nonDefaultBearingPropertyIds.get(groupTypeId).isEmpty()) {
+			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
+		}
+
+		final GroupId result = new GroupId(masterGroupId++);
 		groups.add(result);
 		groupsToTypesMap.setIntValue(result.getValue(), typeIndex);
 
@@ -828,8 +986,8 @@ public final class GroupsDataManager extends DataManager {
 	 *             type id is null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             group property id is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
+	 *             property id is null</li>
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is unknown</li>
 	 */
@@ -893,8 +1051,8 @@ public final class GroupsDataManager extends DataManager {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
 	 *             is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             group property id is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
+	 *             property id is null</li>
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is unknown</li>
 	 * 
@@ -926,8 +1084,8 @@ public final class GroupsDataManager extends DataManager {
 	 *             null</li>
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
 	 *             is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             group property id is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
+	 *             property id is null</li>
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
 	 *             group property id is unknown</li>
 	 * 

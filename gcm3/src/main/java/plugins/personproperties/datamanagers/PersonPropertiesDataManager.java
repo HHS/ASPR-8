@@ -100,7 +100,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
 
-		if (checkAllPeopleHaveValues) {
+		if (checkAllPeopleHaveValues) {	
 			addNonDefaultProperty(personPropertyId);
 			int idLimit = peopleDataManager.getPersonIdLimit();
 			BitSet coverageSet = new BitSet(idLimit);
@@ -109,6 +109,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 				PersonId personId = pair.getFirst();
 				int pId = personId.getValue();
 				coverageSet.set(pId);
+				/*
+				 * we do not have to validate the value since it is guaranteed
+				 * to be consistent with the property definition by contract.
+				 */
 				Object value = pair.getSecond();
 				propertyManager.setPropertyValue(pId, value);
 			}
@@ -124,6 +128,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 			for (Pair<PersonId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
 				PersonId personId = pair.getFirst();
 				int pId = personId.getValue();
+				/*
+				 * we do not have to validate the value since it is guaranteed
+				 * to be consistent with the property definition by contract.
+				 */
 				Object value = pair.getSecond();
 				propertyManager.setPropertyValue(pId, value);
 			}

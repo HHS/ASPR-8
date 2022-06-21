@@ -26,6 +26,7 @@ public enum GroupError implements ContractError {
 	NULL_GROUP_SAMPLER("Null group sampler"),
 	NULL_GROUP_TYPE_ID("Null group type id"),
 	UNKNOWN_GROUP_ID("Unknown group id"),
+	INCORRECT_GROUP_TYPE_ID("incorrect group type id for a group"),
 	UNKNOWN_GROUP_TYPE_ID("Unknown group type id"),	
 	;
 

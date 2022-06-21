@@ -46,11 +46,12 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
 	), //
+	
 	GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK(
 			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
-								.setDefaultValue(0)//
+								//.setDefaultValue(0)//
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build() //
