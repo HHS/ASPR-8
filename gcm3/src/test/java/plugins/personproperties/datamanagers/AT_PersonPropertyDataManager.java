@@ -43,6 +43,7 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestAuxiliaryPersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -54,7 +55,6 @@ import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyDefinitionInitialization;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
@@ -1061,7 +1061,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "definePersonProperty", args = { PropertyDefinitionInitialization.class })
+	@UnitTestMethod(name = "definePersonProperty", args = { PersonPropertyDefinitionInitialization.class })
 	public void testDefinePersonProperty() {
 
 		/*
@@ -1076,10 +1076,11 @@ public final class AT_PersonPropertyDataManager {
 					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
 					PersonPropertiesDataManager personPropertiesDataManager = c2.getDataManager(PersonPropertiesDataManager.class);
 					PropertyDefinition expectedPropertyDefinition = auxPropertyId.getPropertyDefinition();
-					PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
-					defBuilder.setPropertyId(auxPropertyId);
-					defBuilder.setPropertyDefinition(expectedPropertyDefinition);
-					PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+					PersonPropertyDefinitionInitialization propertyDefinitionInitialization = //
+							PersonPropertyDefinitionInitialization	.builder()//
+																	.setPersonPropertyId(auxPropertyId)//
+																	.setPropertyDefinition(expectedPropertyDefinition)//
+																	.build();
 
 					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
@@ -1137,9 +1138,11 @@ public final class AT_PersonPropertyDataManager {
 
 					Map<PersonId, Object> expectedPropertyValues = new LinkedHashMap<>();
 
-					PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
-					defBuilder.setPropertyId(auxPropertyId);
-					defBuilder.setPropertyDefinition(expectedPropertyDefinition);
+					PersonPropertyDefinitionInitialization.Builder defBuilder = //
+							PersonPropertyDefinitionInitialization	.builder()//
+																	.setPersonPropertyId(auxPropertyId)//
+																	.setPropertyDefinition(expectedPropertyDefinition);
+					//
 					expectedPropertyDefinition.getType();
 					for (PersonId personId : peopleDataManager.getPeople()) {
 						Object randomPropertyValue = auxPropertyId.getRandomPropertyValue(randomGenerator);
@@ -1147,7 +1150,7 @@ public final class AT_PersonPropertyDataManager {
 						expectedPropertyValues.put(personId, randomPropertyValue);
 					}
 
-					PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+					PersonPropertyDefinitionInitialization propertyDefinitionInitialization = defBuilder.build();
 
 					personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization);
 
@@ -1188,10 +1191,11 @@ public final class AT_PersonPropertyDataManager {
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = TestAuxiliaryPersonPropertyId.PERSON_AUX_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK.getPropertyDefinition();
 
-			PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
-			defBuilder.setPropertyId(personPropertyId);
-			defBuilder.setPropertyDefinition(propertyDefinition);
-			PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+			PersonPropertyDefinitionInitialization propertyDefinitionInitialization = //
+					PersonPropertyDefinitionInitialization	.builder()//
+															.setPersonPropertyId(personPropertyId)//
+															.setPropertyDefinition(propertyDefinition)//
+															.build();
 
 			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization));
 			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
@@ -1242,14 +1246,17 @@ public final class AT_PersonPropertyDataManager {
 
 			/*
 			 * define a new property without a default value and only set the
-			 * value for one of the two people in the population
+			 * value for one of the two people in the population.
+			 * 
+			 * only assign a value to one person
 			 */
-			PropertyDefinitionInitialization.Builder<PersonPropertyId, PersonId> defBuilder = new PropertyDefinitionInitialization.Builder<>();
-			defBuilder.setPropertyId(personPropertyId);
-			defBuilder.setPropertyDefinition(propertyDefinition);
-			// only assign a value to one person
-			defBuilder.addPropertyValue(personId1, 12);
-			PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization = defBuilder.build();
+			PersonPropertyDefinitionInitialization propertyDefinitionInitialization = //
+					PersonPropertyDefinitionInitialization	.builder()//
+															.setPersonPropertyId(personPropertyId)//
+															.setPropertyDefinition(propertyDefinition)//
+
+															.addPropertyValue(personId1, 12)//
+															.build();
 
 			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.definePersonProperty(propertyDefinitionInitialization));
 			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());

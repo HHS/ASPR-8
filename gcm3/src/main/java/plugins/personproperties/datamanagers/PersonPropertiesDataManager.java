@@ -27,6 +27,7 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
+import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.util.properties.BooleanPropertyManager;
 import plugins.util.properties.DoublePropertyManager;
@@ -36,7 +37,6 @@ import plugins.util.properties.IndexedPropertyManager;
 import plugins.util.properties.IntPropertyManager;
 import plugins.util.properties.ObjectPropertyManager;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyDefinitionInitialization;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
@@ -66,7 +66,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
 	}
 	
-	private void validatePropertyDefinitionInitializationNotNull(PropertyDefinitionInitialization<?,?> propertyDefinitionInitialization){
+	private void validatePropertyDefinitionInitializationNotNull(PersonPropertyDefinitionInitialization propertyDefinitionInitialization){
 		if(propertyDefinitionInitialization == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION_INITIALIZATION);
 		}
@@ -88,9 +88,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *             if the property definition has no default value and there is
 	 *             no included value assignment for some extant person</li>
 	 */
-	public void definePersonProperty(PropertyDefinitionInitialization<PersonPropertyId, PersonId> propertyDefinitionInitialization) {
+	public void definePersonProperty(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) {
 		validatePropertyDefinitionInitializationNotNull(propertyDefinitionInitialization);
-		PersonPropertyId personPropertyId = propertyDefinitionInitialization.getPropertyId();
+		PersonPropertyId personPropertyId = propertyDefinitionInitialization.getPersonPropertyId();
 		PropertyDefinition propertyDefinition = propertyDefinitionInitialization.getPropertyDefinition();
 
 		validatePersonPropertyIdIsUnknown(personPropertyId);
