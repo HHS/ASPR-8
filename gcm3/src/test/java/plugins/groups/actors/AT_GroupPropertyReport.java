@@ -19,6 +19,7 @@ import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
+import plugins.groups.support.GroupPropertyDefinitionInitialization;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
@@ -159,7 +160,13 @@ public class AT_GroupPropertyReport {
 
 			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK.getPropertyDefinition();
-			groupsDataManager.defineGroupProperty(groupTypeId, groupPropertyId, propertyDefinition);
+			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
+					GroupPropertyDefinitionInitialization	.builder()//
+															.setGroupTypeId(groupTypeId)//
+															.setPropertyDefinition(propertyDefinition)//
+															.setPropertyId(groupPropertyId)//															
+															.build();
+			groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 2, 3), (c) -> {
@@ -236,7 +243,6 @@ public class AT_GroupPropertyReport {
 
 		Map<ReportItem, Integer> actualReportItems = testConsumers(testPlugin, groupPropertyReport, 6092832510476200219L);
 
-		
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 

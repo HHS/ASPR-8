@@ -30,6 +30,7 @@ import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
+import plugins.groups.support.GroupPropertyDefinitionInitialization;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupPropertyValue;
 import plugins.groups.support.GroupSampler;
@@ -52,7 +53,6 @@ import plugins.util.properties.IndexedPropertyManager;
 import plugins.util.properties.IntPropertyManager;
 import plugins.util.properties.ObjectPropertyManager;
 import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyDefinitionInitialization;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
@@ -128,7 +128,7 @@ public final class GroupsDataManager extends DataManager {
 	private final Map<GroupTypeId, Map<GroupPropertyId, PropertyDefinition>> groupPropertyDefinitions = new LinkedHashMap<>();
 
 	private final Map<GroupTypeId, Map<GroupPropertyId, Integer>> nonDefaultBearingPropertyIds = new LinkedHashMap<>();
-	
+
 	private Map<GroupTypeId, boolean[]> nonDefaultChecks = new LinkedHashMap<>();
 
 	private final List<GroupTypeId> indexesToTypesMap = new ArrayList<>();
@@ -292,7 +292,7 @@ public final class GroupsDataManager extends DataManager {
 			indexesToTypesMap.add(groupTypeId);
 			groupPropertyManagerMap.put(groupTypeId, new LinkedHashMap<>());
 			groupPropertyDefinitions.put(groupTypeId, new LinkedHashMap<>());
-			nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());			
+			nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		}
 	}
 
@@ -368,32 +368,32 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 * 
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
-	 *             type id is null</li>
 	 * 
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is unknown</li>
-	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
-	 *             property id is null</li>
 	 *
-	 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_PROPERTY_ID} if
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION} if
 	 *             the group property id is already known</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
-	 *             the property definition is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *             groupPropertyDefinitionInitialization contains a property
+	 *             assignment for a group that does not exist.
 	 * 
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *             if the property definition does not have a default value</li>
+	 *             <li>{@linkplain GroupError#INCORRECT_GROUP_TYPE_ID} if the
+	 *             groupPropertyDefinitionInitialization contains a property
+	 *             assignment for a group that is not of the correct group type.
 	 * 
-	 * 
-	 * 
-	 * 
+	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *             if the groupPropertyDefinitionInitialization does not contain
+	 *             property value assignments for every extant group when the
+	 *             property definition does not contain a default value
+	 *             
 	 */
-	public void defineGroupProperty(GroupTypeId groupTypeId, PropertyDefinitionInitialization<GroupPropertyId, GroupId> propertyDefinitionInitialization) {
+	public void defineGroupProperty(GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization) {
 
-		GroupPropertyId groupPropertyId = propertyDefinitionInitialization.getPropertyId();
-		PropertyDefinition propertyDefinition = propertyDefinitionInitialization.getPropertyDefinition();
+		GroupTypeId groupTypeId = groupPropertyDefinitionInitialization.getGroupTypeId();
+		GroupPropertyId groupPropertyId = groupPropertyDefinitionInitialization.getPropertyId();
+		PropertyDefinition propertyDefinition = groupPropertyDefinitionInitialization.getPropertyDefinition();
 
 		validateGroupTypeId(groupTypeId);
 		validateNewGroupPropertyId(groupTypeId, groupPropertyId);
@@ -433,7 +433,7 @@ public final class GroupsDataManager extends DataManager {
 			 * record the property values and update the bit set that is
 			 * tracking assignment coverate
 			 */
-			for (Pair<GroupId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+			for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
 				GroupId groupId = pair.getFirst();
 				int gId = groupId.getValue();
 				int groupTypeIndex = groupsToTypesMap.getValueAsInt(gId);
@@ -468,7 +468,7 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 		} else {
-			for (Pair<GroupId, Object> pair : propertyDefinitionInitialization.getPropertyValues()) {
+			for (Pair<GroupId, Object> pair : groupPropertyDefinitionInitialization.getPropertyValues()) {
 				GroupId groupId = pair.getFirst();
 				int gId = groupId.getValue();
 				int groupTypeIndex = groupsToTypesMap.getValueAsInt(gId);
@@ -1680,18 +1680,36 @@ public final class GroupsDataManager extends DataManager {
 
 				newGroups.add(groupId);
 
-				for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
-					Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
-					final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-					if (propertyDefinition == null) {
-						validateGroupPropertyId(groupTypeId, groupPropertyId);
-					}
-					validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
-					final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
-					final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-					indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-				}
+				boolean performCoverageCheck = !nonDefaultBearingPropertyIds.get(groupTypeId).isEmpty();
 
+				if (performCoverageCheck) {
+					clearNonDefaultChecks(groupTypeId);
+					for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
+						markAssigned(groupTypeId, groupPropertyId);
+						Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
+						final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+						if (propertyDefinition == null) {
+							validateGroupPropertyId(groupTypeId, groupPropertyId);
+						}
+						validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
+						final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+						final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+						indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+					}
+					verifyNonDefaultChecks(groupTypeId);
+				} else {
+					for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
+						Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
+						final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
+						if (propertyDefinition == null) {
+							validateGroupPropertyId(groupTypeId, groupPropertyId);
+						}
+						validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
+						final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
+						final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
+						indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
+					}
+				}
 				if (groupCreationSubscribersExist) {
 					dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
 				}

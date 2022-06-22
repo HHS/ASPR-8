@@ -18,9 +18,9 @@ import util.errors.ContractException;
  */
 @Immutable
 public final class GroupConstructionInfo {
-	private final Scaffold scaffold;
+	private final Data data;
 
-	private static class Scaffold {
+	private static class Data {
 		private GroupTypeId groupTypeId;
 		private Map<GroupPropertyId, Object> propertyValues = new LinkedHashMap<>();
 	}
@@ -30,21 +30,21 @@ public final class GroupConstructionInfo {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends GroupTypeId> T getGroupTypeId() {
-		return (T) scaffold.groupTypeId;
+		return (T) data.groupTypeId;
 	}
 
 	/**
 	 * Returns a map of the group property values for the group
 	 */
 	public Map<GroupPropertyId, Object> getPropertyValues() {
-		return Collections.unmodifiableMap(scaffold.propertyValues);
+		return Collections.unmodifiableMap(data.propertyValues);
 	}
 
 	/*
 	 * Hidden constructor
 	 */
-	private GroupConstructionInfo(Scaffold scaffold) {
-		this.scaffold = scaffold;
+	private GroupConstructionInfo(Data data) {
+		this.data = data;
 	}
 
 	public static Builder builder() {
@@ -57,10 +57,10 @@ public final class GroupConstructionInfo {
 		private Builder() {
 		}
 
-		private Scaffold scaffold = new Scaffold();
+		private Data data = new Data();
 
 		private void validate() {
-			if (scaffold.groupTypeId == null) {
+			if (data.groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
 		}
@@ -75,9 +75,9 @@ public final class GroupConstructionInfo {
 		public GroupConstructionInfo build() {
 			try {
 				validate();
-				return new GroupConstructionInfo(scaffold);
+				return new GroupConstructionInfo(data);
 			} finally {
-				scaffold = new Scaffold();
+				data = new Data();
 			}
 		}
 
@@ -91,7 +91,7 @@ public final class GroupConstructionInfo {
 			if (groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
-			scaffold.groupTypeId = groupTypeId;
+			data.groupTypeId = groupTypeId;
 			return this;
 		}
 
@@ -109,7 +109,7 @@ public final class GroupConstructionInfo {
 			if (groupPropertyValue == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 			}
-			scaffold.propertyValues.put(groupPropertyId, groupPropertyValue);
+			data.propertyValues.put(groupPropertyId, groupPropertyValue);
 			return this;
 		}
 
