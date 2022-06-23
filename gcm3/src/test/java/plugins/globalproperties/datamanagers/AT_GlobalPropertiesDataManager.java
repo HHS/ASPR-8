@@ -34,6 +34,7 @@ import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertiesError;
 import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.globalproperties.support.GlobalPropertyInitialization;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalsPropertiesActionSupport;
 import plugins.globalproperties.testsupport.TestAuxiliaryGlobalPropertyId;
@@ -379,7 +380,7 @@ public final class AT_GlobalPropertiesDataManager {
 	@Test
 	@UnitTestMethod(name = "defineGlobalProperty", args = { GlobalPropertyId.class, PropertyDefinition.class })
 	public void testDefineGlobalProperty() {
-
+		
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
@@ -394,7 +395,8 @@ public final class AT_GlobalPropertiesDataManager {
 				c.addPlan((c2) -> {
 					GlobalPropertiesDataManager globalPropertiesDataManager = c2.getDataManager(GlobalPropertiesDataManager.class);
 					PropertyDefinition expectedPropertyDefinition = auxPropertyId.getPropertyDefinition();
-					globalPropertiesDataManager.defineGlobalProperty(auxPropertyId, expectedPropertyDefinition);
+					GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder().setGlobalPropertyId(auxPropertyId).setPropertyDefinition(expectedPropertyDefinition).build();
+					globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
 
 					// show that the definition was added
 					PropertyDefinition actualPopertyDefinition = globalPropertiesDataManager.getGlobalPropertyDefinition(auxPropertyId);
@@ -440,13 +442,13 @@ public final class AT_GlobalPropertiesDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		GlobalsPropertiesActionSupport.testConsumers(testPlugin);
 
-		// precondition test: if the global property id is null
+
+		
+		// precondition test: if the global property initialization is null
 		GlobalsPropertiesActionSupport.testConsumer((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			GlobalPropertyId globalPropertyId = null;
-			PropertyDefinition propertyDefinition = TestAuxiliaryGlobalPropertyId.GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(globalPropertyId, propertyDefinition));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(null));
+			assertEquals(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_INITIALIZATION, contractException.getErrorType());
 		});
 
 		// precondition test: if the global property already exists
@@ -454,28 +456,16 @@ public final class AT_GlobalPropertiesDataManager {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 			GlobalPropertyId globalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE;
 			PropertyDefinition propertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(globalPropertyId, propertyDefinition));
+			GlobalPropertyInitialization globalPropertyInitialization =//
+					GlobalPropertyInitialization.builder()//
+					.setGlobalPropertyId(globalPropertyId)//
+					.setPropertyDefinition(propertyDefinition)//
+					.build();
+
+			
+			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization));
 			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
-
-		// precondition test: if the property definition is null
-		GlobalsPropertiesActionSupport.testConsumer((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			GlobalPropertyId globalPropertyId = TestAuxiliaryGlobalPropertyId.GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE;
-			PropertyDefinition propertyDefinition = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(globalPropertyId, propertyDefinition));
-			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-		});
-
-		// precondition test: if the property definition has no default value
-		GlobalsPropertiesActionSupport.testConsumer((c) -> {
-			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
-			GlobalPropertyId globalPropertyId = TestAuxiliaryGlobalPropertyId.GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE;
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(globalPropertyId, propertyDefinition));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
-		});
-	
 
 	}
 

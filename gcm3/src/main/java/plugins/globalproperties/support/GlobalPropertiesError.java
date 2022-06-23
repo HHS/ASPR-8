@@ -12,9 +12,10 @@ import util.errors.ContractException;
  */
 public enum GlobalPropertiesError implements ContractError {
 
-	NULL_GLOBAL_COMPONENT_INITIAL_BEHVAVIOR_SUPPLIER("Null global component initial behvavior supplier"),
+
 	NULL_GLOBAL_DATA_MANGER("Null global data manager"),
 	NULL_GLOBAL_PLUGIN_DATA("Null global plugin data"),
+	NULL_GLOBAL_PROPERTY_INITIALIZATION("Null global property initialization"),
 	;
 
 	private final String description;

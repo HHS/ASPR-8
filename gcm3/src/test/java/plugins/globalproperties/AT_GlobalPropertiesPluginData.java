@@ -34,15 +34,14 @@ public class AT_GlobalPropertiesPluginData {
 		GlobalPropertiesPluginData globalInitialData = GlobalPropertiesPluginData.builder().build();
 		assertNotNull(globalInitialData);
 
-		// precondition tests
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(34).build();
 		GlobalPropertyId globalPropertyId1 = new SimpleGlobalPropertyId("id 1");
 		GlobalPropertyId globalPropertyId2 = new SimpleGlobalPropertyId("id 2");
 
 		/*
-		 * If a global property value was associated with a global property id
-		 * that was not defined
+		 * precondition test: if a global property value was associated with a
+		 * global property id that was not defined
 		 */
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		builder.setGlobalPropertyValue(globalPropertyId2, 67);
@@ -50,8 +49,9 @@ public class AT_GlobalPropertiesPluginData {
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 		/*
-		 * If a global property value was associated with a global property id
-		 * that is incompatible with the corresponding property definition.
+		 * precondition test: if a global property value was associated with a
+		 * global property id that is incompatible with the corresponding
+		 * property definition.
 		 */
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		builder.setGlobalPropertyValue(globalPropertyId1, "bad value");
@@ -59,13 +59,14 @@ public class AT_GlobalPropertiesPluginData {
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
-		 * If a global property definition does not have a default value and
-		 * there are no property values added to replace that default.
+		 * precondition test: if a global property definition has no default
+		 * value and there is also no corresponding property value assignment.
 		 */
 		propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		contractException = assertThrows(ContractException.class, () -> builder.build());
-		assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+
 
 	}
 
@@ -121,8 +122,6 @@ public class AT_GlobalPropertiesPluginData {
 		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 
 	}
-
-	
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.Builder.class, name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
@@ -186,8 +185,6 @@ public class AT_GlobalPropertiesPluginData {
 		assertNotNull(GlobalPropertiesPluginData.builder());
 	}
 
-	
-	
 	@Test
 	@UnitTestMethod(name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {

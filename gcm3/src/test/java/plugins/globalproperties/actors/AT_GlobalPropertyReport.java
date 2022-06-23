@@ -18,6 +18,7 @@ import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.globalproperties.support.GlobalPropertyInitialization;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
@@ -112,8 +113,8 @@ public class AT_GlobalPropertyReport {
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_1, 100);
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 3.45);
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
-			
-			globalPropertiesDataManager.defineGlobalProperty(globalPropertyId_4, propertyDefinition_4);
+			GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder().setGlobalPropertyId(globalPropertyId_4).setPropertyDefinition(propertyDefinition_4).build();
+			globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
 			
 		}));
 
@@ -128,8 +129,8 @@ public class AT_GlobalPropertyReport {
 			// and now a third setting of the same property to a new value
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_2, 100.0);
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId_3, true);
-			
-			globalPropertiesDataManager.defineGlobalProperty(globalPropertyId_5, propertyDefinition_5);
+			GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder().setGlobalPropertyId(globalPropertyId_5).setPropertyDefinition(propertyDefinition_5).build();
+			globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
