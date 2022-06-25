@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import nucleus.DataManager;
@@ -23,7 +24,6 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
-import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.RegionResourceUpdateEvent;
@@ -34,6 +34,7 @@ import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.resources.support.ResourcePropertyInitialization;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.PropertyValueRecord;
@@ -45,15 +46,9 @@ import util.time.StopwatchManager;
 import util.time.Watch;
 
 /**
- * Mutable data manager that backs the {@linkplain ResourcesDataManager}. This
- * data manager is for internal use by the {@link ResourcesPlugin} and should
- * not be published.
- *
- * All resources are defined during construction and cannot be changed. Resource
- * property values are mutable and specific to the type of resource. Limited
- * validation of inputs are performed and mutation methods have invocation
- * ordering requirements.
- *
+ * Data manager for resources. Resource property values are generally mutable
+ * and specific to the type of resource.
+ * 
  * @author Shawn Hatch
  *
  */
@@ -444,9 +439,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * Precondition : the resource id must exist
 	 */
 	private void validateNewResourcePropertyId(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
-		if (resourcePropertyId == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-		}
 
 		final Map<ResourcePropertyId, PropertyValueRecord> map = resourcePropertyMap.get(resourceId);
 
@@ -455,39 +447,26 @@ public final class ResourcesDataManager extends DataManager {
 		}
 	}
 
-	private void validateNewPropertyDefinition(PropertyDefinition propertyDefinition) {
-		if (propertyDefinition == null) {
-			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
-		}
-		if (propertyDefinition.getDefaultValue().isEmpty()) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT);
-		}
-	}
-
 	/**
 	 * Defines a new resource property. Generates the corresponding
 	 * ResourcePropertyAdditionEvent.
 	 * 
 	 * @throw {@link ContractException}
-	 *        <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the resource id
-	 *        is null</li>
+	 * 
 	 *        <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the resource
 	 *        id is unknown</li>
-	 *        <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *        resource property id is unknown</li>
-	 *        <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-	 *        if the resource property is already defined</li>
-	 *        <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if the
-	 *        property definition is null</li>
-	 *        <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *        if the property definition does not have a default value</li>
+	 *        <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION} if
+	 *        the resource property is already defined</li>
+	 * 
 	 * 
 	 */
-	public void defineResourceProperty(ResourceId resourceId, ResourcePropertyId resourcePropertyId, PropertyDefinition propertyDefinition) {
+	public void defineResourceProperty(ResourcePropertyInitialization resourcePropertyInitialization) {
+		ResourceId resourceId = resourcePropertyInitialization.getResourceId();
+		ResourcePropertyId resourcePropertyId = resourcePropertyInitialization.getResourcePropertyId();
+		PropertyDefinition propertyDefinition = resourcePropertyInitialization.getPropertyDefinition();
 
 		validateResourceId(resourceId);
 		validateNewResourcePropertyId(resourceId, resourcePropertyId);
-		validateNewPropertyDefinition(propertyDefinition);
 
 		Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
 		if (defMap == null) {
@@ -500,8 +479,17 @@ public final class ResourcesDataManager extends DataManager {
 			map = new LinkedHashMap<>();
 			resourcePropertyMap.put(resourceId, map);
 		}
+
+		Object propertyValue;
+		Optional<Object> optionalValue = resourcePropertyInitialization.getValue();
+		if (optionalValue.isPresent()) {
+			propertyValue = optionalValue.get();
+		} else {
+			propertyValue = propertyDefinition.getDefaultValue().get();
+		}
+
 		final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-		propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
+		propertyValueRecord.setPropertyValue(propertyValue);
 		map.put(resourcePropertyId, propertyValueRecord);
 
 		dataManagerContext.releaseEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId));
@@ -560,10 +548,10 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *             the resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the resource property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             resource property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             resource property id is unknown</li>
 	 */
 	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		validateResourceId(resourceId);
@@ -599,10 +587,10 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *             the resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the resource property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             resource property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             resource property id is unknown</li>
 	 */
 
 	public double getResourcePropertyTime(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
@@ -619,10 +607,10 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *             the resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the resource property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             resource property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             resource property id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
@@ -1179,12 +1167,12 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource id is null</li>
 	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *             the resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the resource property id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-	 *             if the resource property value is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             resource property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             resource property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+	 *             resource property value is null</li>
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
 	 *             resource property value is incompatible with the
 	 *             corresponding property definition</li>

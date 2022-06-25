@@ -1,25 +1,24 @@
-package plugins.globalproperties.support;
+package plugins.resources.support;
 
 import java.util.Optional;
 
-import net.jcip.annotations.Immutable;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * Immutable data class that represents the addition of a global property
+ * Immutable data class that represents the addition of a resource property
  * 
  * @author Shawn Hatch
  *
  */
 
-@Immutable
-public class GlobalPropertyInitialization {
+public class ResourcePropertyInitialization {
 
 	private static class Data {
-		private GlobalPropertyId globalPropertyId;
-		private PropertyDefinition propertyDefinition;
+		private ResourceId resourceId;
+		private ResourcePropertyId resourcePropertyId;
+		PropertyDefinition propertyDefinition;
 		private Object value;
 
 	}
@@ -41,8 +40,11 @@ public class GlobalPropertyInitialization {
 			if (data.propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
-			if (data.globalPropertyId == null) {
+			if (data.resourcePropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+			}
+			if (data.resourceId == null) {
+				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}
 			if (data.value == null) {
 				if (data.propertyDefinition.getDefaultValue().isEmpty()) {
@@ -52,47 +54,54 @@ public class GlobalPropertyInitialization {
 		}
 
 		/**
-		 * Returns the GlobalPropertyInitialization formed from the inputs.
+		 * Returns the ResourcePropertyInitialization formed from the inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if no property definition was provided</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *             if no property id was provided</li>
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
+		 *             property id was provided</li>
+		 *             <li>{@linkplain PropertyError#NULL_RESOURCE_ID} if no
+		 *             resource id was provided</li>
 		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if no property value was provided and the property
 		 *             definition does not contain a default value</li>
 		 */
-		public GlobalPropertyInitialization build() {
+		public ResourcePropertyInitialization build() {
 			try {
 				validate();
-				return new GlobalPropertyInitialization(data);
+				return new ResourcePropertyInitialization(data);
 			} finally {
 				data = new Data();
 			}
 		}
 
-		/**
-		 * Sets the property id.
-		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li> 
-		 */
-		public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
-			if(globalPropertyId == null) {
-				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-			}
-			data.globalPropertyId = globalPropertyId;
+		public Builder setResourceId(ResourceId resourceId) {
+			data.resourceId = resourceId;
 			return this;
 		}
 
 		/**
-		 * Sets the property definition.
+		 * Sets the resource property id.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if the
-		 *             property definition is null</li> 
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *             property id is null</li>
+		 */
+		public Builder setResourcePropertyId(ResourcePropertyId resourcePropertyId) {
+			if (resourcePropertyId == null) {
+				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+			}
+			data.resourcePropertyId = resourcePropertyId;
+			return this;
+		}
+
+		/**
+		 * Sets the resource property definition.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *             if the property definition is null</li>
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
 			if (propertyDefinition == null) {
@@ -121,15 +130,22 @@ public class GlobalPropertyInitialization {
 
 	private final Data data;
 
-	private GlobalPropertyInitialization(Data data) {
+	private ResourcePropertyInitialization(Data data) {
 		this.data = data;
 	}
 
 	/**
-	 * Returns the global property id
+	 * Returns the resource property id
 	 */
-	public GlobalPropertyId getGlobalPropertyId() {
-		return data.globalPropertyId;
+	public ResourcePropertyId getResourcePropertyId() {
+		return data.resourcePropertyId;
+	}
+
+	/**
+	 * Returns the resource id
+	 */
+	public ResourceId getResourceId() {
+		return data.resourceId;
 	}
 
 	/**

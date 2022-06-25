@@ -34,6 +34,7 @@ import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourcePropertyId;
+import plugins.resources.support.ResourcePropertyInitialization;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
@@ -170,7 +171,8 @@ public class AT_ResourcePropertyReport {
 			for (TestAuxiliaryResourcePropertyId propertyId : TestAuxiliaryResourcePropertyId.values()) {
 				TestResourceId testResourceId = propertyId.getTestResourceId();
 				PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();
-				resourcesDataManager.defineResourceProperty(testResourceId, propertyId, propertyDefinition);
+				ResourcePropertyInitialization resourcePropertyInitialization = ResourcePropertyInitialization.builder().setResourceId(testResourceId).setResourcePropertyId(propertyId).setPropertyDefinition(propertyDefinition).build();
+				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			}
 
 		}));

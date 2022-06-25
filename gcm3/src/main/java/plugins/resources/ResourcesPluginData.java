@@ -265,46 +265,38 @@ public final class ResourcesPluginData implements PluginData {
 		 * @throws ContractException
 		 *
 		 * 
-		 *             1
 		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
 		 *             resource tracking policy was collected for a resource
 		 *             that was not added</li>
 		 * 
-		 *             2
 		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
 		 *             resource property definition was collected for a resource
 		 *             that was not added</li>
 		 * 
-		 *             3
 		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *             if a resource property value was collected for a resource
 		 *             that was not added</li>
 		 * 
-		 *             4
 		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *             if a resource property value was collected for a resource
 		 *             property that is not associated with the given resource
 		 *             id</li>
 		 * 
-		 *             5
 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
 		 *             resource property value was collected for a resource
 		 *             property that is not compatible with the associated
 		 *             resource property definition</li>
 		 * 
-		 *             6
 		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if a resource property definition has a null default
 		 *             value and there is no assigned resource property value
 		 *             for that resource</li>
 		 * 
 		 * 
-		 *             7
 		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
 		 *             resource level was collected for a person that is an
 		 *             unknown resource id</li>
 		 * 
-		 *             8
 		 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
 		 *             resource level was collected for a region that is an
 		 *             unknown resource id</li>
