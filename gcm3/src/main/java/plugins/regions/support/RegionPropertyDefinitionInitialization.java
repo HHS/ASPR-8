@@ -1,4 +1,4 @@
-package plugins.personproperties.support;
+package plugins.regions.support;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,8 +7,6 @@ import java.util.List;
 import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.Immutable;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
@@ -23,17 +21,17 @@ import util.errors.ContractException;
  
  */
 @Immutable
-public final class PersonPropertyDefinitionInitialization {
+public final class RegionPropertyDefinitionInitialization {
 
 	private static class Data {
-		PersonPropertyId personPropertyId;
+		RegionPropertyId regionPropertyId;
 		PropertyDefinition propertyDefinition;
-		List<Pair<PersonId, Object>> propertyValues = new ArrayList<>();
+		List<Pair<RegionId, Object>> propertyValues = new ArrayList<>();
 	}
 
 	private final Data data;
 
-	private PersonPropertyDefinitionInitialization(Data data) {
+	private RegionPropertyDefinitionInitialization(Data data) {
 		this.data = data;
 	}
 	
@@ -62,12 +60,12 @@ public final class PersonPropertyDefinitionInitialization {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
 
-			if (data.personPropertyId == null) {
+			if (data.regionPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
 
 			Class<?> type = data.propertyDefinition.getType();
-			for (Pair<PersonId, Object> pair : data.propertyValues) {
+			for (Pair<RegionId, Object> pair : data.propertyValues) {
 				Object value = pair.getSecond();
 				if (!type.isAssignableFrom(value.getClass())) {
 					String message = "Definition Type " + type.getName() + " is not compatible with value = " + value;
@@ -90,10 +88,10 @@ public final class PersonPropertyDefinitionInitialization {
 		 *             collected property value is incompatible with the
 		 *             property definition</li>
 		 */
-		public PersonPropertyDefinitionInitialization build() {
+		public RegionPropertyDefinitionInitialization build() {
 			try {
 				validate();
-				return new PersonPropertyDefinitionInitialization(data);
+				return new RegionPropertyDefinitionInitialization(data);
 			} finally {
 				data = new Data();
 			}
@@ -106,11 +104,11 @@ public final class PersonPropertyDefinitionInitialization {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             property id is null</li>
 		 */
-		public Builder setPersonPropertyId(PersonPropertyId propertyId) {
-			if (propertyId == null) {
+		public Builder setRegionPropertyId(RegionPropertyId regionPropertyId) {
+			if (regionPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
-			data.personPropertyId = propertyId;
+			data.regionPropertyId = regionPropertyId;
 			return this;
 		}
 
@@ -139,25 +137,25 @@ public final class PersonPropertyDefinitionInitialization {
 		 *             property value is null</li>
 		 */
 
-		public Builder addPropertyValue(PersonId personId, Object value) {
-			if (personId == null) {
-				throw new ContractException(PersonError.NULL_PERSON_ID);
+		public Builder addPropertyValue(RegionId regionId, Object value) {
+			if (regionId == null) {
+				throw new ContractException(RegionError.NULL_REGION_ID);
 			}
 			if (value == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 			}
 
-			data.propertyValues.add(new Pair<>(personId, value));
+			data.propertyValues.add(new Pair<>(regionId, value));
 			return this;
 		}
 
 	}
 
 	/**
-	 * Returns the (non-null) person property id.
+	 * Returns the (non-null) region property id.
 	 */
-	public PersonPropertyId getPersonPropertyId() {
-		return data.personPropertyId;
+	public RegionPropertyId getRegionPropertyId() {
+		return data.regionPropertyId;
 	}
 
 	/**
@@ -168,12 +166,12 @@ public final class PersonPropertyDefinitionInitialization {
 	}
 
 	/**
-	 * Returns the list of (person,value) pairs collected by the builder in the
+	 * Returns the list of (region,value) pairs collected by the builder in the
 	 * order of their addition. All pairs have non-null entries and the values
 	 * are compatible with the contained property definition. Duplicate
 	 * assignments of values to the same owner may be present.
 	 */
-	public List<Pair<PersonId, Object>> getPropertyValues() {
+	public List<Pair<RegionId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
 	}
 

@@ -23,7 +23,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 	REGION_PROPERTY_2_INTEGER_MUTABLE(
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
-								.setDefaultValue(0)//
+								// .setDefaultValue(0)//no default value
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
@@ -35,7 +35,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
-	), //	
+	), //
 	REGION_PROPERTY_4_BOOLEAN_IMMUTABLE(
 			PropertyDefinition	.builder()//
 								.setType(Boolean.class)//
@@ -60,7 +60,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 								.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 								.build()//
 	), //
-	
+
 	;
 
 	private final PropertyDefinition propertyDefinition;
@@ -79,11 +79,11 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 	public static TestRegionPropertyId getRandomRegionPropertyId(final RandomGenerator randomGenerator) {
 		return TestRegionPropertyId.values()[randomGenerator.nextInt(TestRegionPropertyId.values().length)];
 	}
-	
+
 	public static TestRegionPropertyId getRandomMutableRegionPropertyId(final RandomGenerator randomGenerator) {
 		List<TestRegionPropertyId> candidates = new ArrayList<>();
-		for(TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			if(testRegionPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			if (testRegionPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
 				candidates.add(testRegionPropertyId);
 			}
 		}
@@ -104,7 +104,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 		return new RegionPropertyId() {
 		};
 	}
-	
+
 	/**
 	 * Returns a randomly selected value that is compatible with this member's
 	 * associated property definition.
@@ -136,5 +136,34 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 
 		}
 	}
+
+	/**
+	 * Returns the test region property id values associated with property
+	 * definitions that have default values.
+	 */
+	public static List<TestRegionPropertyId> getPropertesWithDefaultValues() {
+		List<TestRegionPropertyId> result = new ArrayList<>();
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			if (testRegionPropertyId.propertyDefinition.getDefaultValue().isPresent()) {
+				result.add(testRegionPropertyId);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the test region property id values associated with property
+	 * definitions that do not have default values.
+	 */
+	public static List<TestRegionPropertyId> getPropertesWithoutDefaultValues() {
+		List<TestRegionPropertyId> result = new ArrayList<>();
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			if (testRegionPropertyId.propertyDefinition.getDefaultValue().isEmpty()) {
+				result.add(testRegionPropertyId);
+			}
+		}
+		return result;
+	}
+
 
 }

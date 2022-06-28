@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
@@ -20,8 +22,10 @@ import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
+import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 public final class RegionsActionSupport {
 	public static void testConsumer(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Consumer<ActorContext> consumer) {
@@ -34,6 +38,8 @@ public final class RegionsActionSupport {
 	}
 
 	public static void testConsumers(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Plugin testPlugin) {
+		
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
 			people.add(new PersonId(i));
@@ -47,7 +53,14 @@ public final class RegionsActionSupport {
 		}
 		
 		for(TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
+			PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
+			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
+			if(propertyDefinition.getDefaultValue().isEmpty()) {
+				for (TestRegionId regionId : TestRegionId.values()) {
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+				}
+			}
+			
 		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		regionPluginBuilder.setPersonRegionArrivalTracking(timeTrackingPolicy);

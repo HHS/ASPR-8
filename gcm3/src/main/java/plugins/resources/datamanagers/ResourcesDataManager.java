@@ -869,6 +869,15 @@ public final class ResourcesDataManager extends DataManager {
 			for (ResourceId resourceId : personResourceValues.keySet()) {
 				resourceMap.put(resourceId, new RegionResourceRecord(dataManagerContext));
 			}
+			List<ResourceInitialization> resourceInitializations = regionAdditionEvent.getValues(ResourceInitialization.class);
+			for(ResourceInitialization resourceInitialization : resourceInitializations) {
+				ResourceId resourceId = resourceInitialization.getResourceId();
+				validateResourceId(resourceId);
+				Long amount = resourceInitialization.getAmount();
+				validateNonnegativeResourceAmount(amount);
+				RegionResourceRecord regionResourceRecord = resourceMap.get(resourceId);
+				regionResourceRecord.amount = amount;
+			}			
 			regionResources.put(regionId, resourceMap);
 		}
 	}

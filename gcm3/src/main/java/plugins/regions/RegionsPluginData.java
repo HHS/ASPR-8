@@ -51,6 +51,7 @@ public class RegionsPluginData implements PluginData {
 		private TimeTrackingPolicy regionArrivalTimeTrackingPolicy;
 
 		private final Map<RegionId, Map<RegionPropertyId, Object>> regionPropertyValues = new LinkedHashMap<>();
+		private final Map<RegionPropertyId, Object> emptyRegionPropertyMap = Collections.unmodifiableMap(new LinkedHashMap<>());
 
 		private final List<RegionId> personRegions = new ArrayList<>();
 
@@ -411,31 +412,15 @@ public class RegionsPluginData implements PluginData {
 	 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li> if the
 	 *             region id is null
 	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID}</li> if the
-	 *             region id is unknown
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li> if
-	 *             the region property id is null
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-	 *             if the region property id is known
+	 *             region id is unknown	             
 	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId) {
+	public Map<RegionPropertyId, Object> getRegionPropertyValues(final RegionId regionId) {
 		validateRegionExists(data, regionId);
-		validateRegionPropertyIdNotNull(regionPropertyId);
-		validateRegionPropertyIsDefined(data, regionPropertyId);
-		Object result = null;
 		final Map<RegionPropertyId, Object> map = data.regionPropertyValues.get(regionId);
-		if (map != null) {
-			result = map.get(regionPropertyId);
+		if(map == null) {
+			return data.emptyRegionPropertyMap;
 		}
-		if (result == null) {
-			final PropertyDefinition propertyDefinition = data.regionPropertyDefinitions.get(regionPropertyId);
-			/*
-			 * we verified earlier that every region property either has a value
-			 * or has a property definition that has a default value
-			 */
-			result = propertyDefinition.getDefaultValue().get();
-		}
-		return (T) result;
+		return Collections.unmodifiableMap(map);		
 	}
 
 	/**

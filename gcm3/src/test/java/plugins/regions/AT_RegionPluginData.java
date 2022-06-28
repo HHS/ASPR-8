@@ -161,33 +161,49 @@ public class AT_RegionPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class })
-	public void testGetRegionPropertyValue() {
-		RegionsPluginData.Builder builder = RegionsPluginData.builder();
-		/*
-		 * Place the various region/property pairs defined in TestRegionId into
-		 * the builder and associate them with distinct property values. Each
-		 * property value will be unique.
-		 */
+	@UnitTestMethod(name = "getRegionPropertyValues", args = { RegionId.class, RegionPropertyId.class })
+	public void testGetRegionPropertyValues() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(887285678478260177L);
 
-		Map<RegionId, Map<RegionPropertyId, Object>> expectedPropertyValues = new LinkedHashMap<>();
+		RegionsPluginData.Builder builder = RegionsPluginData.builder();
+
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			builder.addRegion(testRegionId);
-			Map<RegionPropertyId, Object> map = new LinkedHashMap<>();
-			expectedPropertyValues.put(testRegionId, map);
 		}
 
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
+			PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
 			builder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
 		}
 
-		int propertyValue = 0;
+		Map<RegionId, Map<RegionPropertyId, Object>> expectedPropertyValues = new LinkedHashMap<>();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				expectedPropertyValues.get(testRegionId).put(testRegionPropertyId, propertyValue);
-				builder.setRegionPropertyValue(testRegionId, testRegionPropertyId, propertyValue);
-				propertyValue++;
+			expectedPropertyValues.put(testRegionId, new LinkedHashMap<>());
+		}
+
+		/*
+		 * set about half of the properties for each region for those properties
+		 * that have a default value
+		 */
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithDefaultValues()) {
+			for (TestRegionId testRegionId : TestRegionId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					Object value = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+					builder.setRegionPropertyValue(testRegionId, testRegionPropertyId, value);
+					expectedPropertyValues.get(testRegionId).put(testRegionPropertyId, value);
+				} 
+			}
+		}
+
+		/*
+		 * set all of the properties for each region for those properties that
+		 * do not have a default value
+		 */
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+			for (TestRegionId testRegionId : TestRegionId.values()) {
+				Object value = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+				builder.setRegionPropertyValue(testRegionId, testRegionPropertyId, value);
+				expectedPropertyValues.get(testRegionId).put(testRegionPropertyId, value);
 			}
 		}
 
@@ -197,42 +213,22 @@ public class AT_RegionPluginData {
 		/*
 		 * Retrieve all of the property values in the region inital data and
 		 * place them in a map for comparison.
-		 */
-		Map<RegionId, Map<RegionPropertyId, Object>> actualPropertyValues = new LinkedHashMap<>();
+		 */		
 		for (RegionId regionId : regionsPluginData.getRegionIds()) {
-			Map<RegionPropertyId, Object> map = new LinkedHashMap<>();
-			actualPropertyValues.put(regionId, map);
-			Set<RegionPropertyId> regionPropertyIds = regionsPluginData.getRegionPropertyIds();
-			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
-				Object regionPropertyValue = regionsPluginData.getRegionPropertyValue(regionId, regionPropertyId);
-				map.put(regionPropertyId, regionPropertyValue);
-			}
+			Map<RegionPropertyId, Object> expectedMap = expectedPropertyValues.get(regionId);
+			Map<RegionPropertyId, Object> actualMap = regionsPluginData.getRegionPropertyValues(regionId);
+			// show that the two maps are equal
+			assertEquals(expectedMap, actualMap);
 		}
 
-		// show that the two maps are equal
-		assertEquals(expectedPropertyValues, actualPropertyValues);
-
-		// precondition tests
-
-		// create some valid inputs to help with the precondition tests
-		RegionId validRegionId = TestRegionId.REGION_1;
-		RegionPropertyId validRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-
-		// if the region id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValue(null, validRegionPropertyId));
+		// precondition test: if the region id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValues(null));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
-		// if the region id is unknown
-		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValue(TestRegionId.getUnknownRegionId(), validRegionPropertyId));
+		// precondition test: if the region id is unknown
+		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValues(TestRegionId.getUnknownRegionId()));
 		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
-		// if the region property id is null
-		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValue(validRegionId, null));
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// if the region property id is unknown
-		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValue(validRegionId, TestRegionPropertyId.getUnknownRegionPropertyId()));
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -374,7 +370,6 @@ public class AT_RegionPluginData {
 		ContractException contractException = assertThrows(ContractException.class, () -> RegionsPluginData.builder().build().getPersonRegion(null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-
 	}
 
 	@Test
@@ -464,8 +459,8 @@ public class AT_RegionPluginData {
 			regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
 		}
 		for (TestRegionId testRegionId : TestRegionId.values()) {
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {				
+				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty() || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
 					regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId, randomPropertyValue);
 				}
@@ -504,12 +499,10 @@ public class AT_RegionPluginData {
 		}
 
 		// show that the two plugin datas have the same region property values
-		for (RegionId regionId : regionsPluginData.getRegionIds()) {
-			for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
-				Object expectedPropertyValue = regionsPluginData.getRegionPropertyValue(regionId, regionPropertyId);
-				Object actualPropertyValue = cloneRegionPluginData.getRegionPropertyValue(regionId, regionPropertyId);
-				assertEquals(expectedPropertyValue, actualPropertyValue);
-			}
+		for (RegionId regionId : regionsPluginData.getRegionIds()) {			
+				Map<RegionPropertyId, Object> expectedRegionPropertyValues = regionsPluginData.getRegionPropertyValues(regionId);
+				Map<RegionPropertyId, Object> actualRegionPropertyValues = cloneRegionPluginData.getRegionPropertyValues(regionId);
+				assertEquals(expectedRegionPropertyValues, actualRegionPropertyValues);			
 		}
 
 		// show that the two plugin datas have the same people and region

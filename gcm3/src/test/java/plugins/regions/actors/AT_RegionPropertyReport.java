@@ -20,6 +20,7 @@ import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
+import plugins.regions.support.RegionPropertyDefinitionInitialization;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
@@ -30,6 +31,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
+import plugins.resources.support.RegionConstructionData;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
@@ -129,10 +131,12 @@ public class AT_RegionPropertyReport {
 			regionsDataManager.setRegionPropertyValue(regionA, prop_age, 100);
 			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
 			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "hold");
-			regionsDataManager.addRegionId(regionD);
+			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(regionD).build();
+			regionsDataManager.addRegion(regionConstructionData);
 
 			PropertyDefinition def = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
-			regionsDataManager.defineRegionProperty(prop_vaccine, def);
+			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization.builder().setPropertyDefinition(def).setRegionPropertyId(prop_vaccine).build();
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
 			
 		}));
 

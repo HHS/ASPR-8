@@ -48,10 +48,12 @@ import plugins.regions.events.RegionPropertyAdditionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
+import plugins.regions.support.RegionPropertyDefinitionInitialization;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
+import plugins.resources.support.RegionConstructionData;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -577,19 +579,27 @@ public class AT_RegionsDataManager {
 	@UnitTestMethod(name = "getRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class })
 	public void testGetRegionPropertyValue() {
 
-		Map<MultiKey, Object> expectedPropertyValues = new LinkedHashMap<>();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				Object value = testRegionPropertyId.getPropertyDefinition().getDefaultValue().get();
-				expectedPropertyValues.put(new MultiKey(testRegionId, testRegionPropertyId), value);
-			}
-		}
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		Map<MultiKey, Object> expectedPropertyValues = new LinkedHashMap<>();
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			for (TestRegionId testRegionId : TestRegionId.values()) {
+				for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+
+					Object regionPropertyValue = regionsDataManager.getRegionPropertyValue(testRegionId, testRegionPropertyId);
+					MultiKey multiKey = new MultiKey(testRegionId, testRegionPropertyId);
+					expectedPropertyValues.put(multiKey, regionPropertyValue);
+				}
+			}
+		}));
 
 		// show that changes to the property values properly reflect the
 		// previous values
 
-		for (int i = 0; i < 300; i++) {
+		for (int i = 1; i < 300; i++) {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -1141,10 +1151,18 @@ public class AT_RegionsDataManager {
 			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
 		}
 
+		Map<RegionId, Map<RegionPropertyId, Object>> expectedRegionProperties = new LinkedHashMap<>();
+
 		for (TestRegionId regionId : TestRegionId.values()) {
+			Map<RegionPropertyId, Object> propertyMap = new LinkedHashMap<>();
+			expectedRegionProperties.put(regionId, propertyMap);
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
-					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty() || randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, randomPropertyValue);
+					propertyMap.put(testRegionPropertyId, randomPropertyValue);
+				} else {
+					propertyMap.put(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition().getDefaultValue().get());
 				}
 			}
 		}
@@ -1186,9 +1204,9 @@ public class AT_RegionsDataManager {
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 			for (RegionId regionId : regionsPluginData.getRegionIds()) {
-				for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
-					Object expectedValue = regionsPluginData.getRegionPropertyValue(regionId, regionPropertyId);
-					Object actualValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+				for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+					Object expectedValue = expectedRegionProperties.get(regionId).get(testRegionPropertyId);
+					Object actualValue = regionsDataManager.getRegionPropertyValue(regionId, testRegionPropertyId);
 					assertEquals(expectedValue, actualValue);
 				}
 			}
@@ -1267,6 +1285,8 @@ public class AT_RegionsDataManager {
 
 		long seed = 4228466028646070532L;
 
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
 		int initialPopulation = 100;
 
 		List<PersonId> people = new ArrayList<>();
@@ -1283,6 +1303,13 @@ public class AT_RegionsDataManager {
 
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
+		}
+
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+			for (TestRegionId testRegionId : TestRegionId.values()) {
+				Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+				regionPluginBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId, randomPropertyValue);
+			}
 		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
@@ -1621,11 +1648,26 @@ public class AT_RegionsDataManager {
 			});
 		}));
 
+		// have an actor define property 1
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			assertFalse(regionsDataManager.regionPropertyIdExists(regionPropertyId_1));
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
-			regionsDataManager.defineRegionProperty(regionPropertyId_1, propertyDefinition);
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(55).build();
+			RegionPropertyDefinitionInitialization.Builder propertyBuilder = RegionPropertyDefinitionInitialization.builder();
+			propertyBuilder.setRegionPropertyId(regionPropertyId_1).setPropertyDefinition(propertyDefinition);
+			Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			assertFalse(regionIds.isEmpty());
+			int value = 0;
+			Map<RegionId, Integer> expectedValues = new LinkedHashMap<>();
+			for (RegionId regionId : regionIds) {
+				propertyBuilder.addPropertyValue(regionId, value);
+				expectedValues.put(regionId, value);
+				value++;
+			}
+
+			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = propertyBuilder.build();
+
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
 			assertTrue(regionsDataManager.regionPropertyIdExists(regionPropertyId_1));
 			assertTrue(regionsDataManager.getRegionPropertyIds().contains(regionPropertyId_1));
 			PropertyDefinition actualPropertyDefinition = regionsDataManager.getRegionPropertyDefinition(regionPropertyId_1);
@@ -1633,19 +1675,36 @@ public class AT_RegionsDataManager {
 			MultiKey multiKey = new MultiKey(c.getTime(), regionPropertyId_1);
 			expectedObservations.add(multiKey);
 
+			for (RegionId regionId : regionIds) {
+				Integer expectedValue = expectedValues.get(regionId);
+				Integer actualValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId_1);
+				assertEquals(expectedValue, actualValue);
+			}
+
 		}));
 
+		// have an actor define property 2 having no default property
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			assertFalse(regionIds.isEmpty());
+
 			assertFalse(regionsDataManager.regionPropertyIdExists(regionPropertyId_2));
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
-			regionsDataManager.defineRegionProperty(regionPropertyId_2, propertyDefinition);
+			String defaultValue = "default value";
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).build();
+			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization	.builder().setRegionPropertyId(regionPropertyId_2)
+																																	.setPropertyDefinition(propertyDefinition).build();
+			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
 			assertTrue(regionsDataManager.regionPropertyIdExists(regionPropertyId_2));
 			assertTrue(regionsDataManager.getRegionPropertyIds().contains(regionPropertyId_2));
 			PropertyDefinition actualPropertyDefinition = regionsDataManager.getRegionPropertyDefinition(regionPropertyId_2);
 			assertEquals(propertyDefinition, actualPropertyDefinition);
 			MultiKey multiKey = new MultiKey(c.getTime(), regionPropertyId_2);
 			expectedObservations.add(multiKey);
+			for (RegionId regionId : regionIds) {
+				String actualValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId_2);
+				assertEquals(defaultValue, actualValue);
+			}
 
 		}));
 
@@ -1659,13 +1718,13 @@ public class AT_RegionsDataManager {
 		RegionsActionSupport.testConsumers(0, 6410427420030580842L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
 
 		/*
-		 * precondition test: if the region property id is null
+		 * precondition test: if the region property definition initialization
+		 * is null
 		 */
-		RegionsActionSupport.testConsumer(0, 1219854191882064569L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 755408328420621219L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> regionsDataManager.defineRegionProperty(null, PropertyDefinition.builder().setType(Integer.class).setDefaultValue(7).build()));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.defineRegionProperty(null));
+			assertEquals(RegionError.NULL_REGION_PROPERTY_DEFINITION_INITIALIZATION, contractException.getErrorType());
 		});
 
 		/*
@@ -1673,30 +1732,52 @@ public class AT_RegionsDataManager {
 		 */
 		RegionsActionSupport.testConsumer(0, 755408328420621219L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.defineRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE,
-					PropertyDefinition.builder().setType(Integer.class).setDefaultValue(7).build()));
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+
+				PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																			.setType(Integer.class)//
+																			.setDefaultValue(7)//
+																			.build();
+
+				RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = //
+						RegionPropertyDefinitionInitialization	.builder()//
+																.setPropertyDefinition(propertyDefinition)//
+																.setRegionPropertyId(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE)//
+																.build();
+				regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
+			});
 			assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		});
 
 		/*
-		 * precondition test: if the property definition is null
-		 */
-		RegionsActionSupport.testConsumer(0, 1145328801485276136L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.defineRegionProperty(TestRegionPropertyId.getUnknownRegionPropertyId(), null));
-			assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-		});
-
-		/*
-		 * precondition test: if the property definition does not have a default
-		 * value
+		 * precondition test: if the region property definition has no default
+		 * and a property value for some region is missing from the
+		 * RegionPropertyDefinitionInitialization
+		 * 
 		 */
 		RegionsActionSupport.testConsumer(0, 737227361871382193L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> regionsDataManager.defineRegionProperty(TestRegionPropertyId.getUnknownRegionPropertyId(), PropertyDefinition.builder().setType(Integer.class).build()));
-			assertEquals(PropertyError.PROPERTY_DEFINITION_MISSING_DEFAULT, contractException.getErrorType());
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+
+				PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																			.setType(Integer.class)//
+																			.build();
+
+				RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = //
+						RegionPropertyDefinitionInitialization	.builder()//
+																.setPropertyDefinition(propertyDefinition)//
+																.setRegionPropertyId(TestRegionPropertyId.getUnknownRegionPropertyId())//
+																.build();
+
+				regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
+
+			});
+			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		});
+
+		// * <li>{@linkplain
+		// PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		// * </li>
 
 	}
 
@@ -1717,17 +1798,33 @@ public class AT_RegionsDataManager {
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId newRegionId = TestRegionId.getUnknownRegionId();
-			regionsDataManager.addRegionId(newRegionId);
+			RegionConstructionData.Builder builder = RegionConstructionData.builder().setRegionId(newRegionId);//
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+				builder.setRegionPropertyValue(testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+			}
+			RegionConstructionData regionConstructionData = builder.build();
+			regionsDataManager.addRegion(regionConstructionData);
 			MultiKey multiKey = new MultiKey(c.getTime(), newRegionId);
 			expectedObservations.add(multiKey);
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
 			RegionId newRegionId = TestRegionId.getUnknownRegionId();
-			regionsDataManager.addRegionId(newRegionId);
+			RegionConstructionData.Builder builder = RegionConstructionData.builder().setRegionId(newRegionId);//
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+				builder.setRegionPropertyValue(testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+			}
+			RegionConstructionData regionConstructionData = builder.build();
+			regionsDataManager.addRegion(regionConstructionData);
 			MultiKey multiKey = new MultiKey(c.getTime(), newRegionId);
 			expectedObservations.add(multiKey);
 		}));
@@ -1741,12 +1838,12 @@ public class AT_RegionsDataManager {
 		RegionsActionSupport.testConsumers(0, 4801681059718243112L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
 
 		/*
-		 * precondition test: if the region id is null
+		 * precondition test: if the region construction data is null
 		 */
-		RegionsActionSupport.testConsumer(0, 3200504272553980640L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 1930072318129921567L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.addRegionId(null));
-			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.addRegion(null));
+			assertEquals(RegionError.NULL_REGION_CONSTRUCTION_DATA, contractException.getErrorType());
 		});
 
 		/*
@@ -1754,7 +1851,8 @@ public class AT_RegionsDataManager {
 		 */
 		RegionsActionSupport.testConsumer(0, 1930072318129921567L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.addRegionId(TestRegionId.REGION_1));
+			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(TestRegionId.REGION_1).build();
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.addRegion(regionConstructionData));
 			assertEquals(RegionError.DUPLICATE_REGION_ID, contractException.getErrorType());
 		});
 
@@ -1763,14 +1861,16 @@ public class AT_RegionsDataManager {
 		 */
 		testConsumerWithNoDefaultRegionProperties(6895625301110154531L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.addRegionId(TestRegionId.getUnknownRegionId()));
-			assertEquals(RegionError.REGION_ADDITION_BLOCKED, contractException.getErrorType());
+			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(TestRegionId.getUnknownRegionId()).build();
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.addRegion(regionConstructionData));
+			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		});
 
 	}
 
 	/*
-	 * Executes the simulation with each of the region properties defined without default values
+	 * Executes the simulation with each of the region properties defined
+	 * without default values
 	 * 
 	 */
 	private static void testConsumerWithNoDefaultRegionProperties(long seed, Consumer<ActorContext> consumer) {

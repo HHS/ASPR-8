@@ -47,6 +47,7 @@ import plugins.resources.events.RegionResourceUpdateEvent;
 import plugins.resources.events.ResourceIdAdditionEvent;
 import plugins.resources.events.ResourcePropertyDefinitionEvent;
 import plugins.resources.events.ResourcePropertyUpdateEvent;
+import plugins.resources.support.RegionConstructionData;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourceInitialization;
@@ -2764,15 +2765,40 @@ public final class AT_ResourcesDataManager {
 
 		/*
 		 * show that a newly added region will cause the resource data manager
-		 * to return a 0 resource level
+		 * to return the expected levels from the event.
 		 */
 		ResourcesActionSupport.testConsumer(0, 4192802703078518338L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId newRegionId = TestRegionId.getUnknownRegionId();
-			regionsDataManager.addRegionId(newRegionId);
+
+			Map<TestResourceId, Long> expectedValues = new LinkedHashMap<>();
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				expectedValues.put(testResourceId, 0L);
+			}
+			expectedValues.put(TestResourceId.RESOURCE_1, 75L);
+			expectedValues.put(TestResourceId.RESOURCE_2, 432L);
+
+			RegionConstructionData.Builder regionConstructionDataBuilder = //
+					RegionConstructionData	.builder()//
+											.setRegionId(newRegionId);
+
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				Long amount = expectedValues.get(testResourceId);
+				if (amount != 0L) {
+					regionConstructionDataBuilder.addValue(new ResourceInitialization(testResourceId, amount));//
+				}
+			}
+
+			RegionConstructionData regionConstructionData = regionConstructionDataBuilder.build();
+			regionsDataManager.addRegion(regionConstructionData);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			long regionResourceLevel = resourcesDataManager.getRegionResourceLevel(newRegionId, TestResourceId.RESOURCE_1);
-			assertEquals(0, regionResourceLevel);
+
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				long expectedResourceLevel = expectedValues.get(testResourceId);
+				long actualResourceLevel = resourcesDataManager.getRegionResourceLevel(newRegionId, testResourceId);
+				assertEquals(expectedResourceLevel, actualResourceLevel);
+			}
+
 		});
 	}
 
