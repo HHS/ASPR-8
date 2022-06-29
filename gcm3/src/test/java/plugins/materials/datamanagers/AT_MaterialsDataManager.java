@@ -18,27 +18,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
-import nucleus.Experiment;
 import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestScenarioReport;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
@@ -62,6 +57,7 @@ import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsError;
+import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
@@ -77,10 +73,6 @@ import plugins.regions.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
-import plugins.reports.support.ReportItem;
-import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
@@ -4221,7 +4213,8 @@ public class AT_MaterialsDataManager {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
+				boolean required = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+				if (required || randomGenerator.nextBoolean()) {
 					materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId,
 							testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator));
 				}
@@ -4325,7 +4318,12 @@ public class AT_MaterialsDataManager {
 			 */
 			for (MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
 				for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
-					Object expectedValue = materialsPluginData.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+					Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsPluginData.getMaterialsProducerPropertyValues(materialsProducerId);
+					Object expectedValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
+					if(expectedValue == null) {
+						PropertyDefinition propertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+						expectedValue = propertyDefinition.getDefaultValue().get();
+					}
 					Object actualValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 					assertEquals(expectedValue, actualValue);
 				}
@@ -4441,7 +4439,7 @@ public class AT_MaterialsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addMaterialsProducer", args = { MaterialsProducerId.class })
+	@UnitTestMethod(name = "addMaterialsProducer", args = { MaterialsProducerConstructionData.class })
 	public void testAddMaterialsProducer() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -4457,21 +4455,53 @@ public class AT_MaterialsDataManager {
 
 		// show that a new materials producer can be added
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(20, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId newMaterialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
 			assertFalse(materialsDataManager.materialsProducerIdExists(newMaterialsProducerId));
-			materialsDataManager.addMaterialsProducer(newMaterialsProducerId);
+
+			MaterialsProducerConstructionData.Builder builder //
+			= MaterialsProducerConstructionData	.builder()//
+												.setMaterialsProducerId(newMaterialsProducerId);//
+
+			Map<TestMaterialsProducerPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+				Optional<Object> optional = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue();
+				if (optional.isPresent()) {
+					expectedPropertyValues.put(testMaterialsProducerPropertyId, optional.get());
+				} else {
+					Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
+					expectedPropertyValues.put(testMaterialsProducerPropertyId, randomPropertyValue);
+				}
+			}
+
+			MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
+
+			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
 			assertTrue(materialsDataManager.materialsProducerIdExists(newMaterialsProducerId));
 
 			double expectedTime = c.getTime();
+			int propertyTimeIsCurrentTimeCount = 0;
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-				Object expectedValue = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().get();
+				Object expectedValue = expectedPropertyValues.get(testMaterialsProducerPropertyId);
 				Object actualValue = materialsDataManager.getMaterialsProducerPropertyValue(newMaterialsProducerId, testMaterialsProducerPropertyId);
 				assertEquals(expectedValue, actualValue);
 
 				double actualTime = materialsDataManager.getMaterialsProducerPropertyTime(newMaterialsProducerId, testMaterialsProducerPropertyId);
-				assertEquals(expectedTime, actualTime);
+
+				boolean defaultValueExists = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+
+				if (defaultValueExists) {
+					assertEquals(0.0, actualTime);
+				} else {
+					propertyTimeIsCurrentTimeCount++;
+					assertEquals(expectedTime, actualTime);
+				}
 			}
+
+			assertTrue(propertyTimeIsCurrentTimeCount > 0);
 			long expectedLevel = 0;
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				long actualLevel = materialsDataManager.getMaterialsProducerResourceLevel(newMaterialsProducerId, testResourceId);
@@ -4494,155 +4524,63 @@ public class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumers(7934044435210594542L, testPlugin);
 
 		/*
-		 * precondition test: if the materials producer id is null
-		 */
-		MaterialsActionSupport.testConsumer(7748546983073417323L, (c) -> {
-			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId newMaterialsProducerId = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialsProducer(newMaterialsProducerId));
-			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-		});
-
-		/*
 		 * precondition test: if the materials producer id is already present
 		 */
 		MaterialsActionSupport.testConsumer(6261955547781316622L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			MaterialsProducerId newMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialsProducer(newMaterialsProducerId));
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			MaterialsProducerConstructionData.Builder builder = //
+					MaterialsProducerConstructionData.builder();
+			builder.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
+			}
+			MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialsProducer(materialsProducerConstructionData));
 			assertEquals(MaterialsError.DUPLICATE_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 		});
 
 		/*
-		 * precondition test: if any of the the materials producer properties
-		 * does not have a default value
+		 * precondition test: if the materialsProducerConstructionData does not
+		 * contain a property value for any corresponding materials producer
+		 * property definition that lacks a default value
 		 */
-		testConsumerWithNoDefaultProperyValues(1777796798041842032L, (c) -> {
+		MaterialsActionSupport.testConsumer(1777796798041842032L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerId newMaterialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
-			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialsProducer(newMaterialsProducerId));
-			assertEquals(MaterialsError.MATERIALS_PRODUCER_ADDITION_BLOCKED, contractException.getErrorType());
+			MaterialsProducerConstructionData materialsProducerConstructionData = MaterialsProducerConstructionData.builder().setMaterialsProducerId(newMaterialsProducerId).build();
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialsProducer(materialsProducerConstructionData));
+			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 		});
 
-	}
+		/*
+		 * precondition test: if the materialsProducerConstructionData contains
+		 * a property value assignment for an unknown materials producer
+		 * property id.
+		 */
+		MaterialsActionSupport.testConsumer(1777796798041842032L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
-	private static Set<ReportItem> testConsumerWithNoDefaultProperyValues(long seed, Consumer<ActorContext> consumer) {
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
-		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		Experiment.Builder builder = Experiment.builder();
-
-		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
-
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			materialsBuilder.addMaterial(testMaterialId);
-		}
-
-		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
-		}
-
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			PropertyDefinition propertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
-			propertyDefinition = PropertyDefinition.builder().setType(propertyDefinition.getType()).build();
-			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition);
-			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			MaterialsProducerConstructionData.Builder builder = //
+					MaterialsProducerConstructionData.builder();
+			builder.setMaterialsProducerId(TestMaterialsProducerId.getUnknownMaterialsProducerId());
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
 				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, randomPropertyValue);
+				builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
 			}
-		}
 
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
-			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
-				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
-			}
-		}
-		MaterialsPluginData materialsPluginData = materialsBuilder.build();
-		Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
-		builder.addPlugin(materialsPlugin);
+			builder.setMaterialsProducerPropertyValue(TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), 10);
 
-		// add the resources plugin
-		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
+			MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
 
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
-		}
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addMaterialsProducer(materialsProducerConstructionData));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
 
-		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
-			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-			Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
-		}
-
-		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
-		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
-		builder.addPlugin(resourcesPlugin);
-
-		// add the people plugin
-
-		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		PeoplePluginData peoplePluginData = peopleBuilder.build();
-		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-		builder.addPlugin(peoplePlugin);
-
-		// add the regions plugin
-		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionsBuilder.addRegion(testRegionId);
-		}
-		RegionsPluginData regionsPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
-		builder.addPlugin(regionPlugin);
-
-		// add the report plugin
-
-		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
-		ReportsPluginData reportsPluginData = reportsBuilder.build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
-
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
-		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		// add the stochastics plugin
-		builder.addPlugin(stochasticsPlugin);
-
-		// add the action plugin
-		builder.addPlugin(testPlugin);
-
-		// set the output consumer
-		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
-		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
-		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
-		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-		builder.reportProgressToConsole(false);
-
-		// build and execute the engine
-
-		builder.build().execute();
-		Map<ReportItem, Integer> reportItems = testReportItemOutputConsumer.getReportItems().get(0);
-		Set<ReportItem> result = new LinkedHashSet<>();
-		if (reportItems != null) {
-			result.addAll(reportItems.keySet());
-		}
-
-		// show that all actions were executed
-		Optional<TestScenarioReport> optionalTestScenarioReport = experimentPlanCompletionObserver.getActionCompletionReport(0);
-		if (optionalTestScenarioReport.isEmpty()) {
-			throw new ContractException(NucleusError.SCENARIO_FAILED);
-		}
-		boolean complete = optionalTestScenarioReport.get().isComplete();
-		if (!complete) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}
-		return result;
 	}
 
 	@Test
@@ -4780,29 +4718,29 @@ public class AT_MaterialsDataManager {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
-		
+
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(MaterialIdAdditionEvent.class, (c2,e)->{
-				MultiKey multiKey = new MultiKey(c2.getTime(),e.getMaterialId());
+			c.subscribe(MaterialIdAdditionEvent.class, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialId());
 				actualObservations.add(multiKey);
 			});
 		}));
-		
+
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId newMaterialId = TestMaterialId.getUnknownMaterialId();
 			materialsDataManager.addMaterialId(newMaterialId);
-			MultiKey multiKey = new MultiKey(c.getTime(),newMaterialId);
+			MultiKey multiKey = new MultiKey(c.getTime(), newMaterialId);
 			expectedObservations.add(multiKey);
 		}));
-		
+
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId newMaterialId = TestMaterialId.getUnknownMaterialId();
 			materialsDataManager.addMaterialId(newMaterialId);
-			MultiKey multiKey = new MultiKey(c.getTime(),newMaterialId);
+			MultiKey multiKey = new MultiKey(c.getTime(), newMaterialId);
 			expectedObservations.add(multiKey);
 		}));
 
@@ -4810,7 +4748,7 @@ public class AT_MaterialsDataManager {
 			assertFalse(expectedObservations.isEmpty());
 			assertEquals(expectedObservations, actualObservations);
 		}));
-		
+
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		MaterialsActionSupport.testConsumers(2713286843450316570L, testPlugin);

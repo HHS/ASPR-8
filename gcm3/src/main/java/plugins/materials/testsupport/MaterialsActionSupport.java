@@ -1,6 +1,5 @@
 package plugins.materials.testsupport;
 
-
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -61,14 +60,13 @@ public class MaterialsActionSupport {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		return testConsumers(seed, testPlugin,  null);
+		return testConsumers(seed, testPlugin, null);
 	}
-
-	
 
 	public static Set<ReportItem> testConsumers(long seed, Plugin testPlugin) {
-		return testConsumers(seed, testPlugin,  null);
+		return testConsumers(seed, testPlugin, null);
 	}
+
 	/**
 	 * Executes a simulation instance that supports materials plugin testing.
 	 * 
@@ -84,17 +82,17 @@ public class MaterialsActionSupport {
 	 * The seed is used to produce randomized initial group types and group
 	 * memberships.
 	 * 
-	 * The test plugin is integrated into the simulation run and must contain
-	 * at least one action plan. This helps to ensure that a test that does not
-	 * run completely does not lead to a false positive test evaluation.
+	 * The test plugin is integrated into the simulation run and must contain at
+	 * least one action plan. This helps to ensure that a test that does not run
+	 * completely does not lead to a false positive test evaluation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if not
-	 *             all action plans execute or if there are no action plans
+	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if not all
+	 *             action plans execute or if there are no action plans
 	 *             contained in the action plugin</li>
 	 */
 	public static Set<ReportItem> testConsumers(long seed, Plugin testPlugin,
-			
+
 			Consumer<ActorContext> report) {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
@@ -113,6 +111,13 @@ public class MaterialsActionSupport {
 
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		}
+
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, randomPropertyValue);
+			}
 		}
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -141,7 +146,6 @@ public class MaterialsActionSupport {
 			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
 		}
 
-		
 		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
 		builder.addPlugin(resourcesPlugin);
@@ -152,7 +156,7 @@ public class MaterialsActionSupport {
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
-		
+
 		// add the regions plugin
 		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -188,23 +192,23 @@ public class MaterialsActionSupport {
 		builder.reportProgressToConsole(false);
 
 		// build and execute the engine
-		
+
 		builder.build().execute();
 		Map<ReportItem, Integer> reportItems = testReportItemOutputConsumer.getReportItems().get(0);
 		Set<ReportItem> result = new LinkedHashSet<>();
-		if(reportItems != null) {
+		if (reportItems != null) {
 			result.addAll(reportItems.keySet());
 		}
 
 		// show that all actions were executed
 		Optional<TestScenarioReport> optionalTestScenarioReport = experimentPlanCompletionObserver.getActionCompletionReport(0);
-		if(optionalTestScenarioReport.isEmpty()) {
+		if (optionalTestScenarioReport.isEmpty()) {
 			throw new ContractException(NucleusError.SCENARIO_FAILED);
 		}
 		boolean complete = optionalTestScenarioReport.get().isComplete();
-		if(!complete) {
+		if (!complete) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}		
+		}
 		return result;
 	}
 

@@ -22,8 +22,7 @@ public class AT_TestMaterialsProducerPropertyId {
 	public void testGetPropertyDefinition() {
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
-			assertNotNull(propertyDefinition);
-			assertTrue(propertyDefinition.getDefaultValue().isPresent());
+			assertNotNull(propertyDefinition);			
 		}
 	}
 

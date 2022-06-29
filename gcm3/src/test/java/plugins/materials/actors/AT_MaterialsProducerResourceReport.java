@@ -18,10 +18,12 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestMaterialsProducerId;
+import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -83,8 +85,20 @@ public final class AT_MaterialsProducerResourceReport {
 
 		//add a new materials producer just before time 20
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(19.5, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			materialsDataManager.addMaterialsProducer(newMaterialsProducerId);
+			MaterialsProducerConstructionData.Builder builder = //
+					MaterialsProducerConstructionData.builder()//
+					.setMaterialsProducerId(newMaterialsProducerId);//
+			for(TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
+			}		
+			
+			MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
+			
+			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 				expectedReportItems.add(getReportItemFromResourceId(c, newMaterialsProducerId, resourceId, 0L));

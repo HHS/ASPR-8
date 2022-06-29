@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
@@ -22,6 +23,7 @@ import plugins.materials.events.BatchPropertyDefinitionEvent;
 import plugins.materials.events.BatchPropertyUpdateEvent;
 import plugins.materials.events.MaterialIdAdditionEvent;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
+import plugins.materials.events.MaterialsProducerPropertyDefinitionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.events.StageAdditionEvent;
@@ -35,7 +37,9 @@ import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsError;
+import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
+import plugins.materials.support.MaterialsProducerPropertyDefinitionInitialization;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -133,28 +137,6 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	/*
-	 * Represents the materials producer
-	 */
-	private static class MaterialsProducerRecord {
-		private final Map<ResourceId, ComponentResourceRecord> materialProducerResources = new LinkedHashMap<>();
-		/*
-		 * Identifier for the materials producer
-		 */
-		private MaterialsProducerId materialProducerId;
-
-		/*
-		 * Those batches owned by this materials producer that are not staged
-		 */
-		private final Set<BatchRecord> inventory = new LinkedHashSet<>();
-
-		/*
-		 * Those batches owned by this materials producer that are staged
-		 */
-		private final Set<StageRecord> stageRecords = new LinkedHashSet<>();
-
-	}
-
-	/*
 	 * Represents the stage
 	 */
 	private static class StageRecord {
@@ -179,12 +161,6 @@ public final class MaterialsDataManager extends DataManager {
 		}
 	}
 
-	private boolean allProducerPropertyDefinitionsHaveDefaultValues = true;
-
-	private final Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = new LinkedHashSet<>();
-
-	private final Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, PropertyValueRecord>> materialsProducerPropertyMap = new LinkedHashMap<>();
-
 	private final Map<BatchId, Map<BatchPropertyId, PropertyValueRecord>> batchPropertyMap = new LinkedHashMap<>();
 
 	/*
@@ -203,13 +179,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * <stage id, stage record>
 	 */
 	private final Map<StageId, StageRecord> stageRecords = new LinkedHashMap<>();
-
-	/*
-	 * <Materials Producer id, Materials Producer Record>
-	 */
-	private final Map<MaterialsProducerId, MaterialsProducerRecord> materialsProducerMap = new LinkedHashMap<>();
-
-	private final Map<MaterialsProducerPropertyId, PropertyDefinition> materialsProducerPropertyDefinitions = new LinkedHashMap<>();
 
 	private final Map<MaterialId, Map<BatchPropertyId, PropertyDefinition>> batchPropertyDefinitions = new LinkedHashMap<>();
 
@@ -279,6 +248,17 @@ public final class MaterialsDataManager extends DataManager {
 			}
 		}
 
+		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
+			materialsProducerPropertyIds.add(materialsProducerPropertyId);
+			PropertyDefinition propertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
+			materialsProducerPropertyCreationTimes.put(materialsProducerPropertyId, dataManagerContext.getTime());
+			if (propertyDefinition.getDefaultValue().isEmpty()) {
+				nonDefaultBearingProducerPropertyIds.put(materialsProducerPropertyId, nonDefaultBearingProducerPropertyIds.size());
+			}
+		}
+		nonDefaultChecksForProducers = new boolean[nonDefaultBearingProducerPropertyIds.size()];
+
 		for (final MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
 			final MaterialsProducerRecord materialsProducerRecord = new MaterialsProducerRecord();
 			materialsProducerRecord.materialProducerId = materialsProducerId;
@@ -289,30 +269,14 @@ public final class MaterialsDataManager extends DataManager {
 			materialsProducerPropertyMap.put(materialsProducerId, new LinkedHashMap<>());
 		}
 
-		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
-			PropertyDefinition propertyDefinition = materialsPluginData.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
-			allProducerPropertyDefinitionsHaveDefaultValues &= propertyDefinition.getDefaultValue().isPresent();
-			materialsProducerPropertyIds.add(materialsProducerPropertyId);
-			for (final MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {
-				final Map<MaterialsProducerPropertyId, PropertyValueRecord> map = materialsProducerPropertyMap.get(materialsProducerId);
-				final PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-				map.put(materialsProducerPropertyId, propertyValueRecord);
-			}
-			materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
-		}
-
-		/*
-		 * Load the remaining data from the scenario that generally corresponds
-		 * to mutations available to components so that reporting will properly
-		 * reflect these data. The adding of resources directly to people and
-		 * material producers is covered here but do not correspond to mutations
-		 * allowed to components.
-		 */
-
 		for (final MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
-			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
-				final Object materialsProducerPropertyValue = materialsPluginData.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
-				materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).setPropertyValue(materialsProducerPropertyValue);
+			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsPluginData.getMaterialsProducerPropertyValues(materialsProducerId);
+			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
+				final Object value = materialsProducerPropertyValues.get(materialsProducerPropertyId);
+				Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyToValueMap = materialsProducerPropertyMap.get(materialsProducerId);
+				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				propertyToValueMap.put(materialsProducerPropertyId, propertyValueRecord);
+				propertyValueRecord.setPropertyValue(value);
 			}
 		}
 
@@ -497,10 +461,10 @@ public final class MaterialsDataManager extends DataManager {
 	 *             material id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             batch property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
-	 *             the batch property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the batch
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             batch property id is unknown</li>
 	 */
 	public PropertyDefinition getBatchPropertyDefinition(final MaterialId materialId, final BatchPropertyId batchPropertyId) {
 		validateMaterialId(materialId);
@@ -530,6 +494,97 @@ public final class MaterialsDataManager extends DataManager {
 		}
 	}
 
+	private void validateMaterialsProducerPropertyDefinitionInitializationNotNull(MaterialsProducerPropertyDefinitionInitialization materialsProducerPropertyDefinitionInitialization) {
+		if (materialsProducerPropertyDefinitionInitialization == null) {
+			throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION);
+		}
+	}
+
+	private void validateMaterialsProducerPropertyIdIsUnknown(MaterialsProducerPropertyId materialsProducerPropertyId) {
+		if (materialsProducerPropertyDefinitions.keySet().contains(materialsProducerPropertyId)) {
+			throw new ContractException(MaterialsError.DUPLICATE_MATERIALS_PRODUCER_PROPERTY_ID);
+		}
+	}
+
+	private void addNonDefaultProducerProperty(MaterialsProducerPropertyId materialsProducerPropertyId) {
+		nonDefaultBearingProducerPropertyIds.put(materialsProducerPropertyId, nonDefaultBearingProducerPropertyIds.size());
+		nonDefaultChecksForProducers = new boolean[nonDefaultBearingProducerPropertyIds.size()];
+	}
+
+	/**
+	 * 
+	 * Defines a new person property
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION}
+	 *             if the materials producer property definition initialization
+	 *             is null</li>
+	 * 
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
+	 *             if the person property already exists</li>
+	 * 
+	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *             if the property definition has no default value and there is
+	 *             no included value assignment for some extant person</li>
+	 */
+	public void defineMaterialsProducerProperty(MaterialsProducerPropertyDefinitionInitialization materialsProducerPropertyDefinitionInitialization) {
+		validateMaterialsProducerPropertyDefinitionInitializationNotNull(materialsProducerPropertyDefinitionInitialization);
+		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyDefinitionInitialization.getMaterialsProducerPropertyId();
+		PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitionInitialization.getPropertyDefinition();
+
+		validateMaterialsProducerPropertyIdIsUnknown(materialsProducerPropertyId);
+		boolean checkAllProducersHaveValues = propertyDefinition.getDefaultValue().isEmpty();
+
+		materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
+		materialsProducerPropertyCreationTimes.put(materialsProducerPropertyId, dataManagerContext.getTime());
+		materialsProducerPropertyIds.add(materialsProducerPropertyId);
+
+		if (checkAllProducersHaveValues) {
+			addNonDefaultProducerProperty(materialsProducerPropertyId);
+
+			final Map<MaterialsProducerId, Boolean> coverageSet = new LinkedHashMap<>();
+			for (final MaterialsProducerId materialsProducerId : materialsProducerMap.keySet()) {
+				coverageSet.put(materialsProducerId, false);
+			}
+
+			for (Pair<MaterialsProducerId, Object> pair : materialsProducerPropertyDefinitionInitialization.getPropertyValues()) {
+				MaterialsProducerId materialsProducerId = pair.getFirst();
+				coverageSet.put(materialsProducerId, true);
+				/*
+				 * we do not have to validate the value since it is guaranteed
+				 * to be consistent with the property definition by contract.
+				 */
+				Object value = pair.getSecond();
+				Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyMap = materialsProducerPropertyMap.get(materialsProducerId);
+				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				propertyValueRecord.setPropertyValue(value);
+				propertyMap.put(materialsProducerPropertyId, propertyValueRecord);
+			}
+			for (MaterialsProducerId materialsProducerId : coverageSet.keySet()) {
+				if (!coverageSet.get(materialsProducerId)) {
+					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
+				}
+			}
+		} else {
+			for (Pair<MaterialsProducerId, Object> pair : materialsProducerPropertyDefinitionInitialization.getPropertyValues()) {
+				MaterialsProducerId materialsProducerId = pair.getFirst();
+				/*
+				 * we do not have to validate the value since it is guaranteed
+				 * to be consistent with the property definition by contract.
+				 */
+				Object value = pair.getSecond();
+				Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyMap = materialsProducerPropertyMap.get(materialsProducerId);
+				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				propertyValueRecord.setPropertyValue(value);
+				propertyMap.put(materialsProducerPropertyId, propertyValueRecord);
+			}
+
+		}
+
+		dataManagerContext.releaseEvent(new MaterialsProducerPropertyDefinitionEvent(materialsProducerPropertyId));
+	}
+
 	/**
 	 * Defines a new batch property
 	 * 
@@ -538,8 +593,8 @@ public final class MaterialsDataManager extends DataManager {
 	 *             material id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID} if the
 	 *             material id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             batch property id is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the batch
+	 *             property id is null</li>
 	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the batch property id is already present</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
@@ -618,10 +673,10 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             batch property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
-	 *             the batch property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the batch
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             batch property id is unknown</li>
 	 */
 	public double getBatchPropertyTime(BatchId batchId, BatchPropertyId batchPropertyId) {
 		validateBatchId(batchId);
@@ -641,10 +696,10 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             batch property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
-	 *             the batch property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the batch
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             batch property id is unknown</li>
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -786,9 +841,46 @@ public final class MaterialsDataManager extends DataManager {
 		}
 	}
 
-	private void validateAllMaterialsProducerPropertiesHaveDefaultValues() {
-		if (!allProducerPropertyDefinitionsHaveDefaultValues) {
-			throw new ContractException(MaterialsError.MATERIALS_PRODUCER_ADDITION_BLOCKED);
+	private void clearNonDefaultProducerChecks() {
+		for (int i = 0; i < nonDefaultChecksForProducers.length; i++) {
+			nonDefaultChecksForProducers[i] = false;
+		}
+	}
+
+	private void verifyNonDefaultChecksForProducers() {
+
+		boolean missingPropertyAssignments = false;
+
+		for (int i = 0; i < nonDefaultChecksForProducers.length; i++) {
+			if (!nonDefaultChecksForProducers[i]) {
+				missingPropertyAssignments = true;
+				break;
+			}
+		}
+
+		if (missingPropertyAssignments) {
+			StringBuilder sb = new StringBuilder();
+			int index = -1;
+			boolean firstMember = true;
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : nonDefaultBearingProducerPropertyIds.keySet()) {
+				index++;
+				if (!nonDefaultChecksForProducers[index]) {
+					if (firstMember) {
+						firstMember = false;
+					} else {
+						sb.append(", ");
+					}
+					sb.append(materialsProducerPropertyId);
+				}
+			}
+			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, sb.toString());
+		}
+	}
+
+	private void markProducerPropertyAssigned(MaterialsProducerPropertyId materialsProducerPropertyId) {
+		Integer nonDefaultPropertyIndex = nonDefaultBearingProducerPropertyIds.get(materialsProducerPropertyId);
+		if (nonDefaultPropertyIndex != null) {
+			nonDefaultChecksForProducers[nonDefaultPropertyIndex] = true;
 		}
 	}
 
@@ -796,17 +888,26 @@ public final class MaterialsDataManager extends DataManager {
 	 * Add a material producer
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
-	 *             the materials producer id is null</li>
+	 * 
+	 * 
 	 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is already present</li>
-	 *             <li>{@linkplain MaterialsError#MATERIALS_PRODUCER_ADDITION_BLOCKED}
-	 *             if any of the the materials producer properties does not have
-	 *             a default value</li>
+	 *
+	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *             if the materialsProducerConstructionData does not contain a
+	 *             property value for any corresponding materials producer
+	 *             property definition that lacks a default value</li>
+	 *
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             materialsProducerConstructionData contains a property value
+	 *             assignment for an unknown materials producer property id.
+	 *             </li>
+	 * 
 	 */
-	public void addMaterialsProducer(MaterialsProducerId materialsProducerId) {
+	public void addMaterialsProducer(MaterialsProducerConstructionData materialsProducerConstructionData) {
+
+		MaterialsProducerId materialsProducerId = materialsProducerConstructionData.getMaterialsProducerId();
 		validateNewMaterialsProducerId(materialsProducerId);
-		validateAllMaterialsProducerPropertiesHaveDefaultValues();
 
 		// integrate the new producer into the resources
 		final MaterialsProducerRecord materialsProducerRecord = new MaterialsProducerRecord();
@@ -817,18 +918,56 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerMap.put(materialsProducerId, materialsProducerRecord);
 
 		// integrate the new producer into the property values
+
+		boolean checkPropertyCoverage = !nonDefaultBearingProducerPropertyIds.isEmpty();
+		Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsProducerConstructionData.getMaterialsProducerPropertyValues();
 		Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyValueMap = new LinkedHashMap<>();
 		materialsProducerPropertyMap.put(materialsProducerId, propertyValueMap);
-		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions.keySet()) {
-			PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
-			Object defaultValue = propertyDefinition.getDefaultValue().get();
-			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			propertyValueRecord.setPropertyValue(defaultValue);
-			propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
+		//PropertyValueRecord propertyValueRecord = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
+		if (checkPropertyCoverage) {
+			clearNonDefaultProducerChecks();
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
+				validateMaterialsProducerPropertyId(materialsProducerPropertyId);
+				markProducerPropertyAssigned(materialsProducerPropertyId);
+				Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
+				final PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+				validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, propertyValue);
+				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				propertyValueRecord.setPropertyValue(propertyValue);
+				propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
+			}
+			verifyNonDefaultChecksForProducers();
+		} else {
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyValues.keySet()) {
+				validateMaterialsProducerPropertyId(materialsProducerPropertyId);
+				Object propertyValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
+				final PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+				validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, propertyValue);
+				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				propertyValueRecord.setPropertyValue(propertyValue);
+				propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);
+			}
+		}
+
+		Map<ResourceId, Long> resourceLevels = materialsProducerConstructionData.getResourceLevels();
+		for (ResourceId resourceId : resourceLevels.keySet()) {
+			Long resourceLevel = resourceLevels.get(resourceId);
+			ComponentResourceRecord componentResourceRecord = materialsProducerRecord.materialProducerResources.get(resourceId);
+			componentResourceRecord.incrementAmount(resourceLevel);
 		}
 
 		// release notification of the materials producer addition
-		dataManagerContext.releaseEvent(new MaterialsProducerAdditionEvent(materialsProducerId));
+		MaterialsProducerAdditionEvent.Builder materialsProducerAdditionEventBuilder = //
+				MaterialsProducerAdditionEvent	.builder()//
+												.setMaterialsProducerId(materialsProducerId);//
+
+		List<Object> values = materialsProducerConstructionData.getValues(Object.class);
+		for (Object value : values) {
+			materialsProducerAdditionEventBuilder.addValue(value);
+		}
+
+		MaterialsProducerAdditionEvent materialsProducerAdditionEvent = materialsProducerAdditionEventBuilder.build();
+		dataManagerContext.releaseEvent(materialsProducerAdditionEvent);
 	}
 
 	/**
@@ -836,10 +975,10 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerPropertyId}
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the materials producer property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             materials producer property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             materials producer property id is unknown</li>
 	 */
 	public PropertyDefinition getMaterialsProducerPropertyDefinition(final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		validateMaterialsProducerPropertyId(materialsProducerPropertyId);
@@ -877,16 +1016,23 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the materials producer id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the materials producer property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             materials producer property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             materials producer property id is unknown</li>
 	 */
 
 	public double getMaterialsProducerPropertyTime(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
 		validateMaterialsProducerId(materialsProducerId);
 		validateMaterialsProducerPropertyId(materialsProducerPropertyId);
-		return materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).getAssignmentTime();
+
+		PropertyValueRecord propertyValueRecord = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
+		if (propertyValueRecord != null) {
+			return propertyValueRecord.getAssignmentTime();
+		}
+
+		return materialsProducerPropertyCreationTimes.get(materialsProducerPropertyId);
+
 	}
 
 	/**
@@ -897,16 +1043,22 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the materials producer id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the materials producer property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             materials producer property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             materials producer property id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
 		validateMaterialsProducerId(materialsProducerId);
 		validateMaterialsProducerPropertyId(materialsProducerPropertyId);
-		return (T) materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).getValue();
+
+		PropertyValueRecord propertyValueRecord = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
+		if (propertyValueRecord != null) {
+			return (T) propertyValueRecord.getValue();
+		}
+		PropertyDefinition propertyDefinition = materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+		return (T) propertyDefinition.getDefaultValue().get();
 	}
 
 	/**
@@ -1145,14 +1297,13 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the amount in the batch construction info is not finite</li>
 	 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT} if
 	 *             the amount in the batch construction info is negative</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             batch construction info contains a null batch property
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the batch
+	 *             construction info contains a null batch property id</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             batch construction info contains an unknown batch property
 	 *             id</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
-	 *             the batch construction info contains an unknown batch
-	 *             property id</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if
-	 *             the batch construction info contains a null batch property
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+	 *             batch construction info contains a null batch property
 	 *             value</li>
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
 	 *             batch construction info contains a batch property value that
@@ -1456,14 +1607,14 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             batch property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
-	 *             the batch property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the batch
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             batch property id is unknown</li>
 	 *             <li>{@linkplain PropertyError#IMMUTABLE_VALUE} if batch
 	 *             property is not mutable</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if
-	 *             the batch property value is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+	 *             batch property value is null</li>
 	 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if the
 	 *             batch property value is not compatible with the corresponding
 	 *             property definition</li>
@@ -1509,14 +1660,14 @@ public final class MaterialsDataManager extends DataManager {
 	 *             the materials producer id is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *             if the materials producer id is unknown</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *             if the materials producer property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *             if the materials producer property id is unknown</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             materials producer property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             materials producer property id is unknown</li>
 	 *             <li>{@linkplain PropertyError#IMMUTABLE_VALUE} if the
 	 *             materials producer property is immutable</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-	 *             if the property value is null</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+	 *             property value is null</li>
 	 *             {@linkplain PropertyError#INCOMPATIBLE_VALUE} if the property
 	 *             value is incompatible with the corresponding property
 	 *             definition</li>
@@ -1530,8 +1681,16 @@ public final class MaterialsDataManager extends DataManager {
 		validatePropertyMutability(propertyDefinition);
 		validateMaterialProducerPropertyValueNotNull(materialsProducerPropertyValue);
 		validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, materialsProducerPropertyValue);
-		PropertyValueRecord propertyValueRecord = materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId);
-		Object oldPropertyValue = propertyValueRecord.getValue();
+		Map<MaterialsProducerPropertyId, PropertyValueRecord> propertyValueMap = materialsProducerPropertyMap.get(materialsProducerId);
+		PropertyValueRecord propertyValueRecord = propertyValueMap.get(materialsProducerPropertyId);
+		Object oldPropertyValue;
+		if (propertyValueRecord != null) {
+			oldPropertyValue = propertyValueRecord.getValue();
+		} else {
+			propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+			propertyValueMap.put(materialsProducerPropertyId, propertyValueRecord);			
+			oldPropertyValue = propertyDefinition.getDefaultValue().get();
+		}
 		propertyValueRecord.setPropertyValue(materialsProducerPropertyValue);
 		dataManagerContext.releaseEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
 	}
@@ -2035,7 +2194,7 @@ public final class MaterialsDataManager extends DataManager {
 		dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
 
 	}
-	
+
 	private void validateNewMaterialId(final MaterialId materialId) {
 		if (materialId == null) {
 			throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
@@ -2050,8 +2209,10 @@ public final class MaterialsDataManager extends DataManager {
 	 * Adds a new material type
 	 * 
 	 * @throws ContractException
-	 * <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the material id is null</li>
-	 * <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL} if the material id is already present</li>
+	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+	 *             material id is null</li>
+	 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL} if the
+	 *             material id is already present</li>
 	 * 
 	 */
 	public void addMaterialId(MaterialId materialId) {
@@ -2060,8 +2221,40 @@ public final class MaterialsDataManager extends DataManager {
 		materialIds.add(materialId);
 		batchPropertyIdMap.put(materialId, new LinkedHashSet<>());
 		batchPropertyDefinitions.put(materialId, new LinkedHashMap<>());
-		
+
 		dataManagerContext.releaseEvent(new MaterialIdAdditionEvent(materialId));
+
+	}
+
+	//////////////////////
+	private final Set<MaterialsProducerPropertyId> materialsProducerPropertyIds = new LinkedHashSet<>();
+	private final Map<MaterialsProducerId, MaterialsProducerRecord> materialsProducerMap = new LinkedHashMap<>();
+	private final Map<MaterialsProducerId, Map<MaterialsProducerPropertyId, PropertyValueRecord>> materialsProducerPropertyMap = new LinkedHashMap<>();
+	private final Map<MaterialsProducerPropertyId, PropertyDefinition> materialsProducerPropertyDefinitions = new LinkedHashMap<>();
+	private final Map<MaterialsProducerPropertyId, Double> materialsProducerPropertyCreationTimes = new LinkedHashMap<>();
+	private final Map<MaterialsProducerPropertyId, Integer> nonDefaultBearingProducerPropertyIds = new LinkedHashMap<>();
+	private boolean[] nonDefaultChecksForProducers = new boolean[0];
+
+	/*
+	 * Represents the materials producer
+	 */
+	private static class MaterialsProducerRecord {
+
+		private final Map<ResourceId, ComponentResourceRecord> materialProducerResources = new LinkedHashMap<>();
+		/*
+		 * Identifier for the materials producer
+		 */
+		private MaterialsProducerId materialProducerId;
+
+		/*
+		 * Those batches owned by this materials producer that are not staged
+		 */
+		private final Set<BatchRecord> inventory = new LinkedHashSet<>();
+
+		/*
+		 * Those batches owned by this materials producer that are staged
+		 */
+		private final Set<StageRecord> stageRecords = new LinkedHashSet<>();
 
 	}
 

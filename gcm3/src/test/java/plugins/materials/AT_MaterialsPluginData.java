@@ -750,15 +750,14 @@ public class AT_MaterialsPluginData {
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			builder.addMaterialsProducerId(testMaterialsProducerId);
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+				boolean required = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
-				Object propertyValue;
-				if (randomGenerator.nextBoolean()) {
-					propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				if (required || randomGenerator.nextBoolean()) {
+					Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
-				} else {
-					propertyValue = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().get();
-				}
-				expectedPropertyValues.put(multiKey, propertyValue);
+					expectedPropertyValues.put(multiKey, propertyValue);
+				} 
+				
 			}
 		}
 
@@ -768,7 +767,8 @@ public class AT_MaterialsPluginData {
 			Object expectedValue = expectedPropertyValues.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = multiKey.getKey(1);
-			Object actualValue = materialsInitialData.getMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId);
+			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData.getMaterialsProducerPropertyValues(testMaterialsProducerId);
+			Object actualValue = materialsProducerPropertyValues.get(testMaterialsProducerPropertyId);
 			assertEquals(expectedValue, actualValue);
 		}
 
@@ -1276,8 +1276,9 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class })
-	public void testGetMaterialsProducerPropertyValue() {
+	@UnitTestMethod(name = "getMaterialsProducerPropertyValues", args = { MaterialsProducerId.class })
+	public void testGetMaterialsProducerPropertyValues() {
+		
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(175219330466509056L);
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
@@ -1293,13 +1294,14 @@ public class AT_MaterialsPluginData {
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 				MultiKey multiKey = new MultiKey(testMaterialsProducerId, testMaterialsProducerPropertyId);
 				Object propertyValue;
-				if (randomGenerator.nextBoolean()) {
+				
+				boolean required = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+				
+				if (required || randomGenerator.nextBoolean()) {
 					propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, propertyValue);
-				} else {
-					propertyValue = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().get();
-				}
-				expectedPropertyValues.put(multiKey, propertyValue);
+					expectedPropertyValues.put(multiKey, propertyValue);
+				}				
 			}
 		}
 
@@ -1309,32 +1311,18 @@ public class AT_MaterialsPluginData {
 			Object expectedValue = expectedPropertyValues.get(multiKey);
 			TestMaterialsProducerId testMaterialsProducerId = multiKey.getKey(0);
 			TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = multiKey.getKey(1);
-			Object actualValue = materialsInitialData.getMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId);
+			Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsInitialData.getMaterialsProducerPropertyValues(testMaterialsProducerId);
+			Object actualValue = materialsProducerPropertyValues.get(testMaterialsProducerPropertyId);
 			assertEquals(expectedValue, actualValue);
 		}
 
-		// precondition tests
-
-		TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
-
-		// if the materials producer id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerPropertyValue(null, testMaterialsProducerPropertyId));
+		// precondition test: if the materials producer id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerPropertyValues(null));
 		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 
-		// if the materials producer id is unknown
-		contractException = assertThrows(ContractException.class,
-				() -> materialsInitialData.getMaterialsProducerPropertyValue(TestMaterialsProducerId.getUnknownMaterialsProducerId(), testMaterialsProducerPropertyId));
+		// precondition test: if the materials producer id is unknown
+		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerPropertyValues(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 		assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
-
-		// if the materials producer property id is null
-		contractException = assertThrows(ContractException.class, () -> materialsInitialData.getMaterialsProducerPropertyValue(testMaterialsProducerId, null));
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// if the materials producer property id is unknown
-		contractException = assertThrows(ContractException.class,
-				() -> materialsInitialData.getMaterialsProducerPropertyValue(testMaterialsProducerId, TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId()));
-		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
 
@@ -1610,7 +1598,8 @@ public class AT_MaterialsPluginData {
 		}
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
+				boolean requiredProperty = testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
+				if (requiredProperty || randomGenerator.nextBoolean()) {
 					builder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator));
 				}
 			}
@@ -1649,8 +1638,7 @@ public class AT_MaterialsPluginData {
 					builder.addBatchToStage(stageId, batchId);
 				}
 			}
-			
-			
+
 			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(randomMaterialId)) {
 				if (randomGenerator.nextBoolean()) {
 					builder.setBatchPropertyValue(batchId, testBatchPropertyId, testBatchPropertyId.getRandomPropertyValue(randomGenerator));
@@ -1699,8 +1687,10 @@ public class AT_MaterialsPluginData {
 		// property values
 		for (MaterialsProducerId materialsProducerId : materialsPluginData.getMaterialsProducerIds()) {
 			for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsPluginData.getMaterialsProducerPropertyIds()) {
-				Object expectedValue = materialsPluginData.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
-				Object actualValue = clonePluginData.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+				Map<MaterialsProducerPropertyId, Object> materialsProducerPropertyValues = materialsPluginData.getMaterialsProducerPropertyValues(materialsProducerId);
+				Object expectedValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
+				materialsProducerPropertyValues = clonePluginData.getMaterialsProducerPropertyValues(materialsProducerId);
+				Object actualValue = materialsProducerPropertyValues.get(materialsProducerPropertyId);
 				assertEquals(expectedValue, actualValue);
 			}
 		}
@@ -1748,39 +1738,40 @@ public class AT_MaterialsPluginData {
 			assertEquals(materialsPluginData.getBatchPropertyIds(testMaterialId), clonePluginData.getBatchPropertyIds(testMaterialId));
 		}
 
-		// show that the two plugin datas have the same batch property definitions
+		// show that the two plugin datas have the same batch property
+		// definitions
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			for(BatchPropertyId  batchPropertyId : materialsPluginData.getBatchPropertyIds(testMaterialId)) {
+			for (BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(testMaterialId)) {
 				PropertyDefinition expectedPropertyDefinition = materialsPluginData.getBatchPropertyDefinition(testMaterialId, batchPropertyId);
 				PropertyDefinition actualPropertyDefinition = clonePluginData.getBatchPropertyDefinition(testMaterialId, batchPropertyId);
 				assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 			}
 		}
-		
+
 		// show that the two plugin datas have the same batch ids
 		assertEquals(materialsPluginData.getBatchIds(), clonePluginData.getBatchIds());
-		for(BatchId batchId : materialsPluginData.getBatchIds()) {
-			//show that the amounts are equal
+		for (BatchId batchId : materialsPluginData.getBatchIds()) {
+			// show that the amounts are equal
 			Double expectedAmount = materialsPluginData.getBatchAmount(batchId);
 			Double actualAmount = clonePluginData.getBatchAmount(batchId);
 			assertEquals(expectedAmount, actualAmount);
-			
-			//show that the materials are equal
+
+			// show that the materials are equal
 			MaterialId expectedMaterialId = materialsPluginData.getBatchMaterial(batchId);
 			MaterialId actualMaterialId = clonePluginData.getBatchMaterial(batchId);
 			assertEquals(expectedMaterialId, actualMaterialId);
-			
-			//show that the materials producers
+
+			// show that the materials producers
 			MaterialsProducerId expectedMaterialsProducerId = materialsPluginData.getBatchMaterialsProducer(batchId);
 			MaterialsProducerId actualMaterialsProducerId = clonePluginData.getBatchMaterialsProducer(batchId);
 			assertEquals(expectedMaterialsProducerId, actualMaterialsProducerId);
-			
-			for(BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(expectedMaterialId)){
+
+			for (BatchPropertyId batchPropertyId : materialsPluginData.getBatchPropertyIds(expectedMaterialId)) {
 				Object expectedValue = materialsPluginData.getBatchPropertyValue(batchId, batchPropertyId);
 				Object actualValue = clonePluginData.getBatchPropertyValue(batchId, batchPropertyId);
 				assertEquals(expectedValue, actualValue);
 			}
-		}		
+		}
 
 	}
 

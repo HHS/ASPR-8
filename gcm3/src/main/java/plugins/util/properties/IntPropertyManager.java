@@ -30,11 +30,13 @@ public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 	 * Constructs this IntPropertyManager.
 	 * 
 	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
+	 *             initial size is negative</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
+	 *             the property definition is null</li> 
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not a Byte, Short,
 	 *             Integer or Long</li>
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *             if the property definition does not have a default value</li>
 	 */
 	public IntPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
 		super(simulationContext, propertyDefinition, initialSize);

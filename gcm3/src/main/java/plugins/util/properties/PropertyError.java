@@ -22,7 +22,7 @@ public enum PropertyError implements ContractError {
 	UNKNOWN_PROPERTY_ID("Unknown property id"),
 	INCOMPATIBLE_VALUE("Property value is incompatible with the property definition"),//
 	DUPLICATE_PROPERTY_VALUE_ASSIGNMENT("Duplicate property value assignment"),
-NULL_PROPERTY_OWNER("Property value is being assigned to a null owner"),//
+
 	
 	
 	NULL_PROPERTY_TYPE("Type for property definition is null"),//

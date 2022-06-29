@@ -211,7 +211,7 @@ public final class RegionsDataManager extends DataManager {
 				validateRegionPropertyId(regionPropertyId);
 				markAssigned(regionPropertyId);
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = getRegionPropertyDefinition(regionPropertyId);
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);;
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
 				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
 				if (propertyValueRecord == null) {
@@ -226,7 +226,7 @@ public final class RegionsDataManager extends DataManager {
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
 				validateRegionPropertyId(regionPropertyId);
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = getRegionPropertyDefinition(regionPropertyId);
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);;
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
 				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
 				if (propertyValueRecord == null) {

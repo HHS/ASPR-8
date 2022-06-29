@@ -99,7 +99,7 @@ public class RegionConstructionData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             value is null</li>
 		 * 
-		 *             <li>{@linkplain RegionError#DUPLICATE_REGION_PROPERTY_ID}
+		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if the region property was previously set</li>
 		 */
 		public Builder setRegionPropertyValue(RegionPropertyId regionPropertyId, Object value) {

@@ -23,8 +23,11 @@ public final class ObjectPropertyManager extends AbstractIndexedPropertyManager 
 	 * Constructs this IntPropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *             if the property definition does not have a default value</li>
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
+	 *             initial size is negative</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
+	 *             the property definition is null</li> 
+	 * 
 	 */
 	public ObjectPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
 		super(simulationContext, propertyDefinition, initialSize);

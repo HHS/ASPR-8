@@ -11,9 +11,11 @@ import util.errors.ContractException;
  *
  */
 public enum MaterialsError implements ContractError {
-
+	NULL_AUXILIARY_DATA("Null auxiliary data"),
+	NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION("Null materials producer property definition initialization"),
 	DUPLICATE_MATERIALS_PRODUCER_RESOURCE_ASSIGNMENT("Duplicate materials producer resource assignment"),
 	DUPLICATE_MATERIALS_PRODUCER_ID("Duplicate materials producer id"),
+	DUPLICATE_MATERIALS_PRODUCER_PROPERTY_ID("Duplicate materials producer property id"),
 	RESOURCE_LOADING_ORDER("Resources must be added before materials producers are added"),
 	MATERIALS_PRODUCER_PROPERTY_LOADING_ORDER("Material procuders must be added before materials producer properties are added"),
 	BATCH_ALREADY_STAGED("Batch is already staged"),
@@ -41,9 +43,7 @@ public enum MaterialsError implements ContractError {
 	UNKNOWN_STAGE_ID("Unknown stage id"),
 	UNOFFERED_STAGE_NOT_TRANSFERABLE("Unoffered stages are not transferable"),
 	DUPLICATE_BATCH_ID("Duplicate batch id"),
-	
 
-MATERIALS_PRODUCER_ADDITION_BLOCKED("Materials producer addition requires that all materials producer properties have default values"),
 	;
 
 	private final String description;

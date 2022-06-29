@@ -22,10 +22,12 @@ public final class FloatPropertyManager extends AbstractIndexedPropertyManager {
 	 * Constructs this FloatPropertyManager.
 	 * 
 	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
+	 *             initial size is negative</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
+	 *             the property definition is null</li> 
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not Boolean</li>
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *             if the property definition does not have a default value</li>
 	 */
 	public FloatPropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {
 		super(simulationContext, propertyDefinition, initialSize);

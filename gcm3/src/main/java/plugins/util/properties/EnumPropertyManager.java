@@ -25,8 +25,6 @@ public final class EnumPropertyManager extends AbstractIndexedPropertyManager {
 	 *             initial size is negative</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *             if the property definition does not have a default value</li>
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE} if the
 	 *             property definition's type is not an enumeration</li>
 	 * 

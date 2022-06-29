@@ -6,7 +6,7 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 /**
- * An event released by the global data manager whenever a global property
+ * An event released by the people data manager whenever a person property
  * definition is added to the simulation.
  * 
  * @author Shawn Hatch

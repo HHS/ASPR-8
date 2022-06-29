@@ -16,6 +16,7 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.testsupport.MaterialsActionSupport;
@@ -70,7 +71,18 @@ public final class AT_MaterialsProducerPropertyReport {
 		//add a new materials producer at time 30
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(30, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-			materialsDataManager.addMaterialsProducer(newMaterialsProducerId);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
+			
+			builder.setMaterialsProducerId(newMaterialsProducerId);
+			for(TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
+			}
+			
+			MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
+			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
 			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 				expectedReportItems.add(getReportItemFromPropertyId(c, newMaterialsProducerId, testMaterialsProducerPropertyId));
 			}

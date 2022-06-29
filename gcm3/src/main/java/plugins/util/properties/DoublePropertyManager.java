@@ -29,8 +29,7 @@ public final class DoublePropertyManager extends AbstractIndexedPropertyManager 
 	 *             the property definition is null</li>
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not Double</li>
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_MISSING_DEFAULT}
-	 *             if the property definition does not have a default value</li>
+	 *            
 	 * 
 	 */
 	public DoublePropertyManager(SimulationContext simulationContext, PropertyDefinition propertyDefinition, int initialSize) {

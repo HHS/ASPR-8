@@ -1,5 +1,8 @@
 package plugins.materials.testsupport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.materials.support.MaterialsProducerPropertyId;
@@ -29,7 +32,7 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
-								.setDefaultValue(0)//
+								//.setDefaultValue(0)//no default value
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
@@ -173,5 +176,35 @@ public enum TestMaterialsProducerPropertyId implements MaterialsProducerProperty
 	 */
 	public static int size() {
 		return TestMaterialsProducerPropertyId.values().length;
+	}
+	
+	/**
+	 * Returns the test property ids associated with a default value
+	 */
+	public static List<TestMaterialsProducerPropertyId> getPropertiesWithDefaultValues(){
+		List<TestMaterialsProducerPropertyId> result = new ArrayList<>();
+		
+		for(TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			if(testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isPresent()) {
+				result.add(testMaterialsProducerPropertyId);
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns the test property ids associated without a default value
+	 */
+	public static List<TestMaterialsProducerPropertyId> getPropertiesWithoutDefaultValues(){
+		List<TestMaterialsProducerPropertyId> result = new ArrayList<>();
+		
+		for(TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+			if(testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
+				result.add(testMaterialsProducerPropertyId);
+			}
+		}
+		
+		return result;
 	}
 }
