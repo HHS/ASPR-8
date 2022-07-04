@@ -4,6 +4,9 @@ import net.jcip.annotations.Immutable;
 import nucleus.Event;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
+import plugins.materials.support.MaterialsError;
+import plugins.util.properties.PropertyError;
+import util.errors.ContractException;
 
 @Immutable
 public class BatchPropertyUpdateEvent implements Event {
@@ -14,6 +17,23 @@ public class BatchPropertyUpdateEvent implements Event {
 
 	public BatchPropertyUpdateEvent(BatchId batchId, BatchPropertyId batchPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
 		super();
+		if(batchId == null) {
+			throw new ContractException(MaterialsError.NULL_BATCH_ID);
+		}
+		
+		if(batchPropertyId == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+		}
+		
+		if(previousPropertyValue == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
+		}
+		
+		if(currentPropertyValue == null) {
+			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
+		}
+
+		
 		this.batchId = batchId;
 		this.batchPropertyId = batchPropertyId;
 		this.previousPropertyValue = previousPropertyValue;

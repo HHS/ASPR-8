@@ -19,12 +19,14 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
+import plugins.materials.testsupport.TestBatchConstructionInfo;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
@@ -101,7 +103,8 @@ public final class AT_BatchStatusReport {
 				for (int i = 0; i < 20; i++) {
 					TestMaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 					double amount = randomGenerator.nextDouble();
-					BatchId batchId = materialsDataManager.addBatch(testMaterialsProducerId, materialId, amount);
+					BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo.getBatchConstructionInfo(testMaterialsProducerId, materialId, amount, randomGenerator);
+					BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
 					expectedReportItems.add(getReportItemFromBatch(c, batchId));
 				}
 

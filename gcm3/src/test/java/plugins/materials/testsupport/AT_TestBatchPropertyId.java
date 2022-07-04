@@ -25,8 +25,7 @@ public class AT_TestBatchPropertyId {
 	public void testGetPropertyDefinition() {
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testBatchPropertyId.getPropertyDefinition();
-			assertNotNull(propertyDefinition);
-			assertTrue(propertyDefinition.getDefaultValue().isPresent());
+			assertNotNull(propertyDefinition);			
 		}
 	}
 

@@ -32,7 +32,7 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 			TestMaterialId.MATERIAL_1, //
 			PropertyDefinition	.builder()//
 								.setType(Integer.class)//
-								.setDefaultValue(0)//
+								//.setDefaultValue(0)//no default value
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //
@@ -41,7 +41,7 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 			TestMaterialId.MATERIAL_1, //
 			PropertyDefinition	.builder()//
 								.setType(Double.class)//
-								.setDefaultValue(0.0)//
+								//.setDefaultValue(0.0)//no default
 								.setPropertyValueMutability(true)//
 								.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 								.build() //

@@ -39,8 +39,6 @@ public enum PropertyError implements ContractError {
 	NULL_TIME_TRACKING_POLICY("Time tracking policy is null"),//
 	TIME_TRACKING_OFF("Time tracking is off"),//
 	
-
-PROPERTY_DEFINITION_MISSING_DEFAULT("Property definition has no default value"),//	
 	;
 
 	private final String description;

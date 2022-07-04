@@ -1,4 +1,4 @@
-package plugins.groups.support;
+package plugins.materials.support;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,8 +12,8 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A class for defining a group property with an associated property id and
- * property values for extant groups.
+ * A class for defining a batch property with an associated property id and
+ * property values for extant batches.
  * 
  * 
  * @author Shawn Hatch
@@ -21,18 +21,18 @@ import util.errors.ContractException;
  * 
  */
 @Immutable
-public final class GroupPropertyDefinitionInitialization {
+public final class BatchPropertyDefinitionInitialization {
 
 	private static class Data {
-		GroupTypeId groupTypeId;
-		GroupPropertyId groupPropertyId;
+		MaterialId materialId;
+		BatchPropertyId batchPropertyId;
 		PropertyDefinition propertyDefinition;
-		List<Pair<GroupId, Object>> propertyValues = new ArrayList<>();
+		List<Pair<BatchId, Object>> propertyValues = new ArrayList<>();
 	}
 
 	private final Data data;
 
-	private GroupPropertyDefinitionInitialization(Data data) {
+	private BatchPropertyDefinitionInitialization(Data data) {
 		this.data = data;
 	}
 
@@ -44,7 +44,7 @@ public final class GroupPropertyDefinitionInitialization {
 	}
 
 	/**
-	 * Builder class for a GroupPropertyDefinitionInitialization
+	 * Builder class for a BatchPropertyDefinitionInitialization
 	 * 
 	 * @author Shawn Hatch
 	 *
@@ -61,17 +61,16 @@ public final class GroupPropertyDefinitionInitialization {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
 
-			if (data.groupPropertyId == null) {
+			if (data.batchPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
-			
-			if (data.groupTypeId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+
+			if (data.materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 			}
 
-
 			Class<?> type = data.propertyDefinition.getType();
-			for (Pair<GroupId, Object> pair : data.propertyValues) {
+			for (Pair<BatchId, Object> pair : data.propertyValues) {
 				Object value = pair.getSecond();
 				if (!type.isAssignableFrom(value.getClass())) {
 					String message = "Definition Type " + type.getName() + " is not compatible with value = " + value;
@@ -81,8 +80,8 @@ public final class GroupPropertyDefinitionInitialization {
 		}
 
 		/**
-		 * Constructs the PropertyDefinitionInitialization from the collected
-		 * data
+		 * Constructs the BatchPropertyDefinitionInitialization from the
+		 * collected data
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
@@ -92,47 +91,48 @@ public final class GroupPropertyDefinitionInitialization {
 		 *             property id was assigned to the builder</li>
 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
 		 *             collected property value is incompatible with the
-		 *             property definition</li>
-		 *             <li>{@linkplain  GroupError#NULL_GROUP_TYPE_ID} if no
-		 *             group type id was assigned to the builder</li>             
-		 *            
+		 *             property definition</li> *
+		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if no
+		 *             material id was assigned to the builder</li>
+		 * 
+		 * 
 		 */
-		public GroupPropertyDefinitionInitialization build() {
+		public BatchPropertyDefinitionInitialization build() {
 			try {
 				validate();
-				return new GroupPropertyDefinitionInitialization(data);
+				return new BatchPropertyDefinitionInitialization(data);
 			} finally {
 				data = new Data();
 			}
 		}
 
 		/**
-		 * Sets the group property id
+		 * Sets the batch property id
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             property id is null</li>
 		 */
-		public Builder setPropertyId(GroupPropertyId groupPropertyId) {
-			if (groupPropertyId == null) {
+		public Builder setPropertyId(BatchPropertyId batchPropertyId) {
+			if (batchPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
-			data.groupPropertyId = groupPropertyId;
+			data.batchPropertyId = batchPropertyId;
 			return this;
 		}
 
 		/**
-		 * Sets the group type id
+		 * Sets the material id
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
-		 *             group type id is null</li>
+		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+		 *             material id is null</li>
 		 */
-		public Builder setGroupTypeId(GroupTypeId groupTypeId) {
-			if (groupTypeId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
+		public Builder setMaterialId(MaterialId materialId) {
+			if (materialId == null) {
+				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 			}
-			data.groupTypeId = groupTypeId;
+			data.materialId = materialId;
 			return this;
 		}
 
@@ -155,22 +155,22 @@ public final class GroupPropertyDefinitionInitialization {
 		 * Adds a property value
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id
+		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the batch id
 		 *             is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */
 
-		public Builder addPropertyValue(GroupId groupId, Object value) {
-			if (groupId == null) {
-				throw new ContractException(GroupError.NULL_GROUP_ID);
+		public Builder addPropertyValue(BatchId batchId, Object value) {
+			if (batchId == null) {
+				throw new ContractException(MaterialsError.NULL_BATCH_ID);
 			}
 
 			if (value == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 			}
 
-			data.propertyValues.add(new Pair<>(groupId, value));
+			data.propertyValues.add(new Pair<>(batchId, value));
 			return this;
 		}
 
@@ -179,15 +179,15 @@ public final class GroupPropertyDefinitionInitialization {
 	/**
 	 * Returns the (non-null)property id.
 	 */
-	public GroupPropertyId getPropertyId() {
-		return data.groupPropertyId;
+	public BatchPropertyId getPropertyId() {
+		return data.batchPropertyId;
 	}
 
 	/**
-	 * Returns the (non-null) group type id.
+	 * Returns the (non-null) material id.
 	 */
-	public GroupTypeId getGroupTypeId() {
-		return data.groupTypeId;
+	public MaterialId getMaterialId() {
+		return data.materialId;
 	}
 
 	/**
@@ -198,12 +198,12 @@ public final class GroupPropertyDefinitionInitialization {
 	}
 
 	/**
-	 * Returns the list of (groupId,value) pairs collected by the builder in the
+	 * Returns the list of (batchId,value) pairs collected by the builder in the
 	 * order of their addition. All pairs have non-null entries and the values
 	 * are compatible with the contained property definition. Duplicate
-	 * assignments of values to the same group may be present.
+	 * assignments of values to the same batch may be present.
 	 */
-	public List<Pair<GroupId, Object>> getPropertyValues() {
+	public List<Pair<BatchId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
 	}
 
