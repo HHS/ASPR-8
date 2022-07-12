@@ -1,5 +1,6 @@
 package temp;
 
+import temp.MT_Bulk.LoadMode;
 import util.time.StopwatchManager;
 import util.time.Watch;
 
@@ -12,7 +13,7 @@ public class MT_BulkRunner {
 				.setSeed(2227922522174256634L)//
 
 				// people
-				.setLoadPeopleViaPlugins(true)//
+				.setLoadMode(LoadMode.SINGULAR)//
 				.setPopulationSize(10_000_000)//
 
 				// person properties

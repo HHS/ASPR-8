@@ -2,6 +2,7 @@ package temp;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +58,10 @@ import util.time.Watch;
 
 public class MT_Bulk {
 
+	public static enum LoadMode {
+		PLUGIN, BULK, SINGULAR
+	}
+
 	private static enum LocalGroupType implements GroupTypeId {
 		SCHOOL, WORK, HOME;
 	}
@@ -65,7 +70,7 @@ public class MT_Bulk {
 		private long seed;
 
 		// people
-		private boolean loadPeopleViaPlugins;
+		private LoadMode loadMode;
 		private int populationSize;
 
 		// person properties
@@ -104,9 +109,9 @@ public class MT_Bulk {
 			builder.append(seed);
 			builder.append("\n");
 
-			builder.append("loadPeopleInPlugins");
+			builder.append("loadMode");
 			builder.append("\t");
-			builder.append(loadPeopleViaPlugins);
+			builder.append(loadMode);
 			builder.append("\n");
 
 			builder.append("populationSize");
@@ -200,7 +205,7 @@ public class MT_Bulk {
 
 	private static enum BulkTestError implements ContractError {
 		BAD_POPULATION_PROPORTION("Population proportion must be in interval [0,1]"),
-
+		MISSING_LOAD_MODE("Load mode not assigned"), //
 		NEGATIVE_PROPERTY_COUNT("Negative property count"), //
 		BAD_INIT_PROPERTY_COUNT("The  number of properties to initialize exceeds the total number of  properties"), //
 		UNKNOWN_PROPERTY_TYPE("Unknown property type"), //
@@ -229,6 +234,10 @@ public class MT_Bulk {
 		private Data data = new Data();
 
 		private void validate() {
+			if (data.loadMode == null) {
+				throw new ContractException(BulkTestError.MISSING_LOAD_MODE);
+			}
+
 			if (data.initializedPersonPropertyCount < 0) {
 				throw new ContractException(BulkTestError.NEGATIVE_PROPERTY_COUNT);
 			}
@@ -328,8 +337,8 @@ public class MT_Bulk {
 			return this;
 		}
 
-		public Builder setLoadPeopleViaPlugins(boolean loadPeopleViaPlugins) {
-			data.loadPeopleViaPlugins = loadPeopleViaPlugins;
+		public Builder setLoadMode(LoadMode loadMode) {
+			data.loadMode = loadMode;
 			return this;
 		}
 
@@ -666,9 +675,171 @@ public class MT_Bulk {
 		this.data = data;
 	}
 
+	private void loadPeopleForSinglesPopLoader(ActorContext actorContext) {
+		if (data.loadMode != LoadMode.SINGULAR) {
+			return;
+		}
+		StopwatchManager.start(Watch.PSLC_PERSON_PROPERTIES);
+		List<Pair<PersonPropertyId, Class<?>>> personPropertyToTypeMap = new ArrayList<>();
+		if (data.usePersonProperties) {
+			PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+			for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
+				PropertyDefinition personPropertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
+				personPropertyToTypeMap.add(new Pair<>(personPropertyId, personPropertyDefinition.getType()));
+			}
+		}
+		StopwatchManager.stop(Watch.PSLC_PERSON_PROPERTIES);
+
+		List<RegionId> regionIds = null;
+		if (data.useRegions) {
+			StopwatchManager.start(Watch.PSLC_REGIONS);
+			RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+			regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
+			StopwatchManager.stop(Watch.PSLC_REGIONS);
+		}
+
+		List<ResourceId> resourceIds = null;
+		if (data.useResources) {
+			StopwatchManager.start(Watch.PSLC_RESOURCES);
+			ResourcesDataManager resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
+			resourceIds = new ArrayList<>(resourcesDataManager.getResourceIds());
+			StopwatchManager.stop(Watch.PSLC_RESOURCES);
+		}
+
+		if (data.useGroups) {
+			StopwatchManager.start(Watch.PSLC_GROUPS);
+			GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+
+			int schoolAgedChildrenCount = (int) (data.schoolAgeProportion * data.populationSize);
+			int activeWorkerCount = (int) (data.activeWorkerProportion * (data.populationSize - schoolAgedChildrenCount));
+
+			int householdCount = (int) ((double) data.populationSize / data.householdSize) + 1;
+			int schoolCount = (int) ((double) schoolAgedChildrenCount / data.schoolSize) + 1;
+			int workplaceCount = (int) ((double) activeWorkerCount / data.workplaceSize) + 1;
+
+			// create the household groups
+			Set<GroupPropertyId> groupPropertyIds = new LinkedHashSet<>();
+			if (data.useGroupProperties) {
+				groupPropertyIds = groupsDataManager.getGroupPropertyIds(LocalGroupType.HOME);
+			}
+			for (int i = 0; i < householdCount; i++) {
+				GroupId groupId = groupsDataManager.addGroup(LocalGroupType.HOME);
+				if (data.useGroupProperties) {
+					for (GroupPropertyId groupPropertyId : groupPropertyIds) {
+						Class<?> type = groupsDataManager.getGroupPropertyDefinition(LocalGroupType.HOME, groupPropertyId).getType();
+						Object randomPropertyValue = getRandomPropertyValue(type);
+						groupsDataManager.setGroupPropertyValue(groupId, groupPropertyId, randomPropertyValue);
+					}
+				}
+			}
+
+			// create the work groups
+			for (int i = 0; i < workplaceCount; i++) {
+				groupsDataManager.addGroup(LocalGroupType.WORK);
+			}
+
+			// create the school groups
+			for (int i = 0; i < schoolCount; i++) {
+				groupsDataManager.addGroup(LocalGroupType.SCHOOL);
+			}
+			StopwatchManager.stop(Watch.PSLC_GROUPS);
+		}
+
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+
+		PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
+		for (int i = 0; i < data.populationSize; i++) {
+
+			if (data.usePersonProperties) {
+				StopwatchManager.start(Watch.PSLC_PERSON_PROPERTIES);
+				for (int j = 0; j < data.initializedPersonPropertyCount; j++) {
+					Pair<PersonPropertyId, Class<?>> pair = personPropertyToTypeMap.get(j);
+					PersonPropertyId personPropertyId = pair.getFirst();
+					Class<?> c = pair.getSecond();
+					Object randomPropertyValue = getRandomPropertyValue(c);
+					personBuilder.add(new PersonPropertyInitialization(personPropertyId, randomPropertyValue));
+				}
+				StopwatchManager.stop(Watch.PSLC_PERSON_PROPERTIES);
+			}
+
+			if (regionIds != null) {
+				StopwatchManager.start(Watch.PSLC_REGIONS);
+				RegionId regionId = regionIds.get(state.randomGenerator.nextInt(regionIds.size()));
+				personBuilder.add(regionId);
+				StopwatchManager.stop(Watch.PSLC_REGIONS);
+			}
+
+			if (resourceIds != null) {
+				StopwatchManager.start(Watch.PSLC_RESOURCES);
+				for (int j = 0; j < data.initializedResourceCount; j++) {
+					ResourceId resourceId = resourceIds.get(j);
+					long amount = state.randomGenerator.nextInt(1000) + 1;
+					ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, amount);
+					personBuilder.add(resourceInitialization);
+				}
+				StopwatchManager.stop(Watch.PSLC_RESOURCES);
+			}
+
+			PersonConstructionData personConstructionData = personBuilder.build();
+			peopleDataManager.addPerson(personConstructionData);
+		}
+
+		if (data.useGroups) {
+			StopwatchManager.start(Watch.PSLC_GROUPS);
+			GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			int schoolAgedChildrenCount = (int) (data.schoolAgeProportion * data.populationSize);
+			int activeWorkerCount = (int) (data.activeWorkerProportion * (data.populationSize - schoolAgedChildrenCount));
+
+			int groupMembershipCount = 0;
+
+			// put people in homes
+			List<GroupId> groups = groupsDataManager.getGroupsForGroupType(LocalGroupType.HOME);
+			if (groups.size() > 0) {
+				for (int i = 0; i < people.size(); i++) {
+					PersonId personId = people.get(i);
+					int groupIndex = state.randomGenerator.nextInt(groups.size());
+					GroupId groupId = groups.get(groupIndex);
+					groupsDataManager.addPersonToGroup(personId, groupId);
+					groupMembershipCount++;
+				}
+			}
+
+			// put people in work places
+			groups = groupsDataManager.getGroupsForGroupType(LocalGroupType.WORK);
+			if (groups.size() > 0) {
+				for (int i = 0; i < activeWorkerCount; i++) {
+					PersonId personId = people.get(i);
+					int groupIndex = state.randomGenerator.nextInt(groups.size());
+					GroupId groupId = groups.get(groupIndex);
+					groupsDataManager.addPersonToGroup(personId, groupId);
+					groupMembershipCount++;
+				}
+			}
+
+			// put people in schools
+			groups = groupsDataManager.getGroupsForGroupType(LocalGroupType.SCHOOL);
+			if (groups.size() > 0) {
+				for (int i = 0; i < schoolAgedChildrenCount; i++) {
+					PersonId personId = people.get(i + activeWorkerCount);
+					int groupIndex = state.randomGenerator.nextInt(groups.size());
+					GroupId groupId = groups.get(groupIndex);
+					groupsDataManager.addPersonToGroup(personId, groupId);
+					groupMembershipCount++;
+				}
+			}
+
+			System.out.println("groupMembershipCount = " + groupMembershipCount);
+
+			StopwatchManager.stop(Watch.PSLC_GROUPS);
+		}
+
+	}
+
 	private void loadPeopleForBulkPopLoader(ActorContext actorContext) {
 
-		if (data.loadPeopleViaPlugins) {
+		if (data.loadMode != LoadMode.BULK) {
 			return;
 		}
 		StopwatchManager.start(Watch.PBLC_PERSON_PROPERTIES);
@@ -697,9 +868,6 @@ public class MT_Bulk {
 			resourceIds = new ArrayList<>(resourcesDataManager.getResourceIds());
 			StopwatchManager.stop(Watch.PBLC_RESOURCES);
 		}
-		
-		
-		
 
 		PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
 		for (int i = 0; i < data.populationSize; i++) {
@@ -727,8 +895,8 @@ public class MT_Bulk {
 				StopwatchManager.start(Watch.PBLC_RESOURCES);
 				for (int j = 0; j < data.initializedResourceCount; j++) {
 					ResourceId resourceId = resourceIds.get(j);
-					long amount = state.randomGenerator.nextInt(1000)+1;
-					ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId,amount);
+					long amount = state.randomGenerator.nextInt(1000) + 1;
+					ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, amount);
 					personBuilder.add(resourceInitialization);
 				}
 				StopwatchManager.stop(Watch.PBLC_RESOURCES);
@@ -737,6 +905,8 @@ public class MT_Bulk {
 		}
 
 		if (data.useGroups) {
+			
+			int groupMembershipCount = 0;
 			StopwatchManager.start(Watch.PBLC_GROUPS);
 			BulkGroupMembershipData.Builder bulkGroupMembershipBuilder = BulkGroupMembershipData.builder();
 
@@ -747,15 +917,6 @@ public class MT_Bulk {
 			int schoolCount = (int) ((double) schoolAgedChildrenCount / data.schoolSize) + 1;
 			int workplaceCount = (int) ((double) activeWorkerCount / data.workplaceSize) + 1;
 
-			
-//			System.out.println("total people "+data.populationSize);
-//			System.out.println("householdCount "+householdCount);
-//			System.out.println("worker count "+activeWorkerCount);
-//			System.out.println("workplaceCount "+workplaceCount);
-//			System.out.println("school aged children "+schoolAgedChildrenCount);
-//			System.out.println("schoolCount "+schoolCount);
-			
-			
 			// create the household groups
 			for (int i = 0; i < householdCount; i++) {
 				bulkGroupMembershipBuilder.addGroup(LocalGroupType.HOME);
@@ -775,12 +936,14 @@ public class MT_Bulk {
 			for (int personId = 0; personId < data.populationSize; personId++) {
 				int groupId = state.randomGenerator.nextInt(householdCount);
 				bulkGroupMembershipBuilder.addPersonToGroup(personId, groupId);
+				groupMembershipCount++;
 			}
 
 			// put people in work places
 			for (int personId = 0; personId < activeWorkerCount; personId++) {
 				int groupId = state.randomGenerator.nextInt(workplaceCount) + householdCount;
 				bulkGroupMembershipBuilder.addPersonToGroup(personId, groupId);
+				groupMembershipCount++;
 			}
 
 			// put people in schools
@@ -788,6 +951,7 @@ public class MT_Bulk {
 				int personId = i + activeWorkerCount;
 				int groupId = state.randomGenerator.nextInt(schoolCount) + householdCount + workplaceCount;
 				bulkGroupMembershipBuilder.addPersonToGroup(personId, groupId);
+				groupMembershipCount++;
 			}
 
 			if (data.useGroupProperties) {
@@ -801,12 +965,12 @@ public class MT_Bulk {
 					}
 				}
 			}
-			
-			
 
 			BulkGroupMembershipData bulkGroupMembershipData = bulkGroupMembershipBuilder.build();
 			state.bulkPersonBuilder.addAuxiliaryData(bulkGroupMembershipData);
 			StopwatchManager.stop(Watch.PBLC_GROUPS);
+			
+			System.out.println("groupMembershipCount = "+groupMembershipCount);
 		}
 
 	}
@@ -817,8 +981,9 @@ public class MT_Bulk {
 		state.randomGenerator = RandomGeneratorProvider.getRandomGenerator(data.seed);
 
 		testConsumer((c) -> {
-			if (!data.loadPeopleViaPlugins) {
-				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			switch (data.loadMode) {
+			case BULK:
 
 				StopwatchManager.start(Watch.PBLC_TOTAL);
 
@@ -832,6 +997,16 @@ public class MT_Bulk {
 				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
 
 				StopwatchManager.stop(Watch.PBL_PROCESSING);
+				break;
+			case SINGULAR:
+				StopwatchManager.start(Watch.PSLC_TOTAL);
+				loadPeopleForSinglesPopLoader(c);
+				StopwatchManager.stop(Watch.PSLC_TOTAL);
+				break;
+			default:
+				// PLUGIN case handled by testConsumer() methods
+				break;
+
 			}
 		});
 	}
@@ -891,7 +1066,7 @@ public class MT_Bulk {
 	private void loadPeoplePlugin() {
 		StopwatchManager.start(Watch.PEOPLE_PLUGIN_DATA);
 
-		if (data.loadPeopleViaPlugins) {
+		if (data.loadMode == LoadMode.PLUGIN) {
 			for (int i = 0; i < data.populationSize; i++) {
 				state.people.add(new PersonId(i));
 			}
@@ -942,7 +1117,7 @@ public class MT_Bulk {
 	}
 
 	private void addGroupPluginMemberships() {
-		if (!data.loadPeopleViaPlugins) {
+		if (data.loadMode != LoadMode.PLUGIN) {
 			return;
 		}
 		int schoolAgedChildrenCount = (int) (data.schoolAgeProportion * state.people.size());
@@ -991,13 +1166,14 @@ public class MT_Bulk {
 			state.groupBuilder.addGroup(groupId, LocalGroupType.SCHOOL);
 		}
 
-//		System.out.println("total people "+state.people.size());
-//		System.out.println("householdCount "+householdCount);
-//		System.out.println("worker count "+workers.size());
-//		System.out.println("workplaceCount "+workplaceCount);
-//		System.out.println("school aged children "+schoolAgedChildren.size());
-//		System.out.println("schoolCount "+schoolCount);
-		
+		// System.out.println("total people "+state.people.size());
+		// System.out.println("householdCount "+householdCount);
+		// System.out.println("worker count "+workers.size());
+		// System.out.println("workplaceCount "+workplaceCount);
+		// System.out.println("school aged children
+		// "+schoolAgedChildren.size());
+		// System.out.println("schoolCount "+schoolCount);
+
 		// put people in homes
 		for (PersonId personId : state.people) {
 			GroupId groupId = houseHoldGroups.get(state.randomGenerator.nextInt(houseHoldGroups.size()));
@@ -1086,7 +1262,7 @@ public class MT_Bulk {
 			personPropertiesBuilder.definePersonProperty(personPropertyId, propertyDefinition);
 		}
 
-		if (data.loadPeopleViaPlugins) {
+		if (data.loadMode == LoadMode.PLUGIN) {
 			for (int i = 0; i < data.initializedPersonPropertyCount; i++) {
 				PersonPropertyId personPropertyId = personPropertyIds.get(i);
 				Class<?> type = types.get(i);
@@ -1163,17 +1339,16 @@ public class MT_Bulk {
 			builder.addResource(resourceId);
 		}
 
-		if (data.loadPeopleViaPlugins) {
+		if (data.loadMode == LoadMode.PLUGIN) {
 			for (PersonId personId : state.people) {
 				for (int i = 0; i < data.initializedResourceCount; i++) {
 					ResourceId resourceId = resourceIds.get(i);
 					long amount = state.randomGenerator.nextInt(1000) + 1;
 					builder.setPersonResourceLevel(personId, resourceId, amount);
-					//System.out.println(personId+"\t"+resourceId+"\t"+amount);
 				}
 			}
 		}
-		
+
 		ResourcesPluginData resourcesPluginData = builder.build();
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
 		state.simulationBuilder.addPlugin(resourcesPlugin);
