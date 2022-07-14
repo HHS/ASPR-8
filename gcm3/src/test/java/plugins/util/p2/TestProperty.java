@@ -13,11 +13,13 @@ import util.time.TimeElapser;
 
 public class TestProperty {
 
-	private static final Property<Integer> PROPERTY_A = new Property<>(0);
+	private static final Property<Integer> PROPERTY_A = new Property<>(45,true);
 	private static final Property<Boolean> PROPERTY_B = new Property<>(false);
+
 
 	@Test
 	public void test() {
+		
 		PropertyContainer propertyContainer = new PropertyContainer();
 
 		propertyContainer.set(PROPERTY_A, 1, 1);
@@ -29,7 +31,7 @@ public class TestProperty {
 		assertEquals(true, propertyContainer.get(PROPERTY_B, 1));
 	}
 
-	@SuppressWarnings("unused")
+	
 	private static Object getRandomPropertyValue(final RandomGenerator randomGenerator) {
 
 		int index = randomGenerator.nextInt(5);
@@ -51,21 +53,33 @@ public class TestProperty {
 
 	@Test
 	public void testCast() {
-//		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2930571381466931440L);
-//
-//		PropertyContainer propertyContainer = new PropertyContainer();
-//
-//		List<Property<?>> properties = new ArrayList<>();
-//		for (int i = 0; i < 1_000; i++) {
-//			properties.add(new Property<>(getRandomPropertyValue(randomGenerator)));
-//
-//		}
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2930571381466931440L);
 
-		// for(Property<?> property : properties) {
-		// for(int i = 0;i<1000;i++) {
-		// propertyContainer.set(property, i, property.defaultValue());
-		// }
-		// }
+		PropertyContainer propertyContainer = new PropertyContainer();
+
+		List<Property<Object>> properties = new ArrayList<>();
+		for (int i = 0; i < 1_000; i++) {
+			
+			new Property<>(45,true);
+			
+			properties.add(new Property<>(getRandomPropertyValue(randomGenerator)));
+
+		}
+		Property<Object> p = new Property<>(45);
+		
+		propertyContainer.get(p,0);
+
+		for (Property<Object> property : properties) {
+			for (int i = 0; i < 1000; i++) {
+				propertyContainer.set(property, i, property.defaultValue());
+			}
+		}
+		
+		
+		Property<String> property = new Property<>("r56");
+		property.defaultValue();
+		
+		
 
 	}
 
@@ -93,11 +107,11 @@ public class TestProperty {
 				propertyContainer.get(property, i);
 			}
 		}
-		
-//		System.out.println(timeElapser.getElapsedMilliSeconds());
+
+		// System.out.println(timeElapser.getElapsedMilliSeconds());
 
 	}
-	
+
 	@Test
 	public void testKeySpeed2() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2930571381466931440L);
@@ -122,8 +136,8 @@ public class TestProperty {
 				propertyContainer.get(property, i);
 			}
 		}
-		
-//		System.out.println(timeElapser.getElapsedMilliSeconds());
+
+		// System.out.println(timeElapser.getElapsedMilliSeconds());
 
 	}
 

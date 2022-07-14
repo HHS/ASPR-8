@@ -1,42 +1,39 @@
 package plugins.util.p2;
 
+import java.util.Optional;
+
+import net.jcip.annotations.Immutable;
+
+@Immutable
 public class Property<T> {
-	
-	private static int masterId;
-	private final int id;
 
-    private final T defaultValue;
+	private boolean valuesAreMutable;
 
-    public Property(T defaultValue) {
-    	this.id = masterId++;
-        this.defaultValue = defaultValue;
-    }
+	private T defaultValue;
 
-    public T defaultValue() {
-        return defaultValue;
-    }
+	public Property() {
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof Property)) {
-			return false;
-		}
-		Property<?> other = (Property<?>) obj;
-		if (id != other.id) {
-			return false;
-		}
-		return true;
+	public Property(T defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public Property(boolean valuesAreMutable) {
+		this.valuesAreMutable = valuesAreMutable;
+	}
+
+	public Property(T defaultValue, boolean valuesAreMutable) {
+		this.defaultValue = defaultValue;
+		this.valuesAreMutable = valuesAreMutable;
+	}
+
+	public Optional<T> defaultValue() {
+		return Optional.ofNullable(defaultValue);
+	}
+
+	public boolean valuesAreMutable() {
+		return valuesAreMutable;
 	}
 
 }
