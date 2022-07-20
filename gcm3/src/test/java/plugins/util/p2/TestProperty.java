@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import util.random.RandomGeneratorProvider;
 import util.time.TimeElapser;
-
+@Disabled
 public class TestProperty {
 
 	private static final Property<Integer> PROPERTY_A = new Property<>(45,true);

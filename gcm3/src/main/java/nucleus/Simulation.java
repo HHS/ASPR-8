@@ -15,11 +15,15 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.NotThreadSafe;
+import nucleus.eventfiltering.EventFilter;
+import nucleus.eventfiltering.IdentifiedFunction;
 import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -226,6 +230,11 @@ public class Simulation {
 		}
 
 		@Override
+		public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
+			Simulation.this.subscribeActorToEventByFilter(eventFilter, eventConsumer);
+		}
+
+		@Override
 		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
 			Simulation.this.subscribeActorToEventByClass(eventClass, eventConsumer);
 		}
@@ -263,6 +272,11 @@ public class Simulation {
 		@Override
 		public <T extends Event> void unsubscribe(Class<T> eventClass) {
 			unSubscribeActorFromEventByClass(eventClass);
+		}
+
+		@Override
+		public <T extends Event> void unsubscribe(EventFilter<T> eventFilter) {
+			unsubscribeActorFromEventByFilter(eventFilter);
 		}
 
 	}
@@ -1098,10 +1112,10 @@ public class Simulation {
 			map = new LinkedHashMap<>();
 			actorEventMap.put(eventClass, map);
 		}
-		 
+
 		@SuppressWarnings("unchecked")
-		Consumer<Event> consumer = event-> eventConsumer.accept(actorContext, (T)event); 
-		
+		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
+
 		map.put(focalActorId, consumer);
 	}
 
@@ -1193,7 +1207,7 @@ public class Simulation {
 			dataManagerEventMap.put(eventClass, list);
 		}
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
-		
+
 		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
 
 		list.add(dataManagerEventConsumer);
@@ -1248,7 +1262,9 @@ public class Simulation {
 			}
 		}
 
-		broadcastEventToActorSubscribers(event);
+		broadcastEventToActorSubscribers_ByLabels(event);
+
+		broadcastEventToFilterNode(event, rootNode);
 
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(event.getClass());
 		if (list != null) {
@@ -1399,7 +1415,6 @@ public class Simulation {
 
 	private int masterDataManagerIndex;
 
-
 	private static class DataManagerEventConsumer implements Consumer<Event>, Comparable<DataManagerEventConsumer> {
 
 		private final Consumer<Event> consumer;
@@ -1409,7 +1424,7 @@ public class Simulation {
 			this.consumer = consumer;
 			this.dataManagerId = dataManagerId;
 		}
-		
+
 		@Override
 		public int compareTo(DataManagerEventConsumer other) {
 			return this.dataManagerId.compareTo(other.dataManagerId);
@@ -1417,7 +1432,7 @@ public class Simulation {
 
 		@Override
 		public void accept(Event event) {
-			consumer.accept(event);			
+			consumer.accept(event);
 		}
 	}
 
@@ -1489,7 +1504,7 @@ public class Simulation {
 		id_Labeler_Map.put(metaEventLabeler.getId(), metaEventLabeler);
 	}
 
-	private void broadcastEventToActorSubscribers(final Event event) {
+	private void broadcastEventToActorSubscribers_ByLabels(final Event event) {
 		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>> map1 = actorPubSub.get(event.getClass());
 		if (map1 == null) {
 			return;
@@ -1563,8 +1578,8 @@ public class Simulation {
 		}
 
 		@SuppressWarnings("unchecked")
-		Consumer<Event> consumer = event-> eventConsumer.accept(actorContext, (T)event);
-		
+		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
+
 		map4.put(focalActorId, consumer);
 
 	}
@@ -1631,5 +1646,121 @@ public class Simulation {
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
 
 	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>>> actorPubSub = new LinkedHashMap<>();
+	////////////////////////////////////////////
 
+	private void broadcastEventToFilterNode(final Event event, FilterNode filterNode) {
+
+		Object value = filterNode.function.apply(event);
+		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
+		if (consumerMap != null) {
+			for (ActorId actorId : consumerMap.keySet()) {
+				Consumer<Event> consumer = consumerMap.get(actorId);
+				final ActorContentRec actorContentRec = new ActorContentRec();
+				actorContentRec.event = event;
+				actorContentRec.actorId = actorId;
+				actorContentRec.consumer = consumer;
+				actorQueue.add(actorContentRec);
+			}
+		}
+		Map<Object, FilterNode> childMap = filterNode.children.get(value);
+		if (childMap != null) {
+			for (Object id : childMap.values()) {
+				FilterNode childNode = childMap.get(id);
+				broadcastEventToFilterNode(event, childNode);
+			}
+		}
+	}
+
+	private FilterNode generateRootNode() {
+		FilterNode result = new FilterNode();
+		result.function = (event) -> event.getClass();
+		return result;
+	}
+
+	private final FilterNode rootNode = generateRootNode();
+
+	private static class FilterNode {
+
+		private Function<Event, Object> function;
+
+		// value of function, id of child filter node, FilterNode
+		private Map<Object, Map<Object, FilterNode>> children = new LinkedHashMap<>();
+
+		// value of function, actor id, Consumer
+		private Map<Object, Map<ActorId, Consumer<Event>>> consumers = new LinkedHashMap<>();
+
+		@SuppressWarnings("unchecked")
+		private <T extends Event> FilterNode addChildNode(Object value, IdentifiedFunction<T> identifiedFunction) {
+			Map<Object, FilterNode> map = children.get(value);
+			if (map == null) {
+				map = new LinkedHashMap<>();
+				children.put(value, map);
+			}
+			Object id = identifiedFunction.getEventFunctionId();
+			FilterNode filterNode = map.get(id);
+			if (filterNode == null) {
+				filterNode = new FilterNode();
+				filterNode.function = event -> identifiedFunction.getEventFuntion().apply((T) event);
+				map.put(id, filterNode);
+			}
+			return filterNode;
+		}
+	}
+
+	private <T extends Event> void subscribeActorToEventByFilter(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
+		if (eventFilter == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
+		}
+
+		if (eventConsumer == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
+		}
+
+		@SuppressWarnings("unchecked")
+		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
+		Object value = eventFilter.getEventClass();
+		FilterNode filterNode = rootNode;
+
+		for (Pair<IdentifiedFunction<T>, Object> pair : eventFilter.getEventFunctionPairs()) {
+			filterNode = filterNode.addChildNode(value, pair.getFirst());
+			value = pair.getSecond();
+		}
+
+		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
+		if (consumerMap == null) {
+			consumerMap = new LinkedHashMap<>();
+			filterNode.consumers.put(value, consumerMap);
+		}
+		consumerMap.put(focalActorId, consumer);
+	}
+
+	private <T extends Event> void unsubscribeActorFromEventByFilter(EventFilter<T> eventFilter) {
+		if (eventFilter == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
+		}
+
+		Object value = eventFilter.getEventClass();
+		FilterNode filterNode = rootNode;
+
+		for (Pair<IdentifiedFunction<T>, Object> pair : eventFilter.getEventFunctionPairs()) {
+			Map<Object, FilterNode> map = filterNode.children.get(value);
+			if (map == null) {
+				return;
+			}
+			Object id = pair.getFirst().getEventFunctionId();
+			filterNode = map.get(id);
+			if (filterNode == null) {
+				return;
+			}
+			value = pair.getSecond();
+		}
+
+		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
+		if (consumerMap == null) {
+			consumerMap = new LinkedHashMap<>();
+			filterNode.consumers.put(value, consumerMap);
+		}
+		consumerMap.remove(focalActorId);
+
+	}
 }

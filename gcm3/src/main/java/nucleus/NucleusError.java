@@ -77,6 +77,11 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_SCENARIO_ID("Unknown scenario id"),
 	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
 	
+	
+	NULL_EVENT_FUNCTION_ID("Null event function id"),
+	NULL_EVENT_FUNCTION_VALUE("Null event function value"),
+	NULL_EVENT_FUNCTION("Null event function"),
+	NULL_EVENT_FILTER("Null event filter"),
 	;
 
 	private final String description;
