@@ -3,20 +3,49 @@ package nucleus.eventfiltering;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
-import org.apache.commons.math3.util.Pair;
-
+import net.jcip.annotations.Immutable;
 import nucleus.Event;
 import nucleus.NucleusError;
 import util.errors.ContractException;
 
-public class EventFilter<T extends Event> {
+@Immutable
+public final class EventFilter<T extends Event> {
+
+	@Immutable
+	public final static class FunctionValue<N> {
+
+		private Object functionId;
+		private Function<N, Object> eventFunction;
+		private Object targetValue;
+
+		public FunctionValue(Object functionId, Function<N, Object> eventFunction, Object targetValue) {
+			super();
+			this.functionId = functionId;
+			this.eventFunction = eventFunction;
+			this.targetValue = targetValue;
+		}
+
+		public Object getFunctionId() {
+			return functionId;
+		}
+
+		public Function<N, Object> getEventFunction() {
+			return eventFunction;
+		}
+
+		public Object getTargetValue() {
+			return targetValue;
+		}
+
+	}
 
 	private static class Data<N extends Event> {
 
 		private Class<N> eventClass;
 
-		private List<Pair<IdentifiedFunction<N>, Object>> eventFunctions = new ArrayList<>();
+		private List<FunctionValue<N>> functionValues = new ArrayList<>();
 	}
 
 	/**
@@ -64,15 +93,19 @@ public class EventFilter<T extends Event> {
 		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION} if the
 		 *             event function is null</li>
 		 */
-		public Builder<N> addFunctionValuePair(IdentifiedFunction<N> eventFunction, Object value) {
+		public Builder<N> addFunctionValue(Object functionId, Function<N, Object> eventFunction, Object targetValue) {
+
+			if (functionId == null) {
+				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_ID);
+			}
 			if (eventFunction == null) {
 				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION);
 			}
-			if (value == null) {
+			if (targetValue == null) {
 				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_VALUE);
 			}
 
-			data.eventFunctions.add(new Pair<>(eventFunction, value));
+			data.functionValues.add(new FunctionValue<>(functionId, eventFunction, targetValue));
 			return this;
 		}
 	}
@@ -91,10 +124,10 @@ public class EventFilter<T extends Event> {
 	}
 
 	/**
-	 * Returns an unmodifiable list of the the event function/value pairs
+	 * Returns an unmodifiable list of the the event function values
 	 */
-	public List<Pair<IdentifiedFunction<T>, Object>> getEventFunctionPairs() {
-		return Collections.unmodifiableList(data.eventFunctions);
+	public List<FunctionValue<T>> getFunctionValues() {
+		return Collections.unmodifiableList(data.functionValues);
 	}
 
 }

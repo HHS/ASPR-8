@@ -13,6 +13,7 @@ import org.apache.commons.math3.util.Pair;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.SimulationContext;
+import nucleus.eventfiltering.EventFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
@@ -24,11 +25,13 @@ import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
+import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
-import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.support.RegionError;
+import plugins.regions.support.RegionId;
 import plugins.util.properties.BooleanPropertyManager;
 import plugins.util.properties.DoublePropertyManager;
 import plugins.util.properties.EnumPropertyManager;
@@ -65,9 +68,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		nonDefaultBearingPropertyIds.put(personPropertyId, nonDefaultBearingPropertyIds.size());
 		nonDefaultChecks = new boolean[nonDefaultBearingPropertyIds.size()];
 	}
-	
-	private void validatePropertyDefinitionInitializationNotNull(PersonPropertyDefinitionInitialization propertyDefinitionInitialization){
-		if(propertyDefinitionInitialization == null) {
+
+	private void validatePropertyDefinitionInitializationNotNull(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) {
+		if (propertyDefinitionInitialization == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION_INITIALIZATION);
 		}
 	}
@@ -100,7 +103,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		final IndexedPropertyManager propertyManager = getIndexedPropertyManager(dataManagerContext, propertyDefinition, 0);
 		personPropertyManagerMap.put(personPropertyId, propertyManager);
 
-		if (checkAllPeopleHaveValues) {	
+		if (checkAllPeopleHaveValues) {
 			addNonDefaultProperty(personPropertyId);
 			int idLimit = peopleDataManager.getPersonIdLimit();
 			BitSet coverageSet = new BitSet(idLimit);
@@ -147,7 +150,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
-		RegionsDataManager regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
+		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
 		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionsDataManager));
 		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty());
@@ -222,6 +225,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 */
 
 	private PeopleDataManager peopleDataManager;
+
+	private RegionsDataManager regionsDataManager;
 
 	private IndexedPropertyManager getIndexedPropertyManager(final SimulationContext simulationContext, final PropertyDefinition propertyDefinition, final int intialSize) {
 
@@ -702,4 +707,101 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	}
 
+	private void validateRegionId(RegionId regionId) {
+		if (regionId == null) {
+			throw new ContractException(RegionError.NULL_REGION_ID);
+		}
+
+		if (!regionsDataManager.regionIdExists(regionId)) {
+			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
+		}
+	}
+
+	private static enum EventFunctionIds {
+		PERSON_PROPERTY_ID, REGION_ID, PERSON_ID
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches all such events.
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilter() {		
+		return EventFilter.builder(PersonPropertyUpdateEvent.class).build();
+	}
+
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id.
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByProperty(PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		EventFilter.Builder<PersonPropertyUpdateEvent> filterBuilder = EventFilter.builder(PersonPropertyUpdateEvent.class);
+		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId);
+		return filterBuilder.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id
+	 * and person id.
+	 * 
+	 * 
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
+	 *             is null</li>
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
+	 *             id is not known</li>
+	 * 
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByPersonAndProperty(PersonId personId, PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		validatePersonExists(personId);
+		EventFilter.Builder<PersonPropertyUpdateEvent> filterBuilder = EventFilter.builder(PersonPropertyUpdateEvent.class);
+		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId);
+		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_ID, e -> e.getPersonId(), personId);
+		return filterBuilder.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonPropertyUpdateEvent} events. Matches on region id and person
+	 * property id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             id is not known</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the person
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             person property id is not known</li>
+	 * 
+	 */
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByRegionAndProperty(RegionId regionId, PersonPropertyId personPropertyId) {
+		validatePersonPropertyId(personPropertyId);
+		validateRegionId(regionId);
+		EventFilter.Builder<PersonPropertyUpdateEvent> filterBuilder = EventFilter.builder(PersonPropertyUpdateEvent.class);
+		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId);
+		filterBuilder.addFunctionValue(EventFunctionIds.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()), regionId);
+		return filterBuilder.build();
+	}
 }

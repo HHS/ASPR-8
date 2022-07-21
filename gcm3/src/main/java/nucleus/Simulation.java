@@ -19,11 +19,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.NotThreadSafe;
 import nucleus.eventfiltering.EventFilter;
-import nucleus.eventfiltering.IdentifiedFunction;
+import nucleus.eventfiltering.EventFilter.FunctionValue;
 import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -1664,9 +1663,11 @@ public class Simulation {
 		}
 		Map<Object, FilterNode> childMap = filterNode.children.get(value);
 		if (childMap != null) {
-			for (Object id : childMap.values()) {
+			for (Object id : childMap.keySet()) {
 				FilterNode childNode = childMap.get(id);
-				broadcastEventToFilterNode(event, childNode);
+				if (childNode != null) {
+					broadcastEventToFilterNode(event, childNode);
+				}
 			}
 		}
 	}
@@ -1690,18 +1691,18 @@ public class Simulation {
 		private Map<Object, Map<ActorId, Consumer<Event>>> consumers = new LinkedHashMap<>();
 
 		@SuppressWarnings("unchecked")
-		private <T extends Event> FilterNode addChildNode(Object value, IdentifiedFunction<T> identifiedFunction) {
+		private <T extends Event> FilterNode addChildNode(Object value, Object functionId, Function<T, Object> eventFunction) {
 			Map<Object, FilterNode> map = children.get(value);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				children.put(value, map);
 			}
-			Object id = identifiedFunction.getEventFunctionId();
-			FilterNode filterNode = map.get(id);
+
+			FilterNode filterNode = map.get(functionId);
 			if (filterNode == null) {
 				filterNode = new FilterNode();
-				filterNode.function = event -> identifiedFunction.getEventFuntion().apply((T) event);
-				map.put(id, filterNode);
+				filterNode.function = event -> eventFunction.apply((T) event);
+				map.put(functionId, filterNode);
 			}
 			return filterNode;
 		}
@@ -1720,10 +1721,9 @@ public class Simulation {
 		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
 		Object value = eventFilter.getEventClass();
 		FilterNode filterNode = rootNode;
-
-		for (Pair<IdentifiedFunction<T>, Object> pair : eventFilter.getEventFunctionPairs()) {
-			filterNode = filterNode.addChildNode(value, pair.getFirst());
-			value = pair.getSecond();
+		for (FunctionValue<T> functionValue : eventFilter.getFunctionValues()) {
+			filterNode = filterNode.addChildNode(value, functionValue.getFunctionId(), functionValue.getEventFunction());
+			value = functionValue.getTargetValue();
 		}
 
 		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
@@ -1742,17 +1742,17 @@ public class Simulation {
 		Object value = eventFilter.getEventClass();
 		FilterNode filterNode = rootNode;
 
-		for (Pair<IdentifiedFunction<T>, Object> pair : eventFilter.getEventFunctionPairs()) {
+		for (FunctionValue<T> functionValue : eventFilter.getFunctionValues()) {
 			Map<Object, FilterNode> map = filterNode.children.get(value);
 			if (map == null) {
 				return;
 			}
-			Object id = pair.getFirst().getEventFunctionId();
+			Object id = functionValue.getFunctionId();
 			filterNode = map.get(id);
 			if (filterNode == null) {
 				return;
 			}
-			value = pair.getSecond();
+			value = functionValue.getTargetValue();
 		}
 
 		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);

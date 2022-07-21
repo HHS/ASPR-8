@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.naming.Context;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
@@ -26,6 +27,7 @@ import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
+import nucleus.eventfiltering.EventFilter;
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -40,16 +42,18 @@ import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
+import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.support.PersonPropertyInitialization;
-import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestAuxiliaryPersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.support.RegionError;
+import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
@@ -1263,4 +1267,403 @@ public final class AT_PersonPropertyDataManager {
 		});
 
 	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterByProperty", args = { PersonPropertyId.class })
+	public void testGetEventFilterByProperty() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		/*
+		 * have an observer subscribe to every person property id
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByProperty(propertyId);
+				assertNotNull(eventFilter);
+				c.subscribe(eventFilter, (c2, e) -> {
+					MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());
+					actualObservations.add(multiKey);
+				});
+			}
+		}));
+
+		/*
+		 * have an actor change every person's properties for all those
+		 * properties that can be changed over three distinct times
+		 */
+		for (int i = 1; i < 2; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
+					if (propertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+						for (PersonId personId : peopleDataManager.getPeople()) {
+							Object randomPropertyValue = propertyId.getRandomPropertyValue(randomGenerator);
+							personPropertiesDataManager.setPersonPropertyValue(personId, propertyId, randomPropertyValue);
+							MultiKey multiKey = new MultiKey(c.getTime(), personId, propertyId, randomPropertyValue);
+							expectedObservations.add(multiKey);
+						}
+					}
+				}
+			}));
+		}
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PersonPropertiesActionSupport.testConsumers(10, 5585766374187295381L, testPlugin);
+
+		// precondition test: if the person property id is null
+		PersonPropertiesActionSupport.testConsumer(0, 6844554554783464142L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByProperty(null));
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the person property id is not known
+		PersonPropertiesActionSupport.testConsumer(0, 334179992057034848L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByProperty(TestPersonPropertyId.getUnknownPersonPropertyId()));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterByPersonAndProperty", args = { PersonId.class, PersonPropertyId.class })
+	public void testGetEventFilterByPersonAndProperty() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		Set<Pair<PersonId, TestPersonPropertyId>> selectedPairs = new LinkedHashSet<>();
+
+		/*
+		 * have an actor determine which people and property pairs will be
+		 * observed
+		 */
+		pluginBuilder.addTestActorPlan("selector", new TestActorPlan(0, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+			for (PersonId personId : people) {
+				if (randomGenerator.nextDouble() < 0.6) {
+					continue;
+				}
+				for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
+					if (!propertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+						continue;
+					}
+					selectedPairs.add(new Pair<>(personId, propertyId));
+				}
+			}
+		}));
+
+		/*
+		 * have an observer subscribe to the selected (person, property) pairs
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			for (Pair<PersonId, TestPersonPropertyId> pair : selectedPairs) {
+				PersonId personId = pair.getFirst();
+				TestPersonPropertyId propertyId = pair.getSecond();
+
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, propertyId);
+				assertNotNull(eventFilter);
+				c.subscribe(eventFilter, (c2, e) -> {
+					MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());
+					actualObservations.add(multiKey);
+				});
+			}
+		}));
+
+		/*
+		 * Have an actor change every person's properties for all those
+		 * properties that can be changed over three distinct times.
+		 */
+		for (int i = 1; i < 2; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
+					if (propertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+						for (PersonId personId : peopleDataManager.getPeople()) {
+							Object randomPropertyValue = propertyId.getRandomPropertyValue(randomGenerator);
+							personPropertiesDataManager.setPersonPropertyValue(personId, propertyId, randomPropertyValue);
+							Pair<PersonId, TestPersonPropertyId> pair = new Pair<>(personId, propertyId);
+							if (selectedPairs.contains(pair)) {
+								MultiKey multiKey = new MultiKey(c.getTime(), personId, propertyId, randomPropertyValue);
+								expectedObservations.add(multiKey);
+							}
+						}
+					}
+				}
+			}));
+		}
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PersonPropertiesActionSupport.testConsumers(50, 752337695044384521L, testPlugin);
+
+		// precondition test: if the person property id is null
+		PersonPropertiesActionSupport.testConsumer(10, 7436809263151926252L, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+			assertTrue(people.size() > 0);
+			PersonId personId = people.get(0);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, null));
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the person property id is not known
+		PersonPropertiesActionSupport.testConsumer(10, 5042142105400574982L, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+			assertTrue(people.size() > 0);
+			PersonId personId = people.get(0);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, TestPersonPropertyId.getUnknownPersonPropertyId()));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
+		// * id is not known</li>
+
+		// precondition test: if the person id is null
+		PersonPropertiesActionSupport.testConsumer(10, 2414428612890791850L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> personPropertiesDataManager.getEventFilterByPersonAndProperty(null, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the person id is not known
+		PersonPropertiesActionSupport.testConsumer(10, 2414428612890791850L, (c) -> {
+			PersonId personId = new PersonId(1000000);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterByRegionAndProperty", args = { RegionId.class, PersonPropertyId.class })
+	public void testGetEventFilterByRegionAndProperty() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		Set<Pair<RegionId, TestPersonPropertyId>> selectedPairs = new LinkedHashSet<>();
+
+		/*
+		 * have an actor determine which region and property pairs will be
+		 * observed
+		 */
+		pluginBuilder.addTestActorPlan("selector", new TestActorPlan(0, (c) -> {
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+			for (RegionId regionId : regionIds) {
+				if (randomGenerator.nextDouble() < 0.6) {
+					continue;
+				}
+				for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
+					if (!propertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+						continue;
+					}
+					selectedPairs.add(new Pair<>(regionId, propertyId));
+				}
+			}
+		}));
+
+		/*
+		 * have an observer subscribe to the selected (person, property) pairs
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			for (Pair<RegionId, TestPersonPropertyId> pair : selectedPairs) {
+				RegionId regionId = pair.getFirst();
+				TestPersonPropertyId propertyId = pair.getSecond();
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, propertyId);
+				assertNotNull(eventFilter);
+				c.subscribe(eventFilter, (c2, e) -> {
+					MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());
+					actualObservations.add(multiKey);
+				});
+			}
+		}));
+
+		/*
+		 * Have an actor change every person's properties for all those
+		 * properties that can be changed over three distinct times.
+		 */
+		for (int i = 1; i < 2; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
+					if (propertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+						for (PersonId personId : peopleDataManager.getPeople()) {
+							Object randomPropertyValue = propertyId.getRandomPropertyValue(randomGenerator);
+							personPropertiesDataManager.setPersonPropertyValue(personId, propertyId, randomPropertyValue);
+							RegionId regionId = regionsDataManager.getPersonRegion(personId);
+							Pair<RegionId, TestPersonPropertyId> pair = new Pair<>(regionId, propertyId);
+
+							if (selectedPairs.contains(pair)) {
+								MultiKey multiKey = new MultiKey(c.getTime(), personId, propertyId, randomPropertyValue);
+								expectedObservations.add(multiKey);
+							}
+						}
+					}
+				}
+			}));
+		}
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PersonPropertiesActionSupport.testConsumers(100, 6462842714052608355L, testPlugin);
+
+		// precondition test: if the person property id is null
+		PersonPropertiesActionSupport.testConsumer(10, 6900159997685687591L, (c) -> {
+			RegionId regionId = TestRegionId.REGION_1;
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, null));
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the person property id is not known
+		PersonPropertiesActionSupport.testConsumer(10, 7580223995144844140L, (c) -> {
+			RegionId regionId = TestRegionId.REGION_1;
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, TestPersonPropertyId.getUnknownPersonPropertyId()));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the region id is null
+		PersonPropertiesActionSupport.testConsumer(10, 451632169807459388L, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> personPropertiesDataManager.getEventFilterByRegionAndProperty(null, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the person id is not known
+		PersonPropertiesActionSupport.testConsumer(10, 558207030058239684L, (c) -> {
+			RegionId regionId = TestRegionId.getUnknownRegionId();
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilter", args = {})
+	public void testGetEventFilter() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		/*
+		 * have an observer subscribe to every person property id
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilter();
+			assertNotNull(eventFilter);
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());
+				actualObservations.add(multiKey);
+			});
+
+		}));
+
+		/*
+		 * have an actor change every person's properties for all those
+		 * properties that can be changed over three distinct times
+		 */
+		for (int i = 1; i < 2; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
+					if (propertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+						for (PersonId personId : peopleDataManager.getPeople()) {
+							Object randomPropertyValue = propertyId.getRandomPropertyValue(randomGenerator);
+							personPropertiesDataManager.setPersonPropertyValue(personId, propertyId, randomPropertyValue);
+							MultiKey multiKey = new MultiKey(c.getTime(), personId, propertyId, randomPropertyValue);
+							expectedObservations.add(multiKey);
+						}
+					}
+				}
+			}));
+		}
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PersonPropertiesActionSupport.testConsumers(10, 3804034702019855460L, testPlugin);
+
+	}
+
 }

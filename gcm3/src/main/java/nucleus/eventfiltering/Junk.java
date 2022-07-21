@@ -1,8 +1,6 @@
 package nucleus.eventfiltering;
 
-import org.apache.commons.math3.util.Pair;
-
-import nucleus.eventfiltering.IdentifiedFunction.Builder;
+import nucleus.eventfiltering.EventFilter.FunctionValue;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
@@ -20,32 +18,16 @@ public class Junk {
 
 	private EventFilter<PersonPropertyUpdateEvent> getEventFilter(PersonPropertyId personPropertyId, RegionId regionId) {
 		EventFilter.Builder<PersonPropertyUpdateEvent> filterBuilder = EventFilter.builder(PersonPropertyUpdateEvent.class);
-		Builder<PersonPropertyUpdateEvent> functionBuilder = IdentifiedFunction.builder(PersonPropertyUpdateEvent.class);
-
-		IdentifiedFunction<PersonPropertyUpdateEvent> identifiedFunction = //
-				functionBuilder//
-								.setFunctionId(EventFunctionIds.PERSON_PROPERTY_ID)//
-								.setEventFunction((e) -> e.getPersonPropertyId())//
-								.build();
-
-		filterBuilder.addFunctionValuePair(identifiedFunction, personPropertyId);
-		identifiedFunction = //
-				functionBuilder//
-								.setFunctionId(EventFunctionIds.REGION_ID)//
-								.setEventFunction((e) -> regionsDataManager.getPersonRegion(e.getPersonId()))//
-								.build();
-
-		filterBuilder.addFunctionValuePair(identifiedFunction, regionId);
+		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId);
+		filterBuilder.addFunctionValue(EventFunctionIds.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()), regionId);
 		return filterBuilder.build();
 	}
 
 	public static void main(String[] args) {
 		EventFilter<PersonPropertyUpdateEvent> eventFilter = new Junk().getEventFilter(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, TestRegionId.REGION_1);
-		for (Pair<IdentifiedFunction<PersonPropertyUpdateEvent>, Object> pair : eventFilter.getEventFunctionPairs()) {
-			IdentifiedFunction<PersonPropertyUpdateEvent> identifiedFunction = pair.getFirst();
-			System.out.println(identifiedFunction.getEventFunctionId());			
-			Object value = pair.getSecond();
-			System.out.println("value = "+value);
+		for(FunctionValue<PersonPropertyUpdateEvent> functionValue : eventFilter.getFunctionValues()) {
+			System.out.println(functionValue.getFunctionId());
+			System.out.println(functionValue.getTargetValue());
 		}
 	}
 }
