@@ -21,8 +21,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 
 import net.jcip.annotations.NotThreadSafe;
-import nucleus.eventfiltering.EventFilter;
-import nucleus.eventfiltering.EventFilter.FunctionValue;
+import nucleus.EventFilter.FunctionValue;
 import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -1645,7 +1644,6 @@ public class Simulation {
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
 
 	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>>> actorPubSub = new LinkedHashMap<>();
-	////////////////////////////////////////////
 
 	private void broadcastEventToFilterNode(final Event event, FilterNode filterNode) {
 
@@ -1674,6 +1672,7 @@ public class Simulation {
 
 	private FilterNode generateRootNode() {
 		FilterNode result = new FilterNode();
+		result.id = new Object();
 		result.function = (event) -> event.getClass();
 		return result;
 	}
@@ -1681,6 +1680,10 @@ public class Simulation {
 	private final FilterNode rootNode = generateRootNode();
 
 	private static class FilterNode {
+
+		private FilterNode parent;
+
+		private Object id;
 
 		private Function<Event, Object> function;
 
@@ -1701,6 +1704,8 @@ public class Simulation {
 			FilterNode filterNode = map.get(functionId);
 			if (filterNode == null) {
 				filterNode = new FilterNode();
+				filterNode.id = functionId;
+				filterNode.parent = this;
 				filterNode.function = event -> eventFunction.apply((T) event);
 				map.put(functionId, filterNode);
 			}
@@ -1761,6 +1766,16 @@ public class Simulation {
 			filterNode.consumers.put(value, consumerMap);
 		}
 		consumerMap.remove(focalActorId);
+
+		while (filterNode.parent != null) {
+			boolean removeNode = filterNode.children.isEmpty() && filterNode.consumers.isEmpty();
+			if (removeNode) {
+				filterNode.parent.children.remove(filterNode.id);
+			}else {
+				break;
+			}
+			filterNode = filterNode.parent;
+		}
 
 	}
 }

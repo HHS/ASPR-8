@@ -1,4 +1,4 @@
-package nucleus.eventfiltering;
+package nucleus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import nucleus.NucleusError;
 import util.errors.ContractException;
 
 @Immutable

@@ -12,8 +12,8 @@ import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
 import nucleus.SimulationContext;
-import nucleus.eventfiltering.EventFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
@@ -725,11 +725,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonPropertyUpdateEvent} events. Matches all such events.
 	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilter() {		
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilter() {
 		return EventFilter.builder(PersonPropertyUpdateEvent.class).build();
 	}
 
-	
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id.
@@ -745,9 +744,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 */
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByProperty(PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
-		EventFilter.Builder<PersonPropertyUpdateEvent> filterBuilder = EventFilter.builder(PersonPropertyUpdateEvent.class);
-		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId);
-		return filterBuilder.build();
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
+							.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId)//
+							.build();
+
 	}
 
 	/**
@@ -772,10 +772,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByPersonAndProperty(PersonId personId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
 		validatePersonExists(personId);
-		EventFilter.Builder<PersonPropertyUpdateEvent> filterBuilder = EventFilter.builder(PersonPropertyUpdateEvent.class);
-		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId);
-		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_ID, e -> e.getPersonId(), personId);
-		return filterBuilder.build();
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
+							.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId)//
+							.addFunctionValue(EventFunctionIds.PERSON_ID, e -> e.getPersonId(), personId)//
+							.build();
 	}
 
 	/**
@@ -799,9 +799,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByRegionAndProperty(RegionId regionId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
 		validateRegionId(regionId);
-		EventFilter.Builder<PersonPropertyUpdateEvent> filterBuilder = EventFilter.builder(PersonPropertyUpdateEvent.class);
-		filterBuilder.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId);
-		filterBuilder.addFunctionValue(EventFunctionIds.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()), regionId);
-		return filterBuilder.build();
+		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
+							.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId)//
+							.addFunctionValue(EventFunctionIds.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()), regionId)//
+							.build();
 	}
 }

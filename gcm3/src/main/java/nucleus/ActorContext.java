@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import nucleus.eventfiltering.EventFilter;
 import util.errors.ContractException;
 
 /**
