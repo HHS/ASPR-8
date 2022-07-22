@@ -140,32 +140,26 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_LABEL} if the EventLabel
 	 *             is null
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
-	 *             ActorEventConsumer is null           
+	 *             ActorEventConsumer is null
 	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
 	 *             labeler id in the event label cannot be resolved to a
-	 *             registered event labeler 
-	 *           
+	 *             registered event labeler
+	 * 
 	 * 
 	 */
 	public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer);
-	
-	
+
 	/**
-	 * Subscribes the current actor to the given event filter. Events of the type
-	 * T that are matched to the event filter. If a match is found, then the
-	 * event will be consumed by the supplied event consumer.
+	 * Subscribes the current actor to the given event filter. Events of the
+	 * type T are processed by the event filter. If the event passes the filter
+	 * the event will be consumed by the supplied event consumer.
 	 * 
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_LABEL} if the EventLabel
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
-	 *             ActorEventConsumer is null           
-	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
-	 *             labeler id in the event label cannot be resolved to a
-	 *             registered event labeler 
-	 *           
-	 * 
+	 *             <li>{@link NucleusError#NULL_EVENT_FILTER} if the event
+	 *             filter is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
+	 *             consumer is null
 	 */
 	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer);
 
@@ -199,15 +193,16 @@ public interface ActorContext extends SimulationContext {
 	 *             label has a null primary key
 	 */
 	public <T extends Event> void unsubscribe(EventLabel<T> eventLabel);
-	
-	
+
 	/**
 	 * Unsubscribes the current actor from the given event filter.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_FILTER} if the event
+	 *             filter is null
 	 *
 	 */
 	public <T extends Event> void unsubscribe(EventFilter<T> eventFilter);
-	
-	
 
 	/**
 	 * Unsubscribes the actor from events of the given type.

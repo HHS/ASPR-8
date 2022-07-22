@@ -1645,9 +1645,19 @@ public class Simulation {
 
 	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>>> actorPubSub = new LinkedHashMap<>();
 
+	/*
+	 * Recursively processes the event through the filter node . Events should
+	 * be processed through the root filter node. Each node's consumers have
+	 * each such consumer scheduled onto the actor queue for delayed execution
+	 * of the consumer.
+	 */
 	private void broadcastEventToFilterNode(final Event event, FilterNode filterNode) {
 
+		// determine the value of the function for the given event
 		Object value = filterNode.function.apply(event);
+
+		// use that value to place any consumers that are matched to that value
+		// on the actor queue
 		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
 		if (consumerMap != null) {
 			for (ActorId actorId : consumerMap.keySet()) {
@@ -1659,6 +1669,9 @@ public class Simulation {
 				actorQueue.add(actorContentRec);
 			}
 		}
+
+		// match the value to any child nodes and recursively call this method
+		// on that node
 		Map<Object, FilterNode> childMap = filterNode.children.get(value);
 		if (childMap != null) {
 			for (Object id : childMap.keySet()) {
@@ -1670,6 +1683,9 @@ public class Simulation {
 		}
 	}
 
+	/*
+	 * Generates a filter node to be used as the root filter node.
+	 */
 	private FilterNode generateRootNode() {
 		FilterNode result = new FilterNode();
 		result.id = new Object();
@@ -1679,10 +1695,21 @@ public class Simulation {
 
 	private final FilterNode rootNode = generateRootNode();
 
+	/*
+	 * A data structure for containing a function that process an event and
+	 * returns a value. The node contains maps of the return value that either
+	 * match actor consumers of the event or child nodes to this node. The nodes
+	 * thus form a tree with a single root node that filters by event class
+	 * type. The tree represents simple conjunctive event filters of the form:
+	 * 
+	 * F1(e)=A & F2(e)=B &...
+	 */
 	private static class FilterNode {
 
+		// the parent node is used during the unsubscribe process
 		private FilterNode parent;
 
+		// the id is used during the unsubscribe process
 		private Object id;
 
 		private Function<Event, Object> function;
@@ -1693,6 +1720,12 @@ public class Simulation {
 		// value of function, actor id, Consumer
 		private Map<Object, Map<ActorId, Consumer<Event>>> consumers = new LinkedHashMap<>();
 
+		/*
+		 * Integrates a function and its id and target value into the tree at
+		 * this node as a child node if the node does not already exist. Note
+		 * that functions cannot be compared for equality and that the id value
+		 * takes on this role for the function.
+		 */
 		@SuppressWarnings("unchecked")
 		private <T extends Event> FilterNode addChildNode(Object value, Object functionId, Function<T, Object> eventFunction) {
 			Map<Object, FilterNode> map = children.get(value);
@@ -1713,6 +1746,11 @@ public class Simulation {
 		}
 	}
 
+	/*
+	 * Subscribes the current actor (focalActorId) to the event subject to the
+	 * event filter. This overwrites the current consumer associated with this
+	 * event and filter if it is present.
+	 */
 	private <T extends Event> void subscribeActorToEventByFilter(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 		if (eventFilter == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
@@ -1722,15 +1760,34 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
+		/*
+		 * We wrap the typed consumer with a consumer of event, knowing that the
+		 * cast to (T) is safe. This simplifies the FilterNode class.
+		 */
 		@SuppressWarnings("unchecked")
 		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
+
+		/*
+		 * The event filter does not contain a FunctionValue associated with the
+		 * root filter node, so we have to integrate it with the root node by
+		 * assigning the associated value to the class type that matches the
+		 * generics type of the event filter.
+		 */
 		Object value = eventFilter.getEventClass();
 		FilterNode filterNode = rootNode;
+
+		/*
+		 * We loop through the (function,value) pairs, integrating each into the
+		 * tree of filter nodes and creating new filter nodes as needed.
+		 */
 		for (FunctionValue<T> functionValue : eventFilter.getFunctionValues()) {
 			filterNode = filterNode.addChildNode(value, functionValue.getFunctionId(), functionValue.getEventFunction());
 			value = functionValue.getTargetValue();
 		}
 
+		/*
+		 * The final node will contain the consumer
+		 */
 		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
 		if (consumerMap == null) {
 			consumerMap = new LinkedHashMap<>();
@@ -1739,14 +1796,23 @@ public class Simulation {
 		consumerMap.put(focalActorId, consumer);
 	}
 
+	/*
+	 * Removes the consumer from the filter node tree and removes nodes that are
+	 * empty(no children, no consumers), except for the root node.
+	 */
 	private <T extends Event> void unsubscribeActorFromEventByFilter(EventFilter<T> eventFilter) {
 		if (eventFilter == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
 		}
 
+		// start at the root filter node
 		Object value = eventFilter.getEventClass();
 		FilterNode filterNode = rootNode;
 
+		/*
+		 * Walk down the tree and if we find that any of the function id values
+		 * are not present then we simply return since the consumer cannot exist
+		 */
 		for (FunctionValue<T> functionValue : eventFilter.getFunctionValues()) {
 			Map<Object, FilterNode> map = filterNode.children.get(value);
 			if (map == null) {
@@ -1760,18 +1826,25 @@ public class Simulation {
 			value = functionValue.getTargetValue();
 		}
 
+		/*
+		 * The last node may contain the consumer
+		 */
 		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
 		if (consumerMap == null) {
-			consumerMap = new LinkedHashMap<>();
-			filterNode.consumers.put(value, consumerMap);
+			return;
 		}
 		consumerMap.remove(focalActorId);
 
+		/*
+		 * Walk back up the tree, removing nodes that have neither child nodes
+		 * nor consumers. Once we hit a node that does not need removal we can
+		 * stop since all ancestor nodes will also not be empty.
+		 */
 		while (filterNode.parent != null) {
 			boolean removeNode = filterNode.children.isEmpty() && filterNode.consumers.isEmpty();
 			if (removeNode) {
 				filterNode.parent.children.remove(filterNode.id);
-			}else {
+			} else {
 				break;
 			}
 			filterNode = filterNode.parent;

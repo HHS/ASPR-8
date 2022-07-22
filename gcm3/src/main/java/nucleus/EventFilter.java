@@ -8,6 +8,16 @@ import java.util.function.Function;
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 
+/**
+ * 
+ * A generics-based data class for collecting an ordered list of predicates of
+ * the form F(event) = value that are used on conjunction to filter events.
+ * 
+ * 
+ * @author Shawn Hatch
+ *
+ * 
+ */
 @Immutable
 public final class EventFilter<T extends Event> {
 
@@ -61,6 +71,12 @@ public final class EventFilter<T extends Event> {
 		return new Builder<N>(classReference);
 	}
 
+	/**
+	 * Builder class for EventFilter
+	 * 
+	 * @author Shawn Hatch
+	 * 
+	 */
 	public static class Builder<N extends Event> {
 
 		private Data<N> data = new Data<>();
@@ -72,7 +88,7 @@ public final class EventFilter<T extends Event> {
 		}
 
 		/**
-		 * Constructs a new EventLabel.
+		 * Constructs a new EventLabel from the collected data.
 		 * 
 		 */
 		public EventFilter<N> build() {
@@ -85,11 +101,15 @@ public final class EventFilter<T extends Event> {
 		}
 
 		/**
-		 * Sets the function id
+		 * Adds an event function and its associated target value.
 		 * 
 		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION_ID} if
+		 *             the function id is null</li>
 		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION} if the
 		 *             event function is null</li>
+		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION_VALUE}
+		 *             if the target value is null</li>
 		 */
 		public Builder<N> addFunctionValue(Object functionId, Function<N, Object> eventFunction, Object targetValue) {
 
@@ -115,14 +135,14 @@ public final class EventFilter<T extends Event> {
 	}
 
 	/**
-	 * Returns the event subclass required by the event function
+	 * Returns the event subclass associated with all function values 
 	 */
 	public Class<T> getEventClass() {
 		return data.eventClass;
 	}
 
 	/**
-	 * Returns an unmodifiable list of the the event function values
+	 * Returns an unmodifiable list of the function values
 	 */
 	public List<FunctionValue<T>> getFunctionValues() {
 		return Collections.unmodifiableList(data.functionValues);
