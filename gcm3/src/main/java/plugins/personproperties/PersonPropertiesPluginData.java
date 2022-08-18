@@ -166,6 +166,9 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 
 		private void validateData() {
+			if(!dataIsMutable) {
+				return;
+			}
 
 			for (List<PersonPropertyInitialization> list : data.personPropertyValues) {
 				if (list != null) {

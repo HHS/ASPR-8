@@ -344,7 +344,7 @@ public final class Experiment {
 		 */
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
-			List<Plugin> plugins = preSimActions(scenarioId);
+			List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
 			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportFailuresToConsole));
 			jobIndex++;
 		}
@@ -358,7 +358,7 @@ public final class Experiment {
 		while (jobCompletionCount < jobs.size()) {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
-				List<Plugin> plugins = preSimActions(scenarioId);
+				List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
 				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportFailuresToConsole));
 				jobIndex++;
 			}
@@ -415,9 +415,9 @@ public final class Experiment {
 
 			// generate the plugins that will form the simulation for the given
 			// scenario id
-			final List<Plugin> plugins = preSimActions(scenarioId);
+			final List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
 
-			// Load the plugin behaviors into the simulation builder
+			// Load the plugins into the simulation builder
 			for (final Plugin plugin : plugins) {
 				simBuilder.addPlugin(plugin);
 			}
@@ -451,7 +451,7 @@ public final class Experiment {
 		}
 	}
 
-	private List<Plugin> preSimActions(final int scenarioId) {
+	private List<Plugin> getNewPluginInstancesFromScenarioId(final int scenarioId) {
 		/*
 		 * Build the type map of the clone plugin data builders from the plugins
 		 * supplied to the dimensions of the experiment

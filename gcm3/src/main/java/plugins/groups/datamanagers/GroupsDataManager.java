@@ -491,7 +491,7 @@ public final class GroupsDataManager extends DataManager {
 		dataManagerContext.releaseEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
 	}
 
-	public void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
+	private void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}

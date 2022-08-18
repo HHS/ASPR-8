@@ -353,8 +353,8 @@ public class Simulation {
 		 * simulation
 		 * 
 		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_PLUGIN_INITIALIZER} if the
-		 *             plugin intializer is null
+		 *             <li>{@link NucleusError#NULL_PLUGIN} if the plugin is
+		 *             null
 		 * 
 		 */
 

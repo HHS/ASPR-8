@@ -62,16 +62,16 @@ public final class StochasticsPluginData implements PluginData {
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
-		
+
 		private boolean dataIsMutable;
 
 		private void ensureDataMutability() {
-			if(!dataIsMutable) {
+			if (!dataIsMutable) {
 				data = new Data(data);
 				dataIsMutable = true;
 			}
 		}
-		
+
 		private Builder(Data data) {
 			this.data = data;
 

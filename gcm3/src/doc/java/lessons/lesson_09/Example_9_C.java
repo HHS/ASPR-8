@@ -1,0 +1,82 @@
+package lessons.lesson_09;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import lessons.lesson_09.plugins.disease.DiseasePlugin;
+import lessons.lesson_09.plugins.disease.DiseasePluginData;
+import lessons.lesson_09.plugins.model.ModelPlugin;
+import lessons.lesson_09.plugins.policy.PolicyPlugin;
+import lessons.lesson_09.plugins.policy.PolicyPluginData;
+import nucleus.Dimension;
+import nucleus.Experiment;
+import nucleus.Plugin;
+
+public final class Example_9_C {
+
+	private Example_9_C() {
+	}
+
+	private static DiseasePluginData getDiseasePluginData() {
+		return DiseasePluginData.builder()//
+								.setR0(1.5)//
+								.setAsymptomaticDays(4.0)//
+								.setSymptomaticDays(12.0)//
+								.build();
+	}
+
+	private static PolicyPluginData getPolicyPluginData() {
+		return PolicyPluginData	.builder()//
+								.setDistributeVaccineLocally(true)//
+								.setSchoolClosingInfectionRate(0.05)//
+								.build();
+	}
+
+	private static Dimension getDimension() {
+		Dimension.Builder builder = Dimension.builder();//
+
+		List<Double> r0Values = new ArrayList<>();
+		r0Values.add(0.5);
+		r0Values.add(0.75);
+		r0Values.add(1.0);
+		r0Values.add(1.5);
+		r0Values.add(2.0);
+		r0Values.add(2.5);
+
+		for (Double r0 : r0Values) {
+			builder.addLevel((context) -> {
+				DiseasePluginData.Builder pluginDataBuilder = context.get(DiseasePluginData.Builder.class);				
+				pluginDataBuilder.setR0(r0);
+				ArrayList<String> result = new ArrayList<>();
+				result.add(Double.toString(r0));
+				return result;
+			});//
+		}
+		builder.addMetaDatum("r0");//
+
+		return builder.build();
+
+	}
+
+	public static void main(String[] args) {
+
+		DiseasePluginData diseasePluginData = getDiseasePluginData();
+		Plugin diseasePlugin = DiseasePlugin.getDiseasePlugin(diseasePluginData);
+
+		PolicyPluginData policyPluginData = getPolicyPluginData();
+		Plugin policyPlugin = PolicyPlugin.getPolicyPlugin(policyPluginData);
+
+		Plugin modelPlugin = ModelPlugin.getModelPlugin();
+
+		Dimension dimension = getDimension();
+
+		Experiment	.builder()//
+					.addPlugin(diseasePlugin)//
+					.addPlugin(modelPlugin)//
+					.addPlugin(policyPlugin)//
+					.addDimension(dimension)//
+					.reportProgressToConsole(false)//
+					.build()//
+					.execute();
+	}
+}
