@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import nucleus.ExperimentContext;
 import util.errors.ContractException;
@@ -15,7 +16,7 @@ import util.errors.ContractException;
  * @author Shawn Hatch
  *
  */
-public final class NIOReportItemHandler {
+public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 
 	public static Builder builder() {
 		return new Builder();
@@ -164,11 +165,12 @@ public final class NIOReportItemHandler {
 	 * <li>Experiment Close : closes all file writers</li>
 	 * </ul>
 	 */
-	public void init(ExperimentContext experimentContext) {
+	@Override
+	public void accept(ExperimentContext experimentContext) {
 		experimentContext.subscribeToExperimentOpen(this::openExperiment);
 		experimentContext.subscribeToExperimentClose(this::closeExperiment);
 		experimentContext.subscribeToSimulationClose(this::closeSimulation);
-		experimentContext.subscribeToOutput(ReportItem.class, this::handleOuput);
+		experimentContext.subscribeToOutput(ReportItem.class, this::handleOuput);		
 	}
 
 }

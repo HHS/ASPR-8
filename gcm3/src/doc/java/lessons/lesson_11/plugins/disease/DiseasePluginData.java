@@ -1,11 +1,11 @@
-package lessons.lesson_08.plugins.disease;
+package lessons.lesson_11.plugins.disease;
 
 import net.jcip.annotations.Immutable;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 
- @Immutable
- public final class DiseasePluginData implements PluginData {
+@Immutable
+public final class DiseasePluginData implements PluginData {
 
 	private static class Data {
 
@@ -22,13 +22,13 @@ import nucleus.PluginDataBuilder;
 			r0 = data.r0;
 			asymptomaticDays = data.asymptomaticDays;
 			symptomaticDays = data.symptomaticDays;
-		}		
+		}
 	}
 
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
 		private boolean dataIsMutable;
-		
+
 		private Builder(final Data data) {
 			this.data = data;
 		}
@@ -57,7 +57,7 @@ import nucleus.PluginDataBuilder;
 
 		public Builder setR0(final double r0) {
 			ensureDataMutability();
-			data.r0 = r0;			
+			data.r0 = r0;
 			return this;
 		}
 
@@ -66,6 +66,7 @@ import nucleus.PluginDataBuilder;
 			data.symptomaticDays = symptomaticDays;
 			return this;
 		}
+
 	}
 
 	public static Builder builder() {
@@ -74,7 +75,7 @@ import nucleus.PluginDataBuilder;
 
 	private final Data data;
 
-	private DiseasePluginData(final Data data) {		
+	private DiseasePluginData(final Data data) {
 		this.data = data;
 	}
 
@@ -95,4 +96,4 @@ import nucleus.PluginDataBuilder;
 		return new Builder(data);
 	}
 
- }
+}

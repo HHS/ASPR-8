@@ -12,7 +12,7 @@ import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
 
-public final class Example_9_C {
+ public final class Example_9_C {
 
 	private Example_9_C() {
 	}
@@ -55,7 +55,6 @@ public final class Example_9_C {
 		builder.addMetaDatum("r0");//
 
 		return builder.build();
-
 	}
 
 	public static void main(String[] args) {
@@ -79,4 +78,6 @@ public final class Example_9_C {
 					.build()//
 					.execute();
 	}
-}
+	
+	
+ }

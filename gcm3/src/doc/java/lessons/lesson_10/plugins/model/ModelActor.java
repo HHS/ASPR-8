@@ -4,7 +4,7 @@ import lessons.lesson_10.plugins.disease.DiseaseDataManager;
 import lessons.lesson_10.plugins.policy.PolicyDataManager;
 import nucleus.ActorContext;
 
-public final class ModelActor {
+ public final class ModelActor {
 
 	public void init(ActorContext actorContext) {
 		DiseaseDataManager diseaseDataManager = actorContext.getDataManager(DiseaseDataManager.class);
@@ -17,4 +17,7 @@ public final class ModelActor {
 		actorContext.releaseOutput(tab+"school closing infection rate = "+policyDataManager.getSchoolClosingInfectionRate());
 		actorContext.releaseOutput(tab+"distribute vaccine locally = "+policyDataManager.distributeVaccineLocally());
 	}
-}
+ }
+
+ 
+ 

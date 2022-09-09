@@ -8,10 +8,8 @@ package nucleus;
  */
 
 public interface PluginDataBuilder {
-
 	/**
 	 * Returns a plugin data
 	 */
 	public PluginData build();
-
 }

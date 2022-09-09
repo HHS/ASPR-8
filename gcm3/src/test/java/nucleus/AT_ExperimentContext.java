@@ -63,15 +63,40 @@ public class AT_ExperimentContext {
 
 		// create an experiment with two dimensions with some experiment meta
 		// data
-		Dimension dimension1 = Dimension.builder().addMetaDatum("A").addMetaDatum("B").build();
-		Dimension dimension2 = Dimension.builder().addMetaDatum("C").addMetaDatum("D").build();
+		Dimension dimension1 = Dimension.builder()//
+										.addMetaDatum("A")//
+										.addMetaDatum("B")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("a");
+											result.add("b");
+											return result;
+										})//
+										.build();
+		Dimension dimension2 = Dimension.builder()//
+										.addMetaDatum("C")//
+										.addMetaDatum("D")//
+										.build();
+
+		Dimension dimension3 = Dimension.builder()//
+										.addMetaDatum("E")//
+										.addMetaDatum("F")//
+										.addLevel((c) -> {
+											List<String> result = new ArrayList<>();
+											result.add("e");
+											result.add("f");
+											return result;
+										})//
+										.build();
 
 		Experiment	.builder()//
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
+					.addDimension(dimension3)//
 					.addExperimentContextConsumer(c -> {
+						//this should execute exactly once since there is one scenario
 						actualMetaData.addAll(c.getExperimentMetaData());
 					}).build()//
 					.execute();//
@@ -79,13 +104,13 @@ public class AT_ExperimentContext {
 		/*
 		 * The meta data should be added in the order the meta data were added
 		 * to the dimension and the order that the dimensions were added to the
-		 * experiment
+		 * experiment. Empty dimensions should be ignored.
 		 */
 		List<String> expectedMetaData = new ArrayList<>();
 		expectedMetaData.add("A");
 		expectedMetaData.add("B");
-		expectedMetaData.add("C");
-		expectedMetaData.add("D");
+		expectedMetaData.add("E");
+		expectedMetaData.add("F");
 
 		assertEquals(expectedMetaData, actualMetaData);
 
@@ -95,14 +120,15 @@ public class AT_ExperimentContext {
 
 		actualMetaData.clear();
 		expectedMetaData.clear();
-		expectedMetaData.add("C");
-		expectedMetaData.add("D");
+		expectedMetaData.add("E");
+		expectedMetaData.add("F");
 		expectedMetaData.add("A");
 		expectedMetaData.add("B");
 
 		Experiment	.builder()//
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//
+					.addDimension(dimension3)//
 					.addDimension(dimension2)//
 					.addDimension(dimension1)//
 					.addExperimentContextConsumer(c -> {

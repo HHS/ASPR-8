@@ -47,10 +47,12 @@ public final class Experiment {
 		}
 
 		/**
-		 * Adds a dimension to the experiment
+		 * Adds a non-empty dimension to the experiment
 		 */
 		public Builder addDimension(final Dimension dimension) {
-			data.dimensions.add(dimension);
+			if (dimension.size() > 0) {
+				data.dimensions.add(dimension);
+			}
 			return this;
 		}
 
@@ -228,7 +230,7 @@ public final class Experiment {
 			try {
 				simulation.execute();
 				success = true;
-			} catch (final Exception e) {				
+			} catch (final Exception e) {
 				failureCause = e;
 				if (reportScenarioFailureToConsole) {
 					System.err.println("Simulation failure for scenario " + scenarioId);
@@ -377,8 +379,8 @@ public final class Experiment {
 			} catch (final InterruptedException | ExecutionException e) {
 				// Note that this is the completion service failing and
 				// not the simulation
-				
-				//re-thrown as runtime exception
+
+				// re-thrown as runtime exception
 				throw new RuntimeException(e);
 			}
 
@@ -444,7 +446,7 @@ public final class Experiment {
 
 			if (success) {
 				experimentStateManager.closeScenarioAsSuccess(scenarioId);
-			}else {
+			} else {
 				experimentStateManager.closeScenarioAsFailure(scenarioId, failureCause);
 			}
 
@@ -484,18 +486,18 @@ public final class Experiment {
 		int modulus = 1;
 		for (final Dimension dimension : data.dimensions) {
 			/*
-			 * Determine for the dimension the index within the dimension that
+			 * Determine for the dimension the level within the dimension that
 			 * corresponds to the scenario id
 			 */
-			final int index = (scenarioId / modulus) % dimension.size();
+			final int level = (scenarioId / modulus) % dimension.size();
 			modulus *= dimension.size();
 
 			// get the function from the dimension
-			final Function<PluginDataBuilderContext, List<String>> memberGenerator = dimension.getLevel(index);
+			final Function<PluginDataBuilderContext, List<String>> levelFunction = dimension.getLevel(level);
 
 			// apply the function that will update the plugin builders and
 			// return the meta data for this function
-			scenarioMetaData.addAll(memberGenerator.apply(pluginDataBuilderContext));
+			scenarioMetaData.addAll(levelFunction.apply(pluginDataBuilderContext));
 
 		}
 

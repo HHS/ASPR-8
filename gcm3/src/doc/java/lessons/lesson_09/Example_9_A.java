@@ -8,7 +8,7 @@ import lessons.lesson_09.plugins.policy.PolicyPluginData;
 import nucleus.Experiment;
 import nucleus.Plugin;
 
-public final class Example_9_A {
+ public final class Example_9_A {
 
 	private Example_9_A() {
 	}
@@ -45,4 +45,4 @@ public final class Example_9_A {
 					.build()//
 					.execute();
 	}
-}
+ }

@@ -67,7 +67,8 @@ public class MT_Experiment {
 
 		// build and execute the experiment
 		Experiment	.builder()//
-					.addPlugin(testPlugin).addDimension(dimension1)//
+					.addPlugin(testPlugin)//
+					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.reportProgressToConsole(false)//
 					.reportFailuresToConsole(false)//

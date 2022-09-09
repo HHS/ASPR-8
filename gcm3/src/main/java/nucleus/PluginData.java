@@ -19,9 +19,9 @@ import net.jcip.annotations.ThreadSafe;
  * @author Shawn Hatch
  *
  */
+
 @ThreadSafe
 public interface PluginData {
-
 	/**
 	 * Returns a PluginDataBuilder that can build the plugin data. The returned
 	 * builder should be initialized with this plugin data object's internal

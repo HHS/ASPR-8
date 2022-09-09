@@ -85,7 +85,6 @@ public final class Example_9_D {
 		builder.addMetaDatum("distribute_vaccine_locally");//
 
 		return builder.build();
-
 	}
 
 	public static void main(String[] args) {
@@ -112,4 +111,6 @@ public final class Example_9_D {
 					.build()//
 					.execute();
 	}
+	
+	
 }

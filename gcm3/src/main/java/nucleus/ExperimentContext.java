@@ -94,7 +94,7 @@ public interface ExperimentContext {
 
 	/**
 	 * Returns the number of seconds that have elapsed since the start of the
-	 * experimnet
+	 * experiment
 	 */
 	public double getElapsedSeconds();
 
