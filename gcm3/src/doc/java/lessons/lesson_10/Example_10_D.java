@@ -12,9 +12,9 @@ import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
 
-public final class Example_10_A {
+public final class Example_10_C {
 
-	private Example_10_A() {
+	private Example_10_C() {
 	}
 
 	private static DiseasePluginData getDiseasePluginData() {
@@ -112,7 +112,7 @@ public final class Example_10_A {
 					.addDimension(r0Dimension)//
 					.addDimension(policyDimension)//
 					.reportProgressToConsole(false)//
-					.addExperimentContextConsumer(new VerySimpleOutputHandler()::init)//
+					.addExperimentContextConsumer(new MetaDataOutputHandler()::init)//
 					.setThreadCount(4)//
 					.build()//
 					.execute();
