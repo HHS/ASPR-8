@@ -15,7 +15,8 @@ public class SimpleOutputConsumer implements Consumer<ExperimentContext> {
 
 	private void handleOutput(ExperimentContext experimentContext, Integer scenarioId, Object output) {
 		StringJoiner joiner = new StringJoiner("\t", "", "");
-		joiner.add(scenarioId.toString());
+		
+		joiner.add(" "+scenarioId.toString());
 		experimentContext.getScenarioMetaData(scenarioId).get().forEach(joiner::add);
 		joiner.add(output.toString());
 		System.out.println(joiner);
@@ -23,7 +24,7 @@ public class SimpleOutputConsumer implements Consumer<ExperimentContext> {
 
 	private void handleExperimentOpen(ExperimentContext experimentContext) {
 		StringJoiner joiner = new StringJoiner("\t", "", "");
-		joiner.add("scenario");
+		joiner.add(" scenario");
 		experimentContext.getExperimentMetaData().forEach(joiner::add);
 		joiner.add("output");
 		System.out.println(joiner);
