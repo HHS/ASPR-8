@@ -39,8 +39,10 @@ public class FamilyVaccineReport {
 	private Map<IndividualVaccineStatus, Set<PersonId>> statusToIndividualsMap = new LinkedHashMap<>();
 	private Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
 
-	private enum FamilyVaccineStatus {
-		NONE("unvacinated_families"), PARTIAL("partially_vaccinated_families"), FULL("fully_vaccinated_families");
+	private static enum FamilyVaccineStatus {
+		NONE("unvacinated_families"),//
+		PARTIAL("partially_vaccinated_families"),//
+		FULL("fully_vaccinated_families");//
 
 		private final String description;
 
@@ -49,7 +51,7 @@ public class FamilyVaccineReport {
 		}
 	}
 
-	private enum IndividualVaccineStatus {
+	private static enum IndividualVaccineStatus {
 		NONE("unvaccinated_individuals"), FULL("vaccinated_individuals");
 
 		private final String description;

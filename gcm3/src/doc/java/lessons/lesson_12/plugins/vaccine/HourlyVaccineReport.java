@@ -21,15 +21,10 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 
-public class HourlyVaccineReport extends PeriodicReport{
+public class HourlyVaccineReport extends PeriodicReport {
 
-	private final ReportId reportId;
-
-	
-
-	public HourlyVaccineReport(ReportId reportId,ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
-		this.reportId = reportId;
+	public HourlyVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
+		super(reportId, reportPeriod);	
 	}
 
 	private VaccinationDataManager vaccinationDataManager;
@@ -42,7 +37,7 @@ public class HourlyVaccineReport extends PeriodicReport{
 	private Map<IndividualVaccineStatus, Set<PersonId>> statusToIndividualsMap = new LinkedHashMap<>();
 	private Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
 
-	private enum FamilyVaccineStatus {
+	private static enum FamilyVaccineStatus {
 		NONE("unvacinated_families"), PARTIAL("partially_vaccinated_families"), FULL("fully_vaccinated_families");
 
 		private final String description;
@@ -52,7 +47,7 @@ public class HourlyVaccineReport extends PeriodicReport{
 		}
 	}
 
-	private enum IndividualVaccineStatus {
+	private static enum IndividualVaccineStatus {
 		NONE("unvaccinated_individuals"), FULL("vaccinated_individuals");
 
 		private final String description;
@@ -92,7 +87,7 @@ public class HourlyVaccineReport extends PeriodicReport{
 		}
 		statusToFamiliesMap.get(newStatus).add(familyId);
 		familyToStatusMap.put(familyId, newStatus);
-		
+
 	}
 
 	private void refreshIndividualStatus(PersonId personId) {
@@ -114,19 +109,20 @@ public class HourlyVaccineReport extends PeriodicReport{
 		}
 		statusToIndividualsMap.get(newStatus).add(personId);
 		individualToStatusMap.put(personId, newStatus);
-		
+
 	}
 
 	public void init(ActorContext actorContext) {
+		super.init(actorContext);
 
-		
 		/*
 		 * Subscribe to all the relevant events
 		 */
-		actorContext.subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
-		actorContext.subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
-		actorContext.subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
-		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		
+		actorContext.subscribe(VaccinationEvent.class, getFlushingConsumer(this::handleVaccinationEvent));
+		actorContext.subscribe(FamilyAdditionEvent.class, getFlushingConsumer(this::handleFamilyAdditionEvent));
+		actorContext.subscribe(FamilyMemberShipAdditionEvent.class, getFlushingConsumer(this::handleFamilyMemberShipAdditionEvent));
+		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
 
 		/*
 		 * Some of the events may have already occurred before we initialize
@@ -196,7 +192,7 @@ public class HourlyVaccineReport extends PeriodicReport{
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder builder = ReportHeader.builder();
-			builder.add("time");
+			addTimeFieldHeaders(builder);			
 			for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 				builder.add(familyVaccineStatus.description);
 			}
@@ -208,12 +204,12 @@ public class HourlyVaccineReport extends PeriodicReport{
 		return reportHeader;
 	}
 
-	
-
 	@Override
 	protected void flush(ActorContext actorContext) {
-		ReportItem.Builder builder = ReportItem.builder().setReportId(reportId).setReportHeader(getReportHeader());
-		builder.addValue(actorContext.getTime());
+		ReportItem.Builder builder = ReportItem.builder()//
+				.setReportId(getReportId())//
+				.setReportHeader(getReportHeader());
+		fillTimeFields(builder);		
 		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			Set<FamilyId> families = statusToFamiliesMap.get(familyVaccineStatus);
 			builder.addValue(families.size());
@@ -224,6 +220,6 @@ public class HourlyVaccineReport extends PeriodicReport{
 		}
 		ReportItem reportItem = builder.build();
 		actorContext.releaseOutput(reportItem);
-		
+
 	}
 }

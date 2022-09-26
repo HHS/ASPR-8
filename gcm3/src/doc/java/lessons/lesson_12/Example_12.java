@@ -9,12 +9,15 @@ import lessons.lesson_12.plugins.family.FamilyPluginData;
 import lessons.lesson_12.plugins.model.ModelPlugin;
 import lessons.lesson_12.plugins.person.PersonPlugin;
 import lessons.lesson_12.plugins.vaccine.FamilyVaccineReport;
+import lessons.lesson_12.plugins.vaccine.HourlyVaccineReport;
+import lessons.lesson_12.plugins.vaccine.SimpleVaccineReport;
 import lessons.lesson_12.plugins.vaccine.VaccinePlugin;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
+import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 
@@ -45,14 +48,18 @@ public final class Example_12 {
 		
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder()//
 				.addReport(()->new FamilyVaccineReport(ModelReportId.FAMILY_VACCINE_REPORT)::init)//
+				.addReport(()->new HourlyVaccineReport(ModelReportId.HOURLY_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
+				.addReport(()->new SimpleVaccineReport(ModelReportId.SIMPLE_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
 				.build();
 		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
 		
-		Path path = Paths.get("C:\\temp\\family_vaccine_report.xls");
+		Path dir = Paths.get("C:\\temp");
 		
 		
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
-				.addReport(ModelReportId.FAMILY_VACCINE_REPORT, path)//
+				.addReport(ModelReportId.FAMILY_VACCINE_REPORT, dir.resolve(Paths.get("family_vaccine_report.xls")))//
+				.addReport(ModelReportId.HOURLY_VACCINE_REPORT, dir.resolve(Paths.get("hourly_vaccine_report.xls")))//
+				.addReport(ModelReportId.SIMPLE_VACCINE_REPORT, dir.resolve(Paths.get("simple_vaccine_report.xls")))//
 				.build();
 
 		Experiment	.builder()//
