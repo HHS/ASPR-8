@@ -18,6 +18,7 @@ import nucleus.ActorContext;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
+import util.wrappers.MutableInteger;
 
 public class FamilyVaccineReport {
 
@@ -45,6 +46,8 @@ public class FamilyVaccineReport {
 	}
 
 	private final ReportId reportId;
+	
+	private ReportHeader reportHeader;
 
 	private ActorContext actorContext;
 
@@ -52,15 +55,15 @@ public class FamilyVaccineReport {
 
 	private FamilyDataManager familyDataManager;
 	
-	private final Map<FamilyVaccineStatus, Set<FamilyId>> statusToFamiliesMap = new LinkedHashMap<>();
+	private final Map<FamilyVaccineStatus, MutableInteger> statusToFamiliesMap = new LinkedHashMap<>();
 
 	private final Map<FamilyId, FamilyVaccineStatus> familyToStatusMap = new LinkedHashMap<>();
 	
-	private final Map<IndividualVaccineStatus, Set<PersonId>> statusToIndividualsMap = new LinkedHashMap<>();
+	private final Map<IndividualVaccineStatus, MutableInteger> statusToIndividualsMap = new LinkedHashMap<>();
 
 	private final Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
 
-	private ReportHeader reportHeader;
+	
 
 	public FamilyVaccineReport(final ReportId reportId) {
 		this.reportId = reportId;
@@ -132,11 +135,11 @@ public class FamilyVaccineReport {
 		final PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
 
 		for (final FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
-			statusToFamiliesMap.put(familyVaccineStatus, new LinkedHashSet<>());
+			statusToFamiliesMap.put(familyVaccineStatus, new MutableInteger());
 		}
 
 		for (final IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
-			statusToIndividualsMap.put(individualVaccineStatus, new LinkedHashSet<>());
+			statusToIndividualsMap.put(individualVaccineStatus, new MutableInteger());
 		}
 
 		// determine the family vaccine status for every family
@@ -160,7 +163,7 @@ public class FamilyVaccineReport {
 				status = FamilyVaccineStatus.PARTIAL;
 			}
 			
-			statusToFamiliesMap.get(status).add(familyId);
+			statusToFamiliesMap.get(status).increment();
 			familyToStatusMap.put(familyId, status);
 			
 		}
@@ -175,7 +178,7 @@ public class FamilyVaccineReport {
 				} else {
 					status = IndividualVaccineStatus.NONE;
 				}				
-				statusToIndividualsMap.get(status).add(personId);
+				statusToIndividualsMap.get(status).increment();
 				individualToStatusMap.put(personId, status);
 			}
 		}
@@ -208,9 +211,9 @@ public class FamilyVaccineReport {
 			return;
 		}
 		if (currentStatus != null) {
-			statusToFamiliesMap.get(currentStatus).remove(familyId);
+			statusToFamiliesMap.get(currentStatus).decrement();
 		}
-		statusToFamiliesMap.get(newStatus).add(familyId);
+		statusToFamiliesMap.get(newStatus).increment();
 		familyToStatusMap.put(familyId, newStatus);
 		releaseReportItem();
 	}
@@ -230,9 +233,9 @@ public class FamilyVaccineReport {
 		}
 
 		if (currentStatus != null) {
-			statusToIndividualsMap.get(currentStatus).remove(personId);
+			statusToIndividualsMap.get(currentStatus).decrement();
 		}
-		statusToIndividualsMap.get(newStatus).add(personId);
+		statusToIndividualsMap.get(newStatus).increment();
 		individualToStatusMap.put(personId, newStatus);
 		releaseReportItem();
 	}
@@ -241,12 +244,12 @@ public class FamilyVaccineReport {
 		final ReportItem.Builder builder = ReportItem.builder().setReportId(reportId).setReportHeader(reportHeader);
 		builder.addValue(actorContext.getTime());
 		for (final FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
-			final Set<FamilyId> families = statusToFamiliesMap.get(familyVaccineStatus);
-			builder.addValue(families.size());
+			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);
+			builder.addValue(mutableInteger.getValue());
 		}
 		for (final IndividualVaccineStatus individualVaccineStatus : statusToIndividualsMap.keySet()) {
-			final Set<PersonId> individuals = statusToIndividualsMap.get(individualVaccineStatus);
-			builder.addValue(individuals.size());
+			MutableInteger mutableInteger = statusToIndividualsMap.get(individualVaccineStatus);
+			builder.addValue(mutableInteger.getValue());
 		}
 		final ReportItem reportItem = builder.build();
 		actorContext.releaseOutput(reportItem);
