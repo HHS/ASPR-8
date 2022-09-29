@@ -126,15 +126,15 @@ public final class RegionTransferReport extends PeriodicReport {
 	private RegionsDataManager regionsDataManager;
 
 	@Override
-	public void init(final ActorContext ActorContext) {
-		super.init(ActorContext);
+	public void init(final ActorContext actorContext) {
+		super.init(actorContext);
 
-		ActorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
-		ActorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
-		ActorContext.subscribe(BulkPersonAdditionEvent.class, getFlushingConsumer(this::handleBulkPersonAdditionEvent));
+		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 
-		PeopleDataManager peopleDataManager = ActorContext.getDataManager(PeopleDataManager.class);
-		regionsDataManager = ActorContext.getDataManager(RegionsDataManager.class);
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);

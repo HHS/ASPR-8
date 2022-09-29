@@ -290,24 +290,24 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 		// determine the subscriptions for group addition
 		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			actorContext.subscribe(GroupAdditionEvent.class, getFlushingConsumer(this::handleGroupAdditionEvent));
+			subscribe(GroupAdditionEvent.class, this::handleGroupAdditionEvent);
 			isSubscribedToAllGroupAdditionEvents = true;
 
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
 				EventLabel<GroupAdditionEvent> eventLabelByGroupType = GroupAdditionEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-				actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupAdditionEvent));
+				subscribe(eventLabelByGroupType, this::handleGroupAdditionEvent);
 			}
 		}
 
 		// determine the subscriptions for group removal observations
 		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			actorContext.subscribe(GroupImminentRemovalEvent.class, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
+			subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
 			isSubscribedToAllGroupRemovalEvents = true;
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
 				EventLabel<GroupImminentRemovalEvent> eventLabelByGroupType = GroupImminentRemovalEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-				actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
+				subscribe(eventLabelByGroupType, this::handleGroupImminentRemovalEvent);
 			}
 		}
 
@@ -325,17 +325,17 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 		if (allPropertiesRequired) {
 			isSubscribedToAllGroupPropertyUpdateEvents = true;
-			actorContext.subscribe(GroupPropertyUpdateEvent.class, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
+			subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
 				if (clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
 					EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupType = GroupPropertyUpdateEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-					actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
+					subscribe(eventLabelByGroupType, this::handleGroupPropertyUpdateEvent);
 				} else {
 					for (GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
 						EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupTypeAndProperty = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(actorContext, groupTypeId,
 								groupPropertyId);
-						actorContext.subscribe(eventLabelByGroupTypeAndProperty, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
+						subscribe(eventLabelByGroupTypeAndProperty, this::handleGroupPropertyUpdateEvent);
 					}
 				}
 			}
@@ -369,8 +369,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		if (scaffold.includeNewProperties) {
-			actorContext.subscribe(GroupTypeAdditionEvent.class, getFlushingConsumer(this::handleGroupTypeAdditionEvent));
-			actorContext.subscribe(GroupPropertyDefinitionEvent.class, getFlushingConsumer(this::handleGroupPropertyDefinitionEvent));
+			subscribe(GroupTypeAdditionEvent.class, this::handleGroupTypeAdditionEvent);
+			subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
 		}
 
 	}
@@ -384,7 +384,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		if (!isSubscribedToAllGroupPropertyUpdateEvents) {
 
 			EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupType = GroupPropertyUpdateEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-			actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupPropertyUpdateEvent));
+			subscribe(eventLabelByGroupType, this::handleGroupPropertyUpdateEvent);
 		}
 
 		/*
@@ -392,7 +392,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 */
 		if (isSubscribedToAllGroupAdditionEvents) {
 			EventLabel<GroupAdditionEvent> eventLabelByGroupType = GroupAdditionEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-			actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupAdditionEvent));
+			subscribe(eventLabelByGroupType, this::handleGroupAdditionEvent);
 		}
 		
 		/*
@@ -400,7 +400,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 */
 		if (isSubscribedToAllGroupRemovalEvents) {
 			EventLabel<GroupImminentRemovalEvent> eventLabelByGroupType = GroupImminentRemovalEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-			actorContext.subscribe(eventLabelByGroupType, getFlushingConsumer(this::handleGroupImminentRemovalEvent));
+			subscribe(eventLabelByGroupType, this::handleGroupImminentRemovalEvent);
 		}
 
 		/*

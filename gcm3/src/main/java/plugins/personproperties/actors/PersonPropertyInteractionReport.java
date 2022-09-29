@@ -243,11 +243,11 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
-		actorContext.subscribe(BulkPersonAdditionEvent.class, getFlushingConsumer(this::handleBulkPersonAdditionEvent));
+		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		
-		actorContext.subscribe(PersonImminentRemovalEvent.class, getFlushingConsumer(this::handlePersonImminentRemovalEvent));
-		actorContext.subscribe(PersonRegionUpdateEvent.class, getFlushingConsumer(this::handlePersonRegionUpdateEvent));
+		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -277,12 +277,12 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		// If all person properties are included, then subscribe to the event
 		// class, otherwise subscribe to the individual property values
 		if (propertyIds.stream().collect(Collectors.toSet()).equals(personPropertiesDataManager.getPersonPropertyIds())) {
-			actorContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
-			actorContext.subscribe(PersonPropertyDefinitionEvent.class, getFlushingConsumer(this::handlePersonPropertyDefinitionEvent));
+			subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+			subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 		} else {
 			for (PersonPropertyId personPropertyId : propertyIds) {
 				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
-				actorContext.subscribe(eventLabelByProperty, getFlushingConsumer(this::handlePersonPropertyUpdateEvent));
+				subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
 			}
 		}
 

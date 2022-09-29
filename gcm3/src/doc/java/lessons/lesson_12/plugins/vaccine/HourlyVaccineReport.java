@@ -118,10 +118,10 @@ public class HourlyVaccineReport extends PeriodicReport {
 		 * Subscribe to all the relevant events
 		 */
 		
-		actorContext.subscribe(VaccinationEvent.class, getFlushingConsumer(this::handleVaccinationEvent));
-		actorContext.subscribe(FamilyAdditionEvent.class, getFlushingConsumer(this::handleFamilyAdditionEvent));
-		actorContext.subscribe(FamilyMemberShipAdditionEvent.class, getFlushingConsumer(this::handleFamilyMemberShipAdditionEvent));
-		actorContext.subscribe(PersonAdditionEvent.class, getFlushingConsumer(this::handlePersonAdditionEvent));
+		subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
+		subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
+		subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
+		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
 		/*
 		 * Some of the events may have already occurred before we initialize

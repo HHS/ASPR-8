@@ -4,6 +4,9 @@ import java.util.function.BiConsumer;
 
 import nucleus.ActorContext;
 import nucleus.Event;
+import nucleus.EventFilter;
+import nucleus.EventLabel;
+import nucleus.NucleusError;
 import util.errors.ContractException;
 
 /**
@@ -19,6 +22,8 @@ import util.errors.ContractException;
  *
  */
 public abstract class PeriodicReport {
+	
+	private ActorContext actorContext;
 
 	/**
 	 * Creates the periodic report from the given report period
@@ -77,7 +82,7 @@ public abstract class PeriodicReport {
 			reportHeaderBuilder.add("day");
 			reportHeaderBuilder.add("hour");
 			break;
-		default:			
+		default:
 			throw new RuntimeException("unknown report period " + reportPeriod);
 		}
 		return reportHeaderBuilder;
@@ -105,7 +110,7 @@ public abstract class PeriodicReport {
 			reportItemBuilder.addValue(reportingDay);
 			reportItemBuilder.addValue(reportingHour % 24);
 			break;
-		default:			
+		default:
 			throw new RuntimeException("unknown report period " + reportPeriod);
 		}
 	}
@@ -125,6 +130,7 @@ public abstract class PeriodicReport {
 		if (actorContext == null) {
 			throw new ContractException(ReportError.NULL_CONTEXT);
 		}
+		this.actorContext = actorContext;
 
 		actorContext.subscribeToSimulationClose(this::close);
 
@@ -159,7 +165,7 @@ public abstract class PeriodicReport {
 		case HOURLY:
 			nextPlanTime = reportingDay + (double) (reportingHour + 1) / 24;
 			break;
-		default:			
+		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
 	}
@@ -170,7 +176,7 @@ public abstract class PeriodicReport {
 	 * but happen to execute before the plan. Descendant implementors of
 	 * PeriodicReport should use this wrapper when subscribing to events.
 	 */
-	protected final <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
+	private <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
 		return (c, t) -> {
 			if (c.getTime() >= nextPlanTime) {
 				if (lastFlushTime == null || c.getTime() > lastFlushTime) {
@@ -199,7 +205,7 @@ public abstract class PeriodicReport {
 				reportingDay++;
 			}
 			break;
-		default:			
+		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
 
@@ -207,4 +213,60 @@ public abstract class PeriodicReport {
 		actorContext.addPassivePlan(this::executePlan, nextPlanTime);
 
 	}
+
+	/**
+	 * Subscribes the report to the given event label via the actor context
+	 * while enforcing the flushing of report items as needed. Events of the
+	 * type T that are matched to the event label. If a match is found, then the
+	 * event will be consumed by the supplied event consumer.
+	 * 
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_LABEL} if the EventLabel
+	 *             is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
+	 *             ActorEventConsumer is null
+	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
+	 *             labeler id in the event label cannot be resolved to a
+	 *             registered event labeler
+	 * 
+	 * 
+	 */
+	protected final <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
+		actorContext.subscribe(eventLabel, getFlushingConsumer(eventConsumer));
+	}
+
+	/**
+	 * Subscribes the report to the given event filter via the actor context
+	 * while enforcing the flushing of report items as needed. Events of the
+	 * type T are processed by the event filter. If the event passes the filter
+	 * the event will be consumed by the supplied event consumer.
+	 * 
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_FILTER} if the event
+	 *             filter is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
+	 *             consumer is null
+	 */
+	protected final <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
+		actorContext.subscribe(eventFilter, getFlushingConsumer(eventConsumer));
+	}
+
+	/**
+	 * Subscribes the report to the given event via the actor context while
+	 * enforcing the flushing of report items as needed.
+	 * 
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
+	 *             is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
+	 *             consumer is null
+	 * 
+	 */
+	protected final <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
+		actorContext.subscribe(eventClass, getFlushingConsumer(eventConsumer));
+	}
+
 }
