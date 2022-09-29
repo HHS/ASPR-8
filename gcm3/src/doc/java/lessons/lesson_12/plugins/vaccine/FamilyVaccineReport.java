@@ -1,11 +1,9 @@
 package lessons.lesson_12.plugins.vaccine;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import lessons.lesson_12.plugins.family.FamilyAdditionEvent;
 import lessons.lesson_12.plugins.family.FamilyDataManager;
@@ -99,7 +97,6 @@ public class FamilyVaccineReport {
 			final FamilyId familyId = optional.get();
 			refreshFamilyStatus(familyId);
 		}
-
 	}
 
 	private void handleVaccinationEvent(final ActorContext actorContext, final VaccinationEvent vaccinationEvent) {
@@ -132,7 +129,7 @@ public class FamilyVaccineReport {
 
 		familyDataManager = actorContext.getDataManager(FamilyDataManager.class);
 		vaccinationDataManager = actorContext.getDataManager(VaccinationDataManager.class);
-		final PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
+		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
 
 		for (final FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			statusToFamiliesMap.put(familyVaccineStatus, new MutableInteger());
@@ -143,6 +140,7 @@ public class FamilyVaccineReport {
 		}
 
 		// determine the family vaccine status for every family
+		
 		for (final FamilyId familyId : familyDataManager.getFamilyIds()) {
 			
 			final int familySize = familyDataManager.getFamilySize(familyId);
@@ -169,6 +167,8 @@ public class FamilyVaccineReport {
 		}
 
 		// ensure that any person not assigned to a family is still counted
+		
+		
 		for (final PersonId personId : personDataManager.getPeople()) {
 			if (familyDataManager.getFamilyId(personId).isEmpty()) {
 				

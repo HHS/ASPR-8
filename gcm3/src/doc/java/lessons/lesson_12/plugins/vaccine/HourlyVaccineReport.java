@@ -1,11 +1,9 @@
 package lessons.lesson_12.plugins.vaccine;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import lessons.lesson_12.plugins.family.FamilyAdditionEvent;
 import lessons.lesson_12.plugins.family.FamilyDataManager;
@@ -20,6 +18,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
+import util.wrappers.MutableInteger;
 
 public class HourlyVaccineReport extends PeriodicReport {
 
@@ -31,10 +30,10 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 	private FamilyDataManager familyDataManager;
 
-	private Map<FamilyVaccineStatus, Set<FamilyId>> statusToFamiliesMap = new LinkedHashMap<>();
+	private Map<FamilyVaccineStatus, MutableInteger> statusToFamiliesMap = new LinkedHashMap<>();
 	private Map<FamilyId, FamilyVaccineStatus> familyToStatusMap = new LinkedHashMap<>();
 
-	private Map<IndividualVaccineStatus, Set<PersonId>> statusToIndividualsMap = new LinkedHashMap<>();
+	private Map<IndividualVaccineStatus, MutableInteger> statusToIndividualsMap = new LinkedHashMap<>();
 	private Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
 
 	private static enum FamilyVaccineStatus {
@@ -83,9 +82,9 @@ public class HourlyVaccineReport extends PeriodicReport {
 			return;
 		}
 		if (currentStatus != null) {
-			statusToFamiliesMap.get(currentStatus).remove(familyId);
+			statusToFamiliesMap.get(currentStatus).decrement();
 		}
-		statusToFamiliesMap.get(newStatus).add(familyId);
+		statusToFamiliesMap.get(newStatus).increment();
 		familyToStatusMap.put(familyId, newStatus);
 
 	}
@@ -105,9 +104,9 @@ public class HourlyVaccineReport extends PeriodicReport {
 		}
 
 		if (currentStatus != null) {
-			statusToIndividualsMap.get(currentStatus).remove(personId);
+			statusToIndividualsMap.get(currentStatus).decrement();
 		}
-		statusToIndividualsMap.get(newStatus).add(personId);
+		statusToIndividualsMap.get(newStatus).increment();
 		individualToStatusMap.put(personId, newStatus);
 
 	}
@@ -134,11 +133,11 @@ public class HourlyVaccineReport extends PeriodicReport {
 		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
 
 		for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
-			statusToFamiliesMap.put(familyVaccineStatus, new LinkedHashSet<>());
+			statusToFamiliesMap.put(familyVaccineStatus, new MutableInteger());
 		}
 
 		for (IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
-			statusToIndividualsMap.put(individualVaccineStatus, new LinkedHashSet<>());
+			statusToIndividualsMap.put(individualVaccineStatus, new MutableInteger());
 		}
 
 		// determine the family vaccine status for every family
@@ -212,12 +211,12 @@ public class HourlyVaccineReport extends PeriodicReport {
 				.setReportHeader(getReportHeader());
 		fillTimeFields(builder);		
 		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
-			Set<FamilyId> families = statusToFamiliesMap.get(familyVaccineStatus);
-			builder.addValue(families.size());
+			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);
+			builder.addValue(mutableInteger.getValue());
 		}
 		for (IndividualVaccineStatus individualVaccineStatus : statusToIndividualsMap.keySet()) {
-			Set<PersonId> individuals = statusToIndividualsMap.get(individualVaccineStatus);
-			builder.addValue(individuals.size());
+			MutableInteger mutableInteger = statusToIndividualsMap.get(individualVaccineStatus);
+			builder.addValue(mutableInteger.getValue());
 		}
 		ReportItem reportItem = builder.build();
 		actorContext.releaseOutput(reportItem);
