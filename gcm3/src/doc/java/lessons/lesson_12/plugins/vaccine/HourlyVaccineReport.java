@@ -184,6 +184,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 	}
 
 	private void handleFamilyMemberShipAdditionEvent(ActorContext actorContext, FamilyMemberShipAdditionEvent familyMemberShipAdditionEvent) {
+		individualToStatusMap.remove(familyMemberShipAdditionEvent.getPersonId());
 		refreshFamilyStatus(familyMemberShipAdditionEvent.getFamilyId());
 	}
 

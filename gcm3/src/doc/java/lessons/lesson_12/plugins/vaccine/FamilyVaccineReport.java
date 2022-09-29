@@ -21,103 +21,98 @@ import plugins.reports.support.ReportItem;
 
 public class FamilyVaccineReport {
 
-	private final ReportId reportId;
-
-	private ActorContext actorContext;
-
-	public FamilyVaccineReport(ReportId reportId) {
-		this.reportId = reportId;
-	}
-
-	private VaccinationDataManager vaccinationDataManager;
-
-	private FamilyDataManager familyDataManager;
-
-	private Map<FamilyVaccineStatus, Set<FamilyId>> statusToFamiliesMap = new LinkedHashMap<>();
-	private Map<FamilyId, FamilyVaccineStatus> familyToStatusMap = new LinkedHashMap<>();
-
-	private Map<IndividualVaccineStatus, Set<PersonId>> statusToIndividualsMap = new LinkedHashMap<>();
-	private Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
-
 	private static enum FamilyVaccineStatus {
-		NONE("unvacinated_families"),//
-		PARTIAL("partially_vaccinated_families"),//
+		NONE("unvacinated_families"), //
+		PARTIAL("partially_vaccinated_families"), //
 		FULL("fully_vaccinated_families");//
 
 		private final String description;
 
-		private FamilyVaccineStatus(String description) {
+		private FamilyVaccineStatus(final String description) {
 			this.description = description;
 		}
 	}
 
 	private static enum IndividualVaccineStatus {
-		NONE("unvaccinated_individuals"), FULL("vaccinated_individuals");
+		NONE("unvaccinated_individuals"), //
+		FULL("vaccinated_individuals");//
 
 		private final String description;
 
-		private IndividualVaccineStatus(String description) {
+		private IndividualVaccineStatus(final String description) {
 			this.description = description;
 		}
-
 	}
 
-	private void refreshFamilyStatus(FamilyId familyId) {
+	private final ReportId reportId;
 
-		int familySize = familyDataManager.getFamilySize(familyId);
-		List<PersonId> familyMembers = familyDataManager.getFamilyMembers(familyId);
-		int vaccinatedCount = 0;
-		for (PersonId personId : familyMembers) {
-			if (vaccinationDataManager.isPersonVaccinated(personId)) {
-				vaccinatedCount++;
-			}
+	private ActorContext actorContext;
+
+	private VaccinationDataManager vaccinationDataManager;
+
+	private FamilyDataManager familyDataManager;
+	
+	private final Map<FamilyVaccineStatus, Set<FamilyId>> statusToFamiliesMap = new LinkedHashMap<>();
+
+	private final Map<FamilyId, FamilyVaccineStatus> familyToStatusMap = new LinkedHashMap<>();
+	
+	private final Map<IndividualVaccineStatus, Set<PersonId>> statusToIndividualsMap = new LinkedHashMap<>();
+
+	private final Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
+
+	private ReportHeader reportHeader;
+
+	public FamilyVaccineReport(final ReportId reportId) {
+		this.reportId = reportId;
+		
+		final ReportHeader.Builder builder = ReportHeader.builder();
+		builder.add("time");
+		for (final FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
+			builder.add(familyVaccineStatus.description);
 		}
-		FamilyVaccineStatus newStatus;
+		for (final IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
+			builder.add(individualVaccineStatus.description);
+		}
+		reportHeader = builder.build();
+	}
 
-		if (vaccinatedCount == 0) {
-			newStatus = FamilyVaccineStatus.NONE;
-		} else if (vaccinatedCount == familySize) {
-			newStatus = FamilyVaccineStatus.FULL;
+	
+
+	private void handleFamilyAdditionEvent(final ActorContext actorContext, final FamilyAdditionEvent familyAdditionEvent) {
+		refreshFamilyStatus(familyAdditionEvent.getFamilyId());
+	}
+
+	private void handleFamilyMemberShipAdditionEvent(final ActorContext actorContext, final FamilyMemberShipAdditionEvent familyMemberShipAdditionEvent) {
+		individualToStatusMap.remove(familyMemberShipAdditionEvent.getPersonId());
+		refreshFamilyStatus(familyMemberShipAdditionEvent.getFamilyId());
+	}
+
+	private void handlePersonAdditionEvent(final ActorContext actorContext, final PersonAdditionEvent personAdditionEvent) {
+		final PersonId personId = personAdditionEvent.getPersonId();
+		final Optional<FamilyId> optional = familyDataManager.getFamilyId(personId);
+		if (optional.isEmpty()) {
+			refreshIndividualStatus(personId);
 		} else {
-			newStatus = FamilyVaccineStatus.PARTIAL;
+			final FamilyId familyId = optional.get();
+			refreshFamilyStatus(familyId);
 		}
 
-		FamilyVaccineStatus currentStatus = familyToStatusMap.get(familyId);
-		if (currentStatus == newStatus) {
-			return;
-		}
-		if (currentStatus != null) {
-			statusToFamiliesMap.get(currentStatus).remove(familyId);
-		}
-		statusToFamiliesMap.get(newStatus).add(familyId);
-		familyToStatusMap.put(familyId, newStatus);
-		releaseReportItem();
 	}
 
-	private void refreshIndividualStatus(PersonId personId) {
-		IndividualVaccineStatus newStatus;
-		if (vaccinationDataManager.isPersonVaccinated(personId)) {
-			newStatus = IndividualVaccineStatus.FULL;
+	private void handleVaccinationEvent(final ActorContext actorContext, final VaccinationEvent vaccinationEvent) {
+		final PersonId personId = vaccinationEvent.getPersonId();
+
+		final Optional<FamilyId> optional = familyDataManager.getFamilyId(personId);
+
+		if (optional.isEmpty()) {
+			refreshIndividualStatus(personId);
 		} else {
-			newStatus = IndividualVaccineStatus.NONE;
+			final FamilyId familyId = optional.get();
+			refreshFamilyStatus(familyId);
 		}
-
-		IndividualVaccineStatus currentStatus = individualToStatusMap.get(personId);
-
-		if (currentStatus == newStatus) {
-			return;
-		}
-
-		if (currentStatus != null) {
-			statusToIndividualsMap.get(currentStatus).remove(personId);
-		}
-		statusToIndividualsMap.get(newStatus).add(personId);
-		individualToStatusMap.put(personId, newStatus);
-		releaseReportItem();
 	}
 
-	public void init(ActorContext actorContext) {
-
+	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		/*
 		 * Subscribe to all the relevant events
@@ -134,91 +129,126 @@ public class FamilyVaccineReport {
 
 		familyDataManager = actorContext.getDataManager(FamilyDataManager.class);
 		vaccinationDataManager = actorContext.getDataManager(VaccinationDataManager.class);
-		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
+		final PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
 
-		for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
+		for (final FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			statusToFamiliesMap.put(familyVaccineStatus, new LinkedHashSet<>());
 		}
 
-		for (IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
+		for (final IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
 			statusToIndividualsMap.put(individualVaccineStatus, new LinkedHashSet<>());
 		}
 
 		// determine the family vaccine status for every family
-		for (FamilyId familyId : familyDataManager.getFamilyIds()) {
-			refreshFamilyStatus(familyId);
+		for (final FamilyId familyId : familyDataManager.getFamilyIds()) {
+			
+			final int familySize = familyDataManager.getFamilySize(familyId);
+			final List<PersonId> familyMembers = familyDataManager.getFamilyMembers(familyId);
+			int vaccinatedCount = 0;
+			for (final PersonId personId : familyMembers) {
+				if (vaccinationDataManager.isPersonVaccinated(personId)) {
+					vaccinatedCount++;
+				}
+			}
+			FamilyVaccineStatus status;
+
+			if (vaccinatedCount == 0) {
+				status = FamilyVaccineStatus.NONE;
+			} else if (vaccinatedCount == familySize) {
+				status = FamilyVaccineStatus.FULL;
+			} else {
+				status = FamilyVaccineStatus.PARTIAL;
+			}
+			
+			statusToFamiliesMap.get(status).add(familyId);
+			familyToStatusMap.put(familyId, status);
+			
 		}
 
 		// ensure that any person not assigned to a family is still counted
-		for (PersonId personId : personDataManager.getPeople()) {
+		for (final PersonId personId : personDataManager.getPeople()) {
 			if (familyDataManager.getFamilyId(personId).isEmpty()) {
-				refreshIndividualStatus(personId);
+				
+				IndividualVaccineStatus status;
+				if (vaccinationDataManager.isPersonVaccinated(personId)) {
+					status = IndividualVaccineStatus.FULL;
+				} else {
+					status = IndividualVaccineStatus.NONE;
+				}				
+				statusToIndividualsMap.get(status).add(personId);
+				individualToStatusMap.put(personId, status);
 			}
 		}
+		
+		releaseReportItem();
 	}
 
-	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
-		PersonId personId = personAdditionEvent.getPersonId();
-		Optional<FamilyId> optional = familyDataManager.getFamilyId(personId);
-		if (optional.isEmpty()) {
-			refreshIndividualStatus(personId);
+	private void refreshFamilyStatus(final FamilyId familyId) {
+
+		final int familySize = familyDataManager.getFamilySize(familyId);
+		final List<PersonId> familyMembers = familyDataManager.getFamilyMembers(familyId);
+		int vaccinatedCount = 0;
+		for (final PersonId personId : familyMembers) {
+			if (vaccinationDataManager.isPersonVaccinated(personId)) {
+				vaccinatedCount++;
+			}
+		}
+		FamilyVaccineStatus newStatus;
+
+		if (vaccinatedCount == 0) {
+			newStatus = FamilyVaccineStatus.NONE;
+		} else if (vaccinatedCount == familySize) {
+			newStatus = FamilyVaccineStatus.FULL;
 		} else {
-			FamilyId familyId = optional.get();
-			refreshFamilyStatus(familyId);
+			newStatus = FamilyVaccineStatus.PARTIAL;
 		}
 
+		final FamilyVaccineStatus currentStatus = familyToStatusMap.get(familyId);
+		if (currentStatus == newStatus) {
+			return;
+		}
+		if (currentStatus != null) {
+			statusToFamiliesMap.get(currentStatus).remove(familyId);
+		}
+		statusToFamiliesMap.get(newStatus).add(familyId);
+		familyToStatusMap.put(familyId, newStatus);
+		releaseReportItem();
 	}
 
-	private void handleVaccinationEvent(ActorContext actorContext, VaccinationEvent vaccinationEvent) {
-		PersonId personId = vaccinationEvent.getPersonId();
-
-		Optional<FamilyId> optional = familyDataManager.getFamilyId(personId);
-
-		if (optional.isEmpty()) {
-			refreshIndividualStatus(personId);
+	private void refreshIndividualStatus(final PersonId personId) {
+		IndividualVaccineStatus newStatus;
+		if (vaccinationDataManager.isPersonVaccinated(personId)) {
+			newStatus = IndividualVaccineStatus.FULL;
 		} else {
-			FamilyId familyId = optional.get();
-			refreshFamilyStatus(familyId);
+			newStatus = IndividualVaccineStatus.NONE;
 		}
-	}
 
-	private void handleFamilyAdditionEvent(ActorContext actorContext, FamilyAdditionEvent familyAdditionEvent) {
-		refreshFamilyStatus(familyAdditionEvent.getFamilyId());
-	}
+		final IndividualVaccineStatus currentStatus = individualToStatusMap.get(personId);
 
-	private void handleFamilyMemberShipAdditionEvent(ActorContext actorContext, FamilyMemberShipAdditionEvent familyMemberShipAdditionEvent) {
-		refreshFamilyStatus(familyMemberShipAdditionEvent.getFamilyId());
-	}
-
-	private ReportHeader reportHeader;
-
-	private ReportHeader getReportHeader() {
-		if (reportHeader == null) {
-			ReportHeader.Builder builder = ReportHeader.builder();
-			builder.add("time");
-			for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
-				builder.add(familyVaccineStatus.description);
-			}
-			for (IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
-				builder.add(individualVaccineStatus.description);
-			}
-			reportHeader = builder.build();
+		if (currentStatus == newStatus) {
+			return;
 		}
-		return reportHeader;
+
+		if (currentStatus != null) {
+			statusToIndividualsMap.get(currentStatus).remove(personId);
+		}
+		statusToIndividualsMap.get(newStatus).add(personId);
+		individualToStatusMap.put(personId, newStatus);
+		releaseReportItem();
 	}
 
 	private void releaseReportItem() {
-		ReportItem.Builder builder = ReportItem.builder().setReportId(reportId).setReportHeader(getReportHeader());
+		final ReportItem.Builder builder = ReportItem.builder().setReportId(reportId).setReportHeader(reportHeader);
 		builder.addValue(actorContext.getTime());
-		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
-			Set<FamilyId> families = statusToFamiliesMap.get(familyVaccineStatus);
+		for (final FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
+			final Set<FamilyId> families = statusToFamiliesMap.get(familyVaccineStatus);
 			builder.addValue(families.size());
 		}
-		for (IndividualVaccineStatus individualVaccineStatus : statusToIndividualsMap.keySet()) {
-			Set<PersonId> individuals = statusToIndividualsMap.get(individualVaccineStatus);
+		for (final IndividualVaccineStatus individualVaccineStatus : statusToIndividualsMap.keySet()) {
+			final Set<PersonId> individuals = statusToIndividualsMap.get(individualVaccineStatus);
 			builder.addValue(individuals.size());
 		}
-		ReportItem reportItem = builder.build();
+		final ReportItem reportItem = builder.build();
 		actorContext.releaseOutput(reportItem);
 	}
 }

@@ -16,9 +16,9 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
 
-public class SimpleVaccineReport extends PeriodicReport {
+public class StatelessVaccineReport extends PeriodicReport {
 
-	public SimpleVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
+	public StatelessVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
 		super(reportId, reportPeriod);
 	}
 
