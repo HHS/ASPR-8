@@ -24,6 +24,16 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 	public HourlyVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
 		super(reportId, reportPeriod);	
+		
+		ReportHeader.Builder builder = ReportHeader.builder();
+		addTimeFieldHeaders(builder);			
+		for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
+			builder.add(familyVaccineStatus.description);
+		}
+		for (IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
+			builder.add(individualVaccineStatus.description);
+		}
+		reportHeader = builder.build();
 	}
 
 	private VaccinationDataManager vaccinationDataManager;
@@ -187,28 +197,13 @@ public class HourlyVaccineReport extends PeriodicReport {
 		refreshFamilyStatus(familyMemberShipAdditionEvent.getFamilyId());
 	}
 
-	private ReportHeader reportHeader;
-
-	private ReportHeader getReportHeader() {
-		if (reportHeader == null) {
-			ReportHeader.Builder builder = ReportHeader.builder();
-			addTimeFieldHeaders(builder);			
-			for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
-				builder.add(familyVaccineStatus.description);
-			}
-			for (IndividualVaccineStatus individualVaccineStatus : IndividualVaccineStatus.values()) {
-				builder.add(individualVaccineStatus.description);
-			}
-			reportHeader = builder.build();
-		}
-		return reportHeader;
-	}
+	private ReportHeader reportHeader;	
 
 	@Override
 	protected void flush(ActorContext actorContext) {
 		ReportItem.Builder builder = ReportItem.builder()//
 				.setReportId(getReportId())//
-				.setReportHeader(getReportHeader());
+				.setReportHeader(reportHeader);
 		fillTimeFields(builder);		
 		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);
@@ -220,6 +215,6 @@ public class HourlyVaccineReport extends PeriodicReport {
 		}
 		ReportItem reportItem = builder.build();
 		actorContext.releaseOutput(reportItem);
-
 	}
+	
 }
