@@ -67,7 +67,7 @@ public class AT_GlobalPropertyReport {
 		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
-		builder.addPlugin(GlobalPropertiesPlugin.getPlugin(globalPropertiesPluginData));
+		builder.addPlugin(GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData));
 
 		/*
 		 * Define two more properties that are not included in the plugin data and will be added by an actor

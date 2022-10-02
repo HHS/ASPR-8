@@ -54,7 +54,7 @@ public class GlobalsPropertiesActionSupport {
 			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
 		}
 		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
-		Plugin globalsPlugin = GlobalPropertiesPlugin.getPlugin(globalPropertiesPluginData);
+		Plugin globalsPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
 		Simulation	.builder()//

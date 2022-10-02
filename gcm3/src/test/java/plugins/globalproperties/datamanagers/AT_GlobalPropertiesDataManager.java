@@ -91,7 +91,7 @@ public final class AT_GlobalPropertiesDataManager {
 		expectedPropertyValues.put(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 456);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
-		Plugin globalsPlugin = GlobalPropertiesPlugin.getPlugin(globalPropertiesPluginData);
+		Plugin globalsPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
 
 		/*
 		 * show that the Global Plugin Data is reflected in the initial state of

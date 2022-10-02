@@ -18,7 +18,6 @@ import util.errors.ContractException;
 /**
  * A Report that displays assigned global property values over time.
  *
- *
  * Fields
  *
  * Time -- the time in days when the global property was set

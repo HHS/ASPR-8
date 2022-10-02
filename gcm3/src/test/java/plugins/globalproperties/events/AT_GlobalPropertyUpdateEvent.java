@@ -166,7 +166,7 @@ public class AT_GlobalPropertyUpdateEvent {
 		}
 		GlobalPropertiesPluginData globalInitialData = initialDatabuilder.build();
 
-		builder.addPlugin(GlobalPropertiesPlugin.getPlugin(globalInitialData));
+		builder.addPlugin(GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalInitialData));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		

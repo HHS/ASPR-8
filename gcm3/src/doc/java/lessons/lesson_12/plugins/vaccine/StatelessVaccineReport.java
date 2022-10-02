@@ -18,10 +18,6 @@ import util.wrappers.MutableInteger;
 
 public class StatelessVaccineReport extends PeriodicReport {
 
-	public StatelessVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
-	}
-
 	private static enum VaccineStatus {
 		FAMILY_NONE("unvacinated_families"),
 		FAMILY_PARTIAL("partially_vaccinated_families"),
@@ -34,7 +30,10 @@ public class StatelessVaccineReport extends PeriodicReport {
 		private VaccineStatus(String description) {
 			this.description = description;
 		}
-
+	}
+	
+	public StatelessVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
+		super(reportId, reportPeriod);
 	}
 
 	@Override
@@ -62,10 +61,16 @@ public class StatelessVaccineReport extends PeriodicReport {
 				statusMap.get(vaccineStatus).increment();
 			}
 		}
-
+		ReportHeader.Builder headerBuilder = ReportHeader.builder();
+		addTimeFieldHeaders(headerBuilder);
+		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
+			headerBuilder.add(vaccineStatus.description);
+		}
+		ReportHeader reportHeader = headerBuilder.build();
+		
 		ReportItem.Builder builder = ReportItem	.builder()//
 												.setReportId(getReportId())//
-												.setReportHeader(getReportHeader());
+												.setReportHeader(reportHeader);
 		fillTimeFields(builder);
 		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
 			int value = statusMap.get(vaccineStatus).getValue();
@@ -77,14 +82,7 @@ public class StatelessVaccineReport extends PeriodicReport {
 
 	}
 
-	private ReportHeader getReportHeader() {
-		ReportHeader.Builder builder = ReportHeader.builder();
-		addTimeFieldHeaders(builder);
-		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
-			builder.add(vaccineStatus.description);
-		}
-		return builder.build();
-	}
+	
 
 	private VaccineStatus getFamilyStatus(FamilyId familyId, VaccinationDataManager vaccinationDataManager, FamilyDataManager familyDataManager) {
 

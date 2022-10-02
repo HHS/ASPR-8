@@ -44,7 +44,7 @@ public final class GlobalPropertiesPlugin {
 	 * </P>
 	 * 
 	 */
-	public static Plugin getPlugin(GlobalPropertiesPluginData globalPropertiesPluginData) {
+	public static Plugin getGlobalPropertiesPlugin(GlobalPropertiesPluginData globalPropertiesPluginData) {
 		return Plugin	.builder()//
 						.addPluginData(globalPropertiesPluginData)//
 						.setInitializer((c) -> {
