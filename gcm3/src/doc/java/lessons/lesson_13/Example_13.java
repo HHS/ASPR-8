@@ -94,7 +94,12 @@ public final class Example_13 {
 
 		ReportsPluginData reportsPluginData = ReportsPluginData	.builder()//
 																.addReport(() -> {
-																	return new GlobalPropertyReport(ModelReportId.GLOBAL_PROPERTY_REPORT)::init;
+																	GlobalPropertyReport globalPropertyReport = GlobalPropertyReport.builder()//
+																			.setReportId(ModelReportId.GLOBAL_PROPERTY_REPORT)//
+																			.includeAllExtantPropertyIds(true)//
+																			.includeNewPropertyIds(true)//
+																			.build();
+																	return globalPropertyReport::init;
 																})//
 																.build();
 
