@@ -92,22 +92,23 @@ public final class Example_13 {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		ReportsPluginData reportsPluginData = ReportsPluginData	.builder()//
-																.addReport(() -> {
-																	GlobalPropertyReport globalPropertyReport = GlobalPropertyReport.builder()//
-																			.setReportId(ModelReportId.GLOBAL_PROPERTY_REPORT)//
-																			.includeAllExtantPropertyIds(true)//
-																			.includeNewPropertyIds(true)//
-																			.build();
-																	return globalPropertyReport::init;
-																})//
-																.build();
+		ReportsPluginData reportsPluginData = //
+				ReportsPluginData	.builder()//
+									.addReport(() -> {
+										return GlobalPropertyReport	.builder()//
+																	.setReportId(ModelReportId.GLOBAL_PROPERTY_REPORT)//
+																	.includeAllExtantPropertyIds(true)//
+																	.includeNewPropertyIds(true)//
+																	.build()::init;
+									})//
+									.build();
 
 		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
 
-		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
-																		.addReport(ModelReportId.GLOBAL_PROPERTY_REPORT, Paths.get("C:\\temp\\gcm\\global property report.xls"))//
-																		.build();
+		NIOReportItemHandler nioReportItemHandler = //
+				NIOReportItemHandler.builder()//
+									.addReport(ModelReportId.GLOBAL_PROPERTY_REPORT, Paths.get("C:\\temp\\gcm\\global property report.xls"))//
+									.build();
 
 		Dimension alphaBetaDimension = getAlphaBetaDimension();
 
@@ -116,7 +117,7 @@ public final class Example_13 {
 					.addPlugin(modelPlugin)//
 					.addPlugin(reportPlugin)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addDimension(alphaBetaDimension)//					
+					.addDimension(alphaBetaDimension)//
 					.build()//
 					.execute();//
 

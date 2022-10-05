@@ -134,8 +134,8 @@ public final class GlobalPropertyReport {
 		 * Forces the inclusion of new properties that are not already selected
 		 * for exclusion. Defaults to false.
 		 */
-		public Builder includeNewPropertyIds(boolean includeNewProperties) {
-			data.includeNewPropertyIds = includeNewProperties;
+		public Builder includeNewPropertyIds(boolean includeNewPropertyIds) {
+			data.includeNewPropertyIds = includeNewPropertyIds;
 			return this;
 		}
 
