@@ -89,7 +89,7 @@ public class AT_GlobalPropertyReport {
 																			.build();
 			return globalPropertyReport::init;
 		}).build();
-		builder.addPlugin(ReportsPlugin.getReportPlugin(reportsPluginData));
+		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsPluginData));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

@@ -228,7 +228,7 @@ public class AT_PeriodicReport {
 		}).build();
 
 		// add the reports plugin
-		builder.addPlugin(ReportsPlugin.getReportPlugin(reportsInitialData));
+		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsInitialData));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -262,7 +262,7 @@ public class AT_PeriodicReport {
 		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 			return hourlyTestReport::init;
 		}).build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsInitialData);
+		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
 
 		// add the reports plugin
 		builder.addPlugin(reportPlugin);
@@ -300,7 +300,7 @@ public class AT_PeriodicReport {
 			return endOfSimulationTestReport::init;
 		}).build();
 
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsInitialData);
+		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
 		
 		// add the reports plugin
 		builder.addPlugin(reportPlugin);
@@ -346,7 +346,7 @@ public class AT_PeriodicReport {
 			}).build();
 
 			// add the reports plugin
-			Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsInitialData);
+			Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
 			builder.addPlugin(reportPlugin);
 
 

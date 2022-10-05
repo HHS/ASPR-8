@@ -416,7 +416,7 @@ public class AT_GroupPropertyReport {
 
 		// add the report plugin
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> groupPropertyReport::init).build();
-		builder.addPlugin(ReportsPlugin.getReportPlugin(reportsPluginData));
+		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsPluginData));
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(seed).build();

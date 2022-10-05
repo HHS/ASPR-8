@@ -41,7 +41,7 @@ public class AT_ReportPlugin {
 
 		ReportsPluginData reportsPluginData = builder.build();
 
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
+		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		
 		//show that the report has the reports plugin data
 		reportPlugin.getPluginDatas().contains(reportsPluginData);

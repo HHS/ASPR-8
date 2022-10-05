@@ -82,7 +82,7 @@ public final class Example_12 {
 				.addReport(()->new HourlyVaccineReport(ModelReportId.HOURLY_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
 				.addReport(()->new StatelessVaccineReport(ModelReportId.STATELESS_VACCINE_REPORT, ReportPeriod.HOURLY)::init)//
 				.build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
+		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		
 		Path outputDirectory = Paths.get("C:\\temp\\gcm");		
 		

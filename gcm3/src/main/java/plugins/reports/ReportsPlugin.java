@@ -38,7 +38,7 @@ public class ReportsPlugin {
 	 * 
 	 */
 
-	public static Plugin getReportPlugin(ReportsPluginData reportsPluginData) {
+	public static Plugin getReportsPlugin(ReportsPluginData reportsPluginData) {
 		return Plugin	.builder()//
 						.addPluginData(reportsPluginData)//
 						.setPluginId(ReportsPluginId.PLUGIN_ID)//

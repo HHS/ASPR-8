@@ -374,7 +374,7 @@ public class AT_GroupPopulationReport {
 
 		// add the report plugin
 		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> new GroupPopulationReport(REPORT_ID, reportPeriod)::init).build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
+		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		builder.addPlugin(reportPlugin);
 
 		// add the stochastics plugin

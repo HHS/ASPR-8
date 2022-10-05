@@ -173,7 +173,7 @@ public class MaterialsActionSupport {
 			reportsBuilder.addReport(() -> report);
 		}
 		ReportsPluginData reportsPluginData = reportsBuilder.build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
+		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		builder.addPlugin(reportPlugin);
 
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();

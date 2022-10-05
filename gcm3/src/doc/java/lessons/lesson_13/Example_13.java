@@ -54,7 +54,7 @@ public final class Example_13 {
 												.setPropertyValueMutability(true)//
 												.build();
 
-		builder.defineGlobalProperty(GlobalProperty.DELTA, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.GAMMA, propertyDefinition);
 
 		return builder.build();
 	}
@@ -75,6 +75,8 @@ public final class Example_13 {
 				Builder builder = c.get(GlobalPropertiesPluginData.Builder.class);
 				builder.setGlobalPropertyValue(GlobalProperty.ALPHA, pair.getFirst());
 				builder.setGlobalPropertyValue(GlobalProperty.BETA, pair.getSecond());
+				result.add(pair.getFirst().toString());
+				result.add(pair.getSecond().toString());
 				return result;
 			});
 		}
@@ -103,11 +105,12 @@ public final class Example_13 {
 									})//
 									.build();
 
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
+		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(ModelReportId.GLOBAL_PROPERTY_REPORT, Paths.get("C:\\temp\\gcm\\global property report.xls"))//
+									.addReport(ModelReportId.GLOBAL_PROPERTY_REPORT, //
+											Paths.get("C:\\temp\\gcm\\global property report.xls"))//
 									.build();
 
 		Dimension alphaBetaDimension = getAlphaBetaDimension();
@@ -115,11 +118,13 @@ public final class Example_13 {
 		Experiment	.builder()//
 					.addPlugin(globalPropertiesPlugin)//
 					.addPlugin(modelPlugin)//
-					.addPlugin(reportPlugin)//
+					.addPlugin(reportsPlugin)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.addDimension(alphaBetaDimension)//
 					.build()//
 					.execute();//
 
 	}
+	
+	
 }

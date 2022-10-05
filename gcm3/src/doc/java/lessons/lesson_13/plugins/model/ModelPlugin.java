@@ -13,7 +13,7 @@ public final class ModelPlugin {
 		return Plugin	.builder()//
 						.addPluginDependency(ReportsPluginId.PLUGIN_ID)//
 						.setPluginId(ModelPluginId.PLUGIN_ID).setInitializer((c) -> {
-							c.addActor(new DeltaActor()::init);
+							c.addActor(new GammaActor()::init);
 						}).build();
 	}
 }

@@ -131,7 +131,7 @@ public class AT_ResourcePropertyReport {
 		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
 		reportsBuilder.addReport(() -> new ResourcePropertyReport(REPORT_ID)::init);
 		ReportsPluginData reportsPluginData = reportsBuilder.build();
-		Plugin reportPlugin = ReportsPlugin.getReportPlugin(reportsPluginData);
+		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		builder.addPlugin(reportPlugin);
 
 		// add the stochastics plugin

@@ -100,7 +100,7 @@ public class AT_RegionPropertyReport {
 																.addReport(() -> new RegionPropertyReport(REPORT_ID)::init)//
 																.build();//
 
-		builder.addPlugin(ReportsPlugin.getReportPlugin(reportsPluginData));
+		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsPluginData));
 
 		// add remaining plugins
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
