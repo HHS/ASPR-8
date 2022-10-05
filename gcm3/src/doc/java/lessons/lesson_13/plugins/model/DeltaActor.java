@@ -2,7 +2,6 @@ package lessons.lesson_13.plugins.model;
 
 import java.util.stream.IntStream;
 
-import lessons.lesson_13.GlobalProperty;
 import nucleus.ActorContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
+import lessons.lesson_13.plugins.model.GlobalProperty;
 import lessons.lesson_13.plugins.model.ModelPlugin;
 import lessons.lesson_13.plugins.model.ModelReportId;
 import nucleus.Dimension;

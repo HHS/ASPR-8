@@ -133,6 +133,9 @@ public final class GroupPropertyReport extends PeriodicReport {
 			return this;
 		}
 
+		/**
+		 * Properties that are newly added to the simulation will be covered by the report
+		 */
 		public Builder includeNewProperties(boolean includeNewProperties) {
 			scaffold.includeNewProperties = includeNewProperties;
 			return this;

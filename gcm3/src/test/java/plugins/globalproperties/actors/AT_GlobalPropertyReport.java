@@ -39,8 +39,8 @@ public class AT_GlobalPropertyReport {
 	public void testInit() {
 
 		/*
-		 * We will add one agent and the global property report to the engine.
-		 * We will define a few global properties and the agent will alter
+		 * We will add one actor and the global property report to the engine.
+		 * We will define a few global properties and the actor will alter
 		 * various global properties over time. Report items from the report
 		 * will be collected in an output consumer. The expected report items
 		 * will be collected in a separate consumer and the consumers will be

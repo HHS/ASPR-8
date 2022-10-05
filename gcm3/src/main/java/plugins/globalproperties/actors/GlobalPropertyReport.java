@@ -30,6 +30,19 @@ import util.errors.ContractException;
  *
  */
 public final class GlobalPropertyReport {
+	
+	private static class Data{
+		
+	}
+	
+	/**
+	 * Builder class for the global property report
+	 * @author Shawn Hatch
+	 *
+	 */
+	public final static class Builder{		
+		
+	}
 
 	private ReportHeader reportHeader;
 
