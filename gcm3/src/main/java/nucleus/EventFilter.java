@@ -11,7 +11,7 @@ import util.errors.ContractException;
 /**
  * 
  * A generics-based data class for collecting an ordered list of predicates of
- * the form F(event) = value that are used on conjunction to filter events.
+ * the form F(event) = value that are used in conjunction to filter events.
  * 
  * 
  * @author Shawn Hatch
@@ -28,8 +28,7 @@ public final class EventFilter<T extends Event> {
 		private Function<N, Object> eventFunction;
 		private Object targetValue;
 
-		public FunctionValue(Object functionId, Function<N, Object> eventFunction, Object targetValue) {
-			super();
+		private FunctionValue(Object functionId, Function<N, Object> eventFunction, Object targetValue) {			
 			this.functionId = functionId;
 			this.eventFunction = eventFunction;
 			this.targetValue = targetValue;

@@ -464,7 +464,6 @@ public class Simulation {
 		@Override
 		public void releaseEvent(final Event event) {
 			simulation.releaseEvent(event);
-
 		}
 
 		@Override
