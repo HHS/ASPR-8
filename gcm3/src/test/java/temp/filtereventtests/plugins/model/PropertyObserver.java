@@ -9,11 +9,10 @@ import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.stochastics.StochasticsDataManager;
 import temp.filtereventtests.PersonPropertyIdentifier;
-import util.time.Stopwatch;
 
 public class PropertyObserver {
 	private RandomGenerator randomGenerator;
-	private Stopwatch stopwatch = new Stopwatch();
+	
 
 	public void init(ActorContext actorContext) {
 		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
@@ -38,21 +37,15 @@ public class PropertyObserver {
 			EventLabel<PersonPropertyUpdateEvent> eventLabel = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, PersonPropertyIdentifier.PROP_BOOLEAN_16);
 			actorContext.subscribe(eventLabel, this::handlePersonPropertyUpdateEvent);
 		}
-
 		
 		
-		actorContext.subscribeToSimulationClose((c) -> {
-			c.releaseOutput("stopwatch = " + stopwatch.getElapsedMilliSeconds());
-		});
 	}
 
 	private void handlePersonPropertyUpdateEvent(ActorContext actorContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
-		stopwatch.start();
 		double value;
 		do {
 			value = randomGenerator.nextDouble();
 		} while (value > 0.2);
-		stopwatch.stop();
 	}
 
 }
