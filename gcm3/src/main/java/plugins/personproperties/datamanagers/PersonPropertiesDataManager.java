@@ -7,12 +7,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
+import nucleus.EventFilter.IdentifiableFunction;
 import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonImminentAdditionEvent;
@@ -478,6 +480,24 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private final PersonPropertiesPluginData personPropertiesPluginData;
 
+	private static enum EventFunctionId {
+		PERSON_PROPERTY_ID, //
+		REGION_ID, //
+		PERSON_ID;//
+	}
+	
+	private Map<EventFunctionId,IdentifiableFunction<PersonPropertyUpdateEvent>> functionMap = new LinkedHashMap<>();
+
+	private void initIdentifiableFunction(EventFunctionId eventFunctionId, Function<PersonPropertyUpdateEvent, Object> eventFunction) {
+		functionMap.put(eventFunctionId, new IdentifiableFunction<>(eventFunctionId, eventFunction));
+	}
+	
+	private IdentifiableFunction<PersonPropertyUpdateEvent> getIdentifiableFunction(EventFunctionId eventFunctionId) {
+		return functionMap.get(eventFunctionId);
+	}
+
+
+	
 	/**
 	 * Constructs the person property data manager from the given plugin data
 	 * 
@@ -491,6 +511,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 		this.personPropertiesPluginData = personPropertiesPluginData;
 
+		initIdentifiableFunction(EventFunctionId.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId());
+		initIdentifiableFunction(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()));
+		initIdentifiableFunction(EventFunctionId.PERSON_ID, e -> e.getPersonId());
+		
 	}
 
 	/**
@@ -716,10 +740,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
-
-	private static enum EventFunctionIds {
-		PERSON_PROPERTY_ID, REGION_ID, PERSON_ID
-	}
+	
+	
+	
+	
+	
 
 	/**
 	 * Returns an event filter used to subscribe to
@@ -745,8 +770,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByProperty(PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
 		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
-							.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId)//
-							.build();
+							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId).build();
 
 	}
 
@@ -773,8 +797,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonPropertyId(personPropertyId);
 		validatePersonExists(personId);
 		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
-							.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId)//
-							.addFunctionValue(EventFunctionIds.PERSON_ID, e -> e.getPersonId(), personId)//
+							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.PERSON_ID), personId)//
 							.build();
 	}
 
@@ -800,8 +824,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonPropertyId(personPropertyId);
 		validateRegionId(regionId);
 		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
-							.addFunctionValue(EventFunctionIds.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId(), personPropertyId)//
-							.addFunctionValue(EventFunctionIds.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()), regionId)//
+							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
+							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.REGION_ID), regionId)
 							.build();
 	}
 }

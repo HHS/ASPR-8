@@ -19,9 +19,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.NotThreadSafe;
-import nucleus.EventFilter.FunctionValue;
+import nucleus.EventFilter.IdentifiableFunction;
 import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -1665,13 +1666,13 @@ public class Simulation {
 				actorContentRec.event = event;
 				actorContentRec.actorId = actorId;
 				actorContentRec.consumer = consumer;
-				actorQueue.add(actorContentRec);
+				actorQueue.add(actorContentRec);				
 			}
 		}
 
 		// match the value to any child nodes and recursively call this method
 		// on that node
-		Map<Object, FilterNode> childMap = filterNode.children.get(value);
+		Map<IdentifiableFunction<?>, FilterNode> childMap = filterNode.children.get(value);
 		if (childMap != null) {
 			for (Object id : childMap.keySet()) {
 				FilterNode childNode = childMap.get(id);
@@ -1686,8 +1687,7 @@ public class Simulation {
 	 * Generates a filter node to be used as the root filter node.
 	 */
 	private FilterNode generateRootNode() {
-		FilterNode result = new FilterNode();
-		result.id = new Object();
+		FilterNode result = new FilterNode();		
 		result.function = (event) -> event.getClass();
 		return result;
 	}
@@ -1708,13 +1708,13 @@ public class Simulation {
 		// the parent node is used during the unsubscribe process
 		private FilterNode parent;
 
-		// the id is used during the unsubscribe process
-		private Object id;
+		// the id is used during the unsubscribe process		
+		private IdentifiableFunction<?> identifiableFunction;
 
 		private Function<Event, Object> function;
 
 		// value of function, id of child filter node, FilterNode
-		private Map<Object, Map<Object, FilterNode>> children = new LinkedHashMap<>();
+		private Map<Object, Map<IdentifiableFunction<?>, FilterNode>> children = new LinkedHashMap<>();
 
 		// value of function, actor id, Consumer
 		private Map<Object, Map<ActorId, Consumer<Event>>> consumers = new LinkedHashMap<>();
@@ -1726,20 +1726,20 @@ public class Simulation {
 		 * takes on this role for the function.
 		 */
 		@SuppressWarnings("unchecked")
-		private <T extends Event> FilterNode addChildNode(Object value, Object functionId, Function<T, Object> eventFunction) {
-			Map<Object, FilterNode> map = children.get(value);
+		private <T extends Event> FilterNode addChildNode(Object value, IdentifiableFunction<T> identifiableFunction) {
+			Map<IdentifiableFunction<?>, FilterNode> map = children.get(value);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				children.put(value, map);
 			}
 
-			FilterNode filterNode = map.get(functionId);
+			FilterNode filterNode = map.get(identifiableFunction);
 			if (filterNode == null) {
 				filterNode = new FilterNode();
-				filterNode.id = functionId;
+				filterNode.identifiableFunction = identifiableFunction;
 				filterNode.parent = this;
-				filterNode.function = event -> eventFunction.apply((T) event);
-				map.put(functionId, filterNode);
+				filterNode.function = event -> identifiableFunction.getEventFunction().apply((T) event);
+				map.put(identifiableFunction, filterNode);
 			}
 			return filterNode;
 		}
@@ -1779,9 +1779,9 @@ public class Simulation {
 		 * We loop through the (function,value) pairs, integrating each into the
 		 * tree of filter nodes and creating new filter nodes as needed.
 		 */
-		for (FunctionValue<T> functionValue : eventFilter.getFunctionValues()) {
-			filterNode = filterNode.addChildNode(value, functionValue.getFunctionId(), functionValue.getEventFunction());
-			value = functionValue.getTargetValue();
+		for (Pair<IdentifiableFunction<T>,Object> pair : eventFilter.getFunctionValuePairs()) {
+			filterNode = filterNode.addChildNode(value, pair.getFirst());
+			value = pair.getSecond();
 		}
 
 		/*
@@ -1812,17 +1812,17 @@ public class Simulation {
 		 * Walk down the tree and if we find that any of the function id values
 		 * are not present then we simply return since the consumer cannot exist
 		 */
-		for (FunctionValue<T> functionValue : eventFilter.getFunctionValues()) {
-			Map<Object, FilterNode> map = filterNode.children.get(value);
+		for (Pair<IdentifiableFunction<T>,Object> pair : eventFilter.getFunctionValuePairs()) {
+			Map<IdentifiableFunction<?>, FilterNode> map = filterNode.children.get(value);
 			if (map == null) {
 				return;
 			}
-			Object id = functionValue.getFunctionId();
+			Object id = pair.getFirst();
 			filterNode = map.get(id);
 			if (filterNode == null) {
 				return;
 			}
-			value = functionValue.getTargetValue();
+			value = pair.getSecond();
 		}
 
 		/*
@@ -1842,7 +1842,7 @@ public class Simulation {
 		while (filterNode.parent != null) {
 			boolean removeNode = filterNode.children.isEmpty() && filterNode.consumers.isEmpty();
 			if (removeNode) {
-				filterNode.parent.children.remove(filterNode.id);
+				filterNode.parent.children.remove(filterNode.identifiableFunction);
 			} else {
 				break;
 			}

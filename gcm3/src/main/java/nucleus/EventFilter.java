@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import org.apache.commons.math3.util.Pair;
+
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 
@@ -21,29 +23,54 @@ import util.errors.ContractException;
 @Immutable
 public final class EventFilter<T extends Event> {
 
-	@Immutable
-	public final static class FunctionValue<N> {
-
+	public final static class IdentifiableFunction<N> {
+		
 		private Object functionId;
+		
 		private Function<N, Object> eventFunction;
-		private Object targetValue;
 
-		private FunctionValue(Object functionId, Function<N, Object> eventFunction, Object targetValue) {			
+		
+		public IdentifiableFunction(Object functionId, Function<N, Object> eventFunction) {
+			if (functionId == null) {
+				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_ID);
+			}
+			if (eventFunction == null) {
+				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION);
+			}
+			
 			this.functionId = functionId;
 			this.eventFunction = eventFunction;
-			this.targetValue = targetValue;
-		}
-
-		public Object getFunctionId() {
-			return functionId;
 		}
 
 		public Function<N, Object> getEventFunction() {
 			return eventFunction;
 		}
 
-		public Object getTargetValue() {
-			return targetValue;
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((functionId == null) ? 0 : functionId.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof IdentifiableFunction)) {
+				return false;
+			}
+			IdentifiableFunction<?> other = (IdentifiableFunction<?>) obj;
+			if (functionId == null) {
+				if (other.functionId != null) {
+					return false;
+				}
+			} else if (!functionId.equals(other.functionId)) {
+				return false;
+			}
+			return true;
 		}
 
 	}
@@ -52,7 +79,7 @@ public final class EventFilter<T extends Event> {
 
 		private Class<N> eventClass;
 
-		private List<FunctionValue<N>> functionValues = new ArrayList<>();
+		private List<Pair<IdentifiableFunction<N>,Object>> functionValuePairs = new ArrayList<>();
 	}
 
 	/**
@@ -103,26 +130,23 @@ public final class EventFilter<T extends Event> {
 		 * Adds an event function and its associated target value.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION_ID} if
-		 *             the function id is null</li>
-		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION} if the
-		 *             event function is null</li>
+		 *             <li>{@linkplain NucleusError#NULL_IDENTIFIABLE_FUNCTION} if
+		 *             the identifiable function is null</li>
+		 *             
 		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION_VALUE}
 		 *             if the target value is null</li>
 		 */
-		public Builder<N> addFunctionValue(Object functionId, Function<N, Object> eventFunction, Object targetValue) {
-
-			if (functionId == null) {
-				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_ID);
+		public Builder<N> addFunctionValuePair(IdentifiableFunction<N> identifiableFunction, Object targetValue) {
+			if (identifiableFunction == null) {
+				throw new ContractException(NucleusError.NULL_IDENTIFIABLE_FUNCTION);
 			}
-			if (eventFunction == null) {
-				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION);
-			}
+			
 			if (targetValue == null) {
 				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_VALUE);
 			}
 
-			data.functionValues.add(new FunctionValue<>(functionId, eventFunction, targetValue));
+			data.functionValuePairs.add(new Pair<>(identifiableFunction, targetValue));
+			
 			return this;
 		}
 	}
@@ -134,7 +158,7 @@ public final class EventFilter<T extends Event> {
 	}
 
 	/**
-	 * Returns the event subclass associated with all function values 
+	 * Returns the event subclass associated with all function values
 	 */
 	public Class<T> getEventClass() {
 		return data.eventClass;
@@ -143,8 +167,8 @@ public final class EventFilter<T extends Event> {
 	/**
 	 * Returns an unmodifiable list of the function values
 	 */
-	public List<FunctionValue<T>> getFunctionValues() {
-		return Collections.unmodifiableList(data.functionValues);
+	public List<Pair<IdentifiableFunction<T>,Object>> getFunctionValuePairs() {
+		return Collections.unmodifiableList(data.functionValuePairs);
 	}
 
 }

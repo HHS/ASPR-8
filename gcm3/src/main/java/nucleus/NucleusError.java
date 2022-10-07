@@ -81,6 +81,7 @@ public enum NucleusError implements ContractError {
 	NULL_EVENT_FUNCTION_ID("Null event function id"),
 	NULL_EVENT_FUNCTION_VALUE("Null event function value"),
 	NULL_EVENT_FUNCTION("Null event function"),
+	NULL_IDENTIFIABLE_FUNCTION("Null identifiable function"),
 	NULL_EVENT_FILTER("Null event filter"),
 	;
 
