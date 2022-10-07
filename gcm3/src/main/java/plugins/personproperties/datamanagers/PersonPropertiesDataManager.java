@@ -485,19 +485,17 @@ public final class PersonPropertiesDataManager extends DataManager {
 		REGION_ID, //
 		PERSON_ID;//
 	}
-	
-	private Map<EventFunctionId,IdentifiableFunction<PersonPropertyUpdateEvent>> functionMap = new LinkedHashMap<>();
+
+	private Map<EventFunctionId, IdentifiableFunction<PersonPropertyUpdateEvent>> functionMap = new LinkedHashMap<>();
 
 	private void initIdentifiableFunction(EventFunctionId eventFunctionId, Function<PersonPropertyUpdateEvent, Object> eventFunction) {
 		functionMap.put(eventFunctionId, new IdentifiableFunction<>(eventFunctionId, eventFunction));
 	}
-	
+
 	private IdentifiableFunction<PersonPropertyUpdateEvent> getIdentifiableFunction(EventFunctionId eventFunctionId) {
 		return functionMap.get(eventFunctionId);
 	}
 
-
-	
 	/**
 	 * Constructs the person property data manager from the given plugin data
 	 * 
@@ -514,7 +512,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		initIdentifiableFunction(EventFunctionId.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId());
 		initIdentifiableFunction(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()));
 		initIdentifiableFunction(EventFunctionId.PERSON_ID, e -> e.getPersonId());
-		
+
 	}
 
 	/**
@@ -740,11 +738,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
-	
-	
-	
-	
-	
 
 	/**
 	 * Returns an event filter used to subscribe to
@@ -825,7 +818,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validateRegionId(regionId);
 		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
 							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
-							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.REGION_ID), regionId)
-							.build();
+							.addFunctionValuePair(getIdentifiableFunction(EventFunctionId.REGION_ID), regionId).build();
 	}
 }
