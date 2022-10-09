@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
-import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -393,12 +392,13 @@ public final class AT_PersonPropertyDataManager {
 		// add an agent that will observe changes to all person properties
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				EventLabel<PersonPropertyUpdateEvent> eventLabel = PersonPropertyUpdateEvent.getEventLabelByProperty(c, testPersonPropertyId);
-				c.subscribe(eventLabel, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getPersonId(), e.getPersonPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
-				});
-			}
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(e.getPersonId(), e.getPersonPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
+			});
+
 		}));
 
 		/*
@@ -1271,8 +1271,8 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterByProperty", args = { PersonPropertyId.class })
-	public void testGetEventFilterByProperty() {
+	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonPropertyId.class })
+	public void testGetEventFilterForPersonPropertyUpdateEvent_property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -1284,7 +1284,7 @@ public final class AT_PersonPropertyDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			for (TestPersonPropertyId propertyId : TestPersonPropertyId.values()) {
-				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByProperty(propertyId);
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(propertyId);
 				assertNotNull(eventFilter);
 				c.subscribe(eventFilter, (c2, e) -> {
 					MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());
@@ -1333,21 +1333,21 @@ public final class AT_PersonPropertyDataManager {
 		// precondition test: if the person property id is null
 		PersonPropertiesActionSupport.testConsumer(0, 6844554554783464142L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByProperty(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(null));
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the person property id is not known
 		PersonPropertiesActionSupport.testConsumer(0, 334179992057034848L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByProperty(TestPersonPropertyId.getUnknownPersonPropertyId()));
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(TestPersonPropertyId.getUnknownPersonPropertyId()));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterByPersonAndProperty", args = { PersonId.class, PersonPropertyId.class })
-	public void testGetEventFilterByPersonAndProperty() {
+	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonId.class, PersonPropertyId.class })
+	public void testGetEventFilterForPersonPropertyUpdateEvent_person_property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -1385,7 +1385,7 @@ public final class AT_PersonPropertyDataManager {
 				PersonId personId = pair.getFirst();
 				TestPersonPropertyId propertyId = pair.getSecond();
 
-				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, propertyId);
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personId, propertyId);
 				assertNotNull(eventFilter);
 				c.subscribe(eventFilter, (c2, e) -> {
 					MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());
@@ -1441,7 +1441,7 @@ public final class AT_PersonPropertyDataManager {
 			assertTrue(people.size() > 0);
 			PersonId personId = people.get(0);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personId, null));
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
@@ -1453,15 +1453,16 @@ public final class AT_PersonPropertyDataManager {
 			PersonId personId = people.get(0);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, TestPersonPropertyId.getUnknownPersonPropertyId()));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personId, TestPersonPropertyId.getUnknownPersonPropertyId()));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the person id is null
 		PersonPropertiesActionSupport.testConsumer(10, 2414428612890791850L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			PersonId nullPersonId = null;
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterByPersonAndProperty(null, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(nullPersonId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 		});
 
@@ -1470,17 +1471,19 @@ public final class AT_PersonPropertyDataManager {
 			PersonId personId = new PersonId(1000000);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
 	}
-	
-	private static class LocalPersonPropertyId implements PersonPropertyId{
+
+	private static class LocalPersonPropertyId implements PersonPropertyId {
 		private final int id;
+
 		public LocalPersonPropertyId(int id) {
 			this.id = id;
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -1488,6 +1491,7 @@ public final class AT_PersonPropertyDataManager {
 			result = prime * result + id;
 			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -1502,12 +1506,12 @@ public final class AT_PersonPropertyDataManager {
 			}
 			return true;
 		}
-		
+
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonPropertyDefinition", args = {})
-	public void testGetEventFilterForPersonPropertyDefinition() {
+	@UnitTestMethod(name = "getEventFilterForPersonPropertyDefinitionEvent", args = {})
+	public void testGetEventFilterForPersonPropertyDefinitionEvent() {
 		//
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1520,7 +1524,7 @@ public final class AT_PersonPropertyDataManager {
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			EventFilter<PersonPropertyDefinitionEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyDefinition();
+			EventFilter<PersonPropertyDefinitionEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyDefinitionEvent();
 			assertNotNull(eventFilter);
 			c.subscribe(eventFilter, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonPropertyId());
@@ -1533,25 +1537,25 @@ public final class AT_PersonPropertyDataManager {
 		 * Have an actor add several new person property definitions at various
 		 * times.
 		 */
-		
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
-				.setType(Integer.class)//
-				.setDefaultValue(0)//
-				.build();
-		IntStream.range(1, 4).forEach((i) -> {		
+
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Integer.class)//
+																	.setDefaultValue(0)//
+																	.build();
+		IntStream.range(1, 4).forEach((i) -> {
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
 				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 				PersonPropertyId personPropertyId = new LocalPersonPropertyId(i);
-				
+
 				PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = //
-						
+
 						PersonPropertyDefinitionInitialization	.builder()//
 																.setPersonPropertyId(personPropertyId)//
 																.setPropertyDefinition(propertyDefinition)//
 																.build();
 				personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
-				expectedObservations.add(new MultiKey((double)i,personPropertyId));
-				
+				expectedObservations.add(new MultiKey((double) i, personPropertyId));
+
 			}));
 		});
 
@@ -1569,12 +1573,11 @@ public final class AT_PersonPropertyDataManager {
 
 		PersonPropertiesActionSupport.testConsumers(100, 6462842714052608355L, testPlugin);
 
-		
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterByRegionAndProperty", args = { RegionId.class, PersonPropertyId.class })
-	public void testGetEventFilterByRegionAndProperty() {
+	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = { RegionId.class, PersonPropertyId.class })
+	public void testGetEventFilterForPersonPropertyUpdateEvent_region_property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -1611,7 +1614,7 @@ public final class AT_PersonPropertyDataManager {
 			for (Pair<RegionId, TestPersonPropertyId> pair : selectedPairs) {
 				RegionId regionId = pair.getFirst();
 				TestPersonPropertyId propertyId = pair.getSecond();
-				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, propertyId);
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(regionId, propertyId);
 				assertNotNull(eventFilter);
 				c.subscribe(eventFilter, (c2, e) -> {
 					MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());
@@ -1667,7 +1670,7 @@ public final class AT_PersonPropertyDataManager {
 		PersonPropertiesActionSupport.testConsumer(10, 6900159997685687591L, (c) -> {
 			RegionId regionId = TestRegionId.REGION_1;
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, null));
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(regionId, null));
 			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 		});
 
@@ -1676,15 +1679,16 @@ public final class AT_PersonPropertyDataManager {
 			RegionId regionId = TestRegionId.REGION_1;
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, TestPersonPropertyId.getUnknownPersonPropertyId()));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(regionId, TestPersonPropertyId.getUnknownPersonPropertyId()));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
 		// precondition test: if the region id is null
 		PersonPropertiesActionSupport.testConsumer(10, 451632169807459388L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			RegionId nullRegionId = null;
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterByRegionAndProperty(null, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(nullRegionId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 		});
 
@@ -1693,15 +1697,15 @@ public final class AT_PersonPropertyDataManager {
 			RegionId regionId = TestRegionId.getUnknownRegionId();
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(regionId, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 		});
 
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilter", args = {})
-	public void testGetEventFilter() {
+	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = {})
+	public void testGetEventFilterForPersonPropertyUpdateEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -1713,7 +1717,7 @@ public final class AT_PersonPropertyDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 
-			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilter();
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent();
 			assertNotNull(eventFilter);
 			c.subscribe(eventFilter, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonId(), e.getPersonPropertyId(), e.getCurrentPropertyValue());

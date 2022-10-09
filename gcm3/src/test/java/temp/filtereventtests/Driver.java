@@ -2,7 +2,6 @@ package temp.filtereventtests;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -13,8 +12,13 @@ import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.actors.PersonPropertyReport;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
+import plugins.reports.ReportsPlugin;
+import plugins.reports.ReportsPluginData;
+import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportPeriod;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import temp.filtereventtests.plugins.model.ModelPlugin;
@@ -25,18 +29,21 @@ import util.time.TimeElapser;
 public final class Driver {
 
 	private Driver() {
-		
-		
+
+	}
+
+	private static enum Local_Report_Id implements ReportId {
+		PERSON_PROPERTY_REPORT;
 	}
 
 	public static void main(String[] args) {
 
-		long seed = new Random().nextLong();
-		int populationCount = 3_000_000;
-		int regionCount = 7500;
+		long seed = 698640983459876L;//new Random().nextLong();
+		int populationCount = 10;
+		int regionCount = 5;
 		boolean useEventFilters = true;
-		int eventCount = 1_000_000;
-		int observerCount = 100;
+		int eventCount = 10;
+		int observerCount = 1;
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
@@ -84,12 +91,26 @@ public final class Driver {
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// add the model plugin
-		ModelPluginData modelPluginData = ModelPluginData.builder()//
-				.setEventCount(eventCount)//
-				.setUseEventFilters(useEventFilters)//
-				.setObserverCount(observerCount)
-				.build();
+		ModelPluginData modelPluginData = ModelPluginData	.builder()//
+															.setEventCount(eventCount)//
+															.setUseEventFilters(useEventFilters)//
+															.setObserverCount(observerCount).build();
 		Plugin modelPlugin = ModelPlugin.getModelPlugin(modelPluginData);
+
+		PersonPropertyReport personPropertyReport = new PersonPropertyReport(Local_Report_Id.PERSON_PROPERTY_REPORT, ReportPeriod.DAILY
+//				,
+//				PersonPropertyIdentifier.PROP_INT_1,
+//				PersonPropertyIdentifier.PROP_INT_2,
+//				PersonPropertyIdentifier.PROP_INT_3,
+//				PersonPropertyIdentifier.PROP_INT_4
+				);
+		
+		ReportsPluginData reportsPluginData = //
+				ReportsPluginData	.builder()//
+									.addReport(() -> personPropertyReport::init)//
+									.build();
+		
+		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 
 		// build the experiment
 		Experiment experiment = Experiment	.builder()//
@@ -98,6 +119,7 @@ public final class Driver {
 											.addPlugin(regionsPlugin)//
 											.addPlugin(stochasticsPlugin)//
 											.addPlugin(modelPlugin)//
+											.addPlugin(reportsPlugin)//
 											.addExperimentContextConsumer(c -> {
 												c.subscribeToOutput(Object.class, (c2, scenarioId, value) -> {
 													System.out.println(value);
@@ -108,7 +130,7 @@ public final class Driver {
 		// run the experiment
 		TimeElapser timeElapser = new TimeElapser();
 		experiment.execute();
-		System.out.println("total experiment time = "+timeElapser.getElapsedMilliSeconds());
+		System.out.println("total experiment time = " + timeElapser.getElapsedMilliSeconds());
 
 	}
 }

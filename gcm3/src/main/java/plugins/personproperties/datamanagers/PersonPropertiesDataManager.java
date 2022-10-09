@@ -734,7 +734,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonPropertyUpdateEvent} events. Matches all such events.
 	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilter() {
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent() {
 		return EventFilter.builder(PersonPropertyUpdateEvent.class).build();
 	}
 
@@ -751,7 +751,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * 
 	 * 
 	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByProperty(PersonPropertyId personPropertyId) {
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
 		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
 							.addFunctionValuePair(functionMap.get(EventFunctionId.PERSON_PROPERTY_ID), personPropertyId)//
@@ -778,7 +778,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *             id is not known</li>
 	 * 
 	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByPersonAndProperty(PersonId personId, PersonPropertyId personPropertyId) {
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonId personId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
 		validatePersonExists(personId);
 		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
@@ -805,7 +805,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *             person property id is not known</li>
 	 * 
 	 */
-	public EventFilter<PersonPropertyUpdateEvent> getEventFilterByRegionAndProperty(RegionId regionId, PersonPropertyId personPropertyId) {
+	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(RegionId regionId, PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
 		validateRegionId(regionId);
 		return EventFilter	.builder(PersonPropertyUpdateEvent.class)//
@@ -819,7 +819,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * {@link PersonPropertyDefinitionEvent} events. Matches all such events.
 	 *
 	 */
-	public EventFilter<PersonPropertyDefinitionEvent> getEventFilterForPersonPropertyDefinition() {
+	public EventFilter<PersonPropertyDefinitionEvent> getEventFilterForPersonPropertyDefinitionEvent() {
 		return EventFilter	.builder(PersonPropertyDefinitionEvent.class)//
 							.build();
 	}

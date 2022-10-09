@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ActorContext;
-import nucleus.EventLabel;
+import nucleus.EventFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
@@ -258,14 +258,18 @@ public final class PersonPropertyReport extends PeriodicReport {
 		// If all person properties are included, then subscribe to the event
 		// class, otherwise subscribe to the individual property values
 		if (personPropertyIds.equals(personPropertiesDataManager.getPersonPropertyIds())) {
-			subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+
+			subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(), this::handlePersonPropertyUpdateEvent);
 			// since we are subscribing to all person properties, we must
 			// subscribe to the PersonPropertyDefinitionEvent as well
-			subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
+			
+			subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyDefinitionEvent(), this::handlePersonPropertyDefinitionEvent);
 		} else {
 			for (PersonPropertyId personPropertyId : personPropertyIds) {
-				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
-				subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
+				
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personPropertyId);
+				subscribe(eventFilter, this::handlePersonPropertyUpdateEvent);
+
 			}
 		}
 

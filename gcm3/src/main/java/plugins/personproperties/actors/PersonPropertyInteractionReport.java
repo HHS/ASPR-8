@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import nucleus.ActorContext;
-import nucleus.EventLabel;
+import nucleus.EventFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
@@ -277,12 +277,12 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		// If all person properties are included, then subscribe to the event
 		// class, otherwise subscribe to the individual property values
 		if (propertyIds.stream().collect(Collectors.toSet()).equals(personPropertiesDataManager.getPersonPropertyIds())) {
-			subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
-			subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
+			subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(), this::handlePersonPropertyUpdateEvent);
+			subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyDefinitionEvent(), this::handlePersonPropertyDefinitionEvent);
 		} else {
 			for (PersonPropertyId personPropertyId : propertyIds) {
-				EventLabel<PersonPropertyUpdateEvent> eventLabelByProperty = PersonPropertyUpdateEvent.getEventLabelByProperty(actorContext, personPropertyId);
-				subscribe(eventLabelByProperty, this::handlePersonPropertyUpdateEvent);
+				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personPropertyId);
+				subscribe(eventFilter, this::handlePersonPropertyUpdateEvent);
 			}
 		}
 

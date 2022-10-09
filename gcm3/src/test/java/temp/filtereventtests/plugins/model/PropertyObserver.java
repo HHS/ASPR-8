@@ -68,7 +68,7 @@ public class PropertyObserver {
 	
 	private void subscribeToRegionAndProperty(RegionId regionId, PersonPropertyId personPropertyId) {
 		if (useEventFilters) {
-			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByRegionAndProperty(regionId, PersonPropertyIdentifier.PROP_BOOLEAN_16);
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(regionId, PersonPropertyIdentifier.PROP_BOOLEAN_16);
 			actorContext.subscribe(eventFilter, this::handlePersonPropertyUpdateEvent);
 		} else {
 			EventLabel<PersonPropertyUpdateEvent> eventLabel = PersonPropertyUpdateEvent.getEventLabelByRegionAndProperty(actorContext, regionId, PersonPropertyIdentifier.PROP_BOOLEAN_16);
@@ -79,7 +79,7 @@ public class PropertyObserver {
 	private void subscribeToPersonAndProperty(PersonId personId, PersonPropertyId personPropertyId) {
 		if (useEventFilters) {
 			// by person and property			
-			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByPersonAndProperty(personId, personPropertyId);
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personId, personPropertyId);
 			actorContext.subscribe(eventFilter, this::handlePersonPropertyUpdateEvent);
 
 		} else {
@@ -93,7 +93,7 @@ public class PropertyObserver {
 	private void subscribeToAll() {
 		if (useEventFilters) {
 
-			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilter();
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent();
 			actorContext.subscribe(eventFilter, this::handlePersonPropertyUpdateEvent);
 
 		} else {
@@ -104,7 +104,7 @@ public class PropertyObserver {
 	private void subscribeToProperty(PersonPropertyId personPropertyId) {
 		if (useEventFilters) {
 			// by property
-			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterByProperty(personPropertyId);
+			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personPropertyId);
 			actorContext.subscribe(eventFilter, this::handlePersonPropertyUpdateEvent);
 
 		} else {
