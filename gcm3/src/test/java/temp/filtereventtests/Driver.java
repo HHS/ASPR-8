@@ -2,6 +2,7 @@ package temp.filtereventtests;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -24,15 +25,18 @@ import util.time.TimeElapser;
 public final class Driver {
 
 	private Driver() {
+		
+		
 	}
 
 	public static void main(String[] args) {
 
-		long seed = 57858904586956L;
-		int populationCount = 1_000_000;
-		int regionCount = 500;
+		long seed = new Random().nextLong();
+		int populationCount = 3_000_000;
+		int regionCount = 7500;
 		boolean useEventFilters = true;
 		int eventCount = 1_000_000;
+		int observerCount = 100;
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
@@ -80,7 +84,11 @@ public final class Driver {
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		// add the model plugin
-		ModelPluginData modelPluginData = ModelPluginData.builder().setEventCount(eventCount).setUseEventFilters(useEventFilters).build();
+		ModelPluginData modelPluginData = ModelPluginData.builder()//
+				.setEventCount(eventCount)//
+				.setUseEventFilters(useEventFilters)//
+				.setObserverCount(observerCount)
+				.build();
 		Plugin modelPlugin = ModelPlugin.getModelPlugin(modelPluginData);
 
 		// build the experiment

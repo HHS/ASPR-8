@@ -27,6 +27,8 @@ import util.errors.ContractException;
 
 @Immutable
 public class PersonPropertyUpdateEvent implements Event {
+	public static int masterId;
+	public int id = masterId++;
 
 	private final PersonId personId;
 	private final PersonPropertyId personPropertyId;

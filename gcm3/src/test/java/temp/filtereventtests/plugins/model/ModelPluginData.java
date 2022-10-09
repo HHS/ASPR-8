@@ -33,6 +33,11 @@ public class ModelPluginData implements PluginData {
 			data.useEventFilters = useEventFilters;
 			return this;
 		}
+		public Builder setObserverCount(final int observerCount) {
+			ensureDataMutability();
+			data.observerCount = observerCount;
+			return this;
+		}
 
 		private void ensureDataMutability() {
 			if (!dataIsMutable) {
@@ -53,7 +58,7 @@ public class ModelPluginData implements PluginData {
 
 		private int eventCount;
 		private boolean useEventFilters;
-		
+		private int observerCount;
 
 		private Data() {
 		}
@@ -83,6 +88,10 @@ public class ModelPluginData implements PluginData {
 
 	public boolean getUseEventFilters() {
 		return data.useEventFilters;
+	}
+	
+	public int getObserverCount() {
+		return data.observerCount;
 	}
 
 	@Override

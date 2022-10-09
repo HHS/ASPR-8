@@ -13,9 +13,13 @@ public final class ModelPlugin {
 						.setPluginId(ModelPluginId.PLUGIN_ID)//
 						.setInitializer(c -> {
 							c.addActor(new PropertyChanger()::init);
-							c.addActor(new PropertyObserver()::init);
+
 							ModelPluginData pluginData = c.getPluginData(ModelPluginData.class);
 							c.addDataManager(new ModelDataManager(pluginData));
+							int observerCount = pluginData.getObserverCount();
+							for (int i = 0; i < observerCount; i++) {
+								c.addActor(new PropertyObserver()::init);
+							}
 						})//
 						.build();
 

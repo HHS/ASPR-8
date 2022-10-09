@@ -22,7 +22,6 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.NotThreadSafe;
-import nucleus.EventFilter.IdentifiableFunction;
 import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;

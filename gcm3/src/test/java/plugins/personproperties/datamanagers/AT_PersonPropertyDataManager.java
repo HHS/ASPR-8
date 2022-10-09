@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.naming.Context;
 
@@ -41,6 +42,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import plugins.personproperties.support.PersonPropertyError;
@@ -1455,9 +1457,6 @@ public final class AT_PersonPropertyDataManager {
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 
-		// * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
-		// * id is not known</li>
-
 		// precondition test: if the person id is null
 		PersonPropertiesActionSupport.testConsumer(10, 2414428612890791850L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
@@ -1475,6 +1474,102 @@ public final class AT_PersonPropertyDataManager {
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		});
 
+	}
+	
+	private static class LocalPersonPropertyId implements PersonPropertyId{
+		private final int id;
+		public LocalPersonPropertyId(int id) {
+			this.id = id;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + id;
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof LocalPersonPropertyId)) {
+				return false;
+			}
+			LocalPersonPropertyId other = (LocalPersonPropertyId) obj;
+			if (id != other.id) {
+				return false;
+			}
+			return true;
+		}
+		
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonPropertyDefinition", args = {})
+	public void testGetEventFilterForPersonPropertyDefinition() {
+		//
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		/*
+		 * have an observer subscribe to person property definition events
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			EventFilter<PersonPropertyDefinitionEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyDefinition();
+			assertNotNull(eventFilter);
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c.getTime(), e.getPersonPropertyId());
+				actualObservations.add(multiKey);
+			});
+
+		}));
+
+		/*
+		 * Have an actor add several new person property definitions at various
+		 * times.
+		 */
+		
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Integer.class)//
+				.setDefaultValue(0)//
+				.build();
+		IntStream.range(1, 4).forEach((i) -> {		
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+				PersonPropertyId personPropertyId = new LocalPersonPropertyId(i);
+				
+				PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization = //
+						
+						PersonPropertyDefinitionInitialization	.builder()//
+																.setPersonPropertyId(personPropertyId)//
+																.setPropertyDefinition(propertyDefinition)//
+																.build();
+				personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
+				expectedObservations.add(new MultiKey((double)i,personPropertyId));
+				
+			}));
+		});
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PersonPropertiesActionSupport.testConsumers(100, 6462842714052608355L, testPlugin);
+
+		
 	}
 
 	@Test
