@@ -2,14 +2,7 @@ package plugins.globalproperties.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
-import nucleus.SimulationContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.util.properties.PropertyError;
-import util.errors.ContractException;
 
 /**
  * 
@@ -68,49 +61,6 @@ public class GlobalPropertyUpdateEvent implements Event {
 	@Override
 	public String toString() {
 		return "GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
-	}
-
-	private static enum LabelerId implements EventLabelerId {
-		PROPERTY
-	}
-
-	/**
-	 * Returns an event label used to subscribe to
-	 * {@link GlobalPropertyUpdateEvent} events. Matches on global property id.
-	 *
-	 *
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             global property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if
-	 *             the global property id is unknown</li>
-	 */
-	public static EventLabel<GlobalPropertyUpdateEvent> getEventLabel(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
-		validateGlobalProperty(simulationContext, globalPropertyId);
-		return _getEventLabel(globalPropertyId);
-	}
-	
-	private static EventLabel<GlobalPropertyUpdateEvent> _getEventLabel(GlobalPropertyId globalPropertyId) {
-		return EventLabel	.builder(GlobalPropertyUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.PROPERTY)//
-							.addKey(globalPropertyId)//
-							.build();//
-	}
-
-	/**
-	 * Returns an event labeler for {@link GlobalPropertyUpdateEvent} events
-	 * that the global property id.
-	 */
-	public static EventLabeler<GlobalPropertyUpdateEvent> getEventLabeler() {
-		return EventLabeler	.builder(GlobalPropertyUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.PROPERTY)//
-							.setLabelFunction((context, event) -> _getEventLabel(event.getGlobalPropertyId()))//
-							.build();
-	}
-
-	private static void validateGlobalProperty(SimulationContext simulationContext, GlobalPropertyId globalPropertyId) {
-		simulationContext.getDataManager(GlobalPropertiesDataManager.class).getGlobalPropertyDefinition(globalPropertyId);
 	}
 
 	/**

@@ -18,9 +18,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.NucleusError;
+import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
@@ -65,16 +63,6 @@ public final class AT_GlobalPropertiesDataManager {
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testInit() {
-
-		/*
-		 * show that the event labelers for GlobalPropertyUpdateEvent were added
-		 */
-		GlobalsPropertiesActionSupport.testConsumer((c) -> {
-			EventLabeler<GlobalPropertyUpdateEvent> eventLabeler = GlobalPropertyUpdateEvent.getEventLabeler();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
 
 		Map<GlobalPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
@@ -175,8 +163,9 @@ public final class AT_GlobalPropertiesDataManager {
 
 		// have an observer record changes to the property
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			EventLabel<GlobalPropertyUpdateEvent> eventLabel = GlobalPropertyUpdateEvent.getEventLabel(c, globalPropertyId);
-			c.subscribe(eventLabel, (c2, e) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			EventFilter<GlobalPropertyUpdateEvent> eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(globalPropertyId);
+			c.subscribe(eventFilter, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGlobalPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue());
 				actualObservations.add(multiKey);
 			});
@@ -189,7 +178,6 @@ public final class AT_GlobalPropertiesDataManager {
 			Integer newValue = globalPropertyId.getRandomPropertyValue(randomGenerator);
 			globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId, newValue);
 			expectedObservations.add(new MultiKey(c.getTime(), globalPropertyId, currentValue, newValue));
-
 		}));
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
@@ -380,7 +368,7 @@ public final class AT_GlobalPropertiesDataManager {
 	@Test
 	@UnitTestMethod(name = "defineGlobalProperty", args = { GlobalPropertyId.class, PropertyDefinition.class })
 	public void testDefineGlobalProperty() {
-		
+
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
@@ -395,7 +383,8 @@ public final class AT_GlobalPropertiesDataManager {
 				c.addPlan((c2) -> {
 					GlobalPropertiesDataManager globalPropertiesDataManager = c2.getDataManager(GlobalPropertiesDataManager.class);
 					PropertyDefinition expectedPropertyDefinition = auxPropertyId.getPropertyDefinition();
-					GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder().setGlobalPropertyId(auxPropertyId).setPropertyDefinition(expectedPropertyDefinition).build();
+					GlobalPropertyInitialization globalPropertyInitialization = GlobalPropertyInitialization.builder().setGlobalPropertyId(auxPropertyId)
+																											.setPropertyDefinition(expectedPropertyDefinition).build();
 					globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
 
 					// show that the definition was added
@@ -442,8 +431,6 @@ public final class AT_GlobalPropertiesDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		GlobalsPropertiesActionSupport.testConsumers(testPlugin);
 
-
-		
 		// precondition test: if the global property initialization is null
 		GlobalsPropertiesActionSupport.testConsumer((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
@@ -456,17 +443,252 @@ public final class AT_GlobalPropertiesDataManager {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 			GlobalPropertyId globalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE;
 			PropertyDefinition propertyDefinition = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE.getPropertyDefinition();
-			GlobalPropertyInitialization globalPropertyInitialization =//
+			GlobalPropertyInitialization globalPropertyInitialization = //
 					GlobalPropertyInitialization.builder()//
-					.setGlobalPropertyId(globalPropertyId)//
-					.setPropertyDefinition(propertyDefinition)//
-					.build();
+												.setGlobalPropertyId(globalPropertyId)//
+												.setPropertyDefinition(propertyDefinition)//
+												.build();
 
-			
 			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization));
 			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
 
+	}
+
+	private static class LocalGlobalPropertyId implements GlobalPropertyId {
+		private final int id;
+
+		public LocalGlobalPropertyId(int id) {
+			this.id = id;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + id;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (!(obj instanceof LocalGlobalPropertyId)) {
+				return false;
+			}
+			LocalGlobalPropertyId other = (LocalGlobalPropertyId) obj;
+			if (id != other.id) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGlobalPropertyDefinitionEvent", args = {})
+	public void testGetEventFilterForGlobalPropertyDefinitionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		/*
+		 * have an observer subscribe to global property definition events
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			EventFilter<GlobalPropertyDefinitionEvent> eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyDefinitionEvent();
+			assertNotNull(eventFilter);
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c.getTime(), e.globalPropertyId()));
+			});
+
+		}));
+
+		/*
+		 * Have an actor add several new global property definitions at various
+		 * times.
+		 */
+
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Integer.class)//
+																	.setDefaultValue(0)//
+																	.build();
+		IntStream.range(1, 4).forEach((i) -> {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+				GlobalPropertyId globalPropertyId = new LocalGlobalPropertyId(i);
+
+				GlobalPropertyInitialization globalPropertyInitialization = //
+
+						GlobalPropertyInitialization.builder()//
+													.setGlobalPropertyId(globalPropertyId)//
+													.setPropertyDefinition(propertyDefinition)//
+													.build();
+				globalPropertiesDataManager.defineGlobalProperty(globalPropertyInitialization);
+				expectedObservations.add(new MultiKey(c.getTime(), globalPropertyId));
+
+			}));
+		});
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GlobalsPropertiesActionSupport.testConsumers(testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGlobalPropertyUpdateEvent", args = {})
+	public void testGetEventFilterForGlobalPropertyUpdateEvent() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5410948605660305794L);
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		/*
+		 * have an observer subscribe to global property update events
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			EventFilter<GlobalPropertyUpdateEvent> eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent();
+			assertNotNull(eventFilter);
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c.getTime(), e.getGlobalPropertyId(), e.getCurrentPropertyValue()));
+			});
+
+		}));
+
+		/*
+		 * Have an actor update several global property values
+		 */
+		IntStream.range(1, 4).forEach((i) -> {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+
+				TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId.getRandomMutableGlobalPropertyId(randomGenerator);
+				Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+				globalPropertiesDataManager.setGlobalPropertyValue(testGlobalPropertyId, propertyValue);
+
+				expectedObservations.add(new MultiKey(c.getTime(), testGlobalPropertyId, propertyValue));
+
+			}));
+		});
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GlobalsPropertiesActionSupport.testConsumers(testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGlobalPropertyUpdateEvent", args = { GlobalPropertyId.class })
+	public void testGetEventFilterForGlobalPropertyUpdateEvent_property() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2014699212749132531L);
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		/*
+		 * have an observer subscribe to two of the global property update
+		 * events that correspond to mutable properties
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			EventFilter<GlobalPropertyUpdateEvent> eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE);
+			assertNotNull(eventFilter);
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c.getTime(), e.getGlobalPropertyId(), e.getCurrentPropertyValue()));
+			});
+
+			eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE);
+			assertNotNull(eventFilter);
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c.getTime(), e.getGlobalPropertyId(), e.getCurrentPropertyValue()));
+			});
+
+		}));
+
+		/*
+		 * Have an actor update all of the mutable global property values
+		 */
+		IntStream.range(1, 4).forEach((i) -> {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+				GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+
+				TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE;
+				Object propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+				globalPropertiesDataManager.setGlobalPropertyValue(testGlobalPropertyId, propertyValue);
+				expectedObservations.add(new MultiKey(c.getTime(), testGlobalPropertyId, propertyValue));
+
+				testGlobalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE;
+				propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+				globalPropertiesDataManager.setGlobalPropertyValue(testGlobalPropertyId, propertyValue);
+				expectedObservations.add(new MultiKey(c.getTime(), testGlobalPropertyId, propertyValue));
+
+				testGlobalPropertyId = TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE;
+				propertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+				globalPropertiesDataManager.setGlobalPropertyValue(testGlobalPropertyId, propertyValue);
+				// not that we do not add an expected value here
+
+			}));
+		});
+
+		/*
+		 * have the observer show that the expected and actual observations are
+		 * equal
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GlobalsPropertiesActionSupport.testConsumers(testPlugin);
+
+		// precondition test: if the global property id is null
+		GlobalsPropertiesActionSupport.testConsumer((c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			GlobalPropertyId globalPropertyId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId, new Object()));
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the global property id is not known
+		GlobalsPropertiesActionSupport.testConsumer((c) -> {
+			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
+			GlobalPropertyId globalPropertyId = TestGlobalPropertyId.getUnknownGlobalPropertyId();
+			ContractException contractException = assertThrows(ContractException.class, () -> globalPropertiesDataManager.setGlobalPropertyValue(globalPropertyId, new Object()));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
 	}
 
 }

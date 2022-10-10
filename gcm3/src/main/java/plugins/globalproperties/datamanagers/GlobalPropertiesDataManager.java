@@ -8,6 +8,8 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
+import nucleus.IdentifiableFunctionMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
@@ -164,8 +166,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 
-		dataManagerContext.addEventLabeler(GlobalPropertyUpdateEvent.getEventLabeler());
-
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
 			validateGlobalPropertyAddition(globalPropertyId, globalPropertyDefinition);
@@ -186,7 +186,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * 
 	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_INITIALIZATION}
 	 *             if the global property initialization is null</li>
-	 *             
+	 * 
 	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the global property already exists</li>
 	 * 
@@ -249,10 +249,60 @@ public final class GlobalPropertiesDataManager extends DataManager {
 			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, globalPropertyId);
 		}
 	}
-	
+
 	private void validateGlobalPropertyInitializationNotNull(GlobalPropertyInitialization globalPropertyInitialization) {
-		if(globalPropertyInitialization == null) {
+		if (globalPropertyInitialization == null) {
 			throw new ContractException(GlobalPropertiesError.NULL_GLOBAL_PROPERTY_INITIALIZATION);
 		}
 	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GlobalPropertyDefinitionEvent} events. Matches all such events.
+	 *
+	 */
+	public EventFilter<GlobalPropertyDefinitionEvent> getEventFilterForGlobalPropertyDefinitionEvent() {
+		return EventFilter	.builder(GlobalPropertyDefinitionEvent.class)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GlobalPropertyUpdateEvent} events. Matches all such events.
+	 *
+	 */
+	public EventFilter<GlobalPropertyUpdateEvent> getEventFilterForGlobalPropertyUpdateEvent() {
+		return EventFilter	.builder(GlobalPropertyUpdateEvent.class)//
+							.build();
+	}
+
+	private static enum EventFunctionId {
+		GLOBAL_PROPERTY_ID; //
+
+	}
+
+	private IdentifiableFunctionMap<GlobalPropertyUpdateEvent> functionMap = //
+			IdentifiableFunctionMap	.builder(GlobalPropertyUpdateEvent.class)//
+									.put(EventFunctionId.GLOBAL_PROPERTY_ID, e -> e.getGlobalPropertyId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GlobalPropertyUpdateEvent} events. Matches on global property id.
+	 *
+	 *
+	 * @throws ContractException
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the global
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             global property id is not known</li>
+	 * 
+	 */
+	public EventFilter<GlobalPropertyUpdateEvent> getEventFilterForGlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId) {
+		validateGlobalPropertyId(globalPropertyId);
+		return EventFilter	.builder(GlobalPropertyUpdateEvent.class)//
+							.addFunctionValuePair(functionMap.get(EventFunctionId.GLOBAL_PROPERTY_ID), globalPropertyId)//
+							.build();
+	}
+
 }

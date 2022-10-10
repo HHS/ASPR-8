@@ -1,5 +1,8 @@
 package plugins.globalproperties.testsupport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -65,6 +68,16 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 	 */
 	public static TestGlobalPropertyId getRandomGlobalPropertyId(final RandomGenerator randomGenerator) {
 		return TestGlobalPropertyId.values()[randomGenerator.nextInt(TestGlobalPropertyId.values().length)];
+	}
+	
+	public static TestGlobalPropertyId getRandomMutableGlobalPropertyId(final RandomGenerator randomGenerator) {
+		List<TestGlobalPropertyId> candidates = new ArrayList<>();
+		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
+			if (testGlobalPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+				candidates.add(testGlobalPropertyId);
+			}
+		}
+		return candidates.get(randomGenerator.nextInt(candidates.size()));
 	}
 
 	/**
