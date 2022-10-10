@@ -2,7 +2,6 @@ package plugins.partitions.testsupport.attributes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,8 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
-import nucleus.EventLabeler;
-import nucleus.NucleusError;
+import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -34,6 +32,7 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.wrappers.MultiKey;
 
 @UnitTest(target = AttributesDataManager.class)
 public class AT_AttributesDataManager {
@@ -43,7 +42,7 @@ public class AT_AttributesDataManager {
 	public void testAttributesDataViewInitialization() {
 		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			
+
 			assertEquals(EnumSet.allOf(TestAttributeId.class), attributesDataManager.getAttributeIds());
 
 			for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -52,17 +51,7 @@ public class AT_AttributesDataManager {
 		});
 	}
 
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testAttributeUpdateEventLabelers() {
-		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
-			EventLabeler<AttributeUpdateEvent> eventLabeler = AttributeUpdateEvent.getEventLabeler();
-			assertNotNull(eventLabeler);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-	}
-
+	
 	@Test
 	@UnitTestMethod(name = "setAttributeValue", args = { PersonId.class, AttributeId.class, Object.class })
 
@@ -78,7 +67,9 @@ public class AT_AttributesDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(AttributeUpdateEvent.getEventLabel(c, TestAttributeId.BOOLEAN_0), (c2, e) -> {
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			EventFilter<AttributeUpdateEvent> eventFilter = attributesDataManager.getEventFilterForAttributeUpdateEvent(TestAttributeId.BOOLEAN_0);
+			c.subscribe(eventFilter, (c2, e) -> {
 				peopleObserved.add(e.getPersonId());
 			});
 		}));
@@ -265,6 +256,131 @@ public class AT_AttributesDataManager {
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForAttributeUpdateEvent", args = { AttributeId.class })
+	public void testGetEventFilterForAttributeUpdateEvent_attribute() {
+
+		// select a proper subset of the attribute ids for filtering
+		Set<TestAttributeId> selectedTestAttributeIds = new LinkedHashSet<>();
+		selectedTestAttributeIds.add(TestAttributeId.BOOLEAN_0);
+		selectedTestAttributeIds.add(TestAttributeId.DOUBLE_1);
+		selectedTestAttributeIds.add(TestAttributeId.INT_1);
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// add an agent that will observe attribute changes
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+
+			for (TestAttributeId testAttributeId : selectedTestAttributeIds) {
+				EventFilter<AttributeUpdateEvent> eventFilter = attributesDataManager.getEventFilterForAttributeUpdateEvent(testAttributeId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(new MultiKey(c.getTime(), e.getAttributeId(), e.getPersonId()));
+				});
+			}
+		}));
+
+		// add an actor that will alter the people attributes over time
+		for (int i = 1; i < 5; i++) {
+			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				for (PersonId personId : peopleDataManager.getPeople()) {
+					for (TestAttributeId testAttributeId : TestAttributeId.values()) {
+						if (randomGenerator.nextBoolean()) {
+							Object propertyValue = testAttributeId.getRandomPropertyValue(randomGenerator);
+							attributesDataManager.setAttributeValue(personId, testAttributeId, propertyValue);
+							if (selectedTestAttributeIds.contains(testAttributeId)) {
+								expectedObservations.add(new MultiKey(c.getTime(), testAttributeId, personId));
+							}
+						}
+					}
+				}
+			}));
+		}
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PartitionsActionSupport.testConsumers(10, 6745924247452865860L, testPlugin);
+
+		// show that the correct observations were made;
+		assertEquals(expectedObservations, actualObservations);
+
+		// precondition test: if the attribute id is null
+		PartitionsActionSupport.testConsumer(10, 947664382516123630L, (c) -> {
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getEventFilterForAttributeUpdateEvent(null));
+			assertEquals(AttributeError.NULL_ATTRIBUTE_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the attribute id is not known
+		PartitionsActionSupport.testConsumer(10, 1819497399235641135L, (c) -> {
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> attributesDataManager.getEventFilterForAttributeUpdateEvent(TestAttributeId.getUnknownAttributeId()));
+			assertEquals(AttributeError.UNKNOWN_ATTRIBUTE_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForAttributeUpdateEvent", args = { AttributeId.class })
+	public void testGetEventFilterForAttributeUpdateEvent() {
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// add an agent that will observe all attribute changes
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+
+			EventFilter<AttributeUpdateEvent> eventFilter = attributesDataManager.getEventFilterForAttributeUpdateEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c.getTime(), e.getAttributeId(), e.getPersonId()));
+			});
+
+		}));
+
+		// add an actor that will alter the people attributes over time
+		for (int i = 1; i < 5; i++) {
+			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(i, (c) -> {
+
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+				for (PersonId personId : peopleDataManager.getPeople()) {
+					for (TestAttributeId testAttributeId : TestAttributeId.values()) {
+						if (randomGenerator.nextBoolean()) {
+							Object propertyValue = testAttributeId.getRandomPropertyValue(randomGenerator);
+							attributesDataManager.setAttributeValue(personId, testAttributeId, propertyValue);
+							expectedObservations.add(new MultiKey(c.getTime(), testAttributeId, personId));
+						}
+					}
+				}
+			}));
+		}
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PartitionsActionSupport.testConsumers(10, 6920537014398191296L, testPlugin);
+
+		// show that the correct observations were made;
+		assertEquals(expectedObservations, actualObservations);
 
 	}
 

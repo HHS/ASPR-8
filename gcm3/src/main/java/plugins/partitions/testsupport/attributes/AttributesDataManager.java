@@ -7,6 +7,8 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
+import nucleus.IdentifiableFunctionMap;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import plugins.partitions.testsupport.attributes.support.AttributeError;
@@ -132,8 +134,6 @@ public final class AttributesDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
-		dataManagerContext.addEventLabeler(AttributeUpdateEvent.getEventLabeler());
-
 		for (AttributeId attributeId : attributesPluginData.getAttributeIds()) {
 			AttributeDefinition attributeDefinition = attributesPluginData.getAttributeDefinition(attributeId);
 			addAttribute(attributeId, attributeDefinition);
@@ -238,6 +238,46 @@ public final class AttributesDataManager extends DataManager {
 		if (!attributeExists(attributeId)) {
 			throw new ContractException(AttributeError.UNKNOWN_ATTRIBUTE_ID, attributeId);
 		}
+	}
+
+	private static enum EventFunctionId {
+		ATTRIBUTE_ID, //
+	}
+
+	private IdentifiableFunctionMap<AttributeUpdateEvent> functionMap = //
+			IdentifiableFunctionMap	.builder(AttributeUpdateEvent.class)//
+									.put(EventFunctionId.ATTRIBUTE_ID, e -> e.getAttributeId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to {@link AttributeUpdateEvent}
+	 * events. Matches on attribute id.
+	 * 
+	 * 
+	 * 
+	 * @throws ContractException
+	 * 
+	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if the
+	 *             attribute id is null</li>
+	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID} if the
+	 *             attribute id is not known</li>
+	 * 
+	 */
+	public EventFilter<AttributeUpdateEvent> getEventFilterForAttributeUpdateEvent(AttributeId attributeId) {
+		validateAttributeId(attributeId);
+		return EventFilter	.builder(AttributeUpdateEvent.class)//
+							.addFunctionValuePair(functionMap.get(EventFunctionId.ATTRIBUTE_ID), attributeId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to {@link AttributeUpdateEvent}
+	 * events. Matches all such events.
+	 */
+	public EventFilter<AttributeUpdateEvent> getEventFilterForAttributeUpdateEvent() {
+
+		return EventFilter	.builder(AttributeUpdateEvent.class)//							
+							.build();
 	}
 
 }

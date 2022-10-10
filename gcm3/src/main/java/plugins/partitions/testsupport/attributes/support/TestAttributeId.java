@@ -1,5 +1,7 @@
 package plugins.partitions.testsupport.attributes.support;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 /**
  * A test support enumeration of attribute id value with associated attribute
  * definitions.
@@ -25,6 +27,20 @@ public enum TestAttributeId implements AttributeId {
 	
 	public static AttributeId getUnknownAttributeId() {
 		return new AttributeId() {};
+	}
+	
+	public Object getRandomPropertyValue(final RandomGenerator randomGenerator) {
+		switch (this) {
+		case INT_0,INT_1:
+			return randomGenerator.nextInt();
+		case DOUBLE_0, DOUBLE_1:
+			return randomGenerator.nextDouble();
+		case BOOLEAN_0, BOOLEAN_1:
+			return randomGenerator.nextBoolean();		
+		default:			
+			throw new RuntimeException("unhandled case: " + this);
+
+		}
 	}
 
 }
