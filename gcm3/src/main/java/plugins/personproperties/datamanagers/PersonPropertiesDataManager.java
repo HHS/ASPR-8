@@ -153,10 +153,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
-		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionsDataManager));
-		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty());
-		dataManagerContext.addEventLabeler(PersonPropertyUpdateEvent.getEventLabelerForProperty());
-
 		Set<PersonPropertyId> personPropertyIds = personPropertiesPluginData.getPersonPropertyIds();
 
 		for (final PersonPropertyId personPropertyId : personPropertyIds) {

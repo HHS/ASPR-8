@@ -23,8 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
-import nucleus.EventLabeler;
-import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
@@ -502,40 +500,6 @@ public final class AT_PersonPropertyDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PersonPropertiesActionSupport.testConsumers(10, 2321272063791878719L, testPlugin);
-
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonPropertyUpdateEventLabelers() {
-
-		/*
-		 * For each labeler, show that the labeler was previously added,
-		 * presumably by the resolver.
-		 */
-
-		PersonPropertiesActionSupport.testConsumer(100, 4585617051924828596L, (c) -> {
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			EventLabeler<PersonPropertyUpdateEvent> eventLabelerForRegionAndProperty = PersonPropertyUpdateEvent.getEventLabelerForRegionAndProperty(regionsDataManager);
-			assertNotNull(eventLabelerForRegionAndProperty);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForRegionAndProperty));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-
-		PersonPropertiesActionSupport.testConsumer(100, 3679887899361025474L, (c) -> {
-			EventLabeler<PersonPropertyUpdateEvent> eventLabelerForPersonAndProperty = PersonPropertyUpdateEvent.getEventLabelerForPersonAndProperty();
-			assertNotNull(eventLabelerForPersonAndProperty);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForPersonAndProperty));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-		});
-
-		PersonPropertiesActionSupport.testConsumer(100, 7374053088167649497L, (c) -> {
-			EventLabeler<PersonPropertyUpdateEvent> eventLabelerForProperty = PersonPropertyUpdateEvent.getEventLabelerForProperty();
-			assertNotNull(eventLabelerForProperty);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForProperty));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-		});
 
 	}
 
