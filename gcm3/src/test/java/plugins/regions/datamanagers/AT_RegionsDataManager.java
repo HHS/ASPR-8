@@ -2,7 +2,6 @@ package plugins.regions.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,14 +14,12 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
 import nucleus.EventFilter;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
@@ -964,7 +961,7 @@ public class AT_RegionsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "setRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class })
-	public void testRegionPropertyValueAssignmentEvent() {
+	public void testSetRegionPropertyValue() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -974,15 +971,15 @@ public class AT_RegionsDataManager {
 
 		// Have the observer agent start observations record them
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-
-			EventLabel<RegionPropertyUpdateEvent> eventLabel = RegionPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, TestRegionId.REGION_1,
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_1,
 					TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
-			c.subscribe(eventLabel, (c2, e) -> {
+			c.subscribe(eventFilter, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
 			});
 
-			eventLabel = RegionPropertyUpdateEvent.getEventLabelByRegionAndProperty(c, TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
-			c.subscribe(eventLabel, (c2, e) -> {
+			eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
+			c.subscribe(eventFilter, (c2, e) -> {
 				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
 			});
 
@@ -1231,28 +1228,6 @@ public class AT_RegionsDataManager {
 
 	}
 
-	/**
-	 * Shows that all event {@linkplain RegionPropertyUpdateEvent} labelers are
-	 * created
-	 */
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testRegionPropertyUpdateEventLabelers() {
-
-		RegionsActionSupport.testConsumer(0, 4228466028646070532L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
-			EventLabeler<RegionPropertyUpdateEvent> eventLabeler1 = RegionPropertyUpdateEvent.getEventLabelerForProperty();
-			assertNotNull(eventLabeler1);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler1));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-			EventLabeler<RegionPropertyUpdateEvent> eventLabeler2 = RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty();
-			assertNotNull(eventLabeler2);
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler2));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-		});
-
-	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
@@ -2259,15 +2234,355 @@ public class AT_RegionsDataManager {
 
 	}
 
-	//
-	// 1827237237983764002L
-	// 2294490256521547918L
-	// 4878569785353296577L
-	// 7132294759338470890L
-	// 5168071523034596869L
-	// 5851898172389262566L
-	// 3683702073309702135L
-	// 6706349084351695058L
-	// 6300334142182919392L
+	@Test
+	@UnitTestMethod(name = "getEventFilterForRegionPropertyUpdateEvent", args = { RegionPropertyId.class })
+	public void testGetEventFilterForRegionPropertyUpdateEvent_Region() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create containers to hold actual and expected observations
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+
+		Set<TestRegionPropertyId> selectedPropertyIds = new LinkedHashSet<>();
+		selectedPropertyIds.add(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE);
+		selectedPropertyIds.add(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
+
+		// Have the observer agent observe updates to the selected properties
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			for (TestRegionPropertyId testRegionPropertyId : selectedPropertyIds) {
+				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(testRegionPropertyId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+				});
+			}
+		}));
+
+		int comparisonDay = 100;
+
+		// Have the update agent make various region property updates over
+		// time
+		pluginBuilder.addTestActorPlan("update", new TestActorPlan(0, (c) -> {
+
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					StochasticsDataManager stochasticsDataManager2 = c2.getDataManager(StochasticsDataManager.class);
+					RandomGenerator randomGenerator = stochasticsDataManager2.getRandomGenerator();
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
+
+					TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
+					TestRegionPropertyId regionPropertyId = TestRegionPropertyId.getRandomMutableRegionPropertyId(randomGenerator);
+					Object propertyValue = regionPropertyId.getRandomPropertyValue(randomGenerator);
+
+					regionsDataManager.setRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+
+					if (selectedPropertyIds.contains(regionPropertyId)) {
+						expectedObservations.add(new MultiKey(c2.getTime(), regionId, regionPropertyId, propertyValue));
+					}
+
+				}, i);
+			}
+		}));
+
+		// Have the observer agent observe show observed changes match
+		// expectations
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(0, 1827237237983764002L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+
+		// precondition check: if the region property id is null
+		RegionsActionSupport.testConsumer(0, 2294490256521547918L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(null));
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition check: if the region property id is unknown
+		RegionsActionSupport.testConsumer(0, 4878569785353296577L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionPropertyId.getUnknownRegionPropertyId()));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForRegionPropertyUpdateEvent", args = { RegionId.class, RegionPropertyId.class })
+	public void getEventFilterForRegionPropertyUpdateEvent_Region_Property() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create containers to hold actual and expected observations
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+
+		Set<Pair<RegionId, RegionPropertyId>> selectedRegionPropertyPairs = new LinkedHashSet<>();
+		selectedRegionPropertyPairs.add(new Pair<>(TestRegionId.REGION_1, TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE));
+		selectedRegionPropertyPairs.add(new Pair<>(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE));
+		selectedRegionPropertyPairs.add(new Pair<>(TestRegionId.REGION_3, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE));
+		selectedRegionPropertyPairs.add(new Pair<>(TestRegionId.REGION_4, TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE));
+		selectedRegionPropertyPairs.add(new Pair<>(TestRegionId.REGION_5, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE));
+		selectedRegionPropertyPairs.add(new Pair<>(TestRegionId.REGION_6, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE));
+
+		// Have the observer agent observe updates to the selected
+		// region/property pairs
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			for (Pair<RegionId, RegionPropertyId> pair : selectedRegionPropertyPairs) {
+				RegionId regionId = pair.getFirst();
+				RegionPropertyId regionPropertyId = pair.getSecond();
+				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(regionId, regionPropertyId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+				});
+			}
+		}));
+
+		int comparisonDay = 100;
+
+		// Have the update agent make various region property updates over
+		// time
+		pluginBuilder.addTestActorPlan("update", new TestActorPlan(0, (c) -> {
+
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					StochasticsDataManager stochasticsDataManager2 = c2.getDataManager(StochasticsDataManager.class);
+					RandomGenerator randomGenerator = stochasticsDataManager2.getRandomGenerator();
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
+
+					TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
+					TestRegionPropertyId regionPropertyId = TestRegionPropertyId.getRandomMutableRegionPropertyId(randomGenerator);
+					Object propertyValue = regionPropertyId.getRandomPropertyValue(randomGenerator);
+
+					regionsDataManager.setRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+
+					Pair<RegionId, RegionPropertyId> pair = new Pair<>(regionId, regionPropertyId);
+					if (selectedRegionPropertyPairs.contains(pair)) {
+						expectedObservations.add(new MultiKey(c2.getTime(), regionId, regionPropertyId, propertyValue));
+					}
+
+				}, i);
+			}
+		}));
+
+		// Have the observer agent observe show observed changes match
+		// expectations
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(0, 7132294759338470890L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+
+		// precondition check: if the region property id is null
+		RegionsActionSupport.testConsumer(0, 5168071523034596869L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_1, null));
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition check: if the region property id is unknown
+		RegionsActionSupport.testConsumer(0, 5851898172389262566L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_1, TestRegionPropertyId.getUnknownRegionPropertyId()));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		// precondition check: if the region id is null
+		RegionsActionSupport.testConsumer(0, 3683702073309702135L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(null, TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+		});
+
+		// precondition check: if the region id is unknown
+		RegionsActionSupport.testConsumer(0, 6706349084351695058L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.getUnknownRegionId(), TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE));
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForRegionPropertyUpdateEvent", args = {})
+	public void testGetEventFilterForRegionPropertyUpdateEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create containers to hold actual and expected observations
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+
+		// Have the observer agent observe updates to the selected
+		// region/property pairs
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+			});
+
+		}));
+
+		int comparisonDay = 100;
+
+		// Have the update agent make various region property updates over
+		// time
+		pluginBuilder.addTestActorPlan("update", new TestActorPlan(0, (c) -> {
+
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					StochasticsDataManager stochasticsDataManager2 = c2.getDataManager(StochasticsDataManager.class);
+					RandomGenerator randomGenerator = stochasticsDataManager2.getRandomGenerator();
+					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
+
+					TestRegionId regionId = TestRegionId.getRandomRegionId(randomGenerator);
+					TestRegionPropertyId regionPropertyId = TestRegionPropertyId.getRandomMutableRegionPropertyId(randomGenerator);
+					Object propertyValue = regionPropertyId.getRandomPropertyValue(randomGenerator);
+
+					regionsDataManager.setRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+
+					expectedObservations.add(new MultiKey(c2.getTime(), regionId, regionPropertyId, propertyValue));
+
+				}, i);
+			}
+		}));
+
+		// Have the observer agent observe show observed changes match
+		// expectations
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(0, 6300334142182919392L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForRegionAdditionEvent", args = {})
+	public void testGetEventFilterForRegionAdditionEvent() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			EventFilter<RegionAdditionEvent> eventFilter = regionsDataManager.getEventFilterForRegionAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionId());
+				actualObservations.add(multiKey);
+			});
+		}));
+
+		int comparisonDay = 10;
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+					RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+					RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+					RegionId newRegionId = TestRegionId.getUnknownRegionId();
+					RegionConstructionData.Builder builder = RegionConstructionData.builder().setRegionId(newRegionId);//
+					for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+						builder.setRegionPropertyValue(testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+					}
+					RegionConstructionData regionConstructionData = builder.build();
+					regionsDataManager.addRegion(regionConstructionData);
+					MultiKey multiKey = new MultiKey(c.getTime(), newRegionId);
+					expectedObservations.add(multiKey);
+				}, i);
+			}
+
+		}));
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(0, 6272247954838684078L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForRegionPropertyAdditionEvent", args = {})
+	public void testGetEventFilterForRegionPropertyAdditionEvent() {
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// add an observer
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			EventFilter<RegionPropertyAdditionEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionPropertyId());
+				actualObservations.add(multiKey);
+			});
+		}));
+
+		int comparisonDay = 10;
+
+		// have an actor define property 1
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+					PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(55).build();
+					RegionPropertyDefinitionInitialization.Builder propertyBuilder = RegionPropertyDefinitionInitialization.builder();
+					RegionPropertyId regionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
+					propertyBuilder.setRegionPropertyId(regionPropertyId).setPropertyDefinition(propertyDefinition);
+					Set<RegionId> regionIds = regionsDataManager.getRegionIds();
+					assertFalse(regionIds.isEmpty());
+					int value = 0;
+					Map<RegionId, Integer> expectedValues = new LinkedHashMap<>();
+					for (RegionId regionId : regionIds) {
+						propertyBuilder.addPropertyValue(regionId, value);
+						expectedValues.put(regionId, value);
+						value++;
+					}
+					RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = propertyBuilder.build();
+
+					regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
+
+					MultiKey multiKey = new MultiKey(c.getTime(), regionPropertyId);
+					expectedObservations.add(multiKey);				
+					
+				}, i);
+			}
+
+		}));
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertFalse(expectedObservations.isEmpty());
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(0, 1033803161227361793L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+
+	}
 
 }

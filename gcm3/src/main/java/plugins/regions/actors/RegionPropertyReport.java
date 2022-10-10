@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nucleus.ActorContext;
-import nucleus.EventLabel;
+import nucleus.EventFilter;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.events.RegionPropertyAdditionEvent;
@@ -113,8 +113,8 @@ public final class RegionPropertyReport {
 			actorContext.subscribe(RegionPropertyAdditionEvent.class, this::handleRegionPropertyAdditionEvent);
 		} else {
 			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
-				EventLabel<RegionPropertyUpdateEvent> eventLabelByProperty = RegionPropertyUpdateEvent.getEventLabelByProperty(actorContext, regionPropertyId);
-				actorContext.subscribe(eventLabelByProperty, this::handleRegionPropertyUpdateEvent);
+				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(regionPropertyId);
+				actorContext.subscribe(eventFilter, this::handleRegionPropertyUpdateEvent);
 			}
 		}
 

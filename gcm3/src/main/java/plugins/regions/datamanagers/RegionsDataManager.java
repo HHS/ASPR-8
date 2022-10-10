@@ -785,8 +785,6 @@ public final class RegionsDataManager extends DataManager {
 		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
-		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForProperty());
-		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty());		
 		StopwatchManager.stop(Watch.REGIONS_DM_INIT);
 	}
 
@@ -1086,7 +1084,7 @@ public final class RegionsDataManager extends DataManager {
 							.build();
 
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonRegionUpdateEvent} events. Matches on all such events.
@@ -1096,4 +1094,94 @@ public final class RegionsDataManager extends DataManager {
 		return EventFilter	.builder(PersonRegionUpdateEvent.class)//
 							.build();
 	}
+
+	private static enum RegionPropertyUpdateEventFunctionId {
+		PROPERTY, REGION;
+
+	}
+
+	private IdentifiableFunctionMap<RegionPropertyUpdateEvent> regionPropertyUpdateFunctionMap = //
+			IdentifiableFunctionMap	.builder(RegionPropertyUpdateEvent.class)//
+									.put(RegionPropertyUpdateEventFunctionId.PROPERTY, e -> e.getRegionPropertyId())//
+									.put(RegionPropertyUpdateEventFunctionId.REGION, e -> e.getRegionId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionPropertyUpdateEvent} events. Matches on the region id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if the region
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID} if the
+	 *             region property id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<RegionPropertyUpdateEvent> getEventFilterForRegionPropertyUpdateEvent(RegionPropertyId regionPropertyId) {
+		validateRegionPropertyId(regionPropertyId);
+		return EventFilter	.builder(RegionPropertyUpdateEvent.class)//
+				.addFunctionValuePair(regionPropertyUpdateFunctionMap.get(RegionPropertyUpdateEventFunctionId.PROPERTY), regionPropertyId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionPropertyUpdateEvent} events. Matches on the region property
+	 * id and region id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain RegionError.NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError.UNKNOWN_REGION_ID} if the region
+	 *             id is not known</li>
+	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if the region
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID} if the
+	 *             region property id is not known</li>
+	 * 
+	 */
+	public EventFilter<RegionPropertyUpdateEvent> getEventFilterForRegionPropertyUpdateEvent(RegionId regionId, RegionPropertyId regionPropertyId) {
+		validateRegionId(regionId);
+		validateRegionPropertyId(regionPropertyId);
+		return EventFilter	.builder(RegionPropertyUpdateEvent.class)//
+							.addFunctionValuePair(regionPropertyUpdateFunctionMap.get(RegionPropertyUpdateEventFunctionId.PROPERTY), regionPropertyId)//
+							.addFunctionValuePair(regionPropertyUpdateFunctionMap.get(RegionPropertyUpdateEventFunctionId.REGION), regionId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionPropertyUpdateEvent} events. Matches all such events.
+	 * 
+	 */
+	public EventFilter<RegionPropertyUpdateEvent> getEventFilterForRegionPropertyUpdateEvent() {
+		return EventFilter	.builder(RegionPropertyUpdateEvent.class)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionAdditionEvent} events. Matches all such events.
+	 * 
+	 */
+	public EventFilter<RegionAdditionEvent> getEventFilterForRegionAdditionEvent() {
+		return EventFilter	.builder(RegionAdditionEvent.class)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionPropertyAdditionEvent} events. Matches all such events.
+	 * 
+	 */
+	public EventFilter<RegionPropertyAdditionEvent> getEventFilterForRegionPropertyAdditionEvent() {
+		return EventFilter	.builder(RegionPropertyAdditionEvent.class)//
+							.build();
+	}
+
 }
