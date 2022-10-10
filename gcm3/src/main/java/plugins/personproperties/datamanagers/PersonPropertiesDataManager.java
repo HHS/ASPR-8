@@ -475,18 +475,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private final PersonPropertiesPluginData personPropertiesPluginData;
 
-	private static enum EventFunctionId {
-		PERSON_PROPERTY_ID, //
-		REGION_ID, //
-		PERSON_ID;//
-	}
-
-	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
-			IdentifiableFunctionMap	.builder(PersonPropertyUpdateEvent.class)//
-									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId())//
-									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()))//
-									.put(EventFunctionId.PERSON_ID, e -> e.getPersonId())//
-									.build();//
 
 	/**
 	 * Constructs the person property data manager from the given plugin data
@@ -725,6 +713,22 @@ public final class PersonPropertiesDataManager extends DataManager {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
+	
+	
+	
+	private static enum EventFunctionId {
+		PERSON_PROPERTY_ID, //
+		REGION_ID, //
+		PERSON_ID;//
+	}
+
+	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
+			IdentifiableFunctionMap	.builder(PersonPropertyUpdateEvent.class)//
+									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId())//
+									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()))//
+									.put(EventFunctionId.PERSON_ID, e -> e.getPersonId())//
+									.build();//
+
 
 	/**
 	 * Returns an event filter used to subscribe to

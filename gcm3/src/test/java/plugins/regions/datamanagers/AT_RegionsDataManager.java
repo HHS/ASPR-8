@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
@@ -808,10 +809,10 @@ public class AT_RegionsDataManager {
 		 * observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
-				EventLabel<PersonRegionUpdateEvent> eventLabel = PersonRegionUpdateEvent.getEventLabelByArrivalRegion(c, testRegionId);
-				c.subscribe(eventLabel, (c2, e) -> {
+				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(testRegionId);
+				c.subscribe(eventFilter, (c2, e) -> {
 					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
 				});
 			}
@@ -1228,32 +1229,6 @@ public class AT_RegionsDataManager {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 
-	}
-
-	/**
-	 * Shows that all event {@linkplain PersonRegionUpdateEvent} labelers are
-	 * created
-	 */
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testPersonRegionUpdateEventLabelers() {
-		RegionsActionSupport.testConsumer(0, 2734071676096451334L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
-			EventLabeler<PersonRegionUpdateEvent> eventLabelerForArrivalRegion = PersonRegionUpdateEvent.getEventLabelerForArrivalRegion();
-			assertNotNull(eventLabelerForArrivalRegion);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForArrivalRegion));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-			EventLabeler<PersonRegionUpdateEvent> eventLabelerForDepartureRegion = PersonRegionUpdateEvent.getEventLabelerForDepartureRegion();
-			assertNotNull(eventLabelerForDepartureRegion);
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForDepartureRegion));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-			EventLabeler<PersonRegionUpdateEvent> eventLabelerForPerson = PersonRegionUpdateEvent.getEventLabelerForPerson();
-			assertNotNull(eventLabelerForPerson);
-			contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabelerForPerson));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-		});
 	}
 
 	/**
@@ -1926,5 +1901,373 @@ public class AT_RegionsDataManager {
 		}
 
 	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion", args = { RegionId.class })
+	public void testGetEventFilterForPersonRegionUpdateEvent_ByArrivalRegion() {
+
+		int numberOfPeople = 30;
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create some containers for movement observations
+		List<MultiKey> recievedObservations = new ArrayList<>();
+		List<MultiKey> expectedObservations = new ArrayList<>();
+
+		Set<TestRegionId> selectedRegions = new LinkedHashSet<>();
+		selectedRegions.add(TestRegionId.REGION_1);
+		selectedRegions.add(TestRegionId.REGION_4);
+		selectedRegions.add(TestRegionId.REGION_6);
+
+		/*
+		 * Have the observer agent observe all movements into the selected
+		 * regions observations
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+
+			for (TestRegionId testRegionId : selectedRegions) {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(testRegionId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+				});
+			}
+		}));
+
+		/*
+		 * Have the mover agent move every person over time
+		 */
+		pluginBuilder.addTestActorPlan("mover", new TestActorPlan(1, (c) -> {
+
+			/*
+			 * Make sure that there are actually people in the simulation so
+			 * that test is actually testing something
+			 */
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+			assertTrue(people.size() > 0);
+
+			// schedule a time for each person to be moved to a new region
+			double planTime = 10;
+			for (final PersonId personId : people) {
+				c.addPlan((c2) -> {
+					TestRegionId regionId = regionsDataManager.getPersonRegion(personId);
+					TestRegionId nextRegionId = regionId.next();
+					regionsDataManager.setPersonRegion(personId, nextRegionId);
+
+					if (selectedRegions.contains(nextRegionId)) {
+						expectedObservations.add(new MultiKey(regionId, nextRegionId, personId, c2.getTime()));
+					}
+				}, planTime);
+				planTime += 5;
+			}
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(numberOfPeople, 6280260397394362229L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+
+		// show that the observations were correct
+		assertEquals(expectedObservations.size(), recievedObservations.size());
+		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(recievedObservations));
+
+		/*
+		 * precondition test: if the region id is null
+		 */
+		RegionsActionSupport.testConsumer(numberOfPeople, 8703868236194395945L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(null);
+			});
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+		});
+		/*
+		 * precondition test: if the region id is not known
+		 */
+		RegionsActionSupport.testConsumer(numberOfPeople, 1521124301443522213L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(TestRegionId.getUnknownRegionId());
+			});
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion", args = { RegionId.class })
+	public void testGetEventFilterForPersonRegionUpdateEvent_ByDepartureRegion() {
+
+		int numberOfPeople = 30;
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create some containers for movement observations
+		List<MultiKey> recievedObservations = new ArrayList<>();
+		List<MultiKey> expectedObservations = new ArrayList<>();
+
+		Set<TestRegionId> selectedRegions = new LinkedHashSet<>();
+		selectedRegions.add(TestRegionId.REGION_1);
+		selectedRegions.add(TestRegionId.REGION_2);
+		selectedRegions.add(TestRegionId.REGION_3);
+		selectedRegions.add(TestRegionId.REGION_6);
+
+		/*
+		 * Have the observer agent observe all movements out of the selected
+		 * regions observations
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+
+			for (TestRegionId testRegionId : selectedRegions) {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(testRegionId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+				});
+			}
+		}));
+
+		/*
+		 * Have the mover agent move every person over time
+		 */
+		pluginBuilder.addTestActorPlan("mover", new TestActorPlan(1, (c) -> {
+
+			/*
+			 * Make sure that there are actually people in the simulation so
+			 * that test is actually testing something
+			 */
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+			assertTrue(people.size() > 0);
+
+			// schedule a time for each person to be moved to a new region
+			double planTime = 10;
+			for (final PersonId personId : people) {
+				c.addPlan((c2) -> {
+					TestRegionId regionId = regionsDataManager.getPersonRegion(personId);
+					TestRegionId nextRegionId = regionId.next();
+					regionsDataManager.setPersonRegion(personId, nextRegionId);
+
+					if (selectedRegions.contains(regionId)) {
+						expectedObservations.add(new MultiKey(regionId, nextRegionId, personId, c2.getTime()));
+					}
+				}, planTime);
+				planTime += 5;
+			}
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(numberOfPeople, 5906547765098032882L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+
+		// show that the observations were correct
+		assertEquals(expectedObservations.size(), recievedObservations.size());
+		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(recievedObservations));
+
+		/*
+		 * precondition test: if the region id is null
+		 */
+		RegionsActionSupport.testConsumer(numberOfPeople, 5941332064278474841L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(null);
+			});
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+		});
+		/*
+		 * precondition test: if the region id is not known
+		 */
+		RegionsActionSupport.testConsumer(numberOfPeople, 5981948058533294963L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(TestRegionId.getUnknownRegionId());
+			});
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent", args = { PersonId.class })
+	public void testGetEventFilterForPersonRegionUpdateEvent_Person() {
+		int numberOfPeople = 30;
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create some containers for movement observations
+		List<MultiKey> recievedObservations = new ArrayList<>();
+		List<MultiKey> expectedObservations = new ArrayList<>();
+
+		Set<PersonId> selectedPeople = new LinkedHashSet<>();
+
+		/*
+		 * Have the observer agent observe all movements out of the selected
+		 * regions observations
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			List<PersonId> people = peopleDataManager.getPeople();
+			for (PersonId personId : people) {
+				if (randomGenerator.nextBoolean()) {
+					selectedPeople.add(personId);
+					EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent(personId);
+					c.subscribe(eventFilter, (c2, e) -> {
+						recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+					});
+				}
+			}
+		}));
+
+		/*
+		 * Have the mover agent move every person over time
+		 */
+		pluginBuilder.addTestActorPlan("mover", new TestActorPlan(1, (c) -> {
+
+			/*
+			 * Make sure that there are actually people in the simulation so
+			 * that test is actually testing something
+			 */
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+			assertTrue(people.size() > 0);
+
+			// schedule a time for each person to be moved to a new region
+			double planTime = 10;
+			for (final PersonId personId : people) {
+				c.addPlan((c2) -> {
+					TestRegionId regionId = regionsDataManager.getPersonRegion(personId);
+					TestRegionId nextRegionId = regionId.next();
+					regionsDataManager.setPersonRegion(personId, nextRegionId);
+
+					if (selectedPeople.contains(personId)) {
+						expectedObservations.add(new MultiKey(regionId, nextRegionId, personId, c2.getTime()));
+					}
+				}, planTime);
+				planTime += 5;
+			}
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(numberOfPeople, 3786801901191355144L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+
+		// show that the observations were correct
+		assertEquals(expectedObservations.size(), recievedObservations.size());
+		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(recievedObservations));
+
+		/*
+		 * precondition test: if the person id is null
+		 */
+		RegionsActionSupport.testConsumer(numberOfPeople, 4504604454474342921L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				PersonId nullPersonId = null;
+				regionsDataManager.getEventFilterForPersonRegionUpdateEvent(nullPersonId);
+			});
+			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		});
+		/*
+		 * precondition test: if the person id is not known
+		 */
+		RegionsActionSupport.testConsumer(numberOfPeople, 1166492228021587827L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+				regionsDataManager.getEventFilterForPersonRegionUpdateEvent(new PersonId(1000000));
+			});
+			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+		});
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent", args = {})
+	public void testGetEventFilterForPersonRegionUpdateEvent() {
+
+		int numberOfPeople = 30;
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create some containers for movement observations
+		List<MultiKey> recievedObservations = new ArrayList<>();
+		List<MultiKey> expectedObservations = new ArrayList<>();
+
+		/*
+		 * Have the observer agent observe all movements out of the selected
+		 * regions observations
+		 */
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+			for (PersonId personId : people) {
+				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent(personId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+				});
+			}
+		}));
+
+		/*
+		 * Have the mover agent move every person over time
+		 */
+		pluginBuilder.addTestActorPlan("mover", new TestActorPlan(1, (c) -> {
+
+			/*
+			 * Make sure that there are actually people in the simulation so
+			 * that test is actually testing something
+			 */
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+			assertTrue(people.size() > 0);
+
+			// schedule a time for each person to be moved to a new region
+			double planTime = 10;
+			for (final PersonId personId : people) {
+				c.addPlan((c2) -> {
+					TestRegionId regionId = regionsDataManager.getPersonRegion(personId);
+					TestRegionId nextRegionId = regionId.next();
+					regionsDataManager.setPersonRegion(personId, nextRegionId);
+					expectedObservations.add(new MultiKey(regionId, nextRegionId, personId, c2.getTime()));
+				}, planTime);
+				planTime += 5;
+			}
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		RegionsActionSupport.testConsumers(numberOfPeople, 8773677547139261431L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
+
+		// show that the observations were correct
+		assertEquals(expectedObservations.size(), recievedObservations.size());
+		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(recievedObservations));
+
+	}
+
+	//
+	// 1827237237983764002L
+	// 2294490256521547918L
+	// 4878569785353296577L
+	// 7132294759338470890L
+	// 5168071523034596869L
+	// 5851898172389262566L
+	// 3683702073309702135L
+	// 6706349084351695058L
+	// 6300334142182919392L
 
 }

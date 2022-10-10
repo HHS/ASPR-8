@@ -12,6 +12,8 @@ import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
+import nucleus.IdentifiableFunctionMap;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
@@ -211,7 +213,8 @@ public final class RegionsDataManager extends DataManager {
 				validateRegionPropertyId(regionPropertyId);
 				markAssigned(regionPropertyId);
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);;
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
+				;
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
 				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
 				if (propertyValueRecord == null) {
@@ -226,7 +229,8 @@ public final class RegionsDataManager extends DataManager {
 			for (RegionPropertyId regionPropertyId : regionPropertyValues.keySet()) {
 				validateRegionPropertyId(regionPropertyId);
 				Object regionPropertyValue = regionPropertyValues.get(regionPropertyId);
-				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);;
+				final PropertyDefinition propertyDefinition = regionPropertyDefinitions.get(regionPropertyId);
+				;
 				validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
 				PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
 				if (propertyValueRecord == null) {
@@ -251,7 +255,7 @@ public final class RegionsDataManager extends DataManager {
 	 * @throws ContractException
 	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_DEFINITION_INITIALIZATION}
 	 *             if the region property definition initialization is null</li>
-	 *             
+	 * 
 	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 	 *             if the region property is already defined</li>
 	 * 
@@ -782,10 +786,7 @@ public final class RegionsDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForProperty());
-		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty());
-		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForArrivalRegion());
-		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForDepartureRegion());
-		dataManagerContext.addEventLabeler(PersonRegionUpdateEvent.getEventLabelerForPerson());
+		dataManagerContext.addEventLabeler(RegionPropertyUpdateEvent.getEventLabelerForRegionAndProperty());		
 		StopwatchManager.stop(Watch.REGIONS_DM_INIT);
 	}
 
@@ -912,7 +913,7 @@ public final class RegionsDataManager extends DataManager {
 	private void validateNewPropertyDefinition(final PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
-		}		
+		}
 	}
 
 	private void validateNewRegionId(final RegionId regionId) {
@@ -1012,4 +1013,87 @@ public final class RegionsDataManager extends DataManager {
 		}
 	}
 
+	private static enum PersonRegionUpdateFunctionId {
+		ARRIVAL, DEPARTURE, PERSON;
+
+	}
+
+	private IdentifiableFunctionMap<PersonRegionUpdateEvent> personRegionUpdateFunctionMap = //
+			IdentifiableFunctionMap	.builder(PersonRegionUpdateEvent.class)//
+									.put(PersonRegionUpdateFunctionId.ARRIVAL, e -> e.getCurrentRegionId())//
+									.put(PersonRegionUpdateFunctionId.DEPARTURE, e -> e.getPreviousRegionId())//
+									.put(PersonRegionUpdateFunctionId.PERSON, e -> e.getPersonId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonRegionUpdateEvent} events. Matches on the arrival region id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             id is not known</li> *
+	 * 
+	 */
+	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(RegionId arrivalRegionId) {
+		validateRegionId(arrivalRegionId);
+		return EventFilter	.builder(PersonRegionUpdateEvent.class)//
+							.addFunctionValuePair(personRegionUpdateFunctionMap.get(PersonRegionUpdateFunctionId.ARRIVAL), arrivalRegionId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonRegionUpdateEvent} events. Matches on the departure region
+	 * id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             id is not known</li> *
+	 * 
+	 */
+	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(RegionId departureRegionId) {
+		validateRegionId(departureRegionId);
+		return EventFilter	.builder(PersonRegionUpdateEvent.class)//
+							.addFunctionValuePair(personRegionUpdateFunctionMap.get(PersonRegionUpdateFunctionId.DEPARTURE), departureRegionId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonRegionUpdateEvent} events. Matches on the person id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain PersonError.NULL_PERSON_ID} if the person id
+	 *             is null</li>
+	 *             <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person
+	 *             id is not known</li>
+	 * 
+	 */
+	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent(PersonId personId) {
+		validatePersonExists(personId);
+		return EventFilter	.builder(PersonRegionUpdateEvent.class)//
+							.addFunctionValuePair(personRegionUpdateFunctionMap.get(PersonRegionUpdateFunctionId.PERSON), personId)//
+							.build();
+
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonRegionUpdateEvent} events. Matches on all such events.
+	 * 
+	 */
+	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent() {
+		return EventFilter	.builder(PersonRegionUpdateEvent.class)//
+							.build();
+	}
 }
