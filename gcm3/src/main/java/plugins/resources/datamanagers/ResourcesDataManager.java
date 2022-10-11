@@ -10,6 +10,8 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
+import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -752,9 +754,6 @@ public final class ResourcesDataManager extends DataManager {
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
-		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionsDataManager));
-		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForPersonAndResource());
-		dataManagerContext.addEventLabeler(PersonResourceUpdateEvent.getEventLabelerForResource());
 		dataManagerContext.addEventLabeler(ResourcePropertyUpdateEvent.getEventLabeler());
 		dataManagerContext.addEventLabeler(RegionResourceUpdateEvent.getEventLabelerForRegionAndResource());
 
@@ -870,14 +869,14 @@ public final class ResourcesDataManager extends DataManager {
 				resourceMap.put(resourceId, new RegionResourceRecord(dataManagerContext));
 			}
 			List<ResourceInitialization> resourceInitializations = regionAdditionEvent.getValues(ResourceInitialization.class);
-			for(ResourceInitialization resourceInitialization : resourceInitializations) {
+			for (ResourceInitialization resourceInitialization : resourceInitializations) {
 				ResourceId resourceId = resourceInitialization.getResourceId();
 				validateResourceId(resourceId);
 				Long amount = resourceInitialization.getAmount();
 				validateNonnegativeResourceAmount(amount);
 				RegionResourceRecord regionResourceRecord = resourceMap.get(resourceId);
 				regionResourceRecord.amount = amount;
-			}			
+			}
 			regionResources.put(regionId, resourceMap);
 		}
 	}
@@ -1366,5 +1365,100 @@ public final class ResourcesDataManager extends DataManager {
 			intValueContainer.setLongValue(personId.getValue(), 0);
 		}
 
+	}
+
+	private static enum PersonResourceUpdateEventFunctionId {
+		RESOURCE, REGION, PERSON
+	}
+
+	private IdentifiableFunctionMap<PersonResourceUpdateEvent> personResourceUpdateFunctionMap = //
+			IdentifiableFunctionMap	.builder(PersonResourceUpdateEvent.class)//
+									.put(PersonResourceUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
+									.put(PersonResourceUpdateEventFunctionId.REGION, e -> regionsDataManager.getPersonRegion(e.getPersonId()))//
+									.put(PersonResourceUpdateEventFunctionId.PERSON, e -> e.getPersonId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<PersonResourceUpdateEvent> getEventFilterForPersonResourceUpdateEvent(ResourceId resourceId) {
+		validateResourceId(resourceId);
+		return EventFilter	.builder(PersonResourceUpdateEvent.class)//
+							.addFunctionValuePair(personResourceUpdateFunctionMap.get(PersonResourceUpdateEventFunctionId.RESOURCE), resourceId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id and
+	 * person id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 *             <li>{@linkplain PersonError.NULL_PERSON_ID} if the person id
+	 *             is null</li>
+	 *             <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person
+	 *             id is not known</li>
+	 */
+	public EventFilter<PersonResourceUpdateEvent> getEventFilterForPersonResourceUpdateEvent(ResourceId resourceId, PersonId personId) {
+		validateResourceId(resourceId);
+		validatePersonExists(personId);
+		return EventFilter	.builder(PersonResourceUpdateEvent.class)//
+							.addFunctionValuePair(personResourceUpdateFunctionMap.get(PersonResourceUpdateEventFunctionId.RESOURCE), resourceId)//
+							.addFunctionValuePair(personResourceUpdateFunctionMap.get(PersonResourceUpdateEventFunctionId.PERSON), personId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id and
+	 * person id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 *             <li>{@linkplain RegionError.NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError.UNKNOWN_REGION_ID} if the region
+	 *             id is not known</li>
+	 */
+	public EventFilter<PersonResourceUpdateEvent> getEventFilterForPersonResourceUpdateEvent(ResourceId resourceId, RegionId regionId) {
+		validateResourceId(resourceId);
+		validateRegionId(regionId);
+		return EventFilter	.builder(PersonResourceUpdateEvent.class)//
+							.addFunctionValuePair(personResourceUpdateFunctionMap.get(PersonResourceUpdateEventFunctionId.RESOURCE), resourceId)//
+							.addFunctionValuePair(personResourceUpdateFunctionMap.get(PersonResourceUpdateEventFunctionId.REGION), regionId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonResourceUpdateEvent} events. Matches on all such events.
+	 *
+	 *
+	 */
+	public EventFilter<PersonResourceUpdateEvent> getEventFilterForPersonResourceUpdateEvent() {
+		return EventFilter	.builder(PersonResourceUpdateEvent.class)//
+							.build();
 	}
 }

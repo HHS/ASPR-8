@@ -17,6 +17,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -1350,24 +1351,7 @@ public final class AT_ResourcesDataManager {
 		ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
 		assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = {})
-	public void testPersonResourceUpdateEventLabelers() {
-
-		// Have the actor attempt to add the event labelers and show that a
-		// contract exception is thrown, indicating that the labelers were
-		// previously added by the resolver.
-
-		ResourcesActionSupport.testConsumer(100, 4062799122381184575L, (c) -> {
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForPersonAndResource());
-			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForRegionAndResource(regionsDataManager));
-			testEventLabeler(c, PersonResourceUpdateEvent.getEventLabelerForResource());
-		});
-
-	}
-
+	
 	@Test
 	@UnitTestMethod(name = "init", args = {})
 	public void testRegionResourceUpdateEventLabelers() {
@@ -1426,8 +1410,10 @@ public final class AT_ResourcesDataManager {
 
 		// have an actor observe the changes to person resources
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(PersonResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 				});
 			}
@@ -2023,7 +2009,7 @@ public final class AT_ResourcesDataManager {
 
 		// Have an actor observe the resource changes
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
@@ -2032,9 +2018,9 @@ public final class AT_ResourcesDataManager {
 				}
 			}
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(PersonResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
-
 				});
 			}
 
@@ -2194,7 +2180,8 @@ public final class AT_ResourcesDataManager {
 
 		// Have an actor observe the resource transfers
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
@@ -2202,8 +2189,10 @@ public final class AT_ResourcesDataManager {
 					});
 				}
 			}
+			
 			for (TestResourceId testResourceId : TestResourceId.values()) {
-				c.subscribe(PersonResourceUpdateEvent.getEventLabelByResource(c, testResourceId), (c2, e) -> {
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 
 				});
@@ -2968,10 +2957,436 @@ public final class AT_ResourcesDataManager {
 
 	}
 
-	// 4043641365602447479L
-	// 5107085853667531414L
-	// 5551635264070855342L
-	// 1345117947886682832L
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class })
+	public void testGetEventFilterForPersonResourceUpdateEvent_Resource() {
+
+		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
+		selectedResources.add(TestResourceId.RESOURCE_1);
+		selectedResources.add(TestResourceId.RESOURCE_3);
+		selectedResources.add(TestResourceId.RESOURCE_5);
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// Have an actor add resources to the regions
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionLocationDataManager = c.getDataManager(RegionsDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			// add resources to all regions
+			for (PersonId personId : people) {
+				RegionId regionId = regionLocationDataManager.getPersonRegion(personId);
+				for (TestResourceId testResourceId : TestResourceId.values()) {
+					resourcesDataManager.addResourceToRegion(testResourceId, regionId, 1L);
+				}
+			}
+
+		}));
+
+		// Have an actor observe the resource transfers
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			for (TestResourceId testResourceId : selectedResources) {
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+				});
+			}
+
+		}));
+
+		int comparisonDay = 100;
+
+		// Have an actor transfer the resources to people
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			for (int i = 2; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+					PersonId personId = people.get(randomGenerator.nextInt(people.size()));
+					RegionId regionId = regionsDataManager.getPersonRegion(personId);
+					long resourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
+					if (resourceLevel > 0) {
+						resourcesDataManager.transferResourceToPersonFromRegion(testResourceId, personId, 1L);
+						if (selectedResources.contains(testResourceId)) {
+							expectedObservations.add(new MultiKey(c2.getTime(), personId, testResourceId));
+						}
+					}
+				}, i);
+			}
+
+		}));
+
+		// Have an actor show that the proper observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(30, 4043641365602447479L, testPlugin);
+
+		/* precondition test: if the resource id is null */
+		ResourcesActionSupport.testConsumer(30, 5107085853667531414L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null));
+			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource id is unknown */
+		ResourcesActionSupport.testConsumer(30, 5551635264070855342L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId()));
+			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, PersonId.class })
+	public void testGetEventFilterForPersonResourceUpdateEvent_Resource_Person() {
+
+		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
+		selectedResources.add(TestResourceId.RESOURCE_1);
+		selectedResources.add(TestResourceId.RESOURCE_3);
+		selectedResources.add(TestResourceId.RESOURCE_5);
+
+		Set<PersonId> selectedPeople = new LinkedHashSet<>();
+		selectedPeople.add(new PersonId(22));
+		selectedPeople.add(new PersonId(8));
+		selectedPeople.add(new PersonId(5));
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// Have an actor add resources to the regions
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionLocationDataManager = c.getDataManager(RegionsDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			// add resources to all regions
+			for (PersonId personId : people) {
+				RegionId regionId = regionLocationDataManager.getPersonRegion(personId);
+				for (TestResourceId testResourceId : TestResourceId.values()) {
+					resourcesDataManager.addResourceToRegion(testResourceId, regionId, 1L);
+				}
+			}
+
+		}));
+
+		// Have an actor observe the resource transfers
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			for (TestResourceId testResourceId : selectedResources) {
+				for (PersonId personId : selectedPeople) {
+					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId, personId);
+					c.subscribe(eventFilter, (c2, e) -> {
+						actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+					});
+				}
+			}
+
+		}));
+
+		int comparisonDay = 100;
+
+		// Have an actor transfer the resources to people
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			for (int i = 2; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+					PersonId personId = people.get(randomGenerator.nextInt(people.size()));
+					RegionId regionId = regionsDataManager.getPersonRegion(personId);
+					long resourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
+					if (resourceLevel > 0) {
+						resourcesDataManager.transferResourceToPersonFromRegion(testResourceId, personId, 1L);
+						if (selectedResources.contains(testResourceId) && selectedPeople.contains(personId)) {
+							expectedObservations.add(new MultiKey(c2.getTime(), personId, testResourceId));
+						}
+					}
+				}, i);
+			}
+
+		}));
+
+		// Have an actor show that the proper observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(30, 3776094770483573425L, testPlugin);
+
+		/* precondition test: if the resource id is null */
+		ResourcesActionSupport.testConsumer(30, 8909938597230752836L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null, new PersonId(0)));
+			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource id is unknown */
+		ResourcesActionSupport.testConsumer(30, 4146350189128134907L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0)));
+			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the person id is null */
+		ResourcesActionSupport.testConsumer(30, 8356399638914398643L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PersonId nullPersonId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullPersonId));
+			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the person id is unknown */
+		ResourcesActionSupport.testConsumer(30, 3890936504108305392L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PersonId unknownPersonId = new PersonId(100000);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownPersonId));
+			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, RegionId.class })
+	public void testGetEventFilterForPersonResourceUpdateEvent_Resource_Region() {
+		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
+		selectedResources.add(TestResourceId.RESOURCE_1);
+		selectedResources.add(TestResourceId.RESOURCE_3);
+		selectedResources.add(TestResourceId.RESOURCE_5);
+
+		Set<RegionId> selectedRegions = new LinkedHashSet<>();
+		selectedRegions.add(TestRegionId.REGION_1);
+		selectedRegions.add(TestRegionId.REGION_5);
+		selectedRegions.add(TestRegionId.REGION_6);
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// Have an actor add resources to the regions
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionLocationDataManager = c.getDataManager(RegionsDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			// add resources to all regions
+			for (PersonId personId : people) {
+				RegionId regionId = regionLocationDataManager.getPersonRegion(personId);
+				for (TestResourceId testResourceId : TestResourceId.values()) {
+					resourcesDataManager.addResourceToRegion(testResourceId, regionId, 1L);
+				}
+			}
+
+		}));
+
+		// Have an actor observe the resource transfers
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			for (TestResourceId testResourceId : selectedResources) {
+				for (RegionId regionId : selectedRegions) {
+					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId, regionId);
+					c.subscribe(eventFilter, (c2, e) -> {
+						actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+					});
+				}
+			}
+
+		}));
+
+		int comparisonDay = 100;
+
+		// Have an actor transfer the resources to people
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			for (int i = 2; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+					PersonId personId = people.get(randomGenerator.nextInt(people.size()));
+					RegionId regionId = regionsDataManager.getPersonRegion(personId);
+					long resourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
+					if (resourceLevel > 0) {
+						resourcesDataManager.transferResourceToPersonFromRegion(testResourceId, personId, 1L);
+						if (selectedResources.contains(testResourceId) && selectedRegions.contains(regionId)) {
+							expectedObservations.add(new MultiKey(c2.getTime(), personId, testResourceId));
+						}
+					}
+				}, i);
+			}
+
+		}));
+
+		// Have an actor show that the proper observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(30, 3776094770483573425L, testPlugin);
+
+		/* precondition test: if the resource id is null */
+		ResourcesActionSupport.testConsumer(30, 8909938597230752836L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null, new PersonId(0)));
+			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource id is unknown */
+		ResourcesActionSupport.testConsumer(30, 4146350189128134907L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0)));
+			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the region id is null */
+		ResourcesActionSupport.testConsumer(30, 8356399638914398643L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			RegionId nullRegionId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullRegionId));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the region id is unknown */
+		ResourcesActionSupport.testConsumer(30, 3890936504108305392L, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, unknownRegionId));
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = {})
+	public void testGetEventFilterForPersonResourceUpdateEvent() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// Have an actor add resources to the regions
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionLocationDataManager = c.getDataManager(RegionsDataManager.class);
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			// add resources to all regions
+			for (PersonId personId : people) {
+				RegionId regionId = regionLocationDataManager.getPersonRegion(personId);
+				for (TestResourceId testResourceId : TestResourceId.values()) {
+					resourcesDataManager.addResourceToRegion(testResourceId, regionId, 1L);
+				}
+			}
+
+		}));
+
+		// Have an actor observe the resource transfers
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+			});
+
+		}));
+
+		int comparisonDay = 100;
+
+		// Have an actor transfer the resources to people
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			List<PersonId> people = peopleDataManager.getPeople();
+
+			for (int i = 2; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+					PersonId personId = people.get(randomGenerator.nextInt(people.size()));
+					RegionId regionId = regionsDataManager.getPersonRegion(personId);
+					long resourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, testResourceId);
+					if (resourceLevel > 0) {
+						resourcesDataManager.transferResourceToPersonFromRegion(testResourceId, personId, 1L);
+						expectedObservations.add(new MultiKey(c2.getTime(), personId, testResourceId));
+					}
+				}, i);
+			}
+
+		}));
+
+		// Have an actor show that the proper observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(30, 1345117947886682832L, testPlugin);
+
+	}
+
+	// 
 	// 2870952108296201475L
 	// 9101711257710159283L
 	// 4216397684435821705L
@@ -2980,10 +3395,5 @@ public final class AT_ResourcesDataManager {
 	// 8125399461811894989L
 	// 4130610902285408287L
 	// 4039871222190675923L
-	// 8909938597230752836L
-	// 3776094770483573425L
-	// 4146350189128134907L
-	// 8356399638914398643L
-	// 3890936504108305392L
 
 }

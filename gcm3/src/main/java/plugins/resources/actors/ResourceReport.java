@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import nucleus.ActorContext;
-import nucleus.EventLabel;
+import nucleus.EventFilter;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
@@ -355,12 +355,13 @@ public final class ResourceReport extends PeriodicReport {
 		// If all the resources are included in the report, then subscribe to
 		// the event, otherwise subscribe to each resource
 		if (resourceIds.stream().collect(Collectors.toSet()).equals(resourcesDataManager.getResourceIds())) {
-			subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
+			EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent();
+			subscribe(eventFilter, this::handlePersonResourceUpdateEvent);
 			subscribedToAllResources = true;
 		} else {
 			for (ResourceId resourceId : resourceIds) {
-				EventLabel<PersonResourceUpdateEvent> eventLabelByResource = PersonResourceUpdateEvent.getEventLabelByResource(actorContext, resourceId);
-				subscribe(eventLabelByResource, this::handlePersonResourceUpdateEvent);
+				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(resourceId);
+				subscribe(eventFilter, this::handlePersonResourceUpdateEvent);
 			}
 		}
 

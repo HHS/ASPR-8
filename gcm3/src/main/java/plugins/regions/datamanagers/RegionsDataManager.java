@@ -1097,7 +1097,6 @@ public final class RegionsDataManager extends DataManager {
 
 	private static enum RegionPropertyUpdateEventFunctionId {
 		PROPERTY, REGION;
-
 	}
 
 	private IdentifiableFunctionMap<RegionPropertyUpdateEvent> regionPropertyUpdateFunctionMap = //
