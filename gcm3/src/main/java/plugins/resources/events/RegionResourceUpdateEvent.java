@@ -2,17 +2,8 @@ package plugins.resources.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
-import nucleus.SimulationContext;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
-import util.errors.ContractException;
 
 /**
  * An observation event indicating that a region's resource level has changed.
@@ -66,79 +57,7 @@ public class RegionResourceUpdateEvent implements Event {
 	public long getCurrentResourceLevel() {
 		return currentResourceLevel;
 	}
-
-	private static enum LabelerId implements EventLabelerId {
-		REGION_RESOURCE
-	}
-
-	private static void validateRegionId(SimulationContext simulationContext, RegionId regionId) {
-		if (regionId == null) {
-			throw new ContractException(RegionError.NULL_REGION_ID);
-		}
-		RegionsDataManager regionsDataManager = simulationContext.getDataManager(RegionsDataManager.class);
-		if (!regionsDataManager.regionIdExists(regionId)) {
-			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
-		}
-	}
-
-	private static void validateResourceId(SimulationContext simulationContext, ResourceId resourceId) {
-		if (resourceId == null) {
-			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
-		}
-		ResourcesDataManager resourcesDataManager = simulationContext.getDataManager(ResourcesDataManager.class);
-		if (!resourcesDataManager.resourceIdExists(resourceId)) {
-			throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID);
-		}
-	}
-
-	/**
-	 * Returns an event label used to subscribe to
-	 * {@link RegionResourceUpdateEvent} events. Matches on region id and
-	 * resource id.
-	 * 
-	 *
-	 * Preconditions : The context cannot be null
-	 *
-	 * @throws ContractException
-	 *
-	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
-	 *             is null</li>
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
-	 *             id is unknown</li>
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
-	 *             resource id is unknown</li>
-	 */
-	public static EventLabel<RegionResourceUpdateEvent> getEventLabelByRegionAndResource(SimulationContext simulationContext, RegionId regionId, ResourceId resourceId) {
-		validateRegionId(simulationContext, regionId);
-		validateResourceId(simulationContext, resourceId);
-		return _getEventLabelByRegionAndResource(regionId, resourceId);//
-	}
 	
-	private static EventLabel<RegionResourceUpdateEvent> _getEventLabelByRegionAndResource(RegionId regionId, ResourceId resourceId) {
-		
-		return EventLabel	.builder(RegionResourceUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
-							.addKey(resourceId)//
-							.addKey(regionId)//
-							.build();//
-	}
-
-	/**
-	 * Returns an event labeler for {@link RegionResourceUpdateEvent} events
-	 * that uses region id and resource id. Automatically added at
-	 * initialization.
-	 */
-	public static EventLabeler<RegionResourceUpdateEvent> getEventLabelerForRegionAndResource() {
-		return EventLabeler	.builder(RegionResourceUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.REGION_RESOURCE)//
-							.setLabelFunction((context, event) -> _getEventLabelByRegionAndResource(event.getRegionId(), event.getResourceId()))//
-							.build();
-	}
-	
-	
-
 	/**
 	 * Returns the resource id used to create this event
 	 */

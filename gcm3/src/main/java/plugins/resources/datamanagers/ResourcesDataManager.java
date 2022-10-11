@@ -755,7 +755,7 @@ public final class ResourcesDataManager extends DataManager {
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
 		dataManagerContext.addEventLabeler(ResourcePropertyUpdateEvent.getEventLabeler());
-		dataManagerContext.addEventLabeler(RegionResourceUpdateEvent.getEventLabelerForRegionAndResource());
+		
 
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
@@ -1461,4 +1461,75 @@ public final class ResourcesDataManager extends DataManager {
 		return EventFilter	.builder(PersonResourceUpdateEvent.class)//
 							.build();
 	}
+
+
+	private static enum RegionResourceUpdateEventFunctionId {
+		RESOURCE, REGION
+	}
+
+	private IdentifiableFunctionMap<RegionResourceUpdateEvent> regionResourceUpdateMap = //
+			IdentifiableFunctionMap	.builder(RegionResourceUpdateEvent.class)//
+									.put(RegionResourceUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
+									.put(RegionResourceUpdateEventFunctionId.REGION, e -> e.getRegionId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent(ResourceId resourceId) {
+		validateResourceId(resourceId);
+		return EventFilter	.builder(RegionResourceUpdateEvent.class)//
+							.addFunctionValuePair(regionResourceUpdateMap.get(RegionResourceUpdateEventFunctionId.RESOURCE), resourceId)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id and region id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 *             <li>{@linkplain RegionError.NULL_REGION_ID} if the
+	 *             region id is null</li>
+	 *             <li>{@linkplain RegionError.UNKNOWN_REGION_ID} if the
+	 *             region id is not known</li> 
+	 * 
+	 */
+	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent(ResourceId resourceId,RegionId regionId) {
+		validateResourceId(resourceId);
+		validateRegionId(regionId);
+		return EventFilter	.builder(RegionResourceUpdateEvent.class)//
+							.addFunctionValuePair(regionResourceUpdateMap.get(RegionResourceUpdateEventFunctionId.RESOURCE), resourceId)//
+							.addFunctionValuePair(regionResourceUpdateMap.get(RegionResourceUpdateEventFunctionId.REGION), regionId)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link RegionResourceUpdateEvent} events. Matches on all such events.
+	 *
+	 *
+	 * 
+	 */
+	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent() {
+		return EventFilter	.builder(RegionResourceUpdateEvent.class)//
+							.build();
+	}
+
 }

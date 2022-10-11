@@ -23,6 +23,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
 import nucleus.EventLabel;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
@@ -3845,10 +3846,13 @@ public class AT_MaterialsDataManager {
 			 * instead to have the observer agent subscribe to the resulting
 			 * RegionResourceUpdateEvent
 			 */
+			
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					c.subscribe(RegionResourceUpdateEvent.getEventLabelByRegionAndResource(c, testRegionId, testResourceId), (c2, e) -> {
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
+					c.subscribe(eventFilter, (c2, e) -> {
 						MultiKey multiKey = new MultiKey(c.getTime(), e.getResourceId(), e.getRegionId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel());
 						actualObservations.add(multiKey);
 					});
