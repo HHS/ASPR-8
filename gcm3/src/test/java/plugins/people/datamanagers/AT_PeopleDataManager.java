@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
+import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
@@ -183,7 +184,7 @@ public final class AT_PeopleDataManager {
 
 	@Test
 	@UnitTestMethod(name = "addPerson", args = { PersonConstructionData.class })
-	public void testaddPerson() {
+	public void testAddPerson() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -546,6 +547,90 @@ public final class AT_PeopleDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		PeopleActionSupport.testConsumers(testPlugin);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonAdditionEvent", args = {})
+	public void testGetEventFilterForPersonAdditionEvent() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// create containers to hold observations
+		Set<PersonId> observedPersonIds = new LinkedHashSet<>();
+		Set<PersonId> expectedPersonIds = new LinkedHashSet<>();
+
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			EventFilter<PersonAdditionEvent> eventFilter = peopleDataManager.getEventFilterForPersonAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> observedPersonIds.add(e.getPersonId()));
+		}));
+
+		// have the agent add a few people and show they were added
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			for (int i = 0; i < 10; i++) {
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				expectedPersonIds.add(personId);
+			}
+		}));
+
+		// have the observer show that the expected and actual observations match
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+			assertEquals(expectedPersonIds, observedPersonIds);
+		}));
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PeopleActionSupport.testConsumers(plugin);
+	
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForPersonImminentRemovalEvent", args = {})
+	public void testGetEventFilterForPersonImminentRemovalEvent() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// add a container to collect the observed removals
+		Set<PersonId> observedRemovals = new LinkedHashSet<>();
+		Set<PersonId> expectedRemovals = new LinkedHashSet<>();
+
+		// have the observer subscribe to the removals and record them onto the
+		// observed removals
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			EventFilter<PersonImminentRemovalEvent> eventFilter = peopleDataManager.getEventFilterForPersonImminentRemovalEvent();
+			c.subscribe(eventFilter, (c2, e) -> observedRemovals.add(e.getPersonId()));			
+		}));
+
+		// have the actor add a few people
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			for (int i = 0; i < 10; i++) {				
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+		}));
+
+		// have the actor remove some people
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			for (int i = 0; i < 5; i++) {				
+				PersonId personId = new PersonId(i);
+				peopleDataManager.removePerson(personId);
+				expectedRemovals.add(personId);
+			}
+		}));
+
+		//have the observer show the expected and observed events are equal
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertFalse(expectedRemovals.isEmpty());
+			assertEquals(expectedRemovals, observedRemovals);	
+		}));
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		PeopleActionSupport.testConsumers(testPlugin);
+		
 	}
 
 }

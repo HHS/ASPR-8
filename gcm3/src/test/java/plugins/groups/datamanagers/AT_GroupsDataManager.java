@@ -22,6 +22,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import nucleus.EventLabeler;
 import nucleus.NucleusError;
 import nucleus.Plugin;
@@ -2234,39 +2235,6 @@ public class AT_GroupsDataManager {
 		assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
 	}
 
-	@Test
-	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
-	public void testGroupAdditionEventLabelers() {
-
-		// Have the agent attempt to add the event labelers and show that a
-		// contract exception is thrown, indicating that the labelers were
-		// previously added by the resolver.
-
-		GroupsActionSupport.testConsumer(100, 3, 5, 6706902549572603852L, (c) -> {
-
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			testEventLabeler(c, GroupAdditionEvent.getEventLabelerForGroupType(groupsDataManager));
-		});
-
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
-	public void testGroupImminentRemovalEventLabelers() {
-
-		// Have the agent attempt to add the event labelers and show that a
-		// contract exception is thrown, indicating that the labelers were
-		// previously added by the resolver.
-
-		GroupsActionSupport.testConsumer(100, 3, 5, 6196206924587095446L, (c) -> {
-
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-
-			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroup());
-			testEventLabeler(c, GroupImminentRemovalEvent.getEventLabelerForGroupType(groupsDataManager));
-		});
-
-	}
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
@@ -2902,8 +2870,6 @@ public class AT_GroupsDataManager {
 															.addPropertyValue(new GroupId(0), true)//
 															.build();
 
-			
-
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
 			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
 
@@ -2930,17 +2896,15 @@ public class AT_GroupsDataManager {
 															.addPropertyValue(groupId, true)//
 															.build();
 
-
-
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
 			assertEquals(GroupError.INCORRECT_GROUP_TYPE_ID, contractException.getErrorType());
 
 		});
 
 		/*
-		 * precondition test: if the groupPropertyDefinitionInitialization does not contain
-		 * property value assignments for every extant group when the property
-		 * definition does not contain a default value
+		 * precondition test: if the groupPropertyDefinitionInitialization does
+		 * not contain property value assignments for every extant group when
+		 * the property definition does not contain a default value
 		 */
 		GroupsActionSupport.testConsumer(0, 3, 10, 244590355339669479L, (c) -> {
 
@@ -2948,7 +2912,7 @@ public class AT_GroupsDataManager {
 			GroupTypeId groupTypeId = TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1;
 			groupsDataManager.addGroupType(groupTypeId);
 			groupsDataManager.addGroup(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1);
-		
+
 			GroupPropertyId groupPropertyId = TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).build();
 			GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
@@ -2958,12 +2922,370 @@ public class AT_GroupsDataManager {
 															.setPropertyDefinition(propertyDefinition)//
 															.build();
 
-			
-
 			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization));
 			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 		});
 	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGroupAdditionEvent", args = { GroupTypeId.class })
+	public void testGetEventFilterForGroupAdditionEvent_GroupType() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create containers for observations
+		Set<GroupId> expectedObservations = new LinkedHashSet<>();
+		Set<GroupId> actualObservations = new LinkedHashSet<>();
+
+		Set<TestGroupTypeId> selectedGroupTypes = new LinkedHashSet<>();
+		selectedGroupTypes.add(TestGroupTypeId.GROUP_TYPE_1);
+		selectedGroupTypes.add(TestGroupTypeId.GROUP_TYPE_2);
+
+		// have the observer subscribe to group creation for the selected groups
+		// types
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			for (TestGroupTypeId testGroupTypeId : selectedGroupTypes) {
+				EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent(testGroupTypeId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(e.getGroupId());
+				});
+			}
+		}));
+
+		// have the actor create add a few groups and collect expected
+		// observations
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			for (int i = 0; i < 100; i++) {
+				TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+				GroupId groupId = groupsDataManager.addGroup(groupTypeId);
+				if (selectedGroupTypes.contains(groupTypeId)) {
+					expectedObservations.add(groupId);
+				}
+			}
+
+		}));
+
+		// show that the group creations were observed
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		GroupsActionSupport.testConsumers(30, 4.0, 10.0, 5589772229734037226L, testPlugin);
+
+		// precondition test: if the group type id is null
+		GroupsActionSupport.testConsumer(30, 4.0, 10.0, 7641347481169234356L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
+			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+		});
+
+		// precondition tests: if the group type id is not known
+		GroupsActionSupport.testConsumer(30, 4.0, 10.0, 5165611005555046251L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
+			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGroupAdditionEvent", args = {})
+	public void testGetEventFilterForGroupAdditionEvent() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create containers for observations
+		Set<GroupId> expectedObservations = new LinkedHashSet<>();
+		Set<GroupId> actualObservations = new LinkedHashSet<>();
+
+		// have the observer subscribe to group creation for the selected groups
+		// types
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+
+			EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(e.getGroupId());
+			});
+
+		}));
+
+		// have the actor create add a few groups and collect expected
+		// observations
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			for (int i = 0; i < 100; i++) {
+				TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+				GroupId groupId = groupsDataManager.addGroup(groupTypeId);
+				expectedObservations.add(groupId);
+			}
+
+		}));
+
+		// show that the group creations were observed
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		GroupsActionSupport.testConsumers(30, 4.0, 10.0, 4873414306435646846L, testPlugin);
+
+		// precondition test: if the group type id is null
+		GroupsActionSupport.testConsumer(30, 4.0, 10.0, 1195149554612948377L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
+			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+		});
+
+		// precondition tests: if the group type id is not known
+		GroupsActionSupport.testConsumer(30, 4.0, 10.0, 4200302716872534102L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId));
+			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGroupImminentRemovalEvent", args = { GroupTypeId.class })
+	public void testGetEventFilterForGroupImminentRemovalEvent_GroupType() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<TestGroupTypeId> selectedGroupTypes = new LinkedHashSet<>();
+		selectedGroupTypes.add(TestGroupTypeId.GROUP_TYPE_1);
+		selectedGroupTypes.add(TestGroupTypeId.GROUP_TYPE_2);
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an actor observe imminent group removals for the selected group
+		// types
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			for (TestGroupTypeId testGroupTypeId : selectedGroupTypes) {
+				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(testGroupTypeId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(new MultiKey(c.getTime(), e.getGroupId()));
+				});
+			}
+		}));
+
+		int comparisonDay = 100;
+
+		// have an actor add a few new groups and immediately remove them
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+					StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+					RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+					TestGroupTypeId testGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+					GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
+					GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+					groupsDataManager.removeGroup(groupId);
+					if (selectedGroupTypes.contains(groupTypeId)) {
+						expectedObservations.add(new MultiKey(c2.getTime(), groupId));
+					}
+				}, i);
+			}
+		}));
+
+		// have the observer show that the expected and actual observations are
+		// the same
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(comparisonDay, (c) -> {
+			assertFalse(expectedObservations.isEmpty());
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GroupsActionSupport.testConsumers(30, 3, 5, 5220753097952239863L, testPlugin);
+
+		// precondition test: if the group type id is null
+		GroupsActionSupport.testConsumer(30, 3, 5, 9054394261904590543L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId));
+			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the group type id is unknown
+		GroupsActionSupport.testConsumer(30, 3, 5, 1762165471886047056L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupTypeId groupTypeId = TestGroupTypeId.getUnknownGroupTypeId();
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId));
+			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGroupImminentRemovalEvent", args = { GroupId.class })
+	public void testGetEventFilterForGroupImminentRemovalEvent_GroupId() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		List<GroupId> selectedGroups = new ArrayList<>();
+
+		Set<GroupId> expectedObservations = new LinkedHashSet<>();
+		Set<GroupId> actualObservations = new LinkedHashSet<>();
+
+		int groupCount = 30;
+
+		// have an actor add a few new groups, selecting about half for later
+		// removal
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			for (int i = 0; i < groupCount; i++) {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				TestGroupTypeId testGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+				GroupId groupId = groupsDataManager.addGroup(testGroupTypeId);
+				if (randomGenerator.nextBoolean()) {
+					selectedGroups.add(groupId);
+				}
+			}
+		}));
+
+		// have an actor observe imminent group removals for the selected group
+		// ids
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			for (GroupId groupId : selectedGroups) {
+
+				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId);
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(e.getGroupId());
+				});
+			}
+		}));
+
+		// have an actor remove all the groups
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
+			for (GroupId groupId : groupIds) {
+				if (selectedGroups.contains(groupId)) {
+					expectedObservations.add(groupId);
+				}
+				groupsDataManager.removeGroup(groupId);
+			}
+		}));
+
+		// have the observer show that the expected and actual observations are
+		// the same
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
+			assertFalse(expectedObservations.isEmpty());
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GroupsActionSupport.testConsumers(30, 3, 5, 8387884383247064182L, testPlugin);
+
+		// precondition test: if the group id is null
+		GroupsActionSupport.testConsumer(30, 3, 5, 4632329546403944029L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = null;
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId));
+			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
+		});
+
+		// precondition test: if the group id is unknown
+		GroupsActionSupport.testConsumer(30, 3, 5, 6422007986358180059L, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			GroupId groupId = new GroupId(100000);
+			ContractException contractException = assertThrows(ContractException.class, () -> groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupId));
+			assertEquals(GroupError.UNKNOWN_GROUP_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGroupImminentRemovalEvent", args = {})
+	public void testGetEventFilterForGroupImminentRemovalEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		Set<GroupId> expectedObservations = new LinkedHashSet<>();
+		Set<GroupId> actualObservations = new LinkedHashSet<>();
+
+		int groupCount = 30;
+
+		// have an actor add a few new groups, selecting about half for later
+		// removal
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			for (int i = 0; i < groupCount; i++) {
+				GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				TestGroupTypeId testGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+				groupsDataManager.addGroup(testGroupTypeId);
+			}
+		}));
+
+		// have an actor observe imminent group removals
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(e.getGroupId());
+			});
+		}));
+
+		// have an actor remove all the groups
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			List<GroupId> groupIds = groupsDataManager.getGroupIds();
+			for (GroupId groupId : groupIds) {
+				if (randomGenerator.nextBoolean()) {
+					expectedObservations.add(groupId);
+					groupsDataManager.removeGroup(groupId);
+				}
+			}
+		}));
+
+		// have the observer show that the expected and actual observations are
+		// the same
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
+			assertFalse(expectedObservations.isEmpty());
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GroupsActionSupport.testConsumers(30, 3, 5, 5769859947365341767L, testPlugin);
+
+		
+	}
+
+	
+	// 8388981611967284165L
+	// 8821737193954784979L
+	// 8185554283901963798L
+	// 7894583767324913975L
+	// 3035182036041809215L
+	// 5900407295303039835L
+	// 7573518940281736875L
 
 }

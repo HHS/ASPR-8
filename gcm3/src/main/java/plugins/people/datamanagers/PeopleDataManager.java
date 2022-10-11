@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
 import nucleus.NucleusError;
 import plugins.people.PeoplePluginData;
 import plugins.people.events.BulkPersonAdditionEvent;
@@ -309,4 +310,33 @@ public final class PeopleDataManager extends DataManager {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link BulkPersonAdditionEvent} events. Matches all such events.
+	 */
+	public EventFilter<BulkPersonAdditionEvent> getEventFilterForBulkPersonAdditionEvent() {
+		return EventFilter	.builder(BulkPersonAdditionEvent.class)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonAdditionEvent} events. Matches all such events.
+	 */
+	public EventFilter<PersonAdditionEvent> getEventFilterForPersonAdditionEvent() {
+		return EventFilter	.builder(PersonAdditionEvent.class)//
+							.build();
+	}
+	
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link PersonImminentRemovalEvent} events. Matches all such events.
+	 */
+	public EventFilter<PersonImminentRemovalEvent> getEventFilterForPersonImminentRemovalEvent() {
+		return EventFilter	.builder(PersonImminentRemovalEvent.class)//
+							.build();
+	}
+	
 }

@@ -2,7 +2,6 @@ package plugins.resources.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,10 +16,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.EventFilter;
-import nucleus.EventLabeler;
-import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
@@ -1229,11 +1225,12 @@ public final class AT_ResourcesDataManager {
 		// Have an actor observe the resource property changes
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 				for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
-					c.subscribe(ResourcePropertyUpdateEvent.getEventLabel(c, testResourceId, testResourcePropertyId), (c2, e) -> {
+					EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
+					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getResourceId(), e.getResourcePropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
 					});
 				}
@@ -1343,27 +1340,6 @@ public final class AT_ResourcesDataManager {
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE, value));
 			assertEquals(PropertyError.IMMUTABLE_VALUE, contractException.getErrorType());
-		});
-
-	}
-
-	private void testEventLabeler(ActorContext c, EventLabeler<?> eventLabeler) {
-		assertNotNull(eventLabeler);
-		ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(eventLabeler));
-		assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-	}
-
-	
-	@Test
-	@UnitTestMethod(name = "init", args = {})
-	public void testResourcePropertyUpdateEventLabelers() {
-
-		// Have the actor attempt to add the event labelers and show that a
-		// contract exception is thrown, indicating that the labelers were
-		// previously added by the resolver.
-
-		ResourcesActionSupport.testConsumer(100, 3611119165176896462L, (c) -> {
-			testEventLabeler(c, ResourcePropertyUpdateEvent.getEventLabeler());
 		});
 
 	}
@@ -1585,7 +1561,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId,testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
@@ -1711,7 +1687,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId,testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
@@ -2002,7 +1978,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId,testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
@@ -2175,7 +2151,7 @@ public final class AT_ResourcesDataManager {
 
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId,testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
@@ -2387,13 +2363,12 @@ public final class AT_ResourcesDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		// Have an actor to observe the resource changes
-		
-		
+
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId,testRegionId);
+					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
 						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
 					});
@@ -3610,7 +3585,299 @@ public final class AT_ResourcesDataManager {
 		ResourcesActionSupport.testConsumers(0, 4130610902285408287L, testPlugin);
 
 	}
-	
-	// 4039871222190675923L
 
+	@Test
+	@UnitTestMethod(name = "getEventFilterForResourcePropertyUpdateEvent", args = { ResourceId.class, ResourcePropertyId.class })
+	public void testGetEventFilterForResourcePropertyUpdateEvent_Resource_Property() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		Set<Pair<TestResourceId, TestResourcePropertyId>> selectedResourcePropertyPairs = new LinkedHashSet<>();
+		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE));
+		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE));
+		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_2_INTEGER_MUTABLE));
+		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_2_STRING_MUTABLE));
+		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_3, TestResourcePropertyId.ResourceProperty_3_1_BOOLEAN_MUTABLE));
+		selectedResourcePropertyPairs.add(new Pair<>(TestResourceId.RESOURCE_5, TestResourcePropertyId.ResourceProperty_5_1_DOUBLE_IMMUTABLE));
+
+		// Have an actor observe the selected resource property changes
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			for (Pair<TestResourceId, TestResourcePropertyId> pair : selectedResourcePropertyPairs) {
+				TestResourceId testResourceId = pair.getFirst();
+				TestResourcePropertyId testResourcePropertyId = pair.getSecond();
+				EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
+
+				c.subscribe(eventFilter, (c2, e) -> {
+					actualObservations.add(new MultiKey(c.getTime(), e.getResourceId(), e.getResourcePropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
+				});
+
+			}
+		}));
+
+		int comparisonDay = 100;
+
+		// Have an actor assign resource properties
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+			TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
+
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+					if (propertyDefinition.propertyValuesAreMutable()) {
+						// update the property value
+						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+						Object expectedValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, expectedValue);
+
+						Pair<TestResourceId, TestResourcePropertyId> pair = new Pair<>(testResourceId, testResourcePropertyId);
+						if (selectedResourcePropertyPairs.contains(pair)) {
+							expectedObservations.add(new MultiKey(c2.getTime(), testResourceId, testResourcePropertyId, resourcePropertyValue, expectedValue));
+						}
+					}
+				}, i);
+			}
+
+		}));
+
+		// Have the observer show the the observations were properly generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(0, 4039871222190675923L, testPlugin);
+
+		/* precondition test: if the resource id is null */
+		ResourcesActionSupport.testConsumer(0, 7664472869248061620L, (c) -> {
+			ResourceId resourceId = null;
+			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
+			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource id is unknown */
+		ResourcesActionSupport.testConsumer(0, 2475328515664171695L, (c) -> {
+			ResourceId resourceId = TestResourceId.getUnknownResourceId();
+			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
+			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource property id is null */
+		ResourcesActionSupport.testConsumer(0, 7416000716392694948L, (c) -> {
+			ResourceId resourceId = TestResourceId.RESOURCE_1;
+			ResourcePropertyId resourcePropertyId = null;
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
+			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		/* precondition test: if the resource property id is unknown */
+		ResourcesActionSupport.testConsumer(0, 697790634696788239L, (c) -> {
+			ResourceId resourceId = TestResourceId.RESOURCE_1;
+			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
+
+		/*
+		 * precondition test: if the resource property id is unknown -- in this
+		 * case it is linke to a different resource
+		 */
+		ResourcesActionSupport.testConsumer(0, 697790634696788239L, (c) -> {
+			ResourceId resourceId = TestResourceId.RESOURCE_1;
+			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE;
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(resourceId, resourcePropertyId));
+			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForResourcePropertyUpdateEvent", args = {})
+	public void testGetEventFilterForResourcePropertyUpdateEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// Have an actor observe the selected resource property changes
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent();
+
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c.getTime(), e.getResourceId(), e.getResourcePropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
+			});
+
+		}));
+
+		int comparisonDay = 100;
+
+		// Have an actor assign resource properties
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+
+			TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
+			TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.getRandomResourcePropertyId(testResourceId, randomGenerator);
+
+			for (int i = 1; i < comparisonDay; i++) {
+				c.addPlan((c2) -> {
+					PropertyDefinition propertyDefinition = resourcesDataManager.getResourcePropertyDefinition(testResourceId, testResourcePropertyId);
+					if (propertyDefinition.propertyValuesAreMutable()) {
+						// update the property value
+						Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+						Object expectedValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+						resourcesDataManager.setResourcePropertyValue(testResourceId, testResourcePropertyId, expectedValue);
+						expectedObservations.add(new MultiKey(c2.getTime(), testResourceId, testResourcePropertyId, resourcePropertyValue, expectedValue));
+					}
+				}, i);
+			}
+
+		}));
+
+		// Have the observer show the the observations were properly generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(0, 4428711217570070234L, testPlugin);
+
+	}
+	
+	
+	@Test
+	@UnitTestMethod(name = "getEventFilterForResourceIdAdditionEvent", args = {})
+	public void testGetEventFilterForResourceIdAdditionEvent() {
+		ResourceId newResourceId1 = TestResourceId.getUnknownResourceId();
+		ResourceId newResourceId2 = TestResourceId.getUnknownResourceId();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			EventFilter<ResourceIdAdditionEvent> eventFilter = resourcesDataManager.getEventFilterForResourceIdAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getTimeTrackingPolicy());
+				actualObservations.add(multiKey);
+			});
+
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
+			assertFalse(resourcesDataManager.resourceIdExists(newResourceId1));
+			resourcesDataManager.addResourceId(newResourceId1, timeTrackingPolicy);			
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId1, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+			expectedObservations.add(multiKey);
+		}));
+
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
+			assertFalse(resourcesDataManager.resourceIdExists(newResourceId2));
+			resourcesDataManager.addResourceId(newResourceId2, timeTrackingPolicy);			
+			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId2, TimeTrackingPolicy.TRACK_TIME);
+			expectedObservations.add(multiKey);
+		}));
+
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(5, 6169797168816977272L, testPlugin);
+	}
+	
+	@Test
+	@UnitTestMethod(name = "getEventFilterForResourcePropertyDefinitionEvent", args = {})	
+	public void testGetEventFilterForResourcePropertyDefinitionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an actor observe the resource property definition events
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			EventFilter<ResourcePropertyDefinitionEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyDefinitionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getResourcePropertyId());
+				actualObservations.add(multiKey);
+			});
+		}));
+
+		// have an actor define a new resource property
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(34.6).build();
+			ResourcePropertyInitialization resourcePropertyInitialization = //
+					ResourcePropertyInitialization	.builder()//
+													.setPropertyDefinition(propertyDefinition)//
+													.setResourceId(TestResourceId.RESOURCE_1)//
+													.setResourcePropertyId(newResourcePropertyId)//
+													.build();
+			resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_1, newResourcePropertyId);
+			expectedObservations.add(multiKey);
+		}));
+
+		// have an actor define a new resource property
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
+			ResourcePropertyId newResourcePropertyId = TestResourcePropertyId.getUnknownResourcePropertyId();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default").build();
+
+			ResourcePropertyInitialization resourcePropertyInitialization = //
+					ResourcePropertyInitialization	.builder()//
+													.setPropertyDefinition(propertyDefinition)//
+													.setResourceId(TestResourceId.RESOURCE_2)//
+													.setResourcePropertyId(newResourcePropertyId)//
+													.build();
+			resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
+
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_2, newResourcePropertyId);
+			expectedObservations.add(multiKey);
+		}));
+
+		// have the observer verify the observations were correct
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ResourcesActionSupport.testConsumers(5, 1942435631952524244L, testPlugin);
+		
+	}
 }

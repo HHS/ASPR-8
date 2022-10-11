@@ -754,13 +754,6 @@ public final class ResourcesDataManager extends DataManager {
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
-		dataManagerContext.addEventLabeler(ResourcePropertyUpdateEvent.getEventLabeler());
-		
-
-		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
-
-		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
-
 		// load resource property definitions, property values and time tracking
 		// policies
 		for (ResourceId resourceId : resourcesPluginData.getResourceIds()) {
@@ -1385,9 +1378,9 @@ public final class ResourcesDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is not known</li>
 	 * 
 	 * 
@@ -1407,13 +1400,13 @@ public final class ResourcesDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is not known</li>
-	 *             <li>{@linkplain PersonError.NULL_PERSON_ID} if the person id
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
 	 *             is null</li>
-	 *             <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
 	 *             id is not known</li>
 	 */
 	public EventFilter<PersonResourceUpdateEvent> getEventFilterForPersonResourceUpdateEvent(ResourceId resourceId, PersonId personId) {
@@ -1433,13 +1426,13 @@ public final class ResourcesDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is not known</li>
-	 *             <li>{@linkplain RegionError.NULL_REGION_ID} if the region id
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
 	 *             is null</li>
-	 *             <li>{@linkplain RegionError.UNKNOWN_REGION_ID} if the region
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
 	 *             id is not known</li>
 	 */
 	public EventFilter<PersonResourceUpdateEvent> getEventFilterForPersonResourceUpdateEvent(ResourceId resourceId, RegionId regionId) {
@@ -1462,7 +1455,6 @@ public final class ResourcesDataManager extends DataManager {
 							.build();
 	}
 
-
 	private static enum RegionResourceUpdateEventFunctionId {
 		RESOURCE, REGION
 	}
@@ -1480,9 +1472,9 @@ public final class ResourcesDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is not known</li>
 	 * 
 	 * 
@@ -1493,25 +1485,26 @@ public final class ResourcesDataManager extends DataManager {
 							.addFunctionValuePair(regionResourceUpdateMap.get(RegionResourceUpdateEventFunctionId.RESOURCE), resourceId)//
 							.build();
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id and region id.
+	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id and
+	 * region id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
-	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
 	 *             resource id is not known</li>
-	 *             <li>{@linkplain RegionError.NULL_REGION_ID} if the
-	 *             region id is null</li>
-	 *             <li>{@linkplain RegionError.UNKNOWN_REGION_ID} if the
-	 *             region id is not known</li> 
+	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region id
+	 *             is null</li>
+	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
+	 *             id is not known</li>
 	 * 
 	 */
-	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent(ResourceId resourceId,RegionId regionId) {
+	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent(ResourceId resourceId, RegionId regionId) {
 		validateResourceId(resourceId);
 		validateRegionId(regionId);
 		return EventFilter	.builder(RegionResourceUpdateEvent.class)//
@@ -1519,7 +1512,7 @@ public final class ResourcesDataManager extends DataManager {
 							.addFunctionValuePair(regionResourceUpdateMap.get(RegionResourceUpdateEventFunctionId.REGION), regionId)//
 							.build();
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link RegionResourceUpdateEvent} events. Matches on all such events.
@@ -1529,6 +1522,70 @@ public final class ResourcesDataManager extends DataManager {
 	 */
 	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent() {
 		return EventFilter	.builder(RegionResourceUpdateEvent.class)//
+							.build();
+	}
+
+	private static enum ResourcePropertyUpdateEventFunctionId {
+		RESOURCE, PROPERTY
+	}
+
+	private IdentifiableFunctionMap<ResourcePropertyUpdateEvent> resourcePropertyUpdateMap = //
+			IdentifiableFunctionMap	.builder(ResourcePropertyUpdateEvent.class)//
+									.put(ResourcePropertyUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
+									.put(ResourcePropertyUpdateEventFunctionId.PROPERTY, e -> e.getResourcePropertyId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link ResourcePropertyUpdateEvent} events. Matches on the resource id
+	 * and resource property id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             resource property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             resource property id is not known</li>
+	 * 
+	 */
+	public EventFilter<ResourcePropertyUpdateEvent> getEventFilterForResourcePropertyUpdateEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId) {
+		validateResourceId(resourceId);
+		validateResourcePropertyId(resourceId, resourcePropertyId);
+		return EventFilter	.builder(ResourcePropertyUpdateEvent.class)//
+							.addFunctionValuePair(resourcePropertyUpdateMap.get(ResourcePropertyUpdateEventFunctionId.RESOURCE), resourceId)//
+							.addFunctionValuePair(resourcePropertyUpdateMap.get(ResourcePropertyUpdateEventFunctionId.PROPERTY), resourcePropertyId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link ResourcePropertyUpdateEvent} events. Matches all such events.
+	 */
+	public EventFilter<ResourcePropertyUpdateEvent> getEventFilterForResourcePropertyUpdateEvent() {
+		return EventFilter	.builder(ResourcePropertyUpdateEvent.class)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link ResourceIdAdditionEvent} events. Matches all such events.
+	 */
+	public EventFilter<ResourceIdAdditionEvent> getEventFilterForResourceIdAdditionEvent() {
+		return EventFilter	.builder(ResourceIdAdditionEvent.class)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link ResourcePropertyDefinitionEvent} events. Matches all such events.
+	 */
+	public EventFilter<ResourcePropertyDefinitionEvent> getEventFilterForResourcePropertyDefinitionEvent() {
+		return EventFilter	.builder(ResourcePropertyDefinitionEvent.class)//
 							.build();
 	}
 

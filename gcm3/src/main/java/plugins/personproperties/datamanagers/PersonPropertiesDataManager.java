@@ -562,9 +562,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
 
-		// Ensure that this and the bulk method now check that all non-defaulted
-		// properties are assigned to new people
-
 		PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
 
 		PersonId personId = personImminentAdditionEvent.getPersonId();

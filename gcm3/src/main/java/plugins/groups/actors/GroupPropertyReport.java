@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import nucleus.EventLabel;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupAdditionEvent;
@@ -134,7 +135,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		/**
-		 * Properties that are newly added to the simulation will be covered by the report
+		 * Properties that are newly added to the simulation will be covered by
+		 * the report
 		 */
 		public Builder includeNewProperties(boolean includeNewProperties) {
 			scaffold.includeNewProperties = includeNewProperties;
@@ -293,24 +295,26 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 		// determine the subscriptions for group addition
 		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			subscribe(GroupAdditionEvent.class, this::handleGroupAdditionEvent);
+			EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent();
+			subscribe(eventFilter, this::handleGroupAdditionEvent);
 			isSubscribedToAllGroupAdditionEvents = true;
 
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				EventLabel<GroupAdditionEvent> eventLabelByGroupType = GroupAdditionEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-				subscribe(eventLabelByGroupType, this::handleGroupAdditionEvent);
+				EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
+				subscribe(eventFilter, this::handleGroupAdditionEvent);
 			}
 		}
 
 		// determine the subscriptions for group removal observations
 		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
+			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent();
+			subscribe(eventFilter, this::handleGroupImminentRemovalEvent);
 			isSubscribedToAllGroupRemovalEvents = true;
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				EventLabel<GroupImminentRemovalEvent> eventLabelByGroupType = GroupImminentRemovalEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-				subscribe(eventLabelByGroupType, this::handleGroupImminentRemovalEvent);
+				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId);
+				subscribe(eventFilter, this::handleGroupImminentRemovalEvent);
 			}
 		}
 
@@ -391,19 +395,21 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		/*
-		 * If we are not subscribed to all group addition events then we will need to subscribe by type
+		 * If we are not subscribed to all group addition events then we will
+		 * need to subscribe by type
 		 */
 		if (isSubscribedToAllGroupAdditionEvents) {
-			EventLabel<GroupAdditionEvent> eventLabelByGroupType = GroupAdditionEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-			subscribe(eventLabelByGroupType, this::handleGroupAdditionEvent);
+			EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
+			subscribe(eventFilter, this::handleGroupAdditionEvent);
 		}
-		
+
 		/*
-		 * If we are not subscribed to all group removal events then we will need to subscribe by type
+		 * If we are not subscribed to all group removal events then we will
+		 * need to subscribe by type
 		 */
 		if (isSubscribedToAllGroupRemovalEvents) {
-			EventLabel<GroupImminentRemovalEvent> eventLabelByGroupType = GroupImminentRemovalEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-			subscribe(eventLabelByGroupType, this::handleGroupImminentRemovalEvent);
+			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId);
+			subscribe(eventFilter, this::handleGroupImminentRemovalEvent);
 		}
 
 		/*

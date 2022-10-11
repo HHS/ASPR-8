@@ -16,6 +16,8 @@ import org.apache.commons.math3.util.Pair;
 import net.jcip.annotations.GuardedBy;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
+import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.groups.GroupsPluginData;
@@ -243,10 +245,6 @@ public final class GroupsDataManager extends DataManager {
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupTypeAndPerson(this));
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForPerson());
 
-		dataManagerContext.addEventLabeler(GroupAdditionEvent.getEventLabelerForGroupType(this));
-
-		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForGroup());
-		dataManagerContext.addEventLabeler(GroupImminentRemovalEvent.getEventLabelerForGroupType(this));
 
 		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroup());
 		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
@@ -372,8 +370,8 @@ public final class GroupsDataManager extends DataManager {
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
 	 *             group type id is unknown</li>
 	 *
-	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION} if
-	 *             the group property id is already known</li>
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
+	 *             if the group property id is already known</li>
 	 * 
 	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
 	 *             groupPropertyDefinitionInitialization contains a property
@@ -387,7 +385,7 @@ public final class GroupsDataManager extends DataManager {
 	 *             if the groupPropertyDefinitionInitialization does not contain
 	 *             property value assignments for every extant group when the
 	 *             property definition does not contain a default value
-	 *             
+	 * 
 	 */
 	public void defineGroupProperty(GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization) {
 
@@ -1761,4 +1759,107 @@ public final class GroupsDataManager extends DataManager {
 			}
 		}
 	}
+
+	private static enum GroupAdditionEventFunctionId {
+		GROUP_TYPE
+	}
+
+	private IdentifiableFunctionMap<GroupAdditionEvent> groupAdditionFunctionMap = //
+			IdentifiableFunctionMap	.builder(GroupAdditionEvent.class)//
+									.put(GroupAdditionEventFunctionId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to {@link GroupAdditionEvent}
+	 * events. Matches on the group type id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError.NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError.UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<GroupAdditionEvent> getEventFilterForGroupAdditionEvent(GroupTypeId groupTypeId) {
+		validateGroupTypeId(groupTypeId);
+		return EventFilter	.builder(GroupAdditionEvent.class)//
+							.addFunctionValuePair(groupAdditionFunctionMap.get(GroupAdditionEventFunctionId.GROUP_TYPE), groupTypeId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to {@link GroupAdditionEvent}
+	 * events. Matches on all such events.
+	 */
+	public EventFilter<GroupAdditionEvent> getEventFilterForGroupAdditionEvent() {
+
+		return EventFilter	.builder(GroupAdditionEvent.class)//
+							.build();
+	}
+	
+	private static enum GroupImminentRemovalEventId {
+		GROUP_TYPE, GROUP_ID
+	}
+
+	private IdentifiableFunctionMap<GroupImminentRemovalEvent> groupImminentRemovalMap = //
+			IdentifiableFunctionMap	.builder(GroupImminentRemovalEvent.class)//
+									.put(GroupImminentRemovalEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
+									.put(GroupImminentRemovalEventId.GROUP_ID, e -> e.getGroupId())//
+									.build();//
+	
+	/**
+	 * Returns an event filter used to subscribe to {@link GroupImminentRemovalEvent}
+	 * events. Matches on the group type id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<GroupImminentRemovalEvent> getEventFilterForGroupImminentRemovalEvent(GroupTypeId groupTypeId) {
+		validateGroupTypeId(groupTypeId);
+		return EventFilter	.builder(GroupImminentRemovalEvent.class)//
+							.addFunctionValuePair(groupImminentRemovalMap.get(GroupImminentRemovalEventId.GROUP_TYPE), groupTypeId)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to {@link GroupImminentRemovalEvent}
+	 * events. Matches on the group id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group
+	 *             id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
+	 *             group id is not known</li>
+	 * 
+	 * 
+	 */
+	public EventFilter<GroupImminentRemovalEvent> getEventFilterForGroupImminentRemovalEvent(GroupId groupId) {
+		validateGroupExists(groupId);
+		return EventFilter	.builder(GroupImminentRemovalEvent.class)//
+							.addFunctionValuePair(groupImminentRemovalMap.get(GroupImminentRemovalEventId.GROUP_ID), groupId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to {@link GroupImminentRemovalEvent}
+	 * events. Matches all such events.
+	 * 
+	 */
+	public EventFilter<GroupImminentRemovalEvent> getEventFilterForGroupImminentRemovalEvent() {
+		return EventFilter	.builder(GroupImminentRemovalEvent.class)//
+							.build();
+	}
+
 }
