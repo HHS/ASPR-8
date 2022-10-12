@@ -233,18 +233,11 @@ public final class GroupsDataManager extends DataManager {
 		 * contained in the groups plugin.
 		 */
 
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroup());
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupAndPerson());
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupType(this));
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForGroupTypeAndPerson(this));
-		dataManagerContext.addEventLabeler(GroupMembershipAdditionEvent.getEventLabelerForPerson());
-
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroup());
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupAndPerson());
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupType(this));
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForGroupTypeAndPerson(this));
 		dataManagerContext.addEventLabeler(GroupMembershipRemovalEvent.getEventLabelerForPerson());
-
 
 		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroup());
 		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
@@ -1799,7 +1792,7 @@ public final class GroupsDataManager extends DataManager {
 		return EventFilter	.builder(GroupAdditionEvent.class)//
 							.build();
 	}
-	
+
 	private static enum GroupImminentRemovalEventId {
 		GROUP_TYPE, GROUP_ID
 	}
@@ -1809,10 +1802,10 @@ public final class GroupsDataManager extends DataManager {
 									.put(GroupImminentRemovalEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
 									.put(GroupImminentRemovalEventId.GROUP_ID, e -> e.getGroupId())//
 									.build();//
-	
+
 	/**
-	 * Returns an event filter used to subscribe to {@link GroupImminentRemovalEvent}
-	 * events. Matches on the group type id.
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupImminentRemovalEvent} events. Matches on the group type id.
 	 *
 	 *
 	 * @throws ContractException
@@ -1830,18 +1823,18 @@ public final class GroupsDataManager extends DataManager {
 							.addFunctionValuePair(groupImminentRemovalMap.get(GroupImminentRemovalEventId.GROUP_TYPE), groupTypeId)//
 							.build();
 	}
-	
+
 	/**
-	 * Returns an event filter used to subscribe to {@link GroupImminentRemovalEvent}
-	 * events. Matches on the group id.
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupImminentRemovalEvent} events. Matches on the group id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group
-	 *             id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the
-	 *             group id is not known</li>
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
+	 *             null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
+	 *             is not known</li>
 	 * 
 	 * 
 	 */
@@ -1853,12 +1846,150 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	/**
-	 * Returns an event filter used to subscribe to {@link GroupImminentRemovalEvent}
-	 * events. Matches all such events.
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupImminentRemovalEvent} events. Matches all such events.
 	 * 
 	 */
 	public EventFilter<GroupImminentRemovalEvent> getEventFilterForGroupImminentRemovalEvent() {
 		return EventFilter	.builder(GroupImminentRemovalEvent.class)//
+							.build();
+	}
+
+	private static enum GroupMembershipAdditionEventId {
+		GROUP_TYPE, GROUP_ID, PERSON_ID;
+	}
+
+	private IdentifiableFunctionMap<GroupMembershipAdditionEvent> groupMembershipAdditionMap = //
+			IdentifiableFunctionMap	.builder(GroupMembershipAdditionEvent.class)//
+									.put(GroupMembershipAdditionEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
+									.put(GroupMembershipAdditionEventId.GROUP_ID, e -> e.getGroupId())//
+									.put(GroupMembershipAdditionEventId.PERSON_ID, e -> e.getPersonId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
+	 *             null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
+	 *             is not known</li>
+	 * 
+	 */
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupId groupId) {
+
+		validateGroupExists(groupId);
+		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
+							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_ID), groupId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group id and
+	 * person id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
+	 *             null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
+	 *             is not known</li>
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
+	 *             is null</li>
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
+	 *             id is not known</li>
+	 * 
+	 */
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupId groupId, PersonId personId) {
+		validateGroupExists(groupId);
+		validatePersonExists(personId);
+		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
+							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_ID), groupId)//
+							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID), personId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group type id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is not known</li>
+	 * 
+	 */
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupTypeId groupTypeId) {
+		validateGroupTypeId(groupTypeId);
+		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
+							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_TYPE), groupTypeId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupMembershipAdditionEvent} events. Matches on group type id and
+	 * person id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is not known</li>
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
+	 *             is null</li>
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
+	 *             id is not known</li>
+	 * 
+	 */
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(GroupTypeId groupTypeId, PersonId personId) {
+		validateGroupTypeId(groupTypeId);
+		validatePersonExists(personId);
+		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
+							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.GROUP_TYPE), groupTypeId)//
+							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID), personId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupMembershipAdditionEvent} events. Matches on person id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
+	 *             is null</li>
+	 *             <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person
+	 *             id is not known</li>
+	 * 
+	 */
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent(PersonId personId) {
+		validatePersonExists(personId);
+		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
+							.addFunctionValuePair(groupMembershipAdditionMap.get(GroupMembershipAdditionEventId.PERSON_ID), personId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupMembershipAdditionEvent} events. Matches on all such events.
+	 *
+	 *
+	 * 
+	 */
+	public EventFilter<GroupMembershipAdditionEvent> getEventFilterForGroupMembershipAdditionEvent() {
+		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
 							.build();
 	}
 
