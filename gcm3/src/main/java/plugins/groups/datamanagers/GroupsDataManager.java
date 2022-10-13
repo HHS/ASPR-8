@@ -228,16 +228,6 @@ public final class GroupsDataManager extends DataManager {
 		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
-		/*
-		 * Add the event labelers associated with the various observation events
-		 * contained in the groups plugin.
-		 */
-
-
-		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroup());
-		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupAndProperty());
-		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupType(this));
-		dataManagerContext.addEventLabeler(GroupPropertyUpdateEvent.getEventLabelerForGroupTypeAndProperty(this));
 
 		loadGroupTypes();
 		loadGroupPropertyDefinitions();
@@ -1987,10 +1977,7 @@ public final class GroupsDataManager extends DataManager {
 		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
 							.build();
 	}
-	
-	///////////////////////////////////////////////
-	///////////////////////////////////////////////
-	
+		
 	private static enum GroupMembershipRemovalEventId {
 		GROUP_TYPE, GROUP_ID, PERSON_ID;
 	}
@@ -2130,4 +2117,111 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 
+	private static enum GroupPropertyUpdateEventId {
+		GROUP_PROPERTY, GROUP_TYPE, GROUP_ID;
+	}
+
+	private IdentifiableFunctionMap<GroupPropertyUpdateEvent> groupPropertyUpdateMap = //
+			IdentifiableFunctionMap	.builder(GroupPropertyUpdateEvent.class)//
+									.put(GroupPropertyUpdateEventId.GROUP_PROPERTY, e -> e.getGroupPropertyId())//
+									.put(GroupPropertyUpdateEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
+									.put(GroupPropertyUpdateEventId.GROUP_ID, e -> e.getGroupId())//
+									.build();//
+
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id is not known</li> 
+	 */
+	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupId groupId) {
+		validateGroupExists(groupId);
+		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
+							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_ID), groupId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and group id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the group property id is not known</li>
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id is not known</li> 
+	 */
+	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupPropertyId groupPropertyId, GroupId groupId) {
+		validateGroupExists(groupId);
+		GroupTypeId groupTypeId =  indexesToTypesMap.get(groupsToTypesMap.getValueAsInt(groupId.getValue()));		
+		validateGroupPropertyId(groupTypeId,groupPropertyId);
+		
+		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
+							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY), groupPropertyId)//
+							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_ID), groupId)//
+							.build();
+	}
+
+	
+
+
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group type id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the group type id is not known</li>
+	 */
+	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupTypeId groupTypeId) {
+		validateGroupTypeId(groupTypeId);
+		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
+							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_TYPE), groupTypeId)//
+							.build();
+	}
+
+	
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and group type id. 
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the group property id is not known</li>
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the group type id is not known</li>
+	 */
+	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupPropertyId groupPropertyId, GroupTypeId groupTypeId) {
+		validateGroupTypeId(groupTypeId);
+		validateGroupPropertyId(groupTypeId,groupPropertyId);
+
+		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
+							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY), groupPropertyId)//
+							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_TYPE), groupTypeId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupPropertyUpdateEvent} events. Matches on all such events. 
+	 */
+	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent() {
+		
+		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
+							.build();
+	}
+	
 }

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import nucleus.ActorContext;
 import nucleus.EventFilter;
-import nucleus.EventLabel;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
@@ -332,17 +331,17 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 		if (allPropertiesRequired) {
 			isSubscribedToAllGroupPropertyUpdateEvents = true;
-			subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
+			EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent();
+			subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
 		} else {
 			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
 				if (clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
-					EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupType = GroupPropertyUpdateEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-					subscribe(eventLabelByGroupType, this::handleGroupPropertyUpdateEvent);
+					EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
+					subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
 				} else {
 					for (GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-						EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupTypeAndProperty = GroupPropertyUpdateEvent.getEventLabelByGroupTypeAndProperty(actorContext, groupTypeId,
-								groupPropertyId);
-						subscribe(eventLabelByGroupTypeAndProperty, this::handleGroupPropertyUpdateEvent);
+						EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
+						subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
 					}
 				}
 			}
@@ -389,9 +388,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * subscribe to all where the group type id is new one
 		 */
 		if (!isSubscribedToAllGroupPropertyUpdateEvents) {
-
-			EventLabel<GroupPropertyUpdateEvent> eventLabelByGroupType = GroupPropertyUpdateEvent.getEventLabelByGroupType(actorContext, groupTypeId);
-			subscribe(eventLabelByGroupType, this::handleGroupPropertyUpdateEvent);
+			EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
+			subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
 		}
 
 		/*
