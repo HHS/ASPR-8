@@ -2169,10 +2169,6 @@ public final class GroupsDataManager extends DataManager {
 							.build();
 	}
 
-	
-
-
-
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link GroupPropertyUpdateEvent} events. Matches on group type id.
@@ -2224,4 +2220,24 @@ public final class GroupsDataManager extends DataManager {
 							.build();
 	}
 	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupPropertyDefinitionEvent} events. Matches all such events.
+	 * 
+	 */
+	public EventFilter<GroupPropertyDefinitionEvent> getEventFilterForGroupPropertyDefinitionEvent() {
+		return EventFilter	.builder(GroupPropertyDefinitionEvent.class)//
+							.build();
+	}
+
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link GroupTypeAdditionEvent} events. Matches all such events.
+	 * 
+	 */
+	public EventFilter<GroupTypeAdditionEvent> getEventFilterForGroupTypeAdditionEvent() {
+		return EventFilter	.builder(GroupTypeAdditionEvent.class)//
+							.build();
+	}
 }

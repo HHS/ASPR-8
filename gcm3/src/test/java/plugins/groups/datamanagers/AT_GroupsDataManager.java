@@ -3446,10 +3446,10 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupTypeId groupTypeId : selectedGroupTypes) {
 				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipAdditionEvent(groupTypeId);
-				
+
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
-					
+
 				});
 			}
 		}));
@@ -3466,7 +3466,7 @@ public class AT_GroupsDataManager {
 			for (int i = 0; i < groupCount; i++) {
 				TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
 				GroupId groupId = groupsDataManager.addGroup(groupTypeId);
-				
+
 				for (int j = 0; j < 3; j++) {
 					PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 					groupsDataManager.addPersonToGroup(personId, groupId);
@@ -3748,7 +3748,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		/*
-		 * have the actor create some groups and people 
+		 * have the actor create some groups and people
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -4015,10 +4015,10 @@ public class AT_GroupsDataManager {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			for (GroupTypeId groupTypeId : selectedGroupTypes) {
 				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupMembershipRemovalEvent(groupTypeId);
-				
+
 				c.subscribe(eventFilter, (c2, e) -> {
 					actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
-					
+
 				});
 			}
 		}));
@@ -4035,7 +4035,7 @@ public class AT_GroupsDataManager {
 			for (int i = 0; i < groupCount; i++) {
 				TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
 				GroupId groupId = groupsDataManager.addGroup(groupTypeId);
-				
+
 				for (int j = 0; j < 3; j++) {
 					PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
 					groupsDataManager.addPersonToGroup(personId, groupId);
@@ -4319,7 +4319,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		/*
-		 * have the actor create some groups and people 
+		 * have the actor create some groups and people
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -4779,8 +4779,95 @@ public class AT_GroupsDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		GroupsActionSupport.testConsumers(100, 3, 5, 2633645086420948220L, testPlugin);
 
-		
 	}
 
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGroupPropertyDefinitionEvent", args = {})
+	public void testGetEventFilterForGroupPropertyDefinitionEvent() {
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// have an observer observe new group property definitions being created
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			EventFilter<GroupPropertyDefinitionEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyDefinitionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGroupTypeId(), e.getGroupPropertyId());
+				actualObservations.add(multiKey);
+			});
+		}));
+
+		// have an actor add group property definitions
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			for (TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
+				groupsDataManager.addGroupType(testAuxiliaryGroupTypeId);
+				for (TestAuxiliaryGroupPropertyId testAuxiliaryGroupPropertyId : TestAuxiliaryGroupPropertyId.getTestGroupPropertyIds(testAuxiliaryGroupTypeId)) {
+					PropertyDefinition propertyDefinition = testAuxiliaryGroupPropertyId.getPropertyDefinition();
+					GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = //
+							GroupPropertyDefinitionInitialization	.builder()//
+																	.setGroupTypeId(testAuxiliaryGroupTypeId)//
+																	.setPropertyId(testAuxiliaryGroupPropertyId)//
+																	.setPropertyDefinition(propertyDefinition)//
+																	.build();
+
+					groupsDataManager.defineGroupProperty(groupPropertyDefinitionInitialization);
+					MultiKey multiKey = new MultiKey(c.getTime(), testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					expectedObservations.add(multiKey);
+					PropertyDefinition actualPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(testAuxiliaryGroupTypeId, testAuxiliaryGroupPropertyId);
+					assertEquals(propertyDefinition, actualPropertyDefinition);
+				}
+			}
+		}));
+
+		// have the observer verify that the observations were correct
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GroupsActionSupport.testConsumers(100, 3, 10, 2918652330043276295L, testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForGroupTypeAdditionEvent", args = {})
+	public void testGetEventFilterForGroupTypeAdditionEvent() {
+		Set<GroupTypeId> expectedGroupTypeIds = new LinkedHashSet<>();
+		Set<GroupTypeId> actualGroupTypeIds = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// have an actor observe the addition of new group types
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			EventFilter<GroupTypeAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupTypeAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualGroupTypeIds.add(e.getGroupTypeId());
+			});
+		}));
+
+		// have an actor add some new group types
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
+			for (TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
+				expectedGroupTypeIds.add(testAuxiliaryGroupTypeId);
+				groupsDataManager.addGroupType(testAuxiliaryGroupTypeId);
+			}
+		}));
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+			assertFalse(expectedGroupTypeIds.size() == 0);
+			assertEquals(expectedGroupTypeIds, actualGroupTypeIds);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		GroupsActionSupport.testConsumers(100, 3, 10, 7349170569580375646L, testPlugin);
+	}
 
 }
