@@ -2,14 +2,7 @@ package plugins.materials.events;
 
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
-import nucleus.EventLabel;
-import nucleus.EventLabeler;
-import nucleus.EventLabelerId;
-import nucleus.SimulationContext;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.support.MaterialsError;
 import plugins.materials.support.StageId;
-import util.errors.ContractException;
 
 @Immutable
 public class StageOfferUpdateEvent implements Event {
@@ -41,38 +34,6 @@ public class StageOfferUpdateEvent implements Event {
 		return "StageOfferUpdateEvent [stageId=" + stageId + ", previousOfferState=" + previousOfferState + ", currentOfferState=" + currentOfferState + "]";
 	}
 
-	private static enum LabelerId implements EventLabelerId {
-		STAGE
-	}
-
-	private static void validateStageId(SimulationContext simulationContext, StageId stageId) {
-		if (stageId == null) {
-			throw new ContractException(MaterialsError.NULL_STAGE_ID);
-		}
-		MaterialsDataManager materialsDataManager = simulationContext.getDataManager(MaterialsDataManager.class);
-		if (!materialsDataManager.stageExists(stageId)) {
-			throw new ContractException(MaterialsError.UNKNOWN_STAGE_ID, stageId);
-		}
-	}
-
-	public static EventLabel<StageOfferUpdateEvent> getEventLabelByStage(SimulationContext simulationContext, StageId stageId) {
-		validateStageId(simulationContext, stageId);
-		return _getEventLabelByStage(stageId);//
-	}
 	
-	private static EventLabel<StageOfferUpdateEvent> _getEventLabelByStage(StageId stageId) {
-		
-		return EventLabel	.builder(StageOfferUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.STAGE)//
-							.addKey(StageOfferUpdateEvent.class)//
-							.addKey(stageId)//
-							.build();//
-	}
-
-	public static EventLabeler<StageOfferUpdateEvent> getEventLabelerForStage() {
-		return EventLabeler	.builder(StageOfferUpdateEvent.class)//
-							.setEventLabelerId(LabelerId.STAGE).setLabelFunction((context, event) -> _getEventLabelByStage(event.getStageId()))//
-							.build();
-	}
-
+	
 }

@@ -1587,6 +1587,6 @@ public final class ResourcesDataManager extends DataManager {
 	public EventFilter<ResourcePropertyDefinitionEvent> getEventFilterForResourcePropertyDefinitionEvent() {
 		return EventFilter	.builder(ResourcePropertyDefinitionEvent.class)//
 							.build();
-	}
+	}	
 
 }

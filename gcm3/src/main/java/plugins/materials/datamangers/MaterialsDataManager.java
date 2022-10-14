@@ -14,6 +14,8 @@ import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
+import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.materials.MaterialsPluginData;
@@ -225,14 +227,6 @@ public final class MaterialsDataManager extends DataManager {
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
 
 		this.dataManagerContext = dataManagerContext;
-
-		dataManagerContext.addEventLabeler(StageOfferUpdateEvent.getEventLabelerForStage());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForDestination());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForSource());
-		dataManagerContext.addEventLabeler(StageMaterialsProducerUpdateEvent.getEventLabelerForStage());
-		dataManagerContext.addEventLabeler(MaterialsProducerPropertyUpdateEvent.getEventLabelerForMaterialsProducerAndProperty());
-		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForMaterialsProducerAndResource());
-		dataManagerContext.addEventLabeler(MaterialsProducerResourceUpdateEvent.getEventLabelerForResource());
 
 		for (final MaterialId materialId : materialsPluginData.getMaterialIds()) {
 			materialIds.add(materialId);
@@ -700,7 +694,7 @@ public final class MaterialsDataManager extends DataManager {
 
 		final Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);
 		if (map == null || !map.containsKey(batchPropertyId)) {
-			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID,batchPropertyId);
+			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, batchPropertyId);
 		}
 
 	}
@@ -1514,7 +1508,6 @@ public final class MaterialsDataManager extends DataManager {
 		}
 	}
 
-
 	/**
 	 * Transfers an amount of material from one batch to another batch of the
 	 * same material type and material producer. Generates a corresponding
@@ -1723,14 +1716,14 @@ public final class MaterialsDataManager extends DataManager {
 		final Map<BatchPropertyId, PropertyValueRecord> map = batchPropertyMap.get(batchId);
 		Object previousPropertyValue;
 		PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
-		if(propertyValueRecord == null) {
+		if (propertyValueRecord == null) {
 			propertyValueRecord = new PropertyValueRecord(dataManagerContext);
 			map.put(batchPropertyId, propertyValueRecord);
 			previousPropertyValue = propertyDefinition.getDefaultValue().get();
-		}else {
-			previousPropertyValue = propertyValueRecord.getValue();	
+		} else {
+			previousPropertyValue = propertyValueRecord.getValue();
 		}
-		
+
 		propertyValueRecord.setPropertyValue(batchPropertyValue);
 		dataManagerContext.releaseEvent(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
 	}
@@ -2351,6 +2344,248 @@ public final class MaterialsDataManager extends DataManager {
 		 */
 		private final Set<StageRecord> stageRecords = new LinkedHashSet<>();
 
+	}
+
+	private static enum MaterialsProducerPropertyUpdateEventFunctionId {
+		PROPERTY, PRODUCER
+	}
+
+	private IdentifiableFunctionMap<MaterialsProducerPropertyUpdateEvent> materialsProducerPropertyUpdateMap = //
+			IdentifiableFunctionMap	.builder(MaterialsProducerPropertyUpdateEvent.class)//
+									.put(MaterialsProducerPropertyUpdateEventFunctionId.PRODUCER, e -> e.getMaterialsProducerId())//
+									.put(MaterialsProducerPropertyUpdateEventFunctionId.PROPERTY, e -> e.getMaterialsProducerPropertyId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialsProducerPropertyUpdateEvent} events. Matches on the
+	 * materials producer id and materials producer property id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID} if
+	 *             the materials producer id is null</li>
+	 *             <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *             if the materials producer id is not known</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *             materials producer property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             materials producer property id is not known</li>
+	 * 
+	 */
+	public EventFilter<MaterialsProducerPropertyUpdateEvent> getEventFilterForMaterialsProducerPropertyUpdateEvent(MaterialsProducerId materialsProducerId,
+			MaterialsProducerPropertyId materialsProducerPropertyId) {
+		validateMaterialsProducerId(materialsProducerId);
+		validateMaterialsProducerPropertyId(materialsProducerPropertyId);
+		return EventFilter	.builder(MaterialsProducerPropertyUpdateEvent.class)//
+							.addFunctionValuePair(materialsProducerPropertyUpdateMap.get(MaterialsProducerPropertyUpdateEventFunctionId.PROPERTY), materialsProducerPropertyId)//
+							.addFunctionValuePair(materialsProducerPropertyUpdateMap.get(MaterialsProducerPropertyUpdateEventFunctionId.PRODUCER), materialsProducerId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialsProducerPropertyUpdateEvent} events. Matches all such
+	 * events.
+	 *
+	 *
+	 *
+	 * 
+	 */
+	public EventFilter<MaterialsProducerPropertyUpdateEvent> getEventFilterForMaterialsProducerPropertyUpdateEvent() {
+		return EventFilter	.builder(MaterialsProducerPropertyUpdateEvent.class)//
+							.build();
+	}
+
+	private static enum MaterialsProducerResourceUpdateEventFunctionId {
+		RESOURCE, PRODUCER
+	}
+
+	private IdentifiableFunctionMap<MaterialsProducerResourceUpdateEvent> materialsProducerResourceUpdateMap = //
+			IdentifiableFunctionMap	.builder(MaterialsProducerResourceUpdateEvent.class)//
+									.put(MaterialsProducerResourceUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
+									.put(MaterialsProducerResourceUpdateEventFunctionId.PRODUCER, e -> e.getMaterialsProducerId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the
+	 * materials producer id and resource id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID} if
+	 *             the materials producer id is null</li>
+	 *             <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *             if the materials producer id is not known</li>
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 */
+	public EventFilter<MaterialsProducerResourceUpdateEvent> getEventFilterForMaterialsProducerResourceUpdateEvent(MaterialsProducerId materialsProducerId, ResourceId resourceId) {
+		validateMaterialsProducerId(materialsProducerId);
+		validateResourceId(resourceId);
+		return EventFilter	.builder(MaterialsProducerResourceUpdateEvent.class)//
+							.addFunctionValuePair(materialsProducerResourceUpdateMap.get(MaterialsProducerResourceUpdateEventFunctionId.RESOURCE), resourceId)//
+							.addFunctionValuePair(materialsProducerResourceUpdateMap.get(MaterialsProducerResourceUpdateEventFunctionId.PRODUCER), materialsProducerId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the
+	 * resource id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if the
+	 *             resource id is null</li>
+	 *             <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID} if the
+	 *             resource id is not known</li>
+	 */
+	public EventFilter<MaterialsProducerResourceUpdateEvent> getEventFilterForMaterialsProducerResourceUpdateEvent(ResourceId resourceId) {
+		validateResourceId(resourceId);
+		return EventFilter	.builder(MaterialsProducerResourceUpdateEvent.class)//
+							.addFunctionValuePair(materialsProducerResourceUpdateMap.get(MaterialsProducerResourceUpdateEventFunctionId.RESOURCE), resourceId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on all such
+	 * events.
+	 */
+	public EventFilter<MaterialsProducerResourceUpdateEvent> getEventFilterForMaterialsProducerResourceUpdateEvent() {
+		return EventFilter	.builder(MaterialsProducerResourceUpdateEvent.class)//
+							.build();
+	}
+
+
+	private static enum StageMaterialsProducerUpdateEventFunctionId {
+		SOURCE, DESTINATION, STAGE
+	}
+
+	private IdentifiableFunctionMap<StageMaterialsProducerUpdateEvent> stageMaterialsProducerUpdateMap = //
+			IdentifiableFunctionMap	.builder(StageMaterialsProducerUpdateEvent.class)//
+									.put(StageMaterialsProducerUpdateEventFunctionId.SOURCE, e -> e.getPreviousMaterialsProducerId())//
+									.put(StageMaterialsProducerUpdateEventFunctionId.DESTINATION, e -> e.getCurrentMaterialsProducerId())//
+									.put(StageMaterialsProducerUpdateEventFunctionId.STAGE, e -> e.getStageId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the source
+	 * materials producer id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
+	 *             the materials producer id is null</li>
+	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *             if the materials producer id is not known</li>
+	 */
+	public EventFilter<StageMaterialsProducerUpdateEvent> getEventFilterForStageMaterialsProducerUpdateEvent_BySource(MaterialsProducerId materialsProducerId) {
+		validateMaterialsProducerId(materialsProducerId);
+		return EventFilter	.builder(StageMaterialsProducerUpdateEvent.class)//
+							.addFunctionValuePair(stageMaterialsProducerUpdateMap.get(StageMaterialsProducerUpdateEventFunctionId.SOURCE), materialsProducerId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the
+	 * destination materials producer id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID} if
+	 *             the materials producer id is null</li>
+	 *             <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *             if the materials producer id is not known</li>
+	 */
+	public EventFilter<StageMaterialsProducerUpdateEvent> getEventFilterForStageMaterialsProducerUpdateEvent_ByDestination(MaterialsProducerId materialsProducerId) {
+		validateMaterialsProducerId(materialsProducerId);
+		return EventFilter	.builder(StageMaterialsProducerUpdateEvent.class)//
+							.addFunctionValuePair(stageMaterialsProducerUpdateMap.get(StageMaterialsProducerUpdateEventFunctionId.DESTINATION), materialsProducerId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the stage
+	 * id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
+	 *             is null</li>
+	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if the stage
+	 *             id is not known</li>
+	 */
+	public EventFilter<StageMaterialsProducerUpdateEvent> getEventFilterForStageMaterialsProducerUpdateEvent(StageId stageId) {
+		validateStageId(stageId);
+		return EventFilter	.builder(StageMaterialsProducerUpdateEvent.class)//
+							.addFunctionValuePair(stageMaterialsProducerUpdateMap.get(StageMaterialsProducerUpdateEventFunctionId.STAGE), stageId)//
+							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on all such
+	 * events.
+	 *
+	 *
+	 */
+	public EventFilter<StageMaterialsProducerUpdateEvent> getEventFilterForStageMaterialsProducerUpdateEvent() {
+		return EventFilter	.builder(StageMaterialsProducerUpdateEvent.class)//
+							.build();
+	}
+	
+	
+	private static enum StageOfferUpdateEventFunctionId {
+		STAGE
+	}
+
+	private IdentifiableFunctionMap<StageOfferUpdateEvent> stageOfferUpdateMap = //
+			IdentifiableFunctionMap	.builder(StageOfferUpdateEvent.class)//
+									.put(StageOfferUpdateEventFunctionId.STAGE, e -> e.getStageId())//
+									.build();//
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageOfferUpdateEvent} events. Matches on the stage
+	 * id.
+	 *
+	 *
+	 * @throws ContractException
+	 *
+	 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the stage id
+	 *             is null</li>
+	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if the stage
+	 *             id is not known</li>
+	 */
+	public EventFilter<StageOfferUpdateEvent> getEventFilterForStageOfferUpdateEvent(StageId stageId) {
+		validateStageId(stageId);
+		return EventFilter	.builder(StageOfferUpdateEvent.class)//
+							.addFunctionValuePair(stageOfferUpdateMap.get(StageOfferUpdateEventFunctionId.STAGE), stageId)//
+							.build();
+	}
+	
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageOfferUpdateEvent} events. Matches on all such events.
+	 *
+	 */
+	public EventFilter<StageOfferUpdateEvent> getEventFilterForStageOfferUpdateEvent() {
+		return EventFilter	.builder(StageOfferUpdateEvent.class)//
+							.build();
 	}
 
 }
