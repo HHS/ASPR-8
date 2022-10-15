@@ -22,17 +22,6 @@ public class AT_BatchPropertyUpdateEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		BatchId batchId = new BatchId(5348);
-		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 45;
-		Object currentPropertyValue = 643;
-		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(BatchPropertyUpdateEvent.class, batchPropertyUpdateEvent.getPrimaryKeyValue());
-	}
-
-	@Test
 	@UnitTestMethod(name = "getBatchId", args = {})
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(5348);

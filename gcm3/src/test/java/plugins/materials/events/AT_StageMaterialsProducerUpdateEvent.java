@@ -21,17 +21,6 @@ public class AT_StageMaterialsProducerUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		StageId stageId = new StageId(344);
-		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
-				currentMaterialsProducerId);
-		assertEquals(StageMaterialsProducerUpdateEvent.class, stageMaterialsProducerUpdateEvent.getPrimaryKeyValue());
-	}
-
-	@Test
 	@UnitTestMethod(name = "getStageId", args = {})
 	public void testGetStageId() {
 		StageId stageId = new StageId(344);

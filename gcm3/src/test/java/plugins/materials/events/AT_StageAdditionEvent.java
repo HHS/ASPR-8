@@ -21,15 +21,6 @@ public class AT_StageAdditionEvent implements Event {
 	}
 	
 	@Test
-	@UnitTestMethod(name="getPrimaryKeyValue",args = {})
-	public void testGetPrimaryKeyValue() {
-		StageId stageId = new StageId(534);
-		StageAdditionEvent stageAdditionEvent = new StageAdditionEvent(stageId);
-		assertEquals(StageAdditionEvent.class,stageAdditionEvent.getPrimaryKeyValue());
-	}
-
-
-	@Test
 	@UnitTestMethod(name="getStageId",args = {})
 	public void testGetStageId() {
 		StageId stageId = new StageId(534);

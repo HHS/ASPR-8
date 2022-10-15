@@ -84,12 +84,5 @@ public class AT_RegionPropertyUpdateEvent {
 		assertEquals(expectedValue, actualValue);
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			RegionPropertyUpdateEvent regionPropertyUpdateEvent = new RegionPropertyUpdateEvent(TestRegionId.REGION_2, testRegionPropertyId, 10, 15);
-			assertEquals(testRegionPropertyId, regionPropertyUpdateEvent.getPrimaryKeyValue());
-		}
-	}
+
 }

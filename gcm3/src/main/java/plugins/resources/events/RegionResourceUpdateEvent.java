@@ -58,12 +58,5 @@ public class RegionResourceUpdateEvent implements Event {
 		return currentResourceLevel;
 	}
 	
-	/**
-	 * Returns the resource id used to create this event
-	 */
-	@Override
-	public Object getPrimaryKeyValue() {
-		return resourceId;
-	}
 
 }

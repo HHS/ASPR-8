@@ -57,12 +57,5 @@ public class ResourcePropertyUpdateEvent implements Event {
 		return currentPropertyValue;
 	}
 
-	/**
-	 * Returns the resource property id used to create this event
-	 */
-	@Override
-	public Object getPrimaryKeyValue() {
-		return resourcePropertyId;
-	}
 
 }

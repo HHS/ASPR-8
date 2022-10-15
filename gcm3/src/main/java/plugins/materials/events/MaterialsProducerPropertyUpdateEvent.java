@@ -42,10 +42,5 @@ public class MaterialsProducerPropertyUpdateEvent implements Event {
 		return "MaterialsProducerPropertyUpdateEvent [materialsProducerId=" + materialsProducerId + ", materialsProducerPropertyId=" + materialsProducerPropertyId + ", previousPropertyValue="
 				+ previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
 	}
-
-	@Override
-	public Object getPrimaryKeyValue() {
-		return this.materialsProducerPropertyId;
-	}
 	
 }

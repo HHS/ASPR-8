@@ -19,15 +19,6 @@ public class AT_StageMembershipAdditionEvent {
 	public void testConstructor() {
 		//nothing to test
 	}
-	
-	@Test
-	@UnitTestMethod(name="getPrimaryKeyValue",args = {})
-	public void testGetPrimaryKeyValue() {
-		BatchId batchId = new BatchId(6);
-		StageId stageId = new StageId(252);
-		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
-		assertEquals(StageMembershipAdditionEvent.class, stageMembershipAdditionEvent.getPrimaryKeyValue());
-	}
 
 	@Test
 	@UnitTestMethod(name="getBatchId",args = {})

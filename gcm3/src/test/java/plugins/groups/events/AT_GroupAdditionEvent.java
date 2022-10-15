@@ -27,11 +27,4 @@ public class AT_GroupAdditionEvent {
 		assertEquals(groupId, groupAdditionEvent.getGroupId());
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		GroupId groupId = new GroupId(46);
-		GroupAdditionEvent groupAdditionEvent = new GroupAdditionEvent(groupId);
-		assertEquals(GroupAdditionEvent.class, groupAdditionEvent.getPrimaryKeyValue());
-	}
 }

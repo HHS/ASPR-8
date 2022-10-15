@@ -63,11 +63,4 @@ public class GlobalPropertyUpdateEvent implements Event {
 		return "GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
 	}
 
-	/**
-	 * Returns the global property id used to create this event
-	 */
-	@Override
-	public Object getPrimaryKeyValue() {
-		return globalPropertyId;
-	}
 }

@@ -42,9 +42,4 @@ public class MaterialsProducerResourceUpdateEvent implements Event {
 				+ ", currentResourceLevel=" + currentResourceLevel + "]";
 	}
 
-	@Override
-	public Object getPrimaryKeyValue() {
-		return resourceId;
-	}
-
 }

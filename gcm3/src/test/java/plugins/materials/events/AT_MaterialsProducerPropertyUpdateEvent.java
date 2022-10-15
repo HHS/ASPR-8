@@ -22,18 +22,6 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 896.5;
-		Object currentPropertyValue = 3762.87;
-		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
-				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(materialsProducerPropertyId, materialsProducerPropertyUpdateEvent.getPrimaryKeyValue());
-	}
-
-	@Test
 	@UnitTestMethod(name = "getMaterialsProducerId", args = {})
 	public void testGetMaterialsProducerId() {
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;

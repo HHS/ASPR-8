@@ -19,14 +19,6 @@ public class AT_BatchAdditionEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		BatchId batchId = new BatchId(56456);
-		BatchAdditionEvent batchAdditionEvent = new BatchAdditionEvent(batchId);
-		assertEquals(BatchAdditionEvent.class, batchAdditionEvent.getPrimaryKeyValue());
-	}
-
-	@Test
 	@UnitTestMethod(name = "getBatchId", args = {})
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(56456);

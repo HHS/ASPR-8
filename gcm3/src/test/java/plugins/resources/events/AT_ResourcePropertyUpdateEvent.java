@@ -67,16 +67,5 @@ public class AT_ResourcePropertyUpdateEvent implements Event {
 		assertEquals(currentValue, resourcePropertyUpdateEvent.getCurrentPropertyValue());
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-			ResourceId resourceId = testResourcePropertyId.getTestResourceId();
-			Object previousValue = "previous";
-			Object currentValue = "current";
-			ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, testResourcePropertyId, previousValue, currentValue);
-			assertEquals(testResourcePropertyId, resourcePropertyUpdateEvent.getPrimaryKeyValue());
-		}
-	}
 
 }

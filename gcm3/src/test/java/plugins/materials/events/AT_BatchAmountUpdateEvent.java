@@ -20,16 +20,6 @@ public class AT_BatchAmountUpdateEvent {
 	}
 	
 	@Test
-	@UnitTestMethod(name="getPrimaryKeyValue",args = {})
-	public void testGetPrimaryKeyValue() {
-		BatchId batchId = new BatchId(23423);
-		double previousAmount = 14.5;
-		double currentAmount = 44.7;		
-		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
-		assertEquals(BatchAmountUpdateEvent.class, batchAmountUpdateEvent.getPrimaryKeyValue());
-	}
-
-	@Test
 	@UnitTestMethod(name="getBatchId",args = {})
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(23423);

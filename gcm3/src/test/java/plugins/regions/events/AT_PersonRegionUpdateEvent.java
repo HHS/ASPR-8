@@ -69,11 +69,5 @@ public class AT_PersonRegionUpdateEvent {
 		assertEquals(expectedValue, actualValue);
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(new PersonId(12), TestRegionId.REGION_2, TestRegionId.REGION_4);
-		assertEquals(PersonRegionUpdateEvent.class, personRegionUpdateEvent.getPrimaryKeyValue());
-	}
 
 }

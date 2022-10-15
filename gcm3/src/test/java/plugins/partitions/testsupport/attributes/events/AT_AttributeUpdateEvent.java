@@ -67,11 +67,4 @@ public class AT_AttributeUpdateEvent implements Event {
 		}
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			assertEquals(testAttributeId, new AttributeUpdateEvent(null, testAttributeId, null, null).getPrimaryKeyValue());
-		}
-	}
 }

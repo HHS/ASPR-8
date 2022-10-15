@@ -19,12 +19,6 @@ public class AT_StageOfferUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		// nothing to test
-	}
-
-	@Test
 	@UnitTestMethod(name = "getStageId", args = {})
 	public void testGetStageId() {
 		StageId stageId = new StageId(543);

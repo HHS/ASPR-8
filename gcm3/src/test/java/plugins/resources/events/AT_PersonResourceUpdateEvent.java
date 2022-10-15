@@ -66,17 +66,4 @@ public class AT_PersonResourceUpdateEvent implements Event {
 		assertEquals(previousResourceLevel, personResourceUpdateEvent.getPreviousResourceLevel());
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			PersonId personId = new PersonId(7645);
-			long previousResourceLevel = 45L;
-			long currentResourceLevel = 398L;
-			PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, testResourceId, previousResourceLevel, currentResourceLevel);
-			assertEquals(testResourceId, personResourceUpdateEvent.getPrimaryKeyValue());
-		}
-	}
-
 }

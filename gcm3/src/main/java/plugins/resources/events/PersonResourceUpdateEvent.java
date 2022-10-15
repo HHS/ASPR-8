@@ -56,12 +56,5 @@ public class PersonResourceUpdateEvent implements Event {
 		return previousResourceLevel;
 	}
 
-	/**
-	 * Returns the resource id used to create this event
-	 */
-	@Override
-	public Object getPrimaryKeyValue() {
-		return resourceId;
-	}
 
 }

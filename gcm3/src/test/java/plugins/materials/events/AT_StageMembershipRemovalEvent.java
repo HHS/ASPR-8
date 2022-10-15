@@ -20,15 +20,6 @@ public class AT_StageMembershipRemovalEvent {
 	}
 	
 	@Test
-	@UnitTestMethod(name="getPrimaryKeyValue",args = {})
-	public void testGetPrimaryKeyValue() {
-		BatchId batchId = new BatchId(23);
-		StageId stageId = new StageId(765);
-		StageMembershipRemovalEvent stageMembershipRemovalEvent = new StageMembershipRemovalEvent(batchId, stageId);
-		assertEquals(StageMembershipRemovalEvent.class,stageMembershipRemovalEvent.getPrimaryKeyValue());
-	}
-	
-	@Test
 	@UnitTestMethod(name="getBatchId",args = {})
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(23);

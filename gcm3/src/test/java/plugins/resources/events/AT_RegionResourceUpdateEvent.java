@@ -66,16 +66,4 @@ public class AT_RegionResourceUpdateEvent implements Event {
 		assertEquals(currentResourceLevel, regionResourceUpdateEvent.getCurrentResourceLevel());
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			RegionId regionId = TestRegionId.REGION_4;
-			long previousResourceLevel = 45L;
-			long currentResourceLevel = 398L;
-			RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, testResourceId, previousResourceLevel, currentResourceLevel);
-			assertEquals(testResourceId, regionResourceUpdateEvent.getPrimaryKeyValue());
-		}
-	}
-
 }

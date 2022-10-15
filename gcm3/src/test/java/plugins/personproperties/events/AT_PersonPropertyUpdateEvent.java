@@ -87,17 +87,5 @@ public class AT_PersonPropertyUpdateEvent implements Event {
 		assertEquals(actualValue, expectedValue);
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-
-		PersonId personId = new PersonId(10);
-		Object previousValue = 0;
-		Object currentValue = 1;
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, previousValue, currentValue);
-			assertEquals(testPersonPropertyId, personPropertyUpdateEvent.getPrimaryKeyValue());
-		}
-	}
 
 }

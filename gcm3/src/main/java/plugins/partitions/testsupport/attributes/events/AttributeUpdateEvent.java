@@ -35,9 +35,5 @@ public class AttributeUpdateEvent implements Event {
 	public Object getPreviousValue() {
 		return previousValue;
 	}
-
-	@Override
-	public Object getPrimaryKeyValue() {
-		return attributeId;
-	}
+	
 }

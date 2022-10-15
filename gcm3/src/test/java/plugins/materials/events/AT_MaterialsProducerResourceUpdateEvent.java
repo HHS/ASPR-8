@@ -22,18 +22,6 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		ResourceId resourceId = TestResourceId.RESOURCE_4;
-		long previousResourceLevel = 23L;
-		long currentResourceLevel = 346L;
-		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
-				previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, materialsProducerResourceUpdateEvent.getPrimaryKeyValue());
-	}
-
-	@Test
 	@UnitTestMethod(name = "getMaterialsProducerId", args = {})
 	public void testGetMaterialsProducerId() {
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;

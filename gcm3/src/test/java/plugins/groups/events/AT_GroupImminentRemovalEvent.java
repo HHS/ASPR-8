@@ -26,12 +26,4 @@ public class AT_GroupImminentRemovalEvent {
 		assertEquals(groupId, groupImminentRemovalEvent.getGroupId());
 	}
 	
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		GroupId groupId = new GroupId(35);
-		GroupImminentRemovalEvent groupImminentRemovalEvent = new GroupImminentRemovalEvent(groupId);
-		assertEquals(GroupImminentRemovalEvent.class, groupImminentRemovalEvent.getPrimaryKeyValue());
-	}
-
 }

@@ -75,14 +75,5 @@ public class PersonPropertyUpdateEvent implements Event {
 				+ currentPropertyValue + "]";
 	}
 
-	
-
-	/**
-	 * Returns the person property id used to create this event
-	 */
-	@Override
-	public Object getPrimaryKeyValue() {
-		return personPropertyId;
-	}
 
 }

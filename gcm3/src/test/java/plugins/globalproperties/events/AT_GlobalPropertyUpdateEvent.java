@@ -75,14 +75,4 @@ public class AT_GlobalPropertyUpdateEvent {
 
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
-		Integer previousValue = 12;
-		Integer currentValue = 13;
-		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
-		assertEquals(globalPropertyId, globalPropertyUpdateEvent.getPrimaryKeyValue());
-	}
-
 }

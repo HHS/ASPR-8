@@ -42,9 +42,4 @@ public final class RegionPropertyUpdateEvent implements Event {
 				+ currentPropertyValue + "]";
 	}
 
-	@Override
-	public Object getPrimaryKeyValue() {
-		return regionPropertyId;
-	}
-
 }

@@ -19,13 +19,6 @@ public class AT_StageImminentRemovalEvent {
 		// nothing to test
 	}
 
-	@Test
-	@UnitTestMethod(name = "getPrimaryKeyValue", args = {})
-	public void testGetPrimaryKeyValue() {
-		StageId stageId = new StageId(4534);
-		StageImminentRemovalEvent stageImminentRemovalEvent = new StageImminentRemovalEvent(stageId);
-		assertEquals(StageImminentRemovalEvent.class, stageImminentRemovalEvent.getPrimaryKeyValue());
-	}
 
 	@Test
 	@UnitTestMethod(name = "getStageId", args = {})

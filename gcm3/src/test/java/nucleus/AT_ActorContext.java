@@ -94,11 +94,6 @@ public class AT_ActorContext {
 			return datumType;
 		}
 
-		@Override
-		public Object getPrimaryKeyValue() {
-			return datumType;
-		}
-
 		public int getValue() {
 			return value;
 		}
