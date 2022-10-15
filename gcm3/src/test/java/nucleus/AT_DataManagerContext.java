@@ -1251,107 +1251,8 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addEventLabeler", args = { EventLabeler.class })
-	public void testAddEventLabeler() {
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// have the actor test the preconditions
-		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-
-			EventLabelerId eventLabelerId = new EventLabelerId() {
-			};
-			EventLabel<TestEvent> multiKeyEventLabel = EventLabel	.builder(TestEvent.class)//
-																	.setEventLabelerId(eventLabelerId)//
-																	.addKey(TestEvent.class)//
-																	.build();//
-
-			// if the event labeler is null
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(null));
-			assertEquals(NucleusError.NULL_EVENT_LABELER, contractException.getErrorType());
-
-			/*
-			 * if the event labeler contains a labeler id that is the id of a
-			 * previously added event labeler
-			 */
-			c.addEventLabeler(EventLabeler.builder(TestEvent.class).setEventLabelerId(eventLabelerId).setLabelFunction((c2, e) -> multiKeyEventLabel).build());
-			contractException = assertThrows(ContractException.class,
-					() -> c.addEventLabeler(EventLabeler.builder(TestEvent.class).setEventLabelerId(eventLabelerId).setLabelFunction((c2, e) -> multiKeyEventLabel).build()));
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-		}));
-
-		/*
-		 * create a new event labeler that will be added by the resolver and the
-		 * utilized by an agent.
-		 */
-		EventLabelerId id = new EventLabelerId() {
-		};
-
-		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
-															.setEventLabelerId(id)//
-															.setLabelFunction((c, e) -> EventLabel	.builder(TestEvent.class)//
-																									.setEventLabelerId(id)//
-																									.addKey(TestEvent.class)//
-																									.build())//
-															.build();
-
-		// have the actor add the event labeler
-		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
-			c.addEventLabeler(eventLabeler);
-		}));
-
-		/*
-		 * Create a container for the agent to record that it received the Test
-		 * Event and we can conclude that the event labeler had been properly
-		 * added to the simulation.
-		 */
-		MutableBoolean eventObserved = new MutableBoolean();
-
-		// have the agent observe the test event
-
-		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
-			c.subscribe(EventLabel	.builder(TestEvent.class)//
-									.setEventLabelerId(id)//
-									.addKey(TestEvent.class).build(),
-					(c2, e) -> {
-						eventObserved.setValue(true);
-					});
-		}));
-
-		// have the actor create a test event for the agent to observe
-		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			c.releaseEvent(new TestEvent());
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
-		// build and execute the engine
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all plans were executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
-
-		/*
-		 * Show that the event labeler must have been added to the simulation
-		 * since the agent observed the test event
-		 */
-		assertTrue(eventObserved.getValue());
-	}
-
-	@Test
 	@UnitTestMethod(name = "subscribersExist", args = { Class.class })
 	public void testSubscribersExist() {
-
-		
 
 		/*
 		 * create a simple event label as a place holder -- all test events will
@@ -1359,8 +1260,6 @@ public class AT_DataManagerContext {
 		 */
 		EventFilter<TestEvent> eventFilter = EventFilter	.builder(TestEvent.class)//
 														.build();//
-
-		
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 

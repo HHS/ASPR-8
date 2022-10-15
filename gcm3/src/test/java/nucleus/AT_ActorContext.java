@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
@@ -129,9 +128,6 @@ public class AT_ActorContext {
 		TYPE_1, TYPE_2
 	}
 
-	private static enum Local_Labeler_ID implements EventLabelerId {
-		TEST_LABELER_ID, OBSERVATION_TEST_LABELER_ID, DATA_CHANGE
-	}
 
 	private static enum Local_Function_ID {
 		DATUM, VALUE;
@@ -149,26 +145,6 @@ public class AT_ActorContext {
 		HIGH, LOW
 	}
 
-	private static EventLabel<DataChangeEvent> getEventLabelByDatumAndValue(final DatumType datumType, final ValueType valueType) {
-		return EventLabel	.builder(DataChangeEvent.class)//
-							.setEventLabelerId(Local_Labeler_ID.DATA_CHANGE)//
-							.addKey(datumType)//
-							.addKey(valueType)//
-							.build();//
-	}
-
-	private static EventLabeler<DataChangeEvent> getEventLabelerForDataChangeObservation() {
-		return EventLabeler	.builder(DataChangeEvent.class)//
-							.setEventLabelerId(Local_Labeler_ID.DATA_CHANGE)//
-							.setLabelFunction((context, event) -> {
-								ValueType valueType = ValueType.LOW;
-								if (event.getValue() > 10) {
-									valueType = ValueType.HIGH;
-								}
-								return getEventLabelByDatumAndValue(event.getDatumType(), valueType);
-							})//
-							.build();
-	}
 
 	/**
 	 * Tests {@link AgentContext#agentExists(AgentId)
@@ -232,106 +208,6 @@ public class AT_ActorContext {
 
 		// show that the action plans got executed
 		assertTrue(actorWasAdded.getValue());
-	}
-
-	@Test
-	@UnitTestMethod(name = "addEventLabeler", args = { EventLabeler.class })
-	public void testAddEventLabeler() {
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// have the actor test the preconditions
-		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			EventLabelerId eventLabelerId = new EventLabelerId() {
-			};
-
-			// if the event labeler is null
-			ContractException contractException = assertThrows(ContractException.class, () -> c.addEventLabeler(null));
-			assertEquals(NucleusError.NULL_EVENT_LABELER, contractException.getErrorType());
-
-			/*
-			 * if the event labeler contains a labeler id that is the id of a
-			 * previously added event labeler
-			 */
-			c.addEventLabeler(EventLabeler.builder(BaseEvent.class).setEventLabelerId(eventLabelerId).setLabelFunction((c2, e) -> null).build());
-			contractException = assertThrows(ContractException.class, () -> {
-				EventLabeler<BaseEvent> eventLabeler = EventLabeler	.builder(BaseEvent.class)//
-																	.setEventLabelerId(eventLabelerId)//
-																	.setLabelFunction((c2, e) -> EventLabel	.builder(BaseEvent.class)//
-																											.setEventLabelerId(eventLabelerId)//
-																											.addKey(BaseEvent.class)//
-																											.build())//
-																	.build();
-				c.addEventLabeler(eventLabeler);
-			});
-			assertEquals(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER, contractException.getErrorType());
-
-		}));
-
-		/*
-		 * create a new event labeler that will be added by the resolver and the
-		 * utilized by an agent.
-		 */
-		EventLabelerId id = new EventLabelerId() {
-		};
-
-		EventLabeler<BaseEvent> eventLabeler = EventLabeler	.builder(BaseEvent.class)//
-															.setEventLabelerId(id)//
-															.setLabelFunction((c, e) -> EventLabel	.builder(BaseEvent.class)//
-																									.setEventLabelerId(id)//
-																									.addKey(BaseEvent.class)//
-																									.build()//
-															).build();
-
-		// have the actor add the event labeler
-		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-			c.addEventLabeler(eventLabeler);
-		}));
-
-		/*
-		 * Create a container for the agent to record that it received the Test
-		 * Event and we can conclude that the event labeler had been properly
-		 * added to the simulation.
-		 */
-		MutableBoolean eventObserved = new MutableBoolean();
-
-		// have the agent observe the test event
-
-		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
-			EventLabel<BaseEvent> eventLabel = EventLabel	.builder(BaseEvent.class)//
-															.setEventLabelerId(id)//
-															.addKey(BaseEvent.class).build();
-			c.subscribe(eventLabel, (c2, e) -> {
-				eventObserved.setValue(true);
-			});
-		}));
-
-		// have the actor create a test event for the agent to observe
-		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			c.releaseEvent(new BaseEvent());
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// build and execute the engine
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all plans were executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
-
-		/*
-		 * Show that the event labeler must have been added to the simulation
-		 * since the agent observed the test event
-		 */
-		assertTrue(eventObserved.getValue());
-
 	}
 
 	/**
@@ -1273,105 +1149,6 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribe", args = { EventLabel.class, BiConsumer.class })
-	public void testSubscribe_EventLabel() {
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// have an actor perform precondition tests
-		pluginDataBuilder.addTestActorPlan("precondition checker", new TestActorPlan(0, (context) -> {
-			EventLabel<TestEvent> eventLabel = EventLabel	.builder(TestEvent.class)//
-															.setEventLabelerId(Local_Labeler_ID.TEST_LABELER_ID).addKey(TestEvent.class)//
-															.build();
-
-			context.addEventLabeler(
-
-					EventLabeler.builder(TestEvent.class)//
-								.setEventLabelerId(Local_Labeler_ID.TEST_LABELER_ID)//
-								.setLabelFunction((c, e) -> {
-									return eventLabel;
-								})//
-								.build()
-
-			);
-
-			EventLabel<TestEvent> nullEventLabel = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> context.subscribe(nullEventLabel, (c, e) -> {
-			}));
-			assertEquals(NucleusError.NULL_EVENT_LABEL, contractException.getErrorType());
-
-			contractException = assertThrows(ContractException.class, () -> context.subscribe(eventLabel, null));
-			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
-
-			EventLabel<TestEvent> unknownEventLabel = EventLabel.builder(TestEvent.class)//
-																.setEventLabelerId(Local_Labeler_ID.DATA_CHANGE)//
-																.addKey(TestEvent.class)//
-																.build();//
-			contractException = assertThrows(ContractException.class, () -> context.subscribe(unknownEventLabel, (c, e) -> {
-			}));
-			assertEquals(NucleusError.UNKNOWN_EVENT_LABELER, contractException.getErrorType());
-
-		}));
-
-		Set<MultiKey> receivedEvents = new LinkedHashSet<>();
-
-		/*
-		 * Have an actor add an event labeler for DataChangeObservation events.
-		 * Then have it subscribe to data change events that are or type 1 and
-		 * high value. When it receives a data change observation, it records it
-		 * as a multi-key in the received events set.
-		 */
-
-		pluginDataBuilder.addTestActorPlan("subscriber", new TestActorPlan(1, (context) -> {
-
-			context.addEventLabeler(getEventLabelerForDataChangeObservation());
-			context.subscribe(getEventLabelByDatumAndValue(DatumType.TYPE_1, ValueType.HIGH), (c, e) -> {
-				receivedEvents.add(new MultiKey(c.getTime(), e));
-			});
-		}));
-
-		/*
-		 * Have another actor generate several data change observation events
-		 * with differing types and values.
-		 */
-		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 20));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 0));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 5));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 25));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 38));
-			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 234));
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
-		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all plans got executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
-
-		// show that all and only the observations corresponding to the
-		// subscribed event label were delivered to the subscriber actor
-		Set<MultiKey> expectedEvents = new LinkedHashSet<>();
-		expectedEvents.add(new MultiKey(2.0, new DataChangeEvent(DatumType.TYPE_1, 20)));
-		expectedEvents.add(new MultiKey(2.0, new DataChangeEvent(DatumType.TYPE_1, 38)));
-
-		assertEquals(expectedEvents, receivedEvents);
-
-	}
-
-	@Test
 	@UnitTestMethod(name = "subscribeToSimulationClose", args = { Consumer.class })
 	public void testSubscribeToSimulationClose() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1517,155 +1294,6 @@ public class AT_ActorContext {
 
 		// show that the expected and actual event records are the same
 		assertEquals(expectedEvents, recievedEvents);
-	}
-
-	@Test
-	@UnitTestMethod(name = "unsubscribe", args = { EventLabel.class })
-	public void testUnsubscribe_EventLabel() {
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		/*
-		 * Generate an event label that will match all TestEvents. This will be
-		 * used throughout.
-		 */
-		EventLabel<BaseEvent> eventLabel = EventLabel	.builder(BaseEvent.class)//
-														.setEventLabelerId(Local_Labeler_ID.TEST_LABELER_ID)//
-														.addKey(BaseEvent.class)//
-														.build();//
-
-		// create some times for the resolver to generate events
-		List<Double> eventGenerationTimes = new ArrayList<>();
-		eventGenerationTimes.add(1.0);
-		eventGenerationTimes.add(2.0);
-		eventGenerationTimes.add(3.0);
-		eventGenerationTimes.add(4.0);
-		eventGenerationTimes.add(5.0);
-		eventGenerationTimes.add(6.0);
-		eventGenerationTimes.add(7.0);
-		eventGenerationTimes.add(8.0);
-		eventGenerationTimes.add(9.0);
-
-		/*
-		 * At time 0, have the test resolver generate plans to generate events
-		 * at various times
-		 */
-
-		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(0, (c) -> {
-			/*
-			 * Add the required event labeler -- we want all TestEvents to be
-			 * passed to all actor subscribers so that we can demonstrate that
-			 * unsubscribing works without complicating the test with filtering
-			 */
-			EventLabeler<BaseEvent> eventLabeler = EventLabeler	.builder(BaseEvent.class)//
-																.setEventLabelerId(Local_Labeler_ID.TEST_LABELER_ID)//
-																.setLabelFunction((c2, e) -> {
-																	return eventLabel;
-																})//
-																.build();
-			c.addEventLabeler(eventLabeler);
-
-			for (Double time : eventGenerationTimes) {
-				c.addPlan((c2) -> {
-					c2.releaseEvent(new BaseEvent());
-				}, time);
-			}
-		}));
-
-		/*
-		 * precondition tests -- have the first actor test all the precondition
-		 * exceptions
-		 */
-		pluginDataBuilder.addTestActorPlan("precondition tester", new TestActorPlan(0, (context) -> {
-
-			// if the EventLabel is null
-			EventLabel<BaseEvent> nullEventLabel = null;
-			ContractException contractException = assertThrows(ContractException.class, () -> context.unsubscribe(nullEventLabel));
-			assertEquals(NucleusError.NULL_EVENT_LABEL, contractException.getErrorType());
-
-			// if the event labeler id in the event label cannot be resolved to
-			// a registered event labeler
-
-			EventLabel<BaseEvent> unknownEventLabel = EventLabel.builder(BaseEvent.class)//
-																.setEventLabelerId(Local_Labeler_ID.DATA_CHANGE)//
-																.addKey(BaseEvent.class)//
-																.build();//
-
-			contractException = assertThrows(ContractException.class, () -> context.unsubscribe(unknownEventLabel));
-			assertEquals(NucleusError.UNKNOWN_EVENT_LABELER, contractException.getErrorType());
-
-		}));
-
-		// create a container for the events that are received by the three
-		// actors
-		Set<MultiKey> recievedEvents = new LinkedHashSet<>();
-
-		// have the Alpha actor subscribe to the Test Event at time 0
-		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(0.1, (context) -> {
-			context.subscribe(eventLabel, (c, e) -> {
-				recievedEvents.add(new MultiKey("Alpha", c.getTime()));
-			});
-		}));
-
-		// have the Alpha actor unsubscribe to the Test Event at time 5
-		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(5.1, (context) -> {
-			context.unsubscribe(eventLabel);
-		}));
-
-		// have the Beta actor subscribe to the Test Event at time 4
-		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(4.1, (context) -> {
-			context.subscribe(eventLabel, (c, e) -> {
-				recievedEvents.add(new MultiKey("Beta", c.getTime()));
-			});
-		}));
-
-		// have the Beta actor unsubscribe to the Test Event at time 8
-		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(8.1, (context) -> {
-			context.unsubscribe(eventLabel);
-		}));
-
-		// have the Gamma actor subscribe to the Test Event at time 6
-		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(6.1, (context) -> {
-			context.subscribe(eventLabel, (c, e) -> {
-				recievedEvents.add(new MultiKey("Gamma", c.getTime()));
-			});
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
-		// run the simulation
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that all action plans were executed
-		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
-
-		// show that all and only the observations corresponding to the
-		// subscribed event label were delivered to the actors
-		Set<MultiKey> expectedEvents = new LinkedHashSet<>();
-		expectedEvents.add(new MultiKey("Alpha", 1.0));
-		expectedEvents.add(new MultiKey("Alpha", 2.0));
-		expectedEvents.add(new MultiKey("Alpha", 3.0));
-		expectedEvents.add(new MultiKey("Alpha", 4.0));
-		expectedEvents.add(new MultiKey("Alpha", 5.0));
-		expectedEvents.add(new MultiKey("Beta", 5.0));
-		expectedEvents.add(new MultiKey("Beta", 6.0));
-		expectedEvents.add(new MultiKey("Beta", 7.0));
-		expectedEvents.add(new MultiKey("Beta", 8.0));
-		expectedEvents.add(new MultiKey("Gamma", 7.0));
-		expectedEvents.add(new MultiKey("Gamma", 8.0));
-		expectedEvents.add(new MultiKey("Gamma", 9.0));
-
-		// show that the expected and actual event records are the same
-		assertEquals(expectedEvents, recievedEvents);
-
 	}
 
 	@Test

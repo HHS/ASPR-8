@@ -223,11 +223,6 @@ public class Simulation {
 		}
 
 		@Override
-		public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
-			Simulation.this.subscribeActorToEventByLabel(eventLabel, eventConsumer);
-		}
-
-		@Override
 		public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 			Simulation.this.subscribeActorToEventByFilter(eventFilter, eventConsumer);
 		}
@@ -235,16 +230,6 @@ public class Simulation {
 		@Override
 		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
 			Simulation.this.subscribeActorToEventByClass(eventClass, eventConsumer);
-		}
-
-		@Override
-		public <T extends Event> void unsubscribe(EventLabel<T> eventLabel) {
-			Simulation.this.unsubscribeActorFromEventByLabel(eventLabel);
-		}
-
-		@Override
-		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-			Simulation.this.addEventLabeler(eventLabeler);
 		}
 
 		@Override
@@ -484,11 +469,6 @@ public class Simulation {
 		@Override
 		public void unSubscribe(Class<? extends Event> eventClass) {
 			simulation.unSubscribeDataManagerFromEvent(dataManagerId, eventClass);
-		}
-
-		@Override
-		public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-			simulation.addEventLabeler(eventLabeler);
 		}
 
 		@Override
@@ -1122,44 +1102,6 @@ public class Simulation {
 		}
 	}
 
-	private static class MetaEventLabeler<T extends Event> {
-
-		private final EventLabeler<T> eventLabeler;
-		private final Class<T> eventClass;
-		private final EventLabelerId id;
-
-		public MetaEventLabeler(EventLabeler<T> eventLabeler, Class<T> eventClass) {
-			this.id = eventLabeler.getEventLabelerId();
-			this.eventClass = eventClass;
-			this.eventLabeler = eventLabeler;
-
-		}
-
-		@SuppressWarnings("unchecked")
-		public EventLabel<T> getEventLabel(SimulationContext simulationContext, Event event) {
-			EventLabel<T> eventLabel = eventLabeler.getEventLabel(simulationContext, (T) event);
-			if (eventLabel == null) {
-				throw new ContractException(NucleusError.NULL_EVENT_LABEL,
-						"event labeler for class = " + eventLabeler.getEventClass().getSimpleName() + " and label id =" + eventLabeler.getEventLabelerId() + " returned a null event label");
-			}
-			if (!eventClass.equals(eventLabel.getEventClass())) {
-				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_EVENT_CLASS);
-			}
-			if (!id.equals(eventLabel.getLabelerId())) {
-				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_ID);
-			}
-			if (!event.getPrimaryKeyValue().equals(eventLabel.getPrimaryKeyValue())) {
-				throw new ContractException(NucleusError.LABLER_GENERATED_LABEL_WITH_INCORRECT_PRIMARY_KEY);
-			}
-			return eventLabel;
-		}
-
-		public EventLabelerId getId() {
-			return id;
-		}
-
-	}
-
 	private boolean actorExists(final ActorId actorId) {
 		if (actorId == null) {
 			return false;
@@ -1258,8 +1200,6 @@ public class Simulation {
 				actorQueue.add(contentRec);
 			}
 		}
-
-		broadcastEventToActorSubscribers_ByLabels(event);
 
 		broadcastEventToFilterNode(event, rootNode);
 
@@ -1483,170 +1423,14 @@ public class Simulation {
 
 	}
 
-	private <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler) {
-		if (eventLabeler == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_LABELER);
-		}
 
-		Class<T> eventClass = eventLabeler.getEventClass();
-
-		EventLabelerId id = eventLabeler.getEventLabelerId();
-
-		if (id_Labeler_Map.containsKey(id)) {
-			throw new ContractException(NucleusError.DUPLICATE_LABELER_ID_IN_EVENT_LABELER);
-		}
-
-		MetaEventLabeler<T> metaEventLabeler = new MetaEventLabeler<>(eventLabeler, eventClass);
-
-		id_Labeler_Map.put(metaEventLabeler.getId(), metaEventLabeler);
-	}
-
-	private void broadcastEventToActorSubscribers_ByLabels(final Event event) {
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>> map1 = actorPubSub.get(event.getClass());
-		if (map1 == null) {
-			return;
-		}
-		Object primaryKeyValue = event.getPrimaryKeyValue();
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>> map2 = map1.get(primaryKeyValue);
-		if (map2 == null) {
-			return;
-		}
-
-		for (EventLabelerId eventLabelerId : map2.keySet()) {
-			MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
-			EventLabel<?> eventLabel = metaEventLabeler.getEventLabel(actorContext, event);
-			Map<EventLabel<?>, Map<ActorId, Consumer<Event>>> map3 = map2.get(eventLabelerId);
-			Map<ActorId, Consumer<Event>> map4 = map3.get(eventLabel);
-			if (map4 != null) {
-				for (ActorId actorId : map4.keySet()) {
-					Consumer<Event> consumer = map4.get(actorId);
-					final ActorContentRec actorContentRec = new ActorContentRec();
-					actorContentRec.event = event;
-					actorContentRec.actorId = actorId;
-					actorContentRec.consumer = consumer;
-					actorQueue.add(actorContentRec);
-
-				}
-			}
-		}
-	}
-
-	private <T extends Event> void subscribeActorToEventByLabel(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
-
-		if (eventLabel == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
-		}
-
-		if (eventConsumer == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
-		}
-		Class<T> eventClass = eventLabel.getEventClass();
-		EventLabelerId eventLabelerId = eventLabel.getLabelerId();
-		MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
-
-		if (metaEventLabeler == null) {
-			throw new ContractException(NucleusError.UNKNOWN_EVENT_LABELER);
-		}
-
-		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
-
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>> map1 = actorPubSub.get(eventLabel.getEventClass());
-		if (map1 == null) {
-			map1 = new LinkedHashMap<>();
-			actorPubSub.put(eventClass, map1);
-		}
-
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>> map2 = map1.get(primaryKeyValue);
-		if (map2 == null) {
-			map2 = new LinkedHashMap<>();
-			map1.put(primaryKeyValue, map2);
-		}
-
-		Map<EventLabel<?>, Map<ActorId, Consumer<Event>>> map3 = map2.get(eventLabelerId);
-		if (map3 == null) {
-			map3 = new LinkedHashMap<>();
-			map2.put(eventLabelerId, map3);
-		}
-
-		Map<ActorId, Consumer<Event>> map4 = map3.get(eventLabel);
-		if (map4 == null) {
-			map4 = new LinkedHashMap<>();
-			map3.put(eventLabel, map4);
-		}
-
-		@SuppressWarnings("unchecked")
-		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
-
-		map4.put(focalActorId, consumer);
-
-	}
-
-	private <T extends Event> void unsubscribeActorFromEventByLabel(EventLabel<T> eventLabel) {
-
-		if (eventLabel == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_LABEL);
-		}
-
-		Class<T> eventClass = eventLabel.getEventClass();
-		EventLabelerId eventLabelerId = eventLabel.getLabelerId();
-		MetaEventLabeler<?> metaEventLabeler = id_Labeler_Map.get(eventLabelerId);
-		if (metaEventLabeler == null) {
-			throw new ContractException(NucleusError.UNKNOWN_EVENT_LABELER, eventLabelerId);
-		}
-
-		Object primaryKeyValue = eventLabel.getPrimaryKeyValue();
-
-		Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>> map1 = actorPubSub.get(eventClass);
-
-		if (map1 == null) {
-			return;
-		}
-
-		Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>> map2 = map1.get(primaryKeyValue);
-
-		if (map2 == null) {
-			return;
-		}
-
-		Map<EventLabel<?>, Map<ActorId, Consumer<Event>>> map3 = map2.get(eventLabelerId);
-
-		if (map3 == null) {
-			return;
-		}
-
-		Map<ActorId, Consumer<Event>> map4 = map3.get(eventLabel);
-
-		if (map4 == null) {
-			return;
-		}
-
-		map4.remove(focalActorId);
-
-		if (map4.isEmpty()) {
-			map3.remove(eventLabel);
-			if (map3.isEmpty()) {
-				map2.remove(eventLabelerId);
-				if (map2.isEmpty()) {
-					map1.remove(primaryKeyValue);
-					if (map1.isEmpty()) {
-						actorPubSub.remove(eventClass);
-					}
-				}
-			}
-		}
-	}
 
 	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-		return (dataManagerEventMap.containsKey(eventClass) || 
-				actorPubSub.containsKey(eventClass) || 
+		return (dataManagerEventMap.containsKey(eventClass) ||				 
 				actorEventMap.containsKey(eventClass)||
 				rootNode.children.containsKey(eventClass)||
 				rootNode.consumers.containsKey(eventClass));
 	}
-
-	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
-
-	private Map<Class<?>, Map<Object, Map<EventLabelerId, Map<EventLabel<?>, Map<ActorId, Consumer<Event>>>>>> actorPubSub = new LinkedHashMap<>();
 
 	/*
 	 * Recursively processes the event through the filter node . Events should

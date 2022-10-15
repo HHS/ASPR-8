@@ -51,18 +51,6 @@ public interface SimulationContext {
 	public void halt();
 
 	/**
-	 * Adds an event labeler to nucleus.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_LABELER} if the event
-	 *             labeler is null             
-	 *             <li>{@link NucleusError#DUPLICATE_LABELER_ID_IN_EVENT_LABELER}
-	 *             if the event labeler contains a labeler id that is the id of
-	 *             a previously added event labeler
-	 */
-	public <T extends Event> void addEventLabeler(EventLabeler<T> eventLabeler);
-
-	/**
 	 * Returns true if an only if an actor is associated with the given id.
 	 * Tolerates null values.
 	 */

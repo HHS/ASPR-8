@@ -130,25 +130,7 @@ public interface ActorContext extends SimulationContext {
 	 */
 	public ActorId getActorId();
 
-	/**
-	 * Subscribes the current actor to the given event label. Events of the type
-	 * T that are matched to the event label. If a match is found, then the
-	 * event will be consumed by the supplied event consumer.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_LABEL} if the EventLabel
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
-	 *             ActorEventConsumer is null
-	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
-	 *             labeler id in the event label cannot be resolved to a
-	 *             registered event labeler
-	 * 
-	 * 
-	 */
-	public <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer);
-
+	
 	/**
 	 * Subscribes the current actor to the given event filter. Events of the
 	 * type T are processed by the event filter. If the event passes the filter
@@ -176,23 +158,6 @@ public interface ActorContext extends SimulationContext {
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer);
 
-	/**
-	 * Unsubscribes the current actor from the given event label.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_LABEL} if the EventLabel
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS_IN_EVENT_LABELER} if
-	 *             the event class in the event label is null
-	 *             <li>{@link NucleusError#NULL_LABELER_ID_IN_EVENT_LABEL} if
-	 *             the event labeler id in the event label is null
-	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
-	 *             labeler id in the event label cannot be resolved to a
-	 *             registered event labeler
-	 *             <li>{@link NucleusError#NULL_PRIMARY_KEY_VALUE} if the event
-	 *             label has a null primary key
-	 */
-	public <T extends Event> void unsubscribe(EventLabel<T> eventLabel);
 
 	/**
 	 * Unsubscribes the current actor from the given event filter.
