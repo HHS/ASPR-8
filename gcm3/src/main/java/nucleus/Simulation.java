@@ -1637,7 +1637,11 @@ public class Simulation {
 	}
 
 	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-		return (dataManagerEventMap.containsKey(eventClass) || actorPubSub.containsKey(eventClass) || actorEventMap.containsKey(eventClass));
+		return (dataManagerEventMap.containsKey(eventClass) || 
+				actorPubSub.containsKey(eventClass) || 
+				actorEventMap.containsKey(eventClass)||
+				rootNode.children.containsKey(eventClass)||
+				rootNode.consumers.containsKey(eventClass));
 	}
 
 	private Map<EventLabelerId, MetaEventLabeler<?>> id_Labeler_Map = new LinkedHashMap<>();
@@ -1742,6 +1746,7 @@ public class Simulation {
 			}
 			return filterNode;
 		}
+		
 	}
 
 	/*
@@ -1832,6 +1837,9 @@ public class Simulation {
 			return;
 		}
 		consumerMap.remove(focalActorId);
+		if(consumerMap.isEmpty()) {
+			filterNode.consumers.remove(value);
+		}
 
 		/*
 		 * Walk back up the tree, removing nodes that have neither child nodes

@@ -5,7 +5,6 @@ import java.util.function.BiConsumer;
 import nucleus.ActorContext;
 import nucleus.Event;
 import nucleus.EventFilter;
-import nucleus.EventLabel;
 import nucleus.NucleusError;
 import util.errors.ContractException;
 
@@ -214,27 +213,6 @@ public abstract class PeriodicReport {
 
 	}
 
-	/**
-	 * Subscribes the report to the given event label via the actor context
-	 * while enforcing the flushing of report items as needed. Events of the
-	 * type T that are matched to the event label. If a match is found, then the
-	 * event will be consumed by the supplied event consumer.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_LABEL} if the EventLabel
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
-	 *             ActorEventConsumer is null
-	 *             <li>{@link NucleusError#UNKNOWN_EVENT_LABELER} if the event
-	 *             labeler id in the event label cannot be resolved to a
-	 *             registered event labeler
-	 * 
-	 * 
-	 */
-	protected final <T extends Event> void subscribe(EventLabel<T> eventLabel, BiConsumer<ActorContext, T> eventConsumer) {
-		actorContext.subscribe(eventLabel, getFlushingConsumer(eventConsumer));
-	}
 
 	/**
 	 * Subscribes the report to the given event filter via the actor context

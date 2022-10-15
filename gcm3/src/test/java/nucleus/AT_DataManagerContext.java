@@ -1351,25 +1351,16 @@ public class AT_DataManagerContext {
 	@UnitTestMethod(name = "subscribersExist", args = { Class.class })
 	public void testSubscribersExist() {
 
-		// create an event labeler id
-		EventLabelerId eventLabelerId = new EventLabelerId() {
-		};
+		
 
 		/*
 		 * create a simple event label as a place holder -- all test events will
 		 * be matched
 		 */
-		EventLabel<TestEvent> eventLabel = EventLabel	.builder(TestEvent.class)//
-														.setEventLabelerId(eventLabelerId)//
-														.addKey(TestEvent.class)//
+		EventFilter<TestEvent> eventFilter = EventFilter	.builder(TestEvent.class)//
 														.build();//
 
-		// create an event labeler that always returns the label above
-		EventLabeler<TestEvent> eventLabeler = EventLabeler	.builder(TestEvent.class)//
-															.setEventLabelerId(eventLabelerId)//
-															.setLabelFunction((c2, e) -> {
-																return eventLabel;
-															}).build();
+		
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -1382,18 +1373,13 @@ public class AT_DataManagerContext {
 		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
 			assertFalse(c.subscribersExist(TestEvent.class));
-
-			// add the event labeler to the context
-			c.addEventLabeler(eventLabeler);
-
 		}));
 
 		// create an agent and have it subscribe to test events at time 1
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-
 			// subscribe to the event label
-			c.subscribe(eventLabel, (c2, e) -> {
+			c.subscribe(eventFilter, (c2, e) -> {
 			});
 		}));
 
@@ -1404,7 +1390,7 @@ public class AT_DataManagerContext {
 
 		// have the agent unsubscribe
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			c.unsubscribe(eventLabel);
+			c.unsubscribe(eventFilter);
 		}));
 
 		// show that the resolver see no subscribers
