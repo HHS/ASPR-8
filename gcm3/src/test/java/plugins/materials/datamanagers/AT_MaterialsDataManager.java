@@ -42,6 +42,7 @@ import plugins.materials.events.BatchPropertyDefinitionEvent;
 import plugins.materials.events.BatchPropertyUpdateEvent;
 import plugins.materials.events.MaterialIdAdditionEvent;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
+import plugins.materials.events.MaterialsProducerPropertyDefinitionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.events.StageAdditionEvent;
@@ -58,6 +59,7 @@ import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsError;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
+import plugins.materials.support.MaterialsProducerPropertyDefinitionInitialization;
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.materials.support.StageId;
 import plugins.materials.testsupport.MaterialsActionSupport;
@@ -4109,7 +4111,6 @@ public class AT_MaterialsDataManager {
 
 	}
 
-
 	@Test
 	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testResourceIdAddition() {
@@ -5576,7 +5577,7 @@ public class AT_MaterialsDataManager {
 	@Test
 	@UnitTestMethod(name = "getEventFilterForStageOfferUpdateEvent", args = {})
 	public void testGetEventFilterForStageOfferUpdateEvent() {
-				 
+
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		double actionTime = 0;
 
@@ -5639,6 +5640,677 @@ public class AT_MaterialsDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		MaterialsActionSupport.testConsumers(7611854826274953331L, testPlugin);
+
+	}
+
+	////////////////////////
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForBatchAdditionEvent", args = {})
+	public void testGetEventFilterForBatchAdditionEvent() {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have a agent observe batch creations
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<BatchAdditionEvent> eventFilter = materialsDataManager.getEventFilterForBatchAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId()));
+			});
+
+		}));
+
+		// have the actor randomly add some batches
+		for (int i = 0; i < 30; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+				double amount = randomGenerator.nextDouble();
+				BatchConstructionInfo.Builder batchBuilder = BatchConstructionInfo.builder();
+				//
+				batchBuilder.setMaterialsProducerId(materialsProducerId)//
+							.setMaterialId(testMaterialId)//
+							.setAmount(amount);//
+
+				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
+					batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
+				}
+
+				BatchConstructionInfo batchConstructionInfo = batchBuilder.build();
+				BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+
+				expectedObservations.add(new MultiKey(c.getTime(), batchId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(8733374899306819910L, testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForBatchAmountUpdateEvent", args = {})
+	public void testGetEventFilterForBatchAmountUpdateEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have a agent observe batch amount updates
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<BatchAmountUpdateEvent> eventFilter = materialsDataManager.getEventFilterForBatchAmountUpdateEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId()));
+			});
+
+		}));
+
+		// have the actor randomly add some batches and then alter the amounts
+		for (int i = 0; i < 30; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+				double amount = randomGenerator.nextDouble() + 0.01;
+				BatchConstructionInfo.Builder batchBuilder = BatchConstructionInfo.builder();
+
+				batchBuilder.setMaterialsProducerId(materialsProducerId)//
+							.setMaterialId(testMaterialId)//
+							.setAmount(amount);//
+
+				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
+					batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
+				}
+
+				BatchConstructionInfo batchConstructionInfo = batchBuilder.build();
+				BatchId batchId1 = materialsDataManager.addBatch(batchConstructionInfo);
+
+				batchBuilder.setMaterialsProducerId(materialsProducerId)//
+							.setMaterialId(testMaterialId)//
+							.setAmount(amount);//
+
+				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
+					batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
+				}
+
+				batchConstructionInfo = batchBuilder.build();
+				BatchId batchId2 = materialsDataManager.addBatch(batchConstructionInfo);
+
+				amount = materialsDataManager.getBatchAmount(batchId1) / 2;
+				materialsDataManager.transferMaterialBetweenBatches(batchId1, batchId2, amount);
+
+				expectedObservations.add(new MultiKey(c.getTime(), batchId1));
+				expectedObservations.add(new MultiKey(c.getTime(), batchId2));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(1632036988086563905L, testPlugin);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForBatchImminentRemovalEvent", args = {})
+	public void testGetEventFilterForBatchImminentRemovalEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have a agent observe batch removals
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<BatchImminentRemovalEvent> eventFilter = materialsDataManager.getEventFilterForBatchImminentRemovalEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId()));
+			});
+
+		}));
+
+		// have the actor randomly add some batches and then remove them
+		for (int i = 0; i < 30; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+				double amount = randomGenerator.nextDouble() + 0.01;
+				BatchConstructionInfo.Builder batchBuilder = BatchConstructionInfo.builder();
+
+				batchBuilder.setMaterialsProducerId(materialsProducerId)//
+							.setMaterialId(testMaterialId)//
+							.setAmount(amount);//
+
+				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
+					batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
+				}
+
+				BatchConstructionInfo batchConstructionInfo = batchBuilder.build();
+				BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+				materialsDataManager.removeBatch(batchId);
+
+				expectedObservations.add(new MultiKey(c.getTime(), batchId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(7418141671964137152L, testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForBatchPropertyDefinitionEvent", args = {})
+	public void testGetEventFilterForBatchPropertyDefinitionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have a agent observe batch property definition constructions
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<BatchPropertyDefinitionEvent> eventFilter = materialsDataManager.getEventFilterForBatchPropertyDefinitionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchPropertyId()));
+			});
+
+		}));
+
+		// have the actor randomly add some batch properties
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+
+				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+				int defaultValue = randomGenerator.nextInt(100);
+				PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																			.setType(Integer.class)//
+																			.setDefaultValue(defaultValue)//
+																			.build();
+				BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+				BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization = //
+						BatchPropertyDefinitionInitialization	.builder()//
+																.setMaterialId(testMaterialId).setPropertyDefinition(propertyDefinition)//
+																.setPropertyId(batchPropertyId)//
+																.build();//
+				materialsDataManager.defineBatchProperty(batchPropertyDefinitionInitialization);
+
+				expectedObservations.add(new MultiKey(c.getTime(), batchPropertyId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(1659719780457752005L, testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForBatchPropertyUpdateEvent", args = {})
+	public void testGetEventFilterForBatchPropertyUpdateEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have a agent observe batch property property updates
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<BatchPropertyUpdateEvent> eventFilter = materialsDataManager.getEventFilterForBatchPropertyUpdateEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), e.getBatchPropertyId()));
+			});
+
+		}));
+
+		// have the actor randomly add some batches and change their properties
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				TestMaterialId testMaterialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+				double amount = randomGenerator.nextDouble() + 0.01;
+				BatchConstructionInfo.Builder batchBuilder = BatchConstructionInfo.builder();
+
+				batchBuilder.setMaterialsProducerId(materialsProducerId)//
+							.setMaterialId(testMaterialId)//
+							.setAmount(amount);//
+
+				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
+					batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
+				}
+
+				BatchConstructionInfo batchConstructionInfo = batchBuilder.build();
+				BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+
+				TestBatchPropertyId batchPropertyId = TestBatchPropertyId.getRandomMutableBatchPropertyId(testMaterialId, randomGenerator);
+				Object propertyValue = batchPropertyId.getRandomPropertyValue(randomGenerator);
+				materialsDataManager.setBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+
+				expectedObservations.add(new MultiKey(c.getTime(), batchId, batchPropertyId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(2839431361490510612L, testPlugin);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForMaterialIdAdditionEvent", args = {})
+	public void testGetEventFilterForMaterialIdAdditionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have a agent observe the addition of material types
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<MaterialIdAdditionEvent> eventFilter = materialsDataManager.getEventFilterForMaterialIdAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialId()));
+			});
+
+		}));
+
+		// have the actor add some material ids
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialId materialId = TestMaterialId.getUnknownMaterialId();
+				materialsDataManager.addMaterialId(materialId);
+				expectedObservations.add(new MultiKey(c.getTime(), materialId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(3016777797847869909L, testPlugin);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForMaterialsProducerAdditionEvent", args = {})
+	public void testGetEventFilterForMaterialsProducerAdditionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an agent observe the addition of material producers
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<MaterialsProducerAdditionEvent> eventFilter = materialsDataManager.getEventFilterForMaterialsProducerAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialsProducerId()));
+			});
+		}));
+
+		// have the actor randomly add some materials producers
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+
+				MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
+
+				MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
+
+				builder.setMaterialsProducerId(materialsProducerId);//
+
+				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
+					Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+					builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, propertyValue);
+				}
+
+				MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
+				materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
+
+				expectedObservations.add(new MultiKey(c.getTime(), materialsProducerId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(9030121507723724675L, testPlugin);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForMaterialsProducerPropertyDefinitionEvent", args = {})
+	public void testGetEventFilterForMaterialsProducerPropertyDefinitionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an agent observe the definition of material producer properties
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<MaterialsProducerPropertyDefinitionEvent> eventFilter = materialsDataManager.getEventFilterForMaterialsProducerPropertyDefinitionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getPersonPropertyId()));
+			});
+		}));
+
+		// have the actor randomly define some materials producer properties
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				
+				MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId();
+				int defaultValue = randomGenerator.nextInt(100);
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Integer.class)//
+				.setDefaultValue(defaultValue)//
+				.build();
+				
+				MaterialsProducerPropertyDefinitionInitialization materialsProducerPropertyDefinitionInitialization = MaterialsProducerPropertyDefinitionInitialization.builder()//
+				.setMaterialsProducerPropertyId(materialsProducerPropertyId)//
+				.setPropertyDefinition(propertyDefinition)//
+				.build();
+				materialsDataManager.defineMaterialsProducerProperty(materialsProducerPropertyDefinitionInitialization);
+
+				
+				expectedObservations.add(new MultiKey(c.getTime(), materialsProducerPropertyId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(2555168166874481212L, testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForStageAdditionEvent", args = {})
+	public void testGetEventFilterForStageAdditionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an agent observe the addition of stages
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<StageAdditionEvent> eventFilter = materialsDataManager.getEventFilterForStageAdditionEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+			});
+		}));
+
+		// have the actor add some stages
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				
+				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				
+				expectedObservations.add(new MultiKey(c.getTime(), stageId));
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(5930670132326679913L, testPlugin);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForStageImminentRemovalEvent", args = {})
+	public void testGetEventFilterForStageImminentRemovalEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an agent observe the imminent removal of stages
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<StageImminentRemovalEvent> eventFilter = materialsDataManager.getEventFilterForStageImminentRemovalEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+			});
+		}));
+
+		// have the actor add some stages and then remove them
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				
+				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.removeStage(stageId, false);
+				
+				expectedObservations.add(new MultiKey(c.getTime(), stageId));
+				
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(4965736606382697699L, testPlugin);
+		
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForStageMembershipAdditionEvent", args = {})
+	public void testGetEventFilterForStageMembershipAdditionEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an agent observe the imminent removal of stages
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<StageImminentRemovalEvent> eventFilter = materialsDataManager.getEventFilterForStageImminentRemovalEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+			});
+		}));
+
+		// have the actor add some stages and then remove them
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				
+				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				materialsDataManager.removeStage(stageId, false);
+				
+				expectedObservations.add(new MultiKey(c.getTime(), stageId));
+				
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(4965736606382697699L, testPlugin);
+
+		
+	}
+
+	@Test
+	@UnitTestMethod(name = "getEventFilterForStageMembershipRemovalEvent", args = {})
+	public void testGetEventFilterForStageMembershipRemovalEvent() {
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
+
+		// create containers to hold observations
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
+
+		// have an agent observe the removal of batches from stages
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			EventFilter<StageMembershipRemovalEvent> eventFilter = materialsDataManager.getEventFilterForStageMembershipRemovalEvent();
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId(), e.getBatchId()));
+			});
+		}));
+
+		// have the actor add some stages and then remove them
+		for (int i = 0; i < 10; i++) {
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				
+				TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
+				double amount = randomGenerator.nextDouble();
+				StageId stageId = materialsDataManager.addStage(materialsProducerId);
+				TestMaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
+				BatchConstructionInfo.Builder batchBuilder = BatchConstructionInfo.builder();
+				batchBuilder.setMaterialsProducerId(materialsProducerId);
+				batchBuilder.setAmount(amount);
+				batchBuilder.setMaterialId(materialId);
+				for(TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(materialId)) {
+					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
+					batchBuilder.setPropertyValue(testBatchPropertyId, propertyValue);
+				}
+				BatchConstructionInfo batchConstructionInfo = batchBuilder.build();
+				BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+				materialsDataManager.moveBatchToStage(batchId, stageId);
+				materialsDataManager.moveBatchToInventory(batchId);
+				
+				expectedObservations.add(new MultiKey(c.getTime(), stageId,batchId));
+				
+			}));
+		}
+
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(6812070525878040557L, testPlugin);
 
 	}
 

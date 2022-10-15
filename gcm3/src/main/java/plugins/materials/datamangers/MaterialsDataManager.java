@@ -2464,7 +2464,6 @@ public final class MaterialsDataManager extends DataManager {
 							.build();
 	}
 
-
 	private static enum StageMaterialsProducerUpdateEventFunctionId {
 		SOURCE, DESTINATION, STAGE
 	}
@@ -2547,8 +2546,7 @@ public final class MaterialsDataManager extends DataManager {
 		return EventFilter	.builder(StageMaterialsProducerUpdateEvent.class)//
 							.build();
 	}
-	
-	
+
 	private static enum StageOfferUpdateEventFunctionId {
 		STAGE
 	}
@@ -2560,8 +2558,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link StageOfferUpdateEvent} events. Matches on the stage
-	 * id.
+	 * {@link StageOfferUpdateEvent} events. Matches on the stage id.
 	 *
 	 *
 	 * @throws ContractException
@@ -2577,7 +2574,7 @@ public final class MaterialsDataManager extends DataManager {
 							.addFunctionValuePair(stageOfferUpdateMap.get(StageOfferUpdateEventFunctionId.STAGE), stageId)//
 							.build();
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link StageOfferUpdateEvent} events. Matches on all such events.
@@ -2586,6 +2583,104 @@ public final class MaterialsDataManager extends DataManager {
 	public EventFilter<StageOfferUpdateEvent> getEventFilterForStageOfferUpdateEvent() {
 		return EventFilter	.builder(StageOfferUpdateEvent.class)//
 							.build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to {@link BatchAdditionEvent}
+	 * events. Matches on all such events.
+	 */
+	public EventFilter<BatchAdditionEvent> getEventFilterForBatchAdditionEvent() {
+		return EventFilter.builder(BatchAdditionEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link BatchAmountUpdateEvent} events. Matches on all such events.
+	 */
+	public EventFilter<BatchAmountUpdateEvent> getEventFilterForBatchAmountUpdateEvent() {
+		return EventFilter.builder(BatchAmountUpdateEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link BatchImminentRemovalEvent} events. Matches on all such events.
+	 */
+	public EventFilter<BatchImminentRemovalEvent> getEventFilterForBatchImminentRemovalEvent() {
+		return EventFilter.builder(BatchImminentRemovalEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link BatchPropertyDefinitionEvent} events. Matches on all such events.
+	 */
+	public EventFilter<BatchPropertyDefinitionEvent> getEventFilterForBatchPropertyDefinitionEvent() {
+		return EventFilter.builder(BatchPropertyDefinitionEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link BatchPropertyUpdateEvent} events. Matches on all such events.
+	 */
+	public EventFilter<BatchPropertyUpdateEvent> getEventFilterForBatchPropertyUpdateEvent() {
+		return EventFilter.builder(BatchPropertyUpdateEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialIdAdditionEvent} events. Matches on all such events.
+	 */
+	public EventFilter<MaterialIdAdditionEvent> getEventFilterForMaterialIdAdditionEvent() {
+		return EventFilter.builder(MaterialIdAdditionEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialsProducerAdditionEvent} events. Matches on all such
+	 * events.
+	 */
+	public EventFilter<MaterialsProducerAdditionEvent> getEventFilterForMaterialsProducerAdditionEvent() {
+		return EventFilter.builder(MaterialsProducerAdditionEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link MaterialsProducerPropertyDefinitionEvent} events. Matches on all
+	 * such events.
+	 */
+	public EventFilter<MaterialsProducerPropertyDefinitionEvent> getEventFilterForMaterialsProducerPropertyDefinitionEvent() {
+		return EventFilter.builder(MaterialsProducerPropertyDefinitionEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to {@link StageAdditionEvent}
+	 * events. Matches on all such events.
+	 */
+	public EventFilter<StageAdditionEvent> getEventFilterForStageAdditionEvent() {
+		return EventFilter.builder(StageAdditionEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageImminentRemovalEvent} events. Matches on all such events.
+	 */
+	public EventFilter<StageImminentRemovalEvent> getEventFilterForStageImminentRemovalEvent() {
+		return EventFilter.builder(StageImminentRemovalEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageMembershipAdditionEvent} events. Matches on all such events.
+	 */
+	public EventFilter<StageMembershipAdditionEvent> getEventFilterForStageMembershipAdditionEvent() {
+		return EventFilter.builder(StageMembershipAdditionEvent.class).build();
+	}
+
+	/**
+	 * Returns an event filter used to subscribe to
+	 * {@link StageMembershipRemovalEvent} events. Matches on all such events.
+	 */
+	public EventFilter<StageMembershipRemovalEvent> getEventFilterForStageMembershipRemovalEvent() {
+		return EventFilter.builder(StageMembershipRemovalEvent.class).build();
 	}
 
 }
