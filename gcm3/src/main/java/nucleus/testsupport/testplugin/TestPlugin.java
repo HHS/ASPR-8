@@ -6,6 +6,7 @@ import java.util.Optional;
 import nucleus.NucleusError;
 import nucleus.Plugin;
 import nucleus.PluginContext;
+import nucleus.PluginId;
 import util.errors.ContractException;
 
 /**
@@ -28,12 +29,11 @@ public class TestPlugin {
 	 * TestPlanDataManager that is used internally to this plugin to help manage
 	 * plan distribution for the aforementioned actors and data managers.
 	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN_CONTEXT} if the
-	 *             pluginContext is null</li>
+	 * @throws ContractException <li>{@linkplain
+	 * NucleusError#NULL_PLUGIN_CONTEXT} if the pluginContext is null</li>
 	 */
 	private static void init(PluginContext pluginContext) {
-		if (pluginContext == null) {			
+		if (pluginContext == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_CONTEXT);
 		}
 
@@ -57,11 +57,14 @@ public class TestPlugin {
 	}
 
 	public static Plugin getTestPlugin(TestPluginData testPluginData) {
-		return Plugin	.builder()//
-						.setInitializer(TestPlugin::init)//
-						.addPluginData(testPluginData)//
-						.setPluginId(TestPluginId.PLUGIN_ID)//
-						.build();//
+		Plugin.Builder builder = Plugin.builder();//
+		builder.setInitializer(TestPlugin::init);//
+		for (PluginId pluginId : testPluginData.getPluginDependencies()) {
+			builder.addPluginDependency(pluginId);
+		}
+		builder.addPluginData(testPluginData);//
+		builder.setPluginId(TestPluginId.PLUGIN_ID);//
+		return builder.build();//
 	}
 
 }

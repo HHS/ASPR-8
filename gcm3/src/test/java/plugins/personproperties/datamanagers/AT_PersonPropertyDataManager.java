@@ -978,7 +978,7 @@ public final class AT_PersonPropertyDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		/*
-		 * Have the agent remove a person and show that their properties remain
+		 * Have the actor remove a person and show that their properties remain
 		 * during the current span of this agent's activation
 		 */
 
@@ -1005,7 +1005,7 @@ public final class AT_PersonPropertyDataManager {
 
 		}));
 
-		// Have the agent now show that these person properties are no longer
+		// Have the actor now show that these person properties are no longer
 		// available
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 

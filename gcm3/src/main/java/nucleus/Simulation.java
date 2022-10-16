@@ -217,12 +217,6 @@ public class Simulation {
 		}
 
 		@Override
-		public void releaseEvent(final Event event) {
-			Simulation.this.releaseEvent(event);
-
-		}
-
-		@Override
 		public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 			Simulation.this.subscribeActorToEventByFilter(eventFilter, eventConsumer);
 		}

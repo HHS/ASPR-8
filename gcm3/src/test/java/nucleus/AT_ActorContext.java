@@ -1020,49 +1020,6 @@ public class AT_ActorContext {
 		assertFalse(removedPlanHasExecuted.getValue());
 	}
 
-	/**
-	 * Tests {@link AgentContext#releaseEvent(Event)
-	 */
-	@Test
-	@UnitTestMethod(name = "releaseEvent", args = { Event.class })
-	public void testReleaseEvent() {
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		MutableBoolean eventResolved = new MutableBoolean();
-
-		// Have the actor subscribe to test event and then set the
-		// eventResolved to true
-		pluginDataBuilder.addTestActorPlan("alpha", new TestActorPlan(0, (c) -> {
-			c.subscribe(BaseEvent.class, (c2, e) -> {
-				eventResolved.setValue(true);
-			});
-		}));
-
-		// have another actor resolve a test event
-		pluginDataBuilder.addTestActorPlan("beta", new TestActorPlan(1, (context) -> {
-			context.releaseEvent(new BaseEvent());
-		}));
-
-		// precondition tests
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> context.releaseEvent(null));
-			assertEquals(NucleusError.NULL_EVENT, contractException.getErrorType());
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// run the simulation
-		Simulation	.builder()//
-					.addPlugin(testPlugin)//
-					.build()//
-					.execute();//
-
-		// show that event actually resolved
-		assertTrue(eventResolved.getValue());
-	}
-
 	@Test
 	@UnitTestMethod(name = "subscribe", args = { Class.class, BiConsumer.class })
 	public void testSubscribe_EventClass() {
@@ -1096,14 +1053,15 @@ public class AT_ActorContext {
 		 * Have another actor generate several data change observation events
 		 * with differing types and values.
 		 */
-		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(2, (c) -> {
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 20));
 
 		}));
 
-		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(3, (c) -> {
+		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(3, (c) -> {
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 0));
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 5));
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 25));
@@ -1198,7 +1156,8 @@ public class AT_ActorContext {
 		 * at various times
 		 */
 
-		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(0, (c) -> {
+		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(0, (c) -> {
 
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
@@ -1341,10 +1300,11 @@ public class AT_ActorContext {
 		}));
 
 		/*
-		 * Have another actor generate several data change observation events
+		 * Have a data manager generate several data change observation events
 		 * with differing types and values.
 		 */
-		pluginDataBuilder.addTestActorPlan("generator", new TestActorPlan(2, (c) -> {
+		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(2, (c) -> {
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 20));

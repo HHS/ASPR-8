@@ -19,15 +19,6 @@ public interface SimulationContext {
 	 */
 	public void releaseOutput(Object output);
 
-	/**
-	 * Broadcasts the given event to all subscribers. Data manager subscribers
-	 * receive event immediately. Actors receive events after the current actor
-	 * or data manager has completed its current actions.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
-	 */
-	public void releaseEvent(final Event event);
 
 	/**
 	 * 

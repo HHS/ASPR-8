@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import net.jcip.annotations.ThreadSafe;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import nucleus.PluginId;
 import util.errors.ContractException;
 
 /**
@@ -104,6 +105,8 @@ public class TestPluginData implements PluginData {
 		private Map<Object, Supplier<TestDataManager>> testDataManagerSuppliers = new LinkedHashMap<>();
 
 		private final Map<Object, List<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
+
+		private final List<PluginId> pluginDependencies = new ArrayList<>();
 
 	}
 
@@ -224,6 +227,20 @@ public class TestPluginData implements PluginData {
 
 		}
 
+		/**
+		 * Adds a plugin dependency
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain TestError#NULL_PLUGIN_ID} if the plugin
+		 *             id is null</li>
+		 */
+		public Builder addPluginDependency(final PluginId pluginId) {
+			if (pluginId == null) {
+				throw new ContractException(TestError.NULL_PLUGIN_ID);
+			}
+			data.pluginDependencies.add(pluginId);
+			return this;
+		}
 	}
 
 	/**
@@ -254,6 +271,13 @@ public class TestPluginData implements PluginData {
 			result.addAll(list);
 		}
 		return result;
+	}
+	
+	/**
+	 * Returns the plugin dependencies
+	 */
+	public List<PluginId> getPluginDependencies() {
+		return new ArrayList<>(data.pluginDependencies);
 	}
 
 	/**

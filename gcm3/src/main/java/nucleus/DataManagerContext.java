@@ -100,6 +100,17 @@ public interface DataManagerContext extends SimulationContext {
 	public Optional<Double> getPlanTime(final Object key);
 
 	/**
+	 * Broadcasts the given event to all subscribers. Data manager subscribers
+	 * receive events immediately. Actors receive events after the current actor
+	 * or data manager has completed its current actions.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
+	 */
+	public void releaseEvent(final Event event);
+
+	
+	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
 	 * @throws ContractException

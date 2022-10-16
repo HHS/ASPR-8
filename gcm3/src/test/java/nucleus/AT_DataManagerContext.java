@@ -1129,9 +1129,10 @@ public class AT_DataManagerContext {
 			
 		}));
 
-		// create an agent that will generate a test event
+		// create a data manager that will generate a test event
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
 			c.releaseEvent(new TestEvent());
 		}));
 
@@ -1202,8 +1203,9 @@ public class AT_DataManagerContext {
 
 		}));
 
-		// create an agent that will produce a test event
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+		// create a data manager that will produce a test event
+		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
 			c.releaseEvent(new TestEvent());
 		}));
 
@@ -1220,8 +1222,8 @@ public class AT_DataManagerContext {
 			c.unSubscribe(TestEvent.class);
 		}));
 
-		// have the agent generate another test event
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
+		// have the data manager generate another test event
+		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(4, (c) -> {
 			c.releaseEvent(new TestEvent());
 		}));
 

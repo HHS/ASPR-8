@@ -576,7 +576,7 @@ public final class RegionsDataManager extends DataManager {
 		StopwatchManager.stop(Watch.REGIONS_BULK);
 	}
 
-	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
+	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
 		final PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
 		final RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
 		validateRegionId(regionId);
@@ -781,7 +781,7 @@ public final class RegionsDataManager extends DataManager {
 			regionValues.setIntValue(personId.getValue(), regionIndex);
 		}
 
-		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
+		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
 		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
