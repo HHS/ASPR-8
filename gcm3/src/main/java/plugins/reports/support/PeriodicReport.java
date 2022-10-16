@@ -244,7 +244,7 @@ public abstract class PeriodicReport {
 	 * 
 	 */
 	protected final <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
-		actorContext.subscribe(eventClass, getFlushingConsumer(eventConsumer));
+		actorContext.subscribe(EventFilter.builder(eventClass).build(), getFlushingConsumer(eventConsumer));
 	}
 
 }

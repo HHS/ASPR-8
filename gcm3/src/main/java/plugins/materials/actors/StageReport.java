@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.StageAdditionEvent;
 import plugins.materials.events.StageImminentRemovalEvent;
@@ -143,10 +144,10 @@ public final class StageReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(StageOfferUpdateEvent.class, this::handleStageOfferUpdateEvent);
-		actorContext.subscribe(StageAdditionEvent.class, this::handleStageAdditionEvent);
-		actorContext.subscribe(StageImminentRemovalEvent.class, this::handleStageImminentRemovalEvent);
-		actorContext.subscribe(StageMaterialsProducerUpdateEvent.class, this::handleStageMaterialsProducerUpdateEvent);
+		actorContext.subscribe(EventFilter.builder(StageOfferUpdateEvent.class).build(), this::handleStageOfferUpdateEvent);
+		actorContext.subscribe(EventFilter.builder(StageAdditionEvent.class).build(), this::handleStageAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(StageImminentRemovalEvent.class).build(), this::handleStageImminentRemovalEvent);
+		actorContext.subscribe(EventFilter.builder(StageMaterialsProducerUpdateEvent.class).build(), this::handleStageMaterialsProducerUpdateEvent);
 
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 

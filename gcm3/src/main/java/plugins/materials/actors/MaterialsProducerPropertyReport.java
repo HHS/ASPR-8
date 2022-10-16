@@ -1,6 +1,7 @@
 package plugins.materials.actors;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
@@ -58,8 +59,8 @@ public final class MaterialsProducerPropertyReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
-		actorContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(MaterialsProducerPropertyUpdateEvent.class).build(), this::handleMaterialsProducerPropertyUpdateEvent);
+		actorContext.subscribe(EventFilter.builder(MaterialsProducerAdditionEvent.class).build(), this::handleMaterialsProducerAdditionEvent);
 
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 

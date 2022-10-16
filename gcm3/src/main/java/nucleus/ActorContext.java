@@ -145,20 +145,7 @@ public interface ActorContext extends SimulationContext {
 	 */
 	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer);
 
-	/**
-	 * Subscribes the current actor to the given event.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
-	 * 
-	 */
-	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer);
-
-
+	
 	/**
 	 * Unsubscribes the current actor from the given event filter.
 	 * 
@@ -170,15 +157,6 @@ public interface ActorContext extends SimulationContext {
 	public <T extends Event> void unsubscribe(EventFilter<T> eventFilter);
 
 	/**
-	 * Unsubscribes the actor from events of the given type.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null</li>
-	 */
-	public <T extends Event> void unsubscribe(Class<T> eventClass);
-
-	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * Activity associated with the consumer should be limited to querying data
 	 * state and releasing output.
@@ -188,10 +166,4 @@ public interface ActorContext extends SimulationContext {
 	 *             consumer is null</li>
 	 */
 	public void subscribeToSimulationClose(Consumer<ActorContext> consumer);
-
-	/**
-	 * Returns true if and only if there are actor or data managers subscribed
-	 * to the given event type.
-	 */
-	public boolean subscribersExist(Class<? extends Event> eventClass);
 }

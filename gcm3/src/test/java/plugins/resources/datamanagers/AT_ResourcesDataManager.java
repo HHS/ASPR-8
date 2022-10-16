@@ -1051,7 +1051,7 @@ public final class AT_ResourcesDataManager {
 
 		// have an actor observe the ResourcePropertyAdditionEvent events
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(ResourcePropertyDefinitionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(ResourcePropertyDefinitionEvent.class).build(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getResourcePropertyId());
 				actualObservations.add(multiKey);
 			});
@@ -1156,7 +1156,7 @@ public final class AT_ResourcesDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(ResourceIdAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(ResourceIdAdditionEvent.class).build(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getTimeTrackingPolicy());
 				actualObservations.add(multiKey);
 			});

@@ -1,6 +1,7 @@
 package plugins.resources.actors;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -58,8 +59,8 @@ public final class ResourcePropertyReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(ResourcePropertyUpdateEvent.class,this::handleResourcePropertyUpdateEvent);
-		actorContext.subscribe(ResourcePropertyDefinitionEvent.class, this::handleResourcePropertyAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(ResourcePropertyUpdateEvent.class).build(),this::handleResourcePropertyUpdateEvent);
+		actorContext.subscribe(EventFilter.builder(ResourcePropertyDefinitionEvent.class).build(), this::handleResourcePropertyAdditionEvent);
 		
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {

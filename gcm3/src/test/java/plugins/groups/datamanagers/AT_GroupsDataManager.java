@@ -150,7 +150,7 @@ public class AT_GroupsDataManager {
 		// add an agent to observe the group membership additions
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupMembershipAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupMembershipAdditionEvent.class).build(), (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
 			});
 
@@ -260,7 +260,7 @@ public class AT_GroupsDataManager {
 
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupAdditionEvent.class).build(), (c2, e) -> {
 				actualGroupObservations.add(e.getGroupId());
 			});
 
@@ -380,7 +380,7 @@ public class AT_GroupsDataManager {
 
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupAdditionEvent.class).build(), (c2, e) -> {
 				actualObservations.add(e.getGroupId());
 			});
 
@@ -440,7 +440,7 @@ public class AT_GroupsDataManager {
 
 		// add an agent to observe the group membership additions
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupMembershipAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupMembershipAdditionEvent.class).build(), (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
 			});
 
@@ -726,7 +726,7 @@ public class AT_GroupsDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupPropertyUpdateEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupPropertyUpdateEvent.class).build(), (c2, e) -> {
 				actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
 
 			});
@@ -2241,7 +2241,7 @@ public class AT_GroupsDataManager {
 		// well as the people being added to the groups
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupAdditionEvent.class).build(), (c2, e) -> {
 				actualGroupObservations.add(e.getGroupId());
 			});
 
@@ -2659,7 +2659,7 @@ public class AT_GroupsDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupTypeAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupTypeAdditionEvent.class).build(), (c2, e) -> {
 				actualGroupTypeIds.add(e.getGroupTypeId());
 			});
 		}));
@@ -2706,7 +2706,7 @@ public class AT_GroupsDataManager {
 
 		// have an observer observe new group property definitions being created
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GroupPropertyDefinitionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GroupPropertyDefinitionEvent.class).build(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGroupTypeId(), e.getGroupPropertyId());
 				actualObservations.add(multiKey);
 			});

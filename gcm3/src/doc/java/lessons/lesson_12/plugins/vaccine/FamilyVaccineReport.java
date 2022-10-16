@@ -13,6 +13,7 @@ import lessons.lesson_12.plugins.person.PersonAdditionEvent;
 import lessons.lesson_12.plugins.person.PersonDataManager;
 import lessons.lesson_12.plugins.person.PersonId;
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -116,11 +117,11 @@ public class FamilyVaccineReport {
 		this.actorContext = actorContext;
 		/*
 		 * Subscribe to all the relevant events
-		 */
-		actorContext.subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
-		actorContext.subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
-		actorContext.subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
-		actorContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		 */		
+		actorContext.subscribe(EventFilter.builder(VaccinationEvent.class).build(), this::handleVaccinationEvent);
+		actorContext.subscribe(EventFilter.builder(FamilyAdditionEvent.class).build(), this::handleFamilyAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(FamilyMemberShipAdditionEvent.class).build(), this::handleFamilyMemberShipAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(PersonAdditionEvent.class).build(), this::handlePersonAdditionEvent);
 
 		/*
 		 * Some of the events may have already occurred before we initialize

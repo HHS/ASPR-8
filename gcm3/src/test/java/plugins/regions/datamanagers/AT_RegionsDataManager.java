@@ -1428,7 +1428,7 @@ public class AT_RegionsDataManager {
 
 		// add an observer
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(RegionPropertyAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(RegionPropertyAdditionEvent.class).build(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionPropertyId());
 				actualObservations.add(multiKey);
 			});
@@ -1577,7 +1577,7 @@ public class AT_RegionsDataManager {
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(RegionAdditionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(RegionAdditionEvent.class).build(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionId());
 				actualObservations.add(multiKey);
 			});

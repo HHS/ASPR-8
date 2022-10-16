@@ -109,8 +109,8 @@ public final class RegionPropertyReport {
 		}
 
 		if (regionPropertyIds.equals(regionsDataManager.getRegionPropertyIds())) {
-			actorContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
-			actorContext.subscribe(RegionPropertyAdditionEvent.class, this::handleRegionPropertyAdditionEvent);
+			actorContext.subscribe(EventFilter.builder(RegionPropertyUpdateEvent.class).build(), this::handleRegionPropertyUpdateEvent);
+			actorContext.subscribe(EventFilter.builder(RegionPropertyAdditionEvent.class).build(), this::handleRegionPropertyAdditionEvent);
 		} else {
 			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
 				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(regionPropertyId);
@@ -125,7 +125,7 @@ public final class RegionPropertyReport {
 			}
 		}
 		
-		actorContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(RegionAdditionEvent.class).build(), this::handleRegionAdditionEvent);
 	}
 
 	private void handleRegionAdditionEvent(ActorContext actorContext, RegionAdditionEvent regionAdditionEvent) {

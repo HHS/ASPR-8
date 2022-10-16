@@ -199,8 +199,8 @@ public final class AT_PeopleDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(PersonImminentAdditionEvent.class, (c2, e) -> observedImminentPersonIds.add(e.getPersonId()));
-			c.subscribe(PersonAdditionEvent.class, (c2, e) -> observedPersonIds.add(e.getPersonId()));
+			c.subscribe(EventFilter.builder(PersonImminentAdditionEvent.class).build(), (c2, e) -> observedImminentPersonIds.add(e.getPersonId()));
+			c.subscribe(EventFilter.builder(PersonAdditionEvent.class).build(), (c2, e) -> observedPersonIds.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people and show they were added
@@ -254,8 +254,8 @@ public final class AT_PeopleDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(BulkPersonImminentAdditionEvent.class, (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
-			c.subscribe(BulkPersonAdditionEvent.class, (c2, e) -> observedBulkAddedPeople.addAll(e.getPeople()));
+			c.subscribe(EventFilter.builder(BulkPersonImminentAdditionEvent.class).build(), (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
+			c.subscribe(EventFilter.builder(BulkPersonAdditionEvent.class).build(), (c2, e) -> observedBulkAddedPeople.addAll(e.getPeople()));
 		}));
 
 		// have the agent add a bulk people and show the people were added
@@ -385,8 +385,8 @@ public final class AT_PeopleDataManager {
 		// have the observer subscribe to the removals and record them onto the
 		// observed removals
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-			c.subscribe(PersonRemovalEvent.class, (c2, e) -> observedRemovals.add(e.getPersonId()));
-			c.subscribe(PersonImminentRemovalEvent.class, (c2, e) -> observedImminentRemovals.add(e.getPersonId()));
+			c.subscribe(EventFilter.builder(PersonRemovalEvent.class).build(), (c2, e) -> observedRemovals.add(e.getPersonId()));
+			c.subscribe(EventFilter.builder(PersonImminentRemovalEvent.class).build(), (c2, e) -> observedImminentRemovals.add(e.getPersonId()));
 		}));
 
 		// have the agent add a few people

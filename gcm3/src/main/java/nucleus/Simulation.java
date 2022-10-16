@@ -220,20 +220,10 @@ public class Simulation {
 		public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 			Simulation.this.subscribeActorToEventByFilter(eventFilter, eventConsumer);
 		}
-
-		@Override
-		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
-			Simulation.this.subscribeActorToEventByClass(eventClass, eventConsumer);
-		}
-
+		
 		@Override
 		public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
 			subscribeActorToSimulationClose(consumer);
-		}
-
-		@Override
-		public boolean subscribersExist(Class<? extends Event> eventClass) {
-			return Simulation.this.subscribersExistForEvent(eventClass);
 		}
 
 		@Override
@@ -244,11 +234,6 @@ public class Simulation {
 		@Override
 		public void removeActor(ActorId actorId) {
 			Simulation.this.removeActor(actorId);
-		}
-
-		@Override
-		public <T extends Event> void unsubscribe(Class<T> eventClass) {
-			unSubscribeActorFromEventByClass(eventClass);
 		}
 
 		@Override
@@ -1069,26 +1054,7 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void subscribeActorToEventByClass(Class<? extends Event> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
-		}
-
-		if (eventConsumer == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
-		}
-
-		Map<ActorId, Consumer<Event>> map = actorEventMap.get(eventClass);
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			actorEventMap.put(eventClass, map);
-		}
-
-		@SuppressWarnings("unchecked")
-		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
-
-		map.put(focalActorId, consumer);
-	}
+	
 
 	private void releaseOutput(Object output) {
 		if (outputConsumer != null) {
@@ -1169,30 +1135,11 @@ public class Simulation {
 		}
 	}
 
-	private <T extends Event> void unSubscribeActorFromEventByClass(Class<T> eventClass) {
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
-		}
-		Map<ActorId, Consumer<Event>> map = actorEventMap.get(eventClass);
-		map.remove(focalActorId);
-	}
-
+	
 	private void releaseEvent(final Event event) {
 
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
-		}
-
-		Map<ActorId, Consumer<Event>> consumerMap = actorEventMap.get(event.getClass());
-		if (consumerMap != null) {
-			for (final ActorId actorId : consumerMap.keySet()) {
-				Consumer<Event> consumer = consumerMap.get(actorId);
-				final ActorContentRec contentRec = new ActorContentRec();
-				contentRec.actorId = actorId;
-				contentRec.event = event;
-				contentRec.consumer = consumer;
-				actorQueue.add(contentRec);
-			}
 		}
 
 		broadcastEventToFilterNode(event, rootNode);
@@ -1391,8 +1338,6 @@ public class Simulation {
 	// actor support
 	//////////////////////////////
 
-	private final Map<Class<? extends Event>, Map<ActorId, Consumer<Event>>> actorEventMap = new LinkedHashMap<>();
-
 	private final ActorContext actorContext = new ActorContextImpl();
 
 	private final List<ActorId> actorIds = new ArrayList<>();
@@ -1420,8 +1365,7 @@ public class Simulation {
 
 
 	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-		return (dataManagerEventMap.containsKey(eventClass) ||				 
-				actorEventMap.containsKey(eventClass)||
+		return (dataManagerEventMap.containsKey(eventClass) ||
 				rootNode.children.containsKey(eventClass)||
 				rootNode.consumers.containsKey(eventClass));
 	}

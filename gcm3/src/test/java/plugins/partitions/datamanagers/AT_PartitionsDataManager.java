@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
+import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -1605,7 +1606,7 @@ public final class AT_PartitionsDataManager {
 		List<PersonId> peopleVerifiedByReport = new ArrayList<>();
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(PersonImminentRemovalEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(PersonImminentRemovalEvent.class).build(), (c2, e) -> {
 
 				PersonId personId = e.getPersonId();
 

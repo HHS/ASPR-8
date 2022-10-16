@@ -411,7 +411,7 @@ public final class AT_GlobalPropertiesDataManager {
 
 		// have an observer collect the observations
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(GlobalPropertyDefinitionEvent.class, (c2, e) -> {
+			c.subscribe(EventFilter.builder(GlobalPropertyDefinitionEvent.class).build(), (c2, e) -> {
 				// record the actual observation
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.globalPropertyId(), e.initialPropertyValue());
 				actualObservations.add(multiKey);

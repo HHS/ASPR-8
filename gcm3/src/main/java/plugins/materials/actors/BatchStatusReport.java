@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchAdditionEvent;
@@ -209,12 +210,12 @@ public final class BatchStatusReport {
 
 	public void init(final ActorContext actorContext) {
 
-		actorContext.subscribe(BatchAdditionEvent.class, this::handleBatchAdditionEvent);
-		actorContext.subscribe(BatchImminentRemovalEvent.class, this::handleBatchImminentRemovalEvent);
-		actorContext.subscribe(BatchAmountUpdateEvent.class, this::handleBatchAmountUpdateEvent);
-		actorContext.subscribe(BatchPropertyUpdateEvent.class, this::handleBatchPropertyUpdateEvent);
-		actorContext.subscribe(StageMembershipAdditionEvent.class, this::handleStageMembershipAdditionEvent);
-		actorContext.subscribe(StageMembershipRemovalEvent.class, this::handleStageMembershipRemovalEvent);
+		actorContext.subscribe(EventFilter.builder(BatchAdditionEvent.class).build(), this::handleBatchAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(BatchImminentRemovalEvent.class).build(), this::handleBatchImminentRemovalEvent);
+		actorContext.subscribe(EventFilter.builder(BatchAmountUpdateEvent.class).build(), this::handleBatchAmountUpdateEvent);
+		actorContext.subscribe(EventFilter.builder(BatchPropertyUpdateEvent.class).build(), this::handleBatchPropertyUpdateEvent);
+		actorContext.subscribe(EventFilter.builder(StageMembershipAdditionEvent.class).build(), this::handleStageMembershipAdditionEvent);
+		actorContext.subscribe(EventFilter.builder(StageMembershipRemovalEvent.class).build(), this::handleStageMembershipRemovalEvent);
 
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 		

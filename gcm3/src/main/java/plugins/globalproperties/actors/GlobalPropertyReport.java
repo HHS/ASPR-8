@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
@@ -214,8 +215,8 @@ public final class GlobalPropertyReport {
 		 * We now subscribe to all update and definition events without any
 		 * filtering
 		 */
-		actorContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
-		actorContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
+		actorContext.subscribe(EventFilter.builder(GlobalPropertyUpdateEvent.class).build(), this::handleGlobalPropertyUpdateEvent);
+		actorContext.subscribe(EventFilter.builder(GlobalPropertyDefinitionEvent.class).build(), this::handleGlobalPropertyDefinitionEvent);
 
 		/*
 		 * We initialize the reporting with the current state of each global
