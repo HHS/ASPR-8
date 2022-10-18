@@ -1,4 +1,4 @@
-package plugins.resources.support;
+package plugins.regions.support;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,9 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import plugins.regions.support.RegionError;
-import plugins.regions.support.RegionId;
-import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 

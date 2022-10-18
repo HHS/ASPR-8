@@ -78,14 +78,13 @@ public class DependencyTracer {
 	}
 
 	private static void big() throws IOException {
-		Path dir = Paths.get("C:\\git_repos\\ASPR-6\\gcm2\\src\\main\\java\\plugins");
+		Path dir = Paths.get("C:\\git_repos\\ASPR-8\\gcm4\\src\\main\\java\\plugins");
 
 		List<String> pluginNames = new ArrayList<>();
 		
-		pluginNames.add("components");
 		
-		pluginNames.add("groups");
-		pluginNames.add("globals");
+		pluginNames.add("globalproperties");
+		pluginNames.add("groups");		
 		pluginNames.add("materials");
 		pluginNames.add("partitions");
 		pluginNames.add("people");
@@ -106,7 +105,7 @@ public class DependencyTracer {
 	}
 
 	private static void small(String pluginName) throws IOException {
-		Path dir = Paths.get("C:\\git_repos\\ASPR-6\\gcm2\\src\\main\\java\\plugins");
+		Path dir = Paths.get("C:\\git_repos\\ASPR-8\\gcm4\\src\\test\\java\\plugins");
 		Path pluginDir = dir.resolve(pluginName);
 		String importSuffix = "import plugins.";
 		boolean compact = false;
