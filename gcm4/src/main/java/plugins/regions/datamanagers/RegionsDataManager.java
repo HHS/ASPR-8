@@ -40,8 +40,6 @@ import plugins.util.properties.TimeTrackingPolicy;
 import plugins.util.properties.arraycontainers.DoubleValueContainer;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import util.errors.ContractException;
-import util.time.StopwatchManager;
-import util.time.Watch;
 
 /**
  * Mutable data manager that backs the {@linkplain RegionDataView}. This data
@@ -543,7 +541,6 @@ public final class RegionsDataManager extends DataManager {
 	}
 
 	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
-		StopwatchManager.start(Watch.REGIONS_BULK);
 		final BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		final List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
 
@@ -573,7 +570,6 @@ public final class RegionsDataManager extends DataManager {
 			}
 			pId++;
 		}
-		StopwatchManager.stop(Watch.REGIONS_BULK);
 	}
 
 	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
@@ -709,7 +705,6 @@ public final class RegionsDataManager extends DataManager {
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {
-		StopwatchManager.start(Watch.REGIONS_DM_INIT);
 		super.init(dataManagerContext);
 
 		this.dataManagerContext = dataManagerContext;
@@ -785,7 +780,6 @@ public final class RegionsDataManager extends DataManager {
 		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
-		StopwatchManager.stop(Watch.REGIONS_DM_INIT);
 	}
 
 	/**

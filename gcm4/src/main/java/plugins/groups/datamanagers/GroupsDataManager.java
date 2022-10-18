@@ -59,8 +59,6 @@ import plugins.util.properties.PropertyError;
 import plugins.util.properties.arraycontainers.IntValueContainer;
 import plugins.util.properties.arraycontainers.ObjectValueContainer;
 import util.errors.ContractException;
-import util.time.StopwatchManager;
-import util.time.Watch;
 
 /**
  * <p>
@@ -219,7 +217,7 @@ public final class GroupsDataManager extends DataManager {
 	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
-		StopwatchManager.start(Watch.GROUPS_DM_INIT);
+		
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
@@ -237,7 +235,7 @@ public final class GroupsDataManager extends DataManager {
 
 		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonImminentAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
-		StopwatchManager.stop(Watch.GROUPS_DM_INIT);
+		
 	}
 
 	private void loadGroupPropertyDefinitions() {
@@ -1619,7 +1617,6 @@ public final class GroupsDataManager extends DataManager {
 	}
 
 	private void handleBulkPersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
-		StopwatchManager.start(Watch.GROUPS_BULK);
 		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
 		Optional<BulkGroupMembershipData> optional = bulkPersonConstructionData.getValue(BulkGroupMembershipData.class);
 		if (optional.isPresent()) {
@@ -1714,7 +1711,6 @@ public final class GroupsDataManager extends DataManager {
 				}
 			}
 		}
-		StopwatchManager.stop(Watch.GROUPS_BULK);
 	}
 
 	/**
