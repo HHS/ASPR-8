@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.apache.commons.math3.util.FastMath;
 /**
- * Produces 30 non-negative random longs. Negatives present copy/paste issues.
+ * Produces 20 non-negative random longs. Negatives present copy/paste issues.
  * @author Shawn Hatch
  *
  */
