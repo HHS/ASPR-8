@@ -485,7 +485,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	/**
 	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for bulk population additions.
+	 * count. Used to more efficiently prepare for multiple population additions.
 	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if

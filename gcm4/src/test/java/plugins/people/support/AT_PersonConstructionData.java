@@ -104,7 +104,7 @@ public final class AT_PersonConstructionData {
 		}
 
 		/*
-		 * Show that the bulk construction data returns the first auxiliary data by type
+		 * Show that the person construction data returns the first auxiliary data by type
 		 * 
 		 */
 		PersonConstructionData personConstructionData = builder.build();

@@ -321,7 +321,7 @@ public final class RegionsDataManager extends DataManager {
 
 	/**
 	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for bulk population additions.
+	 * count. Used to more efficiently prepare for multiple population additions.
 	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
@@ -621,32 +621,7 @@ public final class RegionsDataManager extends DataManager {
 	 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if the
 	 *             person was previously added</li>
 	 *             </ul>
-	 *
-	 *             </blockquote></li>
-	 *
-	 *             <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote>
-	 *             Sets each person's initial region in the
-	 *             {@linkplain RegionLocationDataView} from the region
-	 *             references in the auxiliary data of the event.
-	 *
-	 *             <BR>
-	 *             <BR>
-	 *             Throws {@link ContractException}
-	 *             <ul>
-	 *             <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the person
-	 *             does not exist</li>
-	 *
-	 *             <li>{@linkplain RegionError#NULL_REGION_ID} if no region data
-	 *             was included in the for some person in event</li>
-	 *
-	 *             <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if the region
-	 *             is unknown for some person in the event</li>
-	 *             </ul>
-	 *
-	 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if a
-	 *             person was previously added</li>
-	 *
-	 *
+	 *             
 	 *             </blockquote></li>
 	 *
 	 *             <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the

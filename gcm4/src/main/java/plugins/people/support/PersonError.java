@@ -15,7 +15,6 @@ public enum PersonError implements ContractError {
 	NEGATIVE_PERSON_ID("Negative person id"),
 	NULL_PERSON_DATA_MANAGER("Null person data manager"),	
 	NULL_AUXILIARY_DATA("Null auxiliary data"),
-	NULL_BULK_PERSON_CONSTRUCTION_DATA("Null bulk person construction data"),
 	NULL_PERSON_CONSTRUCTION_DATA("Null person construction data"),
 	NULL_PERSON_ID("Null person id"),
 	UNKNOWN_PERSON_ID("Unknown person id"),

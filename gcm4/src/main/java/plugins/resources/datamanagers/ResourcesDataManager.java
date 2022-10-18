@@ -187,7 +187,7 @@ public final class ResourcesDataManager extends DataManager {
 
 	/**
 	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for bulk population additions.
+	 * count. Used to more efficiently prepare for multiple population additions.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
@@ -711,29 +711,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain BulkPersonImminentAdditionEvent}<blockquote> Sets each
-	 * person's initial resource levels in the {@linkplain ResourcesDataManager}
-	 * from the ResourceInitialization references in the auxiliary data of the
-	 * event.
-	 * 
-	 * <BR>
-	 * <BR>
-	 * Throws {@link ContractException}
-	 * <ul>
-	 * <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id is null</li>
-	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is
-	 * unknown</li>
-	 * <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the auxiliary data
-	 * contains a ResourceInitialization that has a null resource id</li>
-	 * <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the auxiliary data
-	 * contains a ResourceInitialization that has an unknown resource id</li>
-	 * <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT} if the auxiliary
-	 * data contains a ResourceInitialization that has a negative resource
-	 * level</li>
-	 * </ul>
-	 * 
-	 * </blockquote></li>
-	 * -------------------------------------------------------------------------------
+	 *
 	 * <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the resource
 	 * assignment data for the person from the {@linkplain ResourcesDataManager}
 	 * 

@@ -170,27 +170,6 @@ public final class GroupsDataManager extends DataManager {
 	 * <li>Subscribes to the following events:
 	 * <ul>
 	 * 
-	 * {@linkplain BulkPersonImminentAdditionEvent} Assigns the newly created
-	 * people into newly created groups on the basis of auxiliary data carried
-	 * in the event as a BulkGroupMembershipData. Publishes the groups to the
-	 * person group data view. Generates the corresponding
-	 * {@linkplain GroupAdditionEvent} events. <BR>
-	 * <BR>
-	 * Throws {@link ContractException}
-	 * <ul>
-	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the event contains an
-	 * unknown person id</li>
-	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the BulkMembership data
-	 * exists and contains an unknown person id, i.e. it uses a person
-	 * index</li>
-	 * <li>{@link GroupError#UNKNOWN_GROUP_TYPE_ID} if the BulkMembership data
-	 * exists and contains an unknown group type id</li>
-	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the BulkMembership data
-	 * exists and contains an unknown group property id</li>
-	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the BulkMembership data
-	 * exists and contains an incompatible group property value</li>
-	 * </ul>
-	 * 
 	 * {@linkplain PersonRemovalEvent} Removes the person from all groups by
 	 * scheduling the removal for the current time. This allows references and
 	 * group memberships to remain long enough for resolvers, agents and reports

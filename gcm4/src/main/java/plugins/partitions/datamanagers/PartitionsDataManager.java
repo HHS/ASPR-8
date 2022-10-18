@@ -43,12 +43,6 @@ import util.errors.ContractException;
  * relevant population partitions after event validation and execution phases
  * are complete. </blockquote></li>
  *
- *
- * <li>{@linkplain BulkPersonAdditionEvent} <blockquote>Adds the people to the
- * relevant population partitions after event validation and execution phases
- * are complete. </blockquote></li>
- *
- *
  * <li>{@linkplain PersonRemovalEvent} <blockquote>Removes the person
  * from all population partitions by scheduling the removal for the current
  * time. This allows references and partition memberships to remain long enough
