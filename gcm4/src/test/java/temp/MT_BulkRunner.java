@@ -13,7 +13,7 @@ public class MT_BulkRunner {
 				.setSeed(2227922522174256634L)//
 
 				// people
-				.setLoadMode(LoadMode.SINGULAR)//
+				.setLoadMode(LoadMode.BULK)//
 				.setPopulationSize(10_000_000)//
 
 				// person properties
