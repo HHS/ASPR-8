@@ -43,7 +43,6 @@ import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -1674,55 +1673,6 @@ public final class AT_PartitionsDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		PartitionsActionSupport.testConsumers(100, 6406306513403641718L, testPlugin);
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBulkPersonAdditionEvent() {		
-		PartitionsActionSupport.testConsumer(100, 2561425586247460069L, (c) -> {
-			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			/*
-			 * Create keys for the two population partitions. One that accepts
-			 * people with attribute BOOLEAN_0 = true and the other with
-			 * BOOLEAN_0 = false.
-			 */
-			Object key1 = new Object();
-			Object key2 = new Object();
-
-			// add the partitions
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition1 = Partition.builder().setFilter(filter).build();
-			partitionsDataManager.addPartition(partition1, key1);
-
-			filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, false);
-			Partition partition2 = Partition.builder().setFilter(filter).build();
-			partitionsDataManager.addPartition(partition2, key2);
-
-			// determine the person ids of the people before the bulk addition
-			List<PersonId> priorPeople = peopleDataManager.getPeople();
-
-			// add three new people, by default they will have BOOLEAN_0 = false
-			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personBuilder.build()).add(personBuilder.build()).add(personBuilder.build()).build();
-			peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-
-			// determine the new people who were added
-			List<PersonId> newPeople = peopleDataManager.getPeople();
-			newPeople.removeAll(priorPeople);
-
-			// show that there are three new people
-			assertEquals(3, newPeople.size());
-
-			// show that the new people are not members of partition 1
-			for (PersonId personId : newPeople) {
-				assertFalse(partitionsDataManager.contains(personId, key1));
-			}
-			// show that the new people are members of partition 2
-			for (PersonId personId : newPeople) {
-				assertTrue(partitionsDataManager.contains(personId, key2));
-			}
-		});
 	}
 
 }

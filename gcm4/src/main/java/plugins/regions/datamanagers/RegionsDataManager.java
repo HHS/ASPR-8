@@ -15,10 +15,8 @@ import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -540,38 +538,6 @@ public final class RegionsDataManager extends DataManager {
 		return (T) propertyDefinition.getDefaultValue().get();
 	}
 
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
-		final BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
-		final List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
-
-		final PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
-		validatePersonExists(personId);
-		int pId = personId.getValue();
-
-		for (final PersonConstructionData personConstructionData : personConstructionDatas) {
-			final RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
-			validateRegionId(regionId);
-			final Optional<PersonId> optionalBoxedPersonId = peopleDataManager.getBoxedPersonId(pId);
-			if (!optionalBoxedPersonId.isPresent()) {
-				throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-			}
-			final PersonId boxedPersonId = optionalBoxedPersonId.get();
-			validatePersonNotContained(boxedPersonId);
-
-			final PopulationRecord populationRecord = regionPopulationRecordMap.get(regionId);
-			populationRecord.populationCount++;
-			populationRecord.assignmentTime = dataManagerContext.getTime();
-
-			final Integer regionIndex = regionToIndexMap.get(regionId).intValue();
-			regionValues.setIntValue(boxedPersonId.getValue(), regionIndex);
-
-			if (regionArrivalTimes != null) {
-				regionArrivalTimes.setValue(boxedPersonId.getValue(), dataManagerContext.getTime());
-			}
-			pId++;
-		}
-	}
-
 	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
 		final PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
 		final RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
@@ -777,7 +743,6 @@ public final class RegionsDataManager extends DataManager {
 		}
 
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
-		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}

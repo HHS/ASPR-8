@@ -28,7 +28,6 @@ import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.events.GroupPropertyDefinitionEvent;
 import plugins.groups.events.GroupPropertyUpdateEvent;
 import plugins.groups.events.GroupTypeAdditionEvent;
-import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
@@ -39,9 +38,7 @@ import plugins.groups.support.GroupSampler;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.support.GroupWeightingFunction;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
@@ -233,7 +230,7 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupMembership();
 		loadGroupPropertyValues();
 
-		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonImminentAdditionEvent);
+		
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 		
 	}
@@ -1614,103 +1611,6 @@ public final class GroupsDataManager extends DataManager {
 		}
 		return Optional.ofNullable(selectedPersonId);
 
-	}
-
-	private void handleBulkPersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
-		Optional<BulkGroupMembershipData> optional = bulkPersonConstructionData.getValue(BulkGroupMembershipData.class);
-		if (optional.isPresent()) {
-			int personCount = bulkPersonConstructionData.getPersonCount();
-			int basePersonIndex = bulkPersonImminentAdditionEvent.getPersonId().getValue();
-
-			BulkGroupMembershipData bulkGroupMembershipData = optional.get();
-			List<GroupTypeId> groupTypeIds = bulkGroupMembershipData.getGroupTypeIds();
-
-			if (bulkGroupMembershipData.getPersonCount() > personCount) {
-				throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-			}
-
-			boolean groupCreationSubscribersExist = dataManagerContext.subscribersExist(GroupAdditionEvent.class);
-
-			int groupCount = groupTypeIds.size();
-			List<GroupId> newGroups = new ArrayList<>(groupCount);
-			for (int i = 0; i < groupCount; i++) {
-				GroupTypeId groupTypeId = groupTypeIds.get(i);
-
-				final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
-				if (typeIndex == null) {
-					validateGroupTypeId(groupTypeId);
-				}
-				List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
-				if (groups == null) {
-					groups = new ArrayList<>();
-					typesToGroupsMap.setValue(typeIndex, groups);
-				}
-				GroupId groupId = new GroupId(masterGroupId++);
-
-				groups.add(groupId);
-				groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
-
-				newGroups.add(groupId);
-
-				boolean performCoverageCheck = !nonDefaultBearingPropertyIds.get(groupTypeId).isEmpty();
-
-				if (performCoverageCheck) {
-					clearNonDefaultChecks(groupTypeId);
-					for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
-						markAssigned(groupTypeId, groupPropertyId);
-						Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
-						final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-						if (propertyDefinition == null) {
-							validateGroupPropertyId(groupTypeId, groupPropertyId);
-						}
-						validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
-						final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
-						final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-						indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-					}
-					verifyNonDefaultChecks(groupTypeId);
-				} else {
-					for (GroupPropertyId groupPropertyId : bulkGroupMembershipData.getGroupPropertyIds(i)) {
-						Object groupPropertyValue = bulkGroupMembershipData.getGroupPropertyValue(i, groupPropertyId).get();
-						final PropertyDefinition propertyDefinition = groupPropertyDefinitions.get(groupTypeId).get(groupPropertyId);
-						if (propertyDefinition == null) {
-							validateGroupPropertyId(groupTypeId, groupPropertyId);
-						}
-						validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
-						final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
-						final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-						indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-					}
-				}
-				if (groupCreationSubscribersExist) {
-					dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
-				}
-			}
-
-			for (int personIndex = 0; personIndex < personCount; personIndex++) {
-				PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(personIndex + basePersonIndex).get();
-				List<Integer> groupIndices = bulkGroupMembershipData.getGroupIndicesForPersonIndex(personIndex);
-				if (!groupIndices.isEmpty()) {
-					List<GroupId> groups = peopleToGroupsMap.getValue(boxedPersonId.getValue());
-					if (groups == null) {
-						groups = new ArrayList<>(1);
-						peopleToGroupsMap.setValue(boxedPersonId.getValue(), groups);
-					}
-
-					for (Integer groupIndex : groupIndices) {
-						GroupId groupId = newGroups.get(groupIndex);
-						groups.add(groupId);
-						List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-						if (people == null) {
-							people = new ArrayList<>();
-							groupsToPeopleMap.setValue(groupId.getValue(), people);
-						}
-						people.add(boxedPersonId);
-					}
-				}
-			}
-		}
 	}
 
 	/**

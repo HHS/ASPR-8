@@ -24,13 +24,10 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -228,69 +225,6 @@ public final class AT_PeopleDataManager {
 		// show that the expected and acutual observations match
 		assertEquals(expectedPersonIds, observedPersonIds);
 		assertEquals(expectedPersonIds, observedImminentPersonIds);
-	}
-
-	@Test
-	@UnitTestMethod(name = "addBulkPeople", args = { BulkPersonConstructionData.class })
-	public void testAddBulkPeople() {
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// create containers to hold observations
-		Set<PersonId> expectedBulkAddedPeople = new LinkedHashSet<>();
-		Set<PersonId> observedBulkAddedPeople = new LinkedHashSet<>();
-		Set<BulkPersonConstructionData> observedBulkPersonConstructionData = new LinkedHashSet<>();
-		Set<BulkPersonConstructionData> expectedBulkPersonConstructionData = new LinkedHashSet<>();
-
-		// generate three BulkPersonConstructionData instances that contain
-		// unique data
-		int uniqueId = 0;
-		for (int i = 0; i < 3; i++) {
-			BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-			for (int j = 0; j < 10; j++) {
-				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(uniqueId++).build();
-				bulkBuilder.add(personConstructionData);
-			}
-			expectedBulkPersonConstructionData.add(bulkBuilder.build());
-		}
-
-		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(EventFilter.builder(BulkPersonImminentAdditionEvent.class).build(), (c2, e) -> observedBulkPersonConstructionData.add(e.getBulkPersonConstructionData()));
-			c.subscribe(EventFilter.builder(BulkPersonAdditionEvent.class).build(), (c2, e) -> observedBulkAddedPeople.addAll(e.getPeople()));
-		}));
-
-		// have the agent add a bulk people and show the people were added
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			for (BulkPersonConstructionData bulkPersonConstructionData : expectedBulkPersonConstructionData) {
-				List<PersonId> priorPeople = peopleDataManager.getPeople();
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-
-				List<PersonId> postPeople = peopleDataManager.getPeople();
-				postPeople.removeAll(priorPeople);
-				int expectedNewPeople = bulkPersonConstructionData.getPersonConstructionDatas().size();
-				assertEquals(expectedNewPeople, postPeople.size());
-
-				expectedBulkAddedPeople.addAll(postPeople);
-			}
-		}));
-
-		// precondition tests
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addBulkPeople(null));
-			assertEquals(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
-		}));
-
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
-
-		PeopleActionSupport.testConsumers(plugin);
-
-		// show that the expected and acutual observations match
-		assertEquals(expectedBulkPersonConstructionData, observedBulkPersonConstructionData);
-		assertEquals(expectedBulkAddedPeople, observedBulkAddedPeople);
-
 	}
 
 	@Test

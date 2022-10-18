@@ -8,7 +8,6 @@ import java.util.Set;
 import nucleus.ActorContext;
 import nucleus.EventFilter;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
@@ -164,16 +163,6 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handleBulkPersonAdditionEvent(ActorContext context, BulkPersonAdditionEvent bulkPersonAdditionEvent) {
-		for (PersonId personId : bulkPersonAdditionEvent.getPeople()) {
-			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-			for (final PersonPropertyId personPropertyId : personPropertyIds) {
-				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
-				increment(regionId, personPropertyId, personPropertyValue);
-			}
-		}
-	}
-
 	private void handlePersonPropertyUpdateEvent(ActorContext context, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonPropertyId personPropertyId = personPropertyUpdateEvent.getPersonPropertyId();
 		if (personPropertyIds.contains(personPropertyId)) {
@@ -229,7 +218,6 @@ public final class PersonPropertyReport extends PeriodicReport {
 		super.init(actorContext);
 
 		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		
 		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);

@@ -23,7 +23,6 @@ import plugins.partitions.support.PartitionSampler;
 import plugins.partitions.support.PopulationPartition;
 import plugins.partitions.support.PopulationPartitionImpl;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
 import plugins.people.support.PersonError;
@@ -375,8 +374,6 @@ public final class PartitionsDataManager extends DataManager {
 
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
-		dataManagerContext.subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
-
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}
@@ -422,29 +419,6 @@ public final class PartitionsDataManager extends DataManager {
 			final PopulationPartition populationPartition = getPopulationPartition(key);
 			populationPartition.attemptPersonAddition(personId);
 		}
-	}
-
-	/*
-	 * Returns true if and only if there are not population partitions contained
-	 * in this manager.
-	 */
-	private boolean isEmpty() {
-		return keyToPopulationPartitionMap.isEmpty();
-	}
-
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonAdditionEvent bulkPersonAdditionEvent) {
-		if (isEmpty()) {
-			return;
-		}
-		final List<PersonId> personIds = bulkPersonAdditionEvent.getPeople();
-		final Set<Object> partitionIds = getKeys();
-		for (final Object key : partitionIds) {
-			final PopulationPartition populationPartition = getPopulationPartition(key);
-			for (final PersonId personId : personIds) {
-				populationPartition.attemptPersonAddition(personId);
-			}
-		}
-
 	}
 
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {

@@ -15,10 +15,8 @@ import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -846,7 +844,6 @@ public final class ResourcesDataManager extends DataManager {
 
 		dataManagerContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
-		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 	}
 
@@ -1316,32 +1313,6 @@ public final class ResourcesDataManager extends DataManager {
 
 		for (final ResourceInitialization resourceAssignment : resourceAssignments) {
 			incrementPersonResourceLevel(resourceAssignment.getResourceId(), personId, resourceAssignment.getAmount());
-		}
-	}
-
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
-		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
-		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
-		for (PersonConstructionData personConstructionData : personConstructionDatas) {
-			List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);
-			for (final ResourceInitialization resourceAssignment : resourceAssignments) {
-				ResourceId resourceId = resourceAssignment.getResourceId();
-				Long amount = resourceAssignment.getAmount();
-				validateResourceId(resourceId);
-				validateNonnegativeResourceAmount(amount);
-			}
-		}
-
-		int pId = personId.getValue();
-
-		for (PersonConstructionData personConstructionData : personConstructionDatas) {
-			List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);
-			PersonId boxedPersonId = peopleDataManager.getBoxedPersonId(pId).get();
-			for (final ResourceInitialization resourceAssignment : resourceAssignments) {
-				incrementPersonResourceLevel(resourceAssignment.getResourceId(), boxedPersonId, resourceAssignment.getAmount());
-			}
-			pId++;
 		}
 	}
 

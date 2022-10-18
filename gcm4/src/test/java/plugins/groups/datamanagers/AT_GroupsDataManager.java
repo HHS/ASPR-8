@@ -40,7 +40,6 @@ import plugins.groups.events.GroupMembershipRemovalEvent;
 import plugins.groups.events.GroupPropertyDefinitionEvent;
 import plugins.groups.events.GroupPropertyUpdateEvent;
 import plugins.groups.events.GroupTypeAdditionEvent;
-import plugins.groups.support.BulkGroupMembershipData;
 import plugins.groups.support.GroupConstructionInfo;
 import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
@@ -58,7 +57,6 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -2229,199 +2227,6 @@ public class AT_GroupsDataManager {
 
 	@Test
 	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
-	public void testBulkPersonAdditionEvent() {
-
-		// create structures to hold observations
-		Set<GroupId> expectedGroupObservations = new LinkedHashSet<>();
-		Set<GroupId> actualGroupObservations = new LinkedHashSet<>();
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-
-		// add an observer that will observe the new groups being created as
-		// well as the people being added to the groups
-
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(EventFilter.builder(GroupAdditionEvent.class).build(), (c2, e) -> {
-				actualGroupObservations.add(e.getGroupId());
-			});
-
-		}));
-
-		/*
-		 * Have an agent add several people via bulk person creation that
-		 * includes group associations.
-		 *
-		 * Show that groups were added and the people are in the new groups and
-		 * thus the resolver must have handled the corresponding
-		 * BulkPersonAdditionEvent.
-		 */
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-			// establish data views and how many people and groups already exist
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			int personIdOffest = peopleDataManager.getPopulationCount();
-
-			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			int groupIdOffset = groupsDataManager.getGroupIds().size();
-
-			// create a bulk construction event with 5 new people and 4 new
-			// groups
-			BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
-			PersonConstructionData.Builder peopleBuilder = PersonConstructionData.builder();
-			BulkGroupMembershipData.Builder membershipBuilder = BulkGroupMembershipData.builder();
-
-			// add 5 people
-			builder.add(peopleBuilder.build());
-			builder.add(peopleBuilder.build());
-			builder.add(peopleBuilder.build());
-			builder.add(peopleBuilder.build());
-			builder.add(peopleBuilder.build());
-
-			// add 4 groups
-			membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-			membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_2);
-			membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_3);
-			membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-
-			// record the expected group observations
-			expectedGroupObservations.add(new GroupId(groupIdOffset + 0));
-			expectedGroupObservations.add(new GroupId(groupIdOffset + 1));
-			expectedGroupObservations.add(new GroupId(groupIdOffset + 2));
-			expectedGroupObservations.add(new GroupId(groupIdOffset + 3));
-
-			// assign the people to the groups
-			membershipBuilder.addPersonToGroup(0, 0);
-			membershipBuilder.addPersonToGroup(0, 1);
-			membershipBuilder.addPersonToGroup(0, 2);
-			membershipBuilder.addPersonToGroup(2, 0);
-			membershipBuilder.addPersonToGroup(2, 1);
-			membershipBuilder.addPersonToGroup(3, 2);
-
-			builder.addAuxiliaryData(membershipBuilder.build());
-			BulkPersonConstructionData bulkPersonConstructionData = builder.build();
-			peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-
-			// show that the groups exist and have the appropriate people
-
-			GroupId groupId = new GroupId(0 + groupIdOffset);
-			assertTrue(groupsDataManager.groupExists(groupId));
-			assertEquals(TestGroupTypeId.GROUP_TYPE_1, groupsDataManager.getGroupType(groupId));
-			assertEquals(2, groupsDataManager.getPersonCountForGroup(groupId));
-			assertTrue(groupsDataManager.isPersonInGroup(new PersonId(personIdOffest + 0), groupId));
-			assertTrue(groupsDataManager.isPersonInGroup(new PersonId(personIdOffest + 2), groupId));
-
-			groupId = new GroupId(1 + groupIdOffset);
-			assertTrue(groupsDataManager.groupExists(groupId));
-			assertEquals(TestGroupTypeId.GROUP_TYPE_2, groupsDataManager.getGroupType(groupId));
-			assertEquals(2, groupsDataManager.getPersonCountForGroup(groupId));
-			assertTrue(groupsDataManager.isPersonInGroup(new PersonId(personIdOffest + 0), groupId));
-			assertTrue(groupsDataManager.isPersonInGroup(new PersonId(personIdOffest + 2), groupId));
-
-			groupId = new GroupId(2 + groupIdOffset);
-			assertTrue(groupsDataManager.groupExists(groupId));
-			assertEquals(TestGroupTypeId.GROUP_TYPE_3, groupsDataManager.getGroupType(groupId));
-			assertEquals(2, groupsDataManager.getPersonCountForGroup(groupId));
-			assertTrue(groupsDataManager.isPersonInGroup(new PersonId(personIdOffest + 0), groupId));
-			assertTrue(groupsDataManager.isPersonInGroup(new PersonId(personIdOffest + 3), groupId));
-
-			groupId = new GroupId(3 + groupIdOffset);
-			assertTrue(groupsDataManager.groupExists(groupId));
-			assertEquals(TestGroupTypeId.GROUP_TYPE_1, groupsDataManager.getGroupType(groupId));
-			assertEquals(0, groupsDataManager.getPersonCountForGroup(groupId));
-
-		}));
-
-		// have the observer verify the observations
-		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(3, (c) -> {
-			assertEquals(expectedGroupObservations, actualGroupObservations);
-		}));
-
-		/*
-		 * Initialize with some people and groups
-		 */
-		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		GroupsActionSupport.testConsumers(10, 3, 5, 4483791915301705904L, testPlugin);
-
-		/*
-		 * precondition test: if the BulkMembership data exists and contains an
-		 * unknown person id
-		 */
-		GroupsActionSupport.testConsumer(10, 3, 5, 3738915539234400027L, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> {
-				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
-				PersonConstructionData.Builder peopleBuilder = PersonConstructionData.builder();
-				BulkGroupMembershipData.Builder membershipBuilder = BulkGroupMembershipData.builder();
-				builder.add(peopleBuilder.build());
-				membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				membershipBuilder.addPersonToGroup(1, 0);
-				builder.addAuxiliaryData(membershipBuilder.build());
-				BulkPersonConstructionData bulkPersonConstructionData = builder.build();
-				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-			});
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-		});
-
-		/*
-		 * precondition test: if the BulkMembership data exists and contains an
-		 * unknown group type id
-		 */
-		GroupsActionSupport.testConsumer(10, 3, 5, 5431888419388886834L, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> {
-				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
-				PersonConstructionData.Builder peopleBuilder = PersonConstructionData.builder();
-				BulkGroupMembershipData.Builder membershipBuilder = BulkGroupMembershipData.builder();
-				builder.add(peopleBuilder.build());
-				membershipBuilder.addGroup(TestGroupTypeId.getUnknownGroupTypeId());
-				builder.addAuxiliaryData(membershipBuilder.build());
-				BulkPersonConstructionData bulkPersonConstructionData = builder.build();
-				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-			});
-			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-		});
-
-		/*
-		 * precondition test: if the BulkMembership data exists and contains an
-		 * unknown group property id
-		 */
-		GroupsActionSupport.testConsumer(10, 3, 5, 5431888419388886834L, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> {
-				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
-				BulkGroupMembershipData.Builder membershipBuilder = BulkGroupMembershipData.builder();
-				builder.add(PersonConstructionData.builder().build());
-				membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				membershipBuilder.setGroupPropertyValue(0, TestGroupPropertyId.getUnknownGroupPropertyId(), 5);
-				builder.addAuxiliaryData(membershipBuilder.build());
-				BulkPersonConstructionData bulkPersonConstructionData = builder.build();
-				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-			});
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
-		});
-
-		/*
-		 * precondition test: if the BulkMembership data exists and contains an
-		 * incompatible group property value
-		 */
-		GroupsActionSupport.testConsumer(10, 3, 5, 5431888419388886834L, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> {
-				BulkPersonConstructionData.Builder builder = BulkPersonConstructionData.builder();
-				BulkGroupMembershipData.Builder membershipBuilder = BulkGroupMembershipData.builder();
-				builder.add(PersonConstructionData.builder().build());
-				membershipBuilder.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-				membershipBuilder.setGroupPropertyValue(0, TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, 5);
-				builder.addAuxiliaryData(membershipBuilder.build());
-				BulkPersonConstructionData bulkPersonConstructionData = builder.build();
-				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-			});
-			assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
-		});
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
 	public void testPersonRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2545,10 +2350,9 @@ public class AT_GroupsDataManager {
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 
-		BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-		for (int i = 0; i < initialPopulation; i++) {
-			bulkBuilder.add(PersonConstructionData.builder().build());
-		}
+		for (PersonId personId : people) {
+			peopleBuilder.addPersonId(personId);
+		}		
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 

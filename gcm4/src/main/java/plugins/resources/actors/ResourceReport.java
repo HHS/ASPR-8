@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import nucleus.ActorContext;
 import nucleus.EventFilter;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
@@ -196,17 +195,6 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handleBulkPersonAdditionEvent(ActorContext actorContext, BulkPersonAdditionEvent bulkPersonAdditionEvent) {
-		for (PersonId personId : bulkPersonAdditionEvent.getPeople()) {
-			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-			for (final ResourceId resourceId : resourceIds) {
-				final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
-				if (personResourceLevel > 0) {
-					increment(regionId, resourceId, Activity.PERSON_ARRIVAL, personResourceLevel);
-				}
-			}
-		}
-	}
 
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
@@ -328,7 +316,6 @@ public final class ResourceReport extends PeriodicReport {
 		super.init(actorContext);
 
 		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);		
 		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 		subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);

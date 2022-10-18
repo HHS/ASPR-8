@@ -16,10 +16,8 @@ import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.SimulationContext;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -201,7 +199,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		}
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
-		dataManagerContext.subscribe(BulkPersonImminentAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 	}
 
@@ -636,52 +633,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 			}
 			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, sb.toString());
 		}
-	}
-
-	private void handleBulkPersonAdditionEvent(final DataManagerContext dataManagerContext, final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent) {
-		PersonId personId = bulkPersonImminentAdditionEvent.getPersonId();
-		int pId = personId.getValue();
-
-		BulkPersonConstructionData bulkPersonConstructionData = bulkPersonImminentAdditionEvent.getBulkPersonConstructionData();
-
-		List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
-
-		if (nonDefaultBearingPropertyIds.isEmpty()) {
-			for (PersonConstructionData personConstructionData : personConstructionDatas) {
-				List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
-				for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
-					PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
-					final Object personPropertyValue = personPropertyAssignment.getValue();
-					validatePersonPropertyId(personPropertyId);
-					validatePersonPropertyValueNotNull(personPropertyValue);
-					final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-					validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-					IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-					propertyManager.setPropertyValue(pId, personPropertyValue);
-				}
-				pId++;
-			}
-		} else {
-			for (PersonConstructionData personConstructionData : personConstructionDatas) {
-				clearNonDefaultChecks();
-				List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
-				for (final PersonPropertyInitialization personPropertyAssignment : personPropertyAssignments) {
-					PersonPropertyId personPropertyId = personPropertyAssignment.getPersonPropertyId();
-					markAssigned(personPropertyId);
-					final Object personPropertyValue = personPropertyAssignment.getValue();
-					validatePersonPropertyId(personPropertyId);
-					validatePersonPropertyValueNotNull(personPropertyValue);
-					final PropertyDefinition propertyDefinition = personPropertyDefinitions.get(personPropertyId);
-					validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-					IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
-					propertyManager.setPropertyValue(pId, personPropertyValue);
-				}
-				verifyNonDefaultChecks();
-				pId++;
-			}
-
-		}
-
 	}
 
 	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {

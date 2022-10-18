@@ -9,13 +9,10 @@ import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.NucleusError;
 import plugins.people.PeoplePluginData;
-import plugins.people.events.BulkPersonAdditionEvent;
-import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -51,40 +48,7 @@ public final class PeopleDataManager extends DataManager {
 
 	private final PopulationRecord globalPopulationRecord = new PopulationRecord();
 
-	/**
-	 * Returns a new person id that has been added to the simulation. The
-	 * returned PersonId is unique and will wrap the int value returned by
-	 * getPersonIdLimit() just prior to invoking this method.
-	 *
-	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA} if
-	 *             the person construction data is null</li>
-	 *
-	 */
-	public Optional<PersonId> addBulkPeople(final BulkPersonConstructionData bulkPersonConstructionData) {
-		validateBulkPersonConstructionData(bulkPersonConstructionData);
-
-		final List<PersonConstructionData> personConstructionDatas = bulkPersonConstructionData.getPersonConstructionDatas();
-		PersonId result = null;
-		final int count = personConstructionDatas.size();
-		if (count > 0) {
-			BulkPersonAdditionEvent.Builder eventBuilder = BulkPersonAdditionEvent.builder();
-			for (int i = 0; i < count; i++) {
-				final PersonId personId = addPersonId();
-				eventBuilder.addPersonId(personId);
-				if (result == null) {
-					result = personId;
-				}
-			}
-			BulkPersonAdditionEvent bulkPersonAdditionEvent = eventBuilder.build();
-
-			final BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(result, bulkPersonConstructionData);
-			dataManagerContext.releaseEvent(bulkPersonImminentAdditionEvent);
-			dataManagerContext.releaseEvent(bulkPersonAdditionEvent);
-		}
-
-		return Optional.ofNullable(result);
-	}
+	
 
 	/**
 	 * Returns a new person id that has been added to the simulation. The
@@ -282,12 +246,6 @@ public final class PeopleDataManager extends DataManager {
 
 	}
 
-	private void validateBulkPersonConstructionData(final BulkPersonConstructionData bulkPersonConstructionData) {
-		if (bulkPersonConstructionData == null) {
-			throw new ContractException(PersonError.NULL_BULK_PERSON_CONSTRUCTION_DATA);
-		}
-	}
-
 	private void validatePersonConstructionDataNotNull(final PersonConstructionData personConstructionData) {
 		if (personConstructionData == null) {
 			throw new ContractException(PersonError.NULL_PERSON_CONSTRUCTION_DATA);
@@ -303,14 +261,6 @@ public final class PeopleDataManager extends DataManager {
 		}
 	}
 	
-	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link BulkPersonAdditionEvent} events. Matches all such events.
-	 */
-	public EventFilter<BulkPersonAdditionEvent> getEventFilterForBulkPersonAdditionEvent() {
-		return EventFilter	.builder(BulkPersonAdditionEvent.class)//
-							.build();
-	}
 	
 	/**
 	 * Returns an event filter used to subscribe to

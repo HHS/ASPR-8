@@ -5,7 +5,6 @@ import java.util.Map;
 
 import nucleus.ActorContext;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonAdditionEvent;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -91,12 +90,6 @@ public final class RegionTransferReport extends PeriodicReport {
 
 	}
 
-	private void handleBulkPersonAdditionEvent(ActorContext ActorContext, BulkPersonAdditionEvent bulkPersonAdditionEvent) {
-		for (PersonId personId : bulkPersonAdditionEvent.getPeople()) {			
-			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-			increment(regionId, regionId);
-		}
-	}
 
 	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
@@ -131,7 +124,6 @@ public final class RegionTransferReport extends PeriodicReport {
 
 		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		subscribe(BulkPersonAdditionEvent.class, this::handleBulkPersonAdditionEvent);
 
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);

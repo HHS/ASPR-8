@@ -34,10 +34,8 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.BulkPersonImminentAdditionEvent;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -2418,127 +2416,6 @@ public class AT_RegionsDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		RegionsActionSupport.testConsumers(0, 1033803161227361793L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
-
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
-	public void testBulkPersonAdditionEvent() {
-
-		/*
-		 * Have the agent create some people over time and show that each person
-		 * is in the correct region at the correct time
-		 */
-		RegionsActionSupport.testConsumer(0, 2654453328570666100L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			for (int i = 0; i < 100; i++) {
-				c.addPlan((c2) -> {
-					StochasticsDataManager stochasticsDataManager2 = c2.getDataManager(StochasticsDataManager.class);
-					RegionsDataManager regionsDataManager = c2.getDataManager(RegionsDataManager.class);
-					PeopleDataManager peopleDataManager = c2.getDataManager(PeopleDataManager.class);
-
-					RandomGenerator rng = stochasticsDataManager2.getRandomGenerator();
-					/*
-					 * Generate a random region to for each new person and add
-					 * the person
-					 */
-					Map<Integer, RegionId> expectedRegions = new LinkedHashMap<>();
-					BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-					PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
-					int personCount = rng.nextInt(5) + 1;
-
-					for (int j = 0; j < personCount; j++) {
-						RegionId randomRegionId = TestRegionId.getRandomRegionId(rng);
-						personBuilder.add(randomRegionId);
-						expectedRegions.put(j, randomRegionId);
-						bulkBuilder.add(personBuilder.build());
-					}
-					BulkPersonConstructionData bulkPersonConstructionData = bulkBuilder.build();
-					PersonId personId = peopleDataManager.addBulkPeople(bulkPersonConstructionData).get();
-
-					int basePersonIndex = personId.getValue();
-
-					/*
-					 * Show that each person is in the correct region with the
-					 * correct region arrival time
-					 */
-					for (int j = 0; j < personCount; j++) {
-						personId = new PersonId(j + basePersonIndex);
-						RegionId personRegionId = regionsDataManager.getPersonRegion(personId);
-						RegionId randomRegionId = expectedRegions.get(j);
-						assertEquals(randomRegionId, personRegionId);
-						assertEquals(c2.getTime(), regionsDataManager.getPersonRegionArrivalTime(personId));
-					}
-
-				}, randomGenerator.nextDouble() * 1000);
-			}
-
-		});
-
-		// precondition check:
-		// precondition check: if no region data was included in the event
-		RegionsActionSupport.testConsumer(0, 7059505726403414171L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addBulkPeople(bulkPersonConstructionData));
-			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-		});
-
-		// precondition check: if the region in the event is unknown
-		RegionsActionSupport.testConsumer(0, 5120242925932651968L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.getUnknownRegionId()).build();
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addBulkPeople(bulkPersonConstructionData));
-			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
-		});
-
-		// precondition check: if the person id does not exist
-		/*
-		 * Note : it is not possible to force the PersonDataManager to release
-		 * such an event, so we release it from an actor
-		 */
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
-		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(new PersonId(45), bulkPersonConstructionData);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonImminentAdditionEvent));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-
-		}));
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		RegionsActionSupport.testConsumers(0, 5968783102821781999L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
-
-		// precondition check: if the person was previously added
-		/*
-		 * Note : it is not possible to force the PersonDataManager to release
-		 * such an event, so we release it from an actor
-		 */
-		pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
-		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
-			PersonId personId = peopleDataManager.addPerson(personConstructionData);
-
-			BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-			BulkPersonImminentAdditionEvent bulkPersonImminentAdditionEvent = new BulkPersonImminentAdditionEvent(personId, bulkPersonConstructionData);
-
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(bulkPersonImminentAdditionEvent));
-			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
-
-		}));
-		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
-		testPluginData = pluginDataBuilder.build();
-		testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		RegionsActionSupport.testConsumers(0, 8092390328840929050L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
 
 	}
 

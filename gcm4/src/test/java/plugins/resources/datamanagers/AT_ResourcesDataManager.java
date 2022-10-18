@@ -28,7 +28,6 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.BulkPersonConstructionData;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -2588,124 +2587,6 @@ public final class AT_ResourcesDataManager {
 			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 
 		});
-	}
-
-	@Test
-	@UnitTestMethod(name = "init", args = {})
-	public void testBulkPersonAdditionEvent() {
-
-		// Have an actor create a few people with random resource levels in a
-		// bulk construction request
-		ResourcesActionSupport.testConsumer(0, 1373835434254978465L, (c) -> {
-			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			// prepare builders
-			BulkPersonConstructionData.Builder bulkBuilder = BulkPersonConstructionData.builder();
-			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();
-			// create a map to hold expected resource levels
-			Map<Integer, Map<ResourceId, MutableInteger>> expectedResources = new LinkedHashMap<>();
-
-			int numberOfPeople = 30;
-
-			// add the people to the construction data
-			for (int i = 0; i < numberOfPeople; i++) {
-				// build the map of expected resources for the person
-				Map<ResourceId, MutableInteger> expectationForPerson = new LinkedHashMap<>();
-				expectedResources.put(i, expectationForPerson);
-				// assign a region to the person
-				personBuilder.add(TestRegionId.getRandomRegionId(randomGenerator));
-				// give the person a positive resource level for about half of
-				// the resources
-				for (TestResourceId testResourceId : TestResourceId.values()) {
-					MutableInteger mutableInteger = new MutableInteger();
-					expectationForPerson.put(testResourceId, mutableInteger);
-					if (randomGenerator.nextBoolean()) {
-						int amount = randomGenerator.nextInt(30) + 1;
-						mutableInteger.setValue(amount);
-						ResourceInitialization resourceInitialization = new ResourceInitialization(testResourceId, (long) amount);
-						personBuilder.add(resourceInitialization);
-					}
-				}
-				bulkBuilder.add(personBuilder.build());
-			}
-
-			// create the people which will in turn generate the
-			// BulkPersonAdditionEvent
-			int personIdOffset = peopleDataManager.addBulkPeople(bulkBuilder.build()).get().getValue();
-
-			// show that each person has the correct resource levels
-			for (int i = 0; i < numberOfPeople; i++) {
-				Map<ResourceId, MutableInteger> expectationForPerson = expectedResources.get(i);
-				PersonId personId = new PersonId(personIdOffset + i);
-				for (TestResourceId testResourceId : TestResourceId.values()) {
-					int actualPersonResourceLevel = (int) resourcesDataManager.getPersonResourceLevel(testResourceId, personId);
-					int expectedPersonResourceLevel = expectationForPerson.get(testResourceId).getValue();
-					assertEquals(expectedPersonResourceLevel, actualPersonResourceLevel);
-				}
-			}
-
-		});
-
-		/*
-		 * Precondition tests for the validity of the person id are shadowed by
-		 * other plugins and cannot be easily tested
-		 */
-
-		/*
-		 * precondition test: if the auxiliary data contains a
-		 * ResourceInitialization that has a null resource id
-		 */
-		ResourcesActionSupport.testConsumer(0, 4090942440102620995L, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> {
-				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
-
-																						.add(TestRegionId.REGION_1)//
-																						.add(new ResourceInitialization(null, 15L))//
-																						.build();//
-				BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-			});
-			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-		});
-
-		/*
-		 * precondition test: if the auxiliary data contains a
-		 * ResourceInitialization that has an unknown resource id
-		 */
-		ResourcesActionSupport.testConsumer(0, 4932056019543858717L, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> {
-				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
-																						.add(TestRegionId.REGION_2)//
-																						.add(new ResourceInitialization(TestResourceId.getUnknownResourceId(), 15L))//
-																						.build();//
-				BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-			});
-			assertEquals(ResourceError.UNKNOWN_RESOURCE_ID, contractException.getErrorType());
-		});
-
-		/*
-		 * precondition test: if the auxiliary data contains a
-		 * ResourceInitialization that has a negative resource level
-		 */
-		ResourcesActionSupport.testConsumer(0, 4192802703078518338L, (c) -> {
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> {
-				PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
-																						.add(TestRegionId.REGION_3)//
-																						.add(new ResourceInitialization(TestResourceId.RESOURCE_1, -15L))//
-																						.build();//
-				BulkPersonConstructionData bulkPersonConstructionData = BulkPersonConstructionData.builder().add(personConstructionData).build();
-				peopleDataManager.addBulkPeople(bulkPersonConstructionData);
-			});
-			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
-		});
-
 	}
 
 	@Test
