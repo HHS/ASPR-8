@@ -375,8 +375,9 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		if (scaffold.includeNewProperties) {
-			subscribe(GroupTypeAdditionEvent.class, this::handleGroupTypeAdditionEvent);
-			subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
+				
+			subscribe(groupsDataManager.getEventFilterForGroupTypeAdditionEvent(), this::handleGroupTypeAdditionEvent);
+			subscribe(groupsDataManager.getEventFilterForGroupPropertyDefinitionEvent(), this::handleGroupPropertyDefinitionEvent);
 		}
 
 	}

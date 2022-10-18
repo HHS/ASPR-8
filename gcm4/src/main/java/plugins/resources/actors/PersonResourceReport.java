@@ -256,16 +256,16 @@ public final class PersonResourceReport extends PeriodicReport {
 	@Override
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
-
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
-
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
-		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+
+		
+		subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
+		subscribe(peopleDataManager.getEventFilterForPersonImminentRemovalEvent(), this::handlePersonImminentRemovalEvent);
+		subscribe(regionsDataManager.getEventFilterForPersonRegionUpdateEvent(), this::handlePersonRegionUpdateEvent);
+		subscribe(regionsDataManager.getEventFilterForRegionAdditionEvent(), this::handleRegionAdditionEvent);
+
 
 		/*
 		 * If no resources were selected, then assume that all are desired.
@@ -288,8 +288,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		// event, otherwise subscribe to each resource id
 		if (resourceIds.equals(resourcesDataManager.getResourceIds())) {
 			EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent();
-			subscribe(eventFilter, this::handlePersonResourceUpdateEvent);
-			subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+			subscribe(eventFilter, this::handlePersonResourceUpdateEvent);			
+			subscribe(resourcesDataManager.getEventFilterForResourceIdAdditionEvent(), this::handleResourceIdAdditionEvent);
 		} else {
 			for (ResourceId resourceId : resourceIds) {
 				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(resourceId);

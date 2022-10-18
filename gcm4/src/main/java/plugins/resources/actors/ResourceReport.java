@@ -314,17 +314,18 @@ public final class ResourceReport extends PeriodicReport {
 	@Override
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
-
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-		subscribe(RegionResourceUpdateEvent.class, this::handleRegionResourceUpdateEvent);
-		subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
-
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
-		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+		
+		
+		
+		subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
+		subscribe(peopleDataManager.getEventFilterForPersonImminentRemovalEvent(), this::handlePersonImminentRemovalEvent);
+		subscribe(regionsDataManager.getEventFilterForPersonRegionUpdateEvent(), this::handlePersonRegionUpdateEvent);
+		subscribe(resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(), this::handleRegionResourceUpdateEvent);
+		subscribe(regionsDataManager.getEventFilterForRegionAdditionEvent(), this::handleRegionAdditionEvent);
+
 
 		if (resourceIds.size() == 0) {
 			resourceIds.addAll(resourcesDataManager.getResourceIds());
@@ -352,7 +353,8 @@ public final class ResourceReport extends PeriodicReport {
 			}
 		}
 
-		subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
+		
+		subscribe(resourcesDataManager.getEventFilterForResourceIdAdditionEvent(), this::handleResourceIdAdditionEvent);
 
 		/*
 		 * Filling the region map with empty counters

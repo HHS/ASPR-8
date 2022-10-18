@@ -236,14 +236,15 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
-
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+
+		
+		subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
+		subscribe(peopleDataManager.getEventFilterForPersonImminentRemovalEvent(), this::handlePersonImminentRemovalEvent);
+		subscribe(regionsDataManager.getEventFilterForPersonRegionUpdateEvent(), this::handlePersonRegionUpdateEvent);
+
 
 		/*
 		 * if the client did not choose any properties, then we assume that all

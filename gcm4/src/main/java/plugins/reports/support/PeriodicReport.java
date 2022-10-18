@@ -231,20 +231,6 @@ public abstract class PeriodicReport {
 		actorContext.subscribe(eventFilter, getFlushingConsumer(eventConsumer));
 	}
 
-	/**
-	 * Subscribes the report to the given event via the actor context while
-	 * enforcing the flushing of report items as needed.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
-	 *             consumer is null
-	 * 
-	 */
-	protected final <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ActorContext, T> eventConsumer) {
-		actorContext.subscribe(EventFilter.builder(eventClass).build(), getFlushingConsumer(eventConsumer));
-	}
+	
 
 }
