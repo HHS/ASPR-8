@@ -20,10 +20,11 @@ package tools.meta;
 //
 //import org.junit.jupiter.api.Test;
 //
-//import util.TimeElapser;
-//import util.annotations.UnitTest;
-//import util.annotations.UnitTestConstructor;
-//import util.annotations.UnitTestMethod;
+//import tools.annotations.UnitTest;
+//import tools.annotations.UnitTestConstructor;
+//import tools.annotations.UnitTestMethod;
+//import util.time.TimeElapser;
+
 
 /**
  * A script covering the details of the GCM Test Plan. It produces a console
@@ -179,7 +180,7 @@ public class TestPlan {
 //			addRec &= !(Modifier.isAbstract(method.getModifiers()) && c.isInterface());
 //
 //			if (addRec) {
-//				TestStatus methodTestStatus = testStatus;				
+//				TestStatus methodTestStatus = testStatus;
 //				final SourceMethodRec sourceMethodRec = new SourceMethodRec(method, methodTestStatus, proxyClass != null);
 //				sourceMethodRecs.put(sourceMethodRec.getMethod(), sourceMethodRec);
 //			}
