@@ -21,7 +21,7 @@ public class AT_ResourcesPlugin {
 	
 
 	@Test
-	@UnitTestMethod(name = "getResourcesPlugin(ResourcesPluginData)", args = { ResourcesPluginData.class })
+	@UnitTestMethod(name = "getResourcesPlugin", args = { ResourcesPluginData.class })
 	public void testGetResourcesPlugin() {
 
 		ResourcesPluginData resourcesPluginData = ResourcesPluginData.builder().build();

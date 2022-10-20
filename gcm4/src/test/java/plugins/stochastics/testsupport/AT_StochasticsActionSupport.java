@@ -19,16 +19,16 @@ import util.wrappers.MutableBoolean;
 public class AT_StochasticsActionSupport {
 
 	@Test
-	@UnitTestMethod(name = "testConsumer", args = { Consumer.class })
+	@UnitTestMethod(name = "testConsumer", args = { long.class, Consumer.class })
 	public void testTestConsumer() {
 		MutableBoolean actorExecuted = new MutableBoolean();
-		Consumer<ActorContext> consumer = (c) -> actorExecuted.setValue(true);		
+		Consumer<ActorContext> consumer = (c) -> actorExecuted.setValue(true);
 		StochasticsActionSupport.testConsumer(45235233432345378L, consumer);
 		assertTrue(actorExecuted.getValue());
 	}
 
 	@Test
-	@UnitTestMethod(name = "testConsumers", args = { Plugin.class })
+	@UnitTestMethod(name = "testConsumers", args = {long.class, Plugin.class })
 	public void testTestConsumers() {
 		MutableBoolean actorExecuted = new MutableBoolean();
 

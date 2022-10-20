@@ -17,7 +17,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_StochasticsPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getPlugin", args = { StochasticsPluginData.class })
+	@UnitTestMethod(name = "getStochasticsPlugin", args = { StochasticsPluginData.class })
 	public void testGetPlugin() {
 
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(34534).build();

@@ -18,7 +18,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_ReportPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getReportPlugin", args = {})
+	@UnitTestMethod(name = "getReportsPlugin", args = {ReportsPluginData.class})
 	public void testGetReportPlugin() {
 		//Build the report plugin from two reports
 		ReportId reportId_1 = new SimpleReportId("report 1");

@@ -11,10 +11,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-
+@UnitTest(target = SimpleRegionPropertyId.class)
 public class AT_SimpleRegionPropertyId{
 
 	@Test

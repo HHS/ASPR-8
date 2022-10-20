@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
@@ -71,7 +72,7 @@ public class AT_ResourcePropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testInit() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8914112012010329946L);
 		int initialPopulation = 20;

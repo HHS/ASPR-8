@@ -205,7 +205,7 @@ public class AT_ReportHeader {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = {})
+	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEquals() {
 		ReportHeader.Builder builder = ReportHeader.builder();
 		ReportHeader AB1 = builder.add("A").add("B").build();

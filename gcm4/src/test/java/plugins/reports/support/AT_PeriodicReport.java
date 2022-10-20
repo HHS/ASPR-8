@@ -184,7 +184,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addTimeFieldHeaders", args = { ReportHeader.Builder.class })
+	@UnitTestMethod(name = "init", args = { ActorContext.class})
 	public void testAddTimeFieldHeaders() {
 
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
@@ -215,7 +215,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "fillTimeFields", args = { ReportItem.Builder.class })
+	@UnitTestMethod(name = "init", args = { ActorContext.class })
 	public void testFillTimeFields_Daily() {
 		double simulationEndTime = 10.6;
 
@@ -251,7 +251,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "fillTimeFields", args = { ReportItem.Builder.class })
+	@UnitTestMethod(name = "init", args = { ActorContext.class })
 	public void testFillTimeFields_Hourly() {
 		double simulationEndTime = 3.6;
 
@@ -288,7 +288,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "fillTimeFields", args = { ReportItem.Builder.class })
+	@UnitTestMethod(name = "init", args = { ActorContext.class })
 	public void testFillTimeFields_EndOfSimulation() {
 		double simulationEndTime = 3.6;
 

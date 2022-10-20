@@ -49,7 +49,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(target = ReportItem.Builder.class, name = "build", args = { Object.class })
+	@UnitTestMethod(target = ReportItem.Builder.class, name = "build", args = {})
 	public void testBuild() {
 
 		// precondition tests

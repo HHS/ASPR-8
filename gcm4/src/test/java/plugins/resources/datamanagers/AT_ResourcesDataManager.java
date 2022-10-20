@@ -16,6 +16,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
@@ -72,7 +73,7 @@ import util.wrappers.MutableObject;
 @UnitTest(target = ResourcesDataManager.class)
 public final class AT_ResourcesDataManager {
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testPersonRemovalEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1040,7 +1041,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineResourceProperty", args = { ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(name = "defineResourceProperty", args = { ResourcePropertyInitialization.class })
+	
 	public void testDefineResourceProperty() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2478,7 +2480,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testPersonAdditionEvent() {
 
 		// Have an actor create a few people with random resource levels
@@ -2590,7 +2592,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testRegionAdditionEvent() {
 
 		/*
@@ -2643,7 +2645,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
 	public void testInitializeResourceDataManager() {
 
 		int initialPopulation = 10;
