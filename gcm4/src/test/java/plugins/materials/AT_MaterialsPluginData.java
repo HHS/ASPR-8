@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -502,7 +501,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addMaterialsProducerId", args = { MaterialsProducerId.class, Supplier.class })
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addMaterialsProducerId", args = { MaterialsProducerId.class})
 	public void testAddMaterialsProducerId() {
 		MaterialsProducerId materialsProducerId1 = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId materialsProducerId2 = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
@@ -1125,7 +1124,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchPropertyValue", args = { BatchId.class, BatchPropertyId.class })
+	@UnitTestMethod(name = "getBatchPropertyValues", args = { BatchId.class })
 	public void testGetBatchPropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4884114879424388887L);

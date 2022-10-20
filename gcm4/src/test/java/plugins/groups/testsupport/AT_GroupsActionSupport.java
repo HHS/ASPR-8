@@ -8,22 +8,24 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.people.datamanagers.PeopleDataManager;
+import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
-//@UnitTest(target = GroupsActionSupport.class)
+@UnitTest(target = GroupsActionSupport.class)
 public class AT_GroupsActionSupport {
 
 	@Test
-	@UnitTestMethod(name = "testConsumer", args = { int.class, double.class, double.class, long.class, Consumer.class })
-	public void testConsumer() {
+	@UnitTestMethod(name = "testConsumer", args = { int.class, double.class, double.class, long.class, Consumer.class })	
+	public void testTestConsumer() {
 		MutableBoolean executed = new MutableBoolean();
 		GroupsActionSupport.testConsumer(100, 3, 5, 234L, (c) -> {
 
@@ -54,8 +56,8 @@ public class AT_GroupsActionSupport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "testConsumers", args = { int.class, double.class, double.class, long.class, Consumer.class })
-	public void testConsumers() {
+	@UnitTestMethod(name = "testConsumers", args = { int.class, double.class, double.class, long.class, Plugin.class })
+	public void testTestConsumers() {
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> GroupsActionSupport.testConsumers(100, 3, 5, 234L, TestPlugin.getTestPlugin(TestPluginData.builder().build())));
 		

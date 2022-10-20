@@ -63,7 +63,7 @@ public class AT_TreeBitSetPeopleContainer {
 	}
 
 	@Test
-	@UnitTestMethod(name = "", args= {PersonId.class})
+	@UnitTestMethod(name = "contains", args= {PersonId.class})
 	public void testContains(){
 		PeopleContainerTester.testContains(this::getPeopleContainer,6865277196728541573L);
 	}

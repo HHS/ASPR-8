@@ -627,7 +627,7 @@ public class AT_GroupsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGroupsForPerson", args = { GroupId.class })
+	@UnitTestMethod(name = "getGroupsForPerson", args = { PersonId.class })
 	public void testGetGroupsForPerson() {
 
 		Random random = new Random(4685636461674441597L);

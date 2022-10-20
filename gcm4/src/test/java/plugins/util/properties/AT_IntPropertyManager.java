@@ -8,12 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import javax.naming.Context;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
+import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActionSupport;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
@@ -235,7 +234,7 @@ public class AT_IntPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		TestActionSupport.testConsumer((c) -> {
 

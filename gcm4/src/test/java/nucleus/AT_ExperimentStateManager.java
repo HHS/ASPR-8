@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
 
-@UnitTest(target = ExperimentStateManager.class, proxy = {ExperimentStateManager.class,ExperimentContext.class })
+@UnitTest(target = ExperimentStateManager.class)
 
 public class AT_ExperimentStateManager {
 

@@ -41,7 +41,7 @@ public class AT_GroupsForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { SimulationContext.class, Equality.class, int.class })
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		GroupsActionSupport.testConsumer(100, 3, 10, 5329703278551588697L, (c) -> {
 			// precondition tests

@@ -15,7 +15,7 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = AttributeId.class)
+@UnitTest(target = SimpleAttributeId.class)
 public class AT_SimpleAttributeId {
 
 	@Test
@@ -41,7 +41,7 @@ public class AT_SimpleAttributeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEquals() {
 		SimpleAttributeId id_1 = new SimpleAttributeId(2);
 		SimpleAttributeId id_2 = new SimpleAttributeId(5);

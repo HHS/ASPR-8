@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
-import org.apache.commons.math3.util.MathArrays.Function;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
@@ -48,7 +48,7 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLevel", args = {})
+	@UnitTestMethod(name = "getLevel", args = {int.class})
 	public void testGetLevel() {
 
 		Dimension.Builder builder = Dimension.builder();
@@ -108,7 +108,7 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.Builder.class, name = "addLevel", args = { Function.class, List.class })
+	@UnitTestMethod(target = Dimension.Builder.class, name = "addLevel", args = { Function.class})
 	public void testAddLevel() {
 		Dimension.Builder builder = Dimension.builder();
 		builder.addLevel((map) -> {
@@ -128,6 +128,7 @@ public class AT_Dimension {
 		for (int i = 0; i < dimension.size(); i++) {
 			assertNotNull(dimension.getLevel(i));
 		}
+		
 	}
 
 	@Test

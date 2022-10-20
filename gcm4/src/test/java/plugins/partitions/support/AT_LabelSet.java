@@ -64,12 +64,10 @@ public class AT_LabelSet {
 
 	}
 
-	/**
-	 * Tests {@linkplain LabelSet#getLabel(Object)
-	 */
+	
 	@Test
-	@UnitTestMethod(name = "getLabel", args = {})
-	public void testGetCompartmentLabel() {
+	@UnitTestMethod(name = "getLabel", args = {Object.class})
+	public void testGetLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
 		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, expectedCompartmentLabel).build();
 		Optional<Object> optionalLabel = labelSet.getLabel(Dimension.DIM_1);
@@ -84,7 +82,7 @@ public class AT_LabelSet {
 	 */
 	@Test
 	@UnitTestMethod(name = "getDimensions", args = {})
-	public void testGetPersonPropertyLabel() {
+	public void testGetDimensions() {
 		// getDimensions()
 		LabelSet.Builder builder = LabelSet.builder();
 		Set<Object> expectedDimensions = new LinkedHashSet<>();

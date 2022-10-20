@@ -19,7 +19,7 @@ import tools.annotations.UnitTestMethod;
 public final class AT_PartitionsPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getPartitionsPlugin", args = {})
+	@UnitTestMethod(name = "getPartitionsPlugin", args = {PluginId[].class})
 	public void testGetPartitionsPlugin() {
 		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin();
 

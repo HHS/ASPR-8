@@ -3174,7 +3174,7 @@ public class AT_MaterialsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setMaterialsProducerPropertyValue", args = {})
+	@UnitTestMethod(name = "setMaterialsProducerPropertyValue", args = {MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class})
 	public void testSetMaterialsProducerPropertyValue() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();

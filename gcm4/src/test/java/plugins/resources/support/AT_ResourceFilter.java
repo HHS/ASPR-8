@@ -6,12 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Set;
 
-import javax.naming.Context;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.NucleusError;
+import nucleus.SimulationContext;
 import plugins.partitions.support.Equality;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -57,7 +56,7 @@ public class AT_ResourceFilter {
 	}
 	
 	@Test
-	@UnitTestMethod(name = "validate", args = { Context.class })
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
 		ResourcesActionSupport.testConsumer(12, 6989281647149803633L, (c) -> {
@@ -81,7 +80,7 @@ public class AT_ResourceFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		ResourcesActionSupport.testConsumer(100, 5313696152098995059L, (c) -> {

@@ -27,7 +27,7 @@ public class AT_PersonImminentRemovalEvent implements Event {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonId", args = { PersonId.class })
+	@UnitTestMethod(name = "getPersonId", args = {})
 	public void testGetPersonId() {
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);

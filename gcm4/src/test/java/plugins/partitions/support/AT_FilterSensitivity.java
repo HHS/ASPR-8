@@ -6,11 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
-import javax.naming.Context;
-
 import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
+import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
@@ -50,7 +49,7 @@ public class AT_FilterSensitivity {
 	}
 
 	@Test
-	@UnitTestMethod(name = "requiresRefresh", args = { Context.class, Event.class })
+	@UnitTestMethod(name = "requiresRefresh", args = { SimulationContext.class, Event.class })
 	public void testRequiresRefresh() {
 		PartitionsActionSupport.testConsumer(10, 8678712526990350206L, (context)->{
 			FilterSensitivity<Event> filterSensitivity = new FilterSensitivity<>(Event.class, (c, e) -> Optional.empty());

@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import javax.naming.Context;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
@@ -26,6 +24,7 @@ import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
+import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -343,7 +342,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, PersonPropertiesPluginData.class })
+	@UnitTestConstructor(args = { SimulationContext.class, PersonPropertiesPluginData.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new PersonPropertiesDataManager(null));
 		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA, contractException.getErrorType());

@@ -9,11 +9,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.naming.Context;
+
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.SimulationContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
@@ -34,7 +35,7 @@ import util.errors.ContractException;
 public class AT_GroupMemberFilter {
 
 	@Test
-	@UnitTestConstructor(args = { Context.class, GroupId.class })
+	@UnitTestConstructor(args = { SimulationContext.class, GroupId.class })
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 8499169041100865476L, (c) -> {
@@ -84,7 +85,7 @@ public class AT_GroupMemberFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		
 		GroupsActionSupport.testConsumer(100, 3, 10, 6248106595116941770L, (c) -> {

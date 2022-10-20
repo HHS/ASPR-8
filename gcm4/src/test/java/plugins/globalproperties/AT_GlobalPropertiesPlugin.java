@@ -17,7 +17,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_GlobalPropertiesPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getPlugin", args = { GlobalPropertiesPluginData.class })
+	@UnitTestMethod(name = "getGlobalPropertiesPlugin", args = { GlobalPropertiesPluginData.class })
 	public void testGetPlugin() {
 		/*
 		 *Show that the plugin contains the plugin data and has the property id and dependencies 

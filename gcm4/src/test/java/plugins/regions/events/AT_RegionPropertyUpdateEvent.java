@@ -22,7 +22,7 @@ public class AT_RegionPropertyUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionId", args = { RegionId.class, RegionPropertyId.class, Object.class, Object.class })
+	@UnitTestMethod(name = "getRegionId", args = {})
 	public void testGetRegionId() {
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;

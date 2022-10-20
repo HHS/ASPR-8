@@ -11,6 +11,7 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
@@ -44,7 +45,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_GroupPopulationReport {
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testHourlyReport() {
 
 		/*
@@ -167,7 +168,7 @@ public class AT_GroupPopulationReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testDailyReport() {
 
 		/*
@@ -258,7 +259,7 @@ public class AT_GroupPopulationReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testEndOfSimReport() {
 
 		/*

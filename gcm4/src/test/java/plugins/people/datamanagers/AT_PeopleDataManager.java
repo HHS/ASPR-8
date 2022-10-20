@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
+import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
@@ -47,7 +48,7 @@ public final class AT_PeopleDataManager {
 	// init(DataManagerContext)
 
 	@Test
-	@UnitTestMethod(name = "init", args = { int.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testInit() {
 
 		// add a few people with gaps between id values

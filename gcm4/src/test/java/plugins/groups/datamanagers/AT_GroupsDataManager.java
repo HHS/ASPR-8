@@ -22,6 +22,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
@@ -136,7 +137,7 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removePersonFromGroup", args = { GroupId.class, PersonId.class })
+	@UnitTestMethod(name = "removePersonFromGroup", args = { PersonId.class,GroupId.class })
 	public void testRemovePersonFromGroup() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -427,7 +428,7 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPersonToGroup", args = { GroupId.class, PersonId.class })
+	@UnitTestMethod(name = "addPersonToGroup", args = { PersonId.class,GroupId.class })
 	public void testAddPersonToGroup() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2136,7 +2137,7 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "isPersonInGroup", args = { GroupId.class, PersonId.class })
+	@UnitTestMethod(name = "isPersonInGroup", args = { PersonId.class, GroupId.class })
 	public void testIsPersonInGroup() {
 
 		GroupsActionSupport.testConsumer(100, 0, 5, 8319627382232144625L, (c) -> {
@@ -2226,7 +2227,7 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2287,7 +2288,7 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { GroupsPluginData.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testGroupDataManagerInitialization() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7212690164088198082L);
@@ -2500,7 +2501,7 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineGroupProperty", args = { GroupTypeId.class, GroupPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(name = "defineGroupProperty", args = { GroupPropertyDefinitionInitialization.class })
 	public void testDefineGroupProperty() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();

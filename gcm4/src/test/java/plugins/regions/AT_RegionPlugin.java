@@ -20,7 +20,7 @@ public class AT_RegionPlugin {
 	
 
 	@Test
-	@UnitTestMethod(name = "getRegionPlugin", args = {RegionsPluginData.class})
+	@UnitTestMethod(name = "getRegionsPlugin", args = {RegionsPluginData.class})
 	public void testGetRegionPlugin() {
 		RegionsPluginData regionsPluginData = RegionsPluginData.builder().build();
 		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);

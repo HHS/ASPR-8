@@ -8,8 +8,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.naming.Context;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -86,7 +84,7 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { Context.class, PersonId.class })
+	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		
 		GroupsActionSupport.testConsumer(100, 0, 10, 4592268926831796100L, (c) -> {

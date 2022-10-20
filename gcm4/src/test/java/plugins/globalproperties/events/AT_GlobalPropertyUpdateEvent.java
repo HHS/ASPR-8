@@ -28,7 +28,7 @@ public class AT_GlobalPropertyUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyId", args = { GlobalPropertyId.class, Object.class, Object.class })
+	@UnitTestMethod(name = "getGlobalPropertyId", args = {})
 	public void testGetGlobalPropertyId() {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;
@@ -40,7 +40,7 @@ public class AT_GlobalPropertyUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyId", args = { GlobalPropertyId.class, Object.class, Object.class })
+	@UnitTestMethod(name = "getGlobalPropertyId", args = { })
 	public void testGetPreviousPropertyValue() {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;

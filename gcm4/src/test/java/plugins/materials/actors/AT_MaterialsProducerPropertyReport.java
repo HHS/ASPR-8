@@ -50,7 +50,7 @@ public final class AT_MaterialsProducerPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testInit() {
 
 		Set<ReportItem> expectedReportItems = new LinkedHashSet<>();

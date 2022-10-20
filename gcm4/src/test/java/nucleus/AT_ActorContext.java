@@ -178,7 +178,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addActor", args = { ActorContext.class })
+	@UnitTestMethod(name = "addActor", args = { Consumer.class })
 	public void testAddActor() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -269,7 +269,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPassiveKeyedPlan", args = { Consumer.class, Object.class })
+	@UnitTestMethod(name = "addPassiveKeyedPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddPassiveKeyedPlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -866,7 +866,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "releaseOutput", args = {})
+	@UnitTestMethod(name = "releaseOutput", args = {Object.class})
 	public void testReleaseOutput() {
 
 		// begin building the action plugin

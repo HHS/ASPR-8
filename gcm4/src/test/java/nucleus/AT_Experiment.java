@@ -309,12 +309,7 @@ public class AT_Experiment {
 		// Other aspects of the build are covered in the remaining capability
 		// specific tests
 	}
-
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressConsole", args = { boolean.class }, manual = true)
-	public void testSetExperimentProgressConsole() {
-		// should be manually tested		
-	}
+	
 
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, manual = true)	

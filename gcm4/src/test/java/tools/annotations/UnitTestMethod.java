@@ -7,9 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for JUnit test classes that are tested via a proxy test. Any class
- * marked with this annotation should not be part of the public GCM API and is
- * considered tested by the test of the class that is the proxy.
+ * Annotation for JUnit test classes
  * 
  * @author Shawn Hatch
  *

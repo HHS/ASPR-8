@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
-import plugins.globalproperties.GlobalPropertiesPluginData;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
@@ -15,7 +14,7 @@ public class AT_PeoplePlugin {
 	
 	
 	@Test
-	@UnitTestMethod(name = "getPlugin", args = { GlobalPropertiesPluginData.class })
+	@UnitTestMethod(name = "getPeoplePlugin", args = { PeoplePluginData.class })
 	public void testGetPlugin() {
 		
 

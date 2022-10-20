@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestDataManagerType", args = { Object.class })
+	@UnitTestMethod(name = "getTestDataManager", args = { Object.class })
 	public void testGetTestDataManagerType() {
 		TestPluginData testPluginData = TestPluginData	.builder()//
 														.addTestDataManager("A", () -> new TestDataManager1())//
@@ -273,7 +274,9 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestDataManager", args = { Object.class, Class.class })
+	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestDataManager", args = { Object.class, Supplier.class })
+	
+	 
 	public void testAddTestDataManager() {
 		// create a few plans
 		LinkedHashSet<Object> expectedDataManagerAliases = new LinkedHashSet<>();
@@ -283,7 +286,7 @@ public class AT_TestPluginData {
 
 		// add those plans to the builder
 		TestPluginData.Builder builder = TestPluginData.builder();
-		builder.addTestDataManager("A",()->new  TestDataManager1());
+		builder.addTestDataManager("A",()->new TestDataManager1());
 		builder.addTestDataManager("B",()->new TestDataManager2());
 		builder.addTestDataManager("C",()->new TestDataManager3());
 

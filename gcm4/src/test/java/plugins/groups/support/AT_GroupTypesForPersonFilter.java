@@ -41,7 +41,7 @@ public class AT_GroupTypesForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = {})
+	@UnitTestMethod(name = "validate", args = {SimulationContext.class})
 	public void testValidate() {
 		//precondition tests
 		

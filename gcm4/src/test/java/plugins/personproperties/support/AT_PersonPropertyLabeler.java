@@ -38,7 +38,7 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabelerSensitivities", args = { PersonPropertyId.class, Function.class, Object.class })
+	@UnitTestMethod(name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 
 		/*

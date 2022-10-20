@@ -53,7 +53,7 @@ public class AT_TestBatchPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownBatchPropertyId", args = { TestMaterialId.class })
+	@UnitTestMethod(name = "getUnknownBatchPropertyId", args = {})
 	public void testGetUnknownBatchPropertyId() {
 		BatchPropertyId unknownBatchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
 		assertNotNull(unknownBatchPropertyId);

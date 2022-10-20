@@ -42,7 +42,7 @@ import util.random.RandomGeneratorProvider;
  *
  */
 @UnitTest(target = RegionsPluginData.class)
-public class AT_RegionPluginData {
+public class AT_RegionsPluginData {
 
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
@@ -72,7 +72,7 @@ public class AT_RegionPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyDefinition", args = { RegionId.class, RegionPropertyId.class })
+	@UnitTestMethod(name = "getRegionPropertyDefinition", args = { RegionPropertyId.class })
 	public void testGetRegionPropertyDefinition() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 		/*
@@ -161,7 +161,7 @@ public class AT_RegionPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyValues", args = { RegionId.class, RegionPropertyId.class })
+	@UnitTestMethod(name = "getRegionPropertyValues", args = { RegionId.class })
 	public void testGetRegionPropertyValues() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(887285678478260177L);
 
@@ -296,7 +296,7 @@ public class AT_RegionPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "defineRegionProperty", args = { RegionId.class, RegionPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "defineRegionProperty", args = { RegionPropertyId.class, PropertyDefinition.class })
 	public void testDefineRegionProperty() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 
@@ -321,7 +321,7 @@ public class AT_RegionPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "addRegion", args = { RegionId.class, RegionPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "addRegion", args = { RegionId.class})
 	public void testAddRegion() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 

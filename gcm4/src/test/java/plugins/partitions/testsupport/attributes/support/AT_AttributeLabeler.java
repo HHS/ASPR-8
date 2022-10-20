@@ -38,7 +38,7 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabelerSensitivities", args = { AttributeId.class, Function.class })
+	@UnitTestMethod(name = "getLabelerSensitivities", args = { })
 	public void testGetLabelerSensitivities() {
 		/*
 		 * Get the labeler sensitivities and show that they are consistent with

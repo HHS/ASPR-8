@@ -145,7 +145,7 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
 	 */
-	public void unSubscribe(Class<? extends Event> eventClass);
+	public void unsubscribe(Class<? extends Event> eventClass);
 
 	/**
 	 * Returns true if and only if there are actor or data managers subscribed

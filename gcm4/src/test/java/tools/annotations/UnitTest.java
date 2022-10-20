@@ -19,6 +19,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface UnitTest {
-	Class<?> target();
-	Class<?>[] proxy() default Object.class;
+	Class<?> target();	
 }

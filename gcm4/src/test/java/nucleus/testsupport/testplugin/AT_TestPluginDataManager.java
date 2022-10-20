@@ -33,7 +33,7 @@ public class AT_TestPluginDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getActorActionPlans", args = { Object.class })
+	@UnitTestMethod(name = "getTestActorPlans", args = { Object.class })
 	public void testGetActorActionPlans() {
 		// create a few TestActorPlan items associated with two aliases
 		Map<String, Set<TestActorPlan>> expectedTestActorPlans = new LinkedHashMap<>();

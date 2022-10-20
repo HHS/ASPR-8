@@ -11,8 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import javax.naming.Context;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -173,7 +171,7 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPastLabel", args = { Context.class, Event.class })
+	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 		ResourcesActionSupport.testConsumer(10, 6601261985382450295L, (c) -> {
 

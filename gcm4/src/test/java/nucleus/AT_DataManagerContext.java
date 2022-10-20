@@ -1168,7 +1168,7 @@ public class AT_DataManagerContext {
 //	}
 
 	@Test
-	@UnitTestMethod(name = "unSubscribeToEvent", args = { Class.class })
+	@UnitTestMethod(name = "unsubscribe", args = { Class.class })
 	public void testUnSubscribeToEvent() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1176,7 +1176,7 @@ public class AT_DataManagerContext {
 		// have the resolver test preconditions
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.unSubscribe(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.unsubscribe(null));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
 		}));
 
@@ -1219,7 +1219,7 @@ public class AT_DataManagerContext {
 
 		// have the resolver unsubscribe
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (c) -> {
-			c.unSubscribe(TestEvent.class);
+			c.unsubscribe(TestEvent.class);
 		}));
 
 		// have the data manager generate another test event
@@ -1315,7 +1315,7 @@ public class AT_DataManagerContext {
 
 		// have the second data manager unsubscribe
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(7, (c) -> {
-			c.unSubscribe(TestEvent.class);
+			c.unsubscribe(TestEvent.class);
 		}));
 
 		// show that dm1 now sees that there are no subscribers

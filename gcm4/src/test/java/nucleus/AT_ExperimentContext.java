@@ -634,7 +634,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "", args = { BiConsumer.class, Integer.class })
+	@UnitTestMethod(name = "subscribeToSimulationClose", args = { BiConsumer.class })
 	public void testSubscribeToSimulationClose() {
 		/*
 		 * Run an experiment that has several clients of the experiment context
@@ -672,7 +672,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToSimulationOpen", args = { BiConsumer.class, Integer.class })
+	@UnitTestMethod(name = "subscribeToSimulationOpen", args = { BiConsumer.class })
 	public void testSubscribeToSimulationOpen() {
 
 		/*

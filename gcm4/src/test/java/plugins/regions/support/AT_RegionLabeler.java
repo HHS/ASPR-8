@@ -12,6 +12,7 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
+import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
@@ -46,7 +47,7 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = {})
+	@UnitTestMethod(name = "getLabel", args = {SimulationContext.class, PersonId.class})
 	public void testGetLabel() {
 
 		/*

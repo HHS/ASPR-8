@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.ActorContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
@@ -88,7 +89,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class, GroupPropertyId.class })
+	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
 	public void testSetReportPeriod() {
 		// test covered by the consumers-based tests in this class
 		// precondition tests:
@@ -106,7 +107,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testHourlySelectProperties() {
 		testHourlySelectProperties(false);
 		testHourlySelectProperties(true);
@@ -247,7 +248,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {})
+	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testDailyAllProperties() {
 
 		/*

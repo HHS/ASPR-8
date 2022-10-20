@@ -1413,7 +1413,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineRegionProperty", args = { RegionPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(name = "defineRegionProperty", args = { RegionPropertyDefinitionInitialization.class })
 	public void testDefineRegionProperty() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -1566,8 +1566,8 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addRegionId", args = { RegionId.class })
-	public void testAddRegionId() {
+	@UnitTestMethod(name = "addRegion", args = { RegionConstructionData.class })
+	public void testAddRegion() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

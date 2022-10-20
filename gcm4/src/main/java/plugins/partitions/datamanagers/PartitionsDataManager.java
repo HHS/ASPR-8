@@ -535,7 +535,7 @@ public final class PartitionsDataManager extends DataManager {
 			keys.remove(key);
 			if (keys.isEmpty()) {
 				eventClassToKeyMap.remove(eventClass);
-				dataManagerContext.unSubscribe(eventClass);
+				dataManagerContext.unsubscribe(eventClass);
 			}
 		}
 	}

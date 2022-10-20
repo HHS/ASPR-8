@@ -40,22 +40,14 @@ public class AT_PropertyFilter {
 
 	
 
-	/**
-	 * Tests
-	 * {@link PropertyFilter#PropertyFilter(Context, PersonPropertyId, Equality, Object)}
-	 */
 	@Test
 	@UnitTestConstructor(args = { SimulationContext.class, PersonPropertyId.class, Equality.class, long.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
-	/**
-	 * Tests
-	 * {@link PropertyFilter#PropertyFilter(Context, PersonPropertyId, Equality, Object)}
-	 */
 	@Test
-	@UnitTestMethod(name = "validate", args = {})
+	@UnitTestMethod(name = "validate", args = {SimulationContext.class})
 	public void testValidate() {
 		
 		PersonPropertiesActionSupport.testConsumer(100, 7889475921077680704L, (c)->{
@@ -98,9 +90,7 @@ public class AT_PropertyFilter {
 		assertEquals(PersonPropertyUpdateEvent.class, filterSensitivity.getEventClass());
 	}
 
-	/**
-	 * Tests {@link PropertyFilter#evaluate(Context, PersonId)}
-	 */
+	
 	@Test
 	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {

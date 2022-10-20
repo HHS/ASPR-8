@@ -446,7 +446,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void unSubscribe(Class<? extends Event> eventClass) {
+		public void unsubscribe(Class<? extends Event> eventClass) {
 			simulation.unSubscribeDataManagerFromEvent(dataManagerId, eventClass);
 		}
 

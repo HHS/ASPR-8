@@ -366,7 +366,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineGlobalProperty", args = { GlobalPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(name = "defineGlobalProperty", args = { GlobalPropertyInitialization.class })
 	public void testDefineGlobalProperty() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
