@@ -16,7 +16,7 @@ public final class GroupId implements Comparable<GroupId>{
 	private final int id;
 
 	/**
-	 * Consructs the groupId
+	 * Constructs the groupId
 	 * 
 	 * @throws ContractException
 	 * <li>{@linkplain GroupError#NEGATIVE_GROUP_ID} </li>

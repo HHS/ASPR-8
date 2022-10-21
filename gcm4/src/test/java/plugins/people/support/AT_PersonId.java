@@ -2,6 +2,7 @@ package plugins.people.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -9,13 +10,8 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
-/**
- * Identifier for all people
- * 
- * @author Shawn Hatch
- *
- */
 
 @UnitTest(target = PersonId.class)
 public final class AT_PersonId {
@@ -27,6 +23,12 @@ public final class AT_PersonId {
 			PersonId personId = new PersonId(i);
 			assertEquals(i, personId.getValue());
 		}
+		
+		//precondition test: if the id < 0		
+		ContractException contractException = assertThrows(ContractException.class, ()->new PersonId(-1));
+		assertEquals(PersonError.NEGATIVE_PERSON_ID, contractException.getErrorType());
+
+		
 	}
 
 	@Test

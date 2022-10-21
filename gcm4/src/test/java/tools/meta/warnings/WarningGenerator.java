@@ -1,4 +1,4 @@
-package tools.meta;
+package tools.meta.warnings;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -24,15 +20,14 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 /**
- * A script covering the details of the GCM Test Plan. It produces a console
- * report that measures the completeness/status of the test classes. It does not
- * measure the correctness of any test, but rather shows which tests exist and
- * their status.
+ * A utility class for generating various warnings on the coverage deficiencies
+ * of the the unit test suite.
  *
  * @author Shawn Hatch
  *
  */
-public class MetaTest {
+public class WarningGenerator {
+
 	private static boolean isJavaFile(Path file) {
 		return Files.isRegularFile(file) && file.toString().endsWith(".java");
 	}
@@ -53,50 +48,7 @@ public class MetaTest {
 		}
 	}
 
-	private enum WarningType {
-
-		SOURCE_METHOD_CANNOT_BE_RESOLVED("The source method for a test method cannot be resolved"),
-
-		SOURCE_CONSTRUCTOR_CANNOT_BE_RESOLVED("The source constructor for a Test method cannot be resolved"),
-
-		TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD("Test method linked to unknown source method"),
-
-		TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_CONSTRUCTOR("Test method linked to unknown source contructor"),
-
-		SOURCE_METHOD_REQUIRES_TEST("Source method requires a test method but does not have one"),
-
-		SOURCE_CONSTRUCTOR_REQUIRES_TEST("Source constructor requires a test method but does not have one"),
-
-		UNIT_CONSTRUCTOR_ANNOTATION_WITHOUT_TEST_ANNOTATION("Test method is marked with @UnitTestConstructor but does not have a corresponding @Test annotation"),
-
-		UNIT_METHOD_ANNOTATION_WITHOUT_TEST_ANNOTATION("Test method is marked with @UnitTestMethod but does not have a corresponding @Test annotation"),
-
-		UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT("Test method is marked with borth @UnitTestMethod and @UnitTestConstructor annotations"),
-
-		TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION("Test method is marked with @Test but does not have a corresponding @UnitTestMethod or @UnitTestConstructor"),
-
-		NONSTATIC_SUBCLASS("Non-static public subclasses are not testable"),
-
-		;
-
-		private final String description;
-
-		private WarningType(String description) {
-			this.description = description;
-		}
-	}
-
-	private Map<WarningType, List<String>> warningMap = new LinkedHashMap<>();
-
-	private void addWarning(WarningType warningType, Method details) {
-		warningMap.get(warningType).add(details.toString());
-	}
-	private void addWarning(WarningType warningType, Constructor<?>details) {
-		warningMap.get(warningType).add(details.toString());
-	}
-	private void addWarning(WarningType warningType, Object details) {
-		warningMap.get(warningType).add(details.toString());
-	}
+	private WarningContainer.Builder warningContainerBuilder = WarningContainer.builder();
 
 	private void probeClass(Class<?> c) {
 
@@ -146,7 +98,8 @@ public class MetaTest {
 				if (Modifier.isStatic(subClass.getModifiers())) {
 					getClasses(subClass, set);
 				} else {
-					addWarning(WarningType.NONSTATIC_SUBCLASS, subClass);
+					System.out.println("Non-static subclass found " + subClass);
+					// addWarning(WarningType.NONSTATIC_SUBCLASS, subClass);
 				}
 			}
 		}
@@ -180,12 +133,12 @@ public class MetaTest {
 		}
 		if (sourceConstructor != null) {
 			if (!sourceConstructors.contains(sourceConstructor)) {
-				addWarning(WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_CONSTRUCTOR, testMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_CONSTRUCTOR));
 			}
 			coveredSourceConstructors.add(sourceConstructor);
 
 		} else {
-			addWarning(WarningType.SOURCE_CONSTRUCTOR_CANNOT_BE_RESOLVED, testMethod);
+			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_CONSTRUCTOR_CANNOT_BE_RESOLVED));
 		}
 	}
 
@@ -211,12 +164,12 @@ public class MetaTest {
 		}
 		if (sourceMethod != null) {
 			if (!sourceMethods.contains(sourceMethod)) {
-				addWarning(WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD, testMethod + " : " + sourceMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD, sourceMethod.toString()));
 			} else {
 				coveredSourceMethods.add(sourceMethod);
 			}
 		} else {
-			addWarning(WarningType.SOURCE_METHOD_CANNOT_BE_RESOLVED, testMethod.toString() + " " + methodExceptionMessage);
+			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_METHOD_CANNOT_BE_RESOLVED, methodExceptionMessage));
 		}
 	}
 
@@ -243,16 +196,16 @@ public class MetaTest {
 				// ignore the method
 				break;
 			case 1:
-				addWarning(WarningType.UNIT_CONSTRUCTOR_ANNOTATION_WITHOUT_TEST_ANNOTATION, testMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_CONSTRUCTOR_ANNOTATION_WITHOUT_TEST_ANNOTATION));
 				break;
 			case 2:
-				addWarning(WarningType.UNIT_METHOD_ANNOTATION_WITHOUT_TEST_ANNOTATION, testMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_METHOD_ANNOTATION_WITHOUT_TEST_ANNOTATION));
 				break;
 			case 3:
-				addWarning(WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT, testMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT));
 				break;
 			case 4:
-				addWarning(WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION, testMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION));
 				break;
 			case 5:
 				probeConstructorTest(testMethod, unitTest, unitTestConstructor);
@@ -261,7 +214,7 @@ public class MetaTest {
 				probeMethodTest(testMethod, unitTest, unitTestMethod);
 				break;
 			case 7:
-				addWarning(WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT, testMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT));
 				break;
 			default:
 				throw new RuntimeException("unhandled case index " + caseIndex);
@@ -279,40 +232,43 @@ public class MetaTest {
 			return FileVisitResult.CONTINUE;
 		}
 	}
-	
+
 	private final Data data;
-	
-	private static class Data{
+
+	private static class Data {
 		private Path sourcePath;
 
 		private Path testPath;
 	}
-	
+
 	public final static Builder builder() {
 		return new Builder();
 	}
-	
-	public final static class Builder{
-		private Builder() {}
-		
+
+	public final static class Builder {
+		private Builder() {
+		}
+
 		private Data data = new Data();
-		public MetaTest build() {
+
+		public WarningGenerator build() {
 			try {
 				validate();
-				return new MetaTest(data);
-			}finally {
+				return new WarningGenerator(data);
+			} finally {
 				data = new Data();
 			}
 		}
-		
+
 		private void validate() {
-			
+
 		}
-		
+
 		public Builder setSourcePath(Path sourcePath) {
 			data.sourcePath = sourcePath;
 			return this;
 		}
+
 		public Builder setTestPath(Path testPath) {
 			data.testPath = testPath;
 			return this;
@@ -320,47 +276,40 @@ public class MetaTest {
 
 	}
 
-	
-
-	
-
-	private MetaTest(Data data) {
-		for (WarningType warningType : WarningType.values()) {
-			warningMap.put(warningType, new ArrayList<String>());
-		}
+	private WarningGenerator(Data data) {
 		this.data = data;
-
 	}
 
-	private void reportWarnings() {
-
-		int warningCount = 0;
-		for (WarningType warningType : WarningType.values()) {
-			warningCount += warningMap.get(warningType).size();
-		}
-		System.out.println("(" + warningCount + ")");
-		for (WarningType warningType : WarningType.values()) {
-			List<String> warnings = warningMap.get(warningType);
-			if (!warnings.isEmpty()) {
-
-				System.out.println("(" + warnings.size() + ")" + warningType.description);
-				int n = warnings.size();
-				for (int i = 0; i < n; i++) {
-					String warning = warnings.get(i);
-					System.out.println("\t" + warning);
-				}
-				System.out.println();
-			}
-		}
-		if (warningCount == 0) {
-			System.out.println("Test code is consistent with source code");
-		}
-	}
+	// private void reportWarnings() {
+	//
+	// int warningCount = 0;
+	// for (WarningType warningType : WarningType.values()) {
+	// warningCount += warningMap.get(warningType).size();
+	// }
+	// System.out.println("(" + warningCount + ")");
+	// for (WarningType warningType : WarningType.values()) {
+	// List<String> warnings = warningMap.get(warningType);
+	// if (!warnings.isEmpty()) {
+	//
+	// System.out.println("(" + warnings.size() + ")" +
+	// warningType.getDescription());
+	// int n = warnings.size();
+	// for (int i = 0; i < n; i++) {
+	// String warning = warnings.get(i);
+	// System.out.println("\t" + warning);
+	// }
+	// System.out.println();
+	// }
+	// }
+	// if (warningCount == 0) {
+	// System.out.println("Test code is consistent with source code");
+	// }
+	// }
 
 	private void checkSourceMethodCoverage() {
 		for (Method method : sourceMethods) {
 			if (!coveredSourceMethods.contains(method)) {
-				addWarning(WarningType.SOURCE_METHOD_REQUIRES_TEST, method);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(method, WarningType.SOURCE_METHOD_REQUIRES_TEST));
 			}
 		}
 	}
@@ -368,7 +317,7 @@ public class MetaTest {
 	private void checkSourceConstructorCoverage() {
 		for (Constructor<?> constructor : sourceConstructors) {
 			if (!coveredSourceConstructors.contains(constructor)) {
-				addWarning(WarningType.SOURCE_CONSTRUCTOR_REQUIRES_TEST, constructor);
+				this.warningContainerBuilder.addConstructorWarning(new ConstructorWarning(constructor, WarningType.SOURCE_CONSTRUCTOR_REQUIRES_TEST));
 			}
 		}
 	}
@@ -393,17 +342,17 @@ public class MetaTest {
 		}
 	}
 
-	public void execute() {
+	public WarningContainer execute() {
 
 		loadSourceClasses();
-		
+
 		loadTestClasses();
 
 		checkSourceMethodCoverage();
 
 		checkSourceConstructorCoverage();
 
-		reportWarnings();
+		return warningContainerBuilder.build();
 
 	}
 
