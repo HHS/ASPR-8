@@ -34,7 +34,7 @@ import util.errors.ContractException;
 public class AT_GroupsForPersonAndGroupTypeFilter {
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, GroupTypeId.class, Equality.class, int.class })
+	@UnitTestConstructor(args = { GroupTypeId.class, Equality.class, int.class })
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 5854778167265102928L, (c) -> {

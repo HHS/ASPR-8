@@ -41,7 +41,7 @@ public class AT_PropertyFilter {
 	
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, PersonPropertyId.class, Equality.class, long.class })
+	@UnitTestConstructor(args = { PersonPropertyId.class, Equality.class, Object.class })
 	public void testConstructor() {
 		// nothing to test
 	}

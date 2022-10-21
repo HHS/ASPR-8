@@ -119,7 +119,7 @@ public class AT_ResourceFilter {
 	}
 
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(args = {ResourceId.class, Equality.class, long.class})
 	public void testConstructor() {
 		// nothing to test
 	}

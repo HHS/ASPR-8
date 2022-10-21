@@ -15,7 +15,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_TestScenarioReport {
 
 	@Test
-	@UnitTestConstructor(args = Boolean.class)
+	@UnitTestConstructor(args = boolean.class)
 	public void testConstructor() {
 		// covered by other tests
 	}

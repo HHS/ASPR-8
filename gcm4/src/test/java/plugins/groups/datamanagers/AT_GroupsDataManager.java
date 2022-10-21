@@ -68,6 +68,7 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -242,6 +243,7 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
+	@UnitTestConstructor(args = {GroupsPluginData.class})
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new GroupsDataManager(null));
 		assertEquals(GroupError.NULL_GROUP_INITIALIZATION_DATA, contractException.getErrorType());

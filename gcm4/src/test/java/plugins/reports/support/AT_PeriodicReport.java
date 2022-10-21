@@ -173,7 +173,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { ReportPeriod.class })
+	@UnitTestConstructor(args = { ReportId.class,ReportPeriod.class })	
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new TestReport(null, ReportPeriod.DAILY));
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());

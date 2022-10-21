@@ -1,19 +1,13 @@
 package plugins.partitions.support.containers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.SimulationContext;
-import plugins.partitions.support.PartitionError;
-import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
-import util.errors.ContractException;
 
 
 @UnitTest(target = BasePeopleContainer.class)
@@ -25,10 +19,9 @@ public class AT_BasePeopleContainer {
 	}
 	
 	@Test
-	@UnitTestConstructor(args = {PeopleDataManager.class})
+	@UnitTestConstructor(args = {SimulationContext.class})
 	public void testConstructor() {
-		ContractException contractException = assertThrows(ContractException.class,()->new TreeBitSetPeopleContainer(null));
-		assertEquals(PartitionError.NULL_PERSON_DATA_VIEW, contractException.getErrorType());
+		//nothing to test
 	}
 
 	@Test

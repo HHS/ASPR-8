@@ -32,7 +32,7 @@ import util.errors.ContractException;
 public class AT_PersonPropertyLabeler {
 
 	@Test
-	@UnitTestConstructor(args = { PersonPropertyId.class, Function.class, Object.class })
+	@UnitTestConstructor(args = { PersonPropertyId.class, Function.class })
 	public void testConstructor() {
 		// nothing to test
 	}

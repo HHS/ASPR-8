@@ -8,7 +8,6 @@ import java.lang.reflect.Modifier;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-public class TestPlan {
+public class MetaTest {
 	private static boolean isJavaFile(Path file) {
 		return Files.isRegularFile(file) && file.toString().endsWith(".java");
 	}
@@ -89,6 +88,12 @@ public class TestPlan {
 
 	private Map<WarningType, List<String>> warningMap = new LinkedHashMap<>();
 
+	private void addWarning(WarningType warningType, Method details) {
+		warningMap.get(warningType).add(details.toString());
+	}
+	private void addWarning(WarningType warningType, Constructor<?>details) {
+		warningMap.get(warningType).add(details.toString());
+	}
 	private void addWarning(WarningType warningType, Object details) {
 		warningMap.get(warningType).add(details.toString());
 	}
@@ -151,7 +156,7 @@ public class TestPlan {
 		@Override
 		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attr) {
 			if (isJavaFile(file)) {
-				final Class<?> c = getClassFromFile(sourcePath, file);
+				final Class<?> c = getClassFromFile(data.sourcePath, file);
 				for (Class<?> c2 : getClasses(c)) {
 					probeClass(c2);
 				}
@@ -268,36 +273,62 @@ public class TestPlan {
 		@Override
 		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attr) {
 			if (isJavaFile(file)) {
-				final Class<?> c = getClassFromFile(testPath, file);
+				final Class<?> c = getClassFromFile(data.testPath, file);
 				probeTestClass(c);
 			}
 			return FileVisitResult.CONTINUE;
 		}
 	}
+	
+	private final Data data;
+	
+	private static class Data{
+		private Path sourcePath;
 
-	public static void main(final String[] args) {
+		private Path testPath;
+	}
+	
+	public final static Builder builder() {
+		return new Builder();
+	}
+	
+	public final static class Builder{
+		private Builder() {}
+		
+		private Data data = new Data();
+		public MetaTest build() {
+			try {
+				validate();
+				return new MetaTest(data);
+			}finally {
+				data = new Data();
+			}
+		}
+		
+		private void validate() {
+			
+		}
+		
+		public Builder setSourcePath(Path sourcePath) {
+			data.sourcePath = sourcePath;
+			return this;
+		}
+		public Builder setTestPath(Path testPath) {
+			data.testPath = testPath;
+			return this;
+		}
 
-		// Should point to src/main/java
-		final Path sourcePath = Paths.get(args[0]);
-
-		// Should point to src/test/java
-		final Path testPath = Paths.get(args[1]);
-
-		final TestPlan testPlan = new TestPlan(sourcePath, testPath);
-
-		testPlan.execute();
 	}
 
-	private final Path sourcePath;
+	
 
-	private final Path testPath;
+	
 
-	private TestPlan(final Path sourcePath, final Path testPath) {
+	private MetaTest(Data data) {
 		for (WarningType warningType : WarningType.values()) {
 			warningMap.put(warningType, new ArrayList<String>());
 		}
-		this.sourcePath = sourcePath;
-		this.testPath = testPath;
+		this.data = data;
 
 	}
 
@@ -346,7 +377,7 @@ public class TestPlan {
 
 		final SourceFileVisitor sourceFileVisitor = new SourceFileVisitor();
 		try {
-			Files.walkFileTree(sourcePath, sourceFileVisitor);
+			Files.walkFileTree(data.sourcePath, sourceFileVisitor);
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -356,16 +387,16 @@ public class TestPlan {
 	private void loadTestClasses() {
 		final TestFileVisitor testFileVisitor = new TestFileVisitor();
 		try {
-			Files.walkFileTree(testPath, testFileVisitor);
+			Files.walkFileTree(data.testPath, testFileVisitor);
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private void execute() {
+	public void execute() {
 
-		loadSourceClasses();		
-
+		loadSourceClasses();
+		
 		loadTestClasses();
 
 		checkSourceMethodCoverage();
