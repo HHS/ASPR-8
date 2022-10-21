@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>gov.hhs.aspr</groupId>
-			<artifactId>gcm3</artifactId>
+			<artifactId>gcm4</artifactId>
 			<version>4.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
