@@ -40,4 +40,6 @@ public enum GroupError implements ContractError {
 	public String getDescription() {
 		return description;
 	}
+	
+	
 }

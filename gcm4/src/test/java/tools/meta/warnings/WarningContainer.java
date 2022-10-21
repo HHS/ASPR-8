@@ -7,6 +7,7 @@ public final class WarningContainer {
 	private static class Data {
 		private List<ConstructorWarning> constructorWarnings = new ArrayList<>();
 		private List<MethodWarning> methodWarnings = new ArrayList<>();
+		private List<String> generalWarnings = new ArrayList<>();
 	}
 
 	public final static Builder builder() {
@@ -54,6 +55,20 @@ public final class WarningContainer {
 			data.methodWarnings.add(methodWarning);
 			return this;
 		}
+		
+		/**
+		 * Adds a method warning
+		 * 
+		 * @throws NullPointerException
+		 *             <li>if the general warning is null</li>
+		 */
+		public Builder addGeneralWarning(String generalWarning) {
+			if (generalWarning == null) {
+				throw new NullPointerException("general warning is null");
+			}
+			data.generalWarnings.add(generalWarning);
+			return this;
+		}
 	}
 
 	private final Data data;
@@ -68,5 +83,9 @@ public final class WarningContainer {
 
 	public List<ConstructorWarning> getConstructorWarnings() {
 		return new ArrayList<>(data.constructorWarnings);
+	}
+	
+	public List<String> getGeneralWarnings(){
+		return new ArrayList<>(data.generalWarnings);
 	}
 }

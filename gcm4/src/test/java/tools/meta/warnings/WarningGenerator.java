@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,12 +54,30 @@ public class WarningGenerator {
 	private void probeClass(Class<?> c) {
 
 		final Method[] methods = c.getMethods();
+		boolean isEnum = c.isEnum();
+
 		for (final Method method : methods) {
 
 			boolean addRec = method.getDeclaringClass().equals(c);
 			addRec &= !method.isBridge();
 			addRec &= !method.isSynthetic();
 			addRec &= !(Modifier.isAbstract(method.getModifiers()) && c.isInterface());
+
+			if (isEnum) {
+				if (method.getName().equals("values")) {
+					if (method.getParameters().length == 0) {						
+						addRec = false;
+					}
+				} else if (method.getName().equals("valueOf")) {
+					Parameter[] parameters = method.getParameters();
+					if (parameters.length == 1) {
+						Parameter parameter = parameters[0];
+						if (parameter.getType() == String.class) {							
+							addRec = false;
+						}
+					}
+				}
+			}
 
 			if (addRec) {
 				sourceMethods.add(method);
@@ -97,9 +116,8 @@ public class WarningGenerator {
 			if (Modifier.isPublic(subClass.getModifiers())) {
 				if (Modifier.isStatic(subClass.getModifiers())) {
 					getClasses(subClass, set);
-				} else {
-					System.out.println("Non-static subclass found " + subClass);
-					// addWarning(WarningType.NONSTATIC_SUBCLASS, subClass);
+				} else {					
+					warningContainerBuilder.addGeneralWarning(WarningType.NONSTATIC_SUBCLASS.getDescription() +" "+ subClass);					
 				}
 			}
 		}
@@ -111,6 +129,8 @@ public class WarningGenerator {
 			if (isJavaFile(file)) {
 				final Class<?> c = getClassFromFile(data.sourcePath, file);
 				for (Class<?> c2 : getClasses(c)) {
+					// System.out.println(c.getSimpleName()+"\t"+c2.getSimpleName());
+
 					probeClass(c2);
 				}
 			}
