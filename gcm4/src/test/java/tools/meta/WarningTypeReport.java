@@ -53,18 +53,21 @@ public class WarningTypeReport {
 
 		for (MethodWarning methodWarning : warningContainer.getMethodWarnings()) {
 			List<String> list = warningMap.get(methodWarning.getWarningType());
-			list.add(methodWarning.getMethod().toString() + " " + methodWarning.getDetails());
-		}
+			list.add(methodWarning.getMethod().getDeclaringClass().getSimpleName()+"\t"+methodWarning.getMethod().toString() + " " + methodWarning.getDetails());
+		}		
 
 		for (ConstructorWarning constructorWarning : warningContainer.getConstructorWarnings()) {
 			List<String> list = warningMap.get(constructorWarning.getWarningType());
-			list.add(constructorWarning.getConstructor().toString() + " " + constructorWarning.getDetails());
+			list.add(constructorWarning.getConstructor().getDeclaringClass().getSimpleName()+"\t"+constructorWarning.getConstructor().toString() + " " + constructorWarning.getDetails());
 		}
 
 		int warningCount = 0;
 		for (WarningType warningType : WarningType.values()) {
 			warningCount += warningMap.get(warningType).size();
 		}
+		
+		
+		
 		System.out.println("(" + warningCount + ")");
 		for (WarningType warningType : WarningType.values()) {
 			List<String> warnings = warningMap.get(warningType);
@@ -79,6 +82,17 @@ public class WarningTypeReport {
 				System.out.println();
 			}
 		}
+		
+		
+		List<String> generalWarnings = warningContainer.getGeneralWarnings();
+		if(!generalWarnings.isEmpty()) {
+			System.out.println("(" + generalWarnings.size() + ")" + "General warnings");
+		}
+		for (String generalWarning : generalWarnings) {
+			warningCount++;
+			System.out.println("\t" + generalWarning);			
+		}
+
 		if (warningCount == 0) {
 			System.out.println("Test code is consistent with source code");
 		}

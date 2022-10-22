@@ -40,6 +40,8 @@ import util.wrappers.MultiKey;
  *
  */
 public class GroupsActionSupport {
+	
+	private GroupsActionSupport() {}
 
 	/**
 	 * Creates an action plugin with an agent that will execute the given

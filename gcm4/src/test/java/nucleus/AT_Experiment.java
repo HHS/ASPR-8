@@ -318,6 +318,25 @@ public class AT_Experiment {
 	}
 
 	@Test
+	@UnitTestMethod(target = Experiment.Builder.class, name = "reportProgressToConsole", args = { boolean.class }, manual = true)
+	public void testReportProgressToConsole() {
+		// should be manually tested	
+	}
+	
+	@Test
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, manual = true)
+	public void testSetContinueFromProgressLog() {
+		// should be manually tested	
+	}
+	
+	@Test
+	@UnitTestMethod(target = Experiment.Builder.class, name = "reportFailuresToConsole", args = { boolean.class }, manual = true)
+	public void testReportFailuresToConsole() {
+		// should be manually tested	
+	}
+
+	
+	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setThreadCount", args = { int.class })
 	public void testSetThreadCount() {
 
@@ -355,7 +374,8 @@ public class AT_Experiment {
 		 * simulation running that actor
 		 */
 		Plugin plugin = Plugin	.builder()//
-								.setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
+								.setPluginId(new SimplePluginId("plugin"))//
+								.setInitializer((c) -> {
 									c.addActor((c2) -> {
 										threadIds.add(Thread.currentThread().getId());
 									});
@@ -375,7 +395,7 @@ public class AT_Experiment {
 		// especially with simulation instances that run very quickly, to reason
 		// out the number of threads that will be allocated or reused. The best
 		// we can do is show that the main thread was not used for any
-		// simulation instance. In practice only a long running manual test can
+		// simulation instance. In practice, only a long running manual test can
 		// demonstrate that the experiment thread management is working as
 		// intended.
 		assertFalse(threadIds.contains(Thread.currentThread().getId()));

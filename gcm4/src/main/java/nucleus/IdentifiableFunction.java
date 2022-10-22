@@ -8,23 +8,23 @@ public final class IdentifiableFunction<N> {
 	
 	private Object functionId;
 	
-	private Function<N, Object> eventFunction;
+	private Function<N, Object> function;
 
 	
-	public IdentifiableFunction(Object functionId, Function<N, Object> eventFunction) {
+	public IdentifiableFunction(Object functionId, Function<N, Object> function) {
 		if (functionId == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_ID);
+			throw new ContractException(NucleusError.NULL_FUNCTION_ID);
 		}
-		if (eventFunction == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_FUNCTION);
+		if (function == null) {
+			throw new ContractException(NucleusError.NULL_FUNCTION);
 		}
 		
 		this.functionId = functionId;
-		this.eventFunction = eventFunction;
+		this.function = function;
 	}
 
-	public Function<N, Object> getEventFunction() {
-		return eventFunction;
+	public Function<N, Object> getFunction() {
+		return function;
 	}
 
 	@Override

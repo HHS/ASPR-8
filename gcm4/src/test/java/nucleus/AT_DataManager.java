@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = DataManager.class)
@@ -17,5 +18,11 @@ public class AT_DataManager {
 		assertFalse(dataManager.isInitialized());
 		dataManager.init(null);
 		assertTrue(dataManager.isInitialized());
+	}
+	
+	@UnitTestConstructor(args = {})
+	@Test
+	public void testConstructor() {
+		//nothing to test
 	}
 }

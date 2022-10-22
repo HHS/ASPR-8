@@ -9,11 +9,20 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = ActorId.class)
 public final class AT_ActorId {
 
+	@UnitTestConstructor( args = {int.class})
+	@Test
+	public void testConstructor() {
+		for (int i = 0; i < 100; i++) {
+			assertEquals(i, new ActorId(i).getValue());
+		}
+	}
+	
 	@UnitTestMethod(name = "getValue", args = {})
 	@Test
 	public void testGetValue() {

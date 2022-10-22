@@ -81,7 +81,7 @@ public final class EventFilter<T extends Event> {
 		 *             <li>{@linkplain NucleusError#NULL_IDENTIFIABLE_FUNCTION} if
 		 *             the identifiable function is null</li>
 		 *             
-		 *             <li>{@linkplain NucleusError#NULL_EVENT_FUNCTION_VALUE}
+		 *             <li>{@linkplain NucleusError#NULL_FUNCTION_VALUE}
 		 *             if the target value is null</li>
 		 */
 		public Builder<N> addFunctionValuePair(IdentifiableFunction<N> identifiableFunction, Object targetValue) {
@@ -90,7 +90,7 @@ public final class EventFilter<T extends Event> {
 			}
 			
 			if (targetValue == null) {
-				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_VALUE);
+				throw new ContractException(NucleusError.NULL_FUNCTION_VALUE);
 			}
 
 			data.functionValuePairs.add(new Pair<>(identifiableFunction, targetValue));

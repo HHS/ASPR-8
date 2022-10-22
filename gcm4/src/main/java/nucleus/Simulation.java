@@ -1463,7 +1463,7 @@ public class Simulation {
 				filterNode = new FilterNode();
 				filterNode.identifiableFunction = identifiableFunction;
 				filterNode.parent = this;
-				filterNode.function = event -> identifiableFunction.getEventFunction().apply((T) event);
+				filterNode.function = event -> identifiableFunction.getFunction().apply((T) event);
 				map.put(identifiableFunction, filterNode);
 			}
 			return filterNode;

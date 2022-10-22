@@ -13,7 +13,14 @@ public final class IdentifiableFunctionMap<N> {
 		private Map<Object, IdentifiableFunction<T>> functionMap = new LinkedHashMap<>();
 	}
 
-	public static <T> Builder<T> builder(Class<T> c) {
+	/**
+	 * Returns a builder instance that will build an IdentifiableFunctionMap of
+	 * the given type
+	 */
+	public static <T> Builder<T> builder(Class<T> type) {
+		if (type == null) {
+			throw new ContractException(NucleusError.NULL_CLASS_REFERENCE);
+		}
 		return new Builder<>();
 	}
 
@@ -32,28 +39,46 @@ public final class IdentifiableFunctionMap<N> {
 
 		}
 
-		public Builder<T> put(Object id, Function<T, Object> eventFunction) {
-			if(id == null) {
-				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_ID);
+		/**
+		 * Puts the function at the id, replacing any existing function.
+		 * 
+		 * @throws ContractException
+		 *             <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if the
+		 *             function id is null</li>
+		 *             <li>{@linkplain NucleusError#NULL_FUNCTION} if the
+		 *             function is null</li>
+		 */
+		public Builder<T> put(Object id, Function<T, Object> function) {
+			if (id == null) {
+				throw new ContractException(NucleusError.NULL_FUNCTION_ID);
 			}
-			
-			if(eventFunction == null) {
-				throw new ContractException(NucleusError.NULL_EVENT_FUNCTION);
+
+			if (function == null) {
+				throw new ContractException(NucleusError.NULL_FUNCTION);
 			}
-			
-			data.functionMap.put(id, new IdentifiableFunction<>(id, eventFunction));
+
+			data.functionMap.put(id, new IdentifiableFunction<>(id, function));
 			return this;
 		}
 
 	}
 
+	/**
+	 * Gets the function associated with the given id
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if the
+	 *             function id is null</li>
+	 *             <li>{@linkplain NucleusError#UNKNOWN_FUNCTION_ID} if the
+	 *             function id is not in this map</li>
+	 */
 	public IdentifiableFunction<N> get(Object id) {
 		if (id == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_FUNCTION_ID);
+			throw new ContractException(NucleusError.NULL_FUNCTION_ID);
 		}
 		IdentifiableFunction<N> result = data.functionMap.get(id);
 		if (result == null) {
-			throw new ContractException(NucleusError.UNKNOWN_EVENT_FUNCTION_ID);
+			throw new ContractException(NucleusError.UNKNOWN_FUNCTION_ID);
 		}
 		return result;
 	}

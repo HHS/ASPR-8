@@ -36,6 +36,7 @@ public enum NucleusError implements ContractError {
 	NULL_DATA_MANAGER("Null data manager"),
 	NULL_DATA_MANAGER_CLASS("Null data manager class"),
 	NULL_DATA_MANAGER_CONTEXT_CONSUMER("Null data manager context consumer"),
+	NULL_CLASS_REFERENCE("Null class reference"),
 	NULL_EVENT("Event is null"),
 	NULL_EVENT_CLASS("Null event class"),
 	NULL_EVENT_CONSUMER("Null event consumer"),
@@ -77,10 +78,10 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_SCENARIO_ID("Unknown scenario id"),
 	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
 	
-	UNKNOWN_EVENT_FUNCTION_ID("Unknown event function id"),
-	NULL_EVENT_FUNCTION_ID("Null event function id"),
-	NULL_EVENT_FUNCTION_VALUE("Null event function value"),
-	NULL_EVENT_FUNCTION("Null event function"),
+	UNKNOWN_FUNCTION_ID("Unknown event function id"),
+	NULL_FUNCTION_ID("Null function id"),
+	NULL_FUNCTION_VALUE("Null event function value"),
+	NULL_FUNCTION("Null function"),
 	NULL_IDENTIFIABLE_FUNCTION("Null identifiable function"),
 	NULL_EVENT_FILTER("Null event filter"),
 	;

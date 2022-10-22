@@ -13,6 +13,7 @@ import nucleus.ActorContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
 
@@ -49,7 +50,7 @@ public class AT_TestActor {
 		for (MultiKey multiKey : expectedObservations) {
 			Object expectedAlias = multiKey.getKey(0);
 			Double expectedTime = multiKey.getKey(1);
-			pluginDataBuilder.addTestActorPlan(expectedAlias, new TestActorPlan(expectedTime, (c) -> {								
+			pluginDataBuilder.addTestActorPlan(expectedAlias, new TestActorPlan(expectedTime, (c) -> {
 				actualObservations.add(new MultiKey(expectedAlias, c.getTime()));
 			}));
 		}
@@ -79,6 +80,15 @@ public class AT_TestActor {
 		// show that the actors executed the expected actions
 		assertEquals(expectedObservations, actualObservations);
 
+	}
+
+	@Test
+	@UnitTestConstructor(args = { Object.class })
+	public void testConstructor() {
+		/*
+		 * The test of the init() method suffices to show that the alias value
+		 * passed in the constructor is utilized as designed.
+		 */
 	}
 
 }
