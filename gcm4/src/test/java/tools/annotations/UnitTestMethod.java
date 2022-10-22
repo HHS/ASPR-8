@@ -22,6 +22,7 @@ public @interface UnitTestMethod {
 	Class<?> target() default Object.class;
 
 	Class<?>[] args();
+	UnitTag[] tags() default {};
 	
 	boolean manual() default false;
 
