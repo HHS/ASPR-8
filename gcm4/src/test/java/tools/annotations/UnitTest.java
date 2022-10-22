@@ -7,9 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for JUnit test classes that are tested via a proxy test. Any class
- * marked with this annotation should not be part of the public GCM API and is
- * considered tested by the test of the class that is the proxy.
+ * Annotation for JUnit test classes. Contains the target variable that is used
+ * as the default target values for {@link UnitTestMethod} and
+ * {@link UnitTestConstructor} in the same test unit class.
  * 
  * @author Shawn Hatch
  *
@@ -19,5 +19,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface UnitTest {
-	Class<?> target();	
+	Class<?> target();
 }

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
@@ -312,25 +313,25 @@ public class AT_Experiment {
 	
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, manual = true)	
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, tags = {UnitTag.MANUAL})	
 	public void testSetExperimentProgressLog() {
 		// should be manually tested		
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "reportProgressToConsole", args = { boolean.class }, manual = true)
+	@UnitTestMethod(target = Experiment.Builder.class, name = "reportProgressToConsole", args = { boolean.class }, tags = {UnitTag.MANUAL})
 	public void testReportProgressToConsole() {
 		// should be manually tested	
 	}
 	
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, manual = true)
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, tags = {UnitTag.MANUAL})
 	public void testSetContinueFromProgressLog() {
 		// should be manually tested	
 	}
 	
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "reportFailuresToConsole", args = { boolean.class }, manual = true)
+	@UnitTestMethod(target = Experiment.Builder.class, name = "reportFailuresToConsole", args = { boolean.class }, tags = {UnitTag.MANUAL})
 	public void testReportFailuresToConsole() {
 		// should be manually tested	
 	}

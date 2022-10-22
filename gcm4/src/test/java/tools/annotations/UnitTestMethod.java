@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for JUnit test classes
+ * Annotation for JUnit test methods that are testing public source methods.
  * 
  * @author Shawn Hatch
  *
@@ -22,8 +22,7 @@ public @interface UnitTestMethod {
 	Class<?> target() default Object.class;
 
 	Class<?>[] args();
-	UnitTag[] tags() default {};
 	
-	boolean manual() default false;
+	UnitTag[] tags() default {};
 
 }
