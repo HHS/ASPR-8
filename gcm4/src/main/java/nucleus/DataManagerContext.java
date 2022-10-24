@@ -168,5 +168,10 @@ public interface DataManagerContext extends SimulationContext {
 	 *             consumer is null</li> 
 	 */
 	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer);
+	
+	/**
+	 * Returns the ActorId of the current actor
+	 */
+	public ActorId getActorId();
 
 }

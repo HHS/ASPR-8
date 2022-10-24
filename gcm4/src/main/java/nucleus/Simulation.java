@@ -355,6 +355,11 @@ public class Simulation {
 		private final DataManagerId dataManagerId;
 		private final Simulation simulation;
 
+		@Override
+		public ActorId getActorId() {
+			return simulation.focalActorId;
+		}
+		
 		private DataManagerContextImpl(Simulation simulation, DataManagerId dataManagerId) {
 			this.simulation = simulation;
 			this.dataManagerId = dataManagerId;
