@@ -2,6 +2,7 @@ package nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -146,5 +147,53 @@ public class AT_TestDataManagerPlan {
 
 	}
 	
+	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
+	public void testEquals() {
+
+		/*
+		 * we must set the key release to false so that the auto generated key
+		 * values won't cause the two plans to be unique
+		 */
+		TestDataManagerPlan plan1 = new TestDataManagerPlan(4.5, (c) -> {
+		}, false);
+		TestDataManagerPlan plan2 = new TestDataManagerPlan(4.5, (c) -> {
+		}, false);
+		assertEquals(plan1, plan2);
+		
+		//with auto generated keys, there is no way to force them to be equal
+		plan1 = new TestDataManagerPlan(4.5, (c) -> {
+		});
+		plan2 = new TestDataManagerPlan(4.5, (c) -> {
+		});
+		assertNotEquals(plan1, plan2);
+		
+		//unless we use the copy constructor
+		plan1 = new TestDataManagerPlan(4.5, (c) -> {
+		});
+		plan2 = new TestDataManagerPlan(plan1);
+		assertEquals(plan1, plan2);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "hashCode", args = { Object.class })
+	public void testHashCode() {
+		/*
+		 * show that equal objects have equal hash codes
+		 */
+		TestDataManagerPlan plan1 = new TestDataManagerPlan(4.5, (c) -> {
+		}, false);
+		TestDataManagerPlan plan2 = new TestDataManagerPlan(4.5, (c) -> {
+		}, false);
+		assertEquals(plan1.hashCode(), plan2.hashCode());
+		
+		//via the copy constructor
+		plan1 = new TestDataManagerPlan(4.5, (c) -> {
+		});
+		plan2 = new TestDataManagerPlan(plan1);
+		assertEquals(plan1.hashCode(), plan2.hashCode());
+
+	}
 
 }

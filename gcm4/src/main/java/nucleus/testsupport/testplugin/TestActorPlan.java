@@ -36,8 +36,9 @@ public class TestActorPlan {
 	 * action plan will return an empty optional key.
 	 * 
 	 * @throws ContractException
-	 * <li>{@linkplain TestError#NEGATIVE_PLANNING_TIME} if the scheduled plan time is negative</li>
-	 * <li>{@linkplain TestError#NULL_PLAN} if the plan is null </li>
+	 *             <li>{@linkplain TestError#NEGATIVE_PLANNING_TIME} if the
+	 *             scheduled plan time is negative</li>
+	 *             <li>{@linkplain TestError#NULL_PLAN} if the plan is null</li>
 	 * 
 	 */
 	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> plan, boolean assignKey) {
@@ -48,7 +49,7 @@ public class TestActorPlan {
 		if (plan == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}
-		
+
 		this.scheduledTime = scheduledTime;
 
 		this.key = getNextKey();
@@ -73,7 +74,11 @@ public class TestActorPlan {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (executed ? 1231 : 1237);
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		if (releaseKey) {
+			result = prime * result + ((key == null) ? 0 : key.hashCode());
+		} else {
+			result = prime * result;
+		}
 		result = prime * result + (releaseKey ? 1231 : 1237);
 		long temp;
 		temp = Double.doubleToLongBits(scheduledTime);
@@ -82,8 +87,10 @@ public class TestActorPlan {
 	}
 
 	/**
-	 * Boilerplate implementation of equals. TestActorPlans are equal if and
-	 * only if all fields are equal.
+	 * TestActorPlans are equal if and only they return the same values for
+	 * 1)getKey(), 2)executed() and 3)getScheduledTime()This limited sense of
+	 * equality is present simply to provide some reasonable evidence that the
+	 * plugin data cloning method is working correctly for the test plugin data.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -97,16 +104,20 @@ public class TestActorPlan {
 		if (executed != other.executed) {
 			return false;
 		}
-		if (key == null) {
-			if (other.key != null) {
-				return false;
-			}
-		} else if (!key.equals(other.key)) {
-			return false;
-		}
+
 		if (releaseKey != other.releaseKey) {
 			return false;
 		}
+		if (releaseKey) {
+			if (key == null) {
+				if (other.key != null) {
+					return false;
+				}
+			} else if (!key.equals(other.key)) {
+				return false;
+			}
+		}
+
 		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
 			return false;
 		}
