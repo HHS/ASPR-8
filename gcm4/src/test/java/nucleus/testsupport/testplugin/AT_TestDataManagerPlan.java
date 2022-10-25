@@ -177,7 +177,7 @@ public class AT_TestDataManagerPlan {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = { Object.class })
+	@UnitTestMethod(name = "hashCode", args = { })
 	public void testHashCode() {
 		/*
 		 * show that equal objects have equal hash codes

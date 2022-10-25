@@ -9,14 +9,16 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
+import nucleus.DataManagerContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
 
-@UnitTest(target = TestActor.class)
+@UnitTest(target = TestDataManager.class)
 public class AT_TestDataManager {
 
 	private static class TestDataManagerType1 extends TestDataManager {
@@ -28,7 +30,7 @@ public class AT_TestDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class })
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
 	public void testInit() {
 		// create two aliases
 		Object alias1 = "alias 1";
@@ -91,6 +93,12 @@ public class AT_TestDataManager {
 		// show that the actors executed the expected actions
 		assertEquals(expectedObservations, actualObservations);
 
+	}
+	
+	@Test
+	@UnitTestConstructor(args = {}, tags = {UnitTag.EMPTY})
+	public void testConstructor() {
+		//nothing to test		
 	}
 
 }

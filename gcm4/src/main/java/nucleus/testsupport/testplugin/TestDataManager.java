@@ -38,7 +38,7 @@ public class TestDataManager extends DataManager {
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		TestPlanDataManager testPlanDataManager = dataManagerContext.getDataManager(TestPlanDataManager.class);
-		
+
 		List<TestDataManagerPlan> testDataManagerPlans = testPlanDataManager.getTestDataManagerPlans(alias);
 		for (final TestDataManagerPlan testDataManagerPlan : testDataManagerPlans) {
 			if (testDataManagerPlan.getKey() != null) {
@@ -48,5 +48,4 @@ public class TestDataManager extends DataManager {
 			}
 		}
 	}
-
 }

@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Experiment;
+import nucleus.ExperimentContext;
 import nucleus.Plugin;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
@@ -67,7 +68,7 @@ public class AT_ExperimentPlanCompletionObserver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {}, tags = { UnitTag.LOCAL_PROXY })
+	@UnitTestMethod(name = "init", args = {ExperimentContext.class}, tags = { UnitTag.LOCAL_PROXY })
 	public void testInit() {
 		// covered by the test: testGetActionCompletionReport()
 	}

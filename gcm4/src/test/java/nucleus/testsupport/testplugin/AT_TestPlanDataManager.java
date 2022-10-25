@@ -9,12 +9,14 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.DataManagerContext;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = TestPlanDataManager.class)
-public class AT_TestPluginDataManager {
+public class AT_TestPlanDataManager {
 	private static class TestDataManager1 extends TestDataManager {
 
 	}
@@ -23,12 +25,15 @@ public class AT_TestPluginDataManager {
 
 	}
 
-	
-
-	
 	@Test
-	@UnitTestConstructor(args = { TestPluginData.class })
-	public void test_Constructor() {
+	@UnitTestMethod(name = "init", args = { DataManagerContext.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testInit() {
+		// covered by other tests
+	}
+
+	@Test
+	@UnitTestConstructor(args = { TestPluginData.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testConstructor() {
 		// covered by other tests
 	}
 
@@ -55,8 +60,8 @@ public class AT_TestPluginDataManager {
 		}));
 
 		// Build the plugin data from the items above
-		TestPluginData.Builder builder = TestPluginData	.builder();
-		
+		TestPluginData.Builder builder = TestPluginData.builder();
+
 		for (String alias : expectedTestActorPlans.keySet()) {
 			testActorPlans = expectedTestActorPlans.get(alias);
 			for (TestActorPlan testActorPlan : testActorPlans) {
@@ -74,8 +79,6 @@ public class AT_TestPluginDataManager {
 			assertEquals(expectedPlans, actualPlans);
 		}
 	}
-
-	
 
 	@Test
 	@UnitTestMethod(name = "getTestDataManagerPlans", args = { Object.class })
@@ -100,22 +103,22 @@ public class AT_TestPluginDataManager {
 		// add them to a test plugin data
 		TestPluginData.Builder builder = TestPluginData.builder();
 		for (Object alias : planMap.keySet()) {
-			
+
 			planSet = planMap.get(alias);
-			for(TestDataManagerPlan testDataManagerPlan : planSet) {
+			for (TestDataManagerPlan testDataManagerPlan : planSet) {
 				builder.addTestDataManagerPlan(alias, testDataManagerPlan);
 			}
 		}
-		builder.addTestDataManager("A", ()-> new TestDataManager1());
-		
-		builder.addTestDataManager("B", ()-> new TestDataManager2());
-		
+		builder.addTestDataManager("A", () -> new TestDataManager1());
+
+		builder.addTestDataManager("B", () -> new TestDataManager2());
+
 		TestPluginData testPluginData = builder.build();
 
-		//create the test plugin data manager
+		// create the test plugin data manager
 		TestPlanDataManager testPlanDataManager = new TestPlanDataManager(testPluginData);
-		
-		//show that the correct plans are stored
+
+		// show that the correct plans are stored
 		for (Object alias : planMap.keySet()) {
 			Set<TestDataManagerPlan> expectedPlans = planMap.get(alias);
 			Set<TestDataManagerPlan> actualPlans = new LinkedHashSet<>(testPlanDataManager.getTestDataManagerPlans(alias));
@@ -123,9 +126,4 @@ public class AT_TestPluginDataManager {
 		}
 	}
 
-	
-
-	
-
-	
 }

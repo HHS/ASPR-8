@@ -2,9 +2,11 @@ package nucleus.testsupport.testplugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import net.jcip.annotations.ThreadSafe;
@@ -54,10 +56,15 @@ public class TestPluginData implements PluginData {
 
 		}
 
+		
+
+		
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
+			result = prime * result + ((pluginDependencies == null) ? 0 : pluginDependencies.hashCode());
 			result = prime * result + ((testActorPlanMap == null) ? 0 : testActorPlanMap.hashCode());
 			result = prime * result + ((testDataManagerPlanMap == null) ? 0 : testDataManagerPlanMap.hashCode());
 			result = prime * result + ((testDataManagerSuppliers == null) ? 0 : testDataManagerSuppliers.hashCode());
@@ -73,6 +80,13 @@ public class TestPluginData implements PluginData {
 				return false;
 			}
 			Data other = (Data) obj;
+			if (pluginDependencies == null) {
+				if (other.pluginDependencies != null) {
+					return false;
+				}
+			} else if (!pluginDependencies.equals(other.pluginDependencies)) {
+				return false;
+			}
 			if (testActorPlanMap == null) {
 				if (other.testActorPlanMap != null) {
 					return false;
@@ -97,6 +111,10 @@ public class TestPluginData implements PluginData {
 			return true;
 		}
 
+
+
+
+
 		/*
 		 * Map of action plans key by actor aliases
 		 */
@@ -106,7 +124,7 @@ public class TestPluginData implements PluginData {
 
 		private final Map<Object, List<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
 
-		private final List<PluginId> pluginDependencies = new ArrayList<>();
+		private final Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 
 	}
 
@@ -276,8 +294,8 @@ public class TestPluginData implements PluginData {
 	/**
 	 * Returns the plugin dependencies
 	 */
-	public List<PluginId> getPluginDependencies() {
-		return new ArrayList<>(data.pluginDependencies);
+	public Set<PluginId> getPluginDependencies() {
+		return new LinkedHashSet<>(data.pluginDependencies);
 	}
 
 	/**

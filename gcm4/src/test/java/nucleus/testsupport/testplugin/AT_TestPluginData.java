@@ -2,7 +2,9 @@ package nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
@@ -12,10 +14,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.PluginId;
+import nucleus.SimplePluginId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
+import util.random.RandomGeneratorProvider;
 
 @UnitTest(target = TestPluginData.class)
 public class AT_TestPluginData {
@@ -145,15 +152,15 @@ public class AT_TestPluginData {
 		}));
 
 		// add data managers
-		builder.addTestDataManager("D", ()->new TestDataManager1());
+		builder.addTestDataManager("D", () -> new TestDataManager1());
 		builder.addTestDataManagerPlan("D", new TestDataManagerPlan(0, (c) -> {
 		}));
-		builder.addTestDataManager("E", ()->new TestDataManager2());
+		builder.addTestDataManager("E", () -> new TestDataManager2());
 		builder.addTestDataManagerPlan("E", new TestDataManagerPlan(0, (c) -> {
 		}));
 		builder.addTestDataManagerPlan("E", new TestDataManagerPlan(0, (c) -> {
 		}));
-		builder.addTestDataManager("F", ()->new TestDataManager3());
+		builder.addTestDataManager("F", () -> new TestDataManager3());
 
 		// build the plugin data
 		TestPluginData testPluginData = builder.build();
@@ -197,8 +204,8 @@ public class AT_TestPluginData {
 			}
 		}
 
-		builder.addTestDataManager("A", ()->new TestDataManager1());
-		builder.addTestDataManager("B", ()->new TestDataManager2());
+		builder.addTestDataManager("A", () -> new TestDataManager1());
+		builder.addTestDataManager("B", () -> new TestDataManager2());
 
 		TestPluginData testPluginData = builder.build();
 
@@ -218,11 +225,11 @@ public class AT_TestPluginData {
 
 		TestPluginData.Builder builder = TestPluginData.builder();
 		expectedAliases.add("A");
-		builder.addTestDataManager("A", ()->new TestDataManager1());
+		builder.addTestDataManager("A", () -> new TestDataManager1());
 		expectedAliases.add("B");
-		builder.addTestDataManager("B", ()->new TestDataManager2());
+		builder.addTestDataManager("B", () -> new TestDataManager2());
 		expectedAliases.add("C");
-		builder.addTestDataManager("C", ()->new TestDataManager3());
+		builder.addTestDataManager("C", () -> new TestDataManager3());
 		TestPluginData testPluginData = builder.build();
 
 		LinkedHashSet<Object> actualAliases = new LinkedHashSet<>(testPluginData.getTestDataManagerAliases());
@@ -260,8 +267,8 @@ public class AT_TestPluginData {
 			}
 		}
 
-		builder.addTestDataManager("A", ()->new TestDataManager1());
-		builder.addTestDataManager("B", ()->new TestDataManager2());
+		builder.addTestDataManager("A", () -> new TestDataManager1());
+		builder.addTestDataManager("B", () -> new TestDataManager2());
 
 		TestPluginData testPluginData = builder.build();
 
@@ -275,8 +282,7 @@ public class AT_TestPluginData {
 
 	@Test
 	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestDataManager", args = { Object.class, Supplier.class })
-	
-	 
+
 	public void testAddTestDataManager() {
 		// create a few plans
 		LinkedHashSet<Object> expectedDataManagerAliases = new LinkedHashSet<>();
@@ -286,9 +292,9 @@ public class AT_TestPluginData {
 
 		// add those plans to the builder
 		TestPluginData.Builder builder = TestPluginData.builder();
-		builder.addTestDataManager("A",()->new TestDataManager1());
-		builder.addTestDataManager("B",()->new TestDataManager2());
-		builder.addTestDataManager("C",()->new TestDataManager3());
+		builder.addTestDataManager("A", () -> new TestDataManager1());
+		builder.addTestDataManager("B", () -> new TestDataManager2());
+		builder.addTestDataManager("C", () -> new TestDataManager3());
 
 		TestPluginData testPluginData = builder.build();
 
@@ -327,8 +333,8 @@ public class AT_TestPluginData {
 			}
 		}
 
-		builder.addTestDataManager("A", ()->new TestDataManager1());
-		builder.addTestDataManager("B", ()->new TestDataManager2());
+		builder.addTestDataManager("A", () -> new TestDataManager1());
+		builder.addTestDataManager("B", () -> new TestDataManager2());
 
 		TestPluginData testPluginData = builder.build();
 
@@ -341,9 +347,235 @@ public class AT_TestPluginData {
 	}
 
 	@Test
+	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addPluginDependency", args = { PluginId.class })
+	public void testAddPluginDependency() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4923209038525994062L);
+		Set<PluginId> candidatePluginIds = new LinkedHashSet<>();
+		candidatePluginIds.add(new SimplePluginId("A"));
+		candidatePluginIds.add(new SimplePluginId("B"));
+		candidatePluginIds.add(new SimplePluginId("C"));
+		candidatePluginIds.add(new SimplePluginId("D"));
+		candidatePluginIds.add(new SimplePluginId("E"));
+
+		for (int i = 0; i < 30; i++) {
+
+			Set<PluginId> expectedPluginIds = new LinkedHashSet<>();
+			TestPluginData.Builder builder = TestPluginData.builder();
+			for (PluginId pluginId : candidatePluginIds) {
+				if (randomGenerator.nextBoolean()) {
+					builder.addPluginDependency(pluginId);
+					expectedPluginIds.add(pluginId);
+				}
+			}
+
+			Set<PluginId> actualPluginIds = builder.build().getPluginDependencies();
+			assertEquals(expectedPluginIds, actualPluginIds);
+		}
+
+		// precondition test: if the plugin id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> TestPluginData.builder().addPluginDependency(null));
+		assertEquals(TestError.NULL_PLUGIN_ID, contractException.getErrorType());
+
+	}
+
+	@Test
 	@UnitTestMethod(target = TestPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		// covered by other tests
+	}
+
+	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
+	public void testEquals() {
+
+		SimplePluginId simplePluginIdA = new SimplePluginId("A");
+		SimplePluginId simplePluginIdB = new SimplePluginId("B");
+		Supplier<TestDataManager> supplier1 = () -> new TestDataManager();
+		Supplier<TestDataManager> supplier2 = () -> new TestDataManager();
+		TestActorPlan testActorPlan1 = new TestActorPlan(0, (c) -> {
+		});
+		TestActorPlan testActorPlan2 = new TestActorPlan(0, (c) -> {
+		});
+		TestDataManagerPlan testDataManagerPlan1 = new TestDataManagerPlan(0, (c) -> {
+		});
+		TestDataManagerPlan testDataManagerPlan2 = new TestDataManagerPlan(0, (c) -> {
+		});
+
+		TestPluginData testPluginData1 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdA)//
+														.addTestActorPlan("actor", testActorPlan1)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+														.addTestDataManager("dm", supplier1)//
+														.build();
+
+		// identical inputs
+		TestPluginData testPluginData2 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdA)//
+														.addTestActorPlan("actor", testActorPlan1)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+														.addTestDataManager("dm", supplier1)//
+														.build();
+
+		assertEquals(testPluginData1, testPluginData2);
+
+		// with different plugin dependencies
+		TestPluginData testPluginData3 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdB)//
+														.addTestActorPlan("actor", testActorPlan1)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+														.addTestDataManager("dm", supplier1)//
+														.build();
+		assertNotEquals(testPluginData1, testPluginData3);
+
+		testPluginData3 = TestPluginData.builder()//
+										.addPluginDependency(simplePluginIdA)//
+										.addPluginDependency(simplePluginIdB)//
+										.addTestActorPlan("actor", testActorPlan1)//
+										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+										.addTestDataManager("dm", supplier1)//
+										.build();
+		assertNotEquals(testPluginData1, testPluginData3);
+
+		// with different actor plans
+		TestPluginData testPluginData4 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdA)//
+														.addTestActorPlan("actor", testActorPlan2)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+														.addTestDataManager("dm", supplier1)//
+														.build();
+		assertNotEquals(testPluginData1, testPluginData4);
+
+		testPluginData4 = TestPluginData.builder()//
+										.addPluginDependency(simplePluginIdA)//
+										.addTestActorPlan("actor2", testActorPlan1)//
+										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+										.addTestDataManager("dm", supplier1)//
+										.build();
+		assertNotEquals(testPluginData1, testPluginData4);
+
+		// with different data manager plans
+		TestPluginData testPluginData5 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdA)//
+														.addTestActorPlan("actor", testActorPlan1)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan2)//
+														.addTestDataManager("dm", supplier1)//
+														.build();
+		assertNotEquals(testPluginData1, testPluginData5);
+
+		// with different data manager suppliers
+		TestPluginData testPluginData6 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdA)//
+														.addTestActorPlan("actor", testActorPlan1)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+														.addTestDataManager("dm", supplier2)//
+														.build();
+		assertNotEquals(testPluginData1, testPluginData6);
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
+	public void testHashCode() {
+		/*
+		 * Show that equal objects have equal hash codes over a few example
+		 * cases
+		 */
+
+		SimplePluginId simplePluginIdA = new SimplePluginId("A");
+		SimplePluginId simplePluginIdB = new SimplePluginId("B");
+		Supplier<TestDataManager> supplier1 = () -> new TestDataManager();
+		Supplier<TestDataManager> supplier2 = () -> new TestDataManager();
+		TestActorPlan testActorPlan1 = new TestActorPlan(0, (c) -> {
+		});
+		TestActorPlan testActorPlan2 = new TestActorPlan(0, (c) -> {
+		});
+		TestDataManagerPlan testDataManagerPlan1 = new TestDataManagerPlan(0, (c) -> {
+		});
+		TestDataManagerPlan testDataManagerPlan2 = new TestDataManagerPlan(0, (c) -> {
+		});
+
+		TestPluginData testPluginData1 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdA)//
+														.addTestActorPlan("actor", testActorPlan1)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+														.addTestDataManager("dm", supplier1)//
+														.build();
+
+		// identical inputs
+		TestPluginData testPluginData2 = TestPluginData	.builder()//
+														.addPluginDependency(simplePluginIdA)//
+														.addTestActorPlan("actor", testActorPlan1)//
+														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+														.addTestDataManager("dm", supplier1)//
+														.build();
+
+		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
+
+		testPluginData1 = TestPluginData.builder()//
+										.addPluginDependency(simplePluginIdA)//
+										.addPluginDependency(simplePluginIdB)//
+										.addTestActorPlan("actor", testActorPlan2)//
+										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+										.addTestDataManager("dm", supplier2)//
+										.build();
+
+		testPluginData2 = TestPluginData.builder()//
+										.addPluginDependency(simplePluginIdA)//
+										.addPluginDependency(simplePluginIdB)//
+										.addTestActorPlan("actor", testActorPlan2)//
+										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+										.addTestDataManager("dm", supplier2)//
+										.build();
+
+		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
+
+		testPluginData1 = TestPluginData.builder()//
+										.addPluginDependency(simplePluginIdA)//
+										.addPluginDependency(simplePluginIdB)//
+										.addTestActorPlan("actor", testActorPlan1)//
+										.addTestActorPlan("actor", testActorPlan2)//
+										.addTestDataManagerPlan("dm", testDataManagerPlan2)//
+										.addTestDataManager("dm", supplier2)//
+										.build();
+
+		testPluginData2 = TestPluginData.builder()//
+										.addPluginDependency(simplePluginIdA)//
+										.addPluginDependency(simplePluginIdB)//
+										.addTestActorPlan("actor", testActorPlan1)//
+										.addTestActorPlan("actor", testActorPlan2)//
+										.addTestDataManagerPlan("dm", testDataManagerPlan2)//
+										.addTestDataManager("dm", supplier2)//
+										.build();
+
+		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPluginDependencies", args = {})
+	public void testGetPluginDependencies() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4923209038525994062L);
+		Set<PluginId> candidatePluginIds = new LinkedHashSet<>();
+		candidatePluginIds.add(new SimplePluginId("A"));
+		candidatePluginIds.add(new SimplePluginId("B"));
+		candidatePluginIds.add(new SimplePluginId("C"));
+		candidatePluginIds.add(new SimplePluginId("D"));
+		candidatePluginIds.add(new SimplePluginId("E"));
+
+		for (int i = 0; i < 30; i++) {
+
+			Set<PluginId> expectedPluginIds = new LinkedHashSet<>();
+			TestPluginData.Builder builder = TestPluginData.builder();
+			for (PluginId pluginId : candidatePluginIds) {
+				if (randomGenerator.nextBoolean()) {
+					builder.addPluginDependency(pluginId);
+					expectedPluginIds.add(pluginId);
+				}
+			}
+
+			Set<PluginId> actualPluginIds = builder.build().getPluginDependencies();
+			assertEquals(expectedPluginIds, actualPluginIds);
+		}
 	}
 
 }
