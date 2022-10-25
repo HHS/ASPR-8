@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.apache.commons.math3.util.MathArrays.Function;
+import java.util.function.Function;
+
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;

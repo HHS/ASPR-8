@@ -10,6 +10,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
@@ -88,7 +89,7 @@ public final class AT_DataManagerId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "compareTo", args = { DataManagerId.class })
+	@UnitTestConstructor( args = { int.class })
 	public void testConstructor() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8041307094727012939L);
 		for (int i = 0; i < 100; i++) {

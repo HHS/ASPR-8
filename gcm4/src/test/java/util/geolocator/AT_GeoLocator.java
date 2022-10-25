@@ -17,6 +17,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.earth.Earth;
@@ -65,9 +66,6 @@ public class AT_GeoLocator {
 		return builder.build();
 	}
 
-	/**
-	 * Tests {@link GeoLocator#builder()}
-	 */
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
@@ -76,9 +74,6 @@ public class AT_GeoLocator {
 		generateGeoLocator(locations);
 	}
 
-	/**
-	 * Tests {@link GeoLocator#getLocations(double, double, double)}
-	 */
 	@Test
 	@UnitTestMethod(name = "getLocations", args = { double.class, double.class, double.class })
 	public void testGetLocations() {
@@ -115,9 +110,6 @@ public class AT_GeoLocator {
 		}
 	}
 
-	/**
-	 * Tests {@link GeoLocator#getNearestLocation(double, double)}
-	 */
 	@Test
 	@UnitTestMethod(name = "getNearestLocation", args = { double.class, double.class })
 	public void testGetNearestLocation() {
@@ -162,9 +154,6 @@ public class AT_GeoLocator {
 		}
 	}
 
-	/**
-	 * Tests {@link GeoLocator#getPrioritizedLocations(double, double, double)}
-	 */
 	@Test
 	@UnitTestMethod(name = "getPrioritizedLocations", args = { double.class, double.class, double.class })
 	public void testGetPrioritizedLocations() {
@@ -212,4 +201,18 @@ public class AT_GeoLocator {
 			assertEquals(expectedLocations, actualLocations);
 		}
 	}
+	
+	@Test
+	@UnitTestMethod(target = GeoLocator.Builder.class,name = "build", args = {}, tags= {UnitTag.LOCAL_PROXY})
+	public void testBuild() {
+		//test is covered by the tests associated with the GeoLocator rather than the builder class	
+	}
+	
+	@Test
+	@UnitTestMethod(target = GeoLocator.Builder.class,name = "addLocation", args = {double.class, double.class, Object.class}, tags= {UnitTag.LOCAL_PROXY})
+	public void testAddLocation() {
+		//test is covered by the tests associated with the GeoLocator rather than the builder class	
+	}
+
+	
 }
