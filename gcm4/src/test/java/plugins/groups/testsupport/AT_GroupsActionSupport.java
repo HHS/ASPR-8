@@ -27,7 +27,7 @@ public class AT_GroupsActionSupport {
 	@UnitTestMethod(name = "testConsumer", args = { int.class, double.class, double.class, long.class, Consumer.class })	
 	public void testTestConsumer() {
 		MutableBoolean executed = new MutableBoolean();
-		GroupsActionSupport.testConsumer(100, 3, 5, 234L, (c) -> {
+		GroupsActionSupport.testConsumer(100, 3, 5, 3765548905828391577L, (c) -> {
 
 			// show that there are 100 people
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -59,7 +59,7 @@ public class AT_GroupsActionSupport {
 	@UnitTestMethod(name = "testConsumers", args = { int.class, double.class, double.class, long.class, Plugin.class })
 	public void testTestConsumers() {
 		ContractException contractException = assertThrows(ContractException.class,
-				() -> GroupsActionSupport.testConsumers(100, 3, 5, 234L, TestPlugin.getTestPlugin(TestPluginData.builder().build())));
+				() -> GroupsActionSupport.testConsumers(100, 3, 5, 5220283745188783777L, TestPlugin.getTestPlugin(TestPluginData.builder().build())));
 		
 		assertEquals(TestError.TEST_EXECUTION_FAILURE, contractException.getErrorType());
 	}

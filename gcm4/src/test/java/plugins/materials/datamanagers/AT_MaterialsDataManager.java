@@ -2676,7 +2676,7 @@ public class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumers(6845954292451913670L, testPlugin);
 
 		/* precondition test: if the batch id is null */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(8929308420703752743L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToStage(null, stageId));
@@ -2684,7 +2684,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the batch id is unknown */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(2109267427404198126L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.moveBatchToStage(new BatchId(100000000), stageId));
@@ -2692,7 +2692,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the batch is already staged */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(7854805166816872481L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -2706,7 +2706,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the stage id is null */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(7324432599621147973L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -2718,7 +2718,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the stage id is unknown */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(1695963867758678736L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -2730,7 +2730,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the stage is offered */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(2664182628538225235L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -2747,7 +2747,7 @@ public class AT_MaterialsDataManager {
 		 * precondition test: if batch and stage do not have the same owning
 		 * materials producer
 		 */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(424341512515165163L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -2974,21 +2974,21 @@ public class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumers(886447125697525680L, testPlugin);
 
 		/* precondition test: if the stage id is null */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(7585484363151799317L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.removeStage(null, false));
 			assertEquals(MaterialsError.NULL_STAGE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the stage id is unknown */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(2068986583725856249L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.removeStage(new StageId(1000000), false));
 			assertEquals(MaterialsError.UNKNOWN_STAGE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if stage is offered */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(4255522387251717178L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 			materialsDataManager.setStageOfferState(stageId, true);
@@ -3069,7 +3069,7 @@ public class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumers(6834204103777199004L, testPlugin);
 
 		/* precondition test: if the batch id is null */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(7018657860620291081L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 			Object propertyValue = 56;
@@ -3078,7 +3078,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the batch id is unknown */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(8208393972487550344L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 			Object propertyValue = 56;
@@ -3087,7 +3087,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the batch property id is null */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(1469429590277285989L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
@@ -3100,7 +3100,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the batch property id is unknown */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(5183183157525649267L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
@@ -3114,7 +3114,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if batch property is not mutable */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(6735391483628478568L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
@@ -3127,7 +3127,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the batch property value is null */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(7110456544138996752L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
@@ -3143,7 +3143,7 @@ public class AT_MaterialsDataManager {
 		 * precondition test: if the batch property value is not compatible with
 		 * the corresponding property definition
 		 */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(2721004733907727252L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5751385676704973926L);
@@ -3155,7 +3155,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test: if the batch in on an offered stage */
-		MaterialsActionSupport.testConsumer(0, (c) -> {
+		MaterialsActionSupport.testConsumer(8421379216279187305L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialId materialId = TestMaterialId.MATERIAL_1;
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
