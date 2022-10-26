@@ -59,8 +59,9 @@ public class AT_SphericalArc {
 	@Test
 	@UnitTestMethod(name = "getLength", args = {})
 	public void testGetLength() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(675015272753785672L);
 		for (int i = 0; i < 100; i++) {
-			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(675015272753785672L);
+			
 			double x1 = randomGenerator.nextDouble() * 2 - 1;
 			double y1 = randomGenerator.nextDouble() * 2 - 1;
 			double z1 = randomGenerator.nextDouble() * 2 - 1;
