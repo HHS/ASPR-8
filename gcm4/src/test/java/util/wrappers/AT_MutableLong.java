@@ -138,12 +138,12 @@ public class AT_MutableLong {
 		MutableLong mutableLong = new MutableLong(2);
 		String expectedValue = "MutableLong [value=2]";
 		String actualValue = mutableLong.toString();
-		assertEquals(actualValue, expectedValue);
+		assertEquals(expectedValue,actualValue);
 		
 		mutableLong = new MutableLong(62);
 		expectedValue = "MutableLong [value=62]";
 		actualValue = mutableLong.toString();
-		assertEquals(actualValue, expectedValue);
+		assertEquals(expectedValue,actualValue);
 
 	}
 

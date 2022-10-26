@@ -137,12 +137,12 @@ public class AT_MutableInteger {
 		MutableInteger mutableInteger = new MutableInteger(2);
 		String expectedValue = "MutableInteger [value=2]";
 		String actualValue = mutableInteger.toString();
-		assertEquals(actualValue, expectedValue);
+		assertEquals(expectedValue,actualValue);
 		
 		mutableInteger = new MutableInteger(62);
 		expectedValue = "MutableInteger [value=62]";
 		actualValue = mutableInteger.toString();
-		assertEquals(actualValue, expectedValue);
+		assertEquals(expectedValue,actualValue);
 
 	}
 

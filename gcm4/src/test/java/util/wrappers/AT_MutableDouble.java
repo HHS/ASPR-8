@@ -138,12 +138,12 @@ public class AT_MutableDouble {
 		MutableDouble mutableDouble = new MutableDouble(2.5);
 		String expectedValue = "MutableDouble [value=2.5]";
 		String actualValue = mutableDouble.toString();
-		assertEquals(actualValue, expectedValue);
+		assertEquals(expectedValue,actualValue);
 		
 		mutableDouble = new MutableDouble(62.598);
 		expectedValue = "MutableDouble [value=62.598]";
 		actualValue = mutableDouble.toString();
-		assertEquals(actualValue, expectedValue);
+		assertEquals(expectedValue,actualValue);
 
 	}
 
