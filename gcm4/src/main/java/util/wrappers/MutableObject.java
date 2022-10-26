@@ -3,21 +3,40 @@ package util.wrappers;
 public final class MutableObject<T> {
 	private T value;
 
-	public MutableObject(T value) {		
+	/**
+	 * Constructs this MutableObject from the given value
+	 */
+	public MutableObject(T value) {
 		this.value = value;
 	}
-	
+
+	/**
+	 * Constructs this MutableObject defaulted to null
+	 */
 	public MutableObject() {
-				
+
 	}
-		
+
+	/**
+	 * Sets the current value
+	 */
 	public void setValue(T value) {
 		this.value = value;
 	}
-	
+
+	/**
+	 * Returns the current value
+	 */
+
 	public T getValue() {
 		return value;
 	}
+
+	/**
+	 * Returns the string representation of the current value(X) in the form
+	 * 
+	 * "MutableObject [value="+ X+"]"
+	 */
 
 	@Override
 	public String toString() {
@@ -28,6 +47,9 @@ public final class MutableObject<T> {
 		return builder.toString();
 	}
 
+	/**
+	 * Returns a hash code based on the current value
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -36,6 +58,9 @@ public final class MutableObject<T> {
 		return result;
 	}
 
+	/**
+	 * Two MutableObjects objects are equal if and only if the current values are equal 
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -56,6 +81,4 @@ public final class MutableObject<T> {
 		return true;
 	}
 
-	
-		
 }

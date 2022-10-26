@@ -1,41 +1,76 @@
 package util.wrappers;
-
+/**
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public final class MutableDouble {
 	private double value;
 
-	public MutableDouble(double value) {
-		
+	/**
+	 * Constructs this MutableDouble from the given value
+	 */	
+	public MutableDouble(double value) {		
 		this.value = value;
 	}
 	
+	
+	/**
+	 * Constructs this MutableDouble defaulted to zero
+	 */	
 	public MutableDouble() {
 				
 	}
 	
+	/**
+	 * Increments the current value by one
+	 */
 	public void increment(){
 		value++;
 	}
-	
+	/**
+	 * Increments the current value by the given value
+	 */
+
 	public void increment(double value){
 		this.value += value;
 	}
 
-	
+	/**
+	 * Decrements the current value by one
+	 */
+
 	public void decrement(){
 		value--;
 	}
-	
+	/**
+	 * Decrements the current value by the given value
+	 */
+
 	public void decrement(double value){
 		this.value -= value;
 	}
 	
+	/**
+	 * Sets the current value
+	 */
+
 	public void setValue(double value) {
 		this.value = value;
 	}
 	
+	/**
+	 * Returns the current value
+	 */
 	public double getValue() {
 		return value;
 	}
+
+	/**
+	 * Returns the string representation of the current value(X) in the form
+	 * 
+	 * "MutableDouble [value="+ X+"]"
+	 */
 
 	@Override
 	public String toString() {
@@ -46,6 +81,9 @@ public final class MutableDouble {
 		return builder.toString();
 	}
 
+	/**
+	 * Returns a hash code based on the current value 
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,6 +94,9 @@ public final class MutableDouble {
 		return result;
 	}
 
+	/**
+	 * Two MutableDouble objects are equal if and only if the current values are equal 
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
