@@ -230,7 +230,7 @@ public final class AT_ReportItem {
 	@UnitTestMethod(name = "equals", args = { Object.class })
 
 	public void testEquals() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7481311225319288863L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7530977954336798039L);
 
 		ReportHeader reportHeader = ReportHeader.builder().build();
 		SimpleReportId reportId = new SimpleReportId("report");

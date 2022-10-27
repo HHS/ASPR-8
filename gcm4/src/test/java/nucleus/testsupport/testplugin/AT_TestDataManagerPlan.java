@@ -45,7 +45,7 @@ public class AT_TestDataManagerPlan {
 	@Test
 	@UnitTestConstructor(args = { TestDataManagerPlan.class })
 	public void testConstructor_fromExistingPlan() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7814286176804755234L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(340643142108466727L);
 
 		for (int i = 0; i < 100; i++) {
 			double scheduledTime = randomGenerator.nextDouble();

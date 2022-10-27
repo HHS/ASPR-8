@@ -357,7 +357,7 @@ public class AT_RegionsDataManager {
 		});
 
 		// precondition test: if the person id is null
-		RegionsActionSupport.testConsumer(0, 9214210856215652451L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 2922597221561284586L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getPersonRegionArrivalTime(null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
@@ -375,8 +375,8 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
-		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
-			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2934280155665825436L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);
+		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {			
 			RegionsActionSupport.testConsumer(0, randomGenerator.nextLong(), timeTrackingPolicy, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				assertEquals(timeTrackingPolicy, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
@@ -387,7 +387,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
-		RegionsActionSupport.testConsumer(0, 9132391945335483479L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 87615823520161580L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			Set<RegionId> expectedRegionIds = new LinkedHashSet<>();
@@ -625,7 +625,7 @@ public class AT_RegionsDataManager {
 		RegionsActionSupport.testConsumers(0, 8784099691519492811L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
 
 		// precondition check: if the region id is null
-		RegionsActionSupport.testConsumer(0, 8784099691519492811L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 468427930601885944L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.getRegionPropertyValue(null, knownRegionPropertyId));
@@ -633,7 +633,7 @@ public class AT_RegionsDataManager {
 		});
 
 		// precondition check: if the region id is not known
-		RegionsActionSupport.testConsumer(0, 1546629608367614750L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 6075787443228538245L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 			RegionPropertyId knownRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
@@ -650,7 +650,7 @@ public class AT_RegionsDataManager {
 		});
 
 		// precondition check: if the region property id is unknown
-		RegionsActionSupport.testConsumer(0, 3797498566412748237L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 7980671049474262492L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId knownRegionId = TestRegionId.REGION_1;
 			RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
@@ -752,7 +752,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(name = "regionIdExists", args = { RegionId.class })
 	public void testRegionIdExists() {
-		RegionsActionSupport.testConsumer(0, 3797498566412748237L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 8636579794186794067L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 
 			// show that null region ids do not exist
@@ -1117,7 +1117,7 @@ public class AT_RegionsDataManager {
 		});
 
 		// precondition check: if the region property value is null
-		RegionsActionSupport.testConsumer(0, 8501593854721316109L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 6977487076968608944L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionId regionId = TestRegionId.REGION_1;
 			RegionPropertyId immutableRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_5_INTEGER_IMMUTABLE;
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -1282,7 +1282,7 @@ public class AT_RegionsDataManager {
 		// builder.addPlugin(ReportsPlugin.getReportPlugin(ReportsPluginData.builder().build()));
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
 
 		// add the partitions plugin
 		// builder.addPlugin(PartitionsPlugin.getPartitionsPlugin());
@@ -1354,7 +1354,7 @@ public class AT_RegionsDataManager {
 		});
 
 		// precondition check: if no region data was included in the event
-		RegionsActionSupport.testConsumer(0, 8294774271110836859L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 7737810808059858455L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().build();
 			ContractException contractException = assertThrows(ContractException.class, () -> peopleDataManager.addPerson(personConstructionData));
@@ -1514,7 +1514,7 @@ public class AT_RegionsDataManager {
 		/*
 		 * precondition test: if the region property is already defined
 		 */
-		RegionsActionSupport.testConsumer(0, 755408328420621219L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 1524991526094322535L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 
@@ -1633,7 +1633,7 @@ public class AT_RegionsDataManager {
 		/*
 		 * precondition test: if the region is already present
 		 */
-		RegionsActionSupport.testConsumer(0, 1930072318129921567L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(0, 4107332213003089045L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(TestRegionId.REGION_1).build();
 			ContractException contractException = assertThrows(ContractException.class, () -> regionsDataManager.addRegion(regionConstructionData));
@@ -1693,7 +1693,7 @@ public class AT_RegionsDataManager {
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
 
 		// add the test plugin
 		builder.addPlugin(testPlugin);
@@ -2501,7 +2501,7 @@ public class AT_RegionsDataManager {
 		pluginBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
 		testPluginData = pluginBuilder.build();
 		Plugin testPlugin2 = TestPlugin.getTestPlugin(testPluginData);
-		ContractException contractException = assertThrows(ContractException.class, () -> RegionsActionSupport.testConsumers(0, 2314376445339268382L, TimeTrackingPolicy.TRACK_TIME, testPlugin2));
+		ContractException contractException = assertThrows(ContractException.class, () -> RegionsActionSupport.testConsumers(0, 3490172254703369545L, TimeTrackingPolicy.TRACK_TIME, testPlugin2));
 		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 

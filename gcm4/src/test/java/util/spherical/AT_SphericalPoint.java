@@ -32,7 +32,7 @@ public class AT_SphericalPoint {
 	@Test
 	@UnitTestConstructor(args = { MutableVector3D.class })
 	public void testConstructors_MutableVector3D() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1115082964305662816L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8382813671696213293L);
 
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 2 - 1;

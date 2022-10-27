@@ -29,44 +29,44 @@ public class AT_IntSetPeopleContainer {
 	@Test
 	@UnitTestMethod(name = "getPeople", args= {})
 	public void testGetPeople(){
-		PeopleContainerTester.testGetPeople(this::getPeopleContainer,473484353360778267L);
+		PeopleContainerTester.testGetPeople(this::getPeopleContainer,2057487963804869808L);
 	}
 	
 	@Test
 	@UnitTestMethod(name = "safeAdd", args= {PersonId.class})
 	public void testSafeAdd(){
-		PeopleContainerTester.testSafeAdd(this::getPeopleContainer,1067260810269284703L);
+		PeopleContainerTester.testSafeAdd(this::getPeopleContainer,8929313356256516845L);
 	}
 
 
 	@Test
 	@UnitTestMethod(name = "unsafeAdd", args= {PersonId.class})
 	public void testUnsafeAdd(){
-		PeopleContainerTester.testUnsafeAdd(this::getPeopleContainer,2640497434656632684L);
+		PeopleContainerTester.testUnsafeAdd(this::getPeopleContainer,7154495188896202332L);
 	}
 
 	@Test
 	@UnitTestMethod(name = "remove", args= {PersonId.class})
 	public void testRemove(){
-		PeopleContainerTester.testRemove(this::getPeopleContainer,1461315035567239819L);
+		PeopleContainerTester.testRemove(this::getPeopleContainer,3751615599692356108L);
 	}
 
 	@Test
 	@UnitTestMethod(name = "size", args= {})
 	public void testSize(){
-		PeopleContainerTester.testSize(this::getPeopleContainer,5880341220076297803L);
+		PeopleContainerTester.testSize(this::getPeopleContainer,7891778848164062625L);
 	}
 
 	@Test
 	@UnitTestMethod(name = "contains", args= {PersonId.class})
 	public void testContains(){
-		PeopleContainerTester.testContains(this::getPeopleContainer,6865277196728541573L);
+		PeopleContainerTester.testContains(this::getPeopleContainer,604075687669743780L);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getRandomPersonId", args= {RandomGenerator.class})
 	public void testGetRandomPersonId(){
-		PeopleContainerTester.testGetRandomPersonId(this::getPeopleContainer,1976658500916036734L);
+		PeopleContainerTester.testGetRandomPersonId(this::getPeopleContainer,2124533986436224378L);
 	}
 
 }

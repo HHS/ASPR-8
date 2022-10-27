@@ -36,7 +36,7 @@ public class AT_StochasticsDataManager {
 	@UnitTestMethod(name = "getRandomNumberGeneratorIds", args = {})
 	public void testGetRandomNumberGeneratorIds() {
 
-		StochasticsActionSupport.testConsumer(2276874395058795370L, (c) -> {
+		StochasticsActionSupport.testConsumer(1244273915891145733L, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 
@@ -64,7 +64,7 @@ public class AT_StochasticsDataManager {
 		});
 		
 		// show that an unknown random number generator id will retrieve a random generator
-		StochasticsActionSupport.testConsumer(2276874395058795370L, (c) -> {
+		StochasticsActionSupport.testConsumer(5985120270606833945L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			
 			RandomNumberGeneratorId randomNumberGeneratorIdA = new RandomNumberGeneratorId() {
@@ -101,7 +101,7 @@ public class AT_StochasticsDataManager {
 
 
 		// precondition test : if the random number generator is null
-		StochasticsActionSupport.testConsumer(5489824520767978373L, (c) -> {
+		StochasticsActionSupport.testConsumer(1893848105389404535L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> stochasticsDataManager.getRandomGeneratorFromId(null));
 			assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());

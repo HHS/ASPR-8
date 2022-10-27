@@ -143,7 +143,7 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(8759226038479000135L, testPlugin, new MaterialsProducerResourceReport(REPORT_ID)::init);
+		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(6081341958178733565L, testPlugin, new MaterialsProducerResourceReport(REPORT_ID)::init);
 
 		assertEquals(expectedReportItems, actualReportItems);
 	}

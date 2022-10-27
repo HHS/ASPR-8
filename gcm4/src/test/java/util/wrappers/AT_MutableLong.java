@@ -108,7 +108,7 @@ public class AT_MutableLong {
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5255250189313941474L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(715063174794811583L);
 		for (int i = 0; i < 30; i++) {
 			long value = randomGenerator.nextInt(1000);
 			MutableLong mutableLong1 = new MutableLong(value);

@@ -42,7 +42,7 @@ public class AT_FloatPropertyManager {
 	public void testGetPropertyValue() {
 
 		TestActionSupport.testConsumer((c) -> {
-			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8486538414190886901L);
 
 			float defaultValue = 423.645F;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Float.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();

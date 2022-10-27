@@ -79,7 +79,7 @@ public final class RegionsActionSupport {
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
 
 		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(seed).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
 
 		// add the test plugin
 		builder.addPlugin(testPlugin);

@@ -655,7 +655,7 @@ public class AT_MaterialsPluginData {
 	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "setBatchPropertyValue", args = { BatchId.class, BatchPropertyId.class, Object.class })
 	public void testSetBatchPropertyValue() {
 
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4884114879424388887L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8767111011954878165L);
 
 		/*
 		 * Add 30 batches with about half of the batch properties being set to

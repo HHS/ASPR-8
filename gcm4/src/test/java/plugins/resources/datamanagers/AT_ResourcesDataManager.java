@@ -1436,7 +1436,7 @@ public final class AT_ResourcesDataManager {
 
 		///////////////////
 		/* precondition test: if the person id is null */
-		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
+		ResourcesActionSupport.testConsumer(50, 368123167921446410L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -1452,7 +1452,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the person does not exist */
-		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
+		ResourcesActionSupport.testConsumer(50, 463919801005664846L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -1468,7 +1468,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the resource id is null */
-		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
+		ResourcesActionSupport.testConsumer(50, 5201087860428100698L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -1484,7 +1484,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the resource id is unknown */
-		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
+		ResourcesActionSupport.testConsumer(50, 805801782412801541L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -1500,7 +1500,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the amount is negative */
-		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
+		ResourcesActionSupport.testConsumer(50, 6748548509217290999L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -1519,7 +1519,7 @@ public final class AT_ResourcesDataManager {
 		 * precondition test: if the person does not have the required amount of
 		 * the resource
 		 */
-		ResourcesActionSupport.testConsumer(50, 6476360369877622233L, (c) -> {
+		ResourcesActionSupport.testConsumer(50, 6668079690803354725L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -1616,7 +1616,7 @@ public final class AT_ResourcesDataManager {
 		ResourcesActionSupport.testConsumers(0, 3784957617927969790L, testPlugin);
 
 		/* precondition test: if the region id is null */
-		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 5886805948424471010L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 10;
@@ -1625,7 +1625,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the region id is unknown */
-		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 1916159097321882678L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			long amount = 10;
@@ -1634,7 +1634,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the resource id is null */
-		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 6766634049148364532L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			RegionId regionId = TestRegionId.REGION_1;
 			long amount = 10;
@@ -1643,7 +1643,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the resource id is unknown */
-		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 3589045787461097821L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			RegionId regionId = TestRegionId.REGION_1;
 			long amount = 10;
@@ -1652,7 +1652,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the amount is negative */
-		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 4784578124305542584L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId = TestRegionId.REGION_1;
@@ -1664,7 +1664,7 @@ public final class AT_ResourcesDataManager {
 		 * precondition test: if the region does not have the required amount of
 		 * the resource
 		 */
-		ResourcesActionSupport.testConsumer(0, 3784957617927969790L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 4875324598998641428L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			RegionId regionId = TestRegionId.REGION_1;
@@ -2114,7 +2114,7 @@ public final class AT_ResourcesDataManager {
 
 		ResourcesActionSupport.testConsumers(30, 3166011813977431605L, testPlugin);
 
-		ResourcesActionSupport.testConsumer(30, 3166011813977431605L, (c) -> {
+		ResourcesActionSupport.testConsumer(30, 1001250760859234604L, (c) -> {
 
 		});
 
@@ -2609,7 +2609,7 @@ public final class AT_ResourcesDataManager {
 		 * show that a newly added region will cause the resource data manager
 		 * to return the expected levels from the event.
 		 */
-		ResourcesActionSupport.testConsumer(0, 4192802703078518338L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 7471968091128250788L, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId newRegionId = TestRegionId.getUnknownRegionId();
 
@@ -3125,17 +3125,17 @@ public final class AT_ResourcesDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		ResourcesActionSupport.testConsumers(30, 3776094770483573425L, testPlugin);
+		ResourcesActionSupport.testConsumers(30, 1727074366899837142L, testPlugin);
 
 		/* precondition test: if the resource id is null */
-		ResourcesActionSupport.testConsumer(30, 8909938597230752836L, (c) -> {
+		ResourcesActionSupport.testConsumer(30, 7693743966390586978L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(null, new PersonId(0)));
 			assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
 		});
 
 		/* precondition test: if the resource id is unknown */
-		ResourcesActionSupport.testConsumer(30, 4146350189128134907L, (c) -> {
+		ResourcesActionSupport.testConsumer(30, 693173450564289263L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.getUnknownResourceId(), new PersonId(0)));
@@ -3143,7 +3143,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the region id is null */
-		ResourcesActionSupport.testConsumer(30, 8356399638914398643L, (c) -> {
+		ResourcesActionSupport.testConsumer(30, 9201364062172125070L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			RegionId nullRegionId = null;
 			ContractException contractException = assertThrows(ContractException.class, () -> resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(TestResourceId.RESOURCE_1, nullRegionId));
@@ -3151,7 +3151,7 @@ public final class AT_ResourcesDataManager {
 		});
 
 		/* precondition test: if the region id is unknown */
-		ResourcesActionSupport.testConsumer(30, 3890936504108305392L, (c) -> {
+		ResourcesActionSupport.testConsumer(30, 5569918148190340272L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			RegionId unknownRegionId = TestRegionId.getUnknownRegionId();
 			ContractException contractException = assertThrows(ContractException.class,
@@ -3582,7 +3582,7 @@ public final class AT_ResourcesDataManager {
 		 * precondition test: if the resource property id is unknown -- in this
 		 * case it is linke to a different resource
 		 */
-		ResourcesActionSupport.testConsumer(0, 697790634696788239L, (c) -> {
+		ResourcesActionSupport.testConsumer(0, 107265130769422979L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
 			ResourcePropertyId resourcePropertyId = TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE;
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);

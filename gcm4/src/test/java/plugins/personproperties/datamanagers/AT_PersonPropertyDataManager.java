@@ -1242,7 +1242,7 @@ public final class AT_PersonPropertyDataManager {
 		});
 
 		// precondition test: if the person id is not known
-		PersonPropertiesActionSupport.testConsumer(10, 2414428612890791850L, (c) -> {
+		PersonPropertiesActionSupport.testConsumer(10, 6438595550119080771L, (c) -> {
 			PersonId personId = new PersonId(1000000);
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class,
@@ -1439,7 +1439,7 @@ public final class AT_PersonPropertyDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PersonPropertiesActionSupport.testConsumers(100, 6462842714052608355L, testPlugin);
+		PersonPropertiesActionSupport.testConsumers(100, 2659336653501353916L, testPlugin);
 
 		// precondition test: if the person property id is null
 		PersonPropertiesActionSupport.testConsumer(10, 6900159997685687591L, (c) -> {

@@ -349,7 +349,7 @@ public class AT_TestPluginData {
 	@Test
 	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addPluginDependency", args = { PluginId.class })
 	public void testAddPluginDependency() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4923209038525994062L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6227272133886959116L);
 		Set<PluginId> candidatePluginIds = new LinkedHashSet<>();
 		candidatePluginIds.add(new SimplePluginId("A"));
 		candidatePluginIds.add(new SimplePluginId("B"));

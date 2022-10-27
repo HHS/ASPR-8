@@ -166,11 +166,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		if (nonDefaultBearingPropertyIds.isEmpty()) {
 			for (int personIndex = 0; personIndex < personCount; personIndex++) {
-				if (!peopleDataManager.personIndexExists(personIndex)) {
-					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
-				}
+				
 				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
 
+				if(!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
+					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
+				}
+				
 				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
 					Object personPropertyValue = personPropertyInitialization.getValue();
 					PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
@@ -181,10 +183,12 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		} else {
 			for (int personIndex = 0; personIndex < personCount; personIndex++) {
-				if (!peopleDataManager.personIndexExists(personIndex)) {
+				
+				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
+				
+				if(!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
 					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 				}
-				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
 
 				clearNonDefaultChecks();
 				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {

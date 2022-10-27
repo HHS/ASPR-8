@@ -321,7 +321,7 @@ public final class AT_PartitionsDataManager {
 		});
 
 		// precondition: if the partition is null
-		PartitionsActionSupport.testConsumer(0, 1137046131619466337L, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 7407325994321033161L, (c) -> {
 
 			PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
 			Object key = new Object();
@@ -332,7 +332,7 @@ public final class AT_PartitionsDataManager {
 		});
 
 		// precondition: if the key is null
-		PartitionsActionSupport.testConsumer(0, 1137046131619466337L, (c) -> {
+		PartitionsActionSupport.testConsumer(0, 530075900162852558L, (c) -> {
 			PartitionsDataManager partitionsDataManager = new PartitionsDataManager();
 			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.addPartition(Partition.builder().build(), null));
 			assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());

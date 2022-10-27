@@ -41,7 +41,7 @@ public class AT_DoublePropertyManager {
 	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
-			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1599837792379294459L);
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3799865640223574835L);
 
 			double defaultValue = 423.645;
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();

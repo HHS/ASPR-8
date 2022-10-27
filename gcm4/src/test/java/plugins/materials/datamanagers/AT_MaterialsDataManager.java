@@ -317,7 +317,7 @@ public class AT_MaterialsDataManager {
 		 * property value that is incompatible with the corresponding property
 		 * def
 		 */
-		MaterialsActionSupport.testConsumer(2067301487300157385L, (c) -> {
+		MaterialsActionSupport.testConsumer(1224987903432629856L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
 				BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
@@ -406,7 +406,7 @@ public class AT_MaterialsDataManager {
 		});
 
 		/* precondition test if the materials producer is unknown */
-		MaterialsActionSupport.testConsumer(2938510662832987631L, (c) -> {
+		MaterialsActionSupport.testConsumer(3333157817809403586L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager.addStage(TestMaterialsProducerId.getUnknownMaterialsProducerId()));
 			assertEquals(MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID, contractException.getErrorType());
@@ -4547,7 +4547,7 @@ public class AT_MaterialsDataManager {
 		 * a property value assignment for an unknown materials producer
 		 * property id.
 		 */
-		MaterialsActionSupport.testConsumer(1777796798041842032L, (c) -> {
+		MaterialsActionSupport.testConsumer(405967616866830371L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -4689,7 +4689,7 @@ public class AT_MaterialsDataManager {
 		 * precondition test: if a batch property value assignment has a batch
 		 * id associated with a different material id type
 		 */
-		MaterialsActionSupport.testConsumer(8540977102873288312L, (c) -> {
+		MaterialsActionSupport.testConsumer(7122546603543728978L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 			BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
@@ -4990,7 +4990,7 @@ public class AT_MaterialsDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		MaterialsActionSupport.testConsumers(6818565317427197123L, testPlugin);
+		MaterialsActionSupport.testConsumers(1943593849394263760L, testPlugin);
 
 		/* precondition test: if the material producer id is null */
 		MaterialsActionSupport.testConsumer(7226633686166745691L, (c) -> {
@@ -6249,7 +6249,7 @@ public class AT_MaterialsDataManager {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		MaterialsActionSupport.testConsumers(4965736606382697699L, testPlugin);
+		MaterialsActionSupport.testConsumers(3581801183499812974L, testPlugin);
 
 		
 	}

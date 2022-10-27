@@ -96,7 +96,7 @@ public class AT_AttributesDataManager {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		PartitionsActionSupport.testConsumers(expectedPersonIds.size(), 5241628071704306523L, testPlugin);
+		PartitionsActionSupport.testConsumers(expectedPersonIds.size(), 4599936503626031739L, testPlugin);
 
 		// show that the correct observations were made;
 		assertEquals(expectedPersonIds, peopleObserved);
@@ -165,7 +165,7 @@ public class AT_AttributesDataManager {
 	@UnitTestMethod(name = "getAttributeValue", args = { PersonId.class, AttributeId.class })
 	public void testGetAttributeValue() {
 
-		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 6311231823303553715L, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -213,7 +213,7 @@ public class AT_AttributesDataManager {
 
 		});
 
-		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 1745090937470588460L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			PersonId goodPersonId = new PersonId(0);
@@ -224,7 +224,7 @@ public class AT_AttributesDataManager {
 
 		});
 
-		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 6116294452862148843L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			PersonId goodPersonId = new PersonId(0);
@@ -236,7 +236,7 @@ public class AT_AttributesDataManager {
 
 		});
 
-		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 5272912205692835718L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			AttributeId goodAttributeId = TestAttributeId.BOOLEAN_0;
@@ -247,7 +247,7 @@ public class AT_AttributesDataManager {
 
 		});
 
-		PartitionsActionSupport.testConsumer(100, 3296963241519285254L, (c) -> {
+		PartitionsActionSupport.testConsumer(100, 4650301398849685719L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			PersonId badPersonId = new PersonId(10000000);
 			AttributeId goodAttributeId = TestAttributeId.BOOLEAN_0;

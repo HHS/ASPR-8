@@ -23,7 +23,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestConstructor(args = { double.class })
 	public void testConstructor_Double() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3824074981405252870L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8225050097744068353L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble = new MutableDouble(value);
@@ -34,7 +34,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestMethod(name = "decrement", args = {})
 	public void testDecrement() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1556136528392901493L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1707576220414487656L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble = new MutableDouble(value);
@@ -46,7 +46,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestMethod(name = "decrement", args = { double.class })
 	public void testDecrement_Double() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6417530085366013967L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6764243104145521113L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble = new MutableDouble(value);
@@ -59,7 +59,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestMethod(name = "increment", args = {})
 	public void testIncrement() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5989612764991268700L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1599603941820866111L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble = new MutableDouble(value);
@@ -71,7 +71,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestMethod(name = "increment", args = { double.class })
 	public void testIncrement_Double() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7024132741444760192L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7574093515830044644L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble = new MutableDouble(value);
@@ -84,7 +84,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestMethod(name = "getValue", args = {})
 	public void testGetValue() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6346882071250399307L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6556525952353208885L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble = new MutableDouble(value);
@@ -95,7 +95,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestMethod(name = "setValue", args = { double.class })
 	public void testSetValue() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6410956163545832731L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5537659412858832599L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble = new MutableDouble(value);
@@ -108,7 +108,7 @@ public class AT_MutableDouble {
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5255250189313941474L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1088491726743804976L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble1 = new MutableDouble(value);
@@ -122,7 +122,7 @@ public class AT_MutableDouble {
 	public void testHashCode() {
 
 		// show equal objects have equal hash codes
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5255250189313941474L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(681314648353227104L);
 		for (int i = 0; i < 30; i++) {
 			double value = (randomGenerator.nextDouble() - 0.5) * 1000;
 			MutableDouble mutableDouble1 = new MutableDouble(value);

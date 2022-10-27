@@ -335,7 +335,7 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(name = "getPersonCount", args = {})
 	public void testGetPersonCount() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6340277988168121078L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3422619272027560361L);
 
 		// create a builder
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
@@ -344,9 +344,7 @@ public class AT_PersonPropertyPluginData {
 
 		List<TestPersonPropertyId> propertiesWithDefaultValues = TestPersonPropertyId.getPropertiesWithDefaultValues();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.getPropertiesWithDefaultValues()) {
-
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-
 		}
 
 		List<List<PersonPropertyInitialization>> expectedPropertyValues = new ArrayList<>();
@@ -354,18 +352,17 @@ public class AT_PersonPropertyPluginData {
 		int personCount = 50;
 		int expectedPersonCount = 0;
 		for (int i = 0; i < personCount; i++) {
-			List<PersonPropertyInitialization> list = new ArrayList<>();
-			expectedPropertyValues.add(list);
 
 			if (randomGenerator.nextBoolean()) {
-				expectedPersonCount = i + 1;
 				PersonId personId = new PersonId(i);
 				int propertyCount = randomGenerator.nextInt(5);
+				if(propertyCount>0) {
+					expectedPersonCount = i + 1;	
+				}
 				for (int j = 0; j < propertyCount; j++) {
 					TestPersonPropertyId testPersonPropertyId = propertiesWithDefaultValues.get(randomGenerator.nextInt(propertiesWithDefaultValues.size()));
 					Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 					personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
-					list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
 				}
 			}
 		}

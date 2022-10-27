@@ -80,7 +80,7 @@ public class PersonPropertiesActionSupport {
 		builder.addPlugin(regionPlugin);
 
 		// add the stochastics plugin
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(seed).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
 		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		builder.addPlugin(stochasticPlugin);
 

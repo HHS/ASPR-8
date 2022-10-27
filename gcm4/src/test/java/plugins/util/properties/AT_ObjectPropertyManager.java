@@ -41,7 +41,7 @@ public class AT_ObjectPropertyManager {
 	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
-			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6268125375257441705L);
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3707927404057976793L);
 
 			String defaultValue = "YELLOW";
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue(defaultValue).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();

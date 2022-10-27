@@ -91,7 +91,7 @@ public final class AT_DataManagerId {
 	@Test
 	@UnitTestConstructor( args = { int.class })
 	public void testConstructor() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8041307094727012939L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7051188045588654915L);
 		for (int i = 0; i < 100; i++) {
 			int expectedIdValue = randomGenerator.nextInt();
 			DataManagerId dataManagerId = new DataManagerId(expectedIdValue);
