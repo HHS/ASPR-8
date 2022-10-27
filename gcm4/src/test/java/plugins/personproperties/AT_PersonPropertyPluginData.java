@@ -347,7 +347,7 @@ public class AT_PersonPropertyPluginData {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 
-		List<List<PersonPropertyInitialization>> expectedPropertyValues = new ArrayList<>();
+		
 
 		int personCount = 50;
 		int expectedPersonCount = 0;
