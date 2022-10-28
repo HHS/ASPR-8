@@ -20,13 +20,9 @@ import util.random.RandomGeneratorProvider;
 @UnitTest(target = ImmutableStat.class)
 public class AT_ImmutableStat {
 
-
-	/**
-	 * Tests {@link ImmutableStat#builder()}
-	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
-	public void testBuilder() {
+	@UnitTestMethod(target = ImmutableStat.Builder.class, name = "build", args = {})
+	public void testBuild() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7777875192439812269L);
 
 		ImmutableStat immutableStat = ImmutableStat	.builder().setMax(0)//
@@ -151,63 +147,208 @@ public class AT_ImmutableStat {
 
 	}
 
-	/**
-	 * Tests {@link ImmutableStat#getMean()}
-	 */
+	@Test
+	@UnitTestMethod(target = ImmutableStat.Builder.class, name = "setMax", args = { double.class })
+	public void testSetMax() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1623204821125929088L);
+
+		for (int i = 0; i < 100; i++) {
+			double max = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(max)//
+														.setMin(0)//
+														.setMean(0)//
+														.setSize(2)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(max, immutableStat.getMax().get(), 0);
+		}
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ImmutableStat.Builder.class, name = "setMean", args = { double.class })
+	public void testSetMean() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5546913373263258838L);
+
+		for (int i = 0; i < 100; i++) {
+			double mean = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(mean + 1)//
+														.setMin(mean - 1)//
+														.setMean(mean)//
+														.setSize(2)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(mean, immutableStat.getMean().get(), 0);
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = ImmutableStat.Builder.class, name = "setMin", args = { double.class })
+	public void testSetMin() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9187585184905019274L);
+
+		for (int i = 0; i < 100; i++) {
+			double min = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(min + 1)//
+														.setMin(min)//
+														.setMean(min + 0.5)//
+														.setSize(2)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(min, immutableStat.getMin().get(), 0);
+		}
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ImmutableStat.Builder.class, name = "setSize", args = { int.class })
+	public void testSetSize() {
+
+		for (int i = 0; i < 100; i++) {
+			int size = i + 1;
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(0)//
+														.setMin(0)//
+														.setMean(0)//
+														.setSize(size)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(size, immutableStat.size(), 0);
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = ImmutableStat.Builder.class, name = "setVariance", args = { double.class })
+	public void testSetVariance() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6920383800120778067L);
+
+		for (int i = 0; i < 100; i++) {
+			double variance = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(0)//
+														.setMin(0)//
+														.setMean(0)//
+														.setSize(2)//
+														.setVariance(variance)//
+														.build();//
+
+			assertEquals(variance, immutableStat.getVariance().get(), 0);
+		}
+	}
+
+	@Test
+	@UnitTestMethod(name = "builder", args = {})
+	public void testBuilder() {
+		assertNotNull(ImmutableStat.builder());
+	}
+
 	@Test
 	@UnitTestMethod(name = "getMean", args = {})
 	public void testGetMean() {
-		// covered by testBuilder()
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6876193335436069229L);
+
+		for (int i = 0; i < 100; i++) {
+			double mean = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(mean + 1)//
+														.setMin(mean - 1)//
+														.setMean(mean)//
+														.setSize(2)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(mean, immutableStat.getMean().get(), 0);
+		}
 	}
 
-	/**
-	 * Tests {@link ImmutableStat#getMax()}
-	 */
 	@Test
 	@UnitTestMethod(name = "getMax", args = {})
 	public void testGetMax() {
-		// covered by testBuilder()
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1155316418087853792L);
+
+		for (int i = 0; i < 100; i++) {
+			double max = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(max)//
+														.setMin(0)//
+														.setMean(0)//
+														.setSize(2)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(max, immutableStat.getMax().get(), 0);
+		}
 	}
 
-	/**
-	 * Tests {@link ImmutableStat#getMin()}
-	 */
 	@Test
 	@UnitTestMethod(name = "getMin", args = {})
 	public void testGetMin() {
-		// covered by testBuilder()
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3698755887947285191L);
+
+		for (int i = 0; i < 100; i++) {
+			double min = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(min + 1)//
+														.setMin(min)//
+														.setMean(min + 0.5)//
+														.setSize(2)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(min, immutableStat.getMin().get(), 0);
+		}
+
 	}
 
-	/**
-	 * Tests {@link ImmutableStat#getStandardDeviation()}
-	 */
 	@Test
 	@UnitTestMethod(name = "getStandardDeviation", args = {})
 	public void testGetStandardDeviation() {
 		// covered by testBuilder()
 	}
 
-	/**
-	 * Tests {@link ImmutableStat#getVariance()}
-	 */
 	@Test
 	@UnitTestMethod(name = "getVariance", args = {})
 	public void testGetVariance() {
-		// covered by testBuilder()
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6224775885223191513L);
+
+		for (int i = 0; i < 100; i++) {
+			double variance = randomGenerator.nextDouble();
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(0)//
+														.setMin(0)//
+														.setMean(0)//
+														.setSize(2)//
+														.setVariance(variance)//
+														.build();//
+
+			assertEquals(variance, immutableStat.getVariance().get(), 0);
+		}
 	}
 
-	/**
-	 * Tests {@link ImmutableStat#size()}
-	 */
 	@Test
 	@UnitTestMethod(name = "size", args = {})
 	public void testSize() {
-		// covered by testBuilder()
+		for (int i = 0; i < 100; i++) {
+			int size = i + 1;
+			ImmutableStat immutableStat = ImmutableStat	.builder()//
+														.setMax(0)//
+														.setMin(0)//
+														.setMean(0)//
+														.setSize(size)//
+														.setVariance(0)//
+														.build();//
+
+			assertEquals(size, immutableStat.size(), 0);
+		}
 	}
 
-	/**
-	 * Tests {@link ImmutableStat#toString()}
-	 */
 	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
