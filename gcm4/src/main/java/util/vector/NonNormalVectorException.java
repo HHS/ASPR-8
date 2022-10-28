@@ -5,7 +5,7 @@ package util.vector;
  */
 public class NonNormalVectorException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5709709658484048137L;
 
 	public NonNormalVectorException() {
 		super();

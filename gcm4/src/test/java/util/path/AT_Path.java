@@ -14,21 +14,12 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link Path}
- * 
- * @author Shawn Hatch
- *
- */
 @UnitTest(target = Path.class)
 public class AT_Path {
-
-	/**
-	 * Tests {@link Path#builder()}
-	 */
+	
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
-	public void testBuilder() {
+	@UnitTestMethod(target = Path.Builder.class,name = "addEdge", args = {Object.class})
+	public void testAddEdge() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
 		assertNotNull(path);
@@ -41,12 +32,32 @@ public class AT_Path {
 		builder.addEdge(1);
 		path = builder.build();
 		assertNotNull(path);
-
 	}
+	
+	@Test
+	@UnitTestMethod(target = Path.Builder.class,name = "build", args = {})
+	public void testBuild() {
+		Path.Builder<Integer> builder = Path.builder();
+		Path<Integer> path = builder.build();
+		assertNotNull(path);
 
-	/**
-	 * Tests {@link Path#equals(Object)}
-	 */
+		builder.addEdge(1);
+		builder.addEdge(3);
+		builder.addEdge(4);
+		builder.addEdge(5);
+		builder.addEdge(6);
+		builder.addEdge(1);
+		path = builder.build();
+		assertNotNull(path);
+	}
+	
+	@Test
+	@UnitTestMethod(name = "builder", args = {})
+	public void testBuilder() {
+		Path.Builder<Integer> builder = Path.builder();
+		assertNotNull(builder);		
+	}
+	
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
@@ -83,10 +94,7 @@ public class AT_Path {
 		assertNotEquals(path1, path3);
 
 	}
-
-	/**
-	 * Tests {@link Path#hashCode()}
-	 */
+	
 	@Test
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
@@ -114,9 +122,6 @@ public class AT_Path {
 
 	}
 
-	/**
-	 * Tests {@link Path#getEdges()}
-	 */
 	@Test
 	@UnitTestMethod(name = "getEdges", args = {})
 	public void testGetEdges() {
@@ -141,9 +146,6 @@ public class AT_Path {
 
 	}
 
-	/**
-	 * Tests {@link Path#isEmpty()}
-	 */
 	@Test
 	@UnitTestMethod(name = "isEmpty", args = {})
 	public void testIsEmpty() {
@@ -156,9 +158,6 @@ public class AT_Path {
 		assertFalse(path.isEmpty());
 	}
 
-	/**
-	 * Tests {@link Path#length()}
-	 */
 	@Test
 	@UnitTestMethod(name = "length", args = {})
 	public void testLength() {

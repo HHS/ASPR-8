@@ -9,6 +9,10 @@ public class MalformedSphericalPointException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
+	public MalformedSphericalPointException() {
+		super();
+	}
+	
 	public MalformedSphericalPointException(String message) {
 		super(message);
 	}

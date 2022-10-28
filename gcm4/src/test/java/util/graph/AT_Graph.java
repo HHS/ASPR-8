@@ -11,17 +11,43 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link Graph}
- * 
- * @author Shawn Hatch
- *
- */
+
 @UnitTest(target = Graph.class)
 public class AT_Graph {
+
+	@Test
+	@UnitTestMethod(target = Graph.Builder.class, name = "build", args = {}, tags = { UnitTag.LOCAL_PROXY })
+	public void testBuild() {
+		// covered by testBuilder() method
+	}
+
+	@Test
+	@UnitTestMethod(target = Graph.Builder.class, name = "addNode", args = { Object.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddNode() {
+		// covered by testBuilder() method
+	}
+
+	@Test
+	@UnitTestMethod(target = Graph.Builder.class, name = "addEdge", args = { Object.class, Object.class, Object.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddEdge() {
+		// covered by testBuilder() method
+	}
+
+	@Test
+	@UnitTestMethod(target = Graph.Builder.class, name = "addAll", args = { MutableGraph.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddAll_MutableGraph() {
+		// covered by testBuilder() method
+	}
+
+	@Test
+	@UnitTestMethod(target = Graph.Builder.class, name = "addAll", args = { Graph.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddAll_Graph() {
+		// covered by testBuilder() method
+	}
 
 	private void testConstructionWithGraph() {
 		Graph.Builder<String, Integer> builder1 = Graph.builder();
