@@ -11,8 +11,6 @@ public final class BinContainer {
 	/**
 	 * Constructs the {@link BinContainer} from the given binSize.
 	 * 
-	 * @throws RuntimeException
-	 *             <li>if the binSize is non-positive
 	 */
 	private BinContainer(MutableBinContainer mutableBinContainer) {
 		this.lowIndex = mutableBinContainer.lowIndex;
@@ -33,6 +31,12 @@ public final class BinContainer {
 
 	}
 
+	/**
+	 * Creates a builder for a bin container
+	 * 
+	 * @throws IllegalArgumentException
+	 * <li>if the bin size was non-positive</li>
+	 */
 	public static Builder builder(double binSize) {
 		return new Builder(binSize);
 	}
@@ -56,6 +60,7 @@ public final class BinContainer {
 
 		/**
 		 * Builds the {@link BinContainer} from the contributed values.
+		 * 
 		 */
 		public BinContainer build() {
 			try {
@@ -68,7 +73,7 @@ public final class BinContainer {
 		/**
 		 * Adds the given value by the given number of times.
 		 * 
-		 * @throws RuntimeException
+		 * @throws IllegalArgumentException
 		 *             <li>if the count is negative
 		 */
 		public Builder addValue(double value, int count) {
@@ -205,8 +210,7 @@ public final class BinContainer {
 	private static class MutableBinContainer {
 		private MutableBinContainer(double binSize) {
 			if (binSize <= 0) {
-				// deception
-				throw new RuntimeException("bin size must be positive");
+				throw new IllegalArgumentException("bin size must be positive");
 			}
 			this.binSize = binSize;
 		}
@@ -254,11 +258,9 @@ public final class BinContainer {
 	 */
 	public Bin getBin(int index) {
 		if (index < 0) {
-			// deception
 			throw new RuntimeException("bin index out of bounds: " + index);
 		}
 		if (index > highIndex - lowIndex) {
-			// deception
 			throw new RuntimeException("bin index out of bounds: " + index);
 		}
 		int adjustedIndex = lowIndex + index;

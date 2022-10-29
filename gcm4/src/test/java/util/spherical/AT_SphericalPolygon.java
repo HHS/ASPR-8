@@ -14,6 +14,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.earth.Earth;
@@ -31,7 +32,6 @@ import util.vector.Vector3D;
 @UnitTest(target = SphericalPolygon.class)
 public class AT_SphericalPolygon {
 
-	
 	private static SphericalPoint generateRandomizedSphericalPoint(RandomGenerator randomGenerator) {
 		double x = randomGenerator.nextDouble() * 2 - 1;
 		double y = randomGenerator.nextDouble() * 2 - 1;
@@ -57,9 +57,24 @@ public class AT_SphericalPolygon {
 		}
 	}
 
-	/**
-	 * Tests {@link SphericalPolygon#builder()}
-	 */
+	@Test
+	@UnitTestMethod(target = SphericalPolygon.Builder.class, name = "addSphericalPoint", args = { SphericalPoint.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddSphericalPoint() {
+		// covered by testBuilder()
+	}
+
+	@Test
+	@UnitTestMethod(target = SphericalPolygon.Builder.class, name = "build", args = {}, tags = { UnitTag.LOCAL_PROXY })
+	public void testBuild() {
+		// covered by testBuilder()
+	}
+
+	@Test
+	@UnitTestMethod(target = SphericalPolygon.Builder.class, name = "setUseSearchTree", args = { boolean.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testSetUseSearchTree() {
+		// covered by testBuilder()
+	}
+
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
@@ -429,8 +444,6 @@ public class AT_SphericalPolygon {
 
 			assertEquals(expected, actual);
 		}
-		
-		
 
 		assertTrue(intersectionCount > 100);
 		assertTrue(intersectionCount < 900);

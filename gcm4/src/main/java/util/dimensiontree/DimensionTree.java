@@ -339,15 +339,13 @@ public final class DimensionTree<T> {
 	public boolean add(double[] position, T member) {
 
 		if (position == null) {
-			// deception
+			
 			throw new RuntimeException("null position");
 		}
 		if (position.length != commonState.dimension) {
-			// deception
 			throw new RuntimeException("dimensional mismatch");
 		}
 		if (member == null) {
-			// deception
 			throw new RuntimeException("null value being added");
 		}
 		expandRootToFitPosition(position);
@@ -382,11 +380,9 @@ public final class DimensionTree<T> {
 	 */
 	public Optional<T> getNearestMember(double[] position) {
 		if (position == null) {
-			// deception
 			throw new RuntimeException("null position");
 		}
 		if (commonState.dimension != position.length) {
-			// deception
 			throw new RuntimeException("dimensional mismatch");
 		}
 
@@ -450,24 +446,19 @@ public final class DimensionTree<T> {
 
 	public List<T> getMembersInRectanguloid(double[] lowerBounds, double[] upperBounds) {
 		if (lowerBounds == null) {
-			// deception
 			throw new RuntimeException("null lower bounds");
 		}
 		if (upperBounds == null) {
-			// deception
 			throw new RuntimeException("null lower bounds");
 		}
 		if (lowerBounds.length != this.commonState.dimension) {
-			// deception
 			throw new RuntimeException("lower bounds do not match dimension of tree");
 		}
 		if (upperBounds.length != this.commonState.dimension) {
-			// deception
 			throw new RuntimeException("upper bounds do not match dimension of tree");
 		}
 		for (int i = 0; i < upperBounds.length; i++) {
 			if (lowerBounds[i] > upperBounds[i]) {
-				// deception
 				throw new RuntimeException("lower bounds exceed upper bounds");
 			}
 		}
@@ -492,15 +483,12 @@ public final class DimensionTree<T> {
 	 */
 	public List<T> getMembersInSphere(double radius, double[] position) {
 		if (position == null) {
-			// deception
 			throw new RuntimeException("null position");
 		}
 		if (this.commonState.dimension != position.length) {
-			// deception
 			throw new RuntimeException("dimensional mismatch");
 		}
 		if (radius < 0) {
-			// deception
 			throw new RuntimeException("negative radius");
 		}
 		return getObjectsInDimensionalShape(new Sphere(radius, position));

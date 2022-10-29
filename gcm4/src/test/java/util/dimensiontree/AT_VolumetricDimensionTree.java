@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -28,7 +29,6 @@ import util.vector.Vector2D;
 @UnitTest(target = VolumetricDimensionTree.class)
 
 public class AT_VolumetricDimensionTree {
-	
 
 	private static class Record {
 		private final Vector2D position;
@@ -325,9 +325,37 @@ public class AT_VolumetricDimensionTree {
 
 	}
 
-	/**
-	 * Tests {@link VolumetricDimensionTree#builder()}
-	 */
+	@Test
+	@UnitTestMethod(target = VolumetricDimensionTree.Builder.class, name = "build", args = {}, tags = { UnitTag.LOCAL_PROXY })
+	public void testBuild() {
+		// covered by testBuilder()
+
+	}
+
+	@Test
+	@UnitTestMethod(target = VolumetricDimensionTree.Builder.class, name = "setFastRemovals", args = { boolean.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testSetFastRemovals() {
+		// covered by testBuilder()
+	}
+
+	@Test
+	@UnitTestMethod(target = VolumetricDimensionTree.Builder.class, name = "setLeafSize", args = { int.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testSetLeafSize() {
+		// covered by testBuilder()
+	}
+
+	@Test
+	@UnitTestMethod(target = VolumetricDimensionTree.Builder.class, name = "setLowerBounds", args = { double[].class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testSetLowerBounds() {
+		// covered by testBuilder()
+	}
+
+	@Test
+	@UnitTestMethod(target = VolumetricDimensionTree.Builder.class, name = "setUpperBounds", args = { double[].class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testSetUpperBounds() {
+		// covered by testBuilder()
+	}
+
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {

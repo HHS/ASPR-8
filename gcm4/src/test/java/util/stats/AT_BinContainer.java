@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -37,9 +38,10 @@ public class AT_BinContainer {
 		assertEquals(upperBound, bin.getUpperBound(), 0);
 		assertEquals(count, bin.getCount());
 
-		// precondition checks
-		assertThrows(IllegalArgumentException.class, () -> new Bin(33, 31, 4));
+		// precondition check: if the lower bound exceeds the upper bound
 
+		assertThrows(IllegalArgumentException.class, () -> new Bin(33, 31, 4));
+		// precondition check: if the count is negative
 		assertThrows(IllegalArgumentException.class, () -> new Bin(30, 40, -1));
 
 	}
@@ -81,6 +83,18 @@ public class AT_BinContainer {
 			Builder builder2 = BinContainer.builder(5);
 			builder2.addValue(13, -1);
 		});
+	}
+
+	@Test
+	@UnitTestMethod(target = BinContainer.Builder.class, name = "addValue", args = { double.class, int.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddValue() {
+		// covered by testBuilder()
+	}
+
+	@Test
+	@UnitTestMethod(target = BinContainer.Builder.class, name = "build", args = {}, tags = { UnitTag.LOCAL_PROXY })
+	public void testBuild() {
+		// covered by testBuilder()
 	}
 
 	/**

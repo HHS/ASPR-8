@@ -737,8 +737,7 @@ public final class ExperimentStateManager {
 			if (writer != null) {
 				writer.close();
 			}
-		} catch (final IOException e) {
-			// deception
+		} catch (final IOException e) {			
 			throw new RuntimeException(e);
 		}
 	}

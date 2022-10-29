@@ -2,12 +2,12 @@ package util.earth;
 
 import org.apache.commons.math3.util.FastMath;
 
-import util.vector.MutableVector2D;
 import util.vector.MutableVector3D;
+import util.vector.Vector2D;
 import util.vector.Vector3D;
 
 /**
- * A utility class for converting (x,y) two dimensional grid coordinates to an
+ * A utility class for converting (x,y) two dimensional grid coordinates to and
  * from (lat,lon) coordinates. The grid is constructed at a particular (lat,
  * lon) position with an azimuth for grid orientation. The resulting grid is a
  * good approximation to the earth's surface for several kilometers. The earth
@@ -64,15 +64,15 @@ public final class EarthGrid {
 		y = z.cross(x).normalize();
 	}
 
-	public MutableVector2D getCartesian2DCoordinate(LatLon latLon) {
+	public Vector2D getCartesian2DCoordinate(LatLon latLon) {
 		MutableVector3D v = new MutableVector3D(earth.getECCFromLatLonAlt(new LatLonAlt(latLon)));
 		v.normalize();
 		v.scale(Earth.getEffectiveEarthRadius(latLon.getLatitude()));
 		v.sub(c);
-		return new MutableVector2D(v.dot(x), v.dot(y));
+		return new Vector2D(v.dot(x), v.dot(y));
 	}
 
-	public LatLon getLatLon(MutableVector2D xyCoordinate) {
+	public LatLon getLatLon(Vector2D xyCoordinate) {
 		double zlength = FastMath.sqrt(earth.getRadius() * earth.getRadius() - xyCoordinate.getX() * xyCoordinate.getX() - xyCoordinate.getY() * xyCoordinate.getY()) - earth.getRadius();
 		MutableVector3D planarPosition = new MutableVector3D(c);
 		planarPosition.addScaled(y, xyCoordinate.getY());
