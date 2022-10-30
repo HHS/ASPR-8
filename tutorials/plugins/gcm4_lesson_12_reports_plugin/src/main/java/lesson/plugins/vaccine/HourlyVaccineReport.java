@@ -13,6 +13,7 @@ import lesson.plugins.person.PersonAdditionEvent;
 import lesson.plugins.person.PersonDataManager;
 import lesson.plugins.person.PersonId;
 import nucleus.ActorContext;
+import nucleus.EventFilter;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -23,10 +24,10 @@ import util.wrappers.MutableInteger;
 public class HourlyVaccineReport extends PeriodicReport {
 
 	public HourlyVaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);	
-		
+		super(reportId, reportPeriod);
+
 		ReportHeader.Builder builder = ReportHeader.builder();
-		addTimeFieldHeaders(builder);			
+		addTimeFieldHeaders(builder);
 		for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			builder.add(familyVaccineStatus.description);
 		}
@@ -127,11 +128,11 @@ public class HourlyVaccineReport extends PeriodicReport {
 		/*
 		 * Subscribe to all the relevant events
 		 */
-		
-		subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
-		subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
-		subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+
+		subscribe(EventFilter.builder(VaccinationEvent.class).build(), this::handleVaccinationEvent);
+		subscribe(EventFilter.builder(FamilyAdditionEvent.class).build(), this::handleFamilyAdditionEvent);
+		subscribe(EventFilter.builder(FamilyMemberShipAdditionEvent.class).build(), this::handleFamilyMemberShipAdditionEvent);
+		subscribe(EventFilter.builder(PersonAdditionEvent.class).build(), this::handlePersonAdditionEvent);
 
 		/*
 		 * Some of the events may have already occurred before we initialize
@@ -197,14 +198,14 @@ public class HourlyVaccineReport extends PeriodicReport {
 		refreshFamilyStatus(familyMemberShipAdditionEvent.getFamilyId());
 	}
 
-	private ReportHeader reportHeader;	
+	private ReportHeader reportHeader;
 
 	@Override
 	protected void flush(ActorContext actorContext) {
-		ReportItem.Builder builder = ReportItem.builder()//
-				.setReportId(getReportId())//
-				.setReportHeader(reportHeader);
-		fillTimeFields(builder);		
+		ReportItem.Builder builder = ReportItem	.builder()//
+												.setReportId(getReportId())//
+												.setReportHeader(reportHeader);
+		fillTimeFields(builder);
 		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);
 			builder.addValue(mutableInteger.getValue());
@@ -216,5 +217,5 @@ public class HourlyVaccineReport extends PeriodicReport {
 		ReportItem reportItem = builder.build();
 		actorContext.releaseOutput(reportItem);
 	}
-	
+
 }
