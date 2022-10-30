@@ -18,7 +18,7 @@ public class PlanarVisualizerDriver {
 		long seed = 147623563453456L;
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		int nodeCount = 10_000;
+		int nodeCount = 5_000;
 
 		Map<Object, Vector2D> dataMap = new LinkedHashMap<>();
 		for (int i = 0; i < nodeCount; i++) {

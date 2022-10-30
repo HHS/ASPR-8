@@ -82,10 +82,10 @@ public final class Example_11_B {
 
 				ArrayList<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
-				result.add(Long.toString(seedValue));
+				result.add(Long.toString(seedValue)+"L");
 
 				return result;
-			});//
+			});
 		});
 
 		builder.addMetaDatum("seed index");//
