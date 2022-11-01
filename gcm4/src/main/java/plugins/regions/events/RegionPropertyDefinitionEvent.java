@@ -13,7 +13,7 @@ import util.errors.ContractException;
  *
  */
 @Immutable
-public class RegionPropertyAdditionEvent implements Event {
+public class RegionPropertyDefinitionEvent implements Event {
 
 	private final RegionPropertyId regionPropertyId;
 
@@ -25,7 +25,7 @@ public class RegionPropertyAdditionEvent implements Event {
 	 *             region property id is null</li>
 	 * 
 	 */
-	public RegionPropertyAdditionEvent(RegionPropertyId regionPropertyId) {
+	public RegionPropertyDefinitionEvent(RegionPropertyId regionPropertyId) {
 		if (regionPropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}

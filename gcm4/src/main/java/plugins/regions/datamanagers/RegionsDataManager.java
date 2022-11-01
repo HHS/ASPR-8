@@ -24,7 +24,7 @@ import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.events.RegionAdditionEvent;
-import plugins.regions.events.RegionPropertyAdditionEvent;
+import plugins.regions.events.RegionPropertyDefinitionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionConstructionData;
 import plugins.regions.support.RegionError;
@@ -316,7 +316,7 @@ public final class RegionsDataManager extends DataManager {
 
 		}
 
-		dataManagerContext.releaseEvent(new RegionPropertyAdditionEvent(regionPropertyId));
+		dataManagerContext.releaseEvent(new RegionPropertyDefinitionEvent(regionPropertyId));
 	}
 
 	/**
@@ -1109,11 +1109,11 @@ public final class RegionsDataManager extends DataManager {
 	
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link RegionPropertyAdditionEvent} events. Matches all such events.
+	 * {@link RegionPropertyDefinitionEvent} events. Matches all such events.
 	 * 
 	 */
-	public EventFilter<RegionPropertyAdditionEvent> getEventFilterForRegionPropertyAdditionEvent() {
-		return EventFilter	.builder(RegionPropertyAdditionEvent.class)//
+	public EventFilter<RegionPropertyDefinitionEvent> getEventFilterForRegionPropertyDefinitionEvent() {
+		return EventFilter	.builder(RegionPropertyDefinitionEvent.class)//
 							.build();
 	}
 

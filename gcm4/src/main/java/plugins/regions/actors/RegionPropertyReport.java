@@ -7,7 +7,7 @@ import nucleus.ActorContext;
 import nucleus.EventFilter;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.RegionAdditionEvent;
-import plugins.regions.events.RegionPropertyAdditionEvent;
+import plugins.regions.events.RegionPropertyDefinitionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
@@ -110,7 +110,7 @@ public final class RegionPropertyReport {
 
 		if (regionPropertyIds.equals(regionsDataManager.getRegionPropertyIds())) {
 			actorContext.subscribe(EventFilter.builder(RegionPropertyUpdateEvent.class).build(), this::handleRegionPropertyUpdateEvent);
-			actorContext.subscribe(EventFilter.builder(RegionPropertyAdditionEvent.class).build(), this::handleRegionPropertyAdditionEvent);
+			actorContext.subscribe(EventFilter.builder(RegionPropertyDefinitionEvent.class).build(), this::handleRegionPropertyDefinitionEvent);
 		} else {
 			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
 				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(regionPropertyId);
@@ -138,10 +138,10 @@ public final class RegionPropertyReport {
 
 	}
 
-	private void handleRegionPropertyAdditionEvent(ActorContext actorContext, RegionPropertyAdditionEvent regionPropertyAdditionEvent) {
+	private void handleRegionPropertyDefinitionEvent(ActorContext actorContext, RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
 
 		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
-		RegionPropertyId regionPropertyId = regionPropertyAdditionEvent.getRegionPropertyId();
+		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.getRegionPropertyId();
 		if (!regionPropertyIds.contains(regionPropertyId)) {
 			regionPropertyIds.add(regionPropertyId);
 			for (final RegionId regionId : regionsDataManager.getRegionIds()) {

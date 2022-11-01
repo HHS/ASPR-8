@@ -16,7 +16,7 @@
 	<artifactId>gcm4_lesson_14_people_plugin</artifactId>
 	<version>4.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>gcm4 lesson 13 global properties plugin</name>
+	<name>gcm4 lesson 14 people plugin</name>
 	<description>Tutorial introducing the global properties plugin</description>
 
 	<!-- Dependencies -->
