@@ -43,7 +43,8 @@ public final class Example_14 {
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
 			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.get(StochasticsPluginData.Builder.class);
+				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
+						context.get(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
 				stochasticsPluginDataBuilder.setSeed(seedValue);
 
@@ -115,7 +116,6 @@ public final class Example_14 {
 					.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
-
 	}
 
 }

@@ -13,8 +13,10 @@ import plugins.stochastics.StochasticsDataManager;
 
 public final class PopulationManager {
 
+	
 	public void init(ActorContext actorContext) {
-		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+		StochasticsDataManager stochasticsDataManager = 
+				actorContext.getDataManager(StochasticsDataManager.class);
 		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 		double planTime = randomGenerator.nextDouble();
 		for (int i = 0; i < 100; i++) {
@@ -28,12 +30,16 @@ public final class PopulationManager {
 					}
 				} else {
 					int intialVaccineCount = randomGenerator.nextInt(3);
-					VaccineInitialization vaccineInitialization = new VaccineInitialization(intialVaccineCount);
-					PersonConstructionData personConstructionData = PersonConstructionData.builder().add(vaccineInitialization).build();
+					VaccineInitialization vaccineInitialization = 
+							new VaccineInitialization(intialVaccineCount);
+					PersonConstructionData personConstructionData = PersonConstructionData.builder()//
+							.add(vaccineInitialization)//
+							.build();
 					peopleDataManager.addPerson(personConstructionData);
 				}
 			}, planTime);
 			planTime += randomGenerator.nextDouble();
 		}
 	}
+	
 }

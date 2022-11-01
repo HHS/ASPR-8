@@ -3,7 +3,6 @@ package plugins.people;
 import nucleus.Plugin;
 import plugins.people.datamanagers.PeopleDataManager;
 
-
 /**
  * A nucleus plugin for representing people, dealing only with their existence.
  * 
@@ -34,13 +33,7 @@ public final class PeoplePlugin {
 	 * </ul>
 	 * </P>
 	 * 
-	 * <P>
-	 * Provides actors:
-	 * <ul>
-	 * <li>{@linkplain PeopleLoader} for loading people from the
-	 * PeoplePluginData</li>
-	 * </ul>
-	 * </P>
+	 * 
 	 * 
 	 */
 	public static Plugin getPeoplePlugin(PeoplePluginData peoplePluginData) {
@@ -50,7 +43,7 @@ public final class PeoplePlugin {
 						.setPluginId(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class);
-							c.addDataManager(new PeopleDataManager(pluginData));							
+							c.addDataManager(new PeopleDataManager(pluginData));
 						})//
 						.build();
 	}
