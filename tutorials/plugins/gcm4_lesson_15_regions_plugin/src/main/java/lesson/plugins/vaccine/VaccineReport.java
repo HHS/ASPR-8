@@ -25,7 +25,7 @@ public final class VaccineReport extends PeriodicReport {
 		this.maxVaccinedCount = FastMath.max(0, maxVaccineCount);
 
 		ReportHeader.Builder builder = ReportHeader.builder();
-		addTimeFieldHeaders(builder);
+		addTimeFieldHeaders(builder);		
 		for (int i = 0; i < maxVaccineCount; i++) {
 			builder.add("count_" + i);
 		}
@@ -47,7 +47,7 @@ public final class VaccineReport extends PeriodicReport {
 	private ReportHeader reportHeader;
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ActorContext actorContext) {		
 		Map<Integer, MutableInteger> peopleByVaccineCount = new LinkedHashMap<>();
 		for (int i = 0; i <= maxVaccinedCount; i++) {
 			peopleByVaccineCount.put(i, new MutableInteger());

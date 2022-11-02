@@ -3,6 +3,7 @@ package lesson.plugins.model;
 import plugins.reports.support.ReportId;
 
 public enum ModelReportId implements ReportId{
-	VACCINATION,
-	POPULATION_TRACE
+	REGION_TRANSFER_REPORT,
+	REGION_PROPERTY_REPORT,
+	VACCINATION
 }

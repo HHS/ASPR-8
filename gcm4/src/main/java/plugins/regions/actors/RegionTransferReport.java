@@ -69,7 +69,7 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext ActorContext) {
+	protected void flush(ActorContext actorContext) {		
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -83,7 +83,7 @@ public final class RegionTransferReport extends PeriodicReport {
 			reportItemBuilder.addValue(sourceRegionId.toString());
 			reportItemBuilder.addValue(destinationRegionId.toString());
 			reportItemBuilder.addValue(mutableInteger.getValue());
-			ActorContext.releaseOutput(reportItemBuilder.build());
+			actorContext.releaseOutput(reportItemBuilder.build());
 		}
 
 		baseMap.clear();

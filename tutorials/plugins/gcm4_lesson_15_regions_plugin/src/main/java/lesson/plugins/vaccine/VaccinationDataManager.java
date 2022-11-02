@@ -2,6 +2,7 @@ package lesson.plugins.vaccine;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -31,32 +32,34 @@ public final class VaccinationDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
 		personDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 		this.dataManagerContext = dataManagerContext;
-		for (PersonId personId : personDataManager.getPeople()) {
+		List<PersonId> people = personDataManager.getPeople();
+		for (PersonId personId : people) {
 			vaccinationCounts.put(personId, new MutableInteger());
 		}
+
 	}
 
-	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
-			PersonRemovalEvent personRemovalEvent) {
+	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.getPersonId();
 		vaccinationCounts.remove(personId);
 	}
 
-	private void handlePersonImminentAdditionEvent(DataManagerContext dataManagerContext,
+	private void handlePersonImminentAdditionEvent(DataManagerContext dataManagerContext, //
 			PersonImminentAdditionEvent personImminentAdditionEvent) {
 		PersonId personId = personImminentAdditionEvent.getPersonId();
 		validateNewPersonId(personId);
 		MutableInteger mutableInteger = new MutableInteger();
 		vaccinationCounts.put(personId, mutableInteger);
-		Optional<VaccineInitialization> optional = personImminentAdditionEvent//
-				.getPersonConstructionData()//
-				.getValue(VaccineInitialization.class);
+		Optional<VaccineInitialization> optional = //
+				personImminentAdditionEvent//
+											.getPersonConstructionData()//
+											.getValue(VaccineInitialization.class);
 		if (optional.isPresent()) {
 			VaccineInitialization vaccineInitialization = optional.get();
 			int vaccineCount = vaccineInitialization.getVaccineCount();
 			validateInitialVaccineCount(vaccineCount);
 			mutableInteger.setValue(vaccineCount);
-		}
+		}		
 	}
 
 	private void validateInitialVaccineCount(int initialVaccineCount) {
@@ -126,7 +129,7 @@ public final class VaccinationDataManager extends DataManager {
 	 *             id is unknown</li>
 	 * 
 	 */
-	public void vaccinatePerson(PersonId personId) {		
+	public void vaccinatePerson(PersonId personId) {
 		validatePersonId(personId);
 		vaccinationCounts.get(personId).increment();
 		dataManagerContext.releaseEvent(new VaccinationEvent(personId));

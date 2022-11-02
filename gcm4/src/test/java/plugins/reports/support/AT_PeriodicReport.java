@@ -135,9 +135,8 @@ public class AT_PeriodicReport {
 		public EndOfSimulationTestReport(ReportId reportId, ReportPeriod reportPeriod) {
 			super(reportId, reportPeriod);
 			if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
-				throw new RuntimeException("must be an hourly report");
+				throw new RuntimeException("must be an end of simulation report");
 			}
-
 		}
 
 		@Override
