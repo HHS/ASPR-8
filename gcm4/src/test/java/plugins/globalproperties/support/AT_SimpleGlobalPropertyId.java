@@ -41,7 +41,7 @@ public class AT_SimpleGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleGlobalPropertyId id_1 = new SimpleGlobalPropertyId(2);
 		SimpleGlobalPropertyId id_2 = new SimpleGlobalPropertyId(5);
