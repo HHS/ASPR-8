@@ -930,54 +930,49 @@ public class AT_GroupsDataManager {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			List<PersonId> people = peopleDataManager.getPeople();
 
-			int groupCount = 60;
 			/*
 			 * Show that there are no groups since we selected 0 groups per
 			 * person
 			 */
 			assertEquals(0, groupIds.size());
 
-			Map<PersonId, Map<GroupTypeId, Integer>> expectedCountOfGroupsPerPerson = new LinkedHashMap<>();
-			// create 60 groups
+			Map<MultiKey, Set<GroupId>> expectedDataStructure = new LinkedHashMap<>();
 
-			for (int i = 0; i < groupCount; i++) {
+			// create 60 groups
+			for (int i = 0; i < 60; i++) {
 				TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
 				GroupId groupId = groupsDataManager.addGroup(groupTypeId);
 				groupIds.add(groupId);
 			}
 
 			/*
-			 * For each person pick either one two or three group types and
-			 * record.
+			 * For each person pick three groups at random and add the person to
+			 * each group, recording this in the expected data structure
 			 */
 			for (PersonId personId : people) {
 				Collections.shuffle(groupIds, new Random(randomGenerator.nextLong()));
-				int _groupCount = randomGenerator.nextInt(3) + 1;
-				
-				expectedCountOfGroupsPerPerson.put(personId, new LinkedHashMap<>());
-				// groupTypeIdToGroups.forEach((groupTypeId, groups) -> groups.clear());
-				Map<GroupTypeId, Integer> personIdGroupTypeGroupCount = new LinkedHashMap<>();
-				for (int i = 0; i < _groupCount; i++) {
-					GroupId groupId = groupIds.get(i);
-					TestGroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
-					groupsDataManager.addPersonToGroup(personId, groupId);
-					// groupTypeIdToGroups.get(groupTypeId).add(groupId);
-					if(personIdGroupTypeGroupCount.containsKey(groupTypeId)) {
-						int prevCount = personIdGroupTypeGroupCount.get(groupTypeId);
-						personIdGroupTypeGroupCount.put(groupTypeId, prevCount++);
-					} else {
-						personIdGroupTypeGroupCount.put(groupTypeId, 1);
-					}
+				for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+					MultiKey multiKey = new MultiKey(testGroupTypeId, personId);
+					expectedDataStructure.put(multiKey, new LinkedHashSet<>());
 				}
-				expectedCountOfGroupsPerPerson.get(personId).putAll(personIdGroupTypeGroupCount);
+
+				for (int i = 0; i < 3; i++) {
+					GroupId groupId = groupIds.get(i);
+					groupsDataManager.addPersonToGroup(personId, groupId);
+					GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+					MultiKey multiKey = new MultiKey(groupTypeId, personId);
+					Set<GroupId> groups = expectedDataStructure.get(multiKey);
+					groups.add(groupId);
+				}
 			}
 
-			// show that the person ids match the expected person ids
-
+			// show that the group ids match the expected group ids
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
-				for(PersonId personId : people) {
-					int actualGroupCount = groupsDataManager.getGroupCountForGroupTypeAndPerson(testGroupTypeId, personId);
-					int expectedGroupCount = expectedCountOfGroupsPerPerson.get(personId).get(testGroupTypeId);
+				for (PersonId personId : people) {
+					int actualGroupCount = groupsDataManager.getGroupCountForGroupTypeAndPerson(testGroupTypeId,
+							personId);
+					MultiKey multiKey = new MultiKey(testGroupTypeId, personId);
+					int expectedGroupCount = expectedDataStructure.get(multiKey).size();
 					assertEquals(expectedGroupCount, actualGroupCount);
 				}
 			}
