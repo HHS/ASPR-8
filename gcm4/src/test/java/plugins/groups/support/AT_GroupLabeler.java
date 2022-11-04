@@ -139,7 +139,7 @@ public final class AT_GroupLabeler {
 	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 
-		GroupsActionSupport.testConsumer(30, 3, 5, 5880749882920317232L, (c) -> {
+		GroupsActionSupport.testConsumer(30, 3, 5, 8478102896119863988L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);

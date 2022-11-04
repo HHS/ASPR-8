@@ -121,7 +121,7 @@ public class AT_GroupMemberFilter {
 	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
-		GroupsActionSupport.testConsumer(100, 3, 10, 6248106595116941770L, (c) -> {
+		GroupsActionSupport.testConsumer(100, 3, 10, 8525809821136960274L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 			Filter filter = new GroupMemberFilter(groupId);
