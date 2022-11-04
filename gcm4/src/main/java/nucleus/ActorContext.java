@@ -117,7 +117,7 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public <T> Optional<T> removePlan(final Object key);
+	public <T extends Consumer<ActorContext>> Optional<T> removePlan(final Object key);
 
 	/**
 	 * Returns a list of the current plan keys associated with the current actor

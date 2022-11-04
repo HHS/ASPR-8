@@ -21,7 +21,7 @@ import util.errors.ContractException;
  *
  */
 public abstract class PeriodicReport {
-	
+
 	private ActorContext actorContext;
 
 	/**
@@ -178,9 +178,11 @@ public abstract class PeriodicReport {
 	private <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
 		return (c, t) -> {
 			if (c.getTime() >= nextPlanTime) {
-				if (lastFlushTime == null || c.getTime() > lastFlushTime) {
-					lastFlushTime = c.getTime();
-					flush(c);
+				if (this.reportPeriod != ReportPeriod.END_OF_SIMULATION) {
+					if (lastFlushTime == null || c.getTime() > lastFlushTime) {
+						lastFlushTime = c.getTime();
+						flush(c);
+					}
 				}
 			}
 			eventConsumer.accept(c, t);
@@ -213,7 +215,6 @@ public abstract class PeriodicReport {
 
 	}
 
-
 	/**
 	 * Subscribes the report to the given event filter via the actor context
 	 * while enforcing the flushing of report items as needed. Events of the
@@ -230,7 +231,5 @@ public abstract class PeriodicReport {
 	protected final <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 		actorContext.subscribe(eventFilter, getFlushingConsumer(eventConsumer));
 	}
-
-	
 
 }

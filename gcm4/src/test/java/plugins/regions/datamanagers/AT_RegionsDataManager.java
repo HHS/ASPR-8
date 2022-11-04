@@ -43,7 +43,7 @@ import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.events.RegionAdditionEvent;
-import plugins.regions.events.RegionPropertyAdditionEvent;
+import plugins.regions.events.RegionPropertyDefinitionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionConstructionData;
 import plugins.regions.support.RegionError;
@@ -1426,7 +1426,7 @@ public class AT_RegionsDataManager {
 
 		// add an observer
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(EventFilter.builder(RegionPropertyAdditionEvent.class).build(), (c2, e) -> {
+			c.subscribe(EventFilter.builder(RegionPropertyDefinitionEvent.class).build(), (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionPropertyId());
 				actualObservations.add(multiKey);
 			});
@@ -2368,7 +2368,7 @@ public class AT_RegionsDataManager {
 		// add an observer
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			EventFilter<RegionPropertyAdditionEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyAdditionEvent();
+			EventFilter<RegionPropertyDefinitionEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
 				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionPropertyId());
 				actualObservations.add(multiKey);
