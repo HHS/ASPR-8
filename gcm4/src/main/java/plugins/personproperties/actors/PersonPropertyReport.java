@@ -62,7 +62,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	/**
 	 * Returns a new instance of the builder class
 	 */
-	public Builder builder() {
+	public static Builder builder() {
 		return new Builder();
 	}
 
@@ -319,13 +319,15 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private RegionsDataManager regionsDataManager;
 
+	private PeopleDataManager peopleDataManager;
+
 	@Override
 	public void init(final ActorContext actorContext) {
 		super.init(actorContext);
 
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 
 		subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
 		subscribe(peopleDataManager.getEventFilterForPersonImminentRemovalEvent(), this::handlePersonImminentRemovalEvent);
@@ -356,6 +358,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 		PersonPropertyId personPropertyId = personPropertyDefinitionEvent.getPersonPropertyId();
 		if (!excludedPersonPropertyIds.contains(personPropertyId)) {
 			includedPersonPropertyIds.add(personPropertyId);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+				increment(regionId, personPropertyId, personPropertyValue);
+			}
 		}
 	}
 
