@@ -46,8 +46,11 @@ public final class Example_16 {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
-										return new PersonPropertyReport(ModelReportId.PERSON_PROPERTY_REPORT, ReportPeriod.END_OF_SIMULATION)//
-										::init;
+										return PersonPropertyReport	.builder()//
+																	.setReportId(ModelReportId.PERSON_PROPERTY_REPORT)//
+																	.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
+																	.setDefaultInclusion(true)//
+																	.build()::init;//
 									})//
 									.addReport(() -> {
 										return new VaccineReport(ModelReportId.VACCINATION, //
