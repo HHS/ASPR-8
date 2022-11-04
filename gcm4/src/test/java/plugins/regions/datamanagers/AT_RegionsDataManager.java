@@ -2357,8 +2357,8 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionPropertyAdditionEvent", args = {})
-	public void testGetEventFilterForRegionPropertyAdditionEvent() {
+	@UnitTestMethod(name = "getEventFilterForRegionPropertyDefinitionEvent", args = {})
+	public void testGetEventFilterForRegionPropertyDefinitionEvent() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
 		Set<MultiKey> actualObservations = new LinkedHashSet<>();
