@@ -206,7 +206,7 @@ public class Simulation {
 		}
 
 		@Override
-		public <T> Optional<T> removePlan(final Object key) {
+		public <T extends Consumer<ActorContext>> Optional<T> removePlan(final Object key) {
 			return Simulation.this.removeActorPlan(key);
 		}
 
@@ -621,7 +621,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Optional<T> removeActorPlan(final Object key) {
+	private <T extends Consumer<ActorContext>> Optional<T> removeActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
