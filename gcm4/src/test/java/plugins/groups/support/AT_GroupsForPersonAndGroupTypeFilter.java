@@ -145,7 +145,7 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = {})
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		GroupsActionSupport.testConsumer(100, 0, 10, 3710154078488599088L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -163,7 +163,8 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 
 			// group type id is unknown
 			contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.getUnknownGroupTypeId(), Equality.EQUAL, 2)
+					() -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.getUnknownGroupTypeId(), Equality.EQUAL,
+							2)
 							.validate(c));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
