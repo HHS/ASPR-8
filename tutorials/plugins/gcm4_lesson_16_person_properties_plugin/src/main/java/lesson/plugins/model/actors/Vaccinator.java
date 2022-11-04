@@ -56,14 +56,15 @@ public final class Vaccinator {
 		personPropertiesDataManager.definePersonProperty(personPropertyDefinitionInitialization);
 	}
 
-	private void handleEducatedPerson(ActorContext actorContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+	private void handleVaccineAcceptance(ActorContext actorContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		/*
 		 * We know that the person property is PersonProperty.REFUSES_VACCINE since we used an event filter when subscribing
 		 */
 		Boolean refusesVaccine = personPropertyUpdateEvent.getCurrentPropertyValue();
 		if (!refusesVaccine) {
 			PersonId personId = personPropertyUpdateEvent.getPersonId();
-			actorContext.removePlan(personId);
+			//drop the current plan
+			actorContext.removePlan(personId);			
 			vaccinatePerson(personId);
 		}
 	}
@@ -86,7 +87,7 @@ public final class Vaccinator {
 		EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager//
 			.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.REFUSES_VACCINE);
 		
-		actorContext.subscribe(eventFilter, this::handleEducatedPerson);
+		actorContext.subscribe(eventFilter, this::handleVaccineAcceptance);
 
 	}
 }
