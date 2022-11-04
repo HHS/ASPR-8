@@ -10,8 +10,9 @@ import util.errors.ContractException;
  * @author Shawn Hatch
  *
  */
-@Immutable
-public final class Region implements RegionId {
+
+ @Immutable
+ public final class Region implements RegionId {
 
 	private final int id;
 
@@ -56,4 +57,4 @@ public final class Region implements RegionId {
 	public String toString() {
 		return "Region_"+id;
 	}
-}
+ }

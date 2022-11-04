@@ -37,8 +37,9 @@ public class PersonPropertyUpdateEvent implements Event {
 	/**
 	 * Returns the current property value used to construct this event
 	 */
-	public Object getCurrentPropertyValue() {
-		return currentPropertyValue;
+	@SuppressWarnings("unchecked")
+	public <T> T getCurrentPropertyValue() {
+		return (T)currentPropertyValue;
 	}
 
 	/**
