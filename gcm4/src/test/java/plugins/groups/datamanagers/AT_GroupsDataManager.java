@@ -918,10 +918,10 @@ public class AT_GroupsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGroupCountForGroupTypeAndPerson", args = {})
+	@UnitTestMethod(name = "getGroupCountForGroupTypeAndPerson", args = {GroupTypeId.class, PersonId.class})
 	public void testGetGroupCountForGroupTypeAndPerson() {
 
-		GroupsActionSupport.testConsumer(100, 0, 5, 8576174021026036673L, (c) -> {
+		GroupsActionSupport.testConsumer(100, 0, 5, 6434309925268726988L, (c) -> {
 
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			List<GroupId> groupIds = groupsDataManager.getGroupIds();
