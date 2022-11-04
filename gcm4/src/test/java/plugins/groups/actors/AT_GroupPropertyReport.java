@@ -59,11 +59,11 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.Builder.class, name = "builder", args = {})
+	@UnitTestMethod(target = GroupPropertyReport.class, name = "builder", args = {})
 	public void testBuilder() {
 		// test covered by the consumers-based-tests in this class
 
-		// precondition tests:
+		// show that the method doesn't not return null
 		assertNotNull(GroupPropertyReport.builder());
 	}
 
