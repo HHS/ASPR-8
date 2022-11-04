@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import tools.annotations.UnitTest;
@@ -15,7 +14,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_GroupTypeAdditionEvent {
 
 	@Test
-	@UnitTestConstructor(args = { GroupId.class })
+	@UnitTestConstructor(args = { GroupTypeId.class })
 	public void testConstructor() {
 		// nothing to test
 	}
