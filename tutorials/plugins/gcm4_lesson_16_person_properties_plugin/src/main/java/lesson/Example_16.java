@@ -2,11 +2,11 @@ package lesson;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
 import lesson.plugins.model.PersonProperty;
@@ -16,9 +16,12 @@ import lesson.plugins.vaccine.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
+import plugins.globalproperties.GlobalPropertiesPlugin;
+import plugins.globalproperties.GlobalPropertiesPluginData;
+import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
+import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
-import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.personproperties.actors.PersonPropertyReport;
@@ -32,14 +35,13 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
+import util.time.TimeElapser;
 
 public final class Example_16 {
 
 	private Example_16() {
 	}
 
-	private List<PersonId> initialPeople = new ArrayList<>();
-	private List<Region> initialRegions = new ArrayList<>();
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
 	private Plugin getReportsPlugin() {
@@ -72,38 +74,18 @@ public final class Example_16 {
 	}
 
 	private Plugin getPeoplePlugin() {
-		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
-		for (PersonId personId : initialPeople) {
-			peoplePluginDataBuilder.addPersonId(personId);
-		}
-		PeoplePluginData peoplePluginData = peoplePluginDataBuilder.build();
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
 
-	private Plugin getRegionsPlugin() {
-		// create the region plugin with an initial five regions, each region
-		// having 200 people
+	private Plugin getRegionsPlugin() {		
 		RegionsPluginData.Builder regionsPluginDataBuilder = RegionsPluginData.builder();
-		for (Region region : initialRegions) {
-			regionsPluginDataBuilder.addRegion(region);
-		}
 
-		for (PersonId personId : initialPeople) {
-			Region region = initialRegions.get(randomGenerator.nextInt(initialRegions.size()));
-			regionsPluginDataBuilder.setPersonRegion(personId, region);
+		for (int i = 0; i < 5; i++) {
+			regionsPluginDataBuilder.addRegion(new Region(i));
 		}
-
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
 		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
-	}
-
-	private void initializePeopleAndRegions() {
-		for (int i = 0; i < 1000; i++) {
-			initialPeople.add(new PersonId(i));
-		}
-		for (int i = 0; i < 5; i++) {
-			initialRegions.add(new Region(i));
-		}
 	}
 
 	private Plugin getPersonPropertiesPlugin() {
@@ -120,57 +102,104 @@ public final class Example_16 {
 												.build();
 		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition);
 
-		for (PersonId personId : initialPeople) {
-			if (randomGenerator.nextDouble() < 0.25) {
-				builder.setPersonPropertyValue(personId, PersonProperty.REFUSES_VACCINE, false);
-			}
-		}
-
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
 	}
 
 	private Plugin getStochasticsPlugin() {
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																			.setSeed(randomGenerator.nextLong()).build();
+
+																			.setSeed(randomGenerator.nextLong())//
+																			.build();
+
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
-	private Dimension getStochasticsDimension(int replicationCount, long seed) {
-		Dimension.Builder builder = Dimension.builder();//
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		List<Long> seedValues = new ArrayList<>();
-		for (int i = 0; i < replicationCount; i++) {
-			seedValues.add(randomGenerator.nextLong());
-		}
-
-		IntStream.range(0, seedValues.size()).forEach((i) -> {
-			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.get(StochasticsPluginData.Builder.class);
-				long seedValue = seedValues.get(i);
-				stochasticsPluginDataBuilder.setSeed(seedValue);
-
+	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
+		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		IntStream.range(0, values.length).forEach((i) -> {
+			dimensionBuilder.addLevel((context) -> {
+				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
+				double value = values[i];
+				builder.setGlobalPropertyValue(globalPropertyId, value);
 				ArrayList<String> result = new ArrayList<>();
-				result.add(Integer.toString(i));
-				result.add(Long.toString(seedValue) + "L");
-
+				result.add(Double.toString(value));
 				return result;
 			});//
 		});
+		dimensionBuilder.addMetaDatum(header);//
+		return dimensionBuilder.build();
+	}
 
-		builder.addMetaDatum("seed index");//
-		builder.addMetaDatum("seed value");//
+	private Dimension getVaccineRefusalProbabilityDimension() {
+		double[] values = new double[] { 0.0, 0.25, 0.5, 0.75, 1.0 };
+		return getGlobalPropertyDimension(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, "intial_refusal_probability", values);
+	}
 
-		return builder.build();
+	private Dimension getImmunityStartTimeDimension() {
+
+		double[] values = new double[] { 120.0, 180.0 };
+		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_START_TIME, "immunity_start_time", values);
+	}
+
+	private Dimension getVaccineAttemptIntervalDimension() {
+		double[] values = new double[] { 15.0, 30.0, 45.0, 60.0 };
+
+		return getGlobalPropertyDimension(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, "vaccine_atttempt_interval", values);
+	}
+
+	private Dimension getEducationAttemptIntervalDimension() {
+		double[] values = new double[] { 15.0, 30.0, 60.0, 180.0 };
+		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, "education_attempt_interval", values);
+	}
+
+	private Dimension getEducationSuccessRatedimension() {
+		double[] values = new double[] { 0.0, 0.1, 0.2 };
+		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_SUCCESS_RATE, "education_success_rate", values);
+	}
+
+	private Plugin getGlobalPropertiesPlugin() {
+		Builder builder = GlobalPropertiesPluginData.builder();//
+
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Double.class)//
+																	.setDefaultValue(0.0)//
+																	.setPropertyValueMutability(false)//
+																	.build();
+
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition);
+		
+		propertyDefinition = PropertyDefinition	.builder()//
+				.setType(Double.class)//
+				.setDefaultValue(365.0)//
+				.setPropertyValueMutability(false)//
+				.build();		
+		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition);
+
+		propertyDefinition = PropertyDefinition	.builder()//
+												.setType(Integer.class)//
+												.setDefaultValue(1000)//
+												.setPropertyValueMutability(false)//
+												.build();
+
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
+		
+
+		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
+
+		return GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
 	}
 
 	private void execute() {
+
 		/*
-		 * Create person ids and region ids that are shared across the plugins
+		 * Create the global properties plugin
 		 */
-		initializePeopleAndRegions();
+		Plugin globalPropertiesPlugin = getGlobalPropertiesPlugin();
 
 		/*
 		 * Create the reports
@@ -194,11 +223,9 @@ public final class Example_16 {
 		Plugin personPropertiesPlugin = getPersonPropertiesPlugin();
 
 		/*
-		 * create the stochastics plugin and build a dimension with 5 seed
-		 * values
+		 * create the stochastics plugin
 		 */
 		Plugin stochasticsPlugin = getStochasticsPlugin();
-		Dimension stochasticsDimension = getStochasticsDimension(5, randomGenerator.nextLong());
 
 		/*
 		 * Create the vaccine and model plugins
@@ -210,19 +237,32 @@ public final class Example_16 {
 		/*
 		 * Assemble and execute the experiment
 		 */
+		
+		TimeElapser timeElapser = new TimeElapser();
 		Experiment	.builder()//
+
 					.addPlugin(personPropertiesPlugin)//
+					.addPlugin(globalPropertiesPlugin)//
 					.addPlugin(modelPlugin)//
 					.addPlugin(regionsPlugin)//
 					.addPlugin(peoplePlugin)//
 					.addPlugin(stochasticsPlugin)//
 					.addPlugin(vaccinePlugin)//
 					.addPlugin(reportsPlugin)//
+
+					.addDimension(getImmunityStartTimeDimension())//
+					.addDimension(getVaccineAttemptIntervalDimension())//
+					.addDimension(getEducationAttemptIntervalDimension())//
+					.addDimension(getEducationSuccessRatedimension())//
+					.addDimension(getVaccineRefusalProbabilityDimension())//
+
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addDimension(stochasticsDimension)//
+					.setThreadCount(8)//
 					.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
+		
+		System.out.println(timeElapser.getElapsedMilliSeconds());
 
 	}
 
