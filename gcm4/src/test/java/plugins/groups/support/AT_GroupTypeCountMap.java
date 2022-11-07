@@ -243,7 +243,7 @@ public class AT_GroupTypeCountMap {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "seCount", args = {GroupTypeId.class, int.class})
+	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "setCount", args = {GroupTypeId.class, int.class})
 	public void testSetCount() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1446391997583651047L);
