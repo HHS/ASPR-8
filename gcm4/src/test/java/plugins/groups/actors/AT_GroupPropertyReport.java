@@ -63,7 +63,7 @@ public class AT_GroupPropertyReport {
 	public void testBuilder() {
 		// test covered by the consumers-based-tests in this class
 
-		// show that the method doesn't not return null
+		// show that the method doesn't return null
 		assertNotNull(GroupPropertyReport.builder());
 	}
 
