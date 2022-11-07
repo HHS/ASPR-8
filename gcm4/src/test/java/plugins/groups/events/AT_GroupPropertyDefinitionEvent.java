@@ -21,7 +21,7 @@ import util.errors.ContractException;
 public class AT_GroupPropertyDefinitionEvent {
 
 	@Test
-	@UnitTestConstructor(args = { GroupTypeId.class, GroupPropertyId.class, Object.class })
+	@UnitTestConstructor(args = { GroupTypeId.class, GroupPropertyId.class })
 	public void testConstructor() {
 		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
