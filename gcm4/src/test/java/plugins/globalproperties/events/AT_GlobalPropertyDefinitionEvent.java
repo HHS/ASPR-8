@@ -1,11 +1,10 @@
 package plugins.globalproperties.events;
 
 import org.junit.jupiter.api.Test;
-import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
-import tools.annotations.UnitTestMethod;
+import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,24 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AT_GlobalPropertyDefinitionEvent {
 
     @Test
-    @UnitTestMethod(name = "testGlobalPropertyId", args = {})
+    @UnitTestConstructor(args = {})
     public void testGlobalPropertyId() {
-    //  SimpleGlobalPropertyId goodId = new SimpleGlobalPropertyId(5);
-        SimpleGlobalPropertyId badId = new SimpleGlobalPropertyId(null);
-        Integer goodValue = 7;
 
-        ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(badId, goodValue));
+        ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(null, 7));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
     }
 
     @Test
-    @UnitTestMethod(name = "testGlobalPropertyValue", args = {})
+    @UnitTestConstructor(args = {})
     void initialPropertyValue() {
-        SimpleGlobalPropertyId goodId = new SimpleGlobalPropertyId(5);
-        Integer badValue = null;
 
-        ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(goodId, badValue));
+        SimpleGlobalPropertyId goodId = new SimpleGlobalPropertyId(5);
+
+        ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(goodId, null));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
     }
 }
