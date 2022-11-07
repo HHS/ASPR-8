@@ -2,6 +2,7 @@ package plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.LinkedHashMap;
@@ -206,6 +207,68 @@ public class AT_GroupTypeCountMap {
 
 			Set<GroupTypeId> actualGroupTypeIds = groupTypeCountMap.getGroupTypeIds();
 			assertEquals(expectedGroupTypeIds, actualGroupTypeIds);
+		}
+
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "build", args = {})
+	public void testBuild() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1446391997583651047L);
+
+		for (int i = 0; i < 20; i++) {
+			Map<TestGroupTypeId, Integer> expectedValues = new LinkedHashMap<>();
+			GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
+
+			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				expectedValues.put(testGroupTypeId, 0);
+				if (randomGenerator.nextBoolean()) {
+					int count = randomGenerator.nextInt(3);
+					builder.setCount(testGroupTypeId, count);
+					expectedValues.put(testGroupTypeId, count);
+				}
+			}
+			GroupTypeCountMap groupTypeCountMap = builder.build();
+
+			assertNotNull(groupTypeCountMap);
+
+			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				int expectedValue = expectedValues.get(testGroupTypeId);
+				int actualValue = groupTypeCountMap.getGroupCount(testGroupTypeId);
+				assertEquals(expectedValue, actualValue);
+			}
+		}
+
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "seCount", args = {GroupTypeId.class, int.class})
+	public void testSetCount() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1446391997583651047L);
+
+		for (int i = 0; i < 20; i++) {
+			Map<TestGroupTypeId, Integer> expectedValues = new LinkedHashMap<>();
+			GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
+
+			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				expectedValues.put(testGroupTypeId, 0);
+				if (randomGenerator.nextBoolean()) {
+					int count = randomGenerator.nextInt(3);
+					builder.setCount(testGroupTypeId, count);
+					expectedValues.put(testGroupTypeId, count);
+				}
+			}
+			GroupTypeCountMap groupTypeCountMap = builder.build();
+
+			assertNotNull(groupTypeCountMap);
+			
+			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				int expectedValue = expectedValues.get(testGroupTypeId);
+				int actualValue = groupTypeCountMap.getGroupCount(testGroupTypeId);
+				assertEquals(expectedValue, actualValue);
+			}
 		}
 
 	}
