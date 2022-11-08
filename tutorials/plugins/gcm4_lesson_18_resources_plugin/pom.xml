@@ -13,11 +13,11 @@
 
 	<!-- Artifact -->
 	<groupId>gov.hhs.aspr</groupId>
-	<artifactId>gcm4_lesson_16_person_properties_plugin</artifactId>
+	<artifactId>gcm4_lesson_18_resources_plugin</artifactId>
 	<version>4.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>gcm4 lesson 16 person properties plugin</name>
-	<description>Tutorial introducing the person properties plugin</description>
+	<name>gcm4 lesson 18 resources plugin</name>
+	<description>Tutorial introducing the resources plugin</description>
 
 	<!-- Dependencies -->
 	<dependencies>

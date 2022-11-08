@@ -35,9 +35,9 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
-public final class Example_16 {
+public final class Example_18 {
 
-	private Example_16() {
+	private Example_18() {
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
@@ -259,14 +259,14 @@ public final class Example_16 {
 
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.setThreadCount(8)//
-					.reportProgressToConsole(false)//
+					//.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
 
 	}
 
 	public static void main(String[] args) {
-		new Example_16().execute();
+		new Example_18().execute();
 	}
 
 }
