@@ -11,7 +11,7 @@ import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
-import lesson.plugins.model.actors.VaccineReport;
+import lesson.plugins.model.Resource;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -23,13 +23,16 @@ import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
-import plugins.personproperties.actors.PersonPropertyReport;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 import plugins.reports.support.NIOReportItemHandler;
 import plugins.reports.support.ReportPeriod;
+import plugins.resources.ResourcesPlugin;
+import plugins.resources.ResourcesPluginData;
+import plugins.resources.actors.PersonResourceReport;
+import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
@@ -40,32 +43,36 @@ public final class Example_18 {
 	private Example_18() {
 	}
 
-	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
+	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
 	private Plugin getReportsPlugin() {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
-									.addReport(() -> {
-										return PersonPropertyReport	.builder()//
-																	.setReportId(ModelReportId.PERSON_PROPERTY_REPORT)//
-																	.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
-																	.setDefaultInclusion(true)//
-																	.build()::init;//
-									})//
-									.addReport(() -> {
-										return new VaccineReport(ModelReportId.VACCINATION)::init;
-									})//
+									.addReport(() -> new PersonResourceReport(
+											ModelReportId.PERSON_RESOURCE_REPORT,//
+											ReportPeriod.END_OF_SIMULATION,//
+											true,//
+											true)//
+											::init)//
 									.build();
 
 		return ReportsPlugin.getReportsPlugin(reportsPluginData);
 	}
 
+	private Plugin getResourcesPlugin() {
+		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();//
+		for (ResourceId resourcId : Resource.values()) {
+			builder.addResource(resourcId);
+		}
+		ResourcesPluginData resourcesPluginData = builder.build();
+
+		return ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
+
+	}
+
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportId.PERSON_PROPERTY_REPORT, //
-											Paths.get("C:\\temp\\gcm\\person_property_report.xls"))//
-									.addReport(ModelReportId.VACCINATION, //
-											Paths.get("C:\\temp\\gcm\\vaccine_report.xls"))//
+									.addReport(ModelReportId.PERSON_RESOURCE_REPORT, Paths.get("c:\\temp\\gcm\\person_resource_report.xls"))//
 									.build();
 	}
 
@@ -84,30 +91,6 @@ public final class Example_18 {
 		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
 	}
 
-	private Plugin getPersonPropertiesPlugin() {
-		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Integer.class)//
-																	.setDefaultValue(0)//
-																	.build();
-		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition);
-		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS, propertyDefinition);
-		
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//												
-												.build();
-		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition);
-
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//
-												.setDefaultValue(false)//
-												.build();
-		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);
-
-		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
-		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
-	}
-
 	private Plugin getStochasticsPlugin() {
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
 
@@ -117,7 +100,56 @@ public final class Example_18 {
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
-	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
+	private Plugin getPersonPropertiesPlugin() {
+
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Boolean.class)//
+																	.setDefaultValue(false)//
+																	.build();
+
+		PersonPropertiesPluginData personPropertiesPluginData = //
+				PersonPropertiesPluginData	.builder()//
+											.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition)//
+											.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition)//
+											.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition)//
+											.definePersonProperty(PersonProperty.DEAD, propertyDefinition)//
+											.build();
+
+		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
+	}
+
+	private Plugin getGlobalPropertiesPlugin() {
+		Builder builder = GlobalPropertiesPluginData.builder();//
+
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Double.class)//
+																	.setDefaultValue(0.0)//
+																	.setPropertyValueMutability(false)//
+																	.build();
+
+		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_COVERAGE_TIME, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_SUCCESS_RATE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, propertyDefinition);
+
+		propertyDefinition = PropertyDefinition	.builder()//
+												.setType(Integer.class)//
+												.setDefaultValue(10000)//
+												.setPropertyValueMutability(false)//
+												.build();
+
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
+
+		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
+
+		return GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
+	}
+
+	private Dimension getGlobalPropertyDimension_Double(GlobalPropertyId globalPropertyId, String header, double[] values) {
 		Dimension.Builder dimensionBuilder = Dimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
@@ -133,72 +165,48 @@ public final class Example_18 {
 		return dimensionBuilder.build();
 	}
 
-	private Dimension getVaccineRefusalProbabilityDimension() {
-		double[] values = new double[] { 0.0, 0.25, 0.5, 0.75, 1.0 };
-		return getGlobalPropertyDimension(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, "intial_refusal_probability", values);
+	private Dimension getAntiviralDosesPerPpersonDimension() {
+		//double[] values = new double[] { .10, 0.20, 0.5 };
+		double[] values = new double[] { 0.5 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON, "antiviral_doses_per_person", values);
 	}
 
-	private Dimension getImmunityStartTimeDimension() {
-		double[] values = new double[] { 120.0, 180.0 };
-		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_START_TIME, "immunity_start_time", values);
-	}
-	
-	private Dimension getImmunityProbabilityDimension() {
-		double[] values = new double[] { 0.0, 0.1 , 0.2 };
-		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_PROBABILITY, "immunity_probabilty", values);
+	private Dimension getHospitalBedsPerPersonDimension() {
+		double[] values = new double[] { .05 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, "hospital_beds_per_person", values);
 	}
 
-	private Dimension getVaccineAttemptIntervalDimension() {
-		double[] values = new double[] { 30.0, 45.0, 60.0 };
-
-		return getGlobalPropertyDimension(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, "vaccine_atttempt_interval", values);
+	private Dimension getHospitalSuccessWithoutAntiviralDimension() {
+		double[] values = new double[] { .50 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, "hospital_success_without_antiviral", values);
 	}
 
-	private Dimension getEducationAttemptIntervalDimension() {
-		double[] values = new double[] { 30.0, 60.0, 180.0 };
-		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, "education_attempt_interval", values);
+	private Dimension getHospitalSuccessWithAntiviralDimension() {
+		double[] values = new double[] { 0.75 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, "hospital_success_with_antiviral", values);
 	}
 
-	private Dimension getEducationSuccessRatedimension() {
-		double[] values = new double[] { 0.0, 0.1, 0.2 };
-		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_SUCCESS_RATE, "education_success_rate", values);
+	private Dimension getAntiviralSuccessRateDimension() {
+		//double[] values = new double[] { .50, 0.8 };
+		double[] values = new double[] {  0.8 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.ANTIVIRAL_SUCCESS_RATE, "antiviral_success_rate", values);
 	}
 
-	private Plugin getGlobalPropertiesPlugin() {
-		Builder builder = GlobalPropertiesPluginData.builder();//
+	private Dimension getAntiviralCoverageTimeDimension() {
+		double[] values = new double[] { 15.0 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.ANTIVIRAL_COVERAGE_TIME, "antiviral_coverage_time", values);
+	}
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Double.class)//
-																	.setDefaultValue(0.0)//
-																	.setPropertyValueMutability(false)//
-																	.build();
+	private Dimension getMaximumSymptomOnsetTimeDimension() {
+		//double[] values = new double[] { 60, 120 };
+		double[] values = new double[] { 60 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME, "maximum_symptom_onset_time", values);
+	}
 
-		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_START_TIME, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition);
-
-		
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Double.class)//
-												.setDefaultValue(365.0)//
-												.setPropertyValueMutability(false)//
-												.build();
-		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition);
-
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.setDefaultValue(1000)//
-												.setPropertyValueMutability(false)//
-												.build();
-
-		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
-
-		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
-
-		return GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
+	private Dimension getSusceptiblePopulationProportionDimension() {
+		//double[] values = new double[] { 0.25, 0.5, 0.75 };
+		double[] values = new double[] { 0.75 };
+		return getGlobalPropertyDimension_Double(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, "susceptible_population_proportion", values);
 	}
 
 	private void execute() {
@@ -215,9 +223,12 @@ public final class Example_18 {
 		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
 
 		/*
-		 * Create the people plugin filled with 1000 people
+		 * Create the people plugin
 		 */
 		Plugin peoplePlugin = getPeoplePlugin();
+
+		// Create the person properties plugin
+		Plugin personPropertiesPlugin = getPersonPropertiesPlugin();
 
 		/*
 		 * Create the region plugin 5 regions, each having a lat and lon and
@@ -226,9 +237,6 @@ public final class Example_18 {
 		 */
 		Plugin regionsPlugin = getRegionsPlugin();
 
-		// Create the person properties plugin
-		Plugin personPropertiesPlugin = getPersonPropertiesPlugin();
-
 		/*
 		 * create the stochastics plugin
 		 */
@@ -236,30 +244,34 @@ public final class Example_18 {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
+		Plugin resourcesPlugin = getResourcesPlugin();
+
 		/*
 		 * Assemble and execute the experiment
 		 */
 
 		Experiment	.builder()//
-
-					.addPlugin(personPropertiesPlugin)//
+					.addPlugin(resourcesPlugin)//
 					.addPlugin(globalPropertiesPlugin)//
+					.addPlugin(personPropertiesPlugin)//
 					.addPlugin(modelPlugin)//
 					.addPlugin(regionsPlugin)//
 					.addPlugin(peoplePlugin)//
 					.addPlugin(stochasticsPlugin)//
 					.addPlugin(reportsPlugin)//
 
-					.addDimension(getImmunityStartTimeDimension())//
-					.addDimension(getImmunityProbabilityDimension())//
-					.addDimension(getVaccineAttemptIntervalDimension())//
-					.addDimension(getEducationAttemptIntervalDimension())//
-					.addDimension(getEducationSuccessRatedimension())//
-					.addDimension(getVaccineRefusalProbabilityDimension())//
+					.addDimension(getMaximumSymptomOnsetTimeDimension())//
+					.addDimension(getSusceptiblePopulationProportionDimension())//
+					.addDimension(getAntiviralCoverageTimeDimension())//
+					.addDimension(getAntiviralSuccessRateDimension())//
+					.addDimension(getHospitalSuccessWithAntiviralDimension())//
+					.addDimension(getHospitalSuccessWithoutAntiviralDimension())//
+					.addDimension(getHospitalBedsPerPersonDimension())//
+					.addDimension(getAntiviralDosesPerPpersonDimension())//
 
 					.addExperimentContextConsumer(nioReportItemHandler)//
-					.setThreadCount(8)//
-					//.reportProgressToConsole(false)//
+					//.setThreadCount(8)//
+					// .reportProgressToConsole(false)//
 					.build()//
 					.execute();//
 

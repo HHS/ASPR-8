@@ -3,14 +3,15 @@ package lesson.plugins.model;
 import plugins.globalproperties.support.GlobalPropertyId;
 
 public enum GlobalProperty implements GlobalPropertyId {
-	IMMUNITY_START_TIME,//the time in days until immunity person property is added
-	IMMUNITY_PROBABILITY,//the probability that person will be immune when the immunity property is added
-	VACCINE_ATTEMPT_INTERVAL,//the maximum time between vaccine attempts
-	EDUCATION_ATTEMPT_INTERVAL,//the maximum time between vaccine education attempts
-	EDUCATION_SUCCESS_RATE,//the probability of changing the refusal person property per attempt
-	POPULATION_SIZE,//the initial size of the population
-	VACCINE_REFUSAL_PROBABILITY,//the probability that a person will refuse vaccination at the start of the simulation
-	SIMULATION_DURATION,//the total time the simulation will run
+	SUSCEPTIBLE_POPULATION_PROPORTION,// the fraction of the population that is susceptible	
+	MAXIMUM_SYMPTOM_ONSET_TIME,// the last time where any person will have onset of symptoms
+	ANTIVIRAL_COVERAGE_TIME,//the amount of time for the antiviral to be effective
+	ANTIVIRAL_SUCCESS_RATE,//the probability that the antiviral will be effective
+	HOSPITAL_SUCCESS_WITH_ANTIVIRAL,//the probability that hospital treatment will be effective for people who previously had antiviral treatment
+	HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL,//the probability that hospital treatment will be effective for people who previously had no antiviral treatment
 	
+	POPULATION_SIZE,//the number of people across all regions.  Regions will not be uniformly populated.
+	HOSPITAL_BEDS_PER_PERSON,//The number of hospital beds per person on average stored in the regions.
+	ANTIVIRAL_DOSES_PER_PERSON,//The number of antiviral doses per person on average stored in the regions.
 	;
 }
