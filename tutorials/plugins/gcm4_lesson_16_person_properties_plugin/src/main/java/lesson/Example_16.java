@@ -11,8 +11,7 @@ import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
-import lesson.plugins.vaccine.VaccinePlugin;
-import lesson.plugins.vaccine.VaccineReport;
+import lesson.plugins.model.actors.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -35,7 +34,6 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
-import util.time.TimeElapser;
 
 public final class Example_16 {
 
@@ -55,9 +53,7 @@ public final class Example_16 {
 																	.build()::init;//
 									})//
 									.addReport(() -> {
-										return new VaccineReport(ModelReportId.VACCINATION, //
-												ReportPeriod.END_OF_SIMULATION//
-										)::init;
+										return new VaccineReport(ModelReportId.VACCINATION)::init;
 									})//
 									.build();
 
@@ -78,7 +74,7 @@ public final class Example_16 {
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
 
-	private Plugin getRegionsPlugin() {		
+	private Plugin getRegionsPlugin() {
 		RegionsPluginData.Builder regionsPluginDataBuilder = RegionsPluginData.builder();
 
 		for (int i = 0; i < 5; i++) {
@@ -96,11 +92,17 @@ public final class Example_16 {
 																	.build();
 		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS, propertyDefinition);
 		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS, propertyDefinition);
+		
 		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//
-												.setDefaultValue(true)//
+												.setType(Boolean.class)//												
 												.build();
 		builder.definePersonProperty(PersonProperty.REFUSES_VACCINE, propertyDefinition);
+
+		propertyDefinition = PropertyDefinition	.builder()//
+												.setType(Boolean.class)//
+												.setDefaultValue(false)//
+												.build();
+		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition);
 
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
@@ -137,19 +139,23 @@ public final class Example_16 {
 	}
 
 	private Dimension getImmunityStartTimeDimension() {
-
 		double[] values = new double[] { 120.0, 180.0 };
 		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_START_TIME, "immunity_start_time", values);
 	}
+	
+	private Dimension getImmunityProbabilityDimension() {
+		double[] values = new double[] { 0.0, 0.1 , 0.2 };
+		return getGlobalPropertyDimension(GlobalProperty.IMMUNITY_PROBABILITY, "immunity_probabilty", values);
+	}
 
 	private Dimension getVaccineAttemptIntervalDimension() {
-		double[] values = new double[] { 15.0, 30.0, 45.0, 60.0 };
+		double[] values = new double[] { 30.0, 45.0, 60.0 };
 
 		return getGlobalPropertyDimension(GlobalProperty.VACCINE_ATTEMPT_INTERVAL, "vaccine_atttempt_interval", values);
 	}
 
 	private Dimension getEducationAttemptIntervalDimension() {
-		double[] values = new double[] { 15.0, 30.0, 60.0, 180.0 };
+		double[] values = new double[] { 30.0, 60.0, 180.0 };
 		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, "education_attempt_interval", values);
 	}
 
@@ -172,12 +178,14 @@ public final class Example_16 {
 		builder.defineGlobalProperty(GlobalProperty.EDUCATION_ATTEMPT_INTERVAL, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.EDUCATION_SUCCESS_RATE, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.VACCINE_REFUSAL_PROBABILITY, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.IMMUNITY_PROBABILITY, propertyDefinition);
+
 		
 		propertyDefinition = PropertyDefinition	.builder()//
-				.setType(Double.class)//
-				.setDefaultValue(365.0)//
-				.setPropertyValueMutability(false)//
-				.build();		
+												.setType(Double.class)//
+												.setDefaultValue(365.0)//
+												.setPropertyValueMutability(false)//
+												.build();
 		builder.defineGlobalProperty(GlobalProperty.SIMULATION_DURATION, propertyDefinition);
 
 		propertyDefinition = PropertyDefinition	.builder()//
@@ -187,7 +195,6 @@ public final class Example_16 {
 												.build();
 
 		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition);
-		
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
@@ -227,18 +234,12 @@ public final class Example_16 {
 		 */
 		Plugin stochasticsPlugin = getStochasticsPlugin();
 
-		/*
-		 * Create the vaccine and model plugins
-		 */
-		Plugin vaccinePlugin = VaccinePlugin.getVaccinePlugin();
-
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
 		/*
 		 * Assemble and execute the experiment
 		 */
-		
-		TimeElapser timeElapser = new TimeElapser();
+
 		Experiment	.builder()//
 
 					.addPlugin(personPropertiesPlugin)//
@@ -247,10 +248,10 @@ public final class Example_16 {
 					.addPlugin(regionsPlugin)//
 					.addPlugin(peoplePlugin)//
 					.addPlugin(stochasticsPlugin)//
-					.addPlugin(vaccinePlugin)//
 					.addPlugin(reportsPlugin)//
 
 					.addDimension(getImmunityStartTimeDimension())//
+					.addDimension(getImmunityProbabilityDimension())//
 					.addDimension(getVaccineAttemptIntervalDimension())//
 					.addDimension(getEducationAttemptIntervalDimension())//
 					.addDimension(getEducationSuccessRatedimension())//
@@ -258,11 +259,9 @@ public final class Example_16 {
 
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.setThreadCount(8)//
-					.reportProgressToConsole(false)//
+					//.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
-		
-		System.out.println(timeElapser.getElapsedMilliSeconds());
 
 	}
 

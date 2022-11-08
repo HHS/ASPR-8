@@ -1,43 +1,72 @@
-package lesson.plugins.vaccine;
+package lesson.plugins.model.actors;
 
+import java.util.List;
+
+import lesson.plugins.model.PersonProperty;
 import nucleus.ActorContext;
-import plugins.reports.support.PeriodicReport;
+import plugins.people.datamanagers.PeopleDataManager;
+import plugins.people.support.PersonId;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportPeriod;
 
-public class VaccineReport extends PeriodicReport {
+public final class VaccineReport {
 
-	public VaccineReport(ReportId reportId, ReportPeriod reportPeriod) {
-		super(reportId, reportPeriod);
+	private final ReportId reportId;
 
-		ReportHeader.Builder builder = ReportHeader.builder();
-
-		reportHeader = addTimeFieldHeaders(builder)//
-													.add("vaccinated")//
-													.add("unvaccinated")//
-													.build();
-
+	public VaccineReport(ReportId reportId) {
+		this.reportId = reportId;
 	}
-
-	private VaccinationDataManager vaccinationDataManager;
 
 	public void init(ActorContext actorContext) {
-		super.init(actorContext);
-		vaccinationDataManager = actorContext.getDataManager(VaccinationDataManager.class);
+		actorContext.subscribeToSimulationClose(this::report);
 	}
 
-	private ReportHeader reportHeader;
+	private ReportHeader reportHeader = ReportHeader.builder()//
+													.add("vaccinated_immune")//
+													.add("vaccinated_susceptible")//
+													.add("unvaccinated_immune")//
+													.add("unvaccinated_susceptible")//
+													.build();
 
-	@Override
-	protected void flush(ActorContext actorContext) {
+	private void report(ActorContext actorContext) {
+		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+
+		int vaccinated_immune = 0;
+		int vaccinated_susceptible = 0;
+		int unvaccinated_immune = 0;
+		int unvaccinated_susceptible = 0;
+
+		List<PersonId> people = peopleDataManager.getPeople();
+		for (PersonId personId : people) {
+			boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.VACCINATED);
+			boolean immune = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.IS_IMMUNE);
+			if (vaccinated) {
+				if (immune) {
+					vaccinated_immune++;
+				} else {
+					vaccinated_susceptible++;
+				}
+			} else {
+				if (immune) {
+					unvaccinated_immune++;
+				} else {
+					unvaccinated_susceptible++;
+				}
+			}
+		}
+
 		ReportItem.Builder builder = ReportItem	.builder()//
-												.setReportId(getReportId())//
+												.setReportId(reportId)//
 												.setReportHeader(reportHeader);
-		fillTimeFields(builder);
-		builder.addValue(vaccinationDataManager.getVaccinatedPeople().size());
-		builder.addValue(vaccinationDataManager.getUnvaccinatedPeople().size());
+
+		builder.addValue(vaccinated_immune);
+		builder.addValue(vaccinated_susceptible);
+		builder.addValue(unvaccinated_immune);
+		builder.addValue(unvaccinated_susceptible);
+
 		ReportItem reportItem = builder.build();
 		actorContext.releaseOutput(reportItem);
 	}
