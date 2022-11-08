@@ -28,6 +28,6 @@ public class AT_GlobalPropertyDefinitionEvent {
         SimpleGlobalPropertyId goodId = new SimpleGlobalPropertyId(5);
 
         ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(goodId, null));
-        assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+        assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
     }
 }
