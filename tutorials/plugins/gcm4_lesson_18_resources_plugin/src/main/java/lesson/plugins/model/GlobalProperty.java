@@ -9,6 +9,8 @@ public enum GlobalProperty implements GlobalPropertyId {
 	ANTIVIRAL_SUCCESS_RATE,//the probability that the antiviral will be effective
 	HOSPITAL_SUCCESS_WITH_ANTIVIRAL,//the probability that hospital treatment will be effective for people who previously had antiviral treatment
 	HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL,//the probability that hospital treatment will be effective for people who previously had no antiviral treatment
+	HOSPITAL_STAY_DURATION_MIN,//The minimum duration of a hospital stay
+	HOSPITAL_STAY_DURATION_MAX,//The maximum duration of a hospital stay
 	
 	POPULATION_SIZE,//the number of people across all regions.  Regions will not be uniformly populated.
 	HOSPITAL_BEDS_PER_PERSON,//The number of hospital beds per person on average stored in the regions.

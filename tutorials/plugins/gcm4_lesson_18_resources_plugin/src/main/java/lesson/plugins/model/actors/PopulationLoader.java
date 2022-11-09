@@ -23,7 +23,7 @@ public class PopulationLoader {
 	private RandomGenerator randomGenerator;
 	private RegionsDataManager regionsDataManager;
 
-	private void buildUnbalanceRegions() {
+	private void buildUnbalancedRegions() {
 
 		for (RegionId regionId : regionsDataManager.getRegionIds()) {
 			double value = randomGenerator.nextDouble();
@@ -56,8 +56,7 @@ public class PopulationLoader {
 			MutableDouble mutableDouble = regionMap.get(regionId);
 			if (mutableDouble.getValue() >= value) {
 				return regionId;
-			}
-			value -= mutableDouble.getValue();
+			}			
 		}
 		return defaultRegionId;
 	}
@@ -73,7 +72,7 @@ public class PopulationLoader {
 		double susceptibleProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
 		double immuneProbabilty = 1 - susceptibleProbability;
 
-		buildUnbalanceRegions();
+		buildUnbalancedRegions();
 
 		for (int i = 0; i < populationSize; i++) {
 			RegionId regionId = getRandomRegionId();
