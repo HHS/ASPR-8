@@ -298,4 +298,10 @@ public class AT_GlobalPropertiesPluginData {
 
 	}
 
+	@Test
+	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	public void testGetCloneBuilder() {
+		assertNotNull(GlobalPropertiesPluginData.builder().build().getCloneBuilder());
+	}
+
 }
