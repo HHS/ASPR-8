@@ -163,6 +163,7 @@ public final class AT_GroupLabeler {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				List<GroupId> groupIdsForPersonId = groupsDataManager.getGroupsForPerson(personId);
 				int numGroupsForPerson = groupIdsForPersonId.size();
+				if(numGroupsForPerson <= 0) continue;
 				GroupId groupId = groupIdsForPersonId.get(randomGenerator.nextInt(numGroupsForPerson));
 				GroupTypeId expectedGroupTypeId = groupsDataManager.getGroupType(groupId);
 				
@@ -187,6 +188,7 @@ public final class AT_GroupLabeler {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				List<GroupId> groupIdsForPersonId = groupsDataManager.getGroupsForPerson(personId);
 				int numGroupsForPerson = groupIdsForPersonId.size();
+				if(numGroupsForPerson <= 0) continue;
 				GroupId groupId = groupIdsForPersonId.get(randomGenerator.nextInt(numGroupsForPerson));
 				GroupTypeId expectedGroupTypeId = groupsDataManager.getGroupType(groupId);
 				groupsDataManager.removePersonFromGroup(personId, groupId);
