@@ -14,6 +14,13 @@ import plugins.reports.support.ReportItem;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 
+/**
+ * A report that groups people at the end of the simulation by their shared
+ * person property values.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public final class DiseaseStateReport {
 	private final ReportId reportId;
 
@@ -28,6 +35,11 @@ public final class DiseaseStateReport {
 	private void report(ActorContext actorContext) {
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+		/*
+		 * Build a map from a multikey to a counter. Each person's ordered
+		 * person property values will form the multikey. The counter is
+		 * incremented for each person matching the unique multikeys.
+		 */
 		Map<MultiKey, MutableInteger> map = new LinkedHashMap<>();
 		for (PersonId personId : peopleDataManager.getPeople()) {
 
@@ -47,6 +59,10 @@ public final class DiseaseStateReport {
 			mutableInteger.increment();
 		}
 
+		/*
+		 * Build the header of the report using the headers that correspond to
+		 * the ordered key values in the multikeys.
+		 */
 		ReportHeader reportHeader = ReportHeader.builder()//
 												.add("immune")//
 												.add("infected")//
@@ -59,6 +75,10 @@ public final class DiseaseStateReport {
 
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
+		/*
+		 * Form a report item for each multikey, taking the ordered property
+		 * values from the multikey and using them as inputs to the report item
+		 */
 		for (MultiKey multiKey : map.keySet()) {
 
 			int personCount = map.get(multiKey).getValue();
@@ -79,6 +99,9 @@ public final class DiseaseStateReport {
 			reportItemBuilder.addValue(deadInHome);
 			reportItemBuilder.addValue(personCount);
 			ReportItem reportItem = reportItemBuilder.build();
+			/*
+			 * Release the report item from the simulation
+			 */
 			actorContext.releaseOutput(reportItem);
 		}
 

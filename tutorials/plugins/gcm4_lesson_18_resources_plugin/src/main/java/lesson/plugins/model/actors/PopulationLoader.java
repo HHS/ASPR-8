@@ -56,12 +56,13 @@ public class PopulationLoader {
 			MutableDouble mutableDouble = regionMap.get(regionId);
 			if (mutableDouble.getValue() >= value) {
 				return regionId;
-			}			
+			}
 		}
 		return defaultRegionId;
 	}
 
 	public void init(ActorContext actorContext) {
+
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
 		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
@@ -72,8 +73,17 @@ public class PopulationLoader {
 		double susceptibleProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
 		double immuneProbabilty = 1 - susceptibleProbability;
 
+		/*
+		 * Derive mapping from region to probability that a person will be
+		 * assigned to that region that will likely not put the same number of
+		 * people in each region.
+		 */
 		buildUnbalancedRegions();
 
+		/*
+		 * Add each person to the simulation. Determine their region id and the
+		 * immune state. The other person properties will have default values.
+		 */
 		for (int i = 0; i < populationSize; i++) {
 			RegionId regionId = getRandomRegionId();
 			boolean immune = randomGenerator.nextDouble() < immuneProbabilty;

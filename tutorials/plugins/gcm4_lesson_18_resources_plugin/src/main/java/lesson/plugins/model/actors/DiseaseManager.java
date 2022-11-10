@@ -17,6 +17,7 @@ import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.stochastics.StochasticsDataManager;
 
 public class DiseaseManager {
+	
 	private ActorContext actorContext;
 	private double antiviralCoverageTime;
 	private double antiviralSuccessRate;
@@ -35,6 +36,12 @@ public class DiseaseManager {
 	}
 
 	private void assessHospitalization(PersonId personId) {
+		/*
+		 * Determine whether the hospitalization was a success taking into
+		 * account whether the person received an antiviral treatment before
+		 * entering the hospital. If the treatment was successful then mark the
+		 * person as immune. Otherwise, mark the person as a hospital death.
+		 */
 		boolean treatedWithAntiViral = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.TREATED_WITH_ANTIVIRAL);
 		double probabilityOfSuccess;
 		if (treatedWithAntiViral) {
@@ -51,6 +58,11 @@ public class DiseaseManager {
 	}
 
 	private void hospitalizePerson(PersonId personId) {
+		/*
+		 * Try to allocate a hospital bed to the person. If the bed is
+		 * available, then schedule an assessment of the treatment success.
+		 * Otherwise, mark the person as a home death.
+		 */
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		long availableHospitalBeds = resourcesDataManager.getRegionResourceLevel(regionId, Resource.HOSPITAL_BED);
 		if (availableHospitalBeds > 0) {
@@ -58,12 +70,17 @@ public class DiseaseManager {
 			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.HOSPITALIZED, true);
 			double hospitalizationDuration = (hospitalStayDurationMax - hospitalStayDurationMin) * randomGenerator.nextDouble() + hospitalStayDurationMin;
 			actorContext.addPlan((c) -> assessHospitalization(personId), actorContext.getTime() + hospitalizationDuration);
-		}else {
+		} else {
 			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DEAD_IN_HOME, true);
 		}
 	}
 
 	private void assessAntiviralTreatment(PersonId personId) {
+		/*
+		 * Expend the antiviral resource from the person. If the antiviral
+		 * succeeded, then mark the person as immune. Otherwise, hospitalize the
+		 * person immediately
+		 */
 		resourcesDataManager.removeResourceFromPerson(Resource.ANTI_VIRAL_MED, personId, 1L);
 		if (randomGenerator.nextDouble() < antiviralSuccessRate) {
 			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.IMMUNE, true);
@@ -73,6 +90,12 @@ public class DiseaseManager {
 	}
 
 	private void treatWithAntiviral(PersonId personId) {
+		/*
+		 * Try to allocate one dose of the antiviral drug to the person. If the
+		 * dose is available, then schedule an assessment of its success after
+		 * the necessary waiting period. Otherwise, hospitalize the person
+		 * immediately.
+		 */
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		long regionResourceLevel = resourcesDataManager.getRegionResourceLevel(regionId, Resource.ANTI_VIRAL_MED);
 		if (regionResourceLevel > 0) {
@@ -85,6 +108,9 @@ public class DiseaseManager {
 	}
 
 	private void startTreatment(ActorContext actorContext) {
+		/*
+		 * Get access to various data managers
+		 */
 		this.actorContext = actorContext;
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
@@ -93,7 +119,10 @@ public class DiseaseManager {
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 
-		double probabilityOfInfection = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
+		/*
+		 * Gather various values that will be used later
+		 */
+		
 		double maximumSymptomOnsetTime = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME);
 
 		antiviralCoverageTime = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.ANTIVIRAL_COVERAGE_TIME);
@@ -103,13 +132,15 @@ public class DiseaseManager {
 		hospitalStayDurationMin = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MIN);
 		hospitalStayDurationMax = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.HOSPITAL_STAY_DURATION_MAX);
 
+		/*
+		 * Infect non-immune people. Those who become infected start antiviral
+		 * treatment immediately.
+		 */
 		List<PersonId> susceptiblePeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.IMMUNE, false);
-		for (PersonId personId : susceptiblePeople) {						
-			if (randomGenerator.nextDouble() < probabilityOfInfection) {
+		for (PersonId personId : susceptiblePeople) {			
 				double symptomOnsetTime = randomGenerator.nextDouble() * maximumSymptomOnsetTime;
 				personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.INFECTED, true);
-				actorContext.addPlan((c) -> this.treatWithAntiviral(personId), symptomOnsetTime);				
-			}
+				actorContext.addPlan((c) -> treatWithAntiviral(personId), symptomOnsetTime);			
 		}
 
 	}

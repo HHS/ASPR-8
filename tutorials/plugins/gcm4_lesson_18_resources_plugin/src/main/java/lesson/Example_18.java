@@ -12,6 +12,7 @@ import lesson.plugins.model.ModelReportId;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.Resource;
+import lesson.plugins.model.actors.DeathReport;
 import lesson.plugins.model.actors.DiseaseStateReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
@@ -56,6 +57,7 @@ public final class Example_18 {
 									::init)//
 
 									.addReport(() -> new DiseaseStateReport(ModelReportId.DISEASE_STATE)::init)//
+									.addReport(() -> new DeathReport(ModelReportId.DEATH_REPORT)::init)//
 
 									.build();
 
@@ -77,6 +79,7 @@ public final class Example_18 {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportId.PERSON_RESOURCE_REPORT, Paths.get("c:\\temp\\gcm\\person_resource_report.xls"))//
 									.addReport(ModelReportId.DISEASE_STATE, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
+									.addReport(ModelReportId.DEATH_REPORT, Paths.get("c:\\temp\\gcm\\death_report.xls"))//
 									.build();
 	}
 
@@ -114,7 +117,7 @@ public final class Example_18 {
 		PersonPropertiesPluginData personPropertiesPluginData = //
 				PersonPropertiesPluginData	.builder()//
 											.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition)//
-											.definePersonProperty(PersonProperty.INFECTED, propertyDefinition)//											
+											.definePersonProperty(PersonProperty.INFECTED, propertyDefinition)//
 											.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition)//
 											.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition)//
 											.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition)//
@@ -202,7 +205,7 @@ public final class Example_18 {
 	}
 
 	private Dimension getHospitalBedsPerPersonDimension() {
-		double[] values = new double[] { .05 };
+		double[] values = new double[] { 0.003 };
 		return getGlobalPropertyDimension(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, "hospital_beds_per_person", values);
 	}
 
@@ -238,54 +241,15 @@ public final class Example_18 {
 
 	private void execute() {
 
-		/*
-		 * Create the global properties plugin
-		 */
-		Plugin globalPropertiesPlugin = getGlobalPropertiesPlugin();
-
-		/*
-		 * Create the reports
-		 */
-		Plugin reportsPlugin = getReportsPlugin();
-		NIOReportItemHandler nioReportItemHandler = getNIOReportItemHandler();
-
-		/*
-		 * Create the people plugin
-		 */
-		Plugin peoplePlugin = getPeoplePlugin();
-
-		// Create the person properties plugin
-		Plugin personPropertiesPlugin = getPersonPropertiesPlugin();
-
-		/*
-		 * Create the region plugin 5 regions, each having a lat and lon and
-		 * assign the people to random regions.
-		 * 
-		 */
-		Plugin regionsPlugin = getRegionsPlugin();
-
-		/*
-		 * create the stochastics plugin
-		 */
-		Plugin stochasticsPlugin = getStochasticsPlugin();
-
-		Plugin modelPlugin = ModelPlugin.getModelPlugin();
-
-		Plugin resourcesPlugin = getResourcesPlugin();
-
-		/*
-		 * Assemble and execute the experiment
-		 */
-
 		Experiment	.builder()//
-					.addPlugin(resourcesPlugin)//
-					.addPlugin(globalPropertiesPlugin)//
-					.addPlugin(personPropertiesPlugin)//
-					.addPlugin(modelPlugin)//
-					.addPlugin(regionsPlugin)//
-					.addPlugin(peoplePlugin)//
-					.addPlugin(stochasticsPlugin)//
-					.addPlugin(reportsPlugin)//
+					.addPlugin(getResourcesPlugin())//
+					.addPlugin(getGlobalPropertiesPlugin())//
+					.addPlugin(getPersonPropertiesPlugin())//
+					.addPlugin(ModelPlugin.getModelPlugin())//
+					.addPlugin(getRegionsPlugin())//
+					.addPlugin(getPeoplePlugin())//
+					.addPlugin(getStochasticsPlugin())//
+					.addPlugin(getReportsPlugin())//
 
 					.addDimension(getMaximumSymptomOnsetTimeDimension())//
 					.addDimension(getSusceptiblePopulationProportionDimension())//
@@ -297,9 +261,9 @@ public final class Example_18 {
 					.addDimension(getAntiviralDosesPerPersonDimension())//
 					.addDimension(getHospitalStayDurationDimension())//
 
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					// .setThreadCount(8)//
-					// .reportProgressToConsole(false)//
+					.addExperimentContextConsumer(getNIOReportItemHandler())//
+					.setThreadCount(8)//
+					.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
 
