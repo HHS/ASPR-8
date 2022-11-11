@@ -12,7 +12,6 @@ import tools.annotations.UnitTestMethod;
 @UnitTest(target = GroupAdditionEvent.class)
 public class AT_GroupAdditionEvent {
 
-
 	@Test
 	@UnitTestConstructor(args = { GroupId.class })
 	public void testConstructor() {
