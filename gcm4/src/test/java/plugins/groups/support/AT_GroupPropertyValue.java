@@ -25,21 +25,22 @@ public class AT_GroupPropertyValue {
     @Test
     @UnitTestConstructor(args = { GroupPropertyId.class, Object.class })
     public void testConstructor() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2797741161017158600L);
         GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-        String value = "foo";
+        String value = Integer.toString(randomGenerator.nextInt(100));
 
-        // preconditions
-        // null group property id
+        assertNotNull(new GroupPropertyValue(groupPropertyId, value));
+
+        // precondition: null group property id
         ContractException contractException = assertThrows(ContractException.class,
                 () -> new GroupPropertyValue(null, value));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-        // null value
+        // precondition: null value
         contractException = assertThrows(ContractException.class,
                 () -> new GroupPropertyValue(groupPropertyId, null));
         assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
-        assertNotNull(new GroupPropertyValue(groupPropertyId, value));
     }
 
     @Test
