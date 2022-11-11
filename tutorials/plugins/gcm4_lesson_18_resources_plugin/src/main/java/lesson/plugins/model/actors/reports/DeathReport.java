@@ -1,4 +1,4 @@
-package lesson.plugins.model.actors;
+package lesson.plugins.model.actors.reports;
 
 import java.util.List;
 

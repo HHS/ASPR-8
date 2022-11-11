@@ -12,8 +12,8 @@ import lesson.plugins.model.ModelReportId;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.Resource;
-import lesson.plugins.model.actors.DeathReport;
-import lesson.plugins.model.actors.DiseaseStateReport;
+import lesson.plugins.model.actors.reports.DeathReport;
+import lesson.plugins.model.actors.reports.TreatmentReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -56,7 +56,7 @@ public final class Example_18 {
 											true)//
 									::init)//
 
-									.addReport(() -> new DiseaseStateReport(ModelReportId.DISEASE_STATE)::init)//
+									.addReport(() -> new TreatmentReport(ModelReportId.TREATMENT_REPORT)::init)//
 									.addReport(() -> new DeathReport(ModelReportId.DEATH_REPORT)::init)//
 
 									.build();
@@ -78,7 +78,7 @@ public final class Example_18 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler	.builder()//
 									.addReport(ModelReportId.PERSON_RESOURCE_REPORT, Paths.get("c:\\temp\\gcm\\person_resource_report.xls"))//
-									.addReport(ModelReportId.DISEASE_STATE, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
+									.addReport(ModelReportId.TREATMENT_REPORT, Paths.get("c:\\temp\\gcm\\treatment_report.xls"))//
 									.addReport(ModelReportId.DEATH_REPORT, Paths.get("c:\\temp\\gcm\\death_report.xls"))//
 									.build();
 	}
@@ -241,7 +241,8 @@ public final class Example_18 {
 
 	private void execute() {
 
-		Experiment	.builder()//
+		Experiment	.builder()
+		
 					.addPlugin(getResourcesPlugin())//
 					.addPlugin(getGlobalPropertiesPlugin())//
 					.addPlugin(getPersonPropertiesPlugin())//
@@ -266,7 +267,6 @@ public final class Example_18 {
 					.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
-
 	}
 
 	public static void main(String[] args) {

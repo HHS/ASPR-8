@@ -1,4 +1,4 @@
-package lesson.plugins.model.actors;
+package lesson.plugins.model.actors.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,10 +21,10 @@ import util.wrappers.MutableInteger;
  * @author Shawn Hatch
  *
  */
-public final class DiseaseStateReport {
+public final class TreatmentReport {
 	private final ReportId reportId;
 
-	public DiseaseStateReport(ReportId reportId) {
+	public TreatmentReport(ReportId reportId) {
 		this.reportId = reportId;
 	}
 
