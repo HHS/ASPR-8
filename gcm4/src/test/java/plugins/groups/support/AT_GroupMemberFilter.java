@@ -126,13 +126,13 @@ public class AT_GroupMemberFilter {
 			GroupId groupId = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 			Filter filter = new GroupMemberFilter(groupId);
 
+			// show that a properly defined filter validates and does not throw
+			assertDoesNotThrow(() -> filter.validate(c));
+
 			/* precondition: if the groupId is null */
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> new GroupMemberFilter(null).validate(c));
 			assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
-
-			// show that a properly defined filter validates and does not throw
-			assertDoesNotThrow(() -> filter.validate(c));
 
 		});
 	}
