@@ -27,7 +27,6 @@ public class AT_TestAuxiliaryGroupPropertyId {
 		for (TestAuxiliaryGroupPropertyId testGroupPropertyId : TestAuxiliaryGroupPropertyId.values()) {
 			assertNotNull(testGroupPropertyId.getPropertyDefinition());
 		}
-
 	}
 
 	@Test

@@ -68,7 +68,6 @@ public class AT_TestAuxiliaryGroupTypeId {
 			assertTrue(mutableInteger.getValue() > lowExpectedSize);
 			assertTrue(mutableInteger.getValue() < highExpectedSize);
 		}
-
 	}
 
 	@Test
