@@ -909,11 +909,11 @@ public class AT_GroupsPluginData {
 		}
 
 		int totalPeopleCount = 0;
-		for(GroupId groupId : groups) {
+		for (GroupId groupId : groups) {
 			int peopleCount = randomGenerator.nextInt(100);
 			int currTotalPeopleCount = totalPeopleCount;
 			totalPeopleCount += peopleCount;
-			for(int i = currTotalPeopleCount; i < totalPeopleCount; i++) {
+			for (int i = currTotalPeopleCount; i < totalPeopleCount; i++) {
 				PersonId personId = new PersonId(i);
 				groupPluginDataBuilder.addPersonToGroup(groupId, personId);
 			}
