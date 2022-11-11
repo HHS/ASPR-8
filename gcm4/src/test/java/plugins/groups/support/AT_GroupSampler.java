@@ -23,16 +23,13 @@ import tools.annotations.UnitTestMethod;
 public class AT_GroupSampler {
 
 	@Test
-	@UnitTestMethod(target = GroupSampler.Builder.class, name="build", args={})
+	@UnitTestMethod(target = GroupSampler.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		// Test covered by other tests in this class
 		GroupSampler groupSampler = GroupSampler.builder().build();
 		assertNotNull(groupSampler);
 	}
 
-	/**
-	 * Tests {@linkplain GroupSampler#builder()
-	 */
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
@@ -52,9 +49,6 @@ public class AT_GroupSampler {
 
 	}
 
-	/**
-	 * Tests {@linkplain GroupSampler#getExcludedPerson()
-	 */
 	@Test
 	@UnitTestMethod(name = "getExcludedPerson", args = {})
 	public void testGetExcludedPerson() {
@@ -65,13 +59,11 @@ public class AT_GroupSampler {
 		assertEquals(67, groupSampler.getExcludedPerson().get().getValue());
 	}
 
-	/**
-	 * Tests {@linkplain GroupSamplerInfo#getRandomNumberGeneratorId()
-	 */
 	@Test
 	@UnitTestMethod(name = "getRandomNumberGeneratorId", args = {})
 	public void testGetRandomNumberGeneratorId() {
-		GroupSampler groupSampler = GroupSampler.builder().setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER).setRandomNumberGeneratorId(TestRandomGeneratorId.VIXEN).build();
+		GroupSampler groupSampler = GroupSampler.builder().setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER)
+				.setRandomNumberGeneratorId(TestRandomGeneratorId.VIXEN).build();
 
 		assertNotNull(groupSampler);
 		assertNotNull(groupSampler.getRandomNumberGeneratorId());
@@ -79,15 +71,13 @@ public class AT_GroupSampler {
 		assertEquals(TestRandomGeneratorId.VIXEN, groupSampler.getRandomNumberGeneratorId().get());
 	}
 
-	/**
-	 * Tests {@linkplain GroupSamplerInfo#getWeightingFunction()
-	 */
 	@Test
 	@UnitTestMethod(name = "getWeightingFunction", args = {})
 	public void testGetLabelSetWeightingFunction() {
 
 		double expectedValue = 17.5;
-		GroupSampler groupSampler = GroupSampler.builder().setGroupWeightingFunction((context, personId, groupId) -> expectedValue).build();
+		GroupSampler groupSampler = GroupSampler.builder()
+				.setGroupWeightingFunction((context, personId, groupId) -> expectedValue).build();
 
 		assertNotNull(groupSampler);
 		assertNotNull(groupSampler.getWeightingFunction());
@@ -99,7 +89,8 @@ public class AT_GroupSampler {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupSampler.Builder.class, name="setRandomNumberGeneratorId", args = {RandomNumberGeneratorId.class})
+	@UnitTestMethod(target = GroupSampler.Builder.class, name = "setRandomNumberGeneratorId", args = {
+			RandomNumberGeneratorId.class })
 	public void testSetRandomNumberGeneratorId() {
 		GroupSampler groupSampler = GroupSampler.builder().build();
 
@@ -108,7 +99,8 @@ public class AT_GroupSampler {
 		assertNotNull(groupSampler.getRandomNumberGeneratorId());
 		assertFalse(groupSampler.getRandomNumberGeneratorId().isPresent());
 
-		// Show that when set, the RandomNumberGeneratorId is Present and set to what we set it to
+		// Show that when set, the RandomNumberGeneratorId is Present and set to what we
+		// set it to
 		RandomNumberGeneratorId expectedValue = TestRandomGeneratorId.DASHER;
 		groupSampler = GroupSampler.builder().setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER).build();
 		assertNotNull(groupSampler.getRandomNumberGeneratorId());
@@ -117,7 +109,7 @@ public class AT_GroupSampler {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupSampler.Builder.class, name="setExcludedPersonId", args = {PersonId.class})
+	@UnitTestMethod(target = GroupSampler.Builder.class, name = "setExcludedPersonId", args = { PersonId.class })
 	public void testSetExcludedPersonId() {
 		GroupSampler groupSampler = GroupSampler.builder().build();
 
@@ -126,7 +118,8 @@ public class AT_GroupSampler {
 		assertNotNull(groupSampler.getExcludedPerson());
 		assertFalse(groupSampler.getExcludedPerson().isPresent());
 
-		// Show that when set, the ExcludedPerson is Present and set to what we set it to
+		// Show that when set, the ExcludedPerson is Present and set to what we set it
+		// to
 		PersonId expectedValue = new PersonId(68);
 		groupSampler = GroupSampler.builder().setExcludedPersonId(expectedValue).build();
 		assertNotNull(groupSampler.getExcludedPerson());
@@ -135,7 +128,8 @@ public class AT_GroupSampler {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupSampler.Builder.class, name="setGroupWeightingFunction", args = {GroupWeightingFunction.class})
+	@UnitTestMethod(target = GroupSampler.Builder.class, name = "setGroupWeightingFunction", args = {
+			GroupWeightingFunction.class })
 	public void testSetGroupWeightingFunction() {
 
 		GroupSampler groupSampler = GroupSampler.builder().build();
@@ -147,11 +141,13 @@ public class AT_GroupSampler {
 		assertFalse(groupSampler.getWeightingFunction().isPresent());
 
 		double expectedValue = 12.8;
-		groupSampler = GroupSampler.builder().setGroupWeightingFunction((context, personId, groupId) -> expectedValue).build();
+		groupSampler = GroupSampler.builder().setGroupWeightingFunction((context, personId, groupId) -> expectedValue)
+				.build();
 
 		assertNotNull(groupSampler);
 
-		// Show that when set, the weighting function is present and is set to the expected value
+		// Show that when set, the weighting function is present and is set to the
+		// expected value
 		assertNotNull(groupSampler.getWeightingFunction());
 		assertTrue(groupSampler.getWeightingFunction().isPresent());
 		GroupWeightingFunction groupWeightingFunction = groupSampler.getWeightingFunction().get();
