@@ -173,13 +173,13 @@ public class AT_GroupTypeCountMap {
 		}
 
 		// precondition checks
-		ContractException contractException = assertThrows(ContractException.class, () -> GroupTypeCountMap.builder().setCount(null, 10));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> GroupTypeCountMap.builder().setCount(null, 10));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-		
-		contractException = assertThrows(ContractException.class, () -> GroupTypeCountMap.builder().setCount(TestGroupTypeId.GROUP_TYPE_1, -1));
+
+		contractException = assertThrows(ContractException.class,
+				() -> GroupTypeCountMap.builder().setCount(TestGroupTypeId.GROUP_TYPE_1, -1));
 		assertEquals(GroupError.NEGATIVE_GROUP_COUNT, contractException.getErrorType());
-
-
 
 	}
 
@@ -243,7 +243,8 @@ public class AT_GroupTypeCountMap {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "setCount", args = {GroupTypeId.class, int.class})
+	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "setCount", args = { GroupTypeId.class,
+			int.class })
 	public void testSetCount() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1446391997583651047L);
@@ -263,7 +264,7 @@ public class AT_GroupTypeCountMap {
 			GroupTypeCountMap groupTypeCountMap = builder.build();
 
 			assertNotNull(groupTypeCountMap);
-			
+
 			for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 				int expectedValue = expectedValues.get(testGroupTypeId);
 				int actualValue = groupTypeCountMap.getGroupCount(testGroupTypeId);
