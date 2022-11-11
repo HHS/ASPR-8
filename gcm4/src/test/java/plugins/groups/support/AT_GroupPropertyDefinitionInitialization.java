@@ -348,6 +348,7 @@ public class AT_GroupPropertyDefinitionInitialization {
 						actualListOfPropertyValues.get(k).getSecond());
 				assertEquals(groupId, actualListOfPropertyValues.get(k).getFirst());
 			}
+			expectedListOfPropertyValues.clear();
 		}
 
 		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
