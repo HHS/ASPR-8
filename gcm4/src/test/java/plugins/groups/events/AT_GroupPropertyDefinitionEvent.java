@@ -26,17 +26,18 @@ public class AT_GroupPropertyDefinitionEvent {
 		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 
-		// preconditions
-		// group type id is null
+		assertNotNull(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
+
+		// precondition: group type id is null
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> new GroupPropertyDefinitionEvent(null, groupPropertyId));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
+		// precondition: group property id is null
 		contractException = assertThrows(ContractException.class,
 				() -> new GroupPropertyDefinitionEvent(groupTypeId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-		assertNotNull(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
 	}
 
 	@Test
