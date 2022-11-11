@@ -52,20 +52,18 @@ public class AT_GroupPopulationReport {
 	@Test
 	@UnitTestConstructor(args = { ReportId.class, ReportPeriod.class })
 	public void testConstructor() {
-		// preconditions
 
-		// report period is null
+		assertNotNull(new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY));
+
+		// precondition: report period is null
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> new GroupPopulationReport(REPORT_ID, null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
-		// report id is null
+		// precondition: report id is null
 		contractException = assertThrows(ContractException.class,
 				() -> new GroupPopulationReport(null, ReportPeriod.HOURLY));
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
-
-		assertNotNull(new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY));
-
 	}
 
 	@Test
