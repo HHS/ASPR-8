@@ -150,30 +150,28 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 		GroupsActionSupport.testConsumer(100, 0, 10, 3710154078488599088L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
-			// preconditions
-			// equality is null
+			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			Filter filter = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, Equality.EQUAL, 1);
+
+			// show filter is valid when group type is valid and equality is valid
+			assertDoesNotThrow(() -> filter.validate(c));
+
+			// precondition: equality is null
 			ContractException contractException = assertThrows(ContractException.class,
 					() -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, null, 2).validate(c));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
-			// group type id is null
+			// precondition: group type id is null
 			contractException = assertThrows(ContractException.class,
 					() -> new GroupsForPersonAndGroupTypeFilter(null, Equality.EQUAL, 2).validate(c));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
-			// group type id is unknown
+			// precondition: group type id is unknown
 			contractException = assertThrows(ContractException.class,
 					() -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.getUnknownGroupTypeId(), Equality.EQUAL,
 							2)
 							.validate(c));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
-
-			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-
-			Filter filter = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, Equality.EQUAL, 1);
-
-			// show filter is valid when group type is valid and equality is valid
-			assertDoesNotThrow(() -> filter.validate(c));
 
 		});
 	}
