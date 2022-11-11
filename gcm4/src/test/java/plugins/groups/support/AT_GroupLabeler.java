@@ -59,7 +59,8 @@ public final class AT_GroupLabeler {
 				groupMembershipAdditionEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipAdditionEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity
+						.getPersonId(new GroupMembershipAdditionEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
@@ -68,7 +69,8 @@ public final class AT_GroupLabeler {
 				groupMembershipRemovalEventSensitivityFound = true;
 				PersonId personId = new PersonId(45253);
 
-				Optional<PersonId> optional = labelerSensitivity.getPersonId(new GroupMembershipRemovalEvent(personId, new GroupId(56)));
+				Optional<PersonId> optional = labelerSensitivity
+						.getPersonId(new GroupMembershipRemovalEvent(personId, new GroupId(56)));
 				assertTrue(optional.isPresent());
 				PersonId actualPersonId = optional.get();
 				assertEquals(personId, actualPersonId);
@@ -105,25 +107,27 @@ public final class AT_GroupLabeler {
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-				for(GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()){
-					builder.setCount(groupTypeId, groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
+				for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+					builder.setCount(groupTypeId,
+							groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId));
 				}
 				GroupTypeCountMap groupTypeCountMap = builder.build();
-				Object expectedLabel = func.apply(groupTypeCountMap);	
+				Object expectedLabel = func.apply(groupTypeCountMap);
 				Object actualLabel = groupLabeler.getLabel(c, personId);
 				assertEquals(expectedLabel, actualLabel);
 			}
-			
-			//precondition tests
-			
-			//if the person id is null
-			ContractException contractException = assertThrows(ContractException.class,()-> groupLabeler.getLabel(c, null));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-			
-			//if the person id is unknown
-			contractException = assertThrows(ContractException.class,()-> groupLabeler.getLabel(c, new PersonId(100000)));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
+			// precondition tests
+
+			// if the person id is null
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> groupLabeler.getLabel(c, null));
+			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+
+			// if the person id is unknown
+			contractException = assertThrows(ContractException.class,
+					() -> groupLabeler.getLabel(c, new PersonId(100000)));
+			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
 	}
@@ -163,32 +167,34 @@ public final class AT_GroupLabeler {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				List<GroupId> groupIdsForPersonId = groupsDataManager.getGroupsForPerson(personId);
 				int numGroupsForPerson = groupIdsForPersonId.size();
-				if(numGroupsForPerson <= 0) continue;
+				if (numGroupsForPerson <= 0)
+					continue;
 				GroupId groupId = groupIdsForPersonId.get(randomGenerator.nextInt(numGroupsForPerson));
 				GroupTypeId expectedGroupTypeId = groupsDataManager.getGroupType(groupId);
-				
+
 				groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
 				delta = -1;
 				GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-				for(GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()){
+				for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
 					int count = groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
-					if(groupTypeId.equals(expectedGroupTypeId)) {
+					if (groupTypeId.equals(expectedGroupTypeId)) {
 						count += delta;
 					}
 					builder.setCount(groupTypeId, count);
 				}
 				GroupTypeCountMap groupTypeCountMap = builder.build();
-				Object expectedLabel = func.apply(groupTypeCountMap);	
+				Object expectedLabel = func.apply(groupTypeCountMap);
 				Object actualLabel = groupLabeler.getPastLabel(c, groupMembershipAdditionEvent);
 				assertEquals(expectedLabel, actualLabel);
 			}
-			
+
 			// Removal Events
 			GroupMembershipRemovalEvent groupMembershipRemovalEvent;
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				List<GroupId> groupIdsForPersonId = groupsDataManager.getGroupsForPerson(personId);
 				int numGroupsForPerson = groupIdsForPersonId.size();
-				if(numGroupsForPerson <= 0) continue;
+				if (numGroupsForPerson <= 0)
+					continue;
 				GroupId groupId = groupIdsForPersonId.get(randomGenerator.nextInt(numGroupsForPerson));
 				GroupTypeId expectedGroupTypeId = groupsDataManager.getGroupType(groupId);
 				groupsDataManager.removePersonFromGroup(personId, groupId);
@@ -196,27 +202,29 @@ public final class AT_GroupLabeler {
 				groupMembershipRemovalEvent = new GroupMembershipRemovalEvent(personId, groupId);
 				delta = 1;
 				GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-				for(GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()){
+				for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
 					int count = groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
-					if(groupTypeId.equals(expectedGroupTypeId)) {
+					if (groupTypeId.equals(expectedGroupTypeId)) {
 						count += delta;
 					}
 					builder.setCount(groupTypeId, count);
 				}
 				GroupTypeCountMap groupTypeCountMap = builder.build();
-				Object expectedLabel = func.apply(groupTypeCountMap);	
+				Object expectedLabel = func.apply(groupTypeCountMap);
 				Object actualLabel = groupLabeler.getPastLabel(c, groupMembershipRemovalEvent);
 				assertEquals(expectedLabel, actualLabel);
-			}			
-			//precondition tests
-			
+			}
+
 			GroupId groupId = groupsDataManager.getGroupIds().get(0);
-			//if the person id is null
-			ContractException contractException = assertThrows(ContractException.class,()-> groupLabeler.getPastLabel(c, new GroupMembershipAdditionEvent(null, groupId)));
+
+			// precondition: person id is null
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> groupLabeler.getPastLabel(c, new GroupMembershipAdditionEvent(null, groupId)));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-			
-			//if the person id is unknown
-			contractException = assertThrows(ContractException.class,()-> groupLabeler.getPastLabel(c, new GroupMembershipAdditionEvent(new PersonId(100000), groupId)));
+
+			// precondition: person id is unknown
+			contractException = assertThrows(ContractException.class, () -> groupLabeler.getPastLabel(c,
+					new GroupMembershipAdditionEvent(new PersonId(100000), groupId)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
