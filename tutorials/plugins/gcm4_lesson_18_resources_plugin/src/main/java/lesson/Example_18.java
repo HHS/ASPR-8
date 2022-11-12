@@ -65,14 +65,12 @@ public final class Example_18 {
 	}
 
 	private Plugin getResourcesPlugin() {
-		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();//
+		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (ResourceId resourcId : Resource.values()) {
 			builder.addResource(resourcId);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
-
 		return ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
-
 	}
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
@@ -205,19 +203,34 @@ public final class Example_18 {
 	}
 
 	private Dimension getHospitalBedsPerPersonDimension() {
-		double[] values = new double[] { 0.003 };
+		double[] values = new double[] { 0.001, 0.003, 0.005 };
 		return getGlobalPropertyDimension(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, "hospital_beds_per_person", values);
 	}
 
-	private Dimension getHospitalSuccessWithoutAntiviralDimension() {
-		double[] values = new double[] { .50 };
-		return getGlobalPropertyDimension(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, "hospital_success_without_antiviral", values);
-	}
+	
+	private Dimension getHospitalSuccessDimension() {
+		double[] minValues = { 0.30, 5.0};
+		double[] maxValues = { 0.50, 0.75 };
 
-	private Dimension getHospitalSuccessWithAntiviralDimension() {
-		double[] values = new double[] { 0.75 };
-		return getGlobalPropertyDimension(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, "hospital_success_with_antiviral", values);
+		Dimension.Builder dimensionBuilder = Dimension.builder();//
+		IntStream.range(0, minValues.length).forEach((i) -> {
+			dimensionBuilder.addLevel((context) -> {
+				GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
+				double minValue = minValues[i];
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITHOUT_ANTIVIRAL, minValue);
+				double maxValue = maxValues[i];
+				builder.setGlobalPropertyValue(GlobalProperty.HOSPITAL_SUCCESS_WITH_ANTIVIRAL, maxValue);
+				ArrayList<String> result = new ArrayList<>();
+				result.add(Double.toString(minValue));
+				result.add(Double.toString(maxValue));
+				return result;
+			});//
+		});
+		dimensionBuilder.addMetaDatum("hospital_success_without_antiviral");//
+		dimensionBuilder.addMetaDatum("hospital_success_with_antiviral");//
+		return dimensionBuilder.build();
 	}
+	
 
 	private Dimension getAntiviralSuccessRateDimension() {
 		double[] values = new double[] { .50, 0.8 };
@@ -225,7 +238,7 @@ public final class Example_18 {
 	}
 
 	private Dimension getAntiviralCoverageTimeDimension() {
-		double[] values = new double[] { 15.0 };
+		double[] values = new double[] { 10.0, 15.0 };
 		return getGlobalPropertyDimension(GlobalProperty.ANTIVIRAL_COVERAGE_TIME, "antiviral_coverage_time", values);
 	}
 
@@ -240,33 +253,33 @@ public final class Example_18 {
 	}
 
 	private void execute() {
-
-		Experiment	.builder()
 		
+		Experiment	.builder()
+
 					.addPlugin(getResourcesPlugin())//
 					.addPlugin(getGlobalPropertiesPlugin())//
 					.addPlugin(getPersonPropertiesPlugin())//
-					.addPlugin(ModelPlugin.getModelPlugin())//
+					.addPlugin(getReportsPlugin())//
 					.addPlugin(getRegionsPlugin())//
 					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getStochasticsPlugin())//
-					.addPlugin(getReportsPlugin())//
+					.addPlugin(ModelPlugin.getModelPlugin())//
 
 					.addDimension(getMaximumSymptomOnsetTimeDimension())//
 					.addDimension(getSusceptiblePopulationProportionDimension())//
 					.addDimension(getAntiviralCoverageTimeDimension())//
 					.addDimension(getAntiviralSuccessRateDimension())//
-					.addDimension(getHospitalSuccessWithAntiviralDimension())//
-					.addDimension(getHospitalSuccessWithoutAntiviralDimension())//
+					.addDimension(getHospitalSuccessDimension())//					
 					.addDimension(getHospitalBedsPerPersonDimension())//
 					.addDimension(getAntiviralDosesPerPersonDimension())//
 					.addDimension(getHospitalStayDurationDimension())//
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
 					.setThreadCount(8)//
-					.reportProgressToConsole(false)//
+					//.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
+		
 	}
 
 	public static void main(String[] args) {

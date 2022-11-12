@@ -4,7 +4,7 @@ import plugins.personproperties.support.PersonPropertyId;
 
 public enum PersonProperty implements PersonPropertyId {
 	IMMUNE,//the person is immune
-	INFECTED,//the person is immune
+	INFECTED,//the person is infected
 	TREATED_WITH_ANTIVIRAL,//the person received antiviral treatment
 	HOSPITALIZED,//the person received hospital treatment
 	DEAD_IN_HOSPITAL,//the person dies in the hospital

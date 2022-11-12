@@ -61,18 +61,24 @@ public class PopulationLoader {
 		return defaultRegionId;
 	}
 
+	
 	public void init(ActorContext actorContext) {
 
-		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+		StochasticsDataManager stochasticsDataManager = 
+				actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		PeopleDataManager peopleDataManager = 
+				actorContext.getDataManager(PeopleDataManager.class);
+		GlobalPropertiesDataManager globalPropertiesDataManager = 
+				actorContext.getDataManager(GlobalPropertiesDataManager.class);
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
-		int populationSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
-		double susceptibleProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
+		int populationSize = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
+		double susceptibleProbability = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
 		double immuneProbabilty = 1 - susceptibleProbability;
-
+		
 		/*
 		 * Derive mapping from region to probability that a person will be
 		 * assigned to that region that will likely not put the same number of
@@ -87,12 +93,13 @@ public class PopulationLoader {
 		for (int i = 0; i < populationSize; i++) {
 			RegionId regionId = getRandomRegionId();
 			boolean immune = randomGenerator.nextDouble() < immuneProbabilty;
-			PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(PersonProperty.IMMUNE, immune);
-			PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
-																					.add(personPropertyInitialization)//
-																					.add(regionId)//
-																					.build();
-
+			PersonPropertyInitialization personPropertyInitialization = 
+					new PersonPropertyInitialization(PersonProperty.IMMUNE, immune);
+			PersonConstructionData personConstructionData = 
+					PersonConstructionData	.builder()//
+						.add(personPropertyInitialization)//
+						.add(regionId)//
+						.build();
 			peopleDataManager.addPerson(personConstructionData);
 		}
 	}
