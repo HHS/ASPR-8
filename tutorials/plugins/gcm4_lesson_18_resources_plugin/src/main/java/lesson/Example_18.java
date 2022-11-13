@@ -13,6 +13,7 @@ import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.Resource;
 import lesson.plugins.model.actors.reports.DeathReport;
+import lesson.plugins.model.actors.reports.QuestionnaireReport;
 import lesson.plugins.model.actors.reports.TreatmentReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
@@ -38,6 +39,7 @@ import plugins.resources.support.ResourceId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.TimeTrackingPolicy;
 import util.random.RandomGeneratorProvider;
 
 public final class Example_18 {
@@ -58,6 +60,8 @@ public final class Example_18 {
 
 									.addReport(() -> new TreatmentReport(ModelReportId.TREATMENT_REPORT)::init)//
 									.addReport(() -> new DeathReport(ModelReportId.DEATH_REPORT)::init)//
+									.addReport(() -> new QuestionnaireReport(ModelReportId.QUESTIONNAIRE_REPORT)::init)//
+									
 
 									.build();
 
@@ -78,6 +82,7 @@ public final class Example_18 {
 									.addReport(ModelReportId.PERSON_RESOURCE_REPORT, Paths.get("c:\\temp\\gcm\\person_resource_report.xls"))//
 									.addReport(ModelReportId.TREATMENT_REPORT, Paths.get("c:\\temp\\gcm\\treatment_report.xls"))//
 									.addReport(ModelReportId.DEATH_REPORT, Paths.get("c:\\temp\\gcm\\death_report.xls"))//
+									.addReport(ModelReportId.QUESTIONNAIRE_REPORT, Paths.get("c:\\temp\\gcm\\questionnaire_report.xls"))//
 									.build();
 	}
 
@@ -107,20 +112,30 @@ public final class Example_18 {
 
 	private Plugin getPersonPropertiesPlugin() {
 
+		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
+
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Boolean.class)//
 																	.setDefaultValue(false)//
 																	.build();
 
-		PersonPropertiesPluginData personPropertiesPluginData = //
-				PersonPropertiesPluginData	.builder()//
-											.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition)//
-											.definePersonProperty(PersonProperty.INFECTED, propertyDefinition)//
-											.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition)//
-											.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition)//
-											.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition)//
-											.definePersonProperty(PersonProperty.DEAD_IN_HOSPITAL, propertyDefinition)//
-											.build();
+
+		builder.definePersonProperty(PersonProperty.IMMUNE, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.INFECTED, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.HOSPITALIZED, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.TREATED_WITH_ANTIVIRAL, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.DEAD_IN_HOME, propertyDefinition);//
+		builder.definePersonProperty(PersonProperty.DEAD_IN_HOSPITAL, propertyDefinition);//
+		
+		
+		propertyDefinition = PropertyDefinition	.builder()//
+				.setType(Boolean.class)//
+				.setDefaultValue(false)//
+				.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
+				.build();		
+		builder.definePersonProperty(PersonProperty.RECEIVED_QUESTIONNAIRE, propertyDefinition);//
+		
+		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
 		return PersonPropertiesPlugin.getPersonPropertyPlugin(personPropertiesPluginData);
 	}
@@ -207,9 +222,8 @@ public final class Example_18 {
 		return getGlobalPropertyDimension(GlobalProperty.HOSPITAL_BEDS_PER_PERSON, "hospital_beds_per_person", values);
 	}
 
-	
 	private Dimension getHospitalSuccessDimension() {
-		double[] minValues = { 0.30, 5.0};
+		double[] minValues = { 0.30, 5.0 };
 		double[] maxValues = { 0.50, 0.75 };
 
 		Dimension.Builder dimensionBuilder = Dimension.builder();//
@@ -230,7 +244,6 @@ public final class Example_18 {
 		dimensionBuilder.addMetaDatum("hospital_success_with_antiviral");//
 		return dimensionBuilder.build();
 	}
-	
 
 	private Dimension getAntiviralSuccessRateDimension() {
 		double[] values = new double[] { .50, 0.8 };
@@ -253,6 +266,7 @@ public final class Example_18 {
 	}
 
 	private void execute() {
+
 		
 		Experiment	.builder()
 
@@ -269,17 +283,18 @@ public final class Example_18 {
 					.addDimension(getSusceptiblePopulationProportionDimension())//
 					.addDimension(getAntiviralCoverageTimeDimension())//
 					.addDimension(getAntiviralSuccessRateDimension())//
-					.addDimension(getHospitalSuccessDimension())//					
+					.addDimension(getHospitalSuccessDimension())//
 					.addDimension(getHospitalBedsPerPersonDimension())//
 					.addDimension(getAntiviralDosesPerPersonDimension())//
 					.addDimension(getHospitalStayDurationDimension())//
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
 					.setThreadCount(8)//
-					//.reportProgressToConsole(false)//
+					.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
 		
+
 	}
 
 	public static void main(String[] args) {

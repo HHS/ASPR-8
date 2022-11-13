@@ -9,5 +9,6 @@ public enum PersonProperty implements PersonPropertyId {
 	HOSPITALIZED,//the person received hospital treatment
 	DEAD_IN_HOSPITAL,//the person dies in the hospital
 	DEAD_IN_HOME,//the person dies in the home
+	RECEIVED_QUESTIONNAIRE,//the person receives the questionnaire	
 	;
 }

@@ -40,9 +40,9 @@ public final class DeathReport {
 												.add("deaths")//
 												.add("deaths_in_home")//
 												.add("deaths_in_hospital")//
-												.add("per_captia_deaths")//
-												.add("per_captia_deaths_in_home")//
-												.add("per_captia_deaths_in_hospital")//												
+												.add("per_capita_deaths")//
+												.add("per_capita_deaths_in_home")//
+												.add("per_capita_deaths_in_hospital")//												
 												.build();
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
