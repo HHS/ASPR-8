@@ -1,6 +1,7 @@
 package plugins.regions.actors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
@@ -37,13 +38,35 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = RegionPropertyReport.class)
 public class AT_RegionPropertyReport {
 
 	@Test
-	@UnitTestMethod(name = "init", args = {ActorContext.class})
+	@UnitTestConstructor(args = { ReportId.class, RegionPropertyId[].class })
+	public void testConstructor() {
+		RegionPropertyReport regionPropertyReport = new RegionPropertyReport(REPORT_ID);
+
+		// Show not null when given 0 RegionPropertyIds
+		assertNotNull(regionPropertyReport);
+
+		RegionPropertyId prop_age = new SimpleRegionPropertyId("prop_age");
+		RegionPropertyId prop_infected = new SimpleRegionPropertyId("prop_infected");
+		RegionPropertyId prop_length = new SimpleRegionPropertyId("prop_length");
+		RegionPropertyId prop_height = new SimpleRegionPropertyId("prop_height");
+		RegionPropertyId prop_policy = new SimpleRegionPropertyId("prop_policy");
+		RegionPropertyId prop_vaccine = new SimpleRegionPropertyId("prop_vaccine");
+
+		regionPropertyReport = new RegionPropertyReport(REPORT_ID, prop_age, prop_infected, prop_length, prop_height, prop_policy, prop_vaccine);
+
+		// Show not null when given 1 or more RegionPropertyIds
+		assertNotNull(regionPropertyReport);
+	}
+
+	@Test
+	@UnitTestMethod(name = "init", args = { ActorContext.class })
 	public void testInit() {
 
 		/*
@@ -67,12 +90,13 @@ public class AT_RegionPropertyReport {
 		regionBuilder.addRegion(regionB);
 		RegionId regionC = new SimpleRegionId("Region_C");
 		regionBuilder.addRegion(regionC);
-		
+
 		RegionId regionD = new SimpleRegionId("Region_D");
 
 		// add the region properties
 		RegionPropertyId prop_age = new SimpleRegionPropertyId("prop_age");
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class)
+				.build();
 		regionBuilder.defineRegionProperty(prop_age, propertyDefinition);
 
 		RegionPropertyId prop_infected = new SimpleRegionPropertyId("prop_infected");
@@ -90,22 +114,22 @@ public class AT_RegionPropertyReport {
 		RegionPropertyId prop_policy = new SimpleRegionPropertyId("prop_policy");
 		propertyDefinition = PropertyDefinition.builder().setDefaultValue("start").setType(String.class).build();
 		regionBuilder.defineRegionProperty(prop_policy, propertyDefinition);
-		
+
 		RegionPropertyId prop_vaccine = new SimpleRegionPropertyId("prop_vaccine");
-		
 
 		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionBuilder.build()));
 
 		// add the report
-		ReportsPluginData reportsPluginData = ReportsPluginData	.builder()//
-																.addReport(() -> new RegionPropertyReport(REPORT_ID)::init)//
-																.build();//
+		ReportsPluginData reportsPluginData = ReportsPluginData.builder()//
+				.addReport(() -> new RegionPropertyReport(REPORT_ID)::init)//
+				.build();//
 
 		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsPluginData));
 
 		// add remaining plugins
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(8833508541323194123L).build()));
+		builder.addPlugin(StochasticsPlugin
+				.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(8833508541323194123L).build()));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -132,13 +156,15 @@ public class AT_RegionPropertyReport {
 			regionsDataManager.setRegionPropertyValue(regionA, prop_age, 100);
 			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
 			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "hold");
-			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(regionD).build();
+			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(regionD)
+					.build();
 			regionsDataManager.addRegion(regionConstructionData);
 
 			PropertyDefinition def = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
-			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization.builder().setPropertyDefinition(def).setRegionPropertyId(prop_vaccine).build();
+			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization
+					.builder().setPropertyDefinition(def).setRegionPropertyId(prop_vaccine).build();
 			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
-			
+
 		}));
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3.0, (c) -> {
@@ -155,7 +181,7 @@ public class AT_RegionPropertyReport {
 			// and now a third setting of the same property to a new value
 			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 100.0);
 			regionsDataManager.setRegionPropertyValue(regionB, prop_length, 60.0);
-			
+
 			regionsDataManager.setRegionPropertyValue(regionD, prop_height, 70.0);
 			regionsDataManager.setRegionPropertyValue(regionD, prop_length, 45.0);
 		}));
@@ -188,7 +214,7 @@ public class AT_RegionPropertyReport {
 		expectedReportItems.put(getReportItem(0.0, regionB, prop_height, 5.0), 1);
 		expectedReportItems.put(getReportItem(0.0, regionB, prop_length, 10.0), 1);
 		expectedReportItems.put(getReportItem(0.0, regionC, prop_policy, "start"), 1);
-		expectedReportItems.put(getReportItem(1.0, regionA, prop_age, 45), 2);	
+		expectedReportItems.put(getReportItem(1.0, regionA, prop_age, 45), 2);
 		expectedReportItems.put(getReportItem(2.0, regionA, prop_age, 100), 1);
 		expectedReportItems.put(getReportItem(2.0, regionB, prop_height, 13.6), 1);
 		expectedReportItems.put(getReportItem(2.0, regionC, prop_policy, "hold"), 1);
@@ -220,9 +246,8 @@ public class AT_RegionPropertyReport {
 		expectedReportItems.put(getReportItem(3.0, regionD, prop_height, 70.0), 1);
 		expectedReportItems.put(getReportItem(3.0, regionD, prop_length, 45.0), 1);
 
-
 		Map<ReportItem, Integer> actualReportItems = reportItemOutputConsumer.getReportItems().get(0);
-		
+
 		assertEquals(expectedReportItems, actualReportItems);
 	}
 
@@ -238,5 +263,6 @@ public class AT_RegionPropertyReport {
 
 	private static final ReportId REPORT_ID = new SimpleReportId("region property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property").add("Value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property")
+			.add("Value").build();
 }
