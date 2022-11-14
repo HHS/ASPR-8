@@ -4,7 +4,6 @@ import java.util.List;
 
 import lesson.plugins.model.PersonProperty;
 import nucleus.ActorContext;
-import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
@@ -31,48 +30,46 @@ public final class QuestionnaireReport {
 	}
 
 	private void report(ActorContext actorContext) {
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 
 		ReportHeader reportHeader = ReportHeader.builder()//
-												.add("completion rate")//
-												.add("completion time mean")//
-												.add("completion time stdev")//
+												.add("delivery rate")//
+												.add("mean delivery time")//
+												.add("stdev delivery time")//
 												.build();
-		
-		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
-		List<PersonId> people = peopleDataManager.getPeople();
-	
-		MutableStat mutableStat = new MutableStat();
+		ReportItem.Builder reportItemBuilder = ReportItem.builder();
+		List<PersonId> infectedPeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.INFECTED, true);
 		
-		for (PersonId personId : people) {
+
+		MutableStat mutableStat = new MutableStat();
+
+		for (PersonId personId : infectedPeople) {
 			Boolean receivedQuestionnaire = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.RECEIVED_QUESTIONNAIRE);
-			if (receivedQuestionnaire) {	
+			if (receivedQuestionnaire) {
 				double questionnaireTime = personPropertiesDataManager.getPersonPropertyTime(personId, PersonProperty.RECEIVED_QUESTIONNAIRE);
 				mutableStat.add(questionnaireTime);
 			}
 		}
-		
+
 		double mean = mutableStat.getMean().orElse(0.0);
 		double stdev = mutableStat.getStandardDeviation().orElse(0.0);
-		
+
 		int completionCount = mutableStat.size();
-		double completionRate = 0;
-		if(people.size()>0) {
-			completionRate = completionCount;
-			completionRate/=people.size();
+		double deliveryRate = 0;
+		if (infectedPeople.size() > 0) {
+			deliveryRate = completionCount;
+			deliveryRate /= infectedPeople.size();
 		}
-		
+
 		reportItemBuilder.setReportHeader(reportHeader);
 		reportItemBuilder.setReportId(reportId);
-		reportItemBuilder.addValue(completionRate);
+		reportItemBuilder.addValue(deliveryRate);
 		reportItemBuilder.addValue(mean);
 		reportItemBuilder.addValue(stdev);
-		
 
 		ReportItem reportItem = reportItemBuilder.build();
-		
+
 		actorContext.releaseOutput(reportItem);
 
 	}
