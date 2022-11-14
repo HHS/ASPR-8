@@ -33,7 +33,6 @@ public final class VaccinationDataManager extends DataManager {
 	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
 		PersonId personId = personRemovalEvent.getPersonId();
 		vaccinatedPeople.remove(personId);
-		System.out.println("Vaccination Data Manager is removing person " + personId + " at time = " + dataManagerContext.getTime());
 	}
 
 	public Set<PersonId> getVaccinatedPeople() {

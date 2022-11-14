@@ -41,47 +41,27 @@ public final class Example_15 {
 	private List<Region> initialRegions = new ArrayList<>();
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-	private Dimension getStochasticsDimension(int replicationCount, long seed) {
-		Dimension.Builder builder = Dimension.builder();//
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		List<Long> seedValues = new ArrayList<>();
-		for (int i = 0; i < replicationCount; i++) {
-			seedValues.add(randomGenerator.nextLong());
-		}
-
-		IntStream.range(0, seedValues.size()).forEach((i) -> {
-			builder.addLevel((context) -> {
-				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context.get(StochasticsPluginData.Builder.class);
-				long seedValue = seedValues.get(i);
-				stochasticsPluginDataBuilder.setSeed(seedValue);
-
-				ArrayList<String> result = new ArrayList<>();
-				result.add(Integer.toString(i));
-				result.add(Long.toString(seedValue) + "L");
-
-				return result;
-			});//
-		});
-
-		builder.addMetaDatum("seed index");//
-		builder.addMetaDatum("seed value");//
-
-		return builder.build();
-	}
+	
 
 	private Plugin getReportsPlugin() {
 		ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> {
-										return new RegionPropertyReport(ModelReportId.REGION_PROPERTY_REPORT)::init;
+										return new RegionPropertyReport(
+												ModelReportId.REGION_PROPERTY_REPORT)//
+												::init;
 									})//
 									.addReport(() -> {
-										return new RegionTransferReport(ModelReportId.REGION_TRANSFER_REPORT, ReportPeriod.END_OF_SIMULATION)::init;
+										return new RegionTransferReport(
+												ModelReportId.REGION_TRANSFER_REPORT,//
+												ReportPeriod.END_OF_SIMULATION)//
+												::init;
 									})//
 									.addReport(() -> {
-										return new VaccineReport(ModelReportId.VACCINATION, ReportPeriod.END_OF_SIMULATION, 6)::init;
+										return new VaccineReport(
+												ModelReportId.VACCINATION,//
+												ReportPeriod.END_OF_SIMULATION,//
+												6)::init;
 									})//
 									.build();
 
@@ -135,7 +115,6 @@ public final class Example_15 {
 
 		RegionsPluginData regionsPluginData = regionsPluginDataBuilder.build();
 		return RegionsPlugin.getRegionsPlugin(regionsPluginData);
-
 	}
 
 	private void initializePeopleAndRegions() {
@@ -148,8 +127,40 @@ public final class Example_15 {
 	}
 
 	private Plugin getStochasticsPlugin() {
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()//
+				.setSeed(randomGenerator.nextLong()).build();
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
+	}
+	
+	private Dimension getStochasticsDimension(int replicationCount, long seed) {
+		Dimension.Builder builder = Dimension.builder();//
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		List<Long> seedValues = new ArrayList<>();
+		for (int i = 0; i < replicationCount; i++) {
+			seedValues.add(randomGenerator.nextLong());
+		}
+
+		IntStream.range(0, seedValues.size()).forEach((i) -> {
+			builder.addLevel((context) -> {
+				StochasticsPluginData.Builder stochasticsPluginDataBuilder = 
+						context.get(StochasticsPluginData.Builder.class);
+				long seedValue = seedValues.get(i);
+				stochasticsPluginDataBuilder.setSeed(seedValue);
+
+				ArrayList<String> result = new ArrayList<>();
+				result.add(Integer.toString(i));
+				result.add(Long.toString(seedValue) + "L");
+
+				return result;
+			});//
+		});
+
+		builder.addMetaDatum("seed index");//
+		builder.addMetaDatum("seed value");//
+
+		return builder.build();
 	}
 
 	private void execute() {

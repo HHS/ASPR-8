@@ -38,9 +38,7 @@ public class PersonMover {
 		RegionId newPersonRegion = regionIds.get(randomGenerator.nextInt(regionIds.size()));
 		
 		//assign the region to the person
-		regionsDataManager.setPersonRegion(personId, newPersonRegion);
-	
-		
+		regionsDataManager.setPersonRegion(personId, newPersonRegion);		
 	}
 
 	public void init(ActorContext actorContext) {

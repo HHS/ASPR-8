@@ -17,23 +17,21 @@ import plugins.util.properties.PropertyDefinition;
 
 public final class Vaccinator {
 
-	private boolean useVaccinePriority;
 	private RegionsDataManager regionsDataManager;
 	private VaccinationDataManager vaccinationDataManager;
 	private RandomGenerator randomGenerator;
 
 	private void alterVaccinePriorityPropertyOnRandomRegion(ActorContext actorContext) {
 		List<RegionId> regionids = new ArrayList<>(regionsDataManager.getRegionIds());
-		if(regionids.isEmpty()) {
+		if (regionids.isEmpty()) {
 			return;
 		}
 		RegionId regionId = regionids.get(randomGenerator.nextInt(regionids.size()));
 		Boolean vaccinePriority = regionsDataManager.getRegionPropertyValue(regionId, RegionProperty.VACCINE_PRIORITY);
-		regionsDataManager.setRegionPropertyValue(regionId, RegionProperty.VACCINE_PRIORITY, !vaccinePriority);		
+		regionsDataManager.setRegionPropertyValue(regionId, RegionProperty.VACCINE_PRIORITY, !vaccinePriority);
 	}
 
 	private void addVaccinePriorityPropertyToRegions(ActorContext actorContext) {
-		
 
 		PropertyDefinition propertyDefinition = //
 				PropertyDefinition	.builder()//
@@ -52,8 +50,6 @@ public final class Vaccinator {
 		RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = defBuilder.build();
 		regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
 
-		useVaccinePriority = true;
-
 		for (int i = 0; i < 50; i++) {
 			double planTime = actorContext.getTime() + i;
 			actorContext.addPlan(this::alterVaccinePriorityPropertyOnRandomRegion, planTime);
@@ -68,35 +64,43 @@ public final class Vaccinator {
 		}
 		RegionId regionId = regionIds.get(randomGenerator.nextInt(regionIds.size()));
 		List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
-		if (peopleInRegion.isEmpty()) {
-			return;
-		}
 
 		Boolean prioritizePeople = false;
-		if (useVaccinePriority) {
-			prioritizePeople = regionsDataManager.getRegionPropertyValue(regionId, RegionProperty.VACCINE_PRIORITY);
+		boolean vaccinePriorityPropertyExists = regionsDataManager.
+				regionPropertyIdExists(RegionProperty.VACCINE_PRIORITY);
+		if (vaccinePriorityPropertyExists) {
+			prioritizePeople = regionsDataManager.
+					getRegionPropertyValue(regionId, RegionProperty.VACCINE_PRIORITY);
 		}
+
 		PersonId selectedPersonId = null;
 		if (prioritizePeople) {
-			selectedPersonId = peopleInRegion.get(randomGenerator.nextInt(peopleInRegion.size()));
-
-		} else {
 			int minVaccinationCount = Integer.MAX_VALUE;
 			for (PersonId personId : peopleInRegion) {
 				int personVaccinationCount = vaccinationDataManager.getPersonVaccinationCount(personId);
 				if (personVaccinationCount < minVaccinationCount) {
 					minVaccinationCount = personVaccinationCount;
-					selectedPersonId = personId;
-				}
-				if (minVaccinationCount == 0) {
-					break;
 				}
 			}
+			List<PersonId> eligiblePeople = new ArrayList<>();
+			for (PersonId personId : peopleInRegion) {
+				int personVaccinationCount = vaccinationDataManager.getPersonVaccinationCount(personId);
+				if (personVaccinationCount == minVaccinationCount) {
+					eligiblePeople.add(personId);
+				}
+			}
+			if (!eligiblePeople.isEmpty()) {
+				selectedPersonId = eligiblePeople.get(randomGenerator.nextInt(eligiblePeople.size()));
+			}
+		} else {
+			if (!peopleInRegion.isEmpty()) {
+				selectedPersonId = peopleInRegion.get(randomGenerator.nextInt(peopleInRegion.size()));
+			}
 		}
+
 		if (selectedPersonId != null) {
 			vaccinationDataManager.vaccinatePerson(selectedPersonId);
 		}
-
 	}
 
 	public void init(ActorContext actorContext) {
@@ -110,7 +114,7 @@ public final class Vaccinator {
 			actorContext.addPlan(this::vaccinateRandomPerson, planTime);
 			planTime += randomGenerator.nextDouble() * 0.02;
 		}
-		
+
 		actorContext.addPlan(this::addVaccinePriorityPropertyToRegions, 50);
 	}
 }
