@@ -49,6 +49,9 @@ public class GlobalPropertyInitialization {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
 			}
+			if (data.propertyDefinition.getType() != data.value.getClass()) {
+				throw new ContractException(PropertyError.INCOMPATIBLE_VALUE);
+			}
 		}
 
 		/**
