@@ -25,18 +25,32 @@ public class AT_GlobalPropertyInitialization {
     @Test
     @UnitTestMethod(target = GlobalPropertyInitialization.Builder.class, name = "build", args = {})
     public void testBuild() {
-        // precondition test: if the property definition was not set
-        SimpleGlobalPropertyId simpleGlobalPropertyId = new SimpleGlobalPropertyId(1);
+        // Setting property definition to use
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(true).build();
-        ContractException propertyContractException = assertThrows(PropertyError.NULL_PROPERTY_DEFINITION, GlobalPropertyInitialization.builder()
-                .setGlobalPropertyId(simpleGlobalPropertyId).setPropertyDefinition());
-        // Problems here not being able to try and create a contract exception
 
+        // precondition test: if the property definition was not set(/is null?)
+        ContractException propertyContractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder()
+                .setGlobalPropertyId(new SimpleGlobalPropertyId(5))
+                .setPropertyDefinition(null)
+                .setValue(5));
+        assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, propertyContractException.getErrorType());
 
-        ContractException contractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder().build());
-        assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
+        // precondition test: if the property id was not set(/is null?)
+        ContractException idContractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder()
+                .setGlobalPropertyId(null)
+                .setPropertyDefinition(propertyDefinition)
+                .setValue(5));
+        assertEquals(PropertyError.NULL_PROPERTY_ID, idContractException.getErrorType());
+
+        // precondition test: if the property value was not set(/is null?
+        ContractException valueContractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder()
+                .setGlobalPropertyId(new SimpleGlobalPropertyId(6))
+                .setPropertyDefinition(propertyDefinition)
+                .setValue(null));
+        assertEquals(PropertyError.NULL_PROPERTY_VALUE, valueContractException.getErrorType());
     }
 
+    
     @Test
     void getGlobalPropertyId() {
 
