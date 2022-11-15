@@ -48,11 +48,13 @@ public class GlobalPropertyInitialization {
 				if (data.propertyDefinition.getDefaultValue().isEmpty()) {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
-			}
-			if (data.propertyDefinition.getType() != data.value.getClass()) {
-				throw new ContractException(PropertyError.INCOMPATIBLE_VALUE);
+			} else {
+				if (!data.propertyDefinition.getType().isAssignableFrom(data.value.getClass())) {
+					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE);
+				}
 			}
 		}
+
 
 		/**
 		 * Returns the GlobalPropertyInitialization formed from the inputs.
