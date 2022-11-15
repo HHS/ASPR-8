@@ -10,6 +10,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target =GlobalPropertyInitialization.class)
@@ -47,12 +49,18 @@ public class AT_GlobalPropertyInitialization {
         ContractException valueContractException = assertThrows(ContractException.class, () -> builder.build());
         assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, valueContractException.getErrorType());
 
+        // precondition test: if the property definition and value types are incompatible
+        builder.setGlobalPropertyId(new SimpleGlobalPropertyId(5));
+        builder.setPropertyDefinition(propertyDefinition);
+        builder.setValue(15.5f);
+        ContractException incompatibleContractException = assertThrows(ContractException.class, () -> builder.build());
+        assertEquals(PropertyError.INCOMPATIBLE_VALUE, incompatibleContractException.getErrorType());
 
 
     }
 
     @Test
-    @UnitTestMethod(name = "setGlobalPropertyId", args = {})
+    @UnitTestMethod(target = GlobalPropertyInitialization.Builder.class, name = "setGlobalPropertyId", args = {GlobalPropertyId.class})
     public void testSetGlobalPropertyId(){
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
@@ -65,7 +73,7 @@ public class AT_GlobalPropertyInitialization {
     }
 
     @Test
-    @UnitTestMethod(name = "setGlobalPropertyDefinition", args = {})
+    @UnitTestMethod(target = GlobalPropertyInitialization.Builder.class, name = "setGlobalPropertyDefinition", args = {PropertyDefinition.class})
     public void testSetGlobalPropertyDefinition() {
         // precondition test: if the property definition is null
         ContractException propertyContractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder()
@@ -76,7 +84,7 @@ public class AT_GlobalPropertyInitialization {
     }
 
     @Test
-    @UnitTestMethod(name = "setValue", args = {})
+    @UnitTestMethod(target = GlobalPropertyInitialization.Builder.class, name = "setValue", args = {Object.class})
     public void testSetValue() {
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
@@ -89,15 +97,54 @@ public class AT_GlobalPropertyInitialization {
     }
 
     @Test
-    void getGlobalPropertyId() {
+    @UnitTestMethod(name = "getGlobalPropertyId", args = {})
+    public void testGetGlobalPropertyId() {
+        PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
+        GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId(6);
+        Integer value = 6;
+
+        builder.setGlobalPropertyId(globalPropertyId)
+                        .setPropertyDefinition(propertyDefinition)
+                        .setValue(value);
+        GlobalPropertyInitialization globalPropertyInitialization = builder.build();
+
+        assertNotNull(globalPropertyInitialization.getGlobalPropertyId());
+        assertEquals(globalPropertyId, globalPropertyInitialization.getGlobalPropertyId());
+    }
+
+    @Test
+    @UnitTestMethod(name = "getPropertyDefinition", args = {})
+    public void testGetPropertyDefinition() {
+        PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
+        GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId(6);
+        Integer value = 6;
+
+        builder.setGlobalPropertyId(globalPropertyId)
+                .setPropertyDefinition(propertyDefinition)
+                .setValue(value);
+        GlobalPropertyInitialization globalPropertyInitialization = builder.build();
+
+        assertNotNull(globalPropertyInitialization.getPropertyDefinition());
+        assertEquals(propertyDefinition, globalPropertyInitialization.getPropertyDefinition());
 
     }
 
     @Test
-    void getPropertyDefinition() {
-    }
+    @UnitTestMethod(name = "getValue", args = {})
+    public void testGetValue() {
+        PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
+        GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId(6);
+        Integer value = 6;
 
-    @Test
-    void getValue() {
+        builder.setGlobalPropertyId(globalPropertyId)
+                .setPropertyDefinition(propertyDefinition)
+                .setValue(value);
+        GlobalPropertyInitialization globalPropertyInitialization = builder.build();
+
+        assertNotNull(globalPropertyInitialization.getValue());
+        assertEquals(value, globalPropertyInitialization.getValue().get());
     }
 }
