@@ -199,6 +199,12 @@ public class AT_RegionTransferReport {
         Map<ReportItem, Integer> actualReportItems = reportItemOutputConsumer.getReportItems().get(0);
 
         assertEquals(expectedReportItems, actualReportItems);
+
+        // precondition: Actor context is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY).init(null);
+        });
+        assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
     }
 
     private static ReportItem getReportItem(Object... values) {
