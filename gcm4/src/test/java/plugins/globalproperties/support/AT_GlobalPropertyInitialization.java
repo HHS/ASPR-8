@@ -73,8 +73,8 @@ public class AT_GlobalPropertyInitialization {
     }
 
     @Test
-    @UnitTestMethod(target = GlobalPropertyInitialization.Builder.class, name = "setGlobalPropertyDefinition", args = {PropertyDefinition.class})
-    public void testSetGlobalPropertyDefinition() {
+    @UnitTestMethod(target = GlobalPropertyInitialization.Builder.class, name = "setPropertyDefinition", args = {PropertyDefinition.class})
+    public void testGlobalPropertyDefinition() {
         // precondition test: if the property definition is null
         ContractException propertyContractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder()
                 .setGlobalPropertyId(new SimpleGlobalPropertyId(5))
