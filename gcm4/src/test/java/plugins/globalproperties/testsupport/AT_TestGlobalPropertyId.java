@@ -19,6 +19,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AT_TestGlobalPropertyId {
 
 	@Test
+	@UnitTestMethod(name = "getRandomGlobalPropertyId", args = {})
+	public void testGetRandomGlobalPropertyId() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
+
+		// show that generated values are reasonably unique
+		Set<GlobalPropertyId> setOfRandomIds = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GlobalPropertyId globalPropertyId = TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
+			setOfRandomIds.add(globalPropertyId);
+		}
+		System.out.println(setOfRandomIds.size());
+		assertTrue(setOfRandomIds.size() > 10);
+	}
+
+	@Test
 	@UnitTestMethod(name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {

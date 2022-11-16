@@ -24,7 +24,7 @@ public class AT_TestAuxiliaryGlobalPropertyId {
 
     @Test
     @UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
-    public void getRandomGlobalPropertyId() {
+    public void testGetRandomGlobalPropertyId() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
 
         // show that generated values are reasonably unique
