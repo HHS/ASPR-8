@@ -41,7 +41,7 @@ public class AT_SimpleRegionPropertyId{
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(name = "equals", args = {})
 	public void testEquals() {
 		SimpleRegionPropertyId id_1 = new SimpleRegionPropertyId(2);
 		SimpleRegionPropertyId id_2 = new SimpleRegionPropertyId(5);

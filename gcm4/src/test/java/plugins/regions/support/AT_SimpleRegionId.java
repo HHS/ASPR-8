@@ -41,7 +41,7 @@ public class AT_SimpleRegionId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(name = "equals", args = {})
 	public void testEquals() {
 		SimpleRegionId id_1 = new SimpleRegionId(2);
 		SimpleRegionId id_2 = new SimpleRegionId(5);
@@ -118,7 +118,7 @@ public class AT_SimpleRegionId {
 			SimpleRegionId s2 = new SimpleRegionId(i);
 			assertEquals(s1.hashCode(), s2.hashCode());
 		}
-		
+
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {
 			boolean unique = hashCodes.add(new SimpleRegionId(i).hashCode());
@@ -126,5 +126,4 @@ public class AT_SimpleRegionId {
 		}
 
 	}
-
 }
