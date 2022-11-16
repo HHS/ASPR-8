@@ -201,4 +201,24 @@ public class AT_RegionConstructionData {
         assertEquals(expectedIntValues, regionConstructionData.getValues(Integer.class));
         assertEquals(expectedStringValues, regionConstructionData.getValues(String.class));
     }
+
+    @Test
+    @UnitTestMethod(target = RegionConstructionData.Builder.class,name = "setRegionId", args = {})
+    public void testSetRegionId() {
+        RegionConstructionData.Builder builder = RegionConstructionData.builder();
+
+        RegionId regionId = new SimpleRegionId(1000);
+        builder.setRegionId(regionId);
+
+        RegionConstructionData regionConstructionData = builder.build();
+
+        assertNotNull(regionConstructionData);
+        assertEquals(regionId, regionConstructionData.getRegionId());
+
+        // precondition: null region id
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> RegionConstructionData.builder()
+                        .build());
+        assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+    }
 }
