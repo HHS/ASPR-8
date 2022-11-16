@@ -30,7 +30,28 @@ public class AT_RegionFilter {
 
 	@Test
 	@UnitTestConstructor(args = { RegionId[].class })
-	public void testConstructor() {
+	public void testConstructorWithArray() {
+		RegionsActionSupport.testConsumer(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+
+			/* precondition: if the set is null */
+			Set<RegionId> regionIds = null;
+
+			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
+
+			/* precondition: if the region is unknown */
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+
+			assertThrows(RuntimeException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+
+		});
+
+	}
+
+	@Test
+	@UnitTestConstructor(args = { Set.class })
+	public void testConstructorWithSet() {
 		RegionsActionSupport.testConsumer(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			/* precondition: if the set is null */
