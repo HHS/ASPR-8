@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
+import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
@@ -23,12 +24,22 @@ public class AT_TestAuxiliaryGlobalPropertyId {
 
     @Test
     @UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
-    void getRandomGlobalPropertyId() {
+    public void getRandomGlobalPropertyId() {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
+
+        // show that generated values are reasonably unique
+        Set<GlobalPropertyId> setOfRandomIds = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+            GlobalPropertyId globalPropertyId = TestAuxiliaryGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
+            setOfRandomIds.add(globalPropertyId);
+        }
+        assertTrue(setOfRandomIds.size() > 10);
+
     }
 
     @Test
     @UnitTestMethod(name = "getRandomPropertyValue", args = {RandomGenerator.class})
-    void testGetRandomPropertyValue() {
+    public void testGetRandomPropertyValue() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
         /*
          * Show that randomly generated values are compatible with the
@@ -54,7 +65,7 @@ public class AT_TestAuxiliaryGlobalPropertyId {
 
     @Test
     @UnitTestMethod(name = "getPropertyDefinition", args = {})
-    void testGetPropertyDefinition() {
+    public void testGetPropertyDefinition() {
         for (TestAuxiliaryGlobalPropertyId testAuxiliaryGlobalPropertyId : TestAuxiliaryGlobalPropertyId.values()){
             assertNotNull(testAuxiliaryGlobalPropertyId.getPropertyDefinition());
         }
@@ -62,7 +73,7 @@ public class AT_TestAuxiliaryGlobalPropertyId {
 
     @Test
     @UnitTestMethod(name = "getUnknownGlobalPropertyId", args = {})
-    void testGetUnknownGlobalPropertyId() {
+    public void testGetUnknownGlobalPropertyId() {
         /*
          * Shows that a generated unknown group property id is unique, not null
          * and not a member of the enum
