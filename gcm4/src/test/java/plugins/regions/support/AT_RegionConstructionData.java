@@ -203,7 +203,7 @@ public class AT_RegionConstructionData {
     }
 
     @Test
-    @UnitTestMethod(target = RegionConstructionData.Builder.class,name = "setRegionId", args = {})
+    @UnitTestMethod(target = RegionConstructionData.Builder.class, name = "setRegionId", args = { RegionId.class })
     public void testSetRegionId() {
         RegionConstructionData.Builder builder = RegionConstructionData.builder();
 
