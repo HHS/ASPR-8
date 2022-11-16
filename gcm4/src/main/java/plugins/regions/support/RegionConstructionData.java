@@ -21,7 +21,7 @@ public class RegionConstructionData {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
@@ -39,6 +39,9 @@ public class RegionConstructionData {
 			}
 		}
 
+		private Builder(Data data) {
+			this.data = data;
+		}
 		/**
 		 * Builds the Region Construction Data from the given inputs.
 		 * 
