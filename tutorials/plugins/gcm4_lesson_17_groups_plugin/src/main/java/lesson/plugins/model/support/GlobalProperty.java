@@ -1,4 +1,4 @@
-package lesson.plugins.model;
+package lesson.plugins.model.support;
 
 import plugins.globalproperties.support.GlobalPropertyId;
 
@@ -14,5 +14,7 @@ public enum GlobalProperty implements GlobalPropertyId {
 	AVERAGE_HOME_SIZE,
 	AVERAGE_SCHOOL_SIZE,
 	AVERAGE_WORK_SIZE,
+	TELEWORK_INFECTION_THRESHOLD,
+	TELEWORK_PROBABILTY,
 	;
 }

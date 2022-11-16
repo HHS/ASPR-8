@@ -8,14 +8,17 @@ import java.util.Random;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import lesson.plugins.model.DiseaseState;
-import lesson.plugins.model.GlobalProperty;
-import lesson.plugins.model.PersonProperty;
+import lesson.plugins.model.support.DiseaseState;
+import lesson.plugins.model.support.GlobalProperty;
+import lesson.plugins.model.support.GroupProperty;
+import lesson.plugins.model.support.GroupType;
+import lesson.plugins.model.support.PersonProperty;
 import nucleus.ActorContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupSampler;
+import plugins.groups.support.GroupTypeId;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.stochastics.StochasticsDataManager;
@@ -73,6 +76,17 @@ public class InfectionManager {
 	private void infectContact(PersonId personId) {
 		List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(personId);
 		GroupId groupId = groupsForPerson.get(randomGenerator.nextInt(groupsForPerson.size()));
+		
+		//work groups doing telework have a 50% contact mitigation
+		GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		if (groupTypeId.equals(GroupType.WORK)) {
+			boolean teleworkGroup = groupsDataManager.getGroupPropertyValue(groupId, GroupProperty.TELEWORK);
+			if (teleworkGroup) {
+				if (randomGenerator.nextBoolean()) {
+					return;
+				}
+			}
+		}
 		GroupSampler groupSampler = GroupSampler.builder().setExcludedPersonId(personId).build();
 		Optional<PersonId> optional = groupsDataManager.sampleGroup(groupId, groupSampler);
 		if (optional.isPresent()) {

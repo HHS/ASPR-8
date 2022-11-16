@@ -6,15 +6,16 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import lesson.plugins.model.DiseaseState;
-import lesson.plugins.model.GlobalProperty;
-import lesson.plugins.model.GroupType;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
-import lesson.plugins.model.PersonProperty;
-import lesson.plugins.model.Region;
 import lesson.plugins.model.actors.reports.ContagionReport;
 import lesson.plugins.model.actors.reports.DiseaseStateReport;
+import lesson.plugins.model.support.DiseaseState;
+import lesson.plugins.model.support.GlobalProperty;
+import lesson.plugins.model.support.GroupProperty;
+import lesson.plugins.model.support.GroupType;
+import lesson.plugins.model.support.PersonProperty;
+import lesson.plugins.model.support.Region;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;
@@ -40,6 +41,7 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
+import util.time.TimeElapser;
 
 public final class Example_17 {
 
@@ -58,7 +60,7 @@ public final class Example_17 {
 																			.setReportPeriod(ReportPeriod.DAILY)//
 																			.includePersonProperty(PersonProperty.DISEASE_STATE)//
 																			.build()::init)//
-									.addReport(() -> new DiseaseStateReport(ModelReportId.DISEASE_STATE, ReportPeriod.DAILY)::init)//
+									.addReport(() -> new DiseaseStateReport(ModelReportId.DISEASE_STATE, ReportPeriod.END_OF_SIMULATION)::init)//
 									.addReport(() -> new ContagionReport(ModelReportId.CONTAGION)::init)//
 									.build();
 
@@ -84,6 +86,13 @@ public final class Example_17 {
 		for (GroupType groupType : GroupType.values()) {
 			builder.addGroupTypeId(groupType);
 		}
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Boolean.class)//
+																	.setDefaultValue(false)//
+																	.build();
+
+		builder.defineGroupProperty(GroupType.WORK, GroupProperty.TELEWORK, propertyDefinition);
+
 		GroupsPluginData groupsPluginData = builder.build();
 		return GroupsPlugin.getGroupPlugin(groupsPluginData);
 	}
@@ -130,6 +139,7 @@ public final class Example_17 {
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Double.class)//
 																	.setPropertyValueMutability(false)//
+																	.setDefaultValue(0.0)
 																	.build();
 
 		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition);
@@ -139,6 +149,8 @@ public final class Example_17 {
 		builder.defineGlobalProperty(GlobalProperty.CHILD_POPULATION_PROPORTION, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.SENIOR_POPULATION_PROPORTION, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.R0, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.TELEWORK_INFECTION_THRESHOLD, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.TELEWORK_PROBABILTY, propertyDefinition);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Integer.class)//
@@ -154,12 +166,14 @@ public final class Example_17 {
 		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 10);
 		builder.setGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD, 3);
 		builder.setGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD, 12);
-		builder.setGlobalPropertyValue(GlobalProperty.R0, 5.0);
+		builder.setGlobalPropertyValue(GlobalProperty.R0, 2.0);
 		builder.setGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION, 0.235);
 		builder.setGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION, 0.169);
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE, 2.5);
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE, 250.0);
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE, 30.0);
+//		builder.setGlobalPropertyValue(GlobalProperty.TELEWORK_INFECTION_THRESHOLD, 1.0);
+//		builder.setGlobalPropertyValue(GlobalProperty.TELEWORK_PROBABILTY, 0.5);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
@@ -205,66 +219,34 @@ public final class Example_17 {
 					.addPlugin(getStochasticsPlugin())//
 					.addPlugin(ModelPlugin.getModelPlugin())//
 
-					// .addDimension(getMaximumSymptomOnsetTimeDimension())//
-					// .addDimension(getSusceptiblePopulationProportionDimension())//
-					// .addDimension(getAntiviralCoverageTimeDimension())//
-					// .addDimension(getAntiviralSuccessRateDimension())//
-					// .addDimension(getHospitalSuccessDimension())//
-					// .addDimension(getHospitalBedsPerPersonDimension())//
-					// .addDimension(getAntiviralDosesPerPersonDimension())//
-					// .addDimension(getHospitalStayDurationDimension())//
+					.addDimension(getTeleworkProbabbilityDimension())//
+					.addDimension(getTeleworkInfectionThresholdDimension())//
+					
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					// .setThreadCount(8)//
-					// .reportProgressToConsole(false)//
+					.setThreadCount(8)//
+					.reportProgressToConsole(true)//
 					.build()//
 					.execute();//
 
 	}
 
 	public static void main(String[] args) {
+		TimeElapser timeElapser = new TimeElapser();
 		new Example_17().execute();
+		System.out.println(timeElapser.getElapsedMilliSeconds());
 	}
 
-	// private Dimension getAntiviralSuccessRateDimension() {
-	// double[] values = new double[] { .50, 0.8 };
-	// return getGlobalPropertyDimension(GlobalProperty.ANTIVIRAL_SUCCESS_RATE,
-	// "antiviral_success_rate", values);
-	// }
-	//
-	// private Dimension getAntiviralCoverageTimeDimension() {
-	// double[] values = new double[] { 10.0, 15.0 };
-	// return getGlobalPropertyDimension(GlobalProperty.ANTIVIRAL_COVERAGE_TIME,
-	// "antiviral_coverage_time", values);
-	// }
-	//
-	// private Dimension getMaximumSymptomOnsetTimeDimension() {
-	// double[] values = new double[] { 60, 120 };
-	// return
-	// getGlobalPropertyDimension(GlobalProperty.MAXIMUM_SYMPTOM_ONSET_TIME,
-	// "maximum_symptom_onset_time", values);
-	// }
-	//
-	// private Dimension getSusceptiblePopulationProportionDimension() {
-	// double[] values = new double[] { 0.25, 0.5, 0.75 };
-	// return
-	// getGlobalPropertyDimension(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION,
-	// "susceptible_population_proportion", values);
-	// }
-	//
-	// private Dimension getAntiviralDosesPerPersonDimension() {
-	// double[] values = new double[] { .10, 0.20, 0.5 };
-	// return
-	// getGlobalPropertyDimension(GlobalProperty.ANTIVIRAL_DOSES_PER_PERSON,
-	// "antiviral_doses_per_person", values);
-	// }
-	//
-	// private Dimension getHospitalBedsPerPersonDimension() {
-	// double[] values = new double[] { 0.001, 0.003, 0.005 };
-	// return
-	// getGlobalPropertyDimension(GlobalProperty.HOSPITAL_BEDS_PER_PERSON,
-	// "hospital_beds_per_person", values);
-	// }
+	private Dimension getTeleworkProbabbilityDimension() {
+		double[] values = new double[] {0.1, 0.3, 0.5, 0.8 };
+		return getGlobalPropertyDimension(GlobalProperty.TELEWORK_PROBABILTY, "telework_probabilty", values);
+	}
+	
+	private Dimension getTeleworkInfectionThresholdDimension() {
+		double[] values = new double[] {0.001, 0.01, 0.1 };
+		return getGlobalPropertyDimension(GlobalProperty.TELEWORK_INFECTION_THRESHOLD, "telework_infection_threshold", values);
+	}
+	
 	//
 	// private Dimension getHospitalSuccessDimension() {
 	// double[] minValues = { 0.30, 5.0 };
