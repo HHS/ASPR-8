@@ -9,10 +9,10 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import lesson.plugins.model.DiseaseState;
-import lesson.plugins.model.GlobalProperty;
-import lesson.plugins.model.GroupType;
-import lesson.plugins.model.PersonProperty;
+import lesson.plugins.model.support.DiseaseState;
+import lesson.plugins.model.support.GlobalProperty;
+import lesson.plugins.model.support.GroupType;
+import lesson.plugins.model.support.PersonProperty;
 import nucleus.ActorContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.groups.datamanagers.GroupsDataManager;

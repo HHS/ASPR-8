@@ -1,7 +1,7 @@
 package lesson.plugins.model.actors.reports;
 
-import lesson.plugins.model.DiseaseState;
-import lesson.plugins.model.PersonProperty;
+import lesson.plugins.model.support.DiseaseState;
+import lesson.plugins.model.support.PersonProperty;
 import nucleus.ActorContext;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.PeriodicReport;

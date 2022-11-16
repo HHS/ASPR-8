@@ -1,4 +1,4 @@
-package lesson.plugins.model;
+package lesson.plugins.model.support;
 
 public enum DiseaseState {
 	IMMUNE,//the person is immune

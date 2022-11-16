@@ -6,8 +6,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.math3.util.FastMath;
 
-import lesson.plugins.model.DiseaseState;
-import lesson.plugins.model.PersonProperty;
+import lesson.plugins.model.support.DiseaseState;
+import lesson.plugins.model.support.PersonProperty;
 import nucleus.ActorContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
