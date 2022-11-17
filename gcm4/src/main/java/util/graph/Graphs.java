@@ -6,7 +6,11 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+
+import util.path.Path;
+import util.path.Paths;
 
 public final class Graphs {
 
@@ -45,6 +49,28 @@ public final class Graphs {
 					mutableGraph.removeNode(node);
 					nodeRemoved = true;
 				}
+			}
+		}
+		return mutableGraph.asGraph();
+	}
+
+	/**
+	 * Returns the sub-graph of the input graph that has had all of its
+	 * non-cyclic edges removed. A non-cyclic edge is one
+	 * where there is no path through the graph from the edges destination node
+	 * to its source node.
+	 */
+	public static <N, E> Graph<N, E> getEdgeReducedGraph(Graph<N, E> graph) {
+		MutableGraph<N, E> mutableGraph = new MutableGraph<>();
+		mutableGraph.addAll(graph);
+		List<E> edges = graph.getEdges();
+		
+		for(E edge : edges) {
+			N originNode = graph.getOriginNode(edge);
+			N destinationNode = graph.getDestinationNode(edge);
+			Optional<Path<E>> optional = Paths.getPath(graph, destinationNode, originNode, (e)->1, (a,b)->0);
+			if(optional.isEmpty()) {
+				mutableGraph.removeEdge(edge);
 			}
 		}
 		return mutableGraph.asGraph();
