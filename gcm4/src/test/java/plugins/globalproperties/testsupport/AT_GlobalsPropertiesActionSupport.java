@@ -8,19 +8,17 @@ import tools.annotations.UnitTestMethod;
 
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @UnitTest(target = GlobalsPropertiesActionSupport.class)
 
 public class AT_GlobalsPropertiesActionSupport {
 
     @Test
     @UnitTestMethod(name = "testConsumer", args = {Consumer.class}, tags = {UnitTag.EMPTY})
-    void testTestConsumer() {
+    public void testTestConsumer() {
     }
 
     @Test
     @UnitTestMethod(name = "testConsumers", args = {Plugin.class}, tags = {UnitTag.EMPTY})
-    void testTestConsumers() {
+    public void testTestConsumers() {
     }
 }
