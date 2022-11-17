@@ -1,6 +1,7 @@
 package plugins.globalproperties.events;
 
 import org.junit.jupiter.api.Test;
+import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AT_GlobalPropertyDefinitionEvent {
 
     @Test
-    @UnitTestConstructor(args = {})
+    @UnitTestConstructor(args = {GlobalPropertyId.class, Object.class})
     public void testConstructor() {
 
         ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(null, 7));
