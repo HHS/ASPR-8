@@ -12,6 +12,8 @@ import java.util.function.Consumer;
 
 public class AT_GlobalsPropertiesActionSupport {
 
+
+
     @Test
     @UnitTestMethod(name = "testConsumer", args = {Consumer.class}, tags = {UnitTag.EMPTY})
     public void testTestConsumer() {

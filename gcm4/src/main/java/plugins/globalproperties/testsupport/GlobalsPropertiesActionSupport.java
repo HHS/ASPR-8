@@ -24,7 +24,10 @@ import util.errors.ContractException;
  *
  */
 
-public class GlobalsPropertiesActionSupport {
+public final class GlobalsPropertiesActionSupport {
+
+	private GlobalsPropertiesActionSupport() {
+	}
 
 	/**
 	 * Creates the test plugin containing a test actor initialized by the given
