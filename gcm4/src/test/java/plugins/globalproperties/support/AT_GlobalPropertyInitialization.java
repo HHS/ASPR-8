@@ -1,16 +1,11 @@
 package plugins.globalproperties.support;
 
 import org.junit.jupiter.api.Test;
-import plugins.groups.support.GroupConstructionInfo;
-import plugins.groups.support.GroupError;
-import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 

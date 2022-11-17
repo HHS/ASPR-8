@@ -3,10 +3,6 @@ package plugins.globalproperties.testsupport;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.groups.support.GroupPropertyId;
-import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
-import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
-import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -14,7 +10,6 @@ import util.random.RandomGeneratorProvider;
 
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
-import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
