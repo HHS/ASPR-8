@@ -31,6 +31,11 @@ public class AT_GlobalPropertyInitialization {
         GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
+        builder.setValue(5);
+        builder.setGlobalPropertyId(new SimpleGlobalPropertyId(5));
+        builder.setPropertyDefinition(propertyDefinition);
+        assertNotNull(builder.build());
+
         // precondition test: if property id is not set
         builder.setPropertyDefinition(propertyDefinition);
         builder.setValue(5);

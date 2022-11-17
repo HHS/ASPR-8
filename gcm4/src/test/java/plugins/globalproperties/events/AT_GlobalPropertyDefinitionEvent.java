@@ -15,22 +15,18 @@ public class AT_GlobalPropertyDefinitionEvent {
 
     @Test
     @UnitTestConstructor(args = {})
-    public void testGlobalPropertyId() {
+    public void testConstructor() {
 
         ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(null, 7));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-    }
-
-    @Test
-    @UnitTestConstructor(args = {})
-    public void initialPropertyValue() {
-
         SimpleGlobalPropertyId goodId = new SimpleGlobalPropertyId(5);
 
-        ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(goodId, null));
-        assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
+        ContractException contractException2 = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(goodId, null));
+        assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException2.getErrorType());
+
     }
+
 
     @Test
     @UnitTestMethod(name = "equals", args = {Object.class})
