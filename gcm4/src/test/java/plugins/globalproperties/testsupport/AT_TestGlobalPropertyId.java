@@ -7,7 +7,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -19,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AT_TestGlobalPropertyId {
 
 	@Test
-	@UnitTestMethod(name = "getRandomGlobalPropertyId", args = {})
+	@UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
 	public void testGetRandomGlobalPropertyId() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(242770195073333036L);
 
 		// show that generated values are reasonably unique
 		Set<GlobalPropertyId> setOfRandomIds = new LinkedHashSet<>();
@@ -30,7 +29,22 @@ public class AT_TestGlobalPropertyId {
 			setOfRandomIds.add(globalPropertyId);
 		}
 		System.out.println(setOfRandomIds.size());
-		assertTrue(setOfRandomIds.size() > 10);
+		assertTrue(setOfRandomIds.size() == 6);
+	}
+
+	@Test
+	@UnitTestMethod(name = "getRandomMutableGlobalPropertyId", args = {RandomGenerator.class})
+	public void testGetRandomMutableGlobalPropertyId() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6104930304058715301L);
+
+		// show that generated values are reasonably unique
+		Set<GlobalPropertyId> setOfRandomMutableIds = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++){
+			GlobalPropertyId mutableGlobalPropertyId = TestGlobalPropertyId.getRandomMutableGlobalPropertyId(randomGenerator);
+			setOfRandomMutableIds.add(mutableGlobalPropertyId);
+		}
+		System.out.println(setOfRandomMutableIds.size());
+		assertTrue(setOfRandomMutableIds.size() == 3);
 	}
 
 	@Test
@@ -44,7 +58,7 @@ public class AT_TestGlobalPropertyId {
 	@Test
 	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3456870569545355468L);
 
 		/*
 		 * Show that randomly generated values are compatible with the

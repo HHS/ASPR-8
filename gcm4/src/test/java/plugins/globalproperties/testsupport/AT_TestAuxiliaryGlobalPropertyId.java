@@ -25,7 +25,7 @@ public class AT_TestAuxiliaryGlobalPropertyId {
     @Test
     @UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
     public void testGetRandomGlobalPropertyId() {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6231414347629293321L);
 
         // show that generated values are reasonably unique
         Set<GlobalPropertyId> setOfRandomIds = new LinkedHashSet<>();
@@ -33,7 +33,7 @@ public class AT_TestAuxiliaryGlobalPropertyId {
             GlobalPropertyId globalPropertyId = TestAuxiliaryGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
             setOfRandomIds.add(globalPropertyId);
         }
-        assertTrue(setOfRandomIds.size() > 10);
+        assertTrue(setOfRandomIds.size() == 6);
 
     }
 
