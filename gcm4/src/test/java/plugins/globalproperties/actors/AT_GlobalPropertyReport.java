@@ -214,52 +214,33 @@ public class AT_GlobalPropertyReport {
 	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includePropertyId", args = {GlobalPropertyId.class})
 	public void testIncludePropertyId () {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1001);
-		GlobalPropertyReport report = builder.setReportId(reportId).build();
 
 		// precondition test: if the property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.includePropertyId(null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		GlobalPropertyId goodGlobalPropertyId = new SimpleGlobalPropertyId(15);
-		builder.includePropertyId(goodGlobalPropertyId);
-		assertNotNull(report);
 
 	}
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includeAllExtantPropertyIds", args = {boolean.class})
 	public void testIncludeAllExtantPropertyIds () {
-		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1003);
-		GlobalPropertyReport report = builder.setReportId(reportId).build();
-
-		builder.includeAllExtantPropertyIds(true);
-		assertNotNull(report);
-
+		// nothing to test
 	}
 
 	@Test
 	@UnitTestMethod(target =  GlobalPropertyReport.Builder.class, name = "includeNewPropertyIds", args = {boolean.class})
 	public void testIncludeNewPropertyIds() {
-		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1002);
-		GlobalPropertyReport report = builder.setReportId(reportId).build();
-
-		builder.includeNewPropertyIds(true);
-		assertNotNull(report);
+		// nothing to test
 	}
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "excludePropertyId", args = {GlobalPropertyId.class})
 	public void testExcludePropertyId () {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
-		ReportId reportId = new SimpleReportId(1004);
-		GlobalPropertyReport report = builder.setReportId(reportId).build();
 
-		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId(33);
-		builder.excludePropertyId(globalPropertyId);
-		assertNotNull(report);
+		// precondition test: if the property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.excludePropertyId(null));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
 	@Test
@@ -271,9 +252,6 @@ public class AT_GlobalPropertyReport {
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.setReportId(null));
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 
-		ReportId reportId = new SimpleReportId(15);
-		builder.setReportId(reportId);
-		assertNotNull(reportId);
 	}
 
 

@@ -111,6 +111,9 @@ public final class GlobalPropertyReport {
 		 * 
 		 */
 		public Builder excludePropertyId(GlobalPropertyId globalPropertyId) {
+			if (globalPropertyId == null) {
+				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
+			}
 			data.includedPropertyIds.remove(globalPropertyId);
 			data.excludedPropertyIds.add(globalPropertyId);
 			return this;
