@@ -74,7 +74,7 @@ public class AT_ExperimentPlanCompletionObserver {
 	}
 	
 	@Test
-	@UnitTestConstructor(args = {}, tags = { UnitTag.EMPTY })
+	@UnitTestConstructor(args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testConstructor() {
 		// nothing to test
 	}

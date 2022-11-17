@@ -96,7 +96,7 @@ public class AT_TestDataManager {
 	}
 	
 	@Test
-	@UnitTestConstructor(args = {}, tags = {UnitTag.EMPTY})
+	@UnitTestConstructor(args = {}, tags = {UnitTag.INCOMPLETE})
 	public void testConstructor() {
 		//nothing to test		
 	}
