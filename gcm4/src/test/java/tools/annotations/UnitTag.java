@@ -19,7 +19,7 @@ public enum UnitTag {
 	CLASS_PROXY,
 
 	/*
-	 *  The test is not yet implemented
+	 *  The test is not yet fully implemented
 	 */
-	EMPTY//
+	INCOMPLETE//
 }

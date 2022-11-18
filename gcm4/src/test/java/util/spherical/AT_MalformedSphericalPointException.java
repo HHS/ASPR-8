@@ -12,7 +12,7 @@ import tools.annotations.UnitTestConstructor;
 @UnitTest(target = MalformedSphericalPointException.class)
 public class AT_MalformedSphericalPointException {
 	@Test
-	@UnitTestConstructor(args = {}, tags = { UnitTag.EMPTY })
+	@UnitTestConstructor(args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testConstructor() {
 		// nothing to test
 	}

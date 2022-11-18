@@ -1,4 +1,4 @@
-package lesson.plugins.model;
+package lesson.plugins.model.support;
 
 import net.jcip.annotations.Immutable;
 import plugins.regions.support.RegionId;
