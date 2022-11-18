@@ -24,6 +24,7 @@ import plugins.reports.support.*;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -41,7 +42,7 @@ public class AT_GlobalPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {ActorContext.class})
+	@UnitTestMethod(name = "init", args = {ActorContext.class}, tags = {UnitTag.INCOMPLETE})
 	public void testInit() {
 
 		/*

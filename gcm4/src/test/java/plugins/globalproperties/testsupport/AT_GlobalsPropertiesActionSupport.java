@@ -15,12 +15,12 @@ public class AT_GlobalsPropertiesActionSupport {
 
 
     @Test
-    @UnitTestMethod(name = "testConsumer", args = {Consumer.class}, tags = {UnitTag.EMPTY})
+    @UnitTestMethod(name = "testConsumer", args = {Consumer.class}, tags = {UnitTag.INCOMPLETE})
     public void testTestConsumer() {
     }
 
     @Test
-    @UnitTestMethod(name = "testConsumers", args = {Plugin.class}, tags = {UnitTag.EMPTY})
+    @UnitTestMethod(name = "testConsumers", args = {Plugin.class}, tags = {UnitTag.INCOMPLETE})
     public void testTestConsumers() {
     }
 }
