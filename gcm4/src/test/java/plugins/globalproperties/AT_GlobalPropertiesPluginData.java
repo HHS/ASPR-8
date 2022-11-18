@@ -1,27 +1,25 @@
 package plugins.globalproperties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.*;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
+import com.sun.jdi.Value;
+import nucleus.PluginData;
+import nucleus.PluginDataBuilder;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
+import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = GlobalPropertiesPluginData.class)
 
@@ -301,7 +299,33 @@ public class AT_GlobalPropertiesPluginData {
 	@Test
 	@UnitTestMethod(name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
-		assertNotNull(GlobalPropertiesPluginData.builder().build().getCloneBuilder());
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
+		PluginDataBuilder cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		PluginData pluginData = cloneBuilder.build();
+		assertTrue(pluginData instanceof GlobalPropertiesPluginData);
+		GlobalPropertiesPluginData cloneGlobalPropertiesPluginData = (GlobalPropertiesPluginData) pluginData;
+
+		// show that the two plugin datas have the same property ids
+		Set<GlobalPropertyId> expectedGlobalPropertyIds = globalPropertiesPluginData.getGlobalPropertyIds();
+		Set<GlobalPropertyId> actualGlobalPropertyIds = cloneGlobalPropertiesPluginData.getGlobalPropertyIds();
+		assertEquals(expectedGlobalPropertyIds, actualGlobalPropertyIds);
+
+		// show that the two plugin datas have the same property definitions
+		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
+			PropertyDefinition expectedPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
+			PropertyDefinition actualPropertyDefinition = cloneGlobalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
+			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);}
+
+		// show that the two plugin datas have the same values
+		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
+			List<Optional> expectedValues = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+			List<Optional> actualValues = cloneGlobalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+			assertIterableEquals(expectedValues, actualValues);
+		}
+
+
 	}
 
 }
