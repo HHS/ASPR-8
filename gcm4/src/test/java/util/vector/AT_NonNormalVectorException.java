@@ -12,7 +12,7 @@ import tools.annotations.UnitTestConstructor;
 @UnitTest(target = NonNormalVectorException.class)
 public class AT_NonNormalVectorException {
 	@Test
-	@UnitTestConstructor(args = {}, tags = { UnitTag.EMPTY })
+	@UnitTestConstructor(args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testConstructor() {
 		// nothing to test
 	}
