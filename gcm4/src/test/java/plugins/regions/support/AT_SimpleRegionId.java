@@ -41,7 +41,7 @@ public class AT_SimpleRegionId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = {})
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleRegionId id_1 = new SimpleRegionId(2);
 		SimpleRegionId id_2 = new SimpleRegionId(5);
