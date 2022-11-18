@@ -28,6 +28,9 @@ import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
 public final class RegionsActionSupport {
+
+	private RegionsActionSupport() {}
+
 	public static void testConsumer(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
