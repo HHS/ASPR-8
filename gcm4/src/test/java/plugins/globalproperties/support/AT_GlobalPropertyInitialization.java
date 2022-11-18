@@ -27,7 +27,7 @@ public class AT_GlobalPropertyInitialization {
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
 
         builder.setValue(5);
-        builder.setGlobalPropertyId(new SimpleGlobalPropertyId(5));
+        builder.setGlobalPropertyId(new SimpleGlobalPropertyId("firstTestId"));
         builder.setPropertyDefinition(propertyDefinition);
         assertNotNull(builder.build());
 
@@ -38,19 +38,19 @@ public class AT_GlobalPropertyInitialization {
         assertEquals(PropertyError.NULL_PROPERTY_ID ,idContractException.getErrorType());
 
         // precondition test: if property definition is not set
-        builder.setGlobalPropertyId(new SimpleGlobalPropertyId(6));
+        builder.setGlobalPropertyId(new SimpleGlobalPropertyId("secondTestId"));
         builder.setValue(6);
         ContractException propertyContractException = assertThrows(ContractException.class, () -> builder.build());
         assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, propertyContractException.getErrorType());
 
         // precondition test: if the property value is not set
-        builder.setGlobalPropertyId(new SimpleGlobalPropertyId(7));
+        builder.setGlobalPropertyId(new SimpleGlobalPropertyId("thirdTestId"));
         builder.setPropertyDefinition(propertyDefinition);
         ContractException valueContractException = assertThrows(ContractException.class, () -> builder.build());
         assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, valueContractException.getErrorType());
 
         // precondition test: if the property definition and value types are incompatible
-        builder.setGlobalPropertyId(new SimpleGlobalPropertyId(5));
+        builder.setGlobalPropertyId(new SimpleGlobalPropertyId("fourthTestId"));
         builder.setPropertyDefinition(propertyDefinition);
         builder.setValue(15.5f);
         ContractException incompatibleContractException = assertThrows(ContractException.class, () -> builder.build());
@@ -77,7 +77,7 @@ public class AT_GlobalPropertyInitialization {
     public void testGlobalPropertyDefinition() {
         // precondition test: if the property definition is null
         ContractException propertyContractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder()
-                .setGlobalPropertyId(new SimpleGlobalPropertyId(5))
+                .setGlobalPropertyId(new SimpleGlobalPropertyId("fifthTestId"))
                 .setValue(5)
                 .setPropertyDefinition(null));
         assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, propertyContractException.getErrorType());
@@ -90,7 +90,7 @@ public class AT_GlobalPropertyInitialization {
 
         // precondition test: if the property value is null
         ContractException valueContractException = assertThrows(ContractException.class, () -> GlobalPropertyInitialization.builder()
-                .setGlobalPropertyId(new SimpleGlobalPropertyId(6))
+                .setGlobalPropertyId(new SimpleGlobalPropertyId("sixthTestId"))
                 .setPropertyDefinition(propertyDefinition)
                 .setValue(null));
         assertEquals(PropertyError.NULL_PROPERTY_VALUE, valueContractException.getErrorType());
@@ -101,7 +101,7 @@ public class AT_GlobalPropertyInitialization {
     public void testGetGlobalPropertyId() {
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
         GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
-        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId(6);
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("seventhTestId");
         Integer value = 6;
 
         builder.setGlobalPropertyId(globalPropertyId)
@@ -118,7 +118,7 @@ public class AT_GlobalPropertyInitialization {
     public void testGetPropertyDefinition() {
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
         GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
-        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId(6);
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("eightTestId");
         Integer value = 6;
 
         builder.setGlobalPropertyId(globalPropertyId)
@@ -136,7 +136,7 @@ public class AT_GlobalPropertyInitialization {
     public void testGetValue() {
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
         GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
-        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId(6);
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("eightTestId");
         Integer value = 6;
 
         builder.setGlobalPropertyId(globalPropertyId)
