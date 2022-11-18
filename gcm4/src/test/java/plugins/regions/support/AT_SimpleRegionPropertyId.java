@@ -16,7 +16,7 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = SimpleRegionPropertyId.class)
-public class AT_SimpleRegionPropertyId{
+public class AT_SimpleRegionPropertyId {
 
 	@Test
 	@UnitTestConstructor(args = { Object.class })
@@ -41,7 +41,7 @@ public class AT_SimpleRegionPropertyId{
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = {})
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleRegionPropertyId id_1 = new SimpleRegionPropertyId(2);
 		SimpleRegionPropertyId id_2 = new SimpleRegionPropertyId(5);
@@ -109,7 +109,7 @@ public class AT_SimpleRegionPropertyId{
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})	
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// equal objects have equal hash codes
@@ -118,7 +118,7 @@ public class AT_SimpleRegionPropertyId{
 			SimpleRegionPropertyId s2 = new SimpleRegionPropertyId(i);
 			assertEquals(s1.hashCode(), s2.hashCode());
 		}
-		
+
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {
 			boolean unique = hashCodes.add(new SimpleRegionPropertyId(i).hashCode());
