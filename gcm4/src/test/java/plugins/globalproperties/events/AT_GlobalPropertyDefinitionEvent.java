@@ -29,29 +29,4 @@ public class AT_GlobalPropertyDefinitionEvent {
     }
 
 
-    @Test
-    @UnitTestMethod(name = "equals", args = {Object.class})
-    public void testEquals() {
-        // nothing to test
-    }
-
-    @Test
-    @UnitTestMethod(name = "toString", args = {})
-    public void testToString() {
-        // nothing to test
-    }
-
-    @Test
-    @UnitTestMethod(name = "hashCode", args = {})
-    public void testHashCode() {
-        // nothing to test
-    }
-
-    @Test
-    @UnitTestMethod(name = "initialPropertyValue", args = {})
-    public void testInitialPropertyValue() {
-        // nothing to test
-    }
-
-
 }
