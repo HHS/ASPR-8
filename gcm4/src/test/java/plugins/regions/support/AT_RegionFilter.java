@@ -43,7 +43,10 @@ public class AT_RegionFilter {
 					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
-			assertThrows(RuntimeException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			// precondition: null region id
+			contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
 
@@ -64,7 +67,10 @@ public class AT_RegionFilter {
 					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
-			assertThrows(RuntimeException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			// precondition: null region id
+			contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
 
