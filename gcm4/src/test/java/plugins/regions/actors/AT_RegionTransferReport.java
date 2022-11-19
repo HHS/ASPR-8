@@ -45,6 +45,7 @@ import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -73,7 +74,7 @@ public class AT_RegionTransferReport {
     }
 
     @Test
-    @UnitTestMethod(name = "init", args = { ActorContext.class })
+    @UnitTestMethod(name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
     public void testInit() {
 
         Experiment.Builder builder = Experiment.builder();

@@ -37,6 +37,7 @@ import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -59,14 +60,15 @@ public class AT_RegionPropertyReport {
 		RegionPropertyId prop_policy = new SimpleRegionPropertyId("prop_policy");
 		RegionPropertyId prop_vaccine = new SimpleRegionPropertyId("prop_vaccine");
 
-		regionPropertyReport = new RegionPropertyReport(REPORT_ID, prop_age, prop_infected, prop_length, prop_height, prop_policy, prop_vaccine);
+		regionPropertyReport = new RegionPropertyReport(REPORT_ID, prop_age, prop_infected, prop_length, prop_height,
+				prop_policy, prop_vaccine);
 
 		// Show not null when given 1 or more RegionPropertyIds
 		assertNotNull(regionPropertyReport);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class })
+	@UnitTestMethod(name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 
 		/*
