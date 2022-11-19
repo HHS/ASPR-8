@@ -64,13 +64,8 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        List<String> expectedStringValues = new ArrayList<>();
-
-        int numValues = randomGenerator.nextInt(15);
-
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             String value = Integer.toString(randomGenerator.nextInt(100));
-            expectedStringValues.add(value);
             builder.addValue(value);
         }
         builder.setRegionId(regionId);
@@ -88,13 +83,8 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        List<String> expectedStringValues = new ArrayList<>();
-
-        int numValues = randomGenerator.nextInt(15);
-
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             String value = Integer.toString(randomGenerator.nextInt(100));
-            expectedStringValues.add(value);
             builder.addValue(value);
         }
         builder.setRegionId(regionId);
@@ -102,6 +92,7 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent regionAdditionEvent = builder.build();
 
         assertNotNull(regionAdditionEvent);
+        // builder.addValue() and builder.setRegionId are covered by other tests
 
         // precondition: null region id
         ContractException contractException = assertThrows(ContractException.class,
@@ -149,13 +140,8 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        List<String> expectedStringValues = new ArrayList<>();
-
-        int numValues = randomGenerator.nextInt(15);
-
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             String value = Integer.toString(randomGenerator.nextInt(100));
-            expectedStringValues.add(value);
             builder.addValue(value);
         }
         builder.setRegionId(regionId);
