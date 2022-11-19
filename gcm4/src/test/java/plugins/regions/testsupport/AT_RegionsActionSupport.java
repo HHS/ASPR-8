@@ -16,6 +16,7 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.util.properties.TimeTrackingPolicy;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -24,7 +25,8 @@ import util.wrappers.MutableBoolean;
 @UnitTest(target = RegionsActionSupport.class)
 public class AT_RegionsActionSupport {
     @Test
-    @UnitTestMethod(name = "testConsumer", args = { int.class, long.class, TimeTrackingPolicy.class, Consumer.class })
+    @UnitTestMethod(name = "testConsumer", args = { int.class, long.class, TimeTrackingPolicy.class,
+            Consumer.class }, tags = { UnitTag.INCOMPLETE })
     public void testTestConsumer() {
         MutableBoolean executed = new MutableBoolean();
         RegionsActionSupport.testConsumer(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
@@ -52,7 +54,8 @@ public class AT_RegionsActionSupport {
     }
 
     @Test
-    @UnitTestMethod(name = "testConsumers", args = { int.class, long.class, TimeTrackingPolicy.class, Plugin.class })
+    @UnitTestMethod(name = "testConsumers", args = { int.class, long.class, TimeTrackingPolicy.class,
+            Plugin.class }, tags = { UnitTag.INCOMPLETE })
     public void testTestConsumers() {
         ContractException contractException = assertThrows(ContractException.class,
                 () -> RegionsActionSupport.testConsumers(100, 5166994853007999229L, TimeTrackingPolicy.TRACK_TIME,
