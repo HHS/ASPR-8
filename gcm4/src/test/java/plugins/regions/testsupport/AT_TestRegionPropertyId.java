@@ -7,8 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -69,51 +71,24 @@ public class AT_TestRegionPropertyId {
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9052754083757003238L);
 
-		Set<Integer> integers = new LinkedHashSet<>();
-		Set<Boolean> booleans = new LinkedHashSet<>();
-		Set<Double> doubles = new LinkedHashSet<>();
-
-		TestRegionPropertyId integerM = TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE;
-		TestRegionPropertyId integerI = TestRegionPropertyId.REGION_PROPERTY_5_INTEGER_IMMUTABLE;
-		TestRegionPropertyId doubleM = TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE;
-		TestRegionPropertyId doubleI = TestRegionPropertyId.REGION_PROPERTY_6_DOUBLE_IMMUTABLE;
-		TestRegionPropertyId booleanM = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-		TestRegionPropertyId booleanI = TestRegionPropertyId.REGION_PROPERTY_4_BOOLEAN_IMMUTABLE;
-
-		boolean assertFalse = false;
-		for (int i = 0; i < 15; i++) {
-			int intValM = integerM.getRandomPropertyValue(randomGenerator);
-			int intValI = integerI.getRandomPropertyValue(randomGenerator);
-			double doubleValM = doubleM.getRandomPropertyValue(randomGenerator);
-			double doubleValI = doubleI.getRandomPropertyValue(randomGenerator);
-			boolean booleanValM = booleanM.getRandomPropertyValue(randomGenerator);
-			boolean booleanValI = booleanI.getRandomPropertyValue(randomGenerator);
-
-			assertNotNull(intValM);
-			assertNotNull(intValI);
-			assertNotNull(doubleValM);
-			assertNotNull(doubleValI);
-			assertNotNull(booleanValM);
-			assertNotNull(booleanValI);
-
-			assertTrue(integers.add(intValM));
-			assertTrue(integers.add(intValI));
-			assertTrue(doubles.add(doubleValM));
-			assertTrue(doubles.add(doubleValI));
-
-			// this is needed because realistically even though it is random, boolean is
-			// either true or false
-			assertFalse = booleans.contains(booleanValM);
-			if (assertFalse) {
-				assertFalse(booleans.add(booleanValM));
-			} else {
-				assertTrue(booleans.add(booleanValM));
+		/*
+		 * Show that randomly generated values are compatible with the
+		 * associated property definition. Show that the values are reasonably
+		 * unique
+		 */
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
+			Set<Object> values = new LinkedHashSet<>();
+			for (int i = 0; i < 100; i++) {
+				Object propertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+				values.add(propertyValue);
+				assertTrue(propertyDefinition.getType().isAssignableFrom(propertyValue.getClass()));				
 			}
-			assertFalse = booleans.contains(booleanValI);
-			if (assertFalse) {
-				assertFalse(booleans.add(booleanValI));
+			//show that the values are reasonable unique
+			if (propertyDefinition.getType() != Boolean.class) {
+				assertTrue(values.size() > 10);
 			} else {
-				assertTrue(booleans.add(booleanValI));
+				assertEquals(2, values.size());
 			}
 		}
 	}
@@ -131,19 +106,28 @@ public class AT_TestRegionPropertyId {
 		List<TestRegionPropertyId> actualValues = TestRegionPropertyId.getPropertesWithDefaultValues();
 
 		assertNotNull(actualValues);
-		assertTrue(!actualValues.isEmpty());
-		assertEquals(expectedValues, actualValues);
+		assertEquals(expectedValues.size(), actualValues.size());
+		Set<TestRegionPropertyId> setOfExpectedValues = new LinkedHashSet<>(expectedValues);
+		Set<TestRegionPropertyId> setOfActualValues = new LinkedHashSet<>(actualValues);
+		assertEquals(setOfExpectedValues, setOfActualValues);
+		assertEquals(expectedValues.size(), setOfExpectedValues.size());
+		assertEquals(actualValues.size(), setOfActualValues.size());
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPropertesWithoutDefaultValues", args = {})
 	public void testGetPropertesWithoutDefaultValues() {
-		List<TestRegionPropertyId> expectedValues = Arrays.asList(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
+		List<TestRegionPropertyId> expectedValues = Arrays
+				.asList(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 		List<TestRegionPropertyId> actualValues = TestRegionPropertyId.getPropertesWithoutDefaultValues();
 
 		assertNotNull(actualValues);
-		assertTrue(!actualValues.isEmpty());
-		assertEquals(expectedValues, actualValues);
+		assertEquals(expectedValues.size(), actualValues.size());
+		Set<TestRegionPropertyId> setOfExpectedValues = new LinkedHashSet<>(expectedValues);
+		Set<TestRegionPropertyId> setOfActualValues = new LinkedHashSet<>(actualValues);
+		assertEquals(setOfExpectedValues, setOfActualValues);
+		assertEquals(expectedValues.size(), setOfExpectedValues.size());
+		assertEquals(actualValues.size(), setOfActualValues.size());
 	}
 
 	@Test
@@ -166,15 +150,26 @@ public class AT_TestRegionPropertyId {
 	@Test
 	@UnitTestMethod(name = "getRandomRegionPropertyId", args = { RandomGenerator.class })
 	public void testGetRandomRegionPropertyId() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7346795875603186755L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8246696863539332004L);
 
 		List<TestRegionPropertyId> applicableValues = Arrays.asList(TestRegionPropertyId.values());
+		Map<TestRegionPropertyId, Integer> valueCounter = new LinkedHashMap<>();
 
-		for (int i = 0; i < applicableValues.size(); i++) {
-			TestRegionPropertyId actualValue = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
+		for (int i = 0; i < 100; i++) {
+			for (int j = 0; j < applicableValues.size(); j++) {
+				TestRegionPropertyId actualValue = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
 
-			assertNotNull(actualValue);
-			assertTrue(applicableValues.contains(actualValue));
+				assertNotNull(actualValue);
+				assertTrue(applicableValues.contains(actualValue));
+				int numTimes = 1;
+				if (valueCounter.containsKey(actualValue))
+					numTimes = valueCounter.get(actualValue) + 1;
+				valueCounter.put(actualValue, numTimes);
+			}
+		}
+		for (TestRegionPropertyId propertyId : valueCounter.keySet()) {
+			int numTimes = valueCounter.get(propertyId);
+			assertTrue(numTimes >= 90);
 		}
 	}
 }
