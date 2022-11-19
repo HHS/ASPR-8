@@ -182,17 +182,14 @@ public class AT_RegionLabeler {
 
 			// Person region update event
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				if (randomGenerator.nextInt(100) > 50) {
-					RegionId personRegion = regionsDataManager.getPersonRegion(personId);
-					assertNotNull(personRegion);
-					RegionId nextRegion = regions.get(randomGenerator.nextInt(regions.size()));
-					regionsDataManager.setPersonRegion(personId, nextRegion);
-					PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId,
-							personRegion, nextRegion);
-					Object expectedLabel = func.apply(personRegion);
-					Object actualLabel = regionLabeler.getPastLabel(c, personRegionUpdateEvent);
-					assertEquals(expectedLabel, actualLabel);
-				}
+				RegionId personRegion = regionsDataManager.getPersonRegion(personId);
+				RegionId nextRegion = regions.get(randomGenerator.nextInt(regions.size()));
+				regionsDataManager.setPersonRegion(personId, nextRegion);
+				PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId,
+						personRegion, nextRegion);
+				Object expectedLabel = func.apply(personRegion);
+				Object actualLabel = regionLabeler.getPastLabel(c, personRegionUpdateEvent);
+				assertEquals(expectedLabel, actualLabel);
 			}
 
 		});
