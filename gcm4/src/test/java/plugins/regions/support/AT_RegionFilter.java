@@ -1,5 +1,6 @@
 package plugins.regions.support;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,6 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.NucleusError;
 import nucleus.SimulationContext;
 import plugins.partitions.support.Filter;
 import plugins.partitions.support.FilterSensitivity;
@@ -26,11 +28,10 @@ import util.errors.ContractException;
 @UnitTest(target = RegionFilter.class)
 public class AT_RegionFilter {
 
-
 	@Test
-	@UnitTestConstructor(args = { Set.class })
-	public void testConstructor() {
-		RegionsActionSupport.testConsumer(100, 4602637405159227338L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+	@UnitTestConstructor(args = { RegionId[].class })
+	public void testConstructorWithArray() {
+		RegionsActionSupport.testConsumer(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			/* precondition: if the set is null */
 			Set<RegionId> regionIds = null;
@@ -38,20 +39,47 @@ public class AT_RegionFilter {
 			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
 
 			/* precondition: if the region is unknown */
-			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
-			assertThrows(RuntimeException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			// precondition: null region id
+			contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
 
 	}
 
-	
+	@Test
+	@UnitTestConstructor(args = { Set.class })
+	public void testConstructorWithSet() {
+		RegionsActionSupport.testConsumer(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+
+			/* precondition: if the set is null */
+			Set<RegionId> regionIds = null;
+
+			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
+
+			/* precondition: if the region is unknown */
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+
+			// precondition: null region id
+			contractException = assertThrows(ContractException.class,
+					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+
+		});
+
+	}
+
 	@Test
 	@UnitTestMethod(name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
-		RegionsActionSupport.testConsumer(100, 2916119612012950359L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(100, 2916119612012950359L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			Filter filter = new RegionFilter(TestRegionId.REGION_1);
 
@@ -67,7 +95,7 @@ public class AT_RegionFilter {
 	@Test
 	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
-		RegionsActionSupport.testConsumer(100, 28072097989345652L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+		RegionsActionSupport.testConsumer(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -75,7 +103,8 @@ public class AT_RegionFilter {
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1) || regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
+				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1)
+						|| regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);
 			}
@@ -91,5 +120,40 @@ public class AT_RegionFilter {
 
 		});
 
+	}
+
+	@Test
+	@UnitTestMethod(name = "toString", args = {})
+	public void testToString() {
+		Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
+
+		String expectedString = "RegionFilter [regionIds=[REGION_1, REGION_2]]";
+
+		assertEquals(expectedString, filter.toString());
+	}
+
+	@Test
+	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
+	public void testValidate() {
+		RegionsActionSupport.testConsumer(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
+			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
+
+			assertDoesNotThrow(() -> filter.validate(c));
+
+			// precondition: null simulation context
+			ContractException contractException = assertThrows(ContractException.class, () -> filter.validate(null));
+			assertEquals(NucleusError.NULL_SIMULATION_CONTEXT, contractException.getErrorType());
+
+			RegionId badRegion = null;
+			// precondition: region id is null
+			Filter badFilter1 = new RegionFilter(badRegion);
+			contractException = assertThrows(ContractException.class, () -> badFilter1.validate(c));
+			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
+
+			// precondition: region id is unknown
+			Filter badFilter2 = new RegionFilter(TestRegionId.getUnknownRegionId());
+			contractException = assertThrows(ContractException.class, () -> badFilter2.validate(c));
+			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
+		});
 	}
 }

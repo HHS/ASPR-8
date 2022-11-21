@@ -41,7 +41,7 @@ public class AT_SimpleRegionId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleRegionId id_1 = new SimpleRegionId(2);
 		SimpleRegionId id_2 = new SimpleRegionId(5);
@@ -50,30 +50,32 @@ public class AT_SimpleRegionId {
 		SimpleRegionId id_5 = new SimpleRegionId("A");
 		SimpleRegionId id_6 = new SimpleRegionId("B");
 
+		// reflexive
 		assertEquals(id_1, id_1);
-		assertNotEquals(id_1, id_2);
+		assertEquals(id_2, id_2);
+		assertEquals(id_3, id_3);
+		assertEquals(id_4, id_4);
+		assertEquals(id_5, id_5);
+		assertEquals(id_6, id_6);
+
+		// symmetric
 		assertEquals(id_1, id_3);
+		assertEquals(id_3, id_1);
+		assertEquals(id_4, id_5);
+		assertEquals(id_5, id_4);
+
+		assertNotEquals(id_1, id_2);
 		assertNotEquals(id_1, id_4);
 		assertNotEquals(id_1, id_5);
 		assertNotEquals(id_1, id_6);
 
 		assertNotEquals(id_2, id_1);
-		assertEquals(id_2, id_2);
 		assertNotEquals(id_2, id_3);
 		assertNotEquals(id_2, id_4);
 		assertNotEquals(id_2, id_5);
 		assertNotEquals(id_2, id_6);
 
-		assertNotEquals(id_2, id_1);
-		assertEquals(id_2, id_2);
-		assertNotEquals(id_2, id_3);
-		assertNotEquals(id_2, id_4);
-		assertNotEquals(id_2, id_5);
-		assertNotEquals(id_2, id_6);
-
-		assertEquals(id_3, id_1);
 		assertNotEquals(id_3, id_2);
-		assertEquals(id_3, id_3);
 		assertNotEquals(id_3, id_4);
 		assertNotEquals(id_3, id_5);
 		assertNotEquals(id_3, id_6);
@@ -81,15 +83,11 @@ public class AT_SimpleRegionId {
 		assertNotEquals(id_4, id_1);
 		assertNotEquals(id_4, id_2);
 		assertNotEquals(id_4, id_3);
-		assertEquals(id_4, id_4);
-		assertEquals(id_4, id_5);
 		assertNotEquals(id_4, id_6);
 
 		assertNotEquals(id_5, id_1);
 		assertNotEquals(id_5, id_2);
 		assertNotEquals(id_5, id_3);
-		assertEquals(id_5, id_4);
-		assertEquals(id_5, id_5);
 		assertNotEquals(id_5, id_6);
 
 		assertNotEquals(id_6, id_1);
@@ -97,7 +95,6 @@ public class AT_SimpleRegionId {
 		assertNotEquals(id_6, id_3);
 		assertNotEquals(id_6, id_4);
 		assertNotEquals(id_6, id_5);
-		assertEquals(id_6, id_6);
 
 		assertNotEquals(id_1, null);
 		assertNotEquals(id_2, null);
@@ -118,7 +115,7 @@ public class AT_SimpleRegionId {
 			SimpleRegionId s2 = new SimpleRegionId(i);
 			assertEquals(s1.hashCode(), s2.hashCode());
 		}
-		
+
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {
 			boolean unique = hashCodes.add(new SimpleRegionId(i).hashCode());
@@ -126,5 +123,4 @@ public class AT_SimpleRegionId {
 		}
 
 	}
-
 }

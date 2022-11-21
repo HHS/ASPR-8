@@ -5,12 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.Event;
 import nucleus.Plugin;
 import nucleus.SimulationContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
@@ -25,6 +28,7 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
+import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
@@ -47,7 +51,7 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = {SimulationContext.class, PersonId.class})
+	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 
 		/*
@@ -56,7 +60,7 @@ public class AT_RegionLabeler {
 		 * person. Get the label from the region labeler from the person id
 		 * alone. Compare the two labels for equality.
 		 */
-		
+
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// build a region labeler with a function that can be tested
@@ -67,10 +71,8 @@ public class AT_RegionLabeler {
 
 		RegionLabeler regionLabeler = new RegionLabeler(function);
 
-		
-
 		// add a few people to the simulation spread across the various
-		// regions		
+		// regions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			int numberOfPeople = 2 * TestRegionId.size();
@@ -81,11 +83,9 @@ public class AT_RegionLabeler {
 			for (int i = 0; i < numberOfPeople; i++) {
 				RegionId regionId = TestRegionId.values()[i % TestRegionId.size()];
 				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionId).build();
-				peopleDataManager.addPerson(personConstructionData);				
+				peopleDataManager.addPerson(personConstructionData);
 			}
 		}));
-		
-
 
 		/*
 		 * Have the agent show that the region labeler created above
@@ -95,7 +95,7 @@ public class AT_RegionLabeler {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			
+
 			List<PersonId> people = peopleDataManager.getPeople();
 			for (PersonId personId : people) {
 
@@ -112,25 +112,24 @@ public class AT_RegionLabeler {
 			}
 		}));
 
-		//test preconditions
+		// test preconditions
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
-			
-			//if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class, ()->	regionLabeler.getLabel(c, new PersonId(100000)));
+
+			// if the person does not exist
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> regionLabeler.getLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-			
-			//if the person id is null
-			contractException = assertThrows(ContractException.class, ()->	regionLabeler.getLabel(c, null));
+
+			// if the person id is null
+			contractException = assertThrows(ContractException.class, () -> regionLabeler.getLabel(c, null));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-			
 		}));
-		
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		RegionsActionSupport.testConsumers(0, 4893773537497436066L,TimeTrackingPolicy.DO_NOT_TRACK_TIME, testPlugin);
-		
+		RegionsActionSupport.testConsumers(0, 4893773537497436066L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, testPlugin);
+
 	}
 
 	@Test
@@ -145,7 +144,7 @@ public class AT_RegionLabeler {
 		RegionLabeler regionLabeler = new RegionLabeler((c) -> null);
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = regionLabeler.getLabelerSensitivities();
-		
+
 		// show that there is exactly one sensitivity
 		assertEquals(1, labelerSensitivities.size());
 
@@ -162,5 +161,37 @@ public class AT_RegionLabeler {
 		labelerSensitivity.getPersonId(personRegionUpdateEvent);
 
 	}
-	
+
+	@Test
+	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	public void testGetPastLabel() {
+
+		RegionsActionSupport.testConsumer(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+
+			Function<RegionId, Object> func = (g) -> {
+				TestRegionId testRegionId = (TestRegionId) g;
+				return testRegionId.ordinal();
+			};
+
+			RegionLabeler regionLabeler = new RegionLabeler(func);
+			List<RegionId> regions = new ArrayList<>(regionsDataManager.getRegionIds());
+
+			// Person region update event
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				RegionId personRegion = regionsDataManager.getPersonRegion(personId);
+				RegionId nextRegion = regions.get(randomGenerator.nextInt(regions.size()));
+				regionsDataManager.setPersonRegion(personId, nextRegion);
+				PersonRegionUpdateEvent personRegionUpdateEvent = new PersonRegionUpdateEvent(personId,
+						personRegion, nextRegion);
+				Object expectedLabel = func.apply(personRegion);
+				Object actualLabel = regionLabeler.getPastLabel(c, personRegionUpdateEvent);
+				assertEquals(expectedLabel, actualLabel);
+			}
+
+		});
+	}
 }
