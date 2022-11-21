@@ -41,7 +41,7 @@ public class AT_SimpleGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleGlobalPropertyId id_1 = new SimpleGlobalPropertyId(2);
 		SimpleGlobalPropertyId id_2 = new SimpleGlobalPropertyId(5);
@@ -49,10 +49,11 @@ public class AT_SimpleGlobalPropertyId {
 		SimpleGlobalPropertyId id_4 = new SimpleGlobalPropertyId("A");
 		SimpleGlobalPropertyId id_5 = new SimpleGlobalPropertyId("A");
 		SimpleGlobalPropertyId id_6 = new SimpleGlobalPropertyId("B");
+		SimpleGlobalPropertyId id_7 = new SimpleGlobalPropertyId("A");
 
-		assertEquals(id_1, id_1);
+		assertEquals(id_1, id_1); 		// testing reflexive property
 		assertNotEquals(id_1, id_2);
-		assertEquals(id_1, id_3);
+		assertEquals(id_1, id_3);		// part of reflective property test
 		assertNotEquals(id_1, id_4);
 		assertNotEquals(id_1, id_5);
 		assertNotEquals(id_1, id_6);
@@ -64,14 +65,7 @@ public class AT_SimpleGlobalPropertyId {
 		assertNotEquals(id_2, id_5);
 		assertNotEquals(id_2, id_6);
 
-		assertNotEquals(id_2, id_1);
-		assertEquals(id_2, id_2);
-		assertNotEquals(id_2, id_3);
-		assertNotEquals(id_2, id_4);
-		assertNotEquals(id_2, id_5);
-		assertNotEquals(id_2, id_6);
-
-		assertEquals(id_3, id_1);
+		assertEquals(id_3, id_1);		// part of reflective property test
 		assertNotEquals(id_3, id_2);
 		assertEquals(id_3, id_3);
 		assertNotEquals(id_3, id_4);
@@ -82,8 +76,9 @@ public class AT_SimpleGlobalPropertyId {
 		assertNotEquals(id_4, id_2);
 		assertNotEquals(id_4, id_3);
 		assertEquals(id_4, id_4);
-		assertEquals(id_4, id_5);
+		assertEquals(id_4, id_5);		// part of transitive property test
 		assertNotEquals(id_4, id_6);
+		assertEquals(id_4, id_7);		// part of transitive property test
 
 		assertNotEquals(id_5, id_1);
 		assertNotEquals(id_5, id_2);
@@ -91,6 +86,7 @@ public class AT_SimpleGlobalPropertyId {
 		assertEquals(id_5, id_4);
 		assertEquals(id_5, id_5);
 		assertNotEquals(id_5, id_6);
+		assertEquals(id_5, id_7);		// part of transitive property test
 
 		assertNotEquals(id_6, id_1);
 		assertNotEquals(id_6, id_2);
@@ -99,6 +95,7 @@ public class AT_SimpleGlobalPropertyId {
 		assertNotEquals(id_6, id_5);
 		assertEquals(id_6, id_6);
 
+		// null tests
 		assertNotEquals(id_1, null);
 		assertNotEquals(id_2, null);
 		assertNotEquals(id_3, null);

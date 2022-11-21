@@ -48,8 +48,13 @@ public class GlobalPropertyInitialization {
 				if (data.propertyDefinition.getDefaultValue().isEmpty()) {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
+			} else {
+				if (!data.propertyDefinition.getType().isAssignableFrom(data.value.getClass())) {
+					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE);
+				}
 			}
 		}
+
 
 		/**
 		 * Returns the GlobalPropertyInitialization formed from the inputs.
@@ -62,6 +67,9 @@ public class GlobalPropertyInitialization {
 		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if no property value was provided and the property
 		 *             definition does not contain a default value</li>
+		 *             <li>(@linkplain PropertyError#INCOMPATIBLE_VALUE)
+		 *             if the property value type is not compatible with the
+		 *             property definition</li>
 		 */
 		public GlobalPropertyInitialization build() {
 			try {

@@ -188,7 +188,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 		private Data(Data data) {
 			globalPropertyDefinitions.putAll(data.globalPropertyDefinitions);
-			globalPropertyValues.putAll(data.globalPropertyValues);
+			globalPropertyValues.putAll(this.globalPropertyValues);
 		}
 	}
 

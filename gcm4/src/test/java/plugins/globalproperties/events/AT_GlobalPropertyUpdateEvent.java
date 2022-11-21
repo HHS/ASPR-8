@@ -40,7 +40,7 @@ public class AT_GlobalPropertyUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyId", args = { })
+	@UnitTestMethod(name = "getPreviousPropertyValue", args = { })
 	public void testGetPreviousPropertyValue() {
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
 		Integer previousValue = 12;

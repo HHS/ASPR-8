@@ -1,8 +1,5 @@
 package plugins.globalproperties.actors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -23,20 +20,29 @@ import plugins.globalproperties.support.GlobalPropertyInitialization;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportId;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.SimpleReportId;
+import plugins.reports.support.*;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.util.properties.PropertyDefinition;
+import plugins.util.properties.PropertyError;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = GlobalPropertyReport.class)
 public class AT_GlobalPropertyReport {
 
 	@Test
-	@UnitTestMethod(name = "init", args = {ActorContext.class})
+	@UnitTestMethod(name = "builder", args = {})
+	public void testBuilder() {
+		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
+		assertNotNull(builder);
+	}
+
+	@Test
+	@UnitTestMethod(name = "init", args = {ActorContext.class}, tags = {UnitTag.INCOMPLETE})
 	public void testInit() {
 
 		/*
@@ -190,6 +196,66 @@ public class AT_GlobalPropertyReport {
 		}
 		return builder.build();
 	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "build", args = {})
+	public void testBuild() {
+		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
+		ReportId reportId = new SimpleReportId(1000);
+		GlobalPropertyReport report = builder.setReportId(reportId).build();
+
+		assertNotNull(report);
+
+		// precondition: report id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> GlobalPropertyReport.builder().build());
+		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includePropertyId", args = {GlobalPropertyId.class})
+	public void testIncludePropertyId () {
+		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
+
+		// precondition test: if the property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.includePropertyId(null));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includeAllExtantPropertyIds", args = {boolean.class})
+	public void testIncludeAllExtantPropertyIds () {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target =  GlobalPropertyReport.Builder.class, name = "includeNewPropertyIds", args = {boolean.class})
+	public void testIncludeNewPropertyIds() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "excludePropertyId", args = {GlobalPropertyId.class})
+	public void testExcludePropertyId () {
+		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
+
+		// precondition test: if the property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.excludePropertyId(null));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "setReportId", args = {ReportId.class})
+	public void testSetReportId () {
+		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
+
+		// precondition test: if the report id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.setReportId(null));
+		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
+
+	}
+
+
 
 	private static final ReportId REPORT_ID = new SimpleReportId("global property report");
 

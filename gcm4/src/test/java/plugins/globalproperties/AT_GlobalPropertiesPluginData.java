@@ -1,15 +1,9 @@
 package plugins.globalproperties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.*;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
+import nucleus.PluginData;
+import nucleus.PluginDataBuilder;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +16,8 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = GlobalPropertiesPluginData.class)
 
@@ -295,6 +291,45 @@ public class AT_GlobalPropertiesPluginData {
 		// if the global property value is null
 		contractException = assertThrows(ContractException.class, () -> globalInitialData.getGlobalPropertyValue(TestGlobalPropertyId.getUnknownGlobalPropertyId()));
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	public void testGetCloneBuilder() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+
+		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
+			builder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
+			builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator));
+		}
+
+		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
+		PluginDataBuilder cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		PluginData pluginData = cloneBuilder.build();
+		assertTrue(pluginData instanceof GlobalPropertiesPluginData);
+		GlobalPropertiesPluginData cloneGlobalPropertiesPluginData = (GlobalPropertiesPluginData) pluginData;
+
+		// show that the two plugin datas have the same property ids
+		Set<GlobalPropertyId> expectedGlobalPropertyIds = globalPropertiesPluginData.getGlobalPropertyIds();
+		Set<GlobalPropertyId> actualGlobalPropertyIds = cloneGlobalPropertiesPluginData.getGlobalPropertyIds();
+		assertEquals(expectedGlobalPropertyIds, actualGlobalPropertyIds);
+
+		// show that the two plugin datas have the same property definitions
+		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
+			PropertyDefinition expectedPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
+			PropertyDefinition actualPropertyDefinition = cloneGlobalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
+			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);}
+
+		// show that the two plugin datas have the same values
+		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
+			Object expectedValues = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+			Object actualValues = cloneGlobalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+			assertEquals(expectedValues, actualValues);
+		}
+
 
 	}
 
