@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
+import util.wrappers.MutableInteger;
 
 @UnitTest(target = TestRegionPropertyId.class)
 public class AT_TestRegionPropertyId {
@@ -81,9 +83,9 @@ public class AT_TestRegionPropertyId {
 			for (int i = 0; i < 100; i++) {
 				Object propertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
 				values.add(propertyValue);
-				assertTrue(propertyDefinition.getType().isAssignableFrom(propertyValue.getClass()));				
+				assertTrue(propertyDefinition.getType().isAssignableFrom(propertyValue.getClass()));
 			}
-			//show that the values are reasonable unique
+			// show that the values are reasonable unique
 			if (propertyDefinition.getType() != Boolean.class) {
 				assertTrue(values.size() > 10);
 			} else {
@@ -151,8 +153,13 @@ public class AT_TestRegionPropertyId {
 	public void testGetRandomRegionPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8246696863539332004L);
 
-		List<TestRegionPropertyId> applicableValues = Arrays.asList(TestRegionPropertyId.values());
-		Map<TestRegionPropertyId, Integer> valueCounter = new LinkedHashMap<>();
+		Set<TestRegionPropertyId> applicableValues = EnumSet.allOf(TestRegionPropertyId.class);
+		Map<TestRegionPropertyId, MutableInteger> valueCounter = new LinkedHashMap<>();
+
+		for(int i = 0; i < applicableValues.size(); i++) {
+			TestRegionPropertyId actualValue = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
+			valueCounter.put(actualValue, new MutableInteger());
+		}
 
 		for (int i = 0; i < 100; i++) {
 			for (int j = 0; j < applicableValues.size(); j++) {
@@ -160,15 +167,13 @@ public class AT_TestRegionPropertyId {
 
 				assertNotNull(actualValue);
 				assertTrue(applicableValues.contains(actualValue));
-				int numTimes = 1;
-				if (valueCounter.containsKey(actualValue))
-					numTimes = valueCounter.get(actualValue) + 1;
-				valueCounter.put(actualValue, numTimes);
+				valueCounter.get(actualValue).increment();
 			}
 		}
 		for (TestRegionPropertyId propertyId : valueCounter.keySet()) {
-			int numTimes = valueCounter.get(propertyId);
+			int numTimes = valueCounter.get(propertyId).getValue();
 			assertTrue(numTimes >= 90);
+			assertTrue(numTimes < 150);
 		}
 	}
 }
