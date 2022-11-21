@@ -2,7 +2,6 @@ package plugins.globalproperties;
 
 import java.util.*;
 
-import com.sun.jdi.Value;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
-import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
@@ -300,6 +298,7 @@ public class AT_GlobalPropertiesPluginData {
 	@UnitTestMethod(name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 		PluginDataBuilder cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
 		assertNotNull(cloneBuilder);
@@ -320,9 +319,9 @@ public class AT_GlobalPropertiesPluginData {
 
 		// show that the two plugin datas have the same values
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
-			List<Optional> expectedValues = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
-			List<Optional> actualValues = cloneGlobalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
-			assertIterableEquals(expectedValues, actualValues);
+			Object expectedValues = globalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+			Object actualValues = cloneGlobalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
+			assertEquals(expectedValues, actualValues);
 		}
 
 

@@ -56,6 +56,8 @@ public class AT_TestGlobalPropertyId {
 				case GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE:
 					idCounter.put(GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE, idCounter.get(GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE) + 1);
 					break;
+				default:
+					throw new RuntimeException("Unhandled Case");
 			}
 		}
 
@@ -92,6 +94,8 @@ public class AT_TestGlobalPropertyId {
 				case GLOBAL_PROPERTY_3_DOUBLE_MUTABLE:
 					idCounter.put(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, idCounter.get(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE) + 1);
 					break;
+				default:
+					throw new RuntimeException("Unhandled Case: Immutable Global Property ID");
 			}
 
 		}

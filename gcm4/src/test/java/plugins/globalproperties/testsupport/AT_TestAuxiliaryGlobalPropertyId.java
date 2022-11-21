@@ -52,14 +52,16 @@ public class AT_TestAuxiliaryGlobalPropertyId {
                 case GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE:
                     idCounter.put(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE) + 1);
                     break;
+                default:
+                    throw new RuntimeException("Unhandled Case");
             }
         }
         for (TestAuxiliaryGlobalPropertyId propertyId : idCounter.keySet()) {
             assertTrue(idCounter.get(propertyId) >= 30 && idCounter.get(propertyId) <= 150);
         }
 
-        assertTrue(idCounter.values().stream().mapToInt(a -> a).sum() == 600);
-        assertTrue(hashSetOfRandomIds.size() == 6);
+        assertEquals(idCounter.values().stream().mapToInt(a -> a).sum(), 600);
+        assertEquals(hashSetOfRandomIds.size(), 6);
 
     }
 
