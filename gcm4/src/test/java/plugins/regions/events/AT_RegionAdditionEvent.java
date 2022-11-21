@@ -58,14 +58,9 @@ public class AT_RegionAdditionEvent {
     @Test
     @UnitTestMethod(name = "getRegionId", args = {})
     public void testGetRegionId() {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3237014269401968266L);
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        // for (int i = 0; i < 15; i++) {
-        //     String value = Integer.toString(randomGenerator.nextInt(100));
-        //     builder.addValue(value);
-        // }
         builder.setRegionId(regionId);
 
         RegionAdditionEvent regionAdditionEvent = builder.build();
@@ -81,10 +76,6 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        // for (int i = 0; i < 15; i++) {
-        //     String value = Integer.toString(randomGenerator.nextInt(100));
-        //     builder.addValue(value);
-        // }
         builder.setRegionId(regionId);
 
         RegionAdditionEvent regionAdditionEvent = builder.build();
@@ -132,14 +123,9 @@ public class AT_RegionAdditionEvent {
     @Test
     @UnitTestMethod(target = RegionAdditionEvent.Builder.class, name = "setRegionId", args = { RegionId.class })
     public void testSetRegiodId() {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5731494247551639715L);
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        // for (int i = 0; i < 15; i++) {
-        //     String value = Integer.toString(randomGenerator.nextInt(100));
-        //     builder.addValue(value);
-        // }
         builder.setRegionId(regionId);
 
         RegionAdditionEvent regionAdditionEvent = builder.build();
