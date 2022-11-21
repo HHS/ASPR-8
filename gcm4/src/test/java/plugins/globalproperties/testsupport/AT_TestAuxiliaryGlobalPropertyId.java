@@ -8,11 +8,10 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-import java.util.EnumSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static plugins.globalproperties.testsupport.TestAuxiliaryGlobalPropertyId.*;
 
 @UnitTest(target = TestAuxiliaryGlobalPropertyId.class)
 public class AT_TestAuxiliaryGlobalPropertyId {
@@ -20,15 +19,47 @@ public class AT_TestAuxiliaryGlobalPropertyId {
     @Test
     @UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
     public void testGetRandomGlobalPropertyId() {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6231414347629293321L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5005107416828888981L);
+        HashMap<TestAuxiliaryGlobalPropertyId, Integer> idCounter = new HashMap<>();
+        Set<TestAuxiliaryGlobalPropertyId> hashSetOfRandomIds = new LinkedHashSet<>();
+        idCounter.put(GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE, 0);
+        idCounter.put(GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE, 0);
+        idCounter.put(GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE, 0);
+        idCounter.put(GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE, 0);
+        idCounter.put(GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE, 0);
+        idCounter.put(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE, 0);
 
         // show that generated values are reasonably unique
-        Set<GlobalPropertyId> setOfRandomIds = new LinkedHashSet<>();
-        for (int i = 0; i < 100; i++) {
-            GlobalPropertyId globalPropertyId = TestAuxiliaryGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
-            setOfRandomIds.add(globalPropertyId);
+        for (int i = 0; i < 600; i++) {
+            TestAuxiliaryGlobalPropertyId testAuxiliaryGlobalPropertyId = TestAuxiliaryGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
+            hashSetOfRandomIds.add(testAuxiliaryGlobalPropertyId);
+            switch(testAuxiliaryGlobalPropertyId) {
+                case GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE:
+                    idCounter.put(GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE) + 1);
+                    break;
+                case GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE:
+                    idCounter.put(GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE) + 1);
+                    break;
+                case GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE:
+                    idCounter.put(GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE) + 1);
+                    break;
+                case GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE:
+                    idCounter.put(GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE) + 1);
+                    break;
+                case GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE:
+                    idCounter.put(GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE) + 1);
+                    break;
+                case GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE:
+                    idCounter.put(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE) + 1);
+                    break;
+            }
         }
-        assertTrue(setOfRandomIds.size() == 6);
+        for (TestAuxiliaryGlobalPropertyId propertyId : idCounter.keySet()) {
+            assertTrue(idCounter.get(propertyId) >= 30 && idCounter.get(propertyId) <= 150);
+        }
+
+        assertTrue(idCounter.values().stream().mapToInt(a -> a).sum() == 600);
+        assertTrue(hashSetOfRandomIds.size() == 6);
 
     }
 
