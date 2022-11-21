@@ -7,11 +7,11 @@ import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
+import util.wrappers.MutableInteger;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static plugins.globalproperties.testsupport.TestAuxiliaryGlobalPropertyId.*;
 
 @UnitTest(target = TestAuxiliaryGlobalPropertyId.class)
 public class AT_TestAuxiliaryGlobalPropertyId {
@@ -20,47 +20,24 @@ public class AT_TestAuxiliaryGlobalPropertyId {
     @UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
     public void testGetRandomGlobalPropertyId() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5005107416828888981L);
-        HashMap<TestAuxiliaryGlobalPropertyId, Integer> idCounter = new HashMap<>();
+        Map<TestAuxiliaryGlobalPropertyId, MutableInteger> idCounter = new LinkedHashMap<>();
         Set<TestAuxiliaryGlobalPropertyId> hashSetOfRandomIds = new LinkedHashSet<>();
-        idCounter.put(GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE, 0);
-        idCounter.put(GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE, 0);
-        idCounter.put(GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE, 0);
-        idCounter.put(GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE, 0);
-        idCounter.put(GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE, 0);
-        idCounter.put(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE, 0);
+
+        for (TestAuxiliaryGlobalPropertyId testAuxiliaryGlobalPropertyId : TestAuxiliaryGlobalPropertyId.values()) {
+            idCounter.put(testAuxiliaryGlobalPropertyId, new MutableInteger());
+        }
 
         // show that generated values are reasonably unique
         for (int i = 0; i < 600; i++) {
             TestAuxiliaryGlobalPropertyId testAuxiliaryGlobalPropertyId = TestAuxiliaryGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
             hashSetOfRandomIds.add(testAuxiliaryGlobalPropertyId);
-            switch(testAuxiliaryGlobalPropertyId) {
-                case GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE:
-                    idCounter.put(GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_1_BOOLEAN_MUTABLE) + 1);
-                    break;
-                case GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE:
-                    idCounter.put(GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_2_INTEGER_MUTABLE) + 1);
-                    break;
-                case GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE:
-                    idCounter.put(GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_3_DOUBLE_MUTABLE) + 1);
-                    break;
-                case GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE:
-                    idCounter.put(GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_4_BOOLEAN_IMMUTABLE) + 1);
-                    break;
-                case GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE:
-                    idCounter.put(GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_5_INTEGER_IMMUTABLE) + 1);
-                    break;
-                case GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE:
-                    idCounter.put(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE, idCounter.get(GLOBAL_AUX_PROPERTY_6_DOUBLE_IMMUTABLE) + 1);
-                    break;
-                default:
-                    throw new RuntimeException("Unhandled Case");
-            }
+            idCounter.get(testAuxiliaryGlobalPropertyId).increment();
         }
         for (TestAuxiliaryGlobalPropertyId propertyId : idCounter.keySet()) {
-            assertTrue(idCounter.get(propertyId) >= 30 && idCounter.get(propertyId) <= 150);
+            assertTrue(idCounter.get(propertyId).getValue() >= 30 && idCounter.get(propertyId).getValue() <= 150);
         }
 
-        assertEquals(idCounter.values().stream().mapToInt(a -> a).sum(), 600);
+        assertEquals(idCounter.values().stream().mapToInt(a -> a.getValue()).sum(), 600);
         assertEquals(hashSetOfRandomIds.size(), 6);
 
     }

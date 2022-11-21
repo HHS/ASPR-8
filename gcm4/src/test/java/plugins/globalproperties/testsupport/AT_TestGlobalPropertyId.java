@@ -12,9 +12,9 @@ import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
+import util.wrappers.MutableInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static plugins.globalproperties.testsupport.TestGlobalPropertyId.*;
 
 @UnitTest(target = TestGlobalPropertyId.class)
 public class AT_TestGlobalPropertyId {
@@ -23,89 +23,54 @@ public class AT_TestGlobalPropertyId {
 	@UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
 	public void testGetRandomGlobalPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(242770195073333036L);
-		HashMap<TestGlobalPropertyId, Integer> idCounter = new HashMap<>();
+		HashMap<TestGlobalPropertyId, MutableInteger> idCounter = new HashMap<>();
 		Set<GlobalPropertyId> setOfRandomIds = new LinkedHashSet<>();
-		idCounter.put(GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, 0);
-		idCounter.put(GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 0);
-		idCounter.put(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, 0);
-		idCounter.put(GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE, 0);
-		idCounter.put(GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE, 0);
-		idCounter.put(GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE, 0);
-
+		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
+			idCounter.put(testGlobalPropertyId, new MutableInteger());
+		}
 
 		// show that generated values are reasonably unique
 		for (int i = 0; i < 600; i++) {
 			TestGlobalPropertyId globalPropertyId = TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
 			setOfRandomIds.add(globalPropertyId);
-			switch(globalPropertyId) {
-				case GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, idCounter.get(GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE) + 1);
-					break;
-				case GLOBAL_PROPERTY_2_INTEGER_MUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_2_INTEGER_MUTABLE, idCounter.get(GLOBAL_PROPERTY_2_INTEGER_MUTABLE) + 1);
-					break;
-				case GLOBAL_PROPERTY_3_DOUBLE_MUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, idCounter.get(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE) + 1);
-					break;
-				case GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE, idCounter.get(GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE) + 1);
-					break;
-				case GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE, idCounter.get(GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE) + 1);
-					break;
-				case GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE, idCounter.get(GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE) + 1);
-					break;
-				default:
-					throw new RuntimeException("Unhandled Case");
-			}
+			idCounter.get(globalPropertyId).increment();
 		}
 
 		for (TestGlobalPropertyId propertyId : idCounter.keySet()) {
-			assertTrue(idCounter.get(propertyId) >= 30 && idCounter.get(propertyId) <= 150);
+			assertTrue(idCounter.get(propertyId).getValue() >= 30 && idCounter.get(propertyId).getValue() <= 150);
 		}
 
-		assertTrue(idCounter.values().stream().mapToInt(a -> a).sum() == 600);
-		assertTrue(setOfRandomIds.size() == 6);
+		assertEquals(idCounter.values().stream().mapToInt(a -> a.getValue()).sum(), 600);
+		assertEquals(setOfRandomIds.size(), 6);
 	}
 
 	@Test
 	@UnitTestMethod(name = "getRandomMutableGlobalPropertyId", args = {RandomGenerator.class})
 	public void testGetRandomMutableGlobalPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6104930304058715301L);
-		HashMap<TestGlobalPropertyId, Integer> idCounter = new HashMap<>();
+		HashMap<TestGlobalPropertyId, MutableInteger> idCounter = new HashMap<>();
 		Set<GlobalPropertyId> setOfRandomMutableIds = new LinkedHashSet<>();
-		idCounter.put(GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, 0);
-		idCounter.put(GLOBAL_PROPERTY_2_INTEGER_MUTABLE, 0);
-		idCounter.put(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, 0);
+
+		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
+			if (testGlobalPropertyId.getPropertyDefinition().propertyValuesAreMutable()) {
+				idCounter.put(testGlobalPropertyId, new MutableInteger());
+			}
+		}
 
 		// show that generated values are reasonably unique
 		for (int i = 0; i < 300; i++){
 			TestGlobalPropertyId mutableGlobalPropertyId = TestGlobalPropertyId.getRandomMutableGlobalPropertyId(randomGenerator);
 			setOfRandomMutableIds.add(mutableGlobalPropertyId);
 			assertTrue(mutableGlobalPropertyId.getPropertyDefinition().propertyValuesAreMutable());
-			switch(mutableGlobalPropertyId) {
-				case GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, idCounter.get(GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE) + 1);
-					break;
-				case GLOBAL_PROPERTY_2_INTEGER_MUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_2_INTEGER_MUTABLE, idCounter.get(GLOBAL_PROPERTY_2_INTEGER_MUTABLE) + 1);
-					break;
-				case GLOBAL_PROPERTY_3_DOUBLE_MUTABLE:
-					idCounter.put(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, idCounter.get(GLOBAL_PROPERTY_3_DOUBLE_MUTABLE) + 1);
-					break;
-				default:
-					throw new RuntimeException("Unhandled Case: Immutable Global Property ID");
-			}
-
+			idCounter.get(mutableGlobalPropertyId).increment();
 		}
 
 		for (TestGlobalPropertyId propertyId : idCounter.keySet()) {
-			assertTrue(idCounter.get(propertyId) >= 30 && idCounter.get(propertyId) <= 150);
+			assertTrue(idCounter.get(propertyId).getValue() >= 30 && idCounter.get(propertyId).getValue() <= 150);
 		}
 
-		assertTrue(idCounter.values().stream().mapToInt(a -> a).sum() == 300);
-		assertTrue(setOfRandomMutableIds.size() == 3);
+		assertEquals(idCounter.values().stream().mapToInt(a -> a.getValue()).sum(), 300);
+		assertEquals(setOfRandomMutableIds.size(), 3);
 	}
 
 	@Test
