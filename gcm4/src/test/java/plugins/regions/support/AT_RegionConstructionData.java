@@ -36,11 +36,10 @@ public class AT_RegionConstructionData {
 
         RegionId regionId = new SimpleRegionId(1000);
 
-        int numValues = randomGenerator.nextInt(15);
         List<String> expectedStringValues = new ArrayList<>();
         List<Integer> expectedIntValues = new ArrayList<>();
 
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             int integerValue = randomGenerator.nextInt(100);
             String stringValue = Integer.toString(randomGenerator.nextInt(100));
 
@@ -66,10 +65,9 @@ public class AT_RegionConstructionData {
 
         RegionId regionId = new SimpleRegionId(1000);
 
-        int numValues = randomGenerator.nextInt(15);
         Map<RegionPropertyId, Object> expectedValues = new LinkedHashMap<>();
 
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             RegionPropertyId regionPropertyId = new SimpleRegionPropertyId(i * 2 + 5);
             int integerValue = randomGenerator.nextInt(100);
 
@@ -127,10 +125,9 @@ public class AT_RegionConstructionData {
 
         RegionId regionId = new SimpleRegionId(1000);
 
-        int numValues = randomGenerator.nextInt(15);
         Map<RegionPropertyId, Object> expectedValues = new LinkedHashMap<>();
 
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             RegionPropertyId regionPropertyId = new SimpleRegionPropertyId(i * 2 + 5);
             int integerValue = randomGenerator.nextInt(100);
 
@@ -180,11 +177,10 @@ public class AT_RegionConstructionData {
 
         RegionId regionId = new SimpleRegionId(1000);
 
-        int numValues = randomGenerator.nextInt(15);
         List<String> expectedStringValues = new ArrayList<>();
         List<Integer> expectedIntValues = new ArrayList<>();
 
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             int integerValue = randomGenerator.nextInt(100);
             String stringValue = Integer.toString(randomGenerator.nextInt(100));
 
