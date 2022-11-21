@@ -56,8 +56,7 @@ public class AT_RegionPropertyDefinitionInitialization {
 
         List<Pair<RegionId, Object>> expectedValues = new ArrayList<>();
 
-        int numValues = randomGenerator.nextInt(15);
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             int value = randomGenerator.nextInt(100);
             RegionId regionId = new SimpleRegionId(i * 2 + 5);
             builder.addPropertyValue(regionId, value);
@@ -95,8 +94,7 @@ public class AT_RegionPropertyDefinitionInitialization {
                 .build();
         builder.setPropertyDefinition(propertyDefinition).setRegionPropertyId(regionPropertyId);
 
-        int numValues = randomGenerator.nextInt(15);
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             int value = randomGenerator.nextInt(100);
             RegionId regionId = new SimpleRegionId(i * 2 + 5);
             builder.addPropertyValue(regionId, value);
@@ -172,8 +170,7 @@ public class AT_RegionPropertyDefinitionInitialization {
 
         List<Pair<RegionId, Object>> expectedValues = new ArrayList<>();
 
-        int numValues = randomGenerator.nextInt(15);
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             int value = randomGenerator.nextInt(100);
             RegionId regionId = new SimpleRegionId(i * 2 + 5);
             builder.addPropertyValue(regionId, value);
