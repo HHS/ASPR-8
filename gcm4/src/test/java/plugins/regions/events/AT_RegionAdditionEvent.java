@@ -39,9 +39,7 @@ public class AT_RegionAdditionEvent {
         List<String> expectedStringValues = new ArrayList<>();
         List<Integer> expectedIntValues = new ArrayList<>();
 
-        int numValues = randomGenerator.nextInt(15);
-
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             int intValue = randomGenerator.nextInt(100);
             String value = Integer.toString(randomGenerator.nextInt(100));
             expectedStringValues.add(value);
@@ -64,10 +62,10 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        for (int i = 0; i < 15; i++) {
-            String value = Integer.toString(randomGenerator.nextInt(100));
-            builder.addValue(value);
-        }
+        // for (int i = 0; i < 15; i++) {
+        //     String value = Integer.toString(randomGenerator.nextInt(100));
+        //     builder.addValue(value);
+        // }
         builder.setRegionId(regionId);
 
         RegionAdditionEvent regionAdditionEvent = builder.build();
@@ -83,10 +81,10 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        for (int i = 0; i < 15; i++) {
-            String value = Integer.toString(randomGenerator.nextInt(100));
-            builder.addValue(value);
-        }
+        // for (int i = 0; i < 15; i++) {
+        //     String value = Integer.toString(randomGenerator.nextInt(100));
+        //     builder.addValue(value);
+        // }
         builder.setRegionId(regionId);
 
         RegionAdditionEvent regionAdditionEvent = builder.build();
@@ -110,9 +108,7 @@ public class AT_RegionAdditionEvent {
         List<String> expectedStringValues = new ArrayList<>();
         List<Integer> expectedIntValues = new ArrayList<>();
 
-        int numValues = randomGenerator.nextInt(15);
-
-        for (int i = 0; i < numValues; i++) {
+        for (int i = 0; i < 15; i++) {
             int intValue = randomGenerator.nextInt(100);
             String value = Integer.toString(randomGenerator.nextInt(100));
             expectedStringValues.add(value);
@@ -140,10 +136,10 @@ public class AT_RegionAdditionEvent {
         RegionAdditionEvent.Builder builder = RegionAdditionEvent.builder();
         RegionId regionId = new SimpleRegionId(1000);
 
-        for (int i = 0; i < 15; i++) {
-            String value = Integer.toString(randomGenerator.nextInt(100));
-            builder.addValue(value);
-        }
+        // for (int i = 0; i < 15; i++) {
+        //     String value = Integer.toString(randomGenerator.nextInt(100));
+        //     builder.addValue(value);
+        // }
         builder.setRegionId(regionId);
 
         RegionAdditionEvent regionAdditionEvent = builder.build();
