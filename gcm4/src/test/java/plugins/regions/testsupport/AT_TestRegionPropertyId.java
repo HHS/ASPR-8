@@ -156,8 +156,7 @@ public class AT_TestRegionPropertyId {
 		Set<TestRegionPropertyId> applicableValues = EnumSet.allOf(TestRegionPropertyId.class);
 		Map<TestRegionPropertyId, MutableInteger> valueCounter = new LinkedHashMap<>();
 
-		for(int i = 0; i < applicableValues.size(); i++) {
-			TestRegionPropertyId actualValue = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
+		for(TestRegionPropertyId actualValue : TestRegionPropertyId.values()) {
 			valueCounter.put(actualValue, new MutableInteger());
 		}
 
