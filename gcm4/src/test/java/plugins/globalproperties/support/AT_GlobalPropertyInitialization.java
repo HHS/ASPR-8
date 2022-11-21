@@ -118,7 +118,7 @@ public class AT_GlobalPropertyInitialization {
     public void testGetPropertyDefinition() {
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
         GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
-        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("eightTestId");
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("eighthTestId");
         Integer value = 6;
 
         builder.setGlobalPropertyId(globalPropertyId)
@@ -136,7 +136,7 @@ public class AT_GlobalPropertyInitialization {
     public void testGetValue() {
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
         GlobalPropertyInitialization.Builder builder = GlobalPropertyInitialization.builder();
-        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("eightTestId");
+        GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("eighthTestId");
         Integer value = 6;
 
         builder.setGlobalPropertyId(globalPropertyId)
