@@ -1,5 +1,6 @@
 package lesson.plugins.model.actors;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupProperty;
 import lesson.plugins.model.support.GroupType;
 import lesson.plugins.model.support.PersonProperty;
+import lesson.plugins.model.support.SchoolStatus;
 import nucleus.ActorContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.groups.datamanagers.GroupsDataManager;
@@ -43,7 +45,15 @@ public class InfectionManager {
 		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		List<PersonId> susceptiblePeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.SUSCEPTIBLE);
-		Collections.shuffle(susceptiblePeople, random);
+		List<PersonId> susceptibleAdults = new ArrayList<>();
+		for (PersonId personId : susceptiblePeople) {
+			int age = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.AGE);
+			if (age > 18) {
+				susceptibleAdults.add(personId);
+			}
+		}
+
+		Collections.shuffle(susceptibleAdults, random);
 
 		minInfectiousPeriod = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD);
 		maxInfectiousPeriod = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD);
@@ -51,10 +61,10 @@ public class InfectionManager {
 		infectionInterval = (double) (minInfectiousPeriod + maxInfectiousPeriod) / (2 * r0);
 
 		int initialInfections = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS);
-		initialInfections = FastMath.min(initialInfections, susceptiblePeople.size());
+		initialInfections = FastMath.min(initialInfections, susceptibleAdults.size());
 
 		for (int i = 0; i < initialInfections; i++) {
-			PersonId personId = susceptiblePeople.get(i);
+			PersonId personId = susceptibleAdults.get(i);
 			double planTime = randomGenerator.nextDouble() * 0.5 + 0.25;
 			actorContext.addPlan((c) -> infectPerson(personId), planTime);
 		}
@@ -76,8 +86,8 @@ public class InfectionManager {
 	private void infectContact(PersonId personId) {
 		List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(personId);
 		GroupId groupId = groupsForPerson.get(randomGenerator.nextInt(groupsForPerson.size()));
-		
-		//work groups doing telework have a 50% contact mitigation
+
+		// work groups doing telework have a 50% contact mitigation
 		GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (groupTypeId.equals(GroupType.WORK)) {
 			boolean teleworkGroup = groupsDataManager.getGroupPropertyValue(groupId, GroupProperty.TELEWORK);
@@ -87,6 +97,25 @@ public class InfectionManager {
 				}
 			}
 		}
+
+		// school groups in COHORT mode have a 50% contact mitigation
+		// school groups in CLOSED mode have a 100% contact mitigation
+		if (groupTypeId.equals(GroupType.SCHOOL)) {
+			SchoolStatus schoolStatus = groupsDataManager.getGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS);
+			switch (schoolStatus) {
+			case COHORT:
+				if (randomGenerator.nextBoolean()) {
+					return;
+				}
+				break;
+			case CLOSED:
+				return;
+			default:
+				// no mitigation
+				break;
+			}
+		}
+
 		GroupSampler groupSampler = GroupSampler.builder().setExcludedPersonId(personId).build();
 		Optional<PersonId> optional = groupsDataManager.sampleGroup(groupId, groupSampler);
 		if (optional.isPresent()) {
