@@ -297,7 +297,13 @@ public class AT_GlobalPropertiesPluginData {
 	@Test
 	@UnitTestMethod(name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+
+		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
+			builder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
+			builder.setGlobalPropertyValue(testGlobalPropertyId, testGlobalPropertyId.getRandomPropertyValue(randomGenerator));
+		}
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 		PluginDataBuilder cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
