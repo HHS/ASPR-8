@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AT_PersonRemovalEvent {
     
     @Test
-    @UnitTestConstructor(target = PersonId.class, args = {})
+    @UnitTestConstructor(args = {PersonId.class})
     public void testPersonRemovalEvent() {
         ContractException contractException = assertThrows(ContractException.class, () -> new PersonRemovalEvent(null));
         assertEquals(contractException.getErrorType(), PersonError.NULL_PERSON_ID);
