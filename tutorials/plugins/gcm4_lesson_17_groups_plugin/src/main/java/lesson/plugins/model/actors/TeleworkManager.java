@@ -33,31 +33,45 @@ public class TeleworkManager {
 	}
 
 	private void reviewTeleworkStatus(ActorContext actorContext) {
-		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
-		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		GroupsDataManager groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
-		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
-		double threshold = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.TELEWORK_INFECTION_THRESHOLD);
-		double teleworkProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.TELEWORK_PROBABILTY);
+		StochasticsDataManager stochasticsDataManager = 
+				actorContext.getDataManager(StochasticsDataManager.class);
+		RandomGenerator randomGenerator = stochasticsDataManager
+				.getRandomGenerator();
+		PeopleDataManager peopleDataManager = actorContext
+				.getDataManager(PeopleDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = actorContext
+				.getDataManager(PersonPropertiesDataManager.class);
+		GroupsDataManager groupsDataManager = actorContext
+				.getDataManager(GroupsDataManager.class);
+		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext
+				.getDataManager(GlobalPropertiesDataManager.class);
+		double threshold = globalPropertiesDataManager
+				.getGlobalPropertyValue(
+						GlobalProperty.TELEWORK_INFECTION_THRESHOLD);
+		double teleworkProbability = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.TELEWORK_PROBABILTY);
 
-		int infectiousCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS);
+		int infectiousCount = personPropertiesDataManager
+				.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE
+						, DiseaseState.INFECTIOUS);
 		int populationCount = peopleDataManager.getPopulationCount();
 
 		double infectiousFraction = infectiousCount;
 		infectiousFraction /= populationCount;
 
 		if (infectiousFraction >= threshold) {
-			List<GroupId> workGroupIds = groupsDataManager.getGroupsForGroupType(GroupType.WORK);
+			List<GroupId> workGroupIds = groupsDataManager
+					.getGroupsForGroupType(GroupType.WORK);
 			for (GroupId groupId : workGroupIds) {
 				if (randomGenerator.nextDouble() < teleworkProbability) {
-					groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.TELEWORK, true);
+					groupsDataManager
+					.setGroupPropertyValue(groupId, 
+							GroupProperty.TELEWORK, true);
 				}
 			}
 		} else {
 			scheduleNextReview();
 		}
-
 	}
+	
 }
