@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -99,5 +101,45 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 			assertTrue(unique);
 			assertFalse(testProperties.contains(unknownPersonPropertyId));
 		}
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPropertiesWithDefaultValues", args = {})
+	public void testGetPropertiesWithDefaultValues() {
+		List<TestPersonPropertyId> expectedValues = Arrays.asList(
+				TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK,
+				TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK,
+				TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK,
+				TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK,
+				TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK,
+				TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK,
+				TestPersonPropertyId.PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK,
+				TestPersonPropertyId.PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK);
+
+		List<TestPersonPropertyId> actualValues = TestPersonPropertyId.getPropertiesWithDefaultValues();
+
+		assertNotNull(actualValues);
+		assertEquals(expectedValues.size(), actualValues.size());
+		Set<TestPersonPropertyId> setOfExpectedValues = new LinkedHashSet<>(expectedValues);
+		Set<TestPersonPropertyId> setOfActualValues = new LinkedHashSet<>(actualValues);
+		assertEquals(setOfExpectedValues, setOfActualValues);
+		assertEquals(expectedValues.size(), setOfExpectedValues.size());
+		assertEquals(actualValues.size(), setOfActualValues.size());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPropertiesWithoutDefaultValues", args = {})
+	public void testGetPropertiesWithoutDefaultValues() {
+		List<TestPersonPropertyId> expectedValues = Arrays
+				.asList(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK);
+		List<TestPersonPropertyId> actualValues = TestPersonPropertyId.getPropertiesWithoutDefaultValues();
+
+		assertNotNull(actualValues);
+		assertEquals(expectedValues.size(), actualValues.size());
+		Set<TestPersonPropertyId> setOfExpectedValues = new LinkedHashSet<>(expectedValues);
+		Set<TestPersonPropertyId> setOfActualValues = new LinkedHashSet<>(actualValues);
+		assertEquals(setOfExpectedValues, setOfActualValues);
+		assertEquals(expectedValues.size(), setOfExpectedValues.size());
+		assertEquals(actualValues.size(), setOfActualValues.size());
 	}
 }
