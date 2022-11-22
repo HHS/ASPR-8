@@ -20,8 +20,14 @@ import plugins.stochastics.StochasticsDataManager;
 public class TeleworkManager {
 
 	private final double reviewInterval = 7;
-
+	private ActorContext actorContext;
+	
 	public void init(ActorContext actorContext) {
+		this.actorContext = actorContext;
+		scheduleNextReview();
+	}
+	
+	private void scheduleNextReview() {
 		double planTime = actorContext.getTime() + reviewInterval;
 		actorContext.addPassivePlan(this::reviewTeleworkStatus, planTime);
 	}
@@ -50,8 +56,7 @@ public class TeleworkManager {
 				}
 			}
 		} else {
-			double planTime = actorContext.getTime() + reviewInterval;
-			actorContext.addPassivePlan(this::reviewTeleworkStatus, planTime);
+			scheduleNextReview();
 		}
 
 	}
