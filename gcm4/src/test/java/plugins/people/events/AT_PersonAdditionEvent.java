@@ -26,7 +26,9 @@ public class AT_PersonAdditionEvent implements Event {
     public void testGetPersonId() {
         PersonId personId = new PersonId(3);
         PersonAdditionEvent personAdditionEvent = new PersonAdditionEvent(personId);
-        assertEquals(personId, personAdditionEvent.getPersonId());
+        PersonId retrievedId = personAdditionEvent.getPersonId();
+        assertNotNull(retrievedId);
+        assertEquals(personId, retrievedId);
     }
 
 }
