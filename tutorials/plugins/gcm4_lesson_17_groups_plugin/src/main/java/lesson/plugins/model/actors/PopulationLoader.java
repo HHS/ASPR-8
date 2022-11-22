@@ -66,19 +66,22 @@ public class PopulationLoader {
 			} else {
 				age = randomGenerator.nextInt(18);
 			}
-			PersonPropertyInitialization ageInitialization = new PersonPropertyInitialization(PersonProperty.AGE, age);
+			PersonPropertyInitialization ageInitialization = 
+					new PersonPropertyInitialization(PersonProperty.AGE, age);
 
 			DiseaseState diseaseState = DiseaseState.IMMUNE;
 			if (randomGenerator.nextDouble() < susceptibleProbability) {
 				diseaseState = DiseaseState.SUSCEPTIBLE;
 			}
 
-			PersonPropertyInitialization diseaseInitialization = new PersonPropertyInitialization(PersonProperty.DISEASE_STATE, diseaseState);
-			PersonConstructionData personConstructionData = PersonConstructionData	.builder()//
-																					.add(ageInitialization)//
-																					.add(diseaseInitialization)//
-																					.add(regionId)//
-																					.build();
+			PersonPropertyInitialization diseaseInitialization = 
+					new PersonPropertyInitialization(PersonProperty.DISEASE_STATE, diseaseState);
+			PersonConstructionData personConstructionData = 
+					PersonConstructionData	.builder()//
+											.add(ageInitialization)//
+											.add(diseaseInitialization)//
+											.add(regionId)//
+											.build();
 			peopleDataManager.addPerson(personConstructionData);
 		}
 
@@ -87,7 +90,8 @@ public class PopulationLoader {
 		// create the home groups
 		List<GroupId> homeGroupIds = new ArrayList<>();
 		for (int i = 0; i < homeCount; i++) {
-			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.HOME).build();
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
+					.setGroupTypeId(GroupType.HOME).build();
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			homeGroupIds.add(groupId);
 		}
@@ -95,7 +99,8 @@ public class PopulationLoader {
 		// create the work groups
 		List<GroupId> workGroupIds = new ArrayList<>();
 		for (int i = 0; i < workCount; i++) {
-			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.WORK).build();
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
+					.setGroupTypeId(GroupType.WORK).build();
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			workGroupIds.add(groupId);
 		}
@@ -103,7 +108,8 @@ public class PopulationLoader {
 		// create the school groups
 		List<GroupId> schoolGroupIds = new ArrayList<>();
 		for (int i = 0; i < schoolCount; i++) {
-			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.SCHOOL).build();
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder()
+					.setGroupTypeId(GroupType.SCHOOL).build();
 			GroupId groupId = groupsDataManager.addGroup(groupConstructionInfo);
 			schoolGroupIds.add(groupId);
 		}
@@ -114,7 +120,8 @@ public class PopulationLoader {
 		List<PersonId> children = new ArrayList<>();
 		List<PersonId> workingAdults = new ArrayList<>();
 		for (PersonId personId : peopleInRegion) {
-			int age = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.AGE);
+			int age = personPropertiesDataManager.
+					getPersonPropertyValue(personId, PersonProperty.AGE);
 			if (age < 18) {
 				children.add(personId);
 			} else {
@@ -169,30 +176,42 @@ public class PopulationLoader {
 	}
 
 	public void init(ActorContext actorContext) {
-		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
-		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+		personPropertiesDataManager = actorContext
+				.getDataManager(PersonPropertiesDataManager.class);
+		groupsDataManager = actorContext
+				.getDataManager(GroupsDataManager.class);
+		StochasticsDataManager stochasticsDataManager = 
+				actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
-		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		peopleDataManager = actorContext
+				.getDataManager(PeopleDataManager.class);
+		GlobalPropertiesDataManager globalPropertiesDataManager = 
+				actorContext.getDataManager(GlobalPropertiesDataManager.class);
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 
-		int populationSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
-		susceptibleProbability = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
-		childPopulationProportion = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION);
-		seniorPopulationProportion = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION);
-		averageHomeSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE);
-		averageSchoolSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE);
-		averageWorkSize = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE);
+		int populationSize = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.POPULATION_SIZE);
+		susceptibleProbability = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION);
+		childPopulationProportion = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION);
+		seniorPopulationProportion = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION);
+		averageHomeSize = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE);
+		averageSchoolSize = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE);
+		averageWorkSize = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE);
 
 		Set<RegionId> regionIds = regionsDataManager.getRegionIds();
 		int regionSize = populationSize / regionIds.size();
-		int leftOverPeople = populationSize % regionIds.size();
+		int leftoverPeople = populationSize % regionIds.size();
 
 		for (RegionId regionId : regionIds) {
 			int regionPopulation = regionSize;
-			if (leftOverPeople > 0) {
-				leftOverPeople--;
+			if (leftoverPeople > 0) {
+				leftoverPeople--;
 				regionPopulation++;
 			}
 			initializeRegionPopulation(regionId, regionPopulation);

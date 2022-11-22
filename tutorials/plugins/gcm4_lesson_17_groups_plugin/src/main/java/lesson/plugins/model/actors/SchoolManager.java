@@ -26,13 +26,19 @@ public class SchoolManager {
 
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
-		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
-		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
-		cohortThreshold = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SCHOOL_COHORT_INFECTION_THRESHOLD);
-		closureThreshold = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.SCHOOL_CLOSURE_INFECTION_THRESHOLD);
+		personPropertiesDataManager = actorContext
+				.getDataManager(PersonPropertiesDataManager.class);
+		groupsDataManager = actorContext
+				.getDataManager(GroupsDataManager.class);
+		GlobalPropertiesDataManager globalPropertiesDataManager = 
+				actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		cohortThreshold = globalPropertiesDataManager
+				.getGlobalPropertyValue(
+						GlobalProperty.SCHOOL_COHORT_INFECTION_THRESHOLD);
+		closureThreshold = globalPropertiesDataManager
+				.getGlobalPropertyValue(
+						GlobalProperty.SCHOOL_CLOSURE_INFECTION_THRESHOLD);
 		planNextReview();
-
 	}
 
 	private void planNextReview() {
@@ -41,21 +47,23 @@ public class SchoolManager {
 	}
 
 	private void reviewSchools(ActorContext actorContext) {
-
-		List<GroupId> schoolGroupIds = groupsDataManager.getGroupsForGroupType(GroupType.SCHOOL);
+		List<GroupId> schoolGroupIds = groupsDataManager
+				.getGroupsForGroupType(GroupType.SCHOOL);
 		for (GroupId groupId : schoolGroupIds) {
 			reviewSchool(groupId);
 		}
 		planNextReview();
-
 	}
 
 	private void reviewSchool(GroupId groupId) {
 
 		int infectiousCount = 0;
-		List<PersonId> peopleForGroup = groupsDataManager.getPeopleForGroup(groupId);
+		List<PersonId> peopleForGroup = groupsDataManager
+				.getPeopleForGroup(groupId);
 		for (PersonId personId : peopleForGroup) {
-			DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.DISEASE_STATE);
+			DiseaseState diseaseState = personPropertiesDataManager
+					.getPersonPropertyValue(personId, 
+							PersonProperty.DISEASE_STATE);
 			if (diseaseState == DiseaseState.INFECTIOUS) {
 				infectiousCount++;
 			}
@@ -66,7 +74,9 @@ public class SchoolManager {
 			infectiousFraction /= peopleForGroup.size();
 		}
 
-		SchoolStatus schoolStatus = groupsDataManager.getGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS);
+		SchoolStatus schoolStatus = groupsDataManager
+				.getGroupPropertyValue(groupId, 
+						GroupProperty.SCHOOL_STATUS);
 
 		switch (schoolStatus) {
 		case OPEN:
@@ -83,23 +93,31 @@ public class SchoolManager {
 			// do nothing
 			break;
 		default:
-			throw new RuntimeException("unhandled case " + schoolStatus);
+			throw new RuntimeException("unhandled case " 
+					+ schoolStatus);
 		}
 	}
 
 	private void closeSchool(GroupId groupId) {
-		groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS, SchoolStatus.CLOSED);
-		List<PersonId> people = groupsDataManager.getPeopleForGroup(groupId);
+		groupsDataManager.setGroupPropertyValue(groupId, 
+				GroupProperty.SCHOOL_STATUS, SchoolStatus.CLOSED);
+		List<PersonId> people = groupsDataManager
+				.getPeopleForGroup(groupId);
 		for(PersonId personId : people) {
-			groupsDataManager.removePersonFromGroup(personId, groupId);
+			groupsDataManager
+			.removePersonFromGroup(personId, groupId);
 		}
 	}
 
 	private void splitSchoolIntoCohorts(GroupId groupId) {
-		GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.SCHOOL).build();
-		GroupId newGroupId = groupsDataManager.addGroup(groupConstructionInfo);
+		GroupConstructionInfo groupConstructionInfo = 
+				GroupConstructionInfo.builder()
+				.setGroupTypeId(GroupType.SCHOOL).build();
+		GroupId newGroupId = 
+				groupsDataManager.addGroup(groupConstructionInfo);
 		
-		List<PersonId> peopleForGroup = groupsDataManager.getPeopleForGroup(groupId);
+		List<PersonId> peopleForGroup = 
+				groupsDataManager.getPeopleForGroup(groupId);
 		for (int i = 0;i<peopleForGroup.size();i++) {
 			if(i%2==0) {
 				PersonId personId = peopleForGroup.get(i);
@@ -108,8 +126,10 @@ public class SchoolManager {
 			}
 		}
 		
-		groupsDataManager.setGroupPropertyValue(newGroupId, GroupProperty.SCHOOL_STATUS, SchoolStatus.COHORT);
-		groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS, SchoolStatus.COHORT);
+		groupsDataManager.setGroupPropertyValue(newGroupId,
+				GroupProperty.SCHOOL_STATUS, SchoolStatus.COHORT);
+		groupsDataManager.setGroupPropertyValue(groupId,
+				GroupProperty.SCHOOL_STATUS, SchoolStatus.COHORT);
 
 	}
 

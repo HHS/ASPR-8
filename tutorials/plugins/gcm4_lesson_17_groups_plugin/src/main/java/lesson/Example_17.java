@@ -42,7 +42,6 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
-import util.time.TimeElapser;
 
 public final class Example_17 {
 

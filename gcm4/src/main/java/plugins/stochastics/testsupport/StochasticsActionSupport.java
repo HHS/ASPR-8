@@ -26,6 +26,10 @@ import util.errors.ContractException;
 
 public class StochasticsActionSupport {
 
+	private StochasticsActionSupport() {
+
+	}
+
 	/**
 	 * Creates the test plugin containing a test actor initialized by the given
 	 * consumer. Executes the simulation via the
