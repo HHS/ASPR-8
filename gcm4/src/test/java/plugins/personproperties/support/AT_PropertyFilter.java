@@ -130,4 +130,14 @@ public class AT_PropertyFilter {
 			assertEquals(PersonError.UNKNOWN_PERSON_ID,contractException.getErrorType());
 		});
 	}
+
+	@Test
+	@UnitTestMethod(name="toString", args={})
+	public void testToString() {
+		Filter filter = new PropertyFilter(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, Equality.GREATER_THAN, 12);
+		String expectedString = "PropertyFilter [personPropertyId=PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, personPropertyValue=12, equality=GREATER_THAN]";
+
+		assertEquals(expectedString, filter.toString());
+
+	}
 }
