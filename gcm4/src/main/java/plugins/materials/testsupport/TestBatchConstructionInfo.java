@@ -8,6 +8,8 @@ import plugins.materials.support.MaterialsProducerId;
 
 public class TestBatchConstructionInfo {
 
+	private TestBatchConstructionInfo(){}
+
 	public static BatchConstructionInfo getBatchConstructionInfo(MaterialsProducerId materialsProducerId, MaterialId materialId, double amount, RandomGenerator randomGenerator) {
 		BatchConstructionInfo.Builder builder = //
 				BatchConstructionInfo	.builder()//
