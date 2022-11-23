@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -95,16 +95,17 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertesWithDefaultValues", args = {})
+	@UnitTestMethod(name = "getPropertiesWithDefaultValues", args = {})
 	public void testGetPropertesWithDefaultValues() {
-		List<TestRegionPropertyId> expectedValues = Arrays.asList(
-				TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE,
-				TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE,
-				TestRegionPropertyId.REGION_PROPERTY_4_BOOLEAN_IMMUTABLE,
-				TestRegionPropertyId.REGION_PROPERTY_5_INTEGER_IMMUTABLE,
-				TestRegionPropertyId.REGION_PROPERTY_6_DOUBLE_IMMUTABLE);
+		List<TestRegionPropertyId> expectedValues = new ArrayList<>();
 
-		List<TestRegionPropertyId> actualValues = TestRegionPropertyId.getPropertesWithDefaultValues();
+		for (TestRegionPropertyId id : TestRegionPropertyId.values()) {
+			if (id.getPropertyDefinition().getDefaultValue().isPresent()) {
+				expectedValues.add(id);
+			}
+		}
+
+		List<TestRegionPropertyId> actualValues = TestRegionPropertyId.getPropertiesWithDefaultValues();
 
 		assertNotNull(actualValues);
 		assertEquals(expectedValues.size(), actualValues.size());
@@ -116,11 +117,17 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertesWithoutDefaultValues", args = {})
+	@UnitTestMethod(name = "getPropertiesWithoutDefaultValues", args = {})
 	public void testGetPropertesWithoutDefaultValues() {
-		List<TestRegionPropertyId> expectedValues = Arrays
-				.asList(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
-		List<TestRegionPropertyId> actualValues = TestRegionPropertyId.getPropertesWithoutDefaultValues();
+		List<TestRegionPropertyId> expectedValues = new ArrayList<>();
+
+		for (TestRegionPropertyId id : TestRegionPropertyId.values()) {
+			if (id.getPropertyDefinition().getDefaultValue().isEmpty()) {
+				expectedValues.add(id);
+			}
+		}
+
+		List<TestRegionPropertyId> actualValues = TestRegionPropertyId.getPropertiesWithoutDefaultValues();
 
 		assertNotNull(actualValues);
 		assertEquals(expectedValues.size(), actualValues.size());
@@ -156,7 +163,7 @@ public class AT_TestRegionPropertyId {
 		Set<TestRegionPropertyId> applicableValues = EnumSet.allOf(TestRegionPropertyId.class);
 		Map<TestRegionPropertyId, MutableInteger> valueCounter = new LinkedHashMap<>();
 
-		for(TestRegionPropertyId actualValue : TestRegionPropertyId.values()) {
+		for (TestRegionPropertyId actualValue : TestRegionPropertyId.values()) {
 			valueCounter.put(actualValue, new MutableInteger());
 		}
 

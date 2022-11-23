@@ -141,7 +141,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 	 * Returns the test region property id values associated with property
 	 * definitions that have default values.
 	 */
-	public static List<TestRegionPropertyId> getPropertesWithDefaultValues() {
+	public static List<TestRegionPropertyId> getPropertiesWithDefaultValues() {
 		List<TestRegionPropertyId> result = new ArrayList<>();
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 			if (testRegionPropertyId.propertyDefinition.getDefaultValue().isPresent()) {
@@ -155,7 +155,7 @@ public enum TestRegionPropertyId implements RegionPropertyId {
 	 * Returns the test region property id values associated with property
 	 * definitions that do not have default values.
 	 */
-	public static List<TestRegionPropertyId> getPropertesWithoutDefaultValues() {
+	public static List<TestRegionPropertyId> getPropertiesWithoutDefaultValues() {
 		List<TestRegionPropertyId> result = new ArrayList<>();
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 			if (testRegionPropertyId.propertyDefinition.getDefaultValue().isEmpty()) {
