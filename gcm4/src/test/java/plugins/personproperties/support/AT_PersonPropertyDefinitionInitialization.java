@@ -71,9 +71,10 @@ public class AT_PersonPropertyDefinitionInitialization {
         builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 
         List<Pair<PersonId, Object>> expectedValues = new ArrayList<>();
-        PersonId personId = new PersonId(1000);
+        
         for (int i = 0; i < 20; i++) {
             int value = randomGenerator.nextInt(100);
+            PersonId personId = new PersonId(i * 2);
             builder.addPropertyValue(personId, value);
             expectedValues.add(new Pair<>(personId, value));
         }
@@ -196,9 +197,9 @@ public class AT_PersonPropertyDefinitionInitialization {
         builder.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
 
         List<Pair<PersonId, Object>> expectedValues = new ArrayList<>();
-        PersonId personId = new PersonId(1000);
         for (int i = 0; i < 20; i++) {
             double value = randomGenerator.nextDouble() * 100;
+            PersonId personId = new PersonId(i * 2);
             builder.addPropertyValue(personId, value);
             expectedValues.add(new Pair<>(personId, value));
         }
