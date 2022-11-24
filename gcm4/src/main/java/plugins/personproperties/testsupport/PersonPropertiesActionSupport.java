@@ -30,6 +30,8 @@ import util.random.RandomGeneratorProvider;
 
 public class PersonPropertiesActionSupport {
 
+	private PersonPropertiesActionSupport(){}
+
 	public static void testConsumer(int initialPopulation, long seed, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
