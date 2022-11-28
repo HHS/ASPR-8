@@ -223,7 +223,7 @@ public final class AT_PeopleDataManager {
 
 		PeopleActionSupport.testConsumers(plugin);
 
-		// show that the expected and acutual observations match
+		// show that the expected and actual observations match
 		assertEquals(expectedPersonIds, observedPersonIds);
 		assertEquals(expectedPersonIds, observedImminentPersonIds);
 	}
@@ -408,7 +408,7 @@ public final class AT_PeopleDataManager {
 			assertEquals(0, peopleDataManager.getProjectedPopulationCount());
 
 			/*
-			 * Add a few people so we are not working from a zero-base and show
+			 * Add a few people, so we are not working from a zero-base and show
 			 * the projected population count is correct
 			 */
 			for (int i = 0; i < 10; i++) {
