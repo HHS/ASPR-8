@@ -189,7 +189,7 @@ public class AT_RegionsPluginData {
 		 * set about half of the properties for each region for those properties
 		 * that have a default value
 		 */
-		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithDefaultValues()) {
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertiesWithDefaultValues()) {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				if (randomGenerator.nextBoolean()) {
 					Object value = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
@@ -203,7 +203,7 @@ public class AT_RegionsPluginData {
 		 * set all of the properties for each region for those properties that
 		 * do not have a default value
 		 */
-		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertiesWithoutDefaultValues()) {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				Object value = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
 				builder.setRegionPropertyValue(testRegionId, testRegionPropertyId, value);
