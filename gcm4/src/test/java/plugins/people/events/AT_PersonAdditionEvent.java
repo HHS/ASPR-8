@@ -16,7 +16,7 @@ public class AT_PersonAdditionEvent implements Event {
 
     @Test
     @UnitTestConstructor(args = {PersonId.class})
-    public void testPersonAdditionEvent() {
+    public void testConstructor() {
         ContractException contractException = assertThrows(ContractException.class, () -> new PersonAdditionEvent(null));
         assertEquals(contractException.getErrorType(), PersonError.NULL_PERSON_ID);
     }

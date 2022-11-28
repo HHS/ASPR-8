@@ -15,7 +15,7 @@ public class AT_PersonRemovalEvent {
     
     @Test
     @UnitTestConstructor(args = {PersonId.class})
-    public void testPersonRemovalEvent() {
+    public void testConstructor() {
         ContractException contractException = assertThrows(ContractException.class, () -> new PersonRemovalEvent(null));
         assertEquals(contractException.getErrorType(), PersonError.NULL_PERSON_ID);
     }
