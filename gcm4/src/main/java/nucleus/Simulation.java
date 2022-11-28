@@ -708,7 +708,11 @@ public class Simulation {
 			 */
 
 			Graph<PluginId, Object> g = mutableGraph.toGraph();
+			
 			g = Graphs.getSourceSinkReducedGraph(g);
+			g = Graphs.getEdgeReducedGraph(g);
+			g = Graphs.getSourceSinkReducedGraph(g);
+			
 			List<Graph<PluginId, Object>> cutGraphs = Graphs.cutGraph(g);
 			StringBuilder sb = new StringBuilder();
 			String lineSeparator = System.getProperty("line.separator");
