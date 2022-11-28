@@ -57,7 +57,7 @@ public final class Graphs {
 	/**
 	 * Returns the sub-graph of the input graph that has had all of its
 	 * non-cyclic edges removed. A non-cyclic edge is one
-	 * where there is no path through the graph from the edges destination node
+	 * where there is no path through the graph from the edge's destination node
 	 * to its source node.
 	 */
 	public static <N, E> Graph<N, E> getEdgeReducedGraph(Graph<N, E> graph) {
