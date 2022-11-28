@@ -26,7 +26,7 @@ import util.errors.ContractException;
 
 public class PeopleActionSupport {
 
-	public PeopleActionSupport() {
+	private PeopleActionSupport() {
 	}
 
 	/**
