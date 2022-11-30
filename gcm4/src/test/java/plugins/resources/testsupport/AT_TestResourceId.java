@@ -62,10 +62,11 @@ public class AT_TestResourceId {
         assertEquals(TestResourceId.size(), 5);
     }
 
-//    @Test
-//    @UnitTestMethod(name = "next", args = {}, tags = UnitTag.INCOMPLETE)
-//    public void testNext() {
-//
-//    }
+    @Test
+    @UnitTestMethod(name = "next", args = {}, tags = UnitTag.INCOMPLETE)
+    public void testNext() {
+        TestResourceId testResourceId = TestResourceId.RESOURCE_1;
+        assertNotNull(testResourceId.next());
+    }
 
 }
