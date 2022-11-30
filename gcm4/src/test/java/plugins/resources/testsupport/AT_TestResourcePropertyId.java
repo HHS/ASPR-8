@@ -3,7 +3,6 @@ package plugins.resources.testsupport;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 import plugins.resources.support.ResourcePropertyId;
-import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;

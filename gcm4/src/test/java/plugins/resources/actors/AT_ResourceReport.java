@@ -10,8 +10,6 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @UnitTest(target = ResourceReport.class)
 public class AT_ResourceReport {
 

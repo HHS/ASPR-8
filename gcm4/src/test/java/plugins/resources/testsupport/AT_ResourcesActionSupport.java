@@ -8,8 +8,6 @@ import tools.annotations.UnitTestMethod;
 
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @UnitTest(target = ResourcesActionSupport.class)
 
 public class AT_ResourcesActionSupport {

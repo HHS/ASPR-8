@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
-import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
