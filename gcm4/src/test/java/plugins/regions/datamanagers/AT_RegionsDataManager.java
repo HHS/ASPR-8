@@ -1255,7 +1255,7 @@ public class AT_RegionsDataManager {
 			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
 		}
 
-		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertiesWithoutDefaultValues()) {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
 				regionPluginBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId, randomPropertyValue);
@@ -1588,7 +1588,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			RegionId newRegionId = TestRegionId.getUnknownRegionId();
 			RegionConstructionData.Builder builder = RegionConstructionData.builder().setRegionId(newRegionId);//
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertiesWithoutDefaultValues()) {
 				builder.setRegionPropertyValue(testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 			}
 			RegionConstructionData regionConstructionData = builder.build();
@@ -1604,7 +1604,7 @@ public class AT_RegionsDataManager {
 
 			RegionId newRegionId = TestRegionId.getUnknownRegionId();
 			RegionConstructionData.Builder builder = RegionConstructionData.builder().setRegionId(newRegionId);//
-			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertiesWithoutDefaultValues()) {
 				builder.setRegionPropertyValue(testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 			}
 			RegionConstructionData regionConstructionData = builder.build();
@@ -2335,7 +2335,7 @@ public class AT_RegionsDataManager {
 					RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 					RegionId newRegionId = TestRegionId.getUnknownRegionId();
 					RegionConstructionData.Builder builder = RegionConstructionData.builder().setRegionId(newRegionId);//
-					for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertesWithoutDefaultValues()) {
+					for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.getPropertiesWithoutDefaultValues()) {
 						builder.setRegionPropertyValue(testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 					}
 					RegionConstructionData regionConstructionData = builder.build();

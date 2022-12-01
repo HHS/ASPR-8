@@ -26,6 +26,9 @@ import util.errors.ContractException;
 
 public class PeopleActionSupport {
 
+	private PeopleActionSupport() {
+	}
+
 	/**
 	 * Creates the test plugin containing a test actor initialized by the given
 	 * consumer. Executes the simulation via the

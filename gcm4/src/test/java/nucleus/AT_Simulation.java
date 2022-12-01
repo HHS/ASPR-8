@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -50,8 +51,12 @@ public class AT_Simulation {
 	}
 
 	@Test
-	@UnitTestMethod(target = Simulation.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = Simulation.Builder.class, name = "build", args = {}, tags = {UnitTag.INCOMPLETE})
 	public void testbuild() {
+		/*
+		 * There is no test that reflects circular dependency 
+		 */
+
 		assertNotNull(Simulation.builder().build());
 	}
 
