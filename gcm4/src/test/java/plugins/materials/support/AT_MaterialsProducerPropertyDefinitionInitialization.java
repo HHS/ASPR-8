@@ -195,7 +195,7 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
     }
 
     @Test
-    @UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.Builder.class, name = "setPropertyDefinition", args = {
+    @UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.Builder.class, name = "addPropertyValue", args = {
             MaterialsProducerId.class, Object.class })
     public void testAddPropertyValue() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3968585809330067411L);
@@ -242,7 +242,7 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
     }
 
     @Test
-    @UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.Builder.class, name = "setPropertyDefinition", args = {
+    @UnitTestMethod(target = MaterialsProducerPropertyDefinitionInitialization.Builder.class, name = "setMaterialsProducerPropertyId", args = {
             MaterialsProducerPropertyId.class })
     public void testSetMaterialsProducerPropertyId() {
         MaterialsProducerPropertyDefinitionInitialization.Builder builder = MaterialsProducerPropertyDefinitionInitialization

@@ -99,7 +99,7 @@ public class AT_MaterialsProducerConstructionData {
     }
 
     @Test
-    @UnitTestMethod(name = "getResourceLevel", args = {})
+    @UnitTestMethod(name = "getResourceLevels", args = {})
     public void testGetResourceLevel() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6832539036105490849L);
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
@@ -238,8 +238,8 @@ public class AT_MaterialsProducerConstructionData {
     }
 
     @Test
-    @UnitTestMethod(target = MaterialsProducerConstructionData.Builder.class, name = "setMaterialsProducerId", args = {
-            MaterialsProducerId.class })
+    @UnitTestMethod(target = MaterialsProducerConstructionData.Builder.class, name = "setResourceLevel", args = {
+            ResourceId.class, long.class })
     public void testSetResourceLevel() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6090230296084756769L);
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
