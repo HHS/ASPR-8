@@ -6314,4 +6314,12 @@ public class AT_MaterialsDataManager {
 
 	}
 
+	public void testDefineMaterialsProducerProperty() {
+
+	}
+
+	public void testConvertStageToResource() {
+		
+	}
+
 }

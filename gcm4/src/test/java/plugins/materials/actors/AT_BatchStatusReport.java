@@ -82,6 +82,10 @@ public final class AT_BatchStatusReport {
 		return reportItem;
 	}
 
+	public void testConstructor() {
+
+	}
+	
 	@Test
 	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testInit() {

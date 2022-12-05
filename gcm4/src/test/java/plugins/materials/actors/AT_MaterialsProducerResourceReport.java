@@ -56,6 +56,10 @@ public final class AT_MaterialsProducerResourceReport {
 
 	}
 
+	public void testConstructor() {
+
+	}
+	
 	@Test
 	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testInit() {

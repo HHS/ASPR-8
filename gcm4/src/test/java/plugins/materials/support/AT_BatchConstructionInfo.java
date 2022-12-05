@@ -135,6 +135,14 @@ public class AT_BatchConstructionInfo {
 
 	}
 
+	public void testSetMaterialsProducerId() {
+
+	}
+
+	public void testGetMaterialsProdcuerId() {
+
+	}
+
 	@Test
 	@UnitTestMethod(target = BatchConstructionInfo.Builder.class, name = "setPropertyValue", args = { BatchPropertyId.class, Object.class })
 	public void testSetPropertyValue() {

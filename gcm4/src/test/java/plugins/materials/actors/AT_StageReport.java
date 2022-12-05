@@ -61,6 +61,10 @@ public final class AT_StageReport {
 							.build();//
 	}
 
+	public void testConstructor() {
+
+	}
+	
 	@Test
 	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testInit() {

@@ -49,6 +49,10 @@ public final class AT_MaterialsProducerPropertyReport {
 		return reportItem;
 	}
 
+	public void testConstructor() {
+		
+	}
+
 	@Test
 	@UnitTestMethod(name = "init", args = {ActorContext.class})
 	public void testInit() {
