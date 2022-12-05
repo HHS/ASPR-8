@@ -32,7 +32,12 @@ public class AT_ResourcePropertyInitialization {
         builder.setValue(1);
         builder.setResourceId(testResourceId);
         builder.setResourcePropertyId(testResourcePropertyId);
-        assertNotNull(builder.build());
+        ResourcePropertyInitialization resourcePropertyInitialization = builder.build();
+        assertNotNull(resourcePropertyInitialization);
+        assertEquals(resourcePropertyInitialization.getValue().get(), 1);
+        assertEquals(resourcePropertyInitialization.getResourcePropertyId(), testResourcePropertyId);
+        assertEquals(resourcePropertyInitialization.getResourceId(), testResourceId);
+        assertEquals(resourcePropertyInitialization.getPropertyDefinition(), propertyDefinition);
 
         // precondition test: if property definition is not set
         builder.setResourceId(testResourceId);
@@ -77,6 +82,7 @@ public class AT_ResourcePropertyInitialization {
         ResourcePropertyInitialization.Builder builder = ResourcePropertyInitialization.builder();
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
         TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
+        TestResourceId testResourceId = TestResourceId.RESOURCE_1;
 
         // precondition test: if resource id is null
         ContractException resourceIdContractException = assertThrows(ContractException.class, () -> builder
@@ -85,6 +91,14 @@ public class AT_ResourcePropertyInitialization {
                 .setResourcePropertyId(testResourcePropertyId)
                 .setResourceId(null));
         assertEquals(resourceIdContractException.getErrorType(), ResourceError.NULL_RESOURCE_ID);
+
+        ResourcePropertyInitialization resourcePropertyInitialization = builder.setPropertyDefinition(propertyDefinition)
+                .setValue(6)
+                .setPropertyDefinition(propertyDefinition)
+                .setResourcePropertyId(testResourcePropertyId)
+                .setResourceId(testResourceId).build();
+
+        assertEquals(resourcePropertyInitialization.getResourceId(), testResourceId);
     }
 
     @Test
@@ -92,6 +106,7 @@ public class AT_ResourcePropertyInitialization {
     public void testSetResourcePropertyId() {
         ResourcePropertyInitialization.Builder builder = ResourcePropertyInitialization.builder();
         PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
+        TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
 
         // precondition test: if resource property id is null
@@ -101,12 +116,21 @@ public class AT_ResourcePropertyInitialization {
                 .setResourceId(testResourceId)
                 .setResourcePropertyId(null));
         assertEquals(resourceIdContractException.getErrorType(), PropertyError.NULL_PROPERTY_ID);
+
+        ResourcePropertyInitialization resourcePropertyInitialization = builder.setPropertyDefinition(propertyDefinition)
+                .setValue(6)
+                .setPropertyDefinition(propertyDefinition)
+                .setResourcePropertyId(testResourcePropertyId)
+                .setResourceId(testResourceId).build();
+
+        assertEquals(resourcePropertyInitialization.getResourcePropertyId(), testResourcePropertyId);
     }
 
     @Test
     @UnitTestMethod(target = ResourcePropertyInitialization.Builder.class, name = "setPropertyDefinition", args = {PropertyDefinition.class})
     public void testSetPropertyDefinition() {
         ResourcePropertyInitialization.Builder builder = ResourcePropertyInitialization.builder();
+        PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).build();
         TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
 
@@ -117,6 +141,14 @@ public class AT_ResourcePropertyInitialization {
                 .setResourcePropertyId(testResourcePropertyId)
                 .setPropertyDefinition(null));
         assertEquals(resourceIdContractException.getErrorType(), PropertyError.NULL_PROPERTY_DEFINITION);
+
+        ResourcePropertyInitialization resourcePropertyInitialization = builder.setPropertyDefinition(propertyDefinition)
+                .setValue(6)
+                .setPropertyDefinition(propertyDefinition)
+                .setResourcePropertyId(testResourcePropertyId)
+                .setResourceId(testResourceId).build();
+
+        assertEquals(resourcePropertyInitialization.getPropertyDefinition(), propertyDefinition);
     }
 
     @Test
@@ -134,6 +166,14 @@ public class AT_ResourcePropertyInitialization {
                 .setPropertyDefinition(propertyDefinition)
                 .setValue(null));
         assertEquals(resourceIdContractException.getErrorType(), PropertyError.NULL_PROPERTY_VALUE);
+
+        ResourcePropertyInitialization resourcePropertyInitialization = builder.setPropertyDefinition(propertyDefinition)
+                .setValue(6)
+                .setPropertyDefinition(propertyDefinition)
+                .setResourcePropertyId(testResourcePropertyId)
+                .setResourceId(testResourceId).build();
+
+        assertEquals(resourcePropertyInitialization.getValue().get(), 6);
     }
 
     @Test
