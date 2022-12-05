@@ -2,7 +2,6 @@ package plugins.resources.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
-import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.resources.support.ResourceId;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
