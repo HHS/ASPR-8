@@ -16,6 +16,7 @@ import plugins.materials.support.BatchId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
+import util.wrappers.MutableDouble;
 
 public final class AntigenProducer {
 
@@ -24,7 +25,6 @@ public final class AntigenProducer {
 																			.setMaterialId(materialId)//
 																			.setMaterialsProducerId(materialsProducerId)//
 																			.build();//
-
 		BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
 		builder.setBatchId(batchId);
 		builder.setMaterialId(materialId);
@@ -32,18 +32,12 @@ public final class AntigenProducer {
 		materialRecs.put(materialId, antigenMaterialRec);
 	}
 
-	private AntigenMaterialRec getMaterialRec(MaterialId materialId) {
-		return materialRecs.get(materialId);
-	}
-
 	private Map<MaterialId, AntigenMaterialRec> materialRecs = new LinkedHashMap<>();
-
-	private int stageOfferCapacity = 5;
+	private int stageCapacity = 25;
 	private double fermentationTime = 15.0;
 	private double antigenUnits = 200.0;
-	private double batchAssemblyDuration = 0.3;
+	private double batchAssemblyDuration = 0.25;
 	private double lastBatchAssemblyEndTime;
-
 	private final MaterialsProducerId materialsProducerId;
 	private MaterialsDataManager materialsDataManager;
 	private ActorContext actorContext;
@@ -57,30 +51,24 @@ public final class AntigenProducer {
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 
 		addMaterialRec(Material.GROWTH_MEDIUM, AntigenMaterialRec	.builder()//
-																	.setDeliveryAmount(3.5)//
+																	.setDeliveryAmount(35.0)//
 																	.setDeliveryDelay(7.0)//
 																	.setStageAmount(1.0));//
 
 		addMaterialRec(Material.VIRUS, AntigenMaterialRec	.builder()//
-															.setDeliveryAmount(2.0)//
+															.setDeliveryAmount(100.0)//
 															.setDeliveryDelay(21.0)//
 															.setStageAmount(1.0));//
 
-		orderMaterials();
+		planFermentation();
 
 		actorContext.subscribe(materialsDataManager.getEventFilterForStageMaterialsProducerUpdateEvent_BySource(materialsProducerId), this::handleStageMaterialsProducerUpdateEvent);
 
 	}
 	
 	private void handleStageMaterialsProducerUpdateEvent(ActorContext actorContext, StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
-		System.out.println("AntigenProducer.handleStageMaterialsProducerUpdateEvent()");
-		if(actorContext.getTime()>110) {
-			System.out.println("AntigenProducer.handleStageMaterialsProducerUpdateEvent()");
-		}
-		orderMaterials();
+		planFermentation();
 	}
-	
-	
 
 	private void orderMaterials() {
 		for (MaterialId materialId : materialRecs.keySet()) {
@@ -89,56 +77,57 @@ public final class AntigenProducer {
 	}
 
 	private void orderMaterial(MaterialId materialId) {
-		AntigenMaterialRec materialRec = getMaterialRec(materialId);
+		AntigenMaterialRec materialRec = materialRecs.get(materialId);
 		if (materialRec.isOnOrder()) {
 			return;
 		}
+		
 
-		List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-		if (stages.size() >= stageOfferCapacity) {
-			return;
-		}
-
-		double requiredGrowthMedium = (stageOfferCapacity - stages.size()) * materialRec.getStageAmount();
-		List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(materialsProducerId, Material.GROWTH_MEDIUM);
-		double currentGrowthMediumLevel = 0;
+		
+		double requiredAmount = materialRec.getStageAmount();
+		requiredAmount /= batchAssemblyDuration;
+		requiredAmount *= materialRec.getDeliveryDelay();
+		
+		List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(materialsProducerId, materialId);
+		double currentAmount = 0;
 		for (BatchId batchId : batches) {
-			currentGrowthMediumLevel += materialsDataManager.getBatchAmount(batchId);
+			currentAmount += materialsDataManager.getBatchAmount(batchId);
 		}
-		double growthMediumToOrder = requiredGrowthMedium - currentGrowthMediumLevel;
-		if (growthMediumToOrder <= 0) {
+		double amountToOrder = requiredAmount - currentAmount;
+		if (amountToOrder <= 0) {
 			return;
 		}
 
-		growthMediumToOrder = FastMath.ceil(growthMediumToOrder / materialRec.getDeliveryAmount()) * materialRec.getDeliveryAmount();
+		amountToOrder = FastMath.ceil(amountToOrder / materialRec.getDeliveryAmount()) * materialRec.getDeliveryAmount();
 		double deliveryTime = materialRec.getDeliveryDelay() + actorContext.getTime();
-		double amount = growthMediumToOrder;
+		double amount = amountToOrder;
 		materialRec.toggleOnOrder();
+		
+		System.out.println(actorContext.getTime()+"\t"+"Ordering "+materialId+"("+amount+")");
 		actorContext.addPlan((c) -> receiveMaterial(materialId, amount), deliveryTime);
 
 	}
 
 	private void receiveMaterial(MaterialId materialId, double amount) {
-		System.out.println("AntigenProducer.receiveMaterial() at "+actorContext.getTime());
-		AntigenMaterialRec materialRec = getMaterialRec(materialId);
+		
+		AntigenMaterialRec materialRec = materialRecs.get(materialId);
 		materialRec.toggleOnOrder();
 
 		BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(materialId).setAmount(amount).build());
 		materialsDataManager.transferMaterialBetweenBatches(newBatchId, materialRec.getBatchId(), amount);
 		materialsDataManager.removeBatch(newBatchId);
-
+		System.out.println(actorContext.getTime()+"\t"+"Received "+materialId+"("+amount+")");
 		planFermentation();
 
-		orderMaterial(materialId);
+		
 	}
 	
 	private boolean stagesAtCapacity() {
 		List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
-		return stages.size() >= stageOfferCapacity;
+		return stages.size() >= stageCapacity;
 	}
 	
-	private boolean hasSufficientMaterialsForNewStage() {
-		
+	private boolean hasSufficientMaterialsForNewStage() {		
 		for (MaterialId materialId : materialRecs.keySet()) {
 			AntigenMaterialRec antigenMaterialRec = materialRecs.get(materialId);
 			double batchAmount = materialsDataManager.getBatchAmount(antigenMaterialRec.getBatchId());
@@ -149,8 +138,9 @@ public final class AntigenProducer {
 		return true;
 	}
 
-	private void planFermentation() {		
-
+	private void planFermentation() {
+		
+		orderMaterials();
 		while (!stagesAtCapacity() && hasSufficientMaterialsForNewStage()) {
 				StageId stageId = materialsDataManager.addStage(materialsProducerId);
 				for (MaterialId materialId : materialRecs.keySet()) {
@@ -165,14 +155,44 @@ public final class AntigenProducer {
 				double planTime = fermentationStartTime+fermentationTime;
 				actorContext.addPlan((c) -> endFermentationStage(stageId), planTime);			
 		}
+		reportState();
 	}
 	
 	private void endFermentationStage(StageId stageId) {
+		
 		BatchId batch = materialsDataManager.convertStageToBatch(stageId, Material.ANTIGEN, antigenUnits);
 		StageId antigenStage = materialsDataManager.addStage(materialsProducerId);
 		materialsDataManager.moveBatchToStage(batch, antigenStage);
 		materialsDataManager.setStageOfferState(antigenStage, true);
-		System.out.println("AntigenProducer.endFermentationStage() is offering antigen stage " + antigenStage+" at time = "+actorContext.getTime());
+		System.out.println(actorContext.getTime()+"\t"+" offering stage "+antigenStage);
+		reportState();
+	}
+	
+	private void reportState() {
+		
+//		System.out.println("State at time = "+actorContext.getTime());	
+//		Map<MaterialId, MutableDouble> inventory = new LinkedHashMap<>();
+//		for(Material material : Material.values()) {
+//			inventory.put(material, new MutableDouble());
+//		}
+//			
+//		for(BatchId batchId : materialsDataManager.getInventoryBatches(materialsProducerId)) {
+//			MaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
+//			double batchAmount = materialsDataManager.getBatchAmount(batchId);
+//			inventory.get(materialId).increment(batchAmount);
+//		}
+//		for(Material material : Material.values()) {
+//			MutableDouble mutableDouble = inventory.get(material);
+//			if(mutableDouble.getValue()>0) {
+//				System.out.println("\t"+material+" = "+mutableDouble.getValue());
+//			}
+//		}
+//		List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
+//		List<StageId> offeredStages = materialsDataManager.getOfferedStages(materialsProducerId);
+//		int nonOfferedStageCount = stages.size()-offeredStages.size();
+//		int offeredStageCount = offeredStages.size();
+//		System.out.println("\t"+"stages = "+nonOfferedStageCount+":"+offeredStageCount);
+		
 	}
 
 }

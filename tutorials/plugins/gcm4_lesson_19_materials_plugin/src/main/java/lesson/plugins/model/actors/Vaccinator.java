@@ -11,6 +11,8 @@ public class Vaccinator {
 //		actorContext.addPlan((c)->{
 //			c.addActor(new AntigenProducer(MaterialsProducer.ANTIGEN_PRODUCER_2)::init);	
 //		}, 60.0);
+		
+		actorContext.addPlan((c)->c.halt(), 300);
 	}
 
 }
