@@ -40,6 +40,9 @@ import util.random.RandomGeneratorProvider;
  */
 public class ResourcesActionSupport {
 
+	private ResourcesActionSupport() {
+	}
+
 	/**
 	 * Creates an action plugin with an agent that will execute the given
 	 * consumer at time 0. The action plugin and the remaining arguments are

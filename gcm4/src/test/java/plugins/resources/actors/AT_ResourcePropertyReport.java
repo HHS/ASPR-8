@@ -42,6 +42,7 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
@@ -69,6 +70,12 @@ public class AT_ResourcePropertyReport {
 			return testResourceId;
 		}
 
+	}
+
+	@Test
+	@UnitTestConstructor(args = {ReportId.class})
+	public void testConstructor() {
+		// nothing to test
 	}
 
 	@Test
