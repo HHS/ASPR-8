@@ -50,6 +50,10 @@ public class ResourcePropertyInitialization {
 				if (data.propertyDefinition.getDefaultValue().isEmpty()) {
 					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
 				}
+			} else {
+				if (!data.propertyDefinition.getType().isAssignableFrom(data.value.getClass())) {
+					throw new ContractException(PropertyError.INCOMPATIBLE_VALUE);
+				}
 			}
 		}
 
@@ -61,7 +65,7 @@ public class ResourcePropertyInitialization {
 		 *             if no property definition was provided</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
 		 *             property id was provided</li>
-		 *             <li>{@linkplain PropertyError#NULL_RESOURCE_ID} if no
+		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if no
 		 *             resource id was provided</li>
 		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if no property value was provided and the property
@@ -76,7 +80,17 @@ public class ResourcePropertyInitialization {
 			}
 		}
 
+		/**
+		 * Sets the resource id.
+		 *
+		 * @throws ContractException
+		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+		 *             resource id is null</li>
+		 */
 		public Builder setResourceId(ResourceId resourceId) {
+			if (resourceId == null) {
+				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
+			}
 			data.resourceId = resourceId;
 			return this;
 		}
