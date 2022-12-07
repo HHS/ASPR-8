@@ -6073,7 +6073,7 @@ public class AT_MaterialsDataManager {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			EventFilter<MaterialsProducerPropertyDefinitionEvent> eventFilter = materialsDataManager.getEventFilterForMaterialsProducerPropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getPersonPropertyId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.getProducerPropertyId()));
 			});
 		}));
 

@@ -36,7 +36,7 @@ public class MaterialsProducerPropertyDefinitionEvent implements Event {
 	/**
 	 * Returns the property id of the added property definition
 	 */
-	public MaterialsProducerPropertyId getPersonPropertyId() {
+	public MaterialsProducerPropertyId getProducerPropertyId() {
 		return materialsProducerPropertyId;
 	}
 
