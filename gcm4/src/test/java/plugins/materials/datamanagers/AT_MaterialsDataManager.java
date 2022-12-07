@@ -6743,9 +6743,6 @@ public class AT_MaterialsDataManager {
 	}
 
 	@Test
-	// @UnitTestMethod(target = MaterialsPluginData.class, name = "defineMaterialsProducerProperty", args = {
-			MaterialsProducerPropertyId.class,
-			PropertyDefinition.class })
 	public void testDefineMaterialsProducerProperty() {
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
