@@ -20,23 +20,23 @@ import plugins.materials.support.StageId;
 
 public final class AntigenProducer {
 	private ActorContext actorContext;
-	
+
 	private final MaterialsProducerId materialsProducerId;
-	
-	private MaterialsDataManager materialsDataManager;	
-	
+
+	private MaterialsDataManager materialsDataManager;
+
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 
 	private final Map<MaterialId, MaterialManufactureSpecification> materialRecs = new LinkedHashMap<>();
 
 	private final int stageCapacity = 25;
-	
+
 	private final double fermentationTime = 15.0;
-	
+
 	private final double antigenUnits = 200.0;
-	
+
 	private final double batchAssemblyDuration = 0.25;
-	
+
 	private double lastBatchAssemblyEndTime;
 
 	public AntigenProducer(final MaterialsProducerId materialsProducerId) {
@@ -155,7 +155,7 @@ public final class AntigenProducer {
 
 		final BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(materialId).setAmount(amount).build());
 		materialsDataManager.transferMaterialBetweenBatches(newBatchId, materialRec.getBatchId(), amount);
-		materialsDataManager.removeBatch(newBatchId);		
+		materialsDataManager.removeBatch(newBatchId);
 		planFermentation();
 	}
 

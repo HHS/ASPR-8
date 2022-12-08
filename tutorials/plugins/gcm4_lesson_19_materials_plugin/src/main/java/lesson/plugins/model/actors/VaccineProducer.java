@@ -21,15 +21,15 @@ import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 
 public final class VaccineProducer {
-	
+
 	private ActorContext actorContext;
-	
+
 	private final MaterialsProducerId materialsProducerId;
-	
+
 	private MaterialsDataManager materialsDataManager;
-	
+
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
-	
+
 	private final Map<MaterialId, MaterialManufactureSpecification> materialRecs = new LinkedHashMap<>();
 
 	private final int stageCapacity = 20;
@@ -41,14 +41,12 @@ public final class VaccineProducer {
 	private final double batchAssemblyDuration = 0.1;
 
 	private double lastBatchAssemblyEndTime;
-		
+
 	private BatchId antigenBatchId;
-	
+
 	private final double antigenAmountPerBatch = 200;
-	
+
 	private final long vaccineCapacity = 1_000;
-	
-	
 
 	public VaccineProducer(final MaterialsProducerId materialsProducerId) {
 		this.materialsProducerId = materialsProducerId;
@@ -206,7 +204,7 @@ public final class VaccineProducer {
 		final double deliveryTime = materialRec.getDeliveryDelay() + actorContext.getTime();
 		final double amount = amountToOrder;
 		materialRec.toggleOnOrder();
-		
+
 		actorContext.addPlan((c) -> receiveMaterial(materialId, amount), deliveryTime);
 	}
 
@@ -247,7 +245,7 @@ public final class VaccineProducer {
 		final BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(materialId).setAmount(amount).build());
 		materialsDataManager.transferMaterialBetweenBatches(newBatchId, materialRec.getBatchId(), amount);
 		materialsDataManager.removeBatch(newBatchId);
-		
+
 		planVaccinePrepartion();
 	}
 

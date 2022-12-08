@@ -45,8 +45,8 @@ public class ContactManager {
 			if (people.size() > 0) {
 				final PersonId contactedPerson = people.get(randomGenerator.nextInt(people.size()));
 				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.DISEASE_STATE);
-				boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
-				if (diseaseState == DiseaseState.SUSCEPTIBLE && !vaccinated) {
+				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
+				if ((diseaseState == DiseaseState.SUSCEPTIBLE) && !vaccinated) {
 					infectPerson(contactedPerson);
 				}
 			}
@@ -58,8 +58,8 @@ public class ContactManager {
 			if (optional.isPresent()) {
 				final PersonId contactedPerson = optional.get();
 				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.DISEASE_STATE);
-				boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
-				if (diseaseState == DiseaseState.SUSCEPTIBLE && !vaccinated) {
+				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
+				if ((diseaseState == DiseaseState.SUSCEPTIBLE) && !vaccinated) {
 					infectPerson(contactedPerson);
 				}
 			}
