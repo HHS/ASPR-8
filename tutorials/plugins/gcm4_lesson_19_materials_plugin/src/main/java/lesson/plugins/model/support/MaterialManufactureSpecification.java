@@ -3,7 +3,49 @@ package lesson.plugins.model.support;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.MaterialId;
 
-public final class AntigenMaterialRec {
+public final class MaterialManufactureSpecification {
+
+	public static class Builder {
+		private Data data = new Data();
+
+		private Builder() {
+
+		}
+
+		public MaterialManufactureSpecification build() {
+			try {
+				return new MaterialManufactureSpecification(data);
+			} finally {
+				data = new Data();
+			}
+		}
+
+		public Builder setBatchId(final BatchId batchId) {
+			data.batchId = batchId;
+			return this;
+		}
+
+		public Builder setDeliveryAmount(final double deliveryAmount) {
+			data.deliveryAmount = deliveryAmount;
+			return this;
+		}
+
+		public Builder setDeliveryDelay(final double deliveryDelay) {
+			data.deliveryDelay = deliveryDelay;
+			return this;
+		}
+
+		public Builder setMaterialId(final MaterialId materialId) {
+			data.materialId = materialId;
+			return this;
+		}
+
+		public Builder setStageAmount(final double stageAmount) {
+			data.stageAmount = stageAmount;
+			return this;
+		}
+
+	}
 
 	private static class Data {
 
@@ -19,52 +61,14 @@ public final class AntigenMaterialRec {
 		return new Builder();
 	}
 
-	public static class Builder {
-		private Data data = new Data();
-		
-		private Builder() {
-			
-		}
-
-		public AntigenMaterialRec build() {
-			try {
-				return new AntigenMaterialRec(data);
-			} finally {
-				data = new Data();
-			}
-		}
-
-		public Builder setDeliveryAmount(double deliveryAmount) {
-			data.deliveryAmount = deliveryAmount;
-			return this;
-		}
-		public Builder setDeliveryDelay(double deliveryDelay) {
-			data.deliveryDelay = deliveryDelay;
-			return this;
-		}
-		public Builder setStageAmount(double stageAmount) {
-			data.stageAmount = stageAmount;
-			return this;
-		}
-		public Builder setMaterialId(MaterialId materialId) {
-			data.materialId = materialId;
-			return this;
-		}
-		public Builder setBatchId(BatchId batchId) {
-			data.batchId = batchId;
-			return this;
-		}
-
-	}
-
 	private final Data data;
 
-	private AntigenMaterialRec(Data data) {
+	private MaterialManufactureSpecification(final Data data) {
 		this.data = data;
 	}
 
-	public boolean isOnOrder() {
-		return data.onOrder;
+	public BatchId getBatchId() {
+		return data.batchId;
 	}
 
 	public double getDeliveryAmount() {
@@ -75,21 +79,20 @@ public final class AntigenMaterialRec {
 		return data.deliveryDelay;
 	}
 
-	public double getStageAmount() {
-		return data.stageAmount;
-	}
-	
 	public MaterialId getMaterialId() {
 		return data.materialId;
 	}
-	
+
+	public double getStageAmount() {
+		return data.stageAmount;
+	}
+
+	public boolean isOnOrder() {
+		return data.onOrder;
+	}
+
 	public void toggleOnOrder() {
 		data.onOrder = !data.onOrder;
 	}
-	
-	public BatchId getBatchId() {
-		return data.batchId;
-	}
-	
-	
+
 }

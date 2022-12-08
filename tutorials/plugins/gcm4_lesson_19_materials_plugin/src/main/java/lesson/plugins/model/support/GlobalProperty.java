@@ -20,6 +20,8 @@ public enum GlobalProperty implements GlobalPropertyId {
 	AVERAGE_HOME_SIZE, // the average number of people per household
 	AVERAGE_SCHOOL_SIZE, // the average number of student in a school
 	AVERAGE_WORK_SIZE, // the average number of people per work place
-	COMMUNITY_CONTACT_RATE, //the proportion of contacts that will be randomly chosen from the entire population
+	COMMUNITY_CONTACT_RATE, // the proportion of contacts that will be randomly
+							// chosen from the entire population
+	MANUFACTURE_VACCINE,// Triggers vaccine manufacture
 	;
 }
