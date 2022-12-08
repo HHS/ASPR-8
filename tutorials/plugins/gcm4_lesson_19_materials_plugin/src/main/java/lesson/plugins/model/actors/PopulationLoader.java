@@ -38,8 +38,8 @@ public class PopulationLoader {
 	private double childPopulationProportion;
 	private double seniorPopulationProportion;
 	private double averageHomeSize;
-	private double averageSchoolSize;
 	private double averageWorkSize;
+	private double averageSchoolSize;
 
 	public void init(final ActorContext actorContext) {
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);

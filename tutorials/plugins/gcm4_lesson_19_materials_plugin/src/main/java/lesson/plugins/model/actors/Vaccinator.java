@@ -49,8 +49,18 @@ public class Vaccinator {
 
 	private int infectionPersonCountThreshold;
 	private int infectedPersonCount;
-	
+
 	private boolean manufactureStarted;
+
+	private void determineVaccineManufacutureStart() {
+		if (!manufactureStarted) {
+			if (infectedPersonCount >= infectionPersonCountThreshold) {
+				manufactureStarted = true;
+				globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE, true);
+				actorContext.unsubscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE));
+			}
+		}
+	}
 
 	private void handleMaterialsProducerResourceUpdateEvent(final ActorContext actorContext, final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (isCapturableResource(materialsProducerResourceUpdateEvent)) {
@@ -78,6 +88,15 @@ public class Vaccinator {
 		}
 	}
 
+	private void handlePersonPropertyUpdateEvent(final ActorContext actorContext, final PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+
+		final DiseaseState diseaseState = (DiseaseState) personPropertyUpdateEvent.getCurrentPropertyValue();
+		if (diseaseState == DiseaseState.INFECTIOUS) {
+			infectedPersonCount++;
+			determineVaccineManufacutureStart();
+		}
+	}
+
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		actorContext.addActor(new VaccineProducer(MaterialsProducer.VACCINE_PRODUCER)::init);
@@ -97,33 +116,13 @@ public class Vaccinator {
 			vaccinationSchedules.put(regionId, new MutableDouble());
 			availableVaccines.put(regionId, new MutableLong());
 		}
-		
-		
+
 		actorContext.subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE), this::handlePersonPropertyUpdateEvent);
-		
-		double infectionThreshold = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD);
+
+		final double infectionThreshold = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD);
 		infectedPersonCount = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS).size();
-		infectionPersonCountThreshold = (int) ((double) peopleDataManager.getPopulationCount() * infectionThreshold);
+		infectionPersonCountThreshold = (int) (peopleDataManager.getPopulationCount() * infectionThreshold);
 		determineVaccineManufacutureStart();
-	}
-
-	private void handlePersonPropertyUpdateEvent(ActorContext actorContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
-
-		DiseaseState diseaseState = (DiseaseState) personPropertyUpdateEvent.getCurrentPropertyValue();
-		if (diseaseState == DiseaseState.INFECTIOUS) {
-			infectedPersonCount++;
-			determineVaccineManufacutureStart();
-		}
-	}
-
-	private void determineVaccineManufacutureStart() {		
-		if (!manufactureStarted) {
-			if (infectedPersonCount >= infectionPersonCountThreshold) {				
-				manufactureStarted = true;
-				globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE, true);
-				actorContext.unsubscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE));
-			}
-		}
 	}
 
 	private boolean isCapturableResource(final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
@@ -178,8 +177,8 @@ public class Vaccinator {
 	}
 
 	private void vaccinatePerson(final PersonId personId) {
-		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);		
-		resourcesDataManager.transferResourceToPersonFromRegion(Resource.VACCINE, personId, 1L);		
+		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);
+		resourcesDataManager.transferResourceToPersonFromRegion(Resource.VACCINE, personId, 1L);
 	}
 
 }
