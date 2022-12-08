@@ -12,7 +12,6 @@ import lesson.plugins.model.support.MaterialManufactureSpecification;
 import nucleus.ActorContext;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.StageMaterialsProducerUpdateEvent;
 import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.MaterialId;
@@ -20,18 +19,25 @@ import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 
 public final class AntigenProducer {
+	private ActorContext actorContext;
+	
+	private final MaterialsProducerId materialsProducerId;
+	
+	private MaterialsDataManager materialsDataManager;	
+	
+	private GlobalPropertiesDataManager globalPropertiesDataManager;
 
 	private final Map<MaterialId, MaterialManufactureSpecification> materialRecs = new LinkedHashMap<>();
 
 	private final int stageCapacity = 25;
+	
 	private final double fermentationTime = 15.0;
+	
 	private final double antigenUnits = 200.0;
+	
 	private final double batchAssemblyDuration = 0.25;
+	
 	private double lastBatchAssemblyEndTime;
-	private final MaterialsProducerId materialsProducerId;
-	private MaterialsDataManager materialsDataManager;
-	private ActorContext actorContext;
-	private GlobalPropertiesDataManager globalPropertiesDataManager;
 
 	public AntigenProducer(final MaterialsProducerId materialsProducerId) {
 		this.materialsProducerId = materialsProducerId;
@@ -54,10 +60,6 @@ public final class AntigenProducer {
 		final StageId antigenStage = materialsDataManager.addStage(materialsProducerId);
 		materialsDataManager.moveBatchToStage(batch, antigenStage);
 		materialsDataManager.setStageOfferState(antigenStage, true);
-	}
-
-	private void handleStageMaterialsProducerUpdateEvent(final ActorContext actorContext, final StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
-		planFermentation();
 	}
 
 	private boolean hasSufficientMaterialsForNewStage() {
@@ -87,7 +89,7 @@ public final class AntigenProducer {
 
 		planFermentation();
 
-		actorContext.subscribe(materialsDataManager.getEventFilterForStageMaterialsProducerUpdateEvent_BySource(materialsProducerId), this::handleStageMaterialsProducerUpdateEvent);
+		actorContext.subscribe(materialsDataManager.getEventFilterForStageMaterialsProducerUpdateEvent_BySource(materialsProducerId), (c, e) -> planFermentation());
 		actorContext.subscribe(globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(GlobalProperty.MANUFACTURE_VACCINE), (c, e) -> planFermentation());
 	}
 
@@ -153,10 +155,8 @@ public final class AntigenProducer {
 
 		final BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(materialId).setAmount(amount).build());
 		materialsDataManager.transferMaterialBetweenBatches(newBatchId, materialRec.getBatchId(), amount);
-		materialsDataManager.removeBatch(newBatchId);
-		System.out.println(actorContext.getTime() + "\t" + "Received " + materialId + "(" + amount + ")");
+		materialsDataManager.removeBatch(newBatchId);		
 		planFermentation();
-
 	}
 
 	private boolean stagesAtCapacity() {

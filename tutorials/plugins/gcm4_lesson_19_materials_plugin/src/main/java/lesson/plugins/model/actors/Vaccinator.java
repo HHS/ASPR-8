@@ -25,20 +25,26 @@ import util.wrappers.MutableDouble;
 import util.wrappers.MutableLong;
 
 public class Vaccinator {
+	
 	private MaterialsDataManager materialsDataManager;
+	
 	private RegionsDataManager regionsDataManager;
+	
 	private PeopleDataManager peopleDataManager;
+	
 	private PersonPropertiesDataManager personPropertiesDataManager;
+	
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
+	
 	private ResourcesDataManager resourcesDataManager;
 
 	private final Map<RegionId, MutableDouble> vaccinationSchedules = new LinkedHashMap<>();
+	
 	private final Map<RegionId, MutableLong> availableVaccines = new LinkedHashMap<>();
 
 	private final int vaccinationsPerRegionPerDay = 100;
+	
 	private ActorContext actorContext;
-
-	private long totalVaccineDosesAcquired;
 
 	private void handleMaterialsProducerResourceUpdateEvent(final ActorContext actorContext, final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (isCapturableResource(materialsProducerResourceUpdateEvent)) {
@@ -47,9 +53,6 @@ public class Vaccinator {
 
 			final long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, Resource.VACCINE);
 			final List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
-
-			totalVaccineDosesAcquired += resourceLevel;
-			System.out.println(actorContext.getTime() + "\t" + "totalVaccineDosesAcquired = " + totalVaccineDosesAcquired);
 
 			final long resourceToTransfer = resourceLevel / regionIds.size();
 			long remainderResource = resourceLevel % regionIds.size();
