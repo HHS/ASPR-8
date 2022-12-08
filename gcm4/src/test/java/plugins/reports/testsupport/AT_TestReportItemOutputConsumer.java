@@ -20,6 +20,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MutableInteger;
 
@@ -43,6 +44,12 @@ public class AT_TestReportItemOutputConsumer {
 	private static MutableInteger scenarioId = new MutableInteger(-1);
 
 	private final static Map<Integer, Map<ReportItem, Integer>> expectedReportItems = new LinkedHashMap<>();
+
+	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructor() {
+		// nothing to test
+	}
 
 	@Test
 	@UnitTestMethod(name = "getReportItems", args = {})
