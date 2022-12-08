@@ -21,6 +21,7 @@ import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
 
 public final class VaccineProducer {
+	
 	private ActorContext actorContext;
 	
 	private final MaterialsProducerId materialsProducerId;

@@ -8,6 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.actors.reports.DiseaseStateReport;
+import lesson.plugins.model.actors.reports.VaccineReport;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.GroupType;
@@ -70,14 +71,10 @@ public final class Example_19 {
 					.addPlugin(getRegionsPlugin())//
 					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getStochasticsPlugin())//
-					.addPlugin(ModelPlugin.getModelPlugin())//
-
-					// .addDimension(getCommunityContactRateDimension())//
-					// .addDimension(getIntialInfectionsDimension())//
-					// .addDimension(getR0Dimension())//
-
+					.addPlugin(ModelPlugin.getModelPlugin())//					
+					//.addDimension(getInfectionThresholdDimension())//
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					// .setThreadCount(8)//
+					//.setThreadCount(8)//
 					.reportProgressToConsole(true)//
 					.build()//
 					.execute();//
@@ -85,7 +82,7 @@ public final class Example_19 {
 	}
 
 	private Dimension getCommunityContactRateDimension() {
-		final double[] values = new double[] { 0.0, 0.01, 0.05, 1.0 };
+		final Double[] values = new Double[] { 0.0, 0.01, 0.05, 1.0 };		
 		return getGlobalPropertyDimension(GlobalProperty.COMMUNITY_CONTACT_RATE, "community_contact_rate", values);
 	}
 
@@ -107,6 +104,7 @@ public final class Example_19 {
 		builder.defineGlobalProperty(GlobalProperty.SENIOR_POPULATION_PROPORTION, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.R0, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.COMMUNITY_CONTACT_RATE, propertyDefinition);
+		builder.defineGlobalProperty(GlobalProperty.INFECTION_THRESHOLD, propertyDefinition);
 
 		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(Integer.class)//
@@ -136,6 +134,7 @@ public final class Example_19 {
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE, 2.5);
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE, 250.0);
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE, 30.0);
+		builder.setGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD, 0.1);
 		builder.setGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE, 0.01);
 
 		final GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
@@ -143,16 +142,17 @@ public final class Example_19 {
 		return GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
 
 	}
-
-	private Dimension getGlobalPropertyDimension(final GlobalPropertyId globalPropertyId, final String header, final double[] values) {
+	
+	
+	private Dimension getGlobalPropertyDimension(final GlobalPropertyId globalPropertyId, final String header, final Object[] values) {
 		final Dimension.Builder dimensionBuilder = Dimension.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
 			dimensionBuilder.addLevel((context) -> {
 				final GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
-				final double value = values[i];
+				final Object value = values[i];
 				builder.setGlobalPropertyValue(globalPropertyId, value);
 				final ArrayList<String> result = new ArrayList<>();
-				result.add(Double.toString(value));
+				result.add(value.toString());
 				return result;
 			});//
 		});
@@ -160,21 +160,6 @@ public final class Example_19 {
 		return dimensionBuilder.build();
 	}
 
-	private Dimension getGlobalPropertyDimension(final GlobalPropertyId globalPropertyId, final String header, final int[] values) {
-		final Dimension.Builder dimensionBuilder = Dimension.builder();//
-		IntStream.range(0, values.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
-				final GlobalPropertiesPluginData.Builder builder = context.get(GlobalPropertiesPluginData.Builder.class);
-				final int value = values[i];
-				builder.setGlobalPropertyValue(globalPropertyId, value);
-				final ArrayList<String> result = new ArrayList<>();
-				result.add(Double.toString(value));
-				return result;
-			});//
-		});
-		dimensionBuilder.addMetaDatum(header);//
-		return dimensionBuilder.build();
-	}
 
 	private Plugin getGroupsPlugin() {
 		final GroupsPluginData.Builder builder = GroupsPluginData.builder();
@@ -186,7 +171,7 @@ public final class Example_19 {
 	}
 
 	private Dimension getIntialInfectionsDimension() {
-		final int[] values = new int[] { 1, 10, 100, 1000 };
+		final Integer[] values = new Integer[] { 1, 10, 100, 1000 };
 		return getGlobalPropertyDimension(GlobalProperty.INITIAL_INFECTIONS, "initial_infections", values);
 	}
 
@@ -202,12 +187,6 @@ public final class Example_19 {
 		return MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
 	}
 
-	private NIOReportItemHandler getNIOReportItemHandler() {
-		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportId.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
-									.addReport(ModelReportId.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
-									.build();
-	}
 
 	private Plugin getPeoplePlugin() {
 		final PeoplePluginData peoplePluginData = PeoplePluginData.builder().build();
@@ -251,9 +230,21 @@ public final class Example_19 {
 	}
 
 	private Dimension getR0Dimension() {
-		final double[] values = new double[] { 2.0, 2.5, 3.0, 4.0, 5.0 };
+		final Double[] values = new Double[] { 2.0, 2.5, 3.0, 4.0, 5.0 };
 		return getGlobalPropertyDimension(GlobalProperty.R0, "R0", values);
 	}
+	
+	private Dimension getInfectionThresholdDimension() {
+		
+		final Double[] values = new Double[101];
+		for(int i =0;i<101;i++) {
+			double value = i;
+			value/=100;
+			values[i] = value;
+		}
+		return getGlobalPropertyDimension(GlobalProperty.INFECTION_THRESHOLD, "infection_threshold", values);
+	}
+	
 
 	private Plugin getRegionsPlugin() {
 		final RegionsPluginData.Builder regionsPluginDataBuilder = RegionsPluginData.builder();
@@ -270,12 +261,26 @@ public final class Example_19 {
 		final ReportsPluginData reportsPluginData = //
 				ReportsPluginData	.builder()//
 									.addReport(() -> new DiseaseStateReport(ModelReportId.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init)//
-									.addReport(() -> PersonPropertyReport	.builder().setReportId(ModelReportId.PERSON_PROPERTY_REPORT).setReportPeriod(ReportPeriod.END_OF_SIMULATION)
-																			.includePersonProperty(PersonProperty.CONTACT_COUNT).build()::init)//
+									.addReport(() -> PersonPropertyReport	.builder()//
+																			.setReportId(ModelReportId.PERSON_PROPERTY_REPORT)//
+																			.setReportPeriod(ReportPeriod.DAILY)//
+																			.includePersonProperty(PersonProperty.VACCINATED)//
+																			.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//																			
+																			.build()::init)//
+									.addReport(() -> new VaccineReport(ModelReportId.VACCINE_REPORT, ReportPeriod.DAILY)::init)//
 									.build();
 
 		return ReportsPlugin.getReportsPlugin(reportsPluginData);
 	}
+	
+	private NIOReportItemHandler getNIOReportItemHandler() {
+		return NIOReportItemHandler	.builder()//
+									.addReport(ModelReportId.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
+									.addReport(ModelReportId.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
+									.addReport(ModelReportId.VACCINE_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_report.xls"))//
+									.build();
+	}
+
 
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
