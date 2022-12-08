@@ -1,6 +1,5 @@
 package lesson.plugins.model.actors.reports;
 
-import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.PersonProperty;
 import nucleus.ActorContext;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -10,18 +9,12 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 
-/**
- * A report that groups people at the end of the simulation by their shared
- * person property values.
- *
- * @author Shawn Hatch
- *
- */
-public final class DiseaseStateReport extends PeriodicReport {
+
+public final class VaccineReport extends PeriodicReport {
 
 	private ReportHeader reportHeader;
 
-	public DiseaseStateReport(final ReportId reportId, final ReportPeriod reportPeriod) {
+	public VaccineReport(final ReportId reportId, final ReportPeriod reportPeriod) {
 		super(reportId, reportPeriod);
 	}
 
@@ -30,32 +23,24 @@ public final class DiseaseStateReport extends PeriodicReport {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportId(getReportId());
 		reportItemBuilder.setReportHeader(getReportHeader());
-		fillTimeFields(reportItemBuilder);
-		reportItemBuilder.addValue(actorContext.getTime());
-		
+		fillTimeFields(reportItemBuilder);				
 		
 		final PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
 		reportItemBuilder.addValue(vaccinatedCount);
-		for (final DiseaseState diseaseState : DiseaseState.values()) {
-			final int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE, diseaseState);
-			reportItemBuilder.addValue(count);
-		}
+		int vaccineScheduledCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINE_SCHEDULED, true);
+		reportItemBuilder.addValue(vaccineScheduledCount);
 
 		final ReportItem reportItem = reportItemBuilder.build();
 		actorContext.releaseOutput(reportItem);
-
 	}
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			addTimeFieldHeaders(reportHeaderBuilder);//
-			reportHeaderBuilder.add("day");
-			reportHeaderBuilder.add("vaccinated");
-			for (final DiseaseState diseaseState : DiseaseState.values()) {
-				reportHeaderBuilder.add(diseaseState.toString().toLowerCase());
-			}
+			addTimeFieldHeaders(reportHeaderBuilder);//			
+			reportHeaderBuilder.add("vaccine_scheduled");
+			reportHeaderBuilder.add("vaccinated");			
 			reportHeader = reportHeaderBuilder.build();
 		}
 		return reportHeader;
