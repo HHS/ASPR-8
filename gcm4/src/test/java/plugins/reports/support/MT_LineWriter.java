@@ -21,12 +21,12 @@ public class MT_LineWriter {
         // covered by test accept in MT_NIOReportItemHandler
     }
 
-    @UnitTestMethod(name = "flush", args = {}, tags = {UnitTag.CLASS_PROXY})
-    public void testFLush() {
+    @UnitTestMethod(name = "flush", args = {}, tags = {UnitTag.CLASS_PROXY, UnitTag.INCOMPLETE})
+    public void testFlush() {
         // covered by test accept in MT_NIOReportItemHandler
     }
 
-    @UnitTestMethod(name = "close", args = {}, tags = {UnitTag.CLASS_PROXY})
+    @UnitTestMethod(name = "close", args = {}, tags = {UnitTag.CLASS_PROXY, UnitTag.INCOMPLETE})
     public void testClose() {
         // covered by test accept in MT_NIOReportItemHandler
     }

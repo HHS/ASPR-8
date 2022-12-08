@@ -3,6 +3,7 @@ package plugins.reports.support;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.ExperimentContext;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -66,7 +67,7 @@ public class MT_NIOReportItemHandler {
 //        testBuild();
 //        testAddReport();
 //        testSetDisplayExperimentColumnsInReports();
-        testAcceptWithProgressLog();
+//        testAcceptWithProgressLog();
     }
 
     private NIOReportItemHandler getNIOReportItemHandler(){
@@ -80,12 +81,12 @@ public class MT_NIOReportItemHandler {
     }
 
     @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "build", args = {})
-    public void testBuild() {
+    private void testBuild() {
         NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
         ReportId reportId1 = new SimpleReportId("testReportId1");
         ReportId reportId2 = new SimpleReportId("testReportId2");
-        final Path path1 = Path.of("C:\\Users\\varnerbf\\Documents\\TestReports\\1");
-        final Path path2 = Path.of("C:\\Users\\varnerbf\\Documents\\TestReports\\2");
+        final Path path1 = Path.of("example_path1");
+        final Path path2 = Path.of("example_path2");
 
         // show that a path collision error happens when 2 reports have the same path
         builder.addReport(reportId1, path1);
@@ -103,10 +104,10 @@ public class MT_NIOReportItemHandler {
     }
 
     @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = {ReportId.class, Path.class})
-    public void testAddReport() {
+    private void testAddReport() {
         NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
         ReportId reportId = new SimpleReportId("testReportId");
-        final Path path1 = Path.of("C:\\Users\\varnerbf\\Documents\\TestReports\\1");
+        final Path path1 = Path.of("example_path3");
 
         // null report id check
         ContractException pathContractException = assertThrows(ContractException.class, () -> builder.addReport(null, path1));
@@ -118,8 +119,8 @@ public class MT_NIOReportItemHandler {
 
     }
 
-    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDisplayExperimentColumnsInReports", args = {boolean.class})
-    public void testSetDisplayExperimentColumnsInReports() {
+    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDisplayExperimentColumnsInReports", args = {boolean.class}, tags = {UnitTag.INCOMPLETE})
+    private void testSetDisplayExperimentColumnsInReports() {
         NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
         final boolean displayExperimentColumnsInReports = true;
 
