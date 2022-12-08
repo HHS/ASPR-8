@@ -1,66 +1,44 @@
 package plugins.reports.support;
 
+import nucleus.ExperimentContext;
 import org.junit.jupiter.api.Test;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
-import util.errors.ContractException;
 
 import java.nio.file.Path;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = NIOReportItemHandler.class)
 public class AT_NIOReportItemHandler {
 
     @Test
-    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "build", args = {})
+    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "build", args = {}, tags = {UnitTag.MANUAL})
     public void testBuild() {
-        NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-        ReportId reportId1 = new SimpleReportId("testReportId1");
-        ReportId reportId2 = new SimpleReportId("testReportId2");
-        final Path path1 = Path.of("C:\\Users\\varnerbf\\Documents\\TestReports\\1");
-        final Path path2 = Path.of("C:\\Users\\varnerbf\\Documents\\TestReports\\2");
-
-        // show that a path collision error happens when 2 reports have the same path
-        builder.addReport(reportId1, path1);
-        builder.addReport(reportId2, path1);
-
-        ContractException contractException = assertThrows(ContractException.class, () -> builder.build());
-        assertEquals(contractException.getErrorType(), ReportError.PATH_COLLISION);
-
-        // show that what is built is not null
-        builder.addReport(reportId1, path1);
-        builder.addReport(reportId2, path2);
-
-        assertNotNull(builder.build());
-
+        // covered by test for accept in manual test
     }
 
     @Test
-    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = {ReportId.class, Path.class})
+    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "addReport", args = {ReportId.class, Path.class}, tags = {UnitTag.MANUAL})
     public void testAddReport() {
-        NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-        ReportId reportId = new SimpleReportId("testReportId");
-        final Path path1 = Path.of("C:\\Users\\varnerbf\\Documents\\TestReports\\1");
-
-        // null report id check
-        ContractException pathContractException = assertThrows(ContractException.class, () -> builder.addReport(null, path1));
-        assertEquals(pathContractException.getErrorType(), ReportError.NULL_REPORT_ID);
-
-        // null report path check
-        ContractException idContractException = assertThrows(ContractException.class, () -> builder.addReport(reportId, null));
-        assertEquals(idContractException.getErrorType(), ReportError.NULL_REPORT_PATH);
-
+        // covered by test for accept in manual test
     }
 
     @Test
-    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDisplayExperimentColumnsInReports", args = {boolean.class})
+    @UnitTestMethod(target = NIOReportItemHandler.Builder.class, name = "setDisplayExperimentColumnsInReports", args = {boolean.class}, tags = {UnitTag.MANUAL})
     public void testSetDisplayExperimentColumnsInReports() {
-        NIOReportItemHandler.Builder builder = NIOReportItemHandler.builder();
-        final boolean displayExperimentColumnsInReports = true;
+        // covered by test for accept in manual test
+    }
 
-        assertNotNull(builder.setDisplayExperimentColumnsInReports(displayExperimentColumnsInReports));
+    @Test
+    @UnitTestMethod(name = "builder", args = {}, tags = {UnitTag.MANUAL})
+    public void testBuilder() {
+        // covered by test for builder in manual test
+    }
 
+    @Test
+    @UnitTestMethod(name = "accept", args = {ExperimentContext.class}, tags = {UnitTag.MANUAL})
+    public void testAccept() {
+        // covered by test for accept in manual test
     }
 
 }
