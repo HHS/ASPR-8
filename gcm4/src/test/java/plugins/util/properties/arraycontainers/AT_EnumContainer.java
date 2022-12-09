@@ -10,6 +10,7 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -156,6 +157,18 @@ public class AT_EnumContainer {
 
 		// if the value is not a member of the enumeration
 		assertThrows(IllegalArgumentException.class, () -> preConditionEnumContainer.setValue(1, 45));
+	}
+
+	@Test
+	@UnitTestMethod(name = "getCapacity", args = {}, tags = {UnitTag.INCOMPLETE})
+	public void testGetCapacity() {
+		// requires a manual performance test
+	}
+
+	@Test
+	@UnitTestMethod(name = "setCapacity", args = {int.class}, tags = {UnitTag.INCOMPLETE})
+	public void testSetCapacity() {
+		// requires a manual performance test
 	}
 
 }
