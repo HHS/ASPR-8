@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -97,6 +98,18 @@ public class AT_ObjectValueContainer {
 
 		// test pre-conditions
 		assertThrows(IllegalArgumentException.class, () -> objectValueContainer.getValue(-1));
+	}
+
+	@Test
+	@UnitTestMethod(name = "setCapacity", args = {int.class}, tags = {UnitTag.INCOMPLETE})
+	public void testSetCapacity() {
+		// requires a manual performance test
+	}
+
+	@Test
+	@UnitTestMethod(name = "getCapacity", args = {}, tags = {UnitTag.INCOMPLETE})
+	public void testGetCapacity() {
+		// requires a manual performance test
 	}
 
 }
