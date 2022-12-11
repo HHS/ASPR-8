@@ -100,10 +100,8 @@ public class Vaccinator {
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		actorContext.addActor(new VaccineProducer(MaterialsProducer.VACCINE_PRODUCER)::init);
-		actorContext.addActor(new AntigenProducer(MaterialsProducer.ANTIGEN_PRODUCER_1)::init);
-		actorContext.addPlan((c) -> {
-			c.addActor(new AntigenProducer(MaterialsProducer.ANTIGEN_PRODUCER_2)::init);
-		}, 60.0);
+		actorContext.addActor(new AntigenProducer(MaterialsProducer.ANTIGEN_PRODUCER)::init);
+		
 		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);

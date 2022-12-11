@@ -29,11 +29,11 @@ public final class AntigenProducer {
 
 	private final Map<MaterialId, MaterialManufactureSpecification> materialRecs = new LinkedHashMap<>();
 
-	private final int stageCapacity = 25;
+	private final int stageCapacity = 60;//to be non-constraining, stageCapacity = fermentationTime/batchAssemblyDuration
 
 	private final double fermentationTime = 15.0;
 
-	private final double antigenUnits = 200.0;
+	private final double antigenUnits = 25.0;
 
 	private final double batchAssemblyDuration = 0.25;
 
@@ -60,6 +60,7 @@ public final class AntigenProducer {
 		final StageId antigenStage = materialsDataManager.addStage(materialsProducerId);
 		materialsDataManager.moveBatchToStage(batch, antigenStage);
 		materialsDataManager.setStageOfferState(antigenStage, true);
+		planFermentation();
 	}
 
 	private boolean hasSufficientMaterialsForNewStage() {
@@ -89,7 +90,10 @@ public final class AntigenProducer {
 
 		planFermentation();
 
+		//each time a stage is transferred
 		actorContext.subscribe(materialsDataManager.getEventFilterForStageMaterialsProducerUpdateEvent_BySource(materialsProducerId), (c, e) -> planFermentation());
+		
+		//each time the manufacture policy is changed
 		actorContext.subscribe(globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(GlobalProperty.MANUFACTURE_VACCINE), (c, e) -> planFermentation());
 	}
 
@@ -99,9 +103,11 @@ public final class AntigenProducer {
 			return;
 		}
 
-		double requiredAmount = materialRec.getStageAmount();
+		double requiredAmount = stageCapacity*materialRec.getStageAmount();
 		requiredAmount /= batchAssemblyDuration;
 		requiredAmount *= materialRec.getDeliveryDelay();
+		
+		
 
 		final List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(materialsProducerId, materialId);
 		double currentAmount = 0;
@@ -127,12 +133,15 @@ public final class AntigenProducer {
 		}
 	}
 
+	
 	private void planFermentation() {
+		
 		final Boolean continueManufature = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE);
 		if (!continueManufature) {
 			return;
 		}
 		orderMaterials();
+		
 		while (!stagesAtCapacity() && hasSufficientMaterialsForNewStage()) {
 			final StageId stageId = materialsDataManager.addStage(materialsProducerId);
 			for (final MaterialId materialId : materialRecs.keySet()) {

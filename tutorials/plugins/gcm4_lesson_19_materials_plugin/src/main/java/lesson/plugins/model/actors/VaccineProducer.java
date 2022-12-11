@@ -32,11 +32,11 @@ public final class VaccineProducer {
 
 	private final Map<MaterialId, MaterialManufactureSpecification> materialRecs = new LinkedHashMap<>();
 
-	private final int stageCapacity = 20;
+	private final int stageCapacity = 15;
 
 	private final double vaccinePreparationTime = 2.0;
 
-	private final long vaccineUnits = 200;
+	private final long vaccineUnits = 50;
 
 	private final double batchAssemblyDuration = 0.1;
 
@@ -44,9 +44,9 @@ public final class VaccineProducer {
 
 	private BatchId antigenBatchId;
 
-	private final double antigenAmountPerBatch = 200;
+	private final double antigenAmountPerBatch = 50;
 
-	private final long vaccineCapacity = 1_000;
+	private final long vaccineCapacity = 100;
 
 	public VaccineProducer(final MaterialsProducerId materialsProducerId) {
 		this.materialsProducerId = materialsProducerId;
@@ -186,7 +186,7 @@ public final class VaccineProducer {
 			return;
 		}
 
-		double requiredAmount = materialRec.getStageAmount();
+		double requiredAmount = materialRec.getStageAmount()*stageCapacity;
 		requiredAmount /= batchAssemblyDuration;
 		requiredAmount *= materialRec.getDeliveryDelay();
 
@@ -230,6 +230,12 @@ public final class VaccineProducer {
 				materialsDataManager.transferMaterialBetweenBatches(materialManufactureSpecification.getBatchId(), newBatchId, materialManufactureSpecification.getStageAmount());
 				materialsDataManager.moveBatchToStage(newBatchId, stageId);
 			}
+			
+			BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(Material.ANTIGEN).build());
+			materialsDataManager.transferMaterialBetweenBatches(antigenBatchId, newBatchId, antigenAmountPerBatch);
+			materialsDataManager.moveBatchToStage(newBatchId, stageId);
+			
+			
 			final double batchAssemblyStartTime = FastMath.max(actorContext.getTime(), lastBatchAssemblyEndTime);
 			final double fermentationStartTime = batchAssemblyStartTime + batchAssemblyDuration;
 			lastBatchAssemblyEndTime = fermentationStartTime;

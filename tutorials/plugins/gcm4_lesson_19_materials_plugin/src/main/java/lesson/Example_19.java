@@ -8,6 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.actors.reports.DiseaseStateReport;
+import lesson.plugins.model.actors.reports.VaccineProductionReport;
 import lesson.plugins.model.actors.reports.VaccineReport;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
@@ -24,6 +25,7 @@ import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
+import plugins.globalproperties.actors.GlobalPropertyReport;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
@@ -72,9 +74,14 @@ public final class Example_19 {
 					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getStochasticsPlugin())//
 					.addPlugin(ModelPlugin.getModelPlugin())//
-					// .addDimension(getInfectionThresholdDimension())//
+
+					.addDimension(getInfectionThresholdDimension())//
+					.addDimension(getCommunityContactRateDimension())//
+					.addDimension(getIntialInfectionsDimension())//
+					.addDimension(getR0Dimension())//
+
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
-					// .setThreadCount(8)//
+					.setThreadCount(8)//
 					.reportProgressToConsole(true)//
 					.build()//
 					.execute();//
@@ -82,7 +89,7 @@ public final class Example_19 {
 	}
 
 	private Dimension getCommunityContactRateDimension() {
-		final Double[] values = new Double[] { 0.0, 0.01, 0.05, 1.0 };
+		final Double[] values = new Double[] { 0.0, 0.01, 0.05 };
 		return getGlobalPropertyDimension(GlobalProperty.COMMUNITY_CONTACT_RATE, "community_contact_rate", values);
 	}
 
@@ -96,7 +103,6 @@ public final class Example_19 {
 																	.build();
 
 		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition);
-		builder.defineGlobalProperty(GlobalProperty.VACCINED_DOSES_PER_PERSON, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.AVERAGE_HOME_SIZE, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.AVERAGE_SCHOOL_SIZE, propertyDefinition);
 		builder.defineGlobalProperty(GlobalProperty.AVERAGE_WORK_SIZE, propertyDefinition);
@@ -123,9 +129,8 @@ public final class Example_19 {
 		builder.defineGlobalProperty(GlobalProperty.MANUFACTURE_VACCINE, propertyDefinition);
 
 		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 10_000);
-		builder.setGlobalPropertyValue(GlobalProperty.VACCINED_DOSES_PER_PERSON, 0.01);
 		builder.setGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, 1.0);
-		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 100);
+		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 1);
 		builder.setGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD, 7);
 		builder.setGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD, 14);
 		builder.setGlobalPropertyValue(GlobalProperty.R0, 2.0);
@@ -134,8 +139,8 @@ public final class Example_19 {
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE, 2.5);
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE, 250.0);
 		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE, 30.0);
-		builder.setGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD, 0.1);
-		builder.setGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE, 0.01);
+		builder.setGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD, 0.0);
+		builder.setGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE, 0.0);
 
 		final GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
@@ -169,7 +174,7 @@ public final class Example_19 {
 	}
 
 	private Dimension getIntialInfectionsDimension() {
-		final Integer[] values = new Integer[] { 1, 10, 100, 1000 };
+		final Integer[] values = new Integer[] { 1, 10, 100 };
 		return getGlobalPropertyDimension(GlobalProperty.INITIAL_INFECTIONS, "initial_infections", values);
 	}
 
@@ -227,18 +232,12 @@ public final class Example_19 {
 	}
 
 	private Dimension getR0Dimension() {
-		final Double[] values = new Double[] { 2.0, 2.5, 3.0, 4.0, 5.0 };
+		final Double[] values = new Double[] { 2.0, 2.5, 3.0 };
 		return getGlobalPropertyDimension(GlobalProperty.R0, "R0", values);
 	}
 
 	private Dimension getInfectionThresholdDimension() {
-
-		final Double[] values = new Double[101];
-		for (int i = 0; i < 101; i++) {
-			double value = i;
-			value /= 100;
-			values[i] = value;
-		}
+		final Double[] values = new Double[] { 0.01, 0.02, 0.05 };
 		return getGlobalPropertyDimension(GlobalProperty.INFECTION_THRESHOLD, "infection_threshold", values);
 	}
 
@@ -264,6 +263,11 @@ public final class Example_19 {
 																			.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
 																			.build()::init)//
 									.addReport(() -> new VaccineReport(ModelReportId.VACCINE_REPORT, ReportPeriod.DAILY)::init)//
+									.addReport(() -> new VaccineProductionReport(ModelReportId.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init)//
+									.addReport(() -> GlobalPropertyReport	.builder().setReportId(ModelReportId.GLOBAL_PROPERTY_REPORT)//
+																			.includeAllExtantPropertyIds(true)//
+																			.build()::init)//
+
 									.build();
 
 		return ReportsPlugin.getReportsPlugin(reportsPluginData);
@@ -274,6 +278,8 @@ public final class Example_19 {
 									.addReport(ModelReportId.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
 									.addReport(ModelReportId.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
 									.addReport(ModelReportId.VACCINE_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_report.xls"))//
+									.addReport(ModelReportId.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//
+									.addReport(ModelReportId.GLOBAL_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\global_property_report.xls"))//
 									.build();
 	}
 

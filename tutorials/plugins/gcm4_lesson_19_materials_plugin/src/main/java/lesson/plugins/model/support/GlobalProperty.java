@@ -3,9 +3,7 @@ package lesson.plugins.model.support;
 import plugins.globalproperties.support.GlobalPropertyId;
 
 public enum GlobalProperty implements GlobalPropertyId {
-	VACCINED_DOSES_PER_PERSON, // The number of vaccine doses per person on
-								// average stored in the regions at the begining
-								// of the simulation.
+	
 	SUSCEPTIBLE_POPULATION_PROPORTION, // the fraction of the population that is
 	// susceptible
 	INITIAL_INFECTIONS, // the number of adults initially infected
