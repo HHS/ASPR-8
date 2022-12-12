@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -16,9 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import util.tree.MutableTree;
-import util.tree.Tree;
-import util.tree.impl.SortedTree;
+import util.wrappers.MutableInteger;
 
 public class CodeCountReport {
 	
@@ -57,18 +56,7 @@ public class CodeCountReport {
 		private Builder() {
 		}
 
-		private void cascadeLineCounts(Tree<Node> tree, Node node) {
-			for (Node childNode : tree.getChildNodes(node)) {
-				cascadeLineCounts(tree, childNode);
-			}
-			for (Node childNode : tree.getChildNodes(node)) {
-				for (LineType lineType : LineType.values()) {
-					node.increment(lineType, childNode.getLineCount(lineType));
-				}
-			}
-
-		}
-
+		
 		public CodeCountReport build() {
 			try {
 
@@ -81,21 +69,9 @@ public class CodeCountReport {
 					}
 				}
 
-				//force a root node above all the nodes in the tree
-				MutableTree<Node> tree = counterFileVisitor.tree;
-
-				Node rootNode = new Node(Paths.get("All"));
-
-				List<Node> currentRootNodes = new ArrayList<>();
-				for (Node node : tree.getRootNodes()) {
-					currentRootNodes.add(node);
-				}
-				for (Node node : currentRootNodes) {
-					tree.addLink(rootNode, node);
-				}
-				
-				//have each node in the tree increment its counters from its children
-				cascadeLineCounts(tree, rootNode);
+			
+				Node rootNode = counterFileVisitor.rootNode;
+				rootNode.cascadeLineCounts();
 
 				//write the report
 				CodeCountReport codeCountReport = new CodeCountReport();
@@ -111,8 +87,8 @@ public class CodeCountReport {
 				}
 				sb.append(totalLineCount);
 				sb.append("\n");
-
-				for (Node node : counterFileVisitor.tree.getAllNodes()) {
+				List<Node> allNodes = rootNode.getAllNodes();
+				for (Node node : allNodes) {
 
 					for (LineType lineType : LineType.values()) {
 						sb.append(node.getLineCount(lineType));
@@ -150,7 +126,7 @@ public class CodeCountReport {
 
 	private static class CounterFileVisitor implements FileVisitor<Path> {
 
-		private MutableTree<Node> tree = new SortedTree<>();
+		private Node rootNode = new Node(Paths.get("All"));
 		private Map<Path, Node> map = new LinkedHashMap<>();
 
 		@Override
@@ -158,13 +134,15 @@ public class CodeCountReport {
 			Objects.requireNonNull(dir);
 			Objects.requireNonNull(attrs);
 
-			Node node = new Node(dir);
-			tree.addNode(node);
+			Node node = new Node(dir);		
 			map.put(dir, node);
-			Node parentCounter = map.get(dir.getParent());
-			if (parentCounter != null) {
-				tree.addLink(parentCounter, node);
+			Node parentNode = map.get(dir.getParent());
+			if (parentNode == null) {
+				parentNode = rootNode;
 			}
+			parentNode.addChildNode(node);
+				
+			
 
 			return FileVisitResult.CONTINUE;
 		}
@@ -173,9 +151,8 @@ public class CodeCountReport {
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
 			Node node = new Node(file);
 			map.put(file, node);
-			Node parentCounter = map.get(file.getParent());
-
-			tree.addLink(parentCounter, node);
+			Node parentNode = map.get(file.getParent());
+			parentNode.addChildNode(node);
 			return FileVisitResult.CONTINUE;
 		}
 
@@ -199,13 +176,49 @@ public class CodeCountReport {
 	}
 
 	private static class Node implements Comparable<Node> {
-		private Map<LineType, Counter> counterMap = new LinkedHashMap<>();
+		
+		public List<Node> getAllNodes(){
+			List<Node> result = new ArrayList<>();
+			result.add(this);
+			for(Node childNode : children) {
+				result.addAll(childNode.getAllNodes());
+			}
+			return result;
+		}
+		
+		private void cascadeLineCounts() {
+			Collections.sort(children);
+			for (Node childNode : children) {
+				childNode.cascadeLineCounts();
+			}
+			for (Node childNode : children) {
+				for (LineType lineType : LineType.values()) {
+					increment(lineType,childNode.getLineCount(lineType));					
+				}
+			}
+		}
+		
+		private int getLineCount(LineType lineType) {
+			return counterMap.get(lineType).getValue();
+		}
+		
+		private void increment(LineType lineType, int count) {
+			counterMap.get(lineType).increment(count);
+		}
+
+		public void addChildNode(Node node) {
+			children.add(node);
+		}
+		
+		private List<Node> children = new ArrayList<>();
+		
+		private Map<LineType, MutableInteger> counterMap = new LinkedHashMap<>();
 
 		private final Path path;
 
 		public Node(Path path) {
 			for (LineType lineType : LineType.values()) {
-				counterMap.put(lineType, new Counter());
+				counterMap.put(lineType, new MutableInteger());
 			}
 			this.path = path;
 			if (Files.isRegularFile(path)) {
@@ -295,14 +308,6 @@ public class CodeCountReport {
 
 		}
 
-		public void increment(LineType lineType, int count) {
-			counterMap.get(lineType).count += count;
-		}
-
-		public int getLineCount(LineType lineType) {
-			return counterMap.get(lineType).count;
-		}
-
 		public Path getPath() {
 			return path;
 		}
@@ -318,7 +323,5 @@ public class CodeCountReport {
 
 	}
 
-	private static class Counter {
-		private int count;
-	}
+
 }
