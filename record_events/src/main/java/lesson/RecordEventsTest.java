@@ -79,7 +79,7 @@ public final class RecordEventsTest {
 
 
 		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 10_000);
-		builder.setGlobalPropertyValue(GlobalProperty.MAX_UPDATE_COUNT, 1_000_000);
+		builder.setGlobalPropertyValue(GlobalProperty.MAX_UPDATE_COUNT, 10_000_000);
 
 		final GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
