@@ -81,6 +81,7 @@ public class CodeCountReport {
 					}
 				}
 
+				//force a root node above all the nodes in the tree
 				MutableTree<Node> tree = counterFileVisitor.tree;
 
 				Node rootNode = new Node(Paths.get("All"));
@@ -88,13 +89,15 @@ public class CodeCountReport {
 				List<Node> currentRootNodes = new ArrayList<>();
 				for (Node node : tree.getRootNodes()) {
 					currentRootNodes.add(node);
-
 				}
 				for (Node node : currentRootNodes) {
 					tree.addLink(rootNode, node);
 				}
+				
+				//have each node in the tree increment its counters from its children
 				cascadeLineCounts(tree, rootNode);
 
+				//write the report
 				CodeCountReport codeCountReport = new CodeCountReport();
 				codeCountReport.totalBlankLineCount = rootNode.getLineCount(LineType.BLANK);
 				codeCountReport.totalCodeLineCount = rootNode.getLineCount(LineType.CODE);
@@ -116,7 +119,6 @@ public class CodeCountReport {
 						sb.append("\t");
 					}
 					sb.append("\t");
-					// sb.append(node.getPath());
 
 					Iterator<Path> iterator = node.getPath().iterator();
 					while (iterator.hasNext()) {
