@@ -183,4 +183,56 @@ public class AT_Graphs {
 
 	}
 
+	@Test
+	@UnitTestMethod(name = "getEdgeReducedGraph", args = {Graph.class})
+	public void testGetEdgeReducedGraph() {
+		// create a new graph
+		// fill it with edges
+		// create another graph that should be the outcome
+		// reduce the edges
+		// check vs the outcome
+
+		// case: empty graph
+		MutableGraph<String, String> emptyGraph = new MutableGraph<>();
+		Graph<String, String> reducedEmptyGraph = Graphs.getEdgeReducedGraph(emptyGraph.toGraph());
+		assertTrue(reducedEmptyGraph.isEmpty());
+		assertEquals(emptyGraph.toGraph(), reducedEmptyGraph);
+
+		// case: self edge
+		MutableGraph<String, String> selfEdgeGraph = new MutableGraph<>();
+		selfEdgeGraph.addEdge("A->A", "A", "A");
+		Graph<String, String> reducedSelfEdgeGraph = Graphs.getEdgeReducedGraph(selfEdgeGraph.toGraph());
+		assertEquals(1, reducedSelfEdgeGraph.edgeCount());
+		assertTrue(reducedSelfEdgeGraph.containsEdge("A->A"));
+		assertEquals(selfEdgeGraph.toGraph(),reducedSelfEdgeGraph);
+
+		// case: single edge
+		MutableGraph<String, String> singleEdgeGraph = new MutableGraph<>();
+		singleEdgeGraph.addEdge("A->B", "A", "B");
+		MutableGraph<String, String> expectedReducedSingleEdgeGraph = new MutableGraph<>();
+		expectedReducedSingleEdgeGraph.addNode("A");
+		expectedReducedSingleEdgeGraph.addNode("B");
+		Graph<String, String> reducedSingleEdgeGraph = Graphs.getEdgeReducedGraph(singleEdgeGraph.toGraph());
+		assertEquals(0, reducedSingleEdgeGraph.edgeCount());
+		assertEquals(expectedReducedSingleEdgeGraph.toGraph(), reducedSingleEdgeGraph);
+
+		// case: single sink
+
+		// case: single source
+
+		// case: one acyclic edge
+
+		// case: one cyclic edge connecting two cycles
+
+		// case: basic cyclic graph
+
+		// case: cyclic graph with many edges
+
+		// case: graph with multiple acyclic and cyclic edges
+
+		// case: graph with only acyclic edges
+
+
+	}
+
 }
