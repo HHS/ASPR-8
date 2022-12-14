@@ -34,11 +34,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 	}
 
-	private static void validateGlobalPropertyValueNotAssigned(final Data data, final GlobalPropertyId globalPropertyId) {
-		if (data.globalPropertyValues.containsKey(globalPropertyId)) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId);
-		}
-	}
+
 
 	/**
 	 * Builder class for GloblaInitialData
@@ -127,19 +123,24 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
 		 *             the global property value is null
 		 * 
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             </li>if the global property value was previously defined
-		 *             for the given global property id
+//		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
+//		 *             </li>if the global property value was previously defined
+//		 *             for the given global property id
 		 * 
 		 */
 		public Builder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object propertyValue) {
 			ensureDataMutability();
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyValueNotNull(propertyValue);
-			validateGlobalPropertyValueNotAssigned(data, globalPropertyId);
+			//validateGlobalPropertyValueNotAssigned(data, globalPropertyId);
 			data.globalPropertyValues.put(globalPropertyId, propertyValue);
 			return this;
 		}
+//		private static void validateGlobalPropertyValueNotAssigned(final Data data, final GlobalPropertyId globalPropertyId) {
+//			if (data.globalPropertyValues.containsKey(globalPropertyId)) {
+//				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId);
+//			}
+//		}
 
 		private void validateData() {
 			if (!dataIsMutable) {

@@ -947,7 +947,7 @@ public final class AT_ResourcesDataManager {
 			 */
 			assertTrue(updateCount > 500);
 
-			// show that the values of the resource propeties are correct
+			// show that the values of the resource properties are correct
 			for (MultiKey multiKey : expectedValues.keySet()) {
 				TestResourceId testResourceId = multiKey.getKey(0);
 				TestResourcePropertyId testResourcePropertyId = multiKey.getKey(1);
@@ -1411,8 +1411,8 @@ public final class AT_ResourcesDataManager {
 
 					// show that the amount was transferred
 					long expectedPersonResourceLevel = personResourceLevel - amount;
-					long actualPersonResorceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
-					assertEquals(expectedPersonResourceLevel, actualPersonResorceLevel);
+					long actualPersonResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+					assertEquals(expectedPersonResourceLevel, actualPersonResourceLevel);
 
 					expectedObservations.add(new MultiKey(personId, resourceId, personResourceLevel, expectedPersonResourceLevel));
 
@@ -3533,7 +3533,7 @@ public final class AT_ResourcesDataManager {
 
 		}));
 
-		// Have the observer show the the observations were properly generated
+		// Have the observer show that the observations were properly generated
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
 			assertEquals(expectedObservations, actualObservations);
 		}));
@@ -3580,7 +3580,7 @@ public final class AT_ResourcesDataManager {
 
 		/*
 		 * precondition test: if the resource property id is unknown -- in this
-		 * case it is linke to a different resource
+		 * case it is linked to a different resource
 		 */
 		ResourcesActionSupport.testConsumer(0, 107265130769422979L, (c) -> {
 			ResourceId resourceId = TestResourceId.RESOURCE_1;
@@ -3641,7 +3641,7 @@ public final class AT_ResourcesDataManager {
 
 		}));
 
-		// Have the observer show the the observations were properly generated
+		// Have the observer show that the observations were properly generated
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(comparisonDay, (c) -> {
 			assertEquals(expectedObservations, actualObservations);
 		}));

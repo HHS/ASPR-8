@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Event;
 import plugins.resources.support.ResourceId;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.testsupport.TestResourceId;
@@ -15,7 +14,7 @@ import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = ResourcePropertyUpdateEvent.class)
 
-public class AT_ResourcePropertyUpdateEvent implements Event {
+public class AT_ResourcePropertyUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { ResourceId.class, ResourcePropertyId.class, Object.class, Object.class })

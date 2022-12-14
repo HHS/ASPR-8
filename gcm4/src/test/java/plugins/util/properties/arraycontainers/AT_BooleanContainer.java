@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
@@ -104,5 +105,11 @@ public class AT_BooleanContainer {
 	@UnitTestMethod(name = "set", args = { int.class, boolean.class })
 	public void testSet() {
 		// proxy via testGet()
+	}
+
+	@Test
+	@UnitTestMethod(name = "expandCapacity", args = {int.class}, tags = {UnitTag.INCOMPLETE})
+	public void testExpandCapacity() {
+		// requires a manual performance test
 	}
 }
