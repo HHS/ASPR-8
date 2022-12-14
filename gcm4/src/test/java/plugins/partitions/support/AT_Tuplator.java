@@ -139,4 +139,11 @@ public class AT_Tuplator {
 
 	}
 
+	public void testBuild() {
+
+	}
+
+	public void testAddDimension() {
+		
+	}
 }

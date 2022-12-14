@@ -102,4 +102,24 @@ public class AT_PartitionSampler {
 		assertEquals(expectedValue, labelSetWeightingFunction.getWeight(null, null), 0);
 	}
 
+	public void testBuild() {
+
+	}
+
+	public void testSetRandomNumberGeneratorId() {
+
+	}
+
+	public void testSetLabelSetWeightingFunction() {
+		
+	}
+
+	public void testSetExcludedPerson() {
+
+	}
+
+	public void testSetLabelSet() {
+
+	}
+	
 }

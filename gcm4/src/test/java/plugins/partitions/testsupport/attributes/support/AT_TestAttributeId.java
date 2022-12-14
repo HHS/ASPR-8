@@ -43,4 +43,8 @@ public class AT_TestAttributeId {
 		}
 	}
 
+	public void testGetRandomPropertyValue() {
+		
+	}
+
 }

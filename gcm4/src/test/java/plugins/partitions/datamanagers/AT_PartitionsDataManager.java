@@ -56,6 +56,10 @@ import util.wrappers.MutableInteger;
 @UnitTest(target = PartitionsDataManager.class)
 public final class AT_PartitionsDataManager {
 
+	public void testConstructor() {
+		
+	}
+
 	/*
 	 * Assigns randomized values for all attributes to all people. Values are
 	 * assigned to be consistent with the static labeling functions.

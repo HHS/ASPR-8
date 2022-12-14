@@ -56,6 +56,21 @@ public class AT_Filter {
 		return Optional.of(new PersonId(4));
 	}
 
+	public void testConstructor() {
+
+	}
+
+	public void testValidate() {
+
+	}
+
+	public void testEvaluate() {
+
+	}
+
+	public void testGetFilterSensitivities() {
+		
+	}
 	/**
 	 * Tests {@link Filter#and(Filter)}
 	 */

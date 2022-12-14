@@ -334,7 +334,7 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForAttributeUpdateEvent", args = { AttributeId.class })
+	@UnitTestMethod(name = "getEventFilterForAttributeUpdateEvent", args = {})
 	public void testGetEventFilterForAttributeUpdateEvent() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();

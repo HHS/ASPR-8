@@ -128,4 +128,15 @@ public class AT_LabelSet {
 		assertEquals(labelSet1.hashCode(), labelSet2.hashCode());
 	}
 
+	public void testToString() {
+
+	}
+
+	public void testBuild() {
+
+	}
+
+	public void testSetLabel() {
+		
+	}
 }

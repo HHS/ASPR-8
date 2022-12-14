@@ -127,6 +127,10 @@ public final class AT_AttributeLabeler {
 
 	}
 
+	public void testGetPastLabel() {
+
+	}
+	
 	@Test
 	@UnitTestMethod(name = "getDimension", args = {})
 	public void testGetDimension() {

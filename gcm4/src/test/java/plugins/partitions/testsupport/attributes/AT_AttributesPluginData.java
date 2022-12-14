@@ -96,4 +96,7 @@ public class AT_AttributesPluginData {
 		assertEquals(EnumSet.allOf(TestAttributeId.class), attributesPluginData.getAttributeIds());
 	}
 
+	public void testGetCloneBuilder() {
+		
+	}
 }
