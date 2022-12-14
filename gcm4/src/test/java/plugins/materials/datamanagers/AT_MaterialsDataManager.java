@@ -3,7 +3,6 @@ package plugins.materials.datamanagers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -6744,46 +6743,91 @@ public class AT_MaterialsDataManager {
 
 	@Test
 	public void testDefineMaterialsProducerProperty() {
-		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
-				.values()) {
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
-					testMaterialsProducerPropertyId.getPropertyDefinition());
-		}
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		double actionTime = 0;
 
-		MaterialsPluginData data = builder.build();
+		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
+		Set<MultiKey> actualObservations = new LinkedHashSet<>();
 
-		assertNotNull(data);
-		Set<MaterialsProducerPropertyId> expectedValues = new LinkedHashSet<>(
-				Arrays.asList(TestMaterialsProducerPropertyId.values()));
-		assertEquals(expectedValues, data.getMaterialsProducerPropertyIds());
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			c.subscribe(EventFilter.builder(MaterialsProducerPropertyDefinitionEvent.class).build(), (c2, e) -> {
+				actualObservations.add(new MultiKey(c2.getTime(), e.getProducerPropertyId(), "property event"));
+			});
+		}));
 
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
-				.values()) {
-			PropertyDefinition propertyDefinition = data
-					.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
-			assertEquals(propertyDefinition, testMaterialsProducerPropertyId.getPropertyDefinition());
+				.getPropertiesWithDefaultValues()) {
+
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				MaterialsProducerPropertyId producerId = TestMaterialsProducerPropertyId
+						.getUnknownMaterialsProducerPropertyId();
+				MaterialsProducerPropertyDefinitionInitialization matprodpropdefinit = MaterialsProducerPropertyDefinitionInitialization
+						.builder()
+						.setMaterialsProducerPropertyId(producerId)
+						.setPropertyDefinition(testMaterialsProducerPropertyId.getPropertyDefinition())
+						.build();
+
+				materialsDataManager.defineMaterialsProducerProperty(matprodpropdefinit);
+				expectedObservations.add(new MultiKey(c.getTime(), producerId, "property event"));
+			}));
 		}
+		// have the observer show that the correct observations were generated
+		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
+			assertTrue(expectedObservations.size() > 0);
+			assertEquals(expectedObservations, actualObservations);
+		}));
 
-		MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
-		PropertyDefinition propertyDefinition = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK
-				.getPropertyDefinition();
+		// precondition: Materials producer property definition init is null
+		MaterialsActionSupport.testConsumer(3735323519290927676L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> materialsDataManager
+					.defineMaterialsProducerProperty(null));
+			assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION,
+					contractException.getErrorType());
 
-		// precondition: null materials producer property id
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
-				.defineMaterialsProducerProperty(null, propertyDefinition));
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		});
 
-		// precondition: null property definition
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
-				.defineMaterialsProducerProperty(producerPropertyId, null));
-		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+		// precondition: duplicate Materials producer property id
+		MaterialsActionSupport.testConsumer(3735323519290927676L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				TestMaterialsProducerPropertyId producerId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
+				MaterialsProducerPropertyDefinitionInitialization matprodpropdefinit = MaterialsProducerPropertyDefinitionInitialization
+						.builder()
+						.setMaterialsProducerPropertyId(producerId)
+						.setPropertyDefinition(producerId.getPropertyDefinition())
+						.build();
 
-		// precondition: duplicate property definition
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder()
-				.defineMaterialsProducerProperty(producerPropertyId, propertyDefinition)
-				.defineMaterialsProducerProperty(producerPropertyId, propertyDefinition));
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
+				materialsDataManager.defineMaterialsProducerProperty(matprodpropdefinit);
+			});
+			assertEquals(MaterialsError.DUPLICATE_MATERIALS_PRODUCER_PROPERTY_ID, contractException.getErrorType());
+
+		});
+
+		// precondition: insufficient property value assignment
+		MaterialsActionSupport.testConsumer(6282192460518073310L, (c) -> {
+			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class, () -> {
+				MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId
+						.getUnknownMaterialsProducerPropertyId();
+				PropertyDefinition propertyDefinition = PropertyDefinition.builder().setPropertyValueMutability(false)
+						.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).setType(Integer.class).build();
+				MaterialsProducerPropertyDefinitionInitialization matprodpropdefinit = MaterialsProducerPropertyDefinitionInitialization
+						.builder()
+						.setMaterialsProducerPropertyId(materialsProducerPropertyId)
+						.setPropertyDefinition(propertyDefinition)
+						.build();
+
+				materialsDataManager.defineMaterialsProducerProperty(matprodpropdefinit);
+			});
+			assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+
+		});
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		MaterialsActionSupport.testConsumers(2721085458686966421L, testPlugin);
 	}
 
 	@Test
@@ -6844,7 +6888,7 @@ public class AT_MaterialsDataManager {
 					resourceAmount = 125L;
 
 					long previousResourceAmount = materialsDataManager
-					.getMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId);
+							.getMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId);
 					long newResourceAmount = resourceAmount + previousResourceAmount;
 
 					List<BatchId> stageBatches = materialsDataManager.getStageBatches(stageId);
