@@ -6742,6 +6742,8 @@ public class AT_MaterialsDataManager {
 	}
 
 	@Test
+	@UnitTestMethod(name = "defineMaterialsProducerProperty", args = {
+			MaterialsProducerPropertyDefinitionInitialization.class })
 	public void testDefineMaterialsProducerProperty() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		double actionTime = 0;
