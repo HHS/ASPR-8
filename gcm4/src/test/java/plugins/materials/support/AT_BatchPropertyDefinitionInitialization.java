@@ -224,12 +224,11 @@ public class AT_BatchPropertyDefinitionInitialization {
                 BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
                 MaterialId materialId = TestMaterialId.MATERIAL_1;
 
-                BatchPropertyDefinitionInitialization.Builder builder = BatchPropertyDefinitionInitialization.builder()
+                BatchPropertyDefinitionInitialization definitionInitialization = BatchPropertyDefinitionInitialization.builder()
                                 .setMaterialId(materialId)
                                 .setPropertyId(batchPropertyId)
-                                .setPropertyDefinition(propertyDefinition);
-
-                BatchPropertyDefinitionInitialization definitionInitialization = builder.build();
+                                .setPropertyDefinition(propertyDefinition)
+                                .build();
 
                 assertNotNull(definitionInitialization);
                 assertEquals(propertyDefinition, definitionInitialization.getPropertyDefinition());
