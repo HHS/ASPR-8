@@ -20,6 +20,7 @@ public enum NucleusError implements ContractError {
 	DATA_MANAGER_DUPLICATE_INITIALIZATION("Data manager was already initialized"),
 	DATA_MANAGER_INITIALIZATION_FAILURE("Data manager base class was not properly initialized, be sure to call super()"),
 	DUPLICATE_DATA_MANAGER_TYPE("Duplicate data manager type"),
+	DUPLICATE_EVENT_SUBSCRIPTION("An event subscription duplicates an existing event subscription"),
 	DUPLICATE_EXPERIMENT_OPEN("Duplicate opening of experiment"),
 	DUPLICATE_LABELER_ID_IN_EVENT_LABELER("Duplicate labeler id in labeler"),
 	DUPLICATE_PLAN_KEY("There is an existing plan currently scheduled with the same key"),
