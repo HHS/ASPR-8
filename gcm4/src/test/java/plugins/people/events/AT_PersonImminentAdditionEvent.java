@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Event;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
@@ -15,7 +14,7 @@ import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 @UnitTest(target = PersonImminentAdditionEvent.class)
-public class AT_PersonImminentAdditionEvent implements Event {
+public class AT_PersonImminentAdditionEvent {
 
 	@Test
 	@UnitTestConstructor(args = { PersonId.class, PersonConstructionData.class })
