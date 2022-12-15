@@ -145,7 +145,7 @@ public class AT_LabelSet {
 	}
 
 	@Test
-	@UnitTestMethod(target = LabelSet.Builder.class, name = "setLabel", args={Dimension.class, Object.class})
+	@UnitTestMethod(target = LabelSet.Builder.class, name = "setLabel", args={Object.class, Object.class})
 	public void testSetLabel() {
 		String expectedLabel1 = "expected label 1";
 		String expectedLabel2 = "expected label 2";
