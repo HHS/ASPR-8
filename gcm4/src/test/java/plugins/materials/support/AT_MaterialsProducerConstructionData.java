@@ -84,10 +84,10 @@ public class AT_MaterialsProducerConstructionData {
         Map<MaterialsProducerPropertyId, Object> expectedValues = new LinkedHashMap<>();
 
         for (int i = 0; i < 15; i++) {
-            MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId
+            TestMaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId
                     .getRandomMaterialsProducerPropertyId(randomGenerator);
             if (!expectedValues.containsKey(producerPropertyId)) {
-                int value = randomGenerator.nextInt(100);
+                Object value = producerPropertyId.getRandomPropertyValue(randomGenerator);
                 builder.setMaterialsProducerPropertyValue(producerPropertyId, value);
                 expectedValues.put(producerPropertyId, value);
             }
@@ -100,7 +100,7 @@ public class AT_MaterialsProducerConstructionData {
 
     @Test
     @UnitTestMethod(name = "getResourceLevels", args = {})
-    public void testGetResourceLevel() {
+    public void testGetResourceLevels() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6832539036105490849L);
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
         builder.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
@@ -109,7 +109,7 @@ public class AT_MaterialsProducerConstructionData {
         for (int i = 0; i < 15; i++) {
             ResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
             if (!expectedValues.containsKey(resourceId)) {
-                long value = Math.max(0, randomGenerator.nextLong());
+                long value = randomGenerator.nextInt(100 * (i + 1)) + 1;
                 builder.setResourceLevel(resourceId, value);
                 expectedValues.put(resourceId, value);
             }
@@ -181,10 +181,10 @@ public class AT_MaterialsProducerConstructionData {
         Map<MaterialsProducerPropertyId, Object> expectedValues = new LinkedHashMap<>();
 
         for (int i = 0; i < 15; i++) {
-            MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId
+            TestMaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId
                     .getRandomMaterialsProducerPropertyId(randomGenerator);
             if (!expectedValues.containsKey(producerPropertyId)) {
-                int value = randomGenerator.nextInt(100);
+                Object value = producerPropertyId.getRandomPropertyValue(randomGenerator);
                 builder.setMaterialsProducerPropertyValue(producerPropertyId, value);
                 expectedValues.put(producerPropertyId, value);
             }
@@ -249,7 +249,7 @@ public class AT_MaterialsProducerConstructionData {
         for (int i = 0; i < 15; i++) {
             ResourceId resourceId = TestResourceId.getRandomResourceId(randomGenerator);
             if (!expectedValues.containsKey(resourceId)) {
-                long value = Math.max(0, randomGenerator.nextLong());
+                long value = randomGenerator.nextInt(100 * (i + 1)) + 1;
                 builder.setResourceLevel(resourceId, value);
                 expectedValues.put(resourceId, value);
             }
