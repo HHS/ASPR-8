@@ -92,8 +92,14 @@ public class AT_Partition {
 		assertFalse(partition.isDegenerate());
 	}
 
+	@Test
+	@UnitTestMethod(name = "retainPersonKeys", args = {})
 	public void testRetainPersonKeys() {
+		Partition retainKeys = Partition.builder().setRetainPersonKeys(true).build();
+		Partition dontRetainKeys = Partition.builder().setRetainPersonKeys(false).build();
 
+		assertTrue(retainKeys.retainPersonKeys());
+		assertFalse(dontRetainKeys.retainPersonKeys());
 	}
 
 	@Test
@@ -104,7 +110,7 @@ public class AT_Partition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setFilter", args={Filter.class})
+	@UnitTestMethod(name = "setFilter", args = { Filter.class })
 	public void testSetFilter() {
 		Partition.Builder builder = Partition.builder();
 		Filter filter = Filter.allPeople();
@@ -116,11 +122,33 @@ public class AT_Partition {
 		assertTrue(!Partition.builder().build().getFilter().isPresent());
 	}
 
+	@Test
+	@UnitTestMethod(target = Partition.Builder.class, name = "setRetainPersonKeys", args = { boolean.class })
 	public void testSetRetainPersonKeys() {
+		Partition retainKeys = Partition.builder().setRetainPersonKeys(true).build();
+		Partition dontRetainKeys = Partition.builder().setRetainPersonKeys(false).build();
 
+		assertTrue(retainKeys.retainPersonKeys());
+		assertFalse(dontRetainKeys.retainPersonKeys());
 	}
 
+	@Test
+	@UnitTestMethod(target = Partition.Builder.class, name = "addLabeler", args = { Labeler.class })
 	public void testAddlabeler() {
+		Set<Labeler> expectedLabelers = new LinkedHashSet<>();
+		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()));
+		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> new Object()));
+		expectedLabelers.add(new AttributeLabeler(TestAttributeId.DOUBLE_0, (v) -> new Object()));
 
+		Partition.Builder builder = Partition.builder();
+		for (Labeler labeler : expectedLabelers) {
+			builder.addLabeler(labeler);
+		}
+
+		Partition partition = builder.build();
+
+		Set<Labeler> actualLabelers = partition.getLabelers();
+
+		assertEquals(expectedLabelers, actualLabelers);
 	}
 }
