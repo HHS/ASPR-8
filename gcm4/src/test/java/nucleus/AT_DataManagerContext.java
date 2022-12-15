@@ -1197,9 +1197,7 @@ public class AT_DataManagerContext {
 				phaseExecutionCount.increment();
 			});
 
-			c.subscribe(TestEvent.class, (c2, e) -> {
-				phaseExecutionCount.increment();
-			});
+			
 
 		}));
 
@@ -1214,7 +1212,7 @@ public class AT_DataManagerContext {
 		 * done
 		 */
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (c) -> {
-			assertEquals(2, phaseExecutionCount.getValue());
+			assertEquals(1, phaseExecutionCount.getValue());
 		}));
 
 		// have the resolver unsubscribe
@@ -1232,7 +1230,7 @@ public class AT_DataManagerContext {
 		 * is done and thus the resolver is no longer subscribed
 		 */
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(5, (c) -> {
-			assertEquals(2, phaseExecutionCount.getValue());
+			assertEquals(1, phaseExecutionCount.getValue());
 		}));
 
 		// build the plugin
