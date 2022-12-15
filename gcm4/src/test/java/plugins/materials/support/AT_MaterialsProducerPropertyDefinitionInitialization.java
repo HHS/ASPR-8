@@ -76,7 +76,7 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
         for (int i = 0; i < 15; i++) {
             int value = randomGenerator.nextInt(100);
             MaterialsProducerId producerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-            expectedValues.add(new Pair<MaterialsProducerId, Object>(producerId, value));
+            expectedValues.add(new Pair<>(producerId, value));
             builder.addPropertyValue(producerId, value);
         }
 
@@ -130,7 +130,7 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
         for (int i = 0; i < 15; i++) {
             int value = randomGenerator.nextInt(100);
             MaterialsProducerId producerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-            expectedValues.add(new Pair<MaterialsProducerId, Object>(producerId, value));
+            expectedValues.add(new Pair<>(producerId, value));
             builder.addPropertyValue(producerId, value);
         }
 
@@ -216,7 +216,7 @@ public class AT_MaterialsProducerPropertyDefinitionInitialization {
         for (int i = 0; i < 15; i++) {
             int value = randomGenerator.nextInt(100);
             MaterialsProducerId producerId = TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator);
-            expectedValues.add(new Pair<MaterialsProducerId, Object>(producerId, value));
+            expectedValues.add(new Pair<>(producerId, value));
             builder.addPropertyValue(producerId, value);
         }
 

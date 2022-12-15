@@ -99,7 +99,7 @@ public class AT_BatchPropertyDefinitionInitialization {
             String value = Integer.toString(randomGenerator.nextInt(100));
             BatchId batchId = new BatchId(i);
             builder.addPropertyValue(batchId, value);
-            expectedValues.add(new Pair<BatchId, Object>(batchId, value));
+            expectedValues.add(new Pair<>(batchId, value));
         }
 
         BatchPropertyDefinitionInitialization definitionInitialization = builder.build();
@@ -156,7 +156,7 @@ public class AT_BatchPropertyDefinitionInitialization {
             String value = Integer.toString(randomGenerator.nextInt(100));
             BatchId batchId = new BatchId(i);
             builder.addPropertyValue(batchId, value);
-            expectedValues.add(new Pair<BatchId, Object>(batchId, value));
+            expectedValues.add(new Pair<>(batchId, value));
         }
 
         BatchPropertyDefinitionInitialization definitionInitialization = builder.build();
@@ -286,7 +286,7 @@ public class AT_BatchPropertyDefinitionInitialization {
             String value = Integer.toString(randomGenerator.nextInt(100));
             BatchId batchId = new BatchId(i);
             builder.addPropertyValue(batchId, value);
-            expectedValues.add(new Pair<BatchId, Object>(batchId, value));
+            expectedValues.add(new Pair<>(batchId, value));
         }
 
         BatchPropertyDefinitionInitialization definitionInitialization = builder.build();
