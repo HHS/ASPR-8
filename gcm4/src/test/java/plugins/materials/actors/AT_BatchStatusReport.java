@@ -241,9 +241,7 @@ public final class AT_BatchStatusReport {
 	}
 
 	private static ReportItem getReportItem(List<Object> values) {
-		Builder builder = ReportItem.builder();
-		builder.setReportId(REPORT_ID);
-		builder.setReportHeader(REPORT_HEADER);
+		Builder builder = ReportItem.builder().setReportId(REPORT_ID).setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}

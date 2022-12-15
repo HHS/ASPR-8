@@ -142,8 +142,7 @@ public class AT_BatchConstructionInfo {
 		MaterialId materialId = TestMaterialId.MATERIAL_2;
 		MaterialsProducerId producerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 
-		builder.setMaterialId(materialId);
-		builder.setMaterialsProducerId(producerId);
+		builder.setMaterialId(materialId).setMaterialsProducerId(producerId);
 
 		BatchConstructionInfo info = builder.build();
 		assertNotNull(info);
@@ -159,8 +158,7 @@ public class AT_BatchConstructionInfo {
 		MaterialId materialId = TestMaterialId.MATERIAL_1;
 		MaterialsProducerId producerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 
-		builder.setMaterialId(materialId);
-		builder.setMaterialsProducerId(producerId);
+		builder.setMaterialId(materialId).setMaterialsProducerId(producerId);
 
 		BatchConstructionInfo info = builder.build();
 		assertNotNull(info);
@@ -183,8 +181,7 @@ public class AT_BatchConstructionInfo {
 		BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();//
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-				builder.setMaterialId(testMaterialId);//
-				builder.setMaterialsProducerId(testMaterialsProducerId);//
+				builder.setMaterialId(testMaterialId).setMaterialsProducerId(testMaterialsProducerId);//
 				Map<BatchPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
 						.getTestBatchPropertyIds(testMaterialId)) {
@@ -247,8 +244,7 @@ public class AT_BatchConstructionInfo {
 		BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();//
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 			for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-				builder.setMaterialsProducerId(testMaterialsProducerId);
-				builder.setMaterialId(testMaterialId);//
+				builder.setMaterialsProducerId(testMaterialsProducerId).setMaterialId(testMaterialId);//
 
 				Map<BatchPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
 				for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
