@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Event;
 import plugins.materials.support.BatchId;
 import plugins.materials.support.BatchPropertyId;
 import plugins.materials.testsupport.TestBatchPropertyId;
@@ -13,7 +12,7 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = BatchPropertyUpdateEvent.class)
-public class AT_BatchPropertyUpdateEvent implements Event {
+public class AT_BatchPropertyUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { BatchId.class, BatchPropertyId.class, Object.class, Object.class })

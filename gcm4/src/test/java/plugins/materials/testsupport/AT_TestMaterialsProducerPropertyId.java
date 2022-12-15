@@ -5,6 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -86,5 +91,49 @@ public class AT_TestMaterialsProducerPropertyId {
 	@UnitTestMethod(name = "size", args = {})
 	public void testSize() {
 		assertEquals(TestMaterialsProducerPropertyId.values().length, TestMaterialsProducerPropertyId.size());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPropertiesWithDefaultValues", args = {})
+	public void testGetPropertesWithDefaultValues() {
+		List<TestMaterialsProducerPropertyId> expectedValues = new ArrayList<>();
+
+		for (TestMaterialsProducerPropertyId id : TestMaterialsProducerPropertyId.values()) {
+			if (id.getPropertyDefinition().getDefaultValue().isPresent()) {
+				expectedValues.add(id);
+			}
+		}
+
+		List<TestMaterialsProducerPropertyId> actualValues = TestMaterialsProducerPropertyId.getPropertiesWithDefaultValues();
+
+		assertNotNull(actualValues);
+		assertEquals(expectedValues.size(), actualValues.size());
+		Set<TestMaterialsProducerPropertyId> setOfExpectedValues = new LinkedHashSet<>(expectedValues);
+		Set<TestMaterialsProducerPropertyId> setOfActualValues = new LinkedHashSet<>(actualValues);
+		assertEquals(setOfExpectedValues, setOfActualValues);
+		assertEquals(expectedValues.size(), setOfExpectedValues.size());
+		assertEquals(actualValues.size(), setOfActualValues.size());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getPropertiesWithoutDefaultValues", args = {})
+	public void testGetPropertesWithoutDefaultValues() {
+		List<TestMaterialsProducerPropertyId> expectedValues = new ArrayList<>();
+
+		for (TestMaterialsProducerPropertyId id : TestMaterialsProducerPropertyId.values()) {
+			if (id.getPropertyDefinition().getDefaultValue().isEmpty()) {
+				expectedValues.add(id);
+			}
+		}
+
+		List<TestMaterialsProducerPropertyId> actualValues = TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues();
+
+		assertNotNull(actualValues);
+		assertEquals(expectedValues.size(), actualValues.size());
+		Set<TestMaterialsProducerPropertyId> setOfExpectedValues = new LinkedHashSet<>(expectedValues);
+		Set<TestMaterialsProducerPropertyId> setOfActualValues = new LinkedHashSet<>(actualValues);
+		assertEquals(setOfExpectedValues, setOfActualValues);
+		assertEquals(expectedValues.size(), setOfExpectedValues.size());
+		assertEquals(actualValues.size(), setOfActualValues.size());
 	}
 }

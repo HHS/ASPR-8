@@ -43,6 +43,8 @@ public class MaterialsProducerAdditionEvent implements Event {
 
 		private Data data = new Data();
 
+		private Builder(){}
+		
 		private void validate() {
 			if (data.materialsProducerId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
