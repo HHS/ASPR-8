@@ -57,7 +57,9 @@ import util.wrappers.MutableInteger;
 public final class AT_PartitionsDataManager {
 
 	public void testConstructor() {
-		
+		PartitionsDataManager dataManager = new PartitionsDataManager();
+
+		assertNotNull(dataManager);
 	}
 
 	/*

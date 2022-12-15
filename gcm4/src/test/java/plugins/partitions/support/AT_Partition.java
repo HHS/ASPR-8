@@ -44,12 +44,10 @@ public class AT_Partition {
 	@UnitTestMethod(name = "getLabelers", args = {})
 	public void testGetLabelers() {
 
-		
-		
 		Set<Labeler> expectedLabelers = new LinkedHashSet<>();
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v)->new Object()));
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v)->new Object()));
-		expectedLabelers.add(new AttributeLabeler(TestAttributeId.DOUBLE_0, (v)->new Object()));
+		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()));
+		expectedLabelers.add(new AttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> new Object()));
+		expectedLabelers.add(new AttributeLabeler(TestAttributeId.DOUBLE_0, (v) -> new Object()));
 
 		Partition.Builder builder = Partition.builder();
 		for (Labeler labeler : expectedLabelers) {
@@ -89,7 +87,8 @@ public class AT_Partition {
 		Partition partition = Partition.builder().build();//
 		assertTrue(partition.isDegenerate());
 
-		partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v)->new Object())).build();
+		partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()))
+				.build();
 		assertFalse(partition.isDegenerate());
 	}
 
@@ -97,12 +96,24 @@ public class AT_Partition {
 
 	}
 
+	@Test
+	@UnitTestMethod(name = "build", args = {})
 	public void testBuild() {
-
+		Partition partition = Partition.builder().build();
+		assertNotNull(partition);
 	}
 
+	@Test
+	@UnitTestMethod(name = "setFilter", args={Filter.class})
 	public void testSetFilter() {
+		Partition.Builder builder = Partition.builder();
+		Filter filter = Filter.allPeople();
+		builder.setFilter(filter);
 
+		Partition partition = builder.build();
+		assertNotNull(partition);
+		assertEquals(filter, partition.getFilter().get());
+		assertTrue(!Partition.builder().build().getFilter().isPresent());
 	}
 
 	public void testSetRetainPersonKeys() {
@@ -110,6 +121,6 @@ public class AT_Partition {
 	}
 
 	public void testAddlabeler() {
-		
+
 	}
 }

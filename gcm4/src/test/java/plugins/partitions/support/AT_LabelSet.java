@@ -64,9 +64,8 @@ public class AT_LabelSet {
 
 	}
 
-	
 	@Test
-	@UnitTestMethod(name = "getLabel", args = {Object.class})
+	@UnitTestMethod(name = "getLabel", args = { Object.class })
 	public void testGetLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
 		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, expectedCompartmentLabel).build();
@@ -128,15 +127,31 @@ public class AT_LabelSet {
 		assertEquals(labelSet1.hashCode(), labelSet2.hashCode());
 	}
 
+	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
+		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
 
+		String expectedString = "LabelSet [labels={DIM_1=compartment label}]";
+		assertNotNull(labelSet);
+		assertEquals(expectedString, labelSet.toString());
 	}
 
+	@Test
+	@UnitTestMethod(target = LabelSet.Builder.class, name = "build", args = {})
 	public void testBuild() {
-
+		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
+		assertNotNull(labelSet);
 	}
 
+	@Test
+	@UnitTestMethod(target = LabelSet.Builder.class, name = "setLabel", args={Dimension.class, Object.class})
 	public void testSetLabel() {
-		
+		String expectedLabel1 = "expected label 1";
+		String expectedLabel2 = "expected label 2";
+
+		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, expectedLabel1).setLabel(Dimension.DIM_2, expectedLabel2).build();
+		assertEquals(expectedLabel1, labelSet.getLabel(Dimension.DIM_1).get());
+		assertEquals(expectedLabel2, labelSet.getLabel(Dimension.DIM_2).get());
 	}
 }
