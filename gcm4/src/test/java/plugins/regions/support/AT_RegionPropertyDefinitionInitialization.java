@@ -60,7 +60,7 @@ public class AT_RegionPropertyDefinitionInitialization {
             int value = randomGenerator.nextInt(100);
             RegionId regionId = new SimpleRegionId(i * 2 + 5);
             builder.addPropertyValue(regionId, value);
-            expectedValues.add(new Pair<RegionId, Object>(regionId, value));
+            expectedValues.add(new Pair<>(regionId, value));
         }
 
         RegionPropertyDefinitionInitialization propertyDefinitionInitialization = builder.build();
@@ -174,7 +174,7 @@ public class AT_RegionPropertyDefinitionInitialization {
             int value = randomGenerator.nextInt(100);
             RegionId regionId = new SimpleRegionId(i * 2 + 5);
             builder.addPropertyValue(regionId, value);
-            expectedValues.add(new Pair<RegionId, Object>(regionId, value));
+            expectedValues.add(new Pair<>(regionId, value));
         }
 
         RegionPropertyDefinitionInitialization propertyDefinitionInitialization = builder.build();

@@ -126,7 +126,7 @@ public final class MaterialsProducerResourceReport {
 		}
 	}
 
-	public void handleMaterialsProducerAdditionEvent(ActorContext actorContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
+	private void handleMaterialsProducerAdditionEvent(ActorContext actorContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
 		MaterialsProducerId materialsProducerId = materialsProducerAdditionEvent.getMaterialsProducerId();
 		ResourcesDataManager resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
