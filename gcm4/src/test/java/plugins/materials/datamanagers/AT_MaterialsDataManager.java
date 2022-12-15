@@ -6753,25 +6753,29 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			c.subscribe(EventFilter.builder(MaterialsProducerPropertyDefinitionEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getProducerPropertyId(), "property event"));
+				actualObservations.add(new MultiKey(c2.getTime(), e.getProducerPropertyId()));
 			});
 		}));
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
-				.getPropertiesWithDefaultValues()) {
+		for (int i = 0; i < 15; i++) {
+			MaterialsProducerPropertyId producerId = TestMaterialsProducerPropertyId
+					.getUnknownMaterialsProducerPropertyId();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder()
+					.setDefaultValue(100 * i)
+					.setPropertyValueMutability(false)
+					.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)
+					.setType(Integer.class)
+					.build();
+			MaterialsProducerPropertyDefinitionInitialization matprodpropdefinit = MaterialsProducerPropertyDefinitionInitialization
+					.builder()
+					.setMaterialsProducerPropertyId(producerId)
+					.setPropertyDefinition(propertyDefinition)
+					.build();
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				MaterialsProducerPropertyId producerId = TestMaterialsProducerPropertyId
-						.getUnknownMaterialsProducerPropertyId();
-				MaterialsProducerPropertyDefinitionInitialization matprodpropdefinit = MaterialsProducerPropertyDefinitionInitialization
-						.builder()
-						.setMaterialsProducerPropertyId(producerId)
-						.setPropertyDefinition(testMaterialsProducerPropertyId.getPropertyDefinition())
-						.build();
-
 				materialsDataManager.defineMaterialsProducerProperty(matprodpropdefinit);
-				expectedObservations.add(new MultiKey(c.getTime(), producerId, "property event"));
+				expectedObservations.add(new MultiKey(c.getTime(), producerId));
 			}));
 		}
 		// have the observer show that the correct observations were generated
@@ -6999,7 +7003,7 @@ public class AT_MaterialsDataManager {
 			assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
 		});
 
-		/* precondition test: if the material amount is not finite */
+		/* precondition test: if the resource amount is not finite */
 		MaterialsActionSupport.testConsumer(4334935928753037959L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
