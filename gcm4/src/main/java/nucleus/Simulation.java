@@ -220,7 +220,7 @@ public class Simulation {
 		public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 			Simulation.this.subscribeActorToEventByFilter(eventFilter, eventConsumer);
 		}
-		
+
 		@Override
 		public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
 			subscribeActorToSimulationClose(consumer);
@@ -359,7 +359,7 @@ public class Simulation {
 		public ActorId getActorId() {
 			return simulation.focalActorId;
 		}
-		
+
 		private DataManagerContextImpl(Simulation simulation, DataManagerId dataManagerId) {
 			this.simulation = simulation;
 			this.dataManagerId = dataManagerId;
@@ -708,11 +708,11 @@ public class Simulation {
 			 */
 
 			Graph<PluginId, Object> g = mutableGraph.toGraph();
-			
+
 			g = Graphs.getSourceSinkReducedGraph(g);
 			g = Graphs.getEdgeReducedGraph(g);
 			g = Graphs.getSourceSinkReducedGraph(g);
-			
+
 			List<Graph<PluginId, Object>> cutGraphs = Graphs.cutGraph(g);
 			StringBuilder sb = new StringBuilder();
 			String lineSeparator = System.getProperty("line.separator");
@@ -1063,8 +1063,6 @@ public class Simulation {
 		}
 	}
 
-	
-
 	private void releaseOutput(Object output) {
 		if (outputConsumer != null) {
 			outputConsumer.accept(output);
@@ -1114,8 +1112,14 @@ public class Simulation {
 			list = new ArrayList<>();
 			dataManagerEventMap.put(eventClass, list);
 		}
+		
+		for (DataManagerEventConsumer dataManagerEventConsumer : list) {
+			if (dataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
+				throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
+			}
+		}
+		
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
-
 		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
 
 		list.add(dataManagerEventConsumer);
@@ -1144,7 +1148,6 @@ public class Simulation {
 		}
 	}
 
-	
 	private void releaseEvent(final Event event) {
 
 		if (event == null) {
@@ -1371,12 +1374,8 @@ public class Simulation {
 
 	}
 
-
-
 	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-		return (dataManagerEventMap.containsKey(eventClass) ||
-				rootNode.children.containsKey(eventClass)||
-				rootNode.consumers.containsKey(eventClass));
+		return (dataManagerEventMap.containsKey(eventClass) || rootNode.children.containsKey(eventClass) || rootNode.consumers.containsKey(eventClass));
 	}
 
 	/*
@@ -1400,7 +1399,7 @@ public class Simulation {
 				actorContentRec.event = event;
 				actorContentRec.actorId = actorId;
 				actorContentRec.consumer = consumer;
-				actorQueue.add(actorContentRec);				
+				actorQueue.add(actorContentRec);
 			}
 		}
 
@@ -1421,7 +1420,7 @@ public class Simulation {
 	 * Generates a filter node to be used as the root filter node.
 	 */
 	private FilterNode generateRootNode() {
-		FilterNode result = new FilterNode();		
+		FilterNode result = new FilterNode();
 		result.function = (event) -> event.getClass();
 		return result;
 	}
@@ -1442,7 +1441,7 @@ public class Simulation {
 		// the parent node is used during the unsubscribe process
 		private FilterNode parent;
 
-		// the id is used during the unsubscribe process		
+		// the id is used during the unsubscribe process
 		private IdentifiableFunction<?> identifiableFunction;
 
 		private Function<Event, Object> function;
@@ -1477,7 +1476,7 @@ public class Simulation {
 			}
 			return filterNode;
 		}
-		
+
 	}
 
 	/*
@@ -1514,7 +1513,7 @@ public class Simulation {
 		 * We loop through the (function,value) pairs, integrating each into the
 		 * tree of filter nodes and creating new filter nodes as needed.
 		 */
-		for (Pair<IdentifiableFunction<T>,Object> pair : eventFilter.getFunctionValuePairs()) {
+		for (Pair<IdentifiableFunction<T>, Object> pair : eventFilter.getFunctionValuePairs()) {
 			filterNode = filterNode.addChildNode(value, pair.getFirst());
 			value = pair.getSecond();
 		}
@@ -1527,7 +1526,10 @@ public class Simulation {
 			consumerMap = new LinkedHashMap<>();
 			filterNode.consumers.put(value, consumerMap);
 		}
-		consumerMap.put(focalActorId, consumer);
+		Consumer<Event> previousConsumer = consumerMap.put(focalActorId, consumer);
+		if(previousConsumer != null) {
+			throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
+		}
 	}
 
 	/*
@@ -1547,7 +1549,7 @@ public class Simulation {
 		 * Walk down the tree and if we find that any of the function id values
 		 * are not present then we simply return since the consumer cannot exist
 		 */
-		for (Pair<IdentifiableFunction<T>,Object> pair : eventFilter.getFunctionValuePairs()) {
+		for (Pair<IdentifiableFunction<T>, Object> pair : eventFilter.getFunctionValuePairs()) {
 			Map<IdentifiableFunction<?>, FilterNode> map = filterNode.children.get(value);
 			if (map == null) {
 				return;
@@ -1568,7 +1570,7 @@ public class Simulation {
 			return;
 		}
 		consumerMap.remove(focalActorId);
-		if(consumerMap.isEmpty()) {
+		if (consumerMap.isEmpty()) {
 			filterNode.consumers.remove(value);
 		}
 
