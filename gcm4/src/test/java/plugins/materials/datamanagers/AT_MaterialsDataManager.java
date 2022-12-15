@@ -6758,7 +6758,7 @@ public class AT_MaterialsDataManager {
 		}));
 
 		for (int i = 0; i < 15; i++) {
-			MaterialsProducerPropertyId producerId = TestMaterialsProducerPropertyId
+			MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId
 					.getUnknownMaterialsProducerPropertyId();
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder()
 					.setDefaultValue(100 * i)
@@ -6768,14 +6768,14 @@ public class AT_MaterialsDataManager {
 					.build();
 			MaterialsProducerPropertyDefinitionInitialization matprodpropdefinit = MaterialsProducerPropertyDefinitionInitialization
 					.builder()
-					.setMaterialsProducerPropertyId(producerId)
+					.setMaterialsProducerPropertyId(materialsProducerPropertyId)
 					.setPropertyDefinition(propertyDefinition)
 					.build();
 
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				materialsDataManager.defineMaterialsProducerProperty(matprodpropdefinit);
-				expectedObservations.add(new MultiKey(c.getTime(), producerId));
+				expectedObservations.add(new MultiKey(c.getTime(), materialsProducerPropertyId));
 			}));
 		}
 		// have the observer show that the correct observations were generated
@@ -6798,11 +6798,11 @@ public class AT_MaterialsDataManager {
 		MaterialsActionSupport.testConsumer(3735323519290927676L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			ContractException contractException = assertThrows(ContractException.class, () -> {
-				TestMaterialsProducerPropertyId producerId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
+				TestMaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 				MaterialsProducerPropertyDefinitionInitialization matprodpropdefinit = MaterialsProducerPropertyDefinitionInitialization
 						.builder()
-						.setMaterialsProducerPropertyId(producerId)
-						.setPropertyDefinition(producerId.getPropertyDefinition())
+						.setMaterialsProducerPropertyId(materialsProducerPropertyId)
+						.setPropertyDefinition(materialsProducerPropertyId.getPropertyDefinition())
 						.build();
 
 				materialsDataManager.defineMaterialsProducerProperty(matprodpropdefinit);
@@ -6992,7 +6992,7 @@ public class AT_MaterialsDataManager {
 			assertEquals(MaterialsError.OFFERED_STAGE_UNALTERABLE, contractException.getErrorType());
 		});
 
-		/* precondition test: if the material amount is negative */
+		/* precondition test: if the resource amount is negative */
 		MaterialsActionSupport.testConsumer(6695497074307172608L, (c) -> {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			StageId stageId = materialsDataManager.addStage(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
