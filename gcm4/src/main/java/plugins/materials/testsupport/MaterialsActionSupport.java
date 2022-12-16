@@ -50,6 +50,8 @@ import util.random.RandomGeneratorProvider;
  */
 public class MaterialsActionSupport {
 
+	private MaterialsActionSupport(){}
+
 	/**
 	 * Creates an action plugin with an agent that will execute the given
 	 * consumer at time 0. The action plugin and the remaining arguments are

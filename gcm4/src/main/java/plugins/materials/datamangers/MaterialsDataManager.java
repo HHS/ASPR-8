@@ -1697,8 +1697,6 @@ public final class MaterialsDataManager extends DataManager {
 	 *             property definition</li>
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the batch in on an offered stage</li>
-	 *             <li>{@linkplain MaterialsError#MATERIALS_OWNERSHIP} if the
-	 *             requesting agent is not the owning materials producer</li>
 	 * 
 	 * 
 	 * 
@@ -1797,8 +1795,6 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if the batch
 	 *             id is unknown</li>
-	 *             <li>{@linkplain MaterialsError#MATERIALS_OWNERSHIP} if the
-	 *             requesting agent is not the owning materials producer</li>
 	 *             <li>{@linkplain MaterialsError#BATCH_NOT_STAGED} if the batch
 	 *             is not staged</li>
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE } if
@@ -1855,8 +1851,6 @@ public final class MaterialsDataManager extends DataManager {
 	 *             <li>{@linkplain MaterialsError#BATCH_STAGED_TO_DIFFERENT_OWNER}
 	 *             if batch and stage do not have the same owning materials
 	 *             producer</li>
-	 *             <li>{@linkplain MaterialsError#MATERIALS_OWNERSHIP} if the
-	 *             requesting agent is not the owning material producer</li>
 	 * 
 	 * 
 	 */
@@ -2153,8 +2147,6 @@ public final class MaterialsDataManager extends DataManager {
 	 *             is null</li>
 	 *             <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if stage id
 	 *             is unknown</li>
-	 *             <li>{@linkplain MaterialsError#MATERIALS_OWNERSHIP} if the
-	 *             requesting agent is not the owning materials producer</li>
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the stage is offered</li>
 	 *             <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT} if
@@ -2236,8 +2228,6 @@ public final class MaterialsDataManager extends DataManager {
 	 *             id is unknown</li>
 	 *             <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE} if
 	 *             the stage is offered</li>
-	 *             <li>{@linkplain MaterialsError#MATERIALS_OWNERSHIP} if the
-	 *             requesting agent is not the owning materials producer</li>
 	 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT} if
 	 *             the the resource amount is negative</li>
 	 *             <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}

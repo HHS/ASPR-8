@@ -4,14 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Event;
 import plugins.materials.support.StageId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = StageAdditionEvent.class)
-public class AT_StageAdditionEvent implements Event {
+public class AT_StageAdditionEvent {
 	
 
 	@Test

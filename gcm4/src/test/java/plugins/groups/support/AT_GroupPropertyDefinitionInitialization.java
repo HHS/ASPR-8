@@ -123,7 +123,7 @@ public class AT_GroupPropertyDefinitionInitialization {
 			GroupId groupId = new GroupId(10000 + i);
 			for (int j = 0; j < 3; j++) {
 				String value = Integer.toString(randomGenerator.nextInt(100));
-				Pair<GroupId, String> propertyValue = new Pair<GroupId, String>(groupId, value);
+				Pair<GroupId, String> propertyValue = new Pair<>(groupId, value);
 				expectedListOfPropertyValues.add(propertyValue);
 				definitionInitializationBuilder.addPropertyValue(groupId, value);
 			}
@@ -328,7 +328,7 @@ public class AT_GroupPropertyDefinitionInitialization {
 			GroupId groupId = new GroupId(10000 + i);
 			for (int j = 0; j < 3; j++) {
 				String value = Integer.toString(randomGenerator.nextInt(100));
-				Pair<GroupId, String> propertyValue = new Pair<GroupId, String>(groupId, value);
+				Pair<GroupId, String> propertyValue = new Pair<>(groupId, value);
 				expectedListOfPropertyValues.add(propertyValue);
 				definitionInitializationBuilder.addPropertyValue(groupId, value);
 			}

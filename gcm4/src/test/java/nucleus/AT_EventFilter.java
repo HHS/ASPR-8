@@ -95,7 +95,7 @@ public class AT_EventFilter {
 									.addFunctionValuePair(xFunction, 2)//
 									.build();
 		functionValuePairs = eventFilter.getFunctionValuePairs();
-		expectedFunctionValuePairs.add(new Pair<IdentifiableFunction<?>, Object>(xFunction, 2));
+		expectedFunctionValuePairs.add(new Pair<>(xFunction, 2));
 		assertNotNull(functionValuePairs);
 		assertEquals(expectedFunctionValuePairs, functionValuePairs);
 
@@ -110,7 +110,7 @@ public class AT_EventFilter {
 									.addFunctionValuePair(yFunction, 3.0)//
 									.build();
 		functionValuePairs = eventFilter.getFunctionValuePairs();
-		expectedFunctionValuePairs.add(new Pair<IdentifiableFunction<?>, Object>(yFunction, 3.0));
+		expectedFunctionValuePairs.add(new Pair<>(yFunction, 3.0));
 		assertNotNull(functionValuePairs);
 		assertEquals(expectedFunctionValuePairs, functionValuePairs);
 
