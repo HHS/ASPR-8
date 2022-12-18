@@ -183,4 +183,141 @@ public class AT_Graphs {
 
 	}
 
+	@Test
+	@UnitTestMethod(name = "getEdgeReducedGraph", args = {Graph.class})
+	public void testGetEdgeReducedGraph() {
+
+		MutableGraph<String, String> mutableGraph;
+		Graph<String, String> graph;
+		Graph<String, String> reducedGraph;
+		Graph<String, String> expectedGraph;
+
+		// case: empty graph
+		mutableGraph = new MutableGraph<>();
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		expectedGraph = graph;
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: self edge
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->A", "A", "A");
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		expectedGraph = graph;
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: single edge
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->B", "A", "B");
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addAll(graph);
+		mutableGraph.removeEdge("A->B");
+		expectedGraph =  mutableGraph.toGraph();
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: two cyclic edges
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->B", "A", "B");
+		mutableGraph.addEdge("B->A", "B", "A");
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		expectedGraph = graph;
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: single sink
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->F", "A", "F");
+		mutableGraph.addEdge("B->F", "B", "F");
+		mutableGraph.addEdge("C->F", "C","F");
+		mutableGraph.addEdge("D->F", "D", "F");
+		mutableGraph.addEdge("E->F", "E", "F");
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		for (String edge : mutableGraph.getEdges()) {
+			mutableGraph.removeEdge(edge);
+		}
+		graph = mutableGraph.toGraph();
+		expectedGraph = graph;
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: single source
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("F->A", "F", "A");
+		mutableGraph.addEdge("F->B", "F", "B");
+		mutableGraph.addEdge("F->C", "F","C");
+		mutableGraph.addEdge("F->D", "F", "D");
+		mutableGraph.addEdge("F->E", "F", "E");
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		for (String edge: mutableGraph.getEdges()) {
+			mutableGraph.removeEdge(edge);
+		}
+		graph = mutableGraph.toGraph();
+		expectedGraph = graph;
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: basic cyclic graph
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->B", "A", "B");
+		mutableGraph.addEdge("B->C", "B", "C");
+		mutableGraph.addEdge("C->A", "C", "A");
+		graph = mutableGraph.toGraph();
+		expectedGraph = graph;
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: basic acyclic graph
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->F", "A", "F");
+		mutableGraph.addEdge("A->B", "A", "B");
+		mutableGraph.addEdge("B->C", "B", "C");
+		mutableGraph.addEdge("C->A", "C", "A");
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		mutableGraph.removeEdge("A->F");
+		graph = mutableGraph.toGraph();
+		expectedGraph = graph;
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: one acyclic edge connecting two cycles
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->B", "A", "B");
+		mutableGraph.addEdge("B->C", "B", "C");
+		mutableGraph.addEdge("C->A", "C", "A");
+		mutableGraph.addEdge("C->E", "C", "E");
+		mutableGraph.addEdge("E->F", "E", "F");
+		mutableGraph.addEdge("F->G", "F", "G");
+		mutableGraph.addEdge("G->E", "G", "E");
+		graph = mutableGraph.toGraph();
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		mutableGraph.removeEdge("C->E");
+		graph = mutableGraph.toGraph();
+		expectedGraph = graph;
+		assertEquals(expectedGraph, reducedGraph);
+
+		// case: cyclic graph with many edges
+		mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("B->A", "B", "A");
+		mutableGraph.addEdge("A->C", "A", "C");
+		mutableGraph.addEdge("C->B", "C", "B");
+		mutableGraph.addEdge("C->D", "C", "D");
+		mutableGraph.addEdge("D->E", "D", "E");
+		mutableGraph.addEdge("E->F", "E", "F");
+		mutableGraph.addEdge("F->D", "F", "D");
+		mutableGraph.addEdge("F->C", "F", "C");
+		mutableGraph.addEdge("F->G", "F", "G");
+		mutableGraph.addEdge("G->H", "G", "H");
+		mutableGraph.addEdge("H->I", "H", "I");
+		mutableGraph.addEdge("I->G", "I", "G");
+		mutableGraph.addEdge("I->B", "I", "B");
+		mutableGraph.addEdge("C->I", "C", "I");
+		graph = mutableGraph.toGraph();
+		expectedGraph = graph;
+		reducedGraph = Graphs.getEdgeReducedGraph(graph);
+		assertEquals(expectedGraph, reducedGraph);
+	}
+
 }
