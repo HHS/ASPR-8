@@ -25,7 +25,7 @@ public class AT_StageOfferUpdateEvent {
 		boolean previousOfferState = true;
 		boolean currentOfferState = false;
 		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(stageId, stageOfferUpdateEvent.getStageId());
+		assertEquals(stageId, stageOfferUpdateEvent.stageId());
 	}
 
 	@Test
@@ -35,7 +35,7 @@ public class AT_StageOfferUpdateEvent {
 		boolean previousOfferState = true;
 		boolean currentOfferState = false;
 		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(previousOfferState, stageOfferUpdateEvent.isPreviousOfferState());
+		assertEquals(previousOfferState, stageOfferUpdateEvent.previousOfferState());
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class AT_StageOfferUpdateEvent {
 		boolean previousOfferState = true;
 		boolean currentOfferState = false;
 		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(currentOfferState, stageOfferUpdateEvent.isCurrentOfferState());
+		assertEquals(currentOfferState, stageOfferUpdateEvent.currentOfferState());
 	}
 
 	@Test

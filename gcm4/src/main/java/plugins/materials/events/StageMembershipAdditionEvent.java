@@ -6,22 +6,11 @@ import plugins.materials.support.BatchId;
 import plugins.materials.support.StageId;
 
 @Immutable
-public class StageMembershipAdditionEvent implements Event {
-	private final BatchId batchId;
-	private final StageId stageId;
+public record StageMembershipAdditionEvent(BatchId batchId,
+										   StageId stageId) implements Event {
 
-	public StageMembershipAdditionEvent(BatchId batchId, StageId stageId) {
-		super();
-		this.batchId = batchId;
-		this.stageId = stageId;
-	}
+	public StageMembershipAdditionEvent {
 
-	public BatchId getBatchId() {
-		return batchId;
-	}
-
-	public StageId getStageId() {
-		return stageId;
 	}
 
 	@Override

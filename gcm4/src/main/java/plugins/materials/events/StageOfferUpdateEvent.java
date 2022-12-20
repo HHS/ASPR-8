@@ -5,28 +5,11 @@ import nucleus.Event;
 import plugins.materials.support.StageId;
 
 @Immutable
-public class StageOfferUpdateEvent implements Event {
-	private final StageId stageId;
-	private final boolean previousOfferState;
-	private final boolean currentOfferState;
+public record StageOfferUpdateEvent(StageId stageId, boolean previousOfferState,
+									boolean currentOfferState) implements Event {
 
-	public StageOfferUpdateEvent(StageId stageId, boolean previousOfferState, boolean currentOfferState) {
-		super();
-		this.stageId = stageId;
-		this.previousOfferState = previousOfferState;
-		this.currentOfferState = currentOfferState;
-	}
+	public StageOfferUpdateEvent {
 
-	public StageId getStageId() {
-		return stageId;
-	}
-
-	public boolean isPreviousOfferState() {
-		return previousOfferState;
-	}
-
-	public boolean isCurrentOfferState() {
-		return currentOfferState;
 	}
 
 	@Override
@@ -34,6 +17,5 @@ public class StageOfferUpdateEvent implements Event {
 		return "StageOfferUpdateEvent [stageId=" + stageId + ", previousOfferState=" + previousOfferState + ", currentOfferState=" + currentOfferState + "]";
 	}
 
-	
-	
+
 }

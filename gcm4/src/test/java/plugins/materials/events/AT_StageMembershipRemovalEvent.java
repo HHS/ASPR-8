@@ -25,7 +25,7 @@ public class AT_StageMembershipRemovalEvent {
 		BatchId batchId = new BatchId(23);
 		StageId stageId = new StageId(765);
 		StageMembershipRemovalEvent stageMembershipRemovalEvent = new StageMembershipRemovalEvent(batchId, stageId);
-		assertEquals(batchId,stageMembershipRemovalEvent.getBatchId());
+		assertEquals(batchId,stageMembershipRemovalEvent.batchId());
 	}
 
 	@Test
@@ -34,7 +34,7 @@ public class AT_StageMembershipRemovalEvent {
 		BatchId batchId = new BatchId(23);
 		StageId stageId = new StageId(765);
 		StageMembershipRemovalEvent stageMembershipRemovalEvent = new StageMembershipRemovalEvent(batchId, stageId);
-		assertEquals(stageId,stageMembershipRemovalEvent.getStageId());
+		assertEquals(stageId,stageMembershipRemovalEvent.stageId());
 	}
 
 	@Test

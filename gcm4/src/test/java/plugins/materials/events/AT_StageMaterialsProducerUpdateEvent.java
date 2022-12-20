@@ -28,7 +28,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		assertEquals(stageId, stageMaterialsProducerUpdateEvent.getStageId());
+		assertEquals(stageId, stageMaterialsProducerUpdateEvent.stageId());
 	}
 
 	@Test
@@ -39,7 +39,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		assertEquals(previousMaterialsProducerId, stageMaterialsProducerUpdateEvent.getPreviousMaterialsProducerId());
+		assertEquals(previousMaterialsProducerId, stageMaterialsProducerUpdateEvent.previousMaterialsProducerId());
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class AT_StageMaterialsProducerUpdateEvent {
 		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
 		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
 				currentMaterialsProducerId);
-		assertEquals(currentMaterialsProducerId, stageMaterialsProducerUpdateEvent.getCurrentMaterialsProducerId());
+		assertEquals(currentMaterialsProducerId, stageMaterialsProducerUpdateEvent.currentMaterialsProducerId());
 	}
 
 	@Test

@@ -26,7 +26,7 @@ public class AT_StageMembershipAdditionEvent {
 		BatchId batchId = new BatchId(6);
 		StageId stageId = new StageId(252);
 		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
-		assertEquals(batchId, stageMembershipAdditionEvent.getBatchId());
+		assertEquals(batchId, stageMembershipAdditionEvent.batchId());
 	}
 
 	@Test
@@ -35,7 +35,7 @@ public class AT_StageMembershipAdditionEvent {
 		BatchId batchId = new BatchId(6);
 		StageId stageId = new StageId(252);
 		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
-		assertEquals(stageId, stageMembershipAdditionEvent.getStageId());
+		assertEquals(stageId, stageMembershipAdditionEvent.stageId());
 	}
 
 	@Test

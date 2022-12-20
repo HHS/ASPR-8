@@ -6,16 +6,10 @@ import plugins.materials.support.StageId;
 
 @Immutable
 
-public class StageImminentRemovalEvent implements Event {
-	private final StageId stageId;
+public record StageImminentRemovalEvent(StageId stageId) implements Event {
 
-	public StageImminentRemovalEvent(StageId stageId) {
-		super();
-		this.stageId = stageId;
-	}
+	public StageImminentRemovalEvent {
 
-	public StageId getStageId() {
-		return stageId;
 	}
 
 	@Override
@@ -27,5 +21,5 @@ public class StageImminentRemovalEvent implements Event {
 		return builder.toString();
 	}
 
-	
+
 }

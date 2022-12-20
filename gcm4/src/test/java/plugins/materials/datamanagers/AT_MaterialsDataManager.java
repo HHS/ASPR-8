@@ -370,7 +370,7 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			c.subscribe(EventFilter.builder(StageAdditionEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 		}));
 
@@ -524,7 +524,7 @@ public class AT_MaterialsDataManager {
 			});
 
 			c.subscribe(EventFilter.builder(StageImminentRemovalEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 
 		}));
@@ -703,7 +703,7 @@ public class AT_MaterialsDataManager {
 			}
 
 			c.subscribe(EventFilter.builder(StageImminentRemovalEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 
 		}));
@@ -2632,7 +2632,7 @@ public class AT_MaterialsDataManager {
 		// have an observer record batches being removed from stages
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			c.subscribe(EventFilter.builder(StageMembershipRemovalEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.batchId(), e.stageId());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -2772,7 +2772,7 @@ public class AT_MaterialsDataManager {
 		// stages
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			c.subscribe(EventFilter.builder(StageMembershipAdditionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.batchId(), e.stageId());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -3051,11 +3051,11 @@ public class AT_MaterialsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 
 			c.subscribe(EventFilter.builder(StageImminentRemovalEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 
 			c.subscribe(EventFilter.builder(StageMembershipRemovalEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getBatchId(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.batchId(), e.stageId()));
 			});
 
 			c.subscribe(EventFilter.builder(BatchImminentRemovalEvent.class).build(), (c2, e) -> {
@@ -3544,7 +3544,7 @@ public class AT_MaterialsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			c.subscribe(EventFilter.builder(StageOfferUpdateEvent.class).build(), (c2, e) -> {
 				actualObservations.add(
-						new MultiKey(c2.getTime(), e.getStageId(), e.isPreviousOfferState(), e.isCurrentOfferState()));
+						new MultiKey(c2.getTime(), e.stageId(), e.previousOfferState(), e.currentOfferState()));
 			});
 		}));
 
@@ -3963,13 +3963,13 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			c.subscribe(EventFilter.builder(StageMaterialsProducerUpdateEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId(), e.getPreviousMaterialsProducerId(),
-						e.getCurrentMaterialsProducerId());
+				MultiKey multiKey = new MultiKey(c.getTime(), e.stageId(), e.previousMaterialsProducerId(),
+						e.currentMaterialsProducerId());
 				actualObservations.add(multiKey);
 			});
 
 			c.subscribe(EventFilter.builder(StageOfferUpdateEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId());
+				MultiKey multiKey = new MultiKey(c.getTime(), e.stageId());
 				actualObservations.add(multiKey);
 
 			});
@@ -5564,8 +5564,8 @@ public class AT_MaterialsDataManager {
 				EventFilter<StageMaterialsProducerUpdateEvent> eventFilter = materialsDataManager
 						.getEventFilterForStageMaterialsProducerUpdateEvent_BySource(materialsProducerId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId(), e.getPreviousMaterialsProducerId(),
-							e.getCurrentMaterialsProducerId());
+					MultiKey multiKey = new MultiKey(c.getTime(), e.stageId(), e.previousMaterialsProducerId(),
+							e.currentMaterialsProducerId());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -5649,8 +5649,8 @@ public class AT_MaterialsDataManager {
 				EventFilter<StageMaterialsProducerUpdateEvent> eventFilter = materialsDataManager
 						.getEventFilterForStageMaterialsProducerUpdateEvent_ByDestination(materialsProducerId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId(), e.getPreviousMaterialsProducerId(),
-							e.getCurrentMaterialsProducerId());
+					MultiKey multiKey = new MultiKey(c.getTime(), e.stageId(), e.previousMaterialsProducerId(),
+							e.currentMaterialsProducerId());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -5752,8 +5752,8 @@ public class AT_MaterialsDataManager {
 				EventFilter<StageMaterialsProducerUpdateEvent> eventFilter = materialsDataManager
 						.getEventFilterForStageMaterialsProducerUpdateEvent(stageId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId(), e.getPreviousMaterialsProducerId(),
-							e.getCurrentMaterialsProducerId());
+					MultiKey multiKey = new MultiKey(c.getTime(), e.stageId(), e.previousMaterialsProducerId(),
+							e.currentMaterialsProducerId());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -5837,8 +5837,8 @@ public class AT_MaterialsDataManager {
 			EventFilter<StageMaterialsProducerUpdateEvent> eventFilter = materialsDataManager
 					.getEventFilterForStageMaterialsProducerUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c.getTime(), e.getStageId(), e.getPreviousMaterialsProducerId(),
-						e.getCurrentMaterialsProducerId());
+				MultiKey multiKey = new MultiKey(c.getTime(), e.stageId(), e.previousMaterialsProducerId(),
+						e.currentMaterialsProducerId());
 				actualObservations.add(multiKey);
 			});
 
@@ -5918,7 +5918,7 @@ public class AT_MaterialsDataManager {
 				EventFilter<StageOfferUpdateEvent> eventFilter = materialsDataManager
 						.getEventFilterForStageOfferUpdateEvent(stageId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 				});
 			}
 		}));
@@ -6008,7 +6008,7 @@ public class AT_MaterialsDataManager {
 			EventFilter<StageOfferUpdateEvent> eventFilter = materialsDataManager
 					.getEventFilterForStageOfferUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 
 		}));
@@ -6549,7 +6549,7 @@ public class AT_MaterialsDataManager {
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			EventFilter<StageAdditionEvent> eventFilter = materialsDataManager.getEventFilterForStageAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 		}));
 
@@ -6596,7 +6596,7 @@ public class AT_MaterialsDataManager {
 			EventFilter<StageImminentRemovalEvent> eventFilter = materialsDataManager
 					.getEventFilterForStageImminentRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 		}));
 
@@ -6645,7 +6645,7 @@ public class AT_MaterialsDataManager {
 			EventFilter<StageImminentRemovalEvent> eventFilter = materialsDataManager
 					.getEventFilterForStageImminentRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 		}));
 
@@ -6694,7 +6694,7 @@ public class AT_MaterialsDataManager {
 			EventFilter<StageMembershipRemovalEvent> eventFilter = materialsDataManager
 					.getEventFilterForStageMembershipRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId(), e.getBatchId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId(), e.batchId()));
 			});
 		}));
 
@@ -6859,7 +6859,7 @@ public class AT_MaterialsDataManager {
 			});
 
 			c.subscribe(EventFilter.builder(StageImminentRemovalEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getStageId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.stageId()));
 			});
 
 		}));

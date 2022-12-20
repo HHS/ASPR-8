@@ -24,7 +24,7 @@ public class AT_StageAdditionEvent {
 	public void testGetStageId() {
 		StageId stageId = new StageId(534);
 		StageAdditionEvent stageAdditionEvent = new StageAdditionEvent(stageId);
-		assertEquals(stageId,stageAdditionEvent.getStageId());
+		assertEquals(stageId,stageAdditionEvent.stageId());
 	}
 
 	@Test

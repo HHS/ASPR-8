@@ -5,16 +5,10 @@ import nucleus.Event;
 import plugins.materials.support.StageId;
 
 @Immutable
-public class StageAdditionEvent implements Event {
-	private final StageId stageId;
+public record StageAdditionEvent(StageId stageId) implements Event {
 
-	public StageAdditionEvent(StageId stageId) {
-		super();
-		this.stageId = stageId;
-	}
+	public StageAdditionEvent {
 
-	public StageId getStageId() {
-		return stageId;
 	}
 
 	@Override
@@ -22,5 +16,5 @@ public class StageAdditionEvent implements Event {
 		return "StageCreation [stageId=" + stageId + "]";
 	}
 
-	
+
 }

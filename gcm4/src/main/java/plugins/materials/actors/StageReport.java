@@ -97,7 +97,7 @@ public final class StageReport {
 	private void handleStageAdditionEvent(ActorContext actorContext, StageAdditionEvent stageAdditionEvent) {
 
 		StageRecord stageRecord = new StageRecord();
-		stageRecord.stageId = stageAdditionEvent.getStageId();
+		stageRecord.stageId = stageAdditionEvent.stageId();
 		stageRecord.isOffered = materialsDataManager.isStageOffered(stageRecord.stageId);
 		stageRecord.materialsProducerId = materialsDataManager.getStageProducer(stageRecord.stageId);
 		stageRecord.lastAction = Action.CREATED;
@@ -106,24 +106,24 @@ public final class StageReport {
 	}
 
 	private void handleStageImminentRemovalEvent(ActorContext actorContext, StageImminentRemovalEvent stageImminentRemovalEvent) {
-		StageId stageId = stageImminentRemovalEvent.getStageId();
+		StageId stageId = stageImminentRemovalEvent.stageId();
 		StageRecord stageRecord = stageRecords.remove(stageId);
 		stageRecord.lastAction = Action.DESTROYED;
 		writeReportItem(actorContext, stageRecord);
 	}
 
 	private void handleStageOfferUpdateEvent(ActorContext actorContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
-		StageId stageId = stageOfferUpdateEvent.getStageId();
+		StageId stageId = stageOfferUpdateEvent.stageId();
 		StageRecord stageRecord = stageRecords.get(stageId);
-		stageRecord.isOffered = stageOfferUpdateEvent.isCurrentOfferState();
+		stageRecord.isOffered = stageOfferUpdateEvent.currentOfferState();
 		stageRecord.lastAction = Action.OFFERED;
 		writeReportItem(actorContext, stageRecord);
 	}
 
 	private void handleStageMaterialsProducerUpdateEvent(ActorContext actorContext, StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
-		StageId stageId = stageMaterialsProducerUpdateEvent.getStageId();
+		StageId stageId = stageMaterialsProducerUpdateEvent.stageId();
 		StageRecord stageRecord = stageRecords.get(stageId);
-		stageRecord.materialsProducerId = stageMaterialsProducerUpdateEvent.getCurrentMaterialsProducerId();
+		stageRecord.materialsProducerId = stageMaterialsProducerUpdateEvent.currentMaterialsProducerId();
 		stageRecord.lastAction = Action.TRANSFERRED;
 		writeReportItem(actorContext, stageRecord);
 	}

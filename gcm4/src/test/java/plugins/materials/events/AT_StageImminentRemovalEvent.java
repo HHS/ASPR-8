@@ -25,7 +25,7 @@ public class AT_StageImminentRemovalEvent {
 	public void testGetStageId() {
 		StageId stageId = new StageId(4534);
 		StageImminentRemovalEvent stageImminentRemovalEvent = new StageImminentRemovalEvent(stageId);
-		assertEquals(stageId, stageImminentRemovalEvent.getStageId());
+		assertEquals(stageId, stageImminentRemovalEvent.stageId());
 	}
 
 	@Test
