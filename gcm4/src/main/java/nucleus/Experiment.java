@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,15 +91,6 @@ public final class Experiment {
 			}
 		}
 
-		/**
-		 * Turns on or off the logging of experiment progress to standard out.
-		 * Default value is true.
-		 *
-		 */
-		public Builder reportProgressToConsole(final boolean reportProgressToConsole) {
-			data.reportProgressToConsole = reportProgressToConsole;
-			return this;
-		}
 
 		/**
 		 * Sets the path for experiment progress log. A null path turns off
@@ -147,10 +137,19 @@ public final class Experiment {
 		}
 
 		/**
+		 * Turns on or off the logging of experiment progress to standard out.
+		 * Default value is true.
+		 *
+		 */
+		public Builder reportProgressToConsole(final boolean reportProgressToConsole) {			
+			return this;
+		}
+
+		
+		/**
 		 * Sets the policy on reporting scenario failures. Defaults to true.
 		 */
 		public Builder reportFailuresToConsole(final boolean reportFailuresToConsole) {
-			data.reportFailuresToConsole = reportFailuresToConsole;
 			return this;
 		}
 
@@ -165,10 +164,6 @@ public final class Experiment {
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
 		private boolean haltOnException;
-
-		private boolean reportFailuresToConsole = true;
-		private boolean reportProgressToConsole = true;
-
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
 
@@ -290,9 +285,7 @@ public final class Experiment {
 
 		builder.setExperimentMetaData(experimentMetaData);
 
-		if (data.reportProgressToConsole) {
-			data.experimentContextConsumers.add(new ExperimentStatusConsole());
-		}
+		
 
 		// initialize the experiment context consumers so that they can
 		// subscribe to experiment level events
@@ -400,10 +393,7 @@ public final class Experiment {
 				experimentStateManager.closeScenarioAsSuccess(simResult.scenarioId);
 			} else {
 				experimentStateManager.closeScenarioAsFailure(simResult.scenarioId, simResult.failureCause);
-				if (data.reportFailuresToConsole) {
-					System.err.println("Simulation failure for scenario " + simResult.scenarioId);
-					simResult.failureCause.printStackTrace();
-				}
+				
 				if (data.haltOnException) {
 					throw simResult.failureCause;
 				}
@@ -478,10 +468,7 @@ public final class Experiment {
 				experimentStateManager.closeScenarioAsSuccess(scenarioId);
 			} else {
 				experimentStateManager.closeScenarioAsFailure(scenarioId, failureCause);
-				if (data.reportFailuresToConsole) {
-					System.err.println("Simulation failure for scenario " + scenarioId);
-					failureCause.printStackTrace();
-				}
+				
 				if (data.haltOnException) {
 					throw failureCause;
 				}

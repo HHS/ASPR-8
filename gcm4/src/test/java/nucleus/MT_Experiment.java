@@ -1,8 +1,6 @@
 package nucleus;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,69 +15,6 @@ import nucleus.testsupport.testplugin.TestPluginData;
  *
  */
 public class MT_Experiment {
-
-	private static class ExperimentContextConsumer implements Consumer<ExperimentContext> {
-
-		// this field is only safe to use in the main thread
-		private ExperimentContext experimentContext;
-
-		@Override
-		public void accept(ExperimentContext experimentContext) {
-			this.experimentContext = experimentContext;
-			experimentContext.subscribeToExperimentClose(this::handleExperimentClose);
-			experimentContext.subscribeToSimulationClose(this::handleSimulationClose);
-
-		}
-
-		private void handleSimulationClose(ExperimentContext experimentContext, Integer sceanrioId) {
-			ScenarioStatus scenarioStatus = experimentContext.getScenarioStatus(sceanrioId).get();
-			if (scenarioStatus == ScenarioStatus.FAILED) {
-				System.out.println("SIMULATION CLOSE with scenario " + sceanrioId + " failing");
-			}
-		}
-
-		private void handleExperimentClose(ExperimentContext experimentContext) {
-			System.out.println();
-			System.out.println("EXPERIMENT CLOSE");
-			System.out.println();
-
-			for (ScenarioStatus scenarioStatus : ScenarioStatus.values()) {
-				List<Integer> scenarios = experimentContext.getScenarios(scenarioStatus);
-
-				System.out.println("There were " + scenarios.size() + " " + scenarioStatus + " scenarios");
-			}
-			System.out.println();
-			List<Integer> failedScenarios = experimentContext.getScenarios(ScenarioStatus.FAILED);
-			for (Integer scenarioId : failedScenarios) {
-				Exception e = experimentContext.getScenarioFailureCause(scenarioId).get();
-				System.out.println("Sceanrio " + scenarioId + " has failed with stackTrace");
-				e.printStackTrace(System.out);
-			}
-		}
-
-		/*
-		 * Execute in the main thread only
-		 */
-		private void report() {
-			System.out.println();
-			System.out.println("FORCED STATUS UPDATE");
-			System.out.println();
-
-			for (ScenarioStatus scenarioStatus : ScenarioStatus.values()) {
-				List<Integer> scenarios = experimentContext.getScenarios(scenarioStatus);
-
-				System.out.println("There were " + scenarios.size() + " " + scenarioStatus + " scenarios");
-			}
-			System.out.println();
-			List<Integer> failedScenarios = experimentContext.getScenarios(ScenarioStatus.FAILED);
-			for (Integer scenarioId : failedScenarios) {
-				Exception e = experimentContext.getScenarioFailureCause(scenarioId).get();
-				System.out.println("Sceanrio " + scenarioId + " has failed with stackTrace");
-				e.printStackTrace(System.out);
-			}
-		}
-
-	}
 
 	@Test
 	public void test() {
@@ -114,9 +49,8 @@ public class MT_Experiment {
 		// have one of the six actors throw an exception
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			synchronized (LOCK) {
-				counter++;
-				// System.out.println("counter = " + counter);
-				if (counter == 3) {
+				counter++;				
+				if (counter == 3 || counter == 10) {
 					throw new RuntimeException("test exception");
 				}
 			}
@@ -125,15 +59,18 @@ public class MT_Experiment {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		// build and execute the experiment
+
+		ExperimentStatusConsole experimentStatusConsole = //
+				ExperimentStatusConsole	.builder()//
+										.setImmediateErrorReporting(true)//
+										.build();//
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
-					.addDimension(getDimension(100))//
-					.reportFailuresToConsole(true)//
-					.reportProgressToConsole(true)//
+					.addDimension(getDimension(100))//					
+					.addExperimentContextConsumer(experimentStatusConsole)//
 					.setHaltOnException(false)//
-					.setThreadCount(10)//
+					.setThreadCount(0)//
 					.build()//
 					.execute();//
 	}
