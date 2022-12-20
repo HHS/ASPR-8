@@ -5,16 +5,10 @@ import nucleus.Event;
 import plugins.materials.support.BatchId;
 
 @Immutable
-public class BatchAdditionEvent implements Event {
-	private final BatchId batchId;
+public record BatchAdditionEvent(BatchId batchId) implements Event {
 
-	public BatchAdditionEvent(final BatchId batchId) {
-		super();
-		this.batchId = batchId;
-	}
+	public BatchAdditionEvent {
 
-	public BatchId getBatchId() {
-		return batchId;
 	}
 
 	@Override

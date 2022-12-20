@@ -5,16 +5,10 @@ import nucleus.Event;
 import plugins.materials.support.BatchId;
 
 @Immutable
-public class BatchImminentRemovalEvent implements Event {
-	private final BatchId batchId;
+public record BatchImminentRemovalEvent(BatchId batchId) implements Event {
 
-	public BatchImminentRemovalEvent(final BatchId batchId) {
-		super();
-		this.batchId = batchId;
-	}
+	public BatchImminentRemovalEvent {
 
-	public BatchId getBatchId() {
-		return batchId;
 	}
 
 	@Override

@@ -5,28 +5,11 @@ import nucleus.Event;
 import plugins.materials.support.BatchId;
 
 @Immutable
-public class BatchAmountUpdateEvent implements Event {
-	private final BatchId batchId;
-	private final double previousAmount;
-	private final double currentAmount;
+public record BatchAmountUpdateEvent(BatchId batchId, double previousAmount,
+									 double currentAmount) implements Event {
 
-	public BatchAmountUpdateEvent(BatchId batchId, double previousAmount, double currentAmount) {
-		super();
-		this.batchId = batchId;
-		this.previousAmount = previousAmount;
-		this.currentAmount = currentAmount;
-	}
+	public BatchAmountUpdateEvent {
 
-	public BatchId getBatchId() {
-		return batchId;
-	}
-
-	public double getPreviousAmount() {
-		return previousAmount;
-	}
-
-	public double getCurrentAmount() {
-		return currentAmount;
 	}
 
 	@Override

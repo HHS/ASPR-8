@@ -23,7 +23,7 @@ public class AT_BatchAdditionEvent {
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(56456);
 		BatchAdditionEvent batchAdditionEvent = new BatchAdditionEvent(batchId);
-		assertEquals(batchId, batchAdditionEvent.getBatchId());
+		assertEquals(batchId, batchAdditionEvent.batchId());
 	}
 
 	@Test

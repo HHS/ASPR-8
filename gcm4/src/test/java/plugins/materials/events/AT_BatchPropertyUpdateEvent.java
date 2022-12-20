@@ -28,7 +28,7 @@ public class AT_BatchPropertyUpdateEvent {
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
 		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(batchId, batchPropertyUpdateEvent.getBatchId());
+		assertEquals(batchId, batchPropertyUpdateEvent.batchId());
 	}
 
 	@Test
@@ -39,7 +39,7 @@ public class AT_BatchPropertyUpdateEvent {
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
 		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(batchPropertyId, batchPropertyUpdateEvent.getBatchPropertyId());
+		assertEquals(batchPropertyId, batchPropertyUpdateEvent.batchPropertyId());
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class AT_BatchPropertyUpdateEvent {
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
 		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(previousPropertyValue, batchPropertyUpdateEvent.getPreviousPropertyValue());
+		assertEquals(previousPropertyValue, batchPropertyUpdateEvent.previousPropertyValue());
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class AT_BatchPropertyUpdateEvent {
 		Object previousPropertyValue = 45;
 		Object currentPropertyValue = 643;
 		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(currentPropertyValue, batchPropertyUpdateEvent.getCurrentPropertyValue());
+		assertEquals(currentPropertyValue, batchPropertyUpdateEvent.currentPropertyValue());
 	}
 
 	@Test

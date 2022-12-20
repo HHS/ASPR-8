@@ -23,7 +23,7 @@ public class AT_BatchImminentRemovalEvent {
 	public void testGetBatchId() {
 		BatchId batchId = new BatchId(7867);
 		BatchImminentRemovalEvent batchImminentRemovalEvent = new BatchImminentRemovalEvent(batchId);
-		assertEquals(batchId, batchImminentRemovalEvent.getBatchId());
+		assertEquals(batchId, batchImminentRemovalEvent.batchId());
 	}
 
 	@Test

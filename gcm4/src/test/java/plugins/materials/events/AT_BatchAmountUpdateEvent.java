@@ -26,7 +26,7 @@ public class AT_BatchAmountUpdateEvent {
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
 		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
-		assertEquals(batchId, batchAmountUpdateEvent.getBatchId());
+		assertEquals(batchId, batchAmountUpdateEvent.batchId());
 	}
 
 	@Test
@@ -36,7 +36,7 @@ public class AT_BatchAmountUpdateEvent {
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
 		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
-		assertEquals(previousAmount, batchAmountUpdateEvent.getPreviousAmount());
+		assertEquals(previousAmount, batchAmountUpdateEvent.previousAmount());
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class AT_BatchAmountUpdateEvent {
 		double previousAmount = 14.5;
 		double currentAmount = 44.7;		
 		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
-		assertEquals(currentAmount, batchAmountUpdateEvent.getCurrentAmount());
+		assertEquals(currentAmount, batchAmountUpdateEvent.currentAmount());
 	}
 	
 	@Test

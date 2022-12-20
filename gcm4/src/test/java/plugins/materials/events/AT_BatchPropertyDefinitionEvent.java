@@ -50,7 +50,7 @@ public class AT_BatchPropertyDefinitionEvent {
 
         assertNotNull(event);
 
-        assertEquals(batchPropertyId, event.getBatchPropertyId());
+        assertEquals(batchPropertyId, event.batchPropertyId());
     }
 
     @Test
@@ -63,6 +63,6 @@ public class AT_BatchPropertyDefinitionEvent {
 
         assertNotNull(event);
 
-        assertEquals(materialId, event.getMaterialId());
+        assertEquals(materialId, event.materialId());
     }
 }
