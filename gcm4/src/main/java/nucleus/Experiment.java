@@ -141,6 +141,11 @@ public final class Experiment {
 			return this;
 		}
 
+		public Builder setHaltOnException(final boolean haltOnException) {
+			data.haltOnException = haltOnException;
+			return this;
+		}
+
 		/**
 		 * Sets the policy on reporting scenario failures. Defaults to true.
 		 */
@@ -159,8 +164,11 @@ public final class Experiment {
 		private final List<Plugin> plugins = new ArrayList<>();
 		private final List<Consumer<ExperimentContext>> experimentContextConsumers = new ArrayList<>();
 		private int threadCount;
+		private boolean haltOnException;
+
 		private boolean reportFailuresToConsole = true;
 		private boolean reportProgressToConsole = true;
+
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
 
@@ -190,16 +198,14 @@ public final class Experiment {
 		private final ExperimentStateManager experimentStateManager;
 		private final List<Plugin> plugins;
 		private final Integer scenarioId;
-		private final boolean reportScenarioFailureToConsole;
 
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean reportScenarioFailureToConsole) {
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
-			this.reportScenarioFailureToConsole = reportScenarioFailureToConsole;
 		}
 
 		/**
@@ -232,10 +238,14 @@ public final class Experiment {
 				success = true;
 			} catch (final Exception e) {
 				failureCause = e;
-				if (reportScenarioFailureToConsole) {
-					System.err.println("Simulation failure for scenario " + scenarioId);
-					e.printStackTrace();
-				}
+				// if (reportScenarioFailureToConsole) {
+				// System.err.println("Simulation failure for scenario " +
+				// scenarioId);
+				// e.printStackTrace();
+				// }
+				// if(rethrow) {
+				// throw e;
+				// }
 			}
 			return new SimResult(scenarioId, success, failureCause);
 		}
@@ -281,7 +291,7 @@ public final class Experiment {
 		builder.setExperimentMetaData(experimentMetaData);
 
 		if (data.reportProgressToConsole) {
-			data.experimentContextConsumers.add(new ExperimentStatusConsole()::init);
+			data.experimentContextConsumers.add(new ExperimentStatusConsole());
 		}
 
 		// initialize the experiment context consumers so that they can
@@ -294,14 +304,27 @@ public final class Experiment {
 		// announce to consumers that the experiment is starting
 		experimentStateManager.openExperiment();
 
-		if (data.threadCount > 0) {
-			executeMultiThreaded();
-		} else {
-			executeSingleThreaded();
+		try {
+			if (data.threadCount > 0) {
+				ExecutorService executorService = Executors.newFixedThreadPool(data.threadCount);
+				try {
+					executeMultiThreaded(executorService);
+					executorService.shutdown();
+				} catch (Exception e) {
+					executorService.shutdownNow();
+					throw new RuntimeException(e);
+				}
+			} else {
+				try {
+					executeSingleThreaded();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		} finally {
+			// announce to consumers that the experiment has ended
+			experimentStateManager.closeExperiment();
 		}
-
-		// announce to consumers that the experiment has ended
-		experimentStateManager.closeExperiment();
 
 	}
 
@@ -310,7 +333,7 @@ public final class Experiment {
 	 * throws an exception it is caught and handled by reporting to standard
 	 * error that the failure occured as well as printing a stack trace.
 	 */
-	private void executeMultiThreaded() {
+	private void executeMultiThreaded(final ExecutorService executorService) throws Exception {
 
 		// Determine the scenarios
 		final List<Integer> jobs = new ArrayList<>();
@@ -335,7 +358,9 @@ public final class Experiment {
 
 		// Create the Completion Service using the suggested thread
 		// count
-		final ExecutorService executorService = Executors.newFixedThreadPool(data.threadCount);
+		// final ExecutorService executorService =
+		// Executors.newFixedThreadPool(data.threadCount);
+
 		final CompletionService<SimResult> completionService = new ExecutorCompletionService<>(executorService);
 
 		/*
@@ -347,7 +372,7 @@ public final class Experiment {
 		while (jobIndex < (Math.min(data.threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportFailuresToConsole));
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins));
 			jobIndex++;
 		}
 
@@ -361,7 +386,7 @@ public final class Experiment {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins, data.reportFailuresToConsole));
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins));
 				jobIndex++;
 			}
 
@@ -369,20 +394,28 @@ public final class Experiment {
 			 * This call is blocking and waits for a job to complete and a
 			 * thread to clear.
 			 */
-			try {
-				final SimResult simResult = completionService.take().get();
-				if (simResult.success) {
-					experimentStateManager.closeScenarioAsSuccess(simResult.scenarioId);
-				} else {
-					experimentStateManager.closeScenarioAsFailure(simResult.scenarioId, simResult.failureCause);
+			// try {
+			final SimResult simResult = completionService.take().get();
+			if (simResult.success) {
+				experimentStateManager.closeScenarioAsSuccess(simResult.scenarioId);
+			} else {
+				experimentStateManager.closeScenarioAsFailure(simResult.scenarioId, simResult.failureCause);
+				if (data.reportFailuresToConsole) {
+					System.err.println("Simulation failure for scenario " + simResult.scenarioId);
+					simResult.failureCause.printStackTrace();
 				}
-			} catch (final InterruptedException | ExecutionException e) {
-				// Note that this is the completion service failing and
-				// not the simulation
-
-				// re-thrown as runtime exception
-				throw new RuntimeException(e);
+				if (data.haltOnException) {
+					throw simResult.failureCause;
+				}
 			}
+			// } catch (final InterruptedException | ExecutionException e) {
+			// // Note that this is the completion service failing and
+			// // not the simulation
+			//
+			// // re-thrown as runtime exception
+			//
+			// throw new RuntimeException(e);
+			// }
 
 			/*
 			 * Once the blocking call returns, we increment the
@@ -395,7 +428,7 @@ public final class Experiment {
 		 * Since all jobs are done, the CompletionService is no longer needed so
 		 * we shut down the executorService that backs it.
 		 */
-		executorService.shutdown();
+		// executorService.shutdown();
 
 	}
 
@@ -404,7 +437,7 @@ public final class Experiment {
 	 * an exception it is caught and handled by reporting to standard error that
 	 * the failure occurred as well as printing a stack trace.
 	 */
-	private void executeSingleThreaded() {
+	private void executeSingleThreaded() throws Exception {
 
 		// Execute each scenario
 		final int scenarioCount = experimentStateManager.getScenarioCount();
@@ -433,21 +466,25 @@ public final class Experiment {
 			// run the simulation
 			boolean success = false;
 			Exception failureCause = null;
+
 			try {
 				simulation.execute();
 				success = true;
 			} catch (final Exception e) {
 				failureCause = e;
-				if (data.reportFailuresToConsole) {
-					System.err.println("Simulation failure for scenario " + scenarioId);
-					e.printStackTrace();
-				}
 			}
 
 			if (success) {
 				experimentStateManager.closeScenarioAsSuccess(scenarioId);
 			} else {
 				experimentStateManager.closeScenarioAsFailure(scenarioId, failureCause);
+				if (data.reportFailuresToConsole) {
+					System.err.println("Simulation failure for scenario " + scenarioId);
+					failureCause.printStackTrace();
+				}
+				if (data.haltOnException) {
+					throw failureCause;
+				}
 			}
 
 		}

@@ -1,6 +1,7 @@
 package nucleus;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -13,7 +14,7 @@ import net.jcip.annotations.ThreadSafe;
  */
 
 @ThreadSafe
-public final class ExperimentStatusConsole {
+public final class ExperimentStatusConsole implements Consumer<ExperimentContext> {
 
 	/*
 	 * The last reported percentage completion value that includes credit from
@@ -114,9 +115,11 @@ public final class ExperimentStatusConsole {
 	 * Initializes this ExperimentStatusConsole, which registers for simulation
 	 * and experiment close events.
 	 */
-	public void init(ExperimentContext experimentContext) {
+	
+	@Override
+	public void accept(ExperimentContext experimentContext) {
 		experimentContext.subscribeToSimulationClose(this::handleSimulationClose);
-		experimentContext.subscribeToExperimentClose(this::handleExperimentClose);
+		experimentContext.subscribeToExperimentClose(this::handleExperimentClose);		
 	}
 
 }
