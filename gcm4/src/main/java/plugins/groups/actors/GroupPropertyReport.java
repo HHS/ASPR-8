@@ -383,7 +383,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	private void handleGroupTypeAdditionEvent(ActorContext actorContext, GroupTypeAdditionEvent groupTypeAdditionEvent) {
-		GroupTypeId groupTypeId = groupTypeAdditionEvent.getGroupTypeId();
+		GroupTypeId groupTypeId = groupTypeAdditionEvent.groupTypeId();
 		/*
 		 * Are we subscribed to all group property assignments? if not then
 		 * subscribe to all where the group type id is new one
@@ -425,8 +425,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		// should we get the default value and integrate that in for all
 		// existing groups of that type?
 
-		GroupTypeId groupTypeId = groupPropertyDefinitionEvent.getGroupTypeId();
-		GroupPropertyId groupPropertyId = groupPropertyDefinitionEvent.getGroupPropertyId();
+		GroupTypeId groupTypeId = groupPropertyDefinitionEvent.groupTypeId();
+		GroupPropertyId groupPropertyId = groupPropertyDefinitionEvent.groupPropertyId();
 
 		// if the group type was not previously added, then we are done
 		Set<GroupPropertyId> groupPropertyIds = clientPropertyMap.get(groupTypeId);
@@ -472,14 +472,14 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	private void handleGroupPropertyUpdateEvent(ActorContext actorContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
-		GroupId groupId = groupPropertyUpdateEvent.getGroupId();
+		GroupId groupId = groupPropertyUpdateEvent.groupId();
 
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 
-			GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.getGroupPropertyId();
-			Object previousPropertyValue = groupPropertyUpdateEvent.getPreviousPropertyValue();
-			Object currentPropertyValue = groupPropertyUpdateEvent.getCurrentPropertyValue();
+			GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.groupPropertyId();
+			Object previousPropertyValue = groupPropertyUpdateEvent.previousPropertyValue();
+			Object currentPropertyValue = groupPropertyUpdateEvent.currentPropertyValue();
 
 			if (clientPropertyMap.get(groupTypeId).contains(groupPropertyId)) {
 
@@ -491,7 +491,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	private void handleGroupAdditionEvent(ActorContext actorContext, GroupAdditionEvent groupAdditionEvent) {
-		GroupId groupId = groupAdditionEvent.getGroupId();
+		GroupId groupId = groupAdditionEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 			for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
@@ -502,7 +502,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	private void handleGroupImminentRemovalEvent(ActorContext actorContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
-		GroupId groupId = groupImminentRemovalEvent.getGroupId();
+		GroupId groupId = groupImminentRemovalEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 			Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);

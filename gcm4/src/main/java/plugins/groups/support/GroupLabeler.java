@@ -38,11 +38,11 @@ public final class GroupLabeler implements Labeler {
 	}
 
 	private Optional<PersonId> getPersonId(GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
-		return Optional.of(groupMembershipAdditionEvent.getPersonId());
+		return Optional.of(groupMembershipAdditionEvent.personId());
 	}
 
 	private Optional<PersonId> getPersonId(GroupMembershipRemovalEvent groupMembershipRemovalEvent) {
-		return Optional.of(groupMembershipRemovalEvent.getPersonId());
+		return Optional.of(groupMembershipRemovalEvent.personId());
 	}
 
 	/**
@@ -102,14 +102,14 @@ public final class GroupLabeler implements Labeler {
 		int delta;
 		if (event instanceof GroupMembershipAdditionEvent) {
 			GroupMembershipAdditionEvent groupMembershipAdditionEvent = (GroupMembershipAdditionEvent) event;
-			personId = groupMembershipAdditionEvent.getPersonId();
-			GroupId groupId = groupMembershipAdditionEvent.getGroupId();
+			personId = groupMembershipAdditionEvent.personId();
+			GroupId groupId = groupMembershipAdditionEvent.groupId();
 			eventGroupTypeId = groupsDataManager.getGroupType(groupId);
 			delta = -1;
 		} else {
 			GroupMembershipRemovalEvent groupMembershipRemovalEvent = (GroupMembershipRemovalEvent) event;
-			personId = groupMembershipRemovalEvent.getPersonId();
-			GroupId groupId = groupMembershipRemovalEvent.getGroupId();
+			personId = groupMembershipRemovalEvent.personId();
+			GroupId groupId = groupMembershipRemovalEvent.groupId();
 			eventGroupTypeId = groupsDataManager.getGroupType(groupId);
 			delta = +1;
 		}

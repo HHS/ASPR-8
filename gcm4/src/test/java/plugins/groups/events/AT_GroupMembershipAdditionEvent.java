@@ -25,7 +25,7 @@ public class AT_GroupMembershipAdditionEvent {
 		PersonId personId = new PersonId(12);
 		GroupId groupId = new GroupId(23);
 		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
-		assertEquals(groupId, groupMembershipAdditionEvent.getGroupId());
+		assertEquals(groupId, groupMembershipAdditionEvent.groupId());
 	}
 
 	@Test
@@ -34,6 +34,6 @@ public class AT_GroupMembershipAdditionEvent {
 		PersonId personId = new PersonId(12);
 		GroupId groupId = new GroupId(23);
 		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
-		assertEquals(personId, groupMembershipAdditionEvent.getPersonId());
+		assertEquals(personId, groupMembershipAdditionEvent.personId());
 	}
 }

@@ -51,11 +51,11 @@ public final class GroupTypesForPersonFilter extends Filter {
 	}
 
 	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionEvent event) {
-		return Optional.of(event.getPersonId());
+		return Optional.of(event.personId());
 	}
 
 	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalEvent event) {
-		return Optional.of(event.getPersonId());
+		return Optional.of(event.personId());
 	}
 
 	@Override

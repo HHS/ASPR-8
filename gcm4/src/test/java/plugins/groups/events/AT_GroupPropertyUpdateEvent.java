@@ -28,7 +28,7 @@ public class AT_GroupPropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(currentValue, groupPropertyUpdateEvent.getCurrentPropertyValue());
+		assertEquals(currentValue, groupPropertyUpdateEvent.currentPropertyValue());
 	}
 
 	@Test
@@ -39,7 +39,7 @@ public class AT_GroupPropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(groupId, groupPropertyUpdateEvent.getGroupId());
+		assertEquals(groupId, groupPropertyUpdateEvent.groupId());
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class AT_GroupPropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(groupPropertyId, groupPropertyUpdateEvent.getGroupPropertyId());
+		assertEquals(groupPropertyId, groupPropertyUpdateEvent.groupPropertyId());
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class AT_GroupPropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(previousValue, groupPropertyUpdateEvent.getPreviousPropertyValue());
+		assertEquals(previousValue, groupPropertyUpdateEvent.previousPropertyValue());
 	}
 
 }

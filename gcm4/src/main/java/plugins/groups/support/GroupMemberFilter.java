@@ -34,15 +34,15 @@ public class GroupMemberFilter extends Filter {
 	}
 
 	private Optional<PersonId> additionRequiresRefresh(SimulationContext simulationContext, GroupMembershipAdditionEvent event) {
-		if (event.getGroupId().equals(groupId)) {
-			return Optional.of(event.getPersonId());
+		if (event.groupId().equals(groupId)) {
+			return Optional.of(event.personId());
 		}
 		return Optional.empty();
 	}
 
 	private Optional<PersonId> removalRequiresRefresh(SimulationContext simulationContext, GroupMembershipRemovalEvent event) {
-		if (event.getGroupId().equals(groupId)) {
-			return Optional.of(event.getPersonId());
+		if (event.groupId().equals(groupId)) {
+			return Optional.of(event.personId());
 		}
 		return Optional.empty();
 

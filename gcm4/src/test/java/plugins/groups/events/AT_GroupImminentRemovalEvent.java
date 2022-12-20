@@ -23,7 +23,7 @@ public class AT_GroupImminentRemovalEvent {
 	public void testGetGroupId() {
 		GroupId groupId = new GroupId(35);
 		GroupImminentRemovalEvent groupImminentRemovalEvent = new GroupImminentRemovalEvent(groupId);
-		assertEquals(groupId, groupImminentRemovalEvent.getGroupId());
+		assertEquals(groupId, groupImminentRemovalEvent.groupId());
 	}
 	
 }
