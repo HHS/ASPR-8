@@ -22,27 +22,6 @@ public record GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId,
 	}
 
 	/**
-	 * Returns the global property id
-	 */
-	public GlobalPropertyId getGlobalPropertyId() {
-		return globalPropertyId;
-	}
-
-	/**
-	 * Returns the previous property value
-	 */
-	public Object getPreviousPropertyValue() {
-		return previousPropertyValue;
-	}
-
-	/**
-	 * Returns the current property value
-	 */
-	public Object getCurrentPropertyValue() {
-		return currentPropertyValue;
-	}
-
-	/**
 	 * Standard string implementation of the form
 	 * <p>
 	 * GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ",
