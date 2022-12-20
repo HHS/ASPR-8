@@ -23,7 +23,7 @@ public class AT_GroupAdditionEvent {
 	public void testGetGroupId() {
 		GroupId groupId = new GroupId(46);
 		GroupAdditionEvent groupAdditionEvent = new GroupAdditionEvent(groupId);
-		assertEquals(groupId, groupAdditionEvent.getGroupId());
+		assertEquals(groupId, groupAdditionEvent.groupId());
 	}
 
 }

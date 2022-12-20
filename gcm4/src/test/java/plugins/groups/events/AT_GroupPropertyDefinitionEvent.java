@@ -45,9 +45,9 @@ public class AT_GroupPropertyDefinitionEvent {
 	public void testGetGroupTypeId() {
 		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-		GroupPropertyDefinitionEvent groupPropertyDefinitioneEvent = new GroupPropertyDefinitionEvent(groupTypeId,
+		GroupPropertyDefinitionEvent groupPropertyDefinitionEvent = new GroupPropertyDefinitionEvent(groupTypeId,
 				groupPropertyId);
-		assertEquals(groupTypeId, groupPropertyDefinitioneEvent.getGroupTypeId());
+		assertEquals(groupTypeId, groupPropertyDefinitionEvent.groupTypeId());
 	}
 
 	@Test
@@ -56,8 +56,8 @@ public class AT_GroupPropertyDefinitionEvent {
 		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
 
-		GroupPropertyDefinitionEvent groupPropertyDefinitioneEvent = new GroupPropertyDefinitionEvent(groupTypeId,
+		GroupPropertyDefinitionEvent groupPropertyDefinitionEvent = new GroupPropertyDefinitionEvent(groupTypeId,
 				groupPropertyId);
-		assertEquals(groupPropertyId, groupPropertyDefinitioneEvent.getGroupPropertyId());
+		assertEquals(groupPropertyId, groupPropertyDefinitionEvent.groupPropertyId());
 	}
 }

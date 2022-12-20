@@ -25,7 +25,7 @@ public class AT_GroupMembershipRemovalEvent {
 		PersonId personId = new PersonId(12);
 		GroupId groupId = new GroupId(23);
 		GroupMembershipRemovalEvent GroupMembershipRemovalEvent = new GroupMembershipRemovalEvent(personId, groupId);
-		assertEquals(groupId, GroupMembershipRemovalEvent.getGroupId());
+		assertEquals(groupId, GroupMembershipRemovalEvent.groupId());
 	}
 
 	@Test
@@ -34,6 +34,6 @@ public class AT_GroupMembershipRemovalEvent {
 		PersonId personId = new PersonId(12);
 		GroupId groupId = new GroupId(23);
 		GroupMembershipRemovalEvent GroupMembershipRemovalEvent = new GroupMembershipRemovalEvent(personId, groupId);
-		assertEquals(personId, GroupMembershipRemovalEvent.getPersonId());
+		assertEquals(personId, GroupMembershipRemovalEvent.personId());
 	}
 }

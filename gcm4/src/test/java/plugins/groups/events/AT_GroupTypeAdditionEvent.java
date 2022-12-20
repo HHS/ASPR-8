@@ -24,7 +24,7 @@ public class AT_GroupTypeAdditionEvent {
 	public void testGetGroupTypeId() {
 		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		GroupTypeAdditionEvent groupTypeAdditionEvent = new GroupTypeAdditionEvent(groupTypeId);
-		assertEquals(groupTypeId, groupTypeAdditionEvent.getGroupTypeId());
+		assertEquals(groupTypeId, groupTypeAdditionEvent.groupTypeId());
 	}
 
 }
