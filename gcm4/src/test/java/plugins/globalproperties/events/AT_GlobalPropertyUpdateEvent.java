@@ -24,41 +24,6 @@ public class AT_GlobalPropertyUpdateEvent {
 		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
 
 		assertNotNull(globalPropertyUpdateEvent);
-
-	}
-
-	@Test
-	@UnitTestMethod(name = "getGlobalPropertyId", args = {})
-	public void testGetGlobalPropertyId() {
-		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
-		Integer previousValue = 12;
-		Integer currentValue = 13;
-		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
-
-		assertEquals(globalPropertyId, globalPropertyUpdateEvent.getGlobalPropertyId());
-
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousPropertyValue", args = { })
-	public void testGetPreviousPropertyValue() {
-		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
-		Integer previousValue = 12;
-		Integer currentValue = 13;
-		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
-
-		assertEquals(previousValue, globalPropertyUpdateEvent.getPreviousPropertyValue());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getCurrentPropertyValue", args = {})
-	public void testGetCurrentPropertyValue() {
-		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
-		Integer previousValue = 12;
-		Integer currentValue = 13;
-		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
-
-		assertEquals(currentValue, globalPropertyUpdateEvent.getCurrentPropertyValue());
 	}
 
 	@Test

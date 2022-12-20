@@ -5,29 +5,20 @@ import nucleus.Event;
 import plugins.globalproperties.support.GlobalPropertyId;
 
 /**
- * 
  * An event released by the global data manager whenever a global property is
  * changed.
- * 
- * @author Shawn Hatch
  *
+ * @author Shawn Hatch
  */
 
 @Immutable
-public class GlobalPropertyUpdateEvent implements Event {
-	private final GlobalPropertyId globalPropertyId;
-	private final Object previousPropertyValue;
-	private final Object currentPropertyValue;
-
+public record GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId,
+										Object previousPropertyValue,
+										Object currentPropertyValue) implements Event {
 	/**
 	 * Constructs the event.
-	 * 
 	 */
-	public GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId, Object previousPropertyValue, Object currentPropertyValue) {
-		super();
-		this.globalPropertyId = globalPropertyId;
-		this.previousPropertyValue = previousPropertyValue;
-		this.currentPropertyValue = currentPropertyValue;
+	public GlobalPropertyUpdateEvent {
 	}
 
 	/**
@@ -53,7 +44,7 @@ public class GlobalPropertyUpdateEvent implements Event {
 
 	/**
 	 * Standard string implementation of the form
-	 * 
+	 * <p>
 	 * GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ",
 	 * previousPropertyValue=" + previousPropertyValue + ",
 	 * currentPropertyValue=" + currentPropertyValue + "]
