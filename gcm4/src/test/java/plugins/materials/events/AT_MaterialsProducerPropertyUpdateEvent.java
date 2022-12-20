@@ -30,7 +30,7 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 		Object currentPropertyValue = 3762.87;
 		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
 				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(materialsProducerId, materialsProducerPropertyUpdateEvent.getMaterialsProducerId());
+		assertEquals(materialsProducerId, materialsProducerPropertyUpdateEvent.materialsProducerId());
 	}
 
 	@Test
@@ -42,19 +42,19 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 		Object currentPropertyValue = 3762.87;
 		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
 				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(materialsProducerPropertyId, materialsProducerPropertyUpdateEvent.getMaterialsProducerPropertyId());
+		assertEquals(materialsProducerPropertyId, materialsProducerPropertyUpdateEvent.materialsProducerPropertyId());
 	}
 
 	@Test
 	@UnitTestMethod(name = "getPreviousPropertyValue", args = {})
-	public void testGgetPreviousPropertyValue() {
+	public void testGetPreviousPropertyValue() {
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		Object previousPropertyValue = 896.5;
 		Object currentPropertyValue = 3762.87;
 		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
 				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(previousPropertyValue, materialsProducerPropertyUpdateEvent.getPreviousPropertyValue());
+		assertEquals(previousPropertyValue, materialsProducerPropertyUpdateEvent.previousPropertyValue());
 	}
 
 	@Test
@@ -66,7 +66,7 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 		Object currentPropertyValue = 3762.87;
 		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
 				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(currentPropertyValue, materialsProducerPropertyUpdateEvent.getCurrentPropertyValue());
+		assertEquals(currentPropertyValue, materialsProducerPropertyUpdateEvent.currentPropertyValue());
 	}
 
 	@Test

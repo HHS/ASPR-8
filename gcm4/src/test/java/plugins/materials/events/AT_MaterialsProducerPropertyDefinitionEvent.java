@@ -40,6 +40,6 @@ public class AT_MaterialsProducerPropertyDefinitionEvent {
 
         assertNotNull(event);
 
-        assertEquals(producerPropertyId, event.getProducerPropertyId());
+        assertEquals(producerPropertyId, event.materialsProducerPropertyId());
     }
 }

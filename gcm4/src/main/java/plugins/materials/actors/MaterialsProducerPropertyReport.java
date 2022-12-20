@@ -51,9 +51,9 @@ public final class MaterialsProducerPropertyReport {
 	}
 
 	private void handleMaterialsProducerPropertyUpdateEvent(ActorContext actorContext, MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent) {
-		MaterialsProducerId materialsProducerId = materialsProducerPropertyUpdateEvent.getMaterialsProducerId();
-		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyUpdateEvent.getMaterialsProducerPropertyId();
-		Object currentPropertyValue = materialsProducerPropertyUpdateEvent.getCurrentPropertyValue();
+		MaterialsProducerId materialsProducerId = materialsProducerPropertyUpdateEvent.materialsProducerId();
+		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyUpdateEvent.materialsProducerPropertyId();
+		Object currentPropertyValue = materialsProducerPropertyUpdateEvent.currentPropertyValue();
 		writeProperty(actorContext, materialsProducerId, materialsProducerPropertyId, currentPropertyValue);
 	}
 

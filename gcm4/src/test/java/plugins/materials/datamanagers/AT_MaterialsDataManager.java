@@ -697,8 +697,8 @@ public class AT_MaterialsDataManager {
 				EventFilter<MaterialsProducerResourceUpdateEvent> eventFilter = materialsDataManager
 						.getEventFilterForMaterialsProducerResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialsProducerId(), e.getResourceId(),
-							e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.materialsProducerId(), e.resourceId(),
+							e.previousResourceLevel(), e.currentResourceLevel()));
 				});
 			}
 
@@ -3399,9 +3399,9 @@ public class AT_MaterialsDataManager {
 							.getEventFilterForMaterialsProducerPropertyUpdateEvent(testMaterialsProducerId,
 									testMaterialsProducerPropertyId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialsProducerId(),
-								e.getMaterialsProducerPropertyId(), e.getPreviousPropertyValue(),
-								e.getCurrentPropertyValue());
+						MultiKey multiKey = new MultiKey(c2.getTime(), e.materialsProducerId(),
+								e.materialsProducerPropertyId(), e.previousPropertyValue(),
+								e.currentPropertyValue());
 						actualObservations.add(multiKey);
 					});
 				}
@@ -4166,8 +4166,8 @@ public class AT_MaterialsDataManager {
 				EventFilter<MaterialsProducerResourceUpdateEvent> eventFilter = materialsDataManager
 						.getEventFilterForMaterialsProducerResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c.getTime(), e.getResourceId(), e.getMaterialsProducerId(),
-							e.getPreviousResourceLevel(), e.getCurrentResourceLevel());
+					MultiKey multiKey = new MultiKey(c.getTime(), e.resourceId(), e.materialsProducerId(),
+							e.previousResourceLevel(), e.currentResourceLevel());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -5061,7 +5061,7 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(MaterialIdAdditionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.materialId());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -5150,8 +5150,8 @@ public class AT_MaterialsDataManager {
 						.getEventFilterForMaterialsProducerPropertyUpdateEvent(materialsProducerId,
 								materialsProducerPropertyId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialsProducerId(),
-							e.getMaterialsProducerPropertyId());
+					MultiKey multiKey = new MultiKey(c2.getTime(), e.materialsProducerId(),
+							e.materialsProducerPropertyId());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -5257,8 +5257,8 @@ public class AT_MaterialsDataManager {
 			EventFilter<MaterialsProducerPropertyUpdateEvent> eventFilter = materialsDataManager
 					.getEventFilterForMaterialsProducerPropertyUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getMaterialsProducerId(),
-						e.getMaterialsProducerPropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.materialsProducerId(),
+						e.materialsProducerPropertyId());
 				actualObservations.add(multiKey);
 			});
 
@@ -5325,7 +5325,7 @@ public class AT_MaterialsDataManager {
 						.getEventFilterForMaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId);
 
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialsProducerId(), e.getResourceId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.materialsProducerId(), e.resourceId()));
 				});
 			}
 		}));
@@ -5429,7 +5429,7 @@ public class AT_MaterialsDataManager {
 				EventFilter<MaterialsProducerResourceUpdateEvent> eventFilter = materialsDataManager
 						.getEventFilterForMaterialsProducerResourceUpdateEvent(resourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialsProducerId(), e.getResourceId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.materialsProducerId(), e.resourceId()));
 				});
 			}
 		}));
@@ -5508,7 +5508,7 @@ public class AT_MaterialsDataManager {
 			EventFilter<MaterialsProducerResourceUpdateEvent> eventFilter = materialsDataManager
 					.getEventFilterForMaterialsProducerResourceUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialsProducerId(), e.getResourceId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.materialsProducerId(), e.resourceId()));
 			});
 		}));
 
@@ -6393,7 +6393,7 @@ public class AT_MaterialsDataManager {
 			EventFilter<MaterialIdAdditionEvent> eventFilter = materialsDataManager
 					.getEventFilterForMaterialIdAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getMaterialId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.materialId()));
 			});
 
 		}));
@@ -6492,7 +6492,7 @@ public class AT_MaterialsDataManager {
 			EventFilter<MaterialsProducerPropertyDefinitionEvent> eventFilter = materialsDataManager
 					.getEventFilterForMaterialsProducerPropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getProducerPropertyId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.materialsProducerPropertyId()));
 			});
 		}));
 
@@ -6753,7 +6753,7 @@ public class AT_MaterialsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(actionTime++, (c) -> {
 			c.subscribe(EventFilter.builder(MaterialsProducerPropertyDefinitionEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getProducerPropertyId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.materialsProducerPropertyId()));
 			});
 		}));
 
@@ -6855,7 +6855,7 @@ public class AT_MaterialsDataManager {
 
 			c.subscribe(EventFilter.builder(MaterialsProducerResourceUpdateEvent.class).build(), (c2, e) -> {
 				actualObservations
-						.add(new MultiKey(c2.getTime(), e.getResourceId(), e.getCurrentResourceLevel(), "update"));
+						.add(new MultiKey(c2.getTime(), e.resourceId(), e.currentResourceLevel(), "update"));
 			});
 
 			c.subscribe(EventFilter.builder(StageImminentRemovalEvent.class).build(), (c2, e) -> {

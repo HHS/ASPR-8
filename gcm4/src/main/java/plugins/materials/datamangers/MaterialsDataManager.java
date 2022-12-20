@@ -2342,8 +2342,8 @@ public final class MaterialsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<MaterialsProducerPropertyUpdateEvent> materialsProducerPropertyUpdateMap = //
 			IdentifiableFunctionMap	.builder(MaterialsProducerPropertyUpdateEvent.class)//
-									.put(MaterialsProducerPropertyUpdateEventFunctionId.PRODUCER, e -> e.getMaterialsProducerId())//
-									.put(MaterialsProducerPropertyUpdateEventFunctionId.PROPERTY, e -> e.getMaterialsProducerPropertyId())//
+									.put(MaterialsProducerPropertyUpdateEventFunctionId.PRODUCER, e -> e.materialsProducerId())//
+									.put(MaterialsProducerPropertyUpdateEventFunctionId.PROPERTY, e -> e.materialsProducerPropertyId())//
 									.build();//
 
 	/**
@@ -2394,8 +2394,8 @@ public final class MaterialsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<MaterialsProducerResourceUpdateEvent> materialsProducerResourceUpdateMap = //
 			IdentifiableFunctionMap	.builder(MaterialsProducerResourceUpdateEvent.class)//
-									.put(MaterialsProducerResourceUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
-									.put(MaterialsProducerResourceUpdateEventFunctionId.PRODUCER, e -> e.getMaterialsProducerId())//
+									.put(MaterialsProducerResourceUpdateEventFunctionId.RESOURCE, e -> e.resourceId())//
+									.put(MaterialsProducerResourceUpdateEventFunctionId.PRODUCER, e -> e.materialsProducerId())//
 									.build();//
 
 	/**

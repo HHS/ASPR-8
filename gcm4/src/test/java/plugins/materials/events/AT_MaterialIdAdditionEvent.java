@@ -38,6 +38,6 @@ public class AT_MaterialIdAdditionEvent {
         MaterialIdAdditionEvent event = new MaterialIdAdditionEvent(materialId);
 
         assertNotNull(event);
-        assertEquals(materialId, event.getMaterialId());
+        assertEquals(materialId, event.materialId());
     }
 }

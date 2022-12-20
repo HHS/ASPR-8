@@ -30,7 +30,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 		long currentResourceLevel = 346L;
 		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(materialsProducerId, materialsProducerResourceUpdateEvent.getMaterialsProducerId());
+		assertEquals(materialsProducerId, materialsProducerResourceUpdateEvent.materialsProducerId());
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 		long currentResourceLevel = 346L;
 		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, materialsProducerResourceUpdateEvent.getResourceId());
+		assertEquals(resourceId, materialsProducerResourceUpdateEvent.resourceId());
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 		long currentResourceLevel = 346L;
 		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, materialsProducerResourceUpdateEvent.getPreviousResourceLevel());
+		assertEquals(previousResourceLevel, materialsProducerResourceUpdateEvent.previousResourceLevel());
 	}
 
 	@Test
@@ -66,7 +66,7 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 		long currentResourceLevel = 346L;
 		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
 				previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, materialsProducerResourceUpdateEvent.getCurrentResourceLevel());
+		assertEquals(currentResourceLevel, materialsProducerResourceUpdateEvent.currentResourceLevel());
 	}
 
 	@Test
