@@ -74,7 +74,6 @@ import nucleus.Plugin;
 					.addPlugin(modelPlugin)//
 					.addPlugin(policyPlugin)//
 					.addDimension(dimension)//
-					.reportProgressToConsole(false)//
 					.build()//
 					.execute();
 	}

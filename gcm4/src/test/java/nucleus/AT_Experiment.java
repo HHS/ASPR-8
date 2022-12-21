@@ -81,9 +81,6 @@ public class AT_Experiment {
 								}).build();//
 
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addExperimentContextConsumer(c -> {
 						c.subscribeToOutput(Object.class, (c2, s, e) -> {
 							List<String> scenarioMetaData = c2.getScenarioMetaData(s).get();
@@ -195,9 +192,6 @@ public class AT_Experiment {
 										.build();//
 
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer(integerOutputHandler)//
@@ -284,9 +278,6 @@ public class AT_Experiment {
 
 		// create the simulation
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addPlugin(pluginA)//
 					.addPlugin(pluginB)//
 					.addPlugin(pluginC)//
@@ -301,10 +292,7 @@ public class AT_Experiment {
 	@UnitTestMethod(target = Experiment.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		// show that an empty experiment will executed
-		Experiment experiment = Experiment	.builder()//
-											.reportProgressToConsole(false)//
-											.reportFailuresToConsole(false)//
-											.build();//
+		Experiment experiment = Experiment	.builder().build();
 		experiment.execute();
 
 		// Other aspects of the build are covered in the remaining capability
@@ -318,11 +306,7 @@ public class AT_Experiment {
 		// should be manually tested		
 	}
 
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "reportProgressToConsole", args = { boolean.class }, tags = {UnitTag.MANUAL})
-	public void testReportProgressToConsole() {
-		// should be manually tested	
-	}
+	
 	
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, tags = {UnitTag.MANUAL})
@@ -330,11 +314,7 @@ public class AT_Experiment {
 		// should be manually tested	
 	}
 	
-	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "reportFailuresToConsole", args = { boolean.class }, tags = {UnitTag.MANUAL})
-	public void testReportFailuresToConsole() {
-		// should be manually tested	
-	}
+	
 
 	
 	@Test
@@ -384,8 +364,6 @@ public class AT_Experiment {
 
 		// Run the experiment using several threads
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//

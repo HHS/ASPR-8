@@ -55,8 +55,6 @@ public class AT_GlobalPropertyReport {
 		 */
 
 		Experiment.Builder builder = Experiment.builder();
-		builder.reportProgressToConsole(false);
-		builder.reportFailuresToConsole(false);
 
 		// add the global property definitions
 		GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();

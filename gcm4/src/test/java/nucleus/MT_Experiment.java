@@ -14,68 +14,65 @@ import nucleus.testsupport.testplugin.TestPluginData;
  */
 public class MT_Experiment {
 
+	//@Test
+	public void test() {
+		main(new String[] {});
+	}
+
 	private MT_Experiment() {
 
 	}
 
 	public static void main(String[] args) {
-		excecute();
-
+		new MT_Experiment().excecute();
 	}
 
-	private static int counter;
+	private int counter;
 
-	private static synchronized int incrementCounter() {
-		counter++;
-		return counter;
+	private final Object LOCK = new Object();
+
+	private Dimension getDimension(final int dimSize) {
+		Dimension.Builder builder = Dimension.builder();
+		for (int i = 0; i < dimSize; i++) {
+			builder.addLevel((c) -> new ArrayList<>());
+		}
+		return builder.build();
 	}
 
-	private static void excecute() {
-
-		// MutableInteger scenarioId = new MutableInteger(-1);
-
-		// add two dimension to create six scenarios
-		Dimension dimension1 = Dimension.builder()//
-										.addLevel((c) -> {
-											return new ArrayList<>();//
-										}).addLevel((c) -> {
-											return new ArrayList<>();//
-										}).build();
-
-		Dimension dimension2 = Dimension.builder()//
-										.addLevel((c) -> {
-											return new ArrayList<>();
-										}).addLevel((c) -> {
-											return new ArrayList<>();
-										}).addLevel((c) -> {
-											return new ArrayList<>();
-										}).build();
-
+	private void excecute() {
+		
 		// use the test plugin to generate an agent
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		// have one of the six actors throw an exception
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			int index = incrementCounter();
-			if (index == 3) {
-				throw new RuntimeException("test exception");
+			synchronized (LOCK) {
+				counter++;				
+				if (counter % 5 == 1 ) {
+					throw new RuntimeException("test exception");
+				}
 			}
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		// build and execute the experiment
+
+		ExperimentStatusConsole experimentStatusConsole = //
+				ExperimentStatusConsole	.builder()//
+										.setImmediateErrorReporting(true)//
+										.setReportScenarioProgress(false)//
+										.setStackTraceReportLimit(3)//
+										.build();//
+
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-					.setThreadCount(4)//
+					.addDimension(getDimension(100))//					
+					.addExperimentContextConsumer(experimentStatusConsole)//
+					.setHaltOnException(false)//
+					.setThreadCount(10)//
 					.build()//
-					.execute();
-
+					.execute();//
 	}
 
 }

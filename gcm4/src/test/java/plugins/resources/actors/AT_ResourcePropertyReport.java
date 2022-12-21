@@ -211,7 +211,6 @@ public class AT_ResourcePropertyReport {
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
 		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-		builder.reportProgressToConsole(false);
 		builder.build().execute();
 
 		// show that all actions were executed
