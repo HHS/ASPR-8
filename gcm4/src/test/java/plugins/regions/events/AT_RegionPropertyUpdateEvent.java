@@ -17,7 +17,7 @@ public class AT_RegionPropertyUpdateEvent {
 
 	@Test
 	@UnitTestConstructor(args = { RegionId.class, RegionPropertyId.class, Object.class, Object.class })
-	public void testContstructor() {
+	public void testConstructor() {
 		// Nothing to test here. All fields covered by other tests.
 	}
 

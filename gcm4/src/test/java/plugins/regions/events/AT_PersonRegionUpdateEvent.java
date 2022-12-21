@@ -26,36 +26,6 @@ public class AT_PersonRegionUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCurrentRegionId", args = {})
-	public void testGetCurrentRegionId() {
-		PersonId personId = new PersonId(456);
-		RegionId previousRegionId = TestRegionId.REGION_1;
-		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
-		assertEquals(currentRegionId, event.currentRegionId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousRegionId", args = {})
-	public void testGetPreviousRegionId() {
-		PersonId personId = new PersonId(456);
-		RegionId previousRegionId = TestRegionId.REGION_1;
-		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
-		assertEquals(previousRegionId, event.previousRegionId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPersonId", args = {})
-	public void testGetPersonId() {
-		PersonId personId = new PersonId(456);
-		RegionId previousRegionId = TestRegionId.REGION_1;
-		RegionId currentRegionId = TestRegionId.REGION_2;
-		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
-		assertEquals(personId, event.personId());
-	}
-
-	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 

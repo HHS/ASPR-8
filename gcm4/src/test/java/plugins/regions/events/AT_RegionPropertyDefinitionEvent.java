@@ -32,16 +32,4 @@ public class AT_RegionPropertyDefinitionEvent {
                 () -> new RegionPropertyDefinitionEvent(null));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
     }
-
-    @Test
-    @UnitTestMethod(name = "getRegionPropertyId", args = {})
-    public void testGetRegionPropertyId() {
-        RegionPropertyId regionPropertyId = new SimpleRegionPropertyId(1000);
-
-        RegionPropertyDefinitionEvent regionPropertyDefinitionEvent = new RegionPropertyDefinitionEvent(
-                regionPropertyId);
-
-        assertNotNull(regionPropertyDefinitionEvent);
-        assertEquals(regionPropertyId, regionPropertyDefinitionEvent.regionPropertyId());
-    }
 }
