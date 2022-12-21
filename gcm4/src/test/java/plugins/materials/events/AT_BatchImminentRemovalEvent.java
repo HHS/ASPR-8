@@ -19,14 +19,6 @@ public class AT_BatchImminentRemovalEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchId", args = {})
-	public void testGetBatchId() {
-		BatchId batchId = new BatchId(7867);
-		BatchImminentRemovalEvent batchImminentRemovalEvent = new BatchImminentRemovalEvent(batchId);
-		assertEquals(batchId, batchImminentRemovalEvent.batchId());
-	}
-
-	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		BatchId batchId = new BatchId(7867);

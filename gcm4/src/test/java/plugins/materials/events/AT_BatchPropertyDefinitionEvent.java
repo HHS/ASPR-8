@@ -39,30 +39,4 @@ public class AT_BatchPropertyDefinitionEvent {
                 () -> new BatchPropertyDefinitionEvent(materialId, null));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
     }
-
-    @Test
-    @UnitTestMethod(name = "getBatchPropertyId", args = {})
-    public void testGetBatchPropertyId() {
-        MaterialId materialId = TestMaterialId.MATERIAL_1;
-        BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
-
-        BatchPropertyDefinitionEvent event = new BatchPropertyDefinitionEvent(materialId, batchPropertyId);
-
-        assertNotNull(event);
-
-        assertEquals(batchPropertyId, event.batchPropertyId());
-    }
-
-    @Test
-    @UnitTestMethod(name = "getMaterialId", args = {})
-    public void testGetMaterialId() {
-        MaterialId materialId = TestMaterialId.MATERIAL_1;
-        BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
-
-        BatchPropertyDefinitionEvent event = new BatchPropertyDefinitionEvent(materialId, batchPropertyId);
-
-        assertNotNull(event);
-
-        assertEquals(materialId, event.materialId());
-    }
 }
