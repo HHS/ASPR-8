@@ -196,10 +196,10 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	private void handlePersonPropertyUpdateEvent(ActorContext actorContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
-		PersonPropertyId personPropertyId = personPropertyUpdateEvent.getPersonPropertyId();
+		PersonPropertyId personPropertyId = personPropertyUpdateEvent.personPropertyId();
 		if (propertyIds.contains(personPropertyId)) {
-			PersonId personId = personPropertyUpdateEvent.getPersonId();
-			Object previousPropertyValue = personPropertyUpdateEvent.getPreviousPropertyValue();
+			PersonId personId = personPropertyUpdateEvent.personId();
+			Object previousPropertyValue = personPropertyUpdateEvent.previousPropertyValue();
 			final Object regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, personId);
 			decrementOldPropertyValue(regionId, personId, personPropertyId, previousPropertyValue);
@@ -286,7 +286,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
-		propertyIds.add(personPropertyDefinitionEvent.getPersonPropertyId());
+		propertyIds.add(personPropertyDefinitionEvent.personPropertyId());
 	}
 
 	/*

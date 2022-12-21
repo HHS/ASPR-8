@@ -38,6 +38,6 @@ public class AT_PersonPropertyDefinitionEvent {
         PersonPropertyDefinitionEvent personPropertyDefinitionEvent = new PersonPropertyDefinitionEvent(personPropertyId);
 
                 assertNotNull(personPropertyDefinitionEvent);
-                assertEquals(personPropertyId, personPropertyDefinitionEvent.getPersonPropertyId());
+                assertEquals(personPropertyId, personPropertyDefinitionEvent.personPropertyId());
     }
 }

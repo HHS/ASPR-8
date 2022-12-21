@@ -41,7 +41,7 @@ public class AT_PersonPropertyUpdateEvent {
 		Object currentValue = 1;
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, testPersonPropertyId, previousValue, currentValue);
-			assertEquals(testPersonPropertyId, personPropertyUpdateEvent.getPersonPropertyId());
+			assertEquals(testPersonPropertyId, personPropertyUpdateEvent.personPropertyId());
 		}
 	}
 
@@ -54,7 +54,7 @@ public class AT_PersonPropertyUpdateEvent {
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
 			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, previousValue, currentValue);
-			assertEquals(personId, personPropertyUpdateEvent.getPersonId());
+			assertEquals(personId, personPropertyUpdateEvent.personId());
 		}
 	}
 
@@ -68,7 +68,7 @@ public class AT_PersonPropertyUpdateEvent {
 		for (int i = 0; i < 10; i++) {
 			Object previousValue = i;
 			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, previousValue, currentValue);
-			assertEquals(previousValue, personPropertyUpdateEvent.getPreviousPropertyValue());
+			assertEquals(previousValue, personPropertyUpdateEvent.previousPropertyValue());
 		}
 
 	}

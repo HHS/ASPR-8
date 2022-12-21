@@ -139,9 +139,9 @@ public final class PropertyFilter extends Filter {
 	}
 
 	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonPropertyUpdateEvent event) {
-		if (event.getPersonPropertyId().equals(personPropertyId)) {
-			if (evaluate(event.getPreviousPropertyValue()) != evaluate(event.getCurrentPropertyValue())) {
-				return Optional.of(event.getPersonId());
+		if (event.personPropertyId().equals(personPropertyId)) {
+			if (evaluate(event.previousPropertyValue()) != evaluate(event.getCurrentPropertyValue())) {
+				return Optional.of(event.personId());
 			}
 		}
 		return Optional.empty();

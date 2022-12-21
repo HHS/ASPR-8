@@ -669,9 +669,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
 			IdentifiableFunctionMap	.builder(PersonPropertyUpdateEvent.class)//
-									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId())//
-									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()))//
-									.put(EventFunctionId.PERSON_ID, e -> e.getPersonId())//
+									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.personPropertyId())//
+									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.personId()))//
+									.put(EventFunctionId.PERSON_ID, e -> e.personId())//
 									.build();//
 
 
