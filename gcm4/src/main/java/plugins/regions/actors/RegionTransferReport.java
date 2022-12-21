@@ -98,8 +98,8 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 	private void handlePersonRegionUpdateEvent(ActorContext ActorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
-		RegionId previousRegionId = personRegionUpdateEvent.getPreviousRegionId();
-		RegionId currentRegionId = personRegionUpdateEvent.getCurrentRegionId();
+		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
+		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
 		increment(previousRegionId, currentRegionId);
 	}
 

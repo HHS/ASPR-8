@@ -952,9 +952,9 @@ public final class RegionsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<PersonRegionUpdateEvent> personRegionUpdateFunctionMap = //
 			IdentifiableFunctionMap	.builder(PersonRegionUpdateEvent.class)//
-									.put(PersonRegionUpdateFunctionId.ARRIVAL, e -> e.getCurrentRegionId())//
-									.put(PersonRegionUpdateFunctionId.DEPARTURE, e -> e.getPreviousRegionId())//
-									.put(PersonRegionUpdateFunctionId.PERSON, e -> e.getPersonId())//
+									.put(PersonRegionUpdateFunctionId.ARRIVAL, e -> e.currentRegionId())//
+									.put(PersonRegionUpdateFunctionId.DEPARTURE, e -> e.previousRegionId())//
+									.put(PersonRegionUpdateFunctionId.PERSON, e -> e.personId())//
 									.build();//
 
 	/**

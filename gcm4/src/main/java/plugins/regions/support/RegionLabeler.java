@@ -40,7 +40,7 @@ public final class RegionLabeler implements Labeler {
 	}
 
 	private Optional<PersonId> getPersonId(PersonRegionUpdateEvent personRegionUpdateEvent) {
-		return Optional.of(personRegionUpdateEvent.getPersonId());
+		return Optional.of(personRegionUpdateEvent.personId());
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public final class RegionLabeler implements Labeler {
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonRegionUpdateEvent personRegionUpdateEvent = (PersonRegionUpdateEvent) event;
-		return regionLabelingFunction.apply(personRegionUpdateEvent.getPreviousRegionId());
+		return regionLabelingFunction.apply(personRegionUpdateEvent.previousRegionId());
 	}
 
 }

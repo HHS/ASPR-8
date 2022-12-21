@@ -32,7 +32,7 @@ public class AT_PersonRegionUpdateEvent {
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
 		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
-		assertEquals(currentRegionId, event.getCurrentRegionId());
+		assertEquals(currentRegionId, event.currentRegionId());
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class AT_PersonRegionUpdateEvent {
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
 		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
-		assertEquals(previousRegionId, event.getPreviousRegionId());
+		assertEquals(previousRegionId, event.previousRegionId());
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class AT_PersonRegionUpdateEvent {
 		RegionId previousRegionId = TestRegionId.REGION_1;
 		RegionId currentRegionId = TestRegionId.REGION_2;
 		PersonRegionUpdateEvent event = new PersonRegionUpdateEvent(personId, previousRegionId, currentRegionId);
-		assertEquals(personId, event.getPersonId());
+		assertEquals(personId, event.personId());
 	}
 
 	@Test

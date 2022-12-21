@@ -213,9 +213,9 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	private void handlePersonRegionUpdateEvent(ActorContext actorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
-		PersonId personId = personRegionUpdateEvent.getPersonId();
-		RegionId sourceRegionId = personRegionUpdateEvent.getPreviousRegionId();
-		final Object regionId = personRegionUpdateEvent.getCurrentRegionId();
+		PersonId personId = personRegionUpdateEvent.personId();
+		RegionId sourceRegionId = personRegionUpdateEvent.previousRegionId();
+		final Object regionId = personRegionUpdateEvent.currentRegionId();
 		increment(regionId, personId);
 		decrement(sourceRegionId, personId);
 	}

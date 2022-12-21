@@ -224,9 +224,9 @@ public final class PersonResourceReport extends PeriodicReport {
 	}
 
 	private void handlePersonRegionUpdateEvent(ActorContext actorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
-		PersonId personId = personRegionUpdateEvent.getPersonId();
-		RegionId previousRegionId = personRegionUpdateEvent.getPreviousRegionId();
-		RegionId currentRegionId = personRegionUpdateEvent.getCurrentRegionId();
+		PersonId personId = personRegionUpdateEvent.personId();
+		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
+		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
 
 		for (final ResourceId resourceId : resourceIds) {
 			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);

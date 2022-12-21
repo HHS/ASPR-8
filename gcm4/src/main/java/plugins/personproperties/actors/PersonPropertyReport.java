@@ -298,9 +298,9 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	private void handlePersonRegionUpdateEvent(ActorContext context, PersonRegionUpdateEvent personRegionUpdateEvent) {
-		PersonId personId = personRegionUpdateEvent.getPersonId();
-		RegionId previousRegionId = personRegionUpdateEvent.getPreviousRegionId();
-		RegionId regionId = personRegionUpdateEvent.getCurrentRegionId();
+		PersonId personId = personRegionUpdateEvent.personId();
+		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
+		RegionId regionId = personRegionUpdateEvent.currentRegionId();
 		for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
