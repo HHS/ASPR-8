@@ -19,36 +19,6 @@ public class AT_StageOfferUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStageId", args = {})
-	public void testGetStageId() {
-		StageId stageId = new StageId(543);
-		boolean previousOfferState = true;
-		boolean currentOfferState = false;
-		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(stageId, stageOfferUpdateEvent.stageId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "isPreviousOfferState", args = {})
-	public void testIsPreviousOfferState() {
-		StageId stageId = new StageId(543);
-		boolean previousOfferState = true;
-		boolean currentOfferState = false;
-		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(previousOfferState, stageOfferUpdateEvent.previousOfferState());
-	}
-
-	@Test
-	@UnitTestMethod(name = "isCurrentOfferState", args = {})
-	public void testIsCurrentOfferState() {
-		StageId stageId = new StageId(543);
-		boolean previousOfferState = true;
-		boolean currentOfferState = false;
-		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals(currentOfferState, stageOfferUpdateEvent.currentOfferState());
-	}
-
-	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		StageId stageId = new StageId(543);

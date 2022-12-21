@@ -21,24 +21,6 @@ public class AT_StageMembershipAdditionEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name="getBatchId",args = {})
-	public void testGetBatchId() {
-		BatchId batchId = new BatchId(6);
-		StageId stageId = new StageId(252);
-		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
-		assertEquals(batchId, stageMembershipAdditionEvent.batchId());
-	}
-
-	@Test
-	@UnitTestMethod(name="getStageId",args = {})
-	public void testGetStageId() {
-		BatchId batchId = new BatchId(6);
-		StageId stageId = new StageId(252);
-		StageMembershipAdditionEvent stageMembershipAdditionEvent = new StageMembershipAdditionEvent(batchId, stageId);
-		assertEquals(stageId, stageMembershipAdditionEvent.stageId());
-	}
-
-	@Test
 	@UnitTestMethod(name="toString",args = {})
 	public void testToString() {
 		BatchId batchId = new BatchId(6);

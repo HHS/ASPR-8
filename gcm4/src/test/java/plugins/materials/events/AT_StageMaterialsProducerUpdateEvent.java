@@ -21,39 +21,6 @@ public class AT_StageMaterialsProducerUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStageId", args = {})
-	public void testGetStageId() {
-		StageId stageId = new StageId(344);
-		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
-				currentMaterialsProducerId);
-		assertEquals(stageId, stageMaterialsProducerUpdateEvent.stageId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousMaterialsProducerId", args = {})
-	public void testGetPreviousMaterialsProducerId() {
-		StageId stageId = new StageId(344);
-		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
-				currentMaterialsProducerId);
-		assertEquals(previousMaterialsProducerId, stageMaterialsProducerUpdateEvent.previousMaterialsProducerId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getCurrentMaterialsProducerId", args = {})
-	public void testGetCurrentMaterialsProducerId() {
-		StageId stageId = new StageId(344);
-		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
-				currentMaterialsProducerId);
-		assertEquals(currentMaterialsProducerId, stageMaterialsProducerUpdateEvent.currentMaterialsProducerId());
-	}
-
-	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		StageId stageId = new StageId(344);

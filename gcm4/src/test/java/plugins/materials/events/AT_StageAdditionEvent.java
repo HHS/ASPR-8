@@ -18,14 +18,6 @@ public class AT_StageAdditionEvent {
 	public void testConstructor() {
 		//nothing to test
 	}
-	
-	@Test
-	@UnitTestMethod(name="getStageId",args = {})
-	public void testGetStageId() {
-		StageId stageId = new StageId(534);
-		StageAdditionEvent stageAdditionEvent = new StageAdditionEvent(stageId);
-		assertEquals(stageId,stageAdditionEvent.stageId());
-	}
 
 	@Test
 	@UnitTestMethod(name="toString",args = {})
