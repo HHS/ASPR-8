@@ -39,8 +39,8 @@ public final class ResourceLabeler implements Labeler {
 
 	private Optional<PersonId> getPersonId(PersonResourceUpdateEvent personResourceUpdateEvent) {
 		PersonId result = null;
-		if (personResourceUpdateEvent.getResourceId().equals(resourceId)) {
-			result = personResourceUpdateEvent.getPersonId();
+		if (personResourceUpdateEvent.resourceId().equals(resourceId)) {
+			result = personResourceUpdateEvent.personId();
 		}
 		return Optional.ofNullable(result);
 	}
@@ -73,7 +73,7 @@ public final class ResourceLabeler implements Labeler {
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonResourceUpdateEvent personResourceUpdateEvent = (PersonResourceUpdateEvent)event;
-		return resourceLabelingFunction.apply(personResourceUpdateEvent.getPreviousResourceLevel());
+		return resourceLabelingFunction.apply(personResourceUpdateEvent.previousResourceLevel());
 	}
 
 }

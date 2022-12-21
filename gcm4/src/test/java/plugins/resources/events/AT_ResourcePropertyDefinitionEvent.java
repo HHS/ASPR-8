@@ -37,8 +37,8 @@ public class AT_ResourcePropertyDefinitionEvent {
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
         ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent = new ResourcePropertyDefinitionEvent(testResourceId, testResourcePropertyId);
 
-        assertNotNull(resourcePropertyDefinitionEvent.getResourceId());
-        assertEquals(resourcePropertyDefinitionEvent.getResourceId(), testResourceId);
+        assertNotNull(resourcePropertyDefinitionEvent.resourceId());
+        assertEquals(resourcePropertyDefinitionEvent.resourceId(), testResourceId);
     }
 
     @Test
@@ -48,8 +48,8 @@ public class AT_ResourcePropertyDefinitionEvent {
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
         ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent = new ResourcePropertyDefinitionEvent(testResourceId, testResourcePropertyId);
 
-        assertNotNull(resourcePropertyDefinitionEvent.getResourcePropertyId());
-        assertEquals(resourcePropertyDefinitionEvent.getResourcePropertyId(), testResourcePropertyId);
+        assertNotNull(resourcePropertyDefinitionEvent.resourcePropertyId());
+        assertEquals(resourcePropertyDefinitionEvent.resourcePropertyId(), testResourcePropertyId);
 
     }
 

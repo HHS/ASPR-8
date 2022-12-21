@@ -36,8 +36,8 @@ public class AT_ResourceIdAdditionEvent {
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
         ResourceIdAdditionEvent resourceIdAdditionEvent = new ResourceIdAdditionEvent(testResourceId, timeTrackingPolicy);
 
-        assertNotNull(resourceIdAdditionEvent.getTimeTrackingPolicy());
-        assertEquals(resourceIdAdditionEvent.getTimeTrackingPolicy(), timeTrackingPolicy);
+        assertNotNull(resourceIdAdditionEvent.timeTrackingPolicy());
+        assertEquals(resourceIdAdditionEvent.timeTrackingPolicy(), timeTrackingPolicy);
     }
 
     @Test
@@ -47,8 +47,8 @@ public class AT_ResourceIdAdditionEvent {
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
         ResourceIdAdditionEvent resourceIdAdditionEvent = new ResourceIdAdditionEvent(testResourceId, timeTrackingPolicy);
 
-        assertNotNull(resourceIdAdditionEvent.getResourceId());
-        assertEquals(resourceIdAdditionEvent.getResourceId(), testResourceId);
+        assertNotNull(resourceIdAdditionEvent.resourceId());
+        assertEquals(resourceIdAdditionEvent.resourceId(), testResourceId);
     }
 
 

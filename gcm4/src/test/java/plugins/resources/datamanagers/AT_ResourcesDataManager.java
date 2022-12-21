@@ -1053,7 +1053,7 @@ public final class AT_ResourcesDataManager {
 		// have an actor observe the ResourcePropertyAdditionEvent events
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(ResourcePropertyDefinitionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getResourcePropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.resourcePropertyId());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -1158,7 +1158,7 @@ public final class AT_ResourcesDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(ResourceIdAdditionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getTimeTrackingPolicy());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.timeTrackingPolicy());
 				actualObservations.add(multiKey);
 			});
 
@@ -1232,7 +1232,7 @@ public final class AT_ResourcesDataManager {
 				for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 					EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.getResourceId(), e.getResourcePropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
+						actualObservations.add(new MultiKey(e.resourceId(), e.resourcePropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
 					});
 				}
 			}
@@ -1378,7 +1378,7 @@ public final class AT_ResourcesDataManager {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 				});
 			}
 		}));
@@ -1564,7 +1564,7 @@ public final class AT_ResourcesDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 					});
 				}
 			}
@@ -1690,7 +1690,7 @@ public final class AT_ResourcesDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 					});
 				}
 			}
@@ -1981,14 +1981,14 @@ public final class AT_ResourcesDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 					});
 				}
 			}
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 				});
 			}
 
@@ -2154,7 +2154,7 @@ public final class AT_ResourcesDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 					});
 				}
 			}
@@ -2162,7 +2162,7 @@ public final class AT_ResourcesDataManager {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getPersonId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+					actualObservations.add(new MultiKey(e.personId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 
 				});
 			}
@@ -2371,7 +2371,7 @@ public final class AT_ResourcesDataManager {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
 					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+						actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 					});
 				}
 			}
@@ -2850,7 +2850,7 @@ public final class AT_ResourcesDataManager {
 			for (TestResourceId testResourceId : selectedResources) {
 				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+					actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 				});
 			}
 
@@ -2957,7 +2957,7 @@ public final class AT_ResourcesDataManager {
 				for (PersonId personId : selectedPeople) {
 					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId, personId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+						actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 					});
 				}
 			}
@@ -3082,7 +3082,7 @@ public final class AT_ResourcesDataManager {
 				for (RegionId regionId : selectedRegions) {
 					EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(testResourceId, regionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+						actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 					});
 				}
 			}
@@ -3196,7 +3196,7 @@ public final class AT_ResourcesDataManager {
 
 			EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c.getTime(), e.getPersonId(), e.getResourceId()));
+				actualObservations.add(new MultiKey(c.getTime(), e.personId(), e.resourceId()));
 			});
 
 		}));
@@ -3259,7 +3259,7 @@ public final class AT_ResourcesDataManager {
 			for (TestResourceId testResourceId : selectedResources) {
 				EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(testResourceId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+					actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 				});
 			}
 		}));
@@ -3347,7 +3347,7 @@ public final class AT_ResourcesDataManager {
 				TestResourceId resourceId = pair.getSecond();
 				EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent(resourceId, regionId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+					actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 				});
 			}
 		}));
@@ -3425,7 +3425,7 @@ public final class AT_ResourcesDataManager {
 
 			EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForRegionResourceUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(e.getRegionId(), e.getResourceId(), e.getPreviousResourceLevel(), e.getCurrentResourceLevel()));
+				actualObservations.add(new MultiKey(e.regionId(), e.resourceId(), e.previousResourceLevel(), e.currentResourceLevel()));
 			});
 
 		}));
@@ -3495,7 +3495,7 @@ public final class AT_ResourcesDataManager {
 				EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent(testResourceId, testResourcePropertyId);
 
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c.getTime(), e.getResourceId(), e.getResourcePropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
+					actualObservations.add(new MultiKey(c.getTime(), e.resourceId(), e.resourcePropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
 				});
 
 			}
@@ -3608,7 +3608,7 @@ public final class AT_ResourcesDataManager {
 			EventFilter<ResourcePropertyUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyUpdateEvent();
 
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c.getTime(), e.getResourceId(), e.getResourcePropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(c.getTime(), e.resourceId(), e.resourcePropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
 			});
 
 		}));
@@ -3667,7 +3667,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			EventFilter<ResourceIdAdditionEvent> eventFilter = resourcesDataManager.getEventFilterForResourceIdAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getTimeTrackingPolicy());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.timeTrackingPolicy());
 				actualObservations.add(multiKey);
 			});
 
@@ -3713,7 +3713,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			EventFilter<ResourcePropertyDefinitionEvent> eventFilter = resourcesDataManager.getEventFilterForResourcePropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getResourceId(), e.getResourcePropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.resourcePropertyId());
 				actualObservations.add(multiKey);
 			});
 		}));

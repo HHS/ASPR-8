@@ -29,7 +29,7 @@ public class AT_RegionResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, regionResourceUpdateEvent.getResourceId());
+		assertEquals(resourceId, regionResourceUpdateEvent.resourceId());
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class AT_RegionResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(regionId, regionResourceUpdateEvent.getRegionId());
+		assertEquals(regionId, regionResourceUpdateEvent.regionId());
 	}
 
 	@Test
@@ -51,7 +51,7 @@ public class AT_RegionResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, regionResourceUpdateEvent.getPreviousResourceLevel());
+		assertEquals(previousResourceLevel, regionResourceUpdateEvent.previousResourceLevel());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class AT_RegionResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, regionResourceUpdateEvent.getCurrentResourceLevel());
+		assertEquals(currentResourceLevel, regionResourceUpdateEvent.currentResourceLevel());
 	}
 
 }

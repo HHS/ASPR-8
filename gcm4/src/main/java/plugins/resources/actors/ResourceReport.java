@@ -222,10 +222,10 @@ public final class ResourceReport extends PeriodicReport {
 
 	private void handlePersonResourceUpdateEvent(ActorContext actorContext, PersonResourceUpdateEvent personResourceUpdateEvent) {
 
-		final PersonId personId = personResourceUpdateEvent.getPersonId();
-		final ResourceId resourceId = personResourceUpdateEvent.getResourceId();
-		final long previousLevel = personResourceUpdateEvent.getPreviousResourceLevel();
-		final long currentLevel = personResourceUpdateEvent.getCurrentResourceLevel();
+		final PersonId personId = personResourceUpdateEvent.personId();
+		final ResourceId resourceId = personResourceUpdateEvent.resourceId();
+		final long previousLevel = personResourceUpdateEvent.previousResourceLevel();
+		final long currentLevel = personResourceUpdateEvent.currentResourceLevel();
 		if (!resourceIds.contains(resourceId)) {
 			return;
 		}
@@ -257,7 +257,7 @@ public final class ResourceReport extends PeriodicReport {
 	private void handleResourceIdAdditionEvent(ActorContext actorContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
 
 		if (subscribedToAllResources) {
-			ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+			ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 			if (resourceId != null && !resourceIds.contains(resourceId)) {
 				resourceIds.add(resourceId);
 				for (RegionId regionId : regionMap.keySet()) {
@@ -274,13 +274,13 @@ public final class ResourceReport extends PeriodicReport {
 
 	private void handleRegionResourceUpdateEvent(ActorContext actorContext, RegionResourceUpdateEvent regionResourceUpdateEvent) {
 
-		ResourceId resourceId = regionResourceUpdateEvent.getResourceId();
+		ResourceId resourceId = regionResourceUpdateEvent.resourceId();
 		if (!resourceIds.contains(resourceId)) {
 			return;
 		}
-		RegionId regionId = regionResourceUpdateEvent.getRegionId();
-		long previousResourceLevel = regionResourceUpdateEvent.getPreviousResourceLevel();
-		long currentResourceLevel = regionResourceUpdateEvent.getCurrentResourceLevel();
+		RegionId regionId = regionResourceUpdateEvent.regionId();
+		long previousResourceLevel = regionResourceUpdateEvent.previousResourceLevel();
+		long currentResourceLevel = regionResourceUpdateEvent.currentResourceLevel();
 		long amount = currentResourceLevel - previousResourceLevel;
 		if (amount > 0) {
 			increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, amount);

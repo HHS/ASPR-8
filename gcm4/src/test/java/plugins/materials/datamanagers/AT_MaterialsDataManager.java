@@ -4155,8 +4155,8 @@ public class AT_MaterialsDataManager {
 					EventFilter<RegionResourceUpdateEvent> eventFilter = resourcesDataManager
 							.getEventFilterForRegionResourceUpdateEvent(testResourceId, testRegionId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						MultiKey multiKey = new MultiKey(c.getTime(), e.getResourceId(), e.getRegionId(),
-								e.getPreviousResourceLevel(), e.getCurrentResourceLevel());
+						MultiKey multiKey = new MultiKey(c.getTime(), e.resourceId(), e.regionId(),
+								e.previousResourceLevel(), e.currentResourceLevel());
 						actualObservations.add(multiKey);
 					});
 				}

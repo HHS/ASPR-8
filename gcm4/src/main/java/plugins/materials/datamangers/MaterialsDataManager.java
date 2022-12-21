@@ -359,7 +359,7 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	private void handleResourceIdAdditionEvent(DataManagerContext dataManagerContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
-		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 		if (resourceId == null || resourceIds.contains(resourceId)) {
 			return;
 		}

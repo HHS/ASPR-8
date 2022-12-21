@@ -29,7 +29,7 @@ public class AT_PersonResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, personResourceUpdateEvent.getResourceId());
+		assertEquals(resourceId, personResourceUpdateEvent.resourceId());
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class AT_PersonResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, personResourceUpdateEvent.getCurrentResourceLevel());
+		assertEquals(currentResourceLevel, personResourceUpdateEvent.currentResourceLevel());
 	}
 
 	@Test
@@ -51,7 +51,7 @@ public class AT_PersonResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(personId, personResourceUpdateEvent.getPersonId());
+		assertEquals(personId, personResourceUpdateEvent.personId());
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class AT_PersonResourceUpdateEvent {
 		long previousResourceLevel = 45L;
 		long currentResourceLevel = 398L;
 		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, personResourceUpdateEvent.getPreviousResourceLevel());
+		assertEquals(previousResourceLevel, personResourceUpdateEvent.previousResourceLevel());
 	}
 
 }

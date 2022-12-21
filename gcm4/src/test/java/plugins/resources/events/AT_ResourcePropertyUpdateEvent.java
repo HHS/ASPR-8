@@ -30,7 +30,7 @@ public class AT_ResourcePropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(resourceId, resourcePropertyUpdateEvent.getResourceId());
+		assertEquals(resourceId, resourcePropertyUpdateEvent.resourceId());
 	}
 
 	@Test
@@ -41,7 +41,7 @@ public class AT_ResourcePropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(resourcePropertyId, resourcePropertyUpdateEvent.getResourcePropertyId());
+		assertEquals(resourcePropertyId, resourcePropertyUpdateEvent.resourcePropertyId());
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class AT_ResourcePropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(previousValue, resourcePropertyUpdateEvent.getPreviousPropertyValue());
+		assertEquals(previousValue, resourcePropertyUpdateEvent.previousPropertyValue());
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class AT_ResourcePropertyUpdateEvent {
 		Object previousValue = "previous";
 		Object currentValue = "current";
 		ResourcePropertyUpdateEvent resourcePropertyUpdateEvent = new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, previousValue, currentValue);
-		assertEquals(currentValue, resourcePropertyUpdateEvent.getCurrentPropertyValue());
+		assertEquals(currentValue, resourcePropertyUpdateEvent.currentPropertyValue());
 	}
 
 
