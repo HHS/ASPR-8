@@ -22,34 +22,12 @@ public class AT_ResourceIdAdditionEvent {
         TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
 
+        // test case: null resource id
         ContractException resourceIdContractException = assertThrows(ContractException.class, () -> new ResourceIdAdditionEvent(null, timeTrackingPolicy));
         assertEquals(resourceIdContractException.getErrorType(), ResourceError.NULL_RESOURCE_ID);
 
+        // test case: null time tracking policy
         ContractException timeContractException = assertThrows(ContractException.class, () -> new ResourceIdAdditionEvent(testResourceId, null));
         assertEquals(timeContractException.getErrorType(), PropertyError.NULL_TIME_TRACKING_POLICY);
     }
-
-    @Test
-    @UnitTestMethod(name = "getTimeTrackingPolicy", args = {})
-    public void testGetTimeTrackingPolicy() {
-        TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
-        TestResourceId testResourceId = TestResourceId.RESOURCE_1;
-        ResourceIdAdditionEvent resourceIdAdditionEvent = new ResourceIdAdditionEvent(testResourceId, timeTrackingPolicy);
-
-        assertNotNull(resourceIdAdditionEvent.timeTrackingPolicy());
-        assertEquals(resourceIdAdditionEvent.timeTrackingPolicy(), timeTrackingPolicy);
-    }
-
-    @Test
-    @UnitTestMethod(name = "getResourceId", args = {})
-    public void testGetResourceId() {
-        TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
-        TestResourceId testResourceId = TestResourceId.RESOURCE_1;
-        ResourceIdAdditionEvent resourceIdAdditionEvent = new ResourceIdAdditionEvent(testResourceId, timeTrackingPolicy);
-
-        assertNotNull(resourceIdAdditionEvent.resourceId());
-        assertEquals(resourceIdAdditionEvent.resourceId(), testResourceId);
-    }
-
-
 }

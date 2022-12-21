@@ -20,49 +20,4 @@ public class AT_RegionResourceUpdateEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "getResourceId", args = {})
-	public void testGetResourceId() {
-		RegionId regionId = TestRegionId.REGION_4;
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, regionResourceUpdateEvent.resourceId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getRegionId", args = {})
-	public void testGetRegionId() {
-		RegionId regionId = TestRegionId.REGION_4;
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(regionId, regionResourceUpdateEvent.regionId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousResourceLevel", args = {})
-	public void testGetPreviousResourceLevel() {
-		RegionId regionId = TestRegionId.REGION_4;
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, regionResourceUpdateEvent.previousResourceLevel());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getCurrentResourceLevel", args = {})
-	public void testGetCurrentResourceLevel() {
-		RegionId regionId = TestRegionId.REGION_4;
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		RegionResourceUpdateEvent regionResourceUpdateEvent = new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, regionResourceUpdateEvent.currentResourceLevel());
-	}
-
 }

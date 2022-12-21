@@ -20,49 +20,4 @@ public class AT_PersonResourceUpdateEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "getResourceId", args = {})
-	public void testGetResourceId() {
-		PersonId personId = new PersonId(7645);
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, personResourceUpdateEvent.resourceId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getCurrentResourceLevel", args = {})
-	public void testGetCurrentResourceLevel() {
-		PersonId personId = new PersonId(7645);
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, personResourceUpdateEvent.currentResourceLevel());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPersonId", args = {})
-	public void testGetPersonId() {
-		PersonId personId = new PersonId(7645);
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(personId, personResourceUpdateEvent.personId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousResourceLevel", args = {})
-	public void testGetPreviousResourceLevel() {
-		PersonId personId = new PersonId(7645);
-		ResourceId resourceId = TestResourceId.RESOURCE_2;
-		long previousResourceLevel = 45L;
-		long currentResourceLevel = 398L;
-		PersonResourceUpdateEvent personResourceUpdateEvent = new PersonResourceUpdateEvent(personId, resourceId, previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, personResourceUpdateEvent.previousResourceLevel());
-	}
-
 }
