@@ -29,7 +29,7 @@ public class AT_RegionPropertyUpdateEvent {
 			Object previousValue = true;
 			Object currentValue = false;
 			RegionPropertyUpdateEvent event = new RegionPropertyUpdateEvent(testRegionId, regionPropertyId, previousValue, currentValue);
-			assertEquals(testRegionId, event.getRegionId());
+			assertEquals(testRegionId, event.regionId());
 		}
 	}
 
@@ -41,7 +41,7 @@ public class AT_RegionPropertyUpdateEvent {
 			Object previousValue = true;
 			Object currentValue = false;
 			RegionPropertyUpdateEvent event = new RegionPropertyUpdateEvent(regionId, testRegionPropertyId, previousValue, currentValue);
-			assertEquals(testRegionPropertyId, event.getRegionPropertyId());
+			assertEquals(testRegionPropertyId, event.regionPropertyId());
 		}
 	}
 
@@ -54,7 +54,7 @@ public class AT_RegionPropertyUpdateEvent {
 			Object previousValue = i;
 			Object currentValue = false;
 			RegionPropertyUpdateEvent event = new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousValue, currentValue);
-			assertEquals(previousValue, event.getPreviousPropertyValue());
+			assertEquals(previousValue, event.previousPropertyValue());
 		}
 	}
 
@@ -67,7 +67,7 @@ public class AT_RegionPropertyUpdateEvent {
 			Object previousValue = true;
 			Object currentValue = i;
 			RegionPropertyUpdateEvent event = new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousValue, currentValue);
-			assertEquals(currentValue, event.getCurrentPropertyValue());
+			assertEquals(currentValue, event.currentPropertyValue());
 		}
 	}
 

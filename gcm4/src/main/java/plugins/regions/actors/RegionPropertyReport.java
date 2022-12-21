@@ -58,9 +58,9 @@ public final class RegionPropertyReport {
 	}
 
 	private void handleRegionPropertyUpdateEvent(ActorContext actorContext, RegionPropertyUpdateEvent regionPropertyUpdateEvent) {
-		RegionId regionId = regionPropertyUpdateEvent.getRegionId();
-		RegionPropertyId regionPropertyId = regionPropertyUpdateEvent.getRegionPropertyId();
-		Object propertyValue = regionPropertyUpdateEvent.getCurrentPropertyValue();
+		RegionId regionId = regionPropertyUpdateEvent.regionId();
+		RegionPropertyId regionPropertyId = regionPropertyUpdateEvent.regionPropertyId();
+		Object propertyValue = regionPropertyUpdateEvent.currentPropertyValue();
 		if (regionPropertyIds.contains(regionPropertyId)) {
 			writeProperty(actorContext, regionId, regionPropertyId, propertyValue);
 		}
@@ -141,7 +141,7 @@ public final class RegionPropertyReport {
 	private void handleRegionPropertyDefinitionEvent(ActorContext actorContext, RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
 
 		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
-		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.getRegionPropertyId();
+		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.regionPropertyId();
 		if (!regionPropertyIds.contains(regionPropertyId)) {
 			regionPropertyIds.add(regionPropertyId);
 			for (final RegionId regionId : regionsDataManager.getRegionIds()) {

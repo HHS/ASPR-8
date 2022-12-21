@@ -1035,8 +1035,8 @@ public final class RegionsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<RegionPropertyUpdateEvent> regionPropertyUpdateFunctionMap = //
 			IdentifiableFunctionMap	.builder(RegionPropertyUpdateEvent.class)//
-									.put(RegionPropertyUpdateEventFunctionId.PROPERTY, e -> e.getRegionPropertyId())//
-									.put(RegionPropertyUpdateEventFunctionId.REGION, e -> e.getRegionId())//
+									.put(RegionPropertyUpdateEventFunctionId.PROPERTY, e -> e.regionPropertyId())//
+									.put(RegionPropertyUpdateEventFunctionId.REGION, e -> e.regionId())//
 									.build();//
 
 	/**

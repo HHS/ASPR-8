@@ -8,36 +8,24 @@ import util.errors.ContractException;
 
 /**
  * Event indicating the addition of a region property
- * 
- * @author Shawn Hatch
  *
+ * @author Shawn Hatch
  */
 @Immutable
-public class RegionPropertyDefinitionEvent implements Event {
-
-	private final RegionPropertyId regionPropertyId;
+public record RegionPropertyDefinitionEvent(
+		RegionPropertyId regionPropertyId) implements Event {
 
 	/**
 	 * Constructs the event
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             region property id is null</li>
-	 * 
+	 *
+	 * @throws ContractException <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *                           region property id is null</li>
 	 */
-	public RegionPropertyDefinitionEvent(RegionPropertyId regionPropertyId) {
+	public RegionPropertyDefinitionEvent {
 		if (regionPropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 
-		this.regionPropertyId = regionPropertyId;
-	}
-
-	/**
-	 * Returns the region property id of the recently added region property
-	 */
-	public RegionPropertyId getRegionPropertyId() {
-		return regionPropertyId;
 	}
 
 }

@@ -42,6 +42,6 @@ public class AT_RegionPropertyDefinitionEvent {
                 regionPropertyId);
 
         assertNotNull(regionPropertyDefinitionEvent);
-        assertEquals(regionPropertyId, regionPropertyDefinitionEvent.getRegionPropertyId());
+        assertEquals(regionPropertyId, regionPropertyDefinitionEvent.regionPropertyId());
     }
 }
