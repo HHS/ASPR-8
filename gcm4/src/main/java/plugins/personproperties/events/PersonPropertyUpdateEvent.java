@@ -26,14 +26,6 @@ public record PersonPropertyUpdateEvent(PersonId personId,
 	}
 
 	/**
-	 * Returns the current property value used to construct this event
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getCurrentPropertyValue() {
-		return (T) currentPropertyValue;
-	}
-
-	/**
 	 * Returns this event in the form:
 	 * <p>
 	 * "PersonPropertyUpdateEvent [personId=" + personId + ", personPropertyId="

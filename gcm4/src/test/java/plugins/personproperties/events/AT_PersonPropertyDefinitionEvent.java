@@ -30,14 +30,4 @@ public class AT_PersonPropertyDefinitionEvent {
                 () -> new PersonPropertyDefinitionEvent(null));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
     }
-
-    @Test
-    @UnitTestMethod(name="getPersonPropertyId", args={})
-    public void testGetPersonPropertyId() {
-        PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-        PersonPropertyDefinitionEvent personPropertyDefinitionEvent = new PersonPropertyDefinitionEvent(personPropertyId);
-
-                assertNotNull(personPropertyDefinitionEvent);
-                assertEquals(personPropertyId, personPropertyDefinitionEvent.personPropertyId());
-    }
 }

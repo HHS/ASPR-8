@@ -391,7 +391,7 @@ public final class AT_PersonPropertyDataManager {
 
 			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(e.personId(), e.personPropertyId(), e.previousPropertyValue(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(e.personId(), e.personPropertyId(), e.previousPropertyValue(), e.currentPropertyValue()));
 			});
 
 		}));
@@ -1062,7 +1062,7 @@ public final class AT_PersonPropertyDataManager {
 				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(propertyId);
 				assertNotNull(eventFilter);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.getCurrentPropertyValue());
+					MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.currentPropertyValue());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -1163,7 +1163,7 @@ public final class AT_PersonPropertyDataManager {
 				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(personId, propertyId);
 				assertNotNull(eventFilter);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.getCurrentPropertyValue());
+					MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.currentPropertyValue());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -1392,7 +1392,7 @@ public final class AT_PersonPropertyDataManager {
 				EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(regionId, propertyId);
 				assertNotNull(eventFilter);
 				c.subscribe(eventFilter, (c2, e) -> {
-					MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.getCurrentPropertyValue());
+					MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.currentPropertyValue());
 					actualObservations.add(multiKey);
 				});
 			}
@@ -1495,7 +1495,7 @@ public final class AT_PersonPropertyDataManager {
 			EventFilter<PersonPropertyUpdateEvent> eventFilter = personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent();
 			assertNotNull(eventFilter);
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.getCurrentPropertyValue());
+				MultiKey multiKey = new MultiKey(c.getTime(), e.personId(), e.personPropertyId(), e.currentPropertyValue());
 				actualObservations.add(multiKey);
 			});
 

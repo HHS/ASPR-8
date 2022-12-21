@@ -29,7 +29,7 @@ public class AT_PersonPropertyUpdateEvent {
 		for (int i = 0; i < 10; i++) {
 			Object currentValue = i;
 			PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, previousValue, currentValue);
-			assertEquals(currentValue, personPropertyUpdateEvent.getCurrentPropertyValue());
+			assertEquals(currentValue, personPropertyUpdateEvent.currentPropertyValue());
 		}
 	}
 
