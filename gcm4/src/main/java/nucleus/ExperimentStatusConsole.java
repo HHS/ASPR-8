@@ -157,8 +157,7 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 			if (failCount > maxFailureCount) {
 				int unprintedFailureCount = failCount - maxFailureCount;
 				printStream.println("..." + unprintedFailureCount + " more failed scenarios");
-			}
-			printStream.println("end of failed scenarios");
+			}			
 		}
 		printStream.println("end of experiment status console");
 	}

@@ -69,8 +69,8 @@ public class MT_Experiment {
 					.addPlugin(testPlugin)//
 					.addDimension(getDimension(100))//					
 					.addExperimentContextConsumer(experimentStatusConsole)//
-					.setHaltOnException(true)//
-					.setThreadCount(0)//
+					.setHaltOnException(false)//
+					.setThreadCount(10)//
 					.build()//
 					.execute();//
 	}
