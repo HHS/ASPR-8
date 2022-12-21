@@ -75,9 +75,7 @@ public class AT_TestDataManager {
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 
 		// build and execute the engine
-		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
+		Experiment	.builder()//					
 					.addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
 					.addPlugin(testPlugin)//
 					.build()//

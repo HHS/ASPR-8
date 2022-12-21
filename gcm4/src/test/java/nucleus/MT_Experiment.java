@@ -2,8 +2,6 @@ package nucleus;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.Test;
-
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
@@ -16,7 +14,7 @@ import nucleus.testsupport.testplugin.TestPluginData;
  */
 public class MT_Experiment {
 
-	@Test
+	//@Test
 	public void test() {
 		main(new String[] {});
 	}
@@ -42,7 +40,7 @@ public class MT_Experiment {
 	}
 
 	private void excecute() {
-
+		
 		// use the test plugin to generate an agent
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -50,7 +48,7 @@ public class MT_Experiment {
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			synchronized (LOCK) {
 				counter++;				
-				if (counter == 3 || counter == 10) {
+				if (counter % 5 == 1 ) {
 					throw new RuntimeException("test exception");
 				}
 			}
@@ -63,13 +61,15 @@ public class MT_Experiment {
 		ExperimentStatusConsole experimentStatusConsole = //
 				ExperimentStatusConsole	.builder()//
 										.setImmediateErrorReporting(true)//
+										.setReportScenarioProgress(false)//
+										.setStackTraceReportLimit(3)//
 										.build();//
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin)//
 					.addDimension(getDimension(100))//					
 					.addExperimentContextConsumer(experimentStatusConsole)//
-					.setHaltOnException(false)//
+					.setHaltOnException(true)//
 					.setThreadCount(0)//
 					.build()//
 					.execute();//

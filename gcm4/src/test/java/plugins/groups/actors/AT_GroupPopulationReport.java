@@ -415,7 +415,6 @@ public class AT_GroupPopulationReport {
 
 		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
 		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-		builder.reportProgressToConsole(false);
 
 		// build and execute the engine
 		builder.build().execute();

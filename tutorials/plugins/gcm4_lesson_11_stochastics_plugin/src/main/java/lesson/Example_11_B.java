@@ -117,7 +117,6 @@ public final class Example_11_B {
 					.addPlugin(policyPlugin)//
 					.addDimension(policyDimension)//
 					.addDimension(stochasticsDimension)//
-					.reportProgressToConsole(false)//
 					.addExperimentContextConsumer(new SimpleOutputConsumer())//
 					.setThreadCount(4)//
 					.build()//

@@ -198,8 +198,6 @@ public class AT_RegionPropertyReport {
 		TestReportItemOutputConsumer reportItemOutputConsumer = new TestReportItemOutputConsumer();
 		builder.addExperimentContextConsumer(reportItemOutputConsumer::init);
 		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-		builder.reportProgressToConsole(false);
-		builder.reportFailuresToConsole(false);
 		builder.build().execute();
 
 		// show that all actions were executed

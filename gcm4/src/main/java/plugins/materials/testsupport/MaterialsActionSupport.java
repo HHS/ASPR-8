@@ -191,7 +191,6 @@ public class MaterialsActionSupport {
 		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-		builder.reportProgressToConsole(false);
 
 		// build and execute the engine
 

@@ -256,10 +256,8 @@ public final class Example_16 {
 					.addDimension(getEducationAttemptIntervalDimension())//
 					.addDimension(getEducationSuccessRatedimension())//
 					.addDimension(getVaccineRefusalProbabilityDimension())//
-
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.setThreadCount(8)//
-					.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
 

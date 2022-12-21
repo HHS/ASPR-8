@@ -136,23 +136,6 @@ public final class Experiment {
 			return this;
 		}
 
-		/**
-		 * Turns on or off the logging of experiment progress to standard out.
-		 * Default value is true.
-		 *
-		 */
-		public Builder reportProgressToConsole(final boolean reportProgressToConsole) {			
-			return this;
-		}
-
-		
-		/**
-		 * Sets the policy on reporting scenario failures. Defaults to true.
-		 */
-		public Builder reportFailuresToConsole(final boolean reportFailuresToConsole) {
-			return this;
-		}
-
 	}
 
 	/*
@@ -166,7 +149,6 @@ public final class Experiment {
 		private boolean haltOnException;
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
-
 	}
 
 	/*
@@ -232,15 +214,7 @@ public final class Experiment {
 				simulation.execute();
 				success = true;
 			} catch (final Exception e) {
-				failureCause = e;
-				// if (reportScenarioFailureToConsole) {
-				// System.err.println("Simulation failure for scenario " +
-				// scenarioId);
-				// e.printStackTrace();
-				// }
-				// if(rethrow) {
-				// throw e;
-				// }
+				failureCause = e;				
 			}
 			return new SimResult(scenarioId, success, failureCause);
 		}
@@ -285,8 +259,6 @@ public final class Experiment {
 
 		builder.setExperimentMetaData(experimentMetaData);
 
-		
-
 		// initialize the experiment context consumers so that they can
 		// subscribe to experiment level events
 		for (final Consumer<ExperimentContext> consumer : data.experimentContextConsumers) {
@@ -324,7 +296,7 @@ public final class Experiment {
 	/*
 	 * Executes the experiment utilizing multiple threads. If the simulation
 	 * throws an exception it is caught and handled by reporting to standard
-	 * error that the failure occured as well as printing a stack trace.
+	 * error that the failure occurred as well as printing a stack trace.
 	 */
 	private void executeMultiThreaded(final ExecutorService executorService) throws Exception {
 
@@ -398,27 +370,13 @@ public final class Experiment {
 					throw simResult.failureCause;
 				}
 			}
-			// } catch (final InterruptedException | ExecutionException e) {
-			// // Note that this is the completion service failing and
-			// // not the simulation
-			//
-			// // re-thrown as runtime exception
-			//
-			// throw new RuntimeException(e);
-			// }
-
+			
 			/*
 			 * Once the blocking call returns, we increment the
 			 * jobCompletionCount
 			 */
 			jobCompletionCount++;
 		}
-
-		/*
-		 * Since all jobs are done, the CompletionService is no longer needed so
-		 * we shut down the executorService that backs it.
-		 */
-		// executorService.shutdown();
 
 	}
 
@@ -570,5 +528,4 @@ public final class Experiment {
 		return result;
 
 	}
-
 }

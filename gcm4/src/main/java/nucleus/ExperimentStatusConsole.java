@@ -17,15 +17,11 @@ import net.jcip.annotations.ThreadSafe;
 @ThreadSafe
 public final class ExperimentStatusConsole implements Consumer<ExperimentContext> {
 
-	private static class Data {
-		private boolean immediateErrorReporting;
-	}
-
 	// this is thread safe so long as there are no mutations
-	private final Data data;
+	private final StatusConsoleState statusConsoleState;
 
-	private ExperimentStatusConsole(Data data) {
-		this.data = data;
+	private ExperimentStatusConsole(StatusConsoleState statusConsoleState) {
+		this.statusConsoleState = statusConsoleState;
 	}
 
 	public static Builder builder() {
@@ -33,7 +29,21 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 	}
 
 	public static class Builder {
-		private Data data = new Data();
+		private StatusConsoleState statusConsoleState = getInitializedStatusConsoleState();
+
+		private StatusConsoleState getInitializedStatusConsoleState() {
+
+			/*
+			 * initialize the state
+			 */
+			StatusConsoleState result = new StatusConsoleState();
+			result.setImmediateErrorReporting(false);
+			result.setReportScenarioProgress(true);
+			result.setStackTraceReportLimit(100);
+			result.setLastReportedCompletionPercentage(-1);
+
+			return result;
+		}
 
 		private Builder() {
 
@@ -41,23 +51,45 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 
 		public ExperimentStatusConsole build() {
 			try {
-				return new ExperimentStatusConsole(data);
+				return new ExperimentStatusConsole(statusConsoleState);
 			} finally {
-				data = new Data();
+				statusConsoleState = getInitializedStatusConsoleState();
 			}
 		}
 
+		/**
+		 * Sets the immediate error reporting policy. When true, simulation
+		 * exceptions will be written to the system error console with the
+		 * scenario id and the corresponding stack trace. Defaulted to false.
+		 */
 		public Builder setImmediateErrorReporting(final boolean immediateErrorReporting) {
-			data.immediateErrorReporting = immediateErrorReporting;
+			statusConsoleState.setImmediateErrorReporting(immediateErrorReporting);
 			return this;
 		}
-	}
 
-	/*
-	 * The last reported percentage completion value that includes credit from
-	 * previous executions of the experiment. Guarded by this.
-	 */
-	private int lastReportPercentage = -1;
+		/**
+		 * Sets the report scenario progress policy. When true, interim progress
+		 * of the scenarios are reported as 1)the number of scenarios completed,
+		 * 2)the percentage of scenarios completed and 3) as a projected
+		 * remaining time until experiment completion. Defaulted to true.
+		 */
+		public Builder setReportScenarioProgress(final boolean reportScenarioProgress) {
+			statusConsoleState.setReportScenarioProgress(reportScenarioProgress);
+			return this;
+		}
+
+		/**
+		 * Sets the maximum number of stack traces that are printed to the
+		 * console. This limit is applied independently to stack traces that are
+		 * immediately reported and those that are reported in the experiment
+		 * summary. Defaulted to 100.
+		 */
+		public Builder setStackTraceReportLimit(Integer stackTraceReportLimit) {
+			statusConsoleState.setStackTraceReportLimit(stackTraceReportLimit);
+			return this;
+		}
+
+	}
 
 	/*
 	 * Returns the string representation of the value with a prepended "0" for
@@ -110,7 +142,7 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 			}
 		}
 
-		int maxFailureCount = 20;
+		int maxFailureCount = statusConsoleState.getStackTraceReportLimit();
 
 		if (failCount > 0) {
 			printStream.println("failed scenarios:");
@@ -123,7 +155,8 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 				e.printStackTrace();
 			}
 			if (failCount > maxFailureCount) {
-				printStream.println("\t...");
+				int unprintedFailureCount = failCount - maxFailureCount;
+				printStream.println("..." + unprintedFailureCount + " more failed scenarios");
 			}
 			printStream.println("end of failed scenarios");
 		}
@@ -142,19 +175,30 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 		int percentComplete = (int) completionProportion;
 
 		boolean reportToConsole = false;
-		synchronized (this) {
-			if (percentComplete > lastReportPercentage) {
-				lastReportPercentage = percentComplete;
-				reportToConsole = true;
-			}
+
+		if (percentComplete > statusConsoleState.getLastReportedCompletionPercentage()) {
+			statusConsoleState.setLastReportedCompletionPercentage(percentComplete);
+			reportToConsole = true;
 		}
 
-		if (data.immediateErrorReporting) {
+		reportToConsole &= statusConsoleState.isReportScenarioProgress();
+
+		if (statusConsoleState.isImmediateErrorReporting()) {
+
 			ScenarioStatus scenarioStatus = experimentContext.getScenarioStatus(scenarioId).get();
 			if (scenarioStatus == ScenarioStatus.FAILED) {
-				Exception failureCause = experimentContext.getScenarioFailureCause(scenarioId).get();
-				System.err.println("Simulation failure for scenario " + scenarioId);
-				failureCause.printStackTrace();
+				boolean printStackTrace = false;
+
+				if (statusConsoleState.getImmediateStackTraceCount() < statusConsoleState.getStackTraceReportLimit()) {
+					printStackTrace = true;
+					statusConsoleState.incrementImmediateStackTraceCount();
+				}
+
+				if (printStackTrace) {
+					Exception failureCause = experimentContext.getScenarioFailureCause(scenarioId).get();
+					System.err.println("Simulation failure for scenario " + scenarioId);
+					failureCause.printStackTrace();
+				}
 			}
 		}
 
@@ -168,8 +212,8 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 			if (experimentContext.getScenarioCount() == 1) {
 				scenarioString = "scenario";
 			}
-			System.out.println(
-					completionCount + " of " + experimentContext.getScenarioCount() +" " +scenarioString + ", " + percentComplete + "% complete. Expected experiment completion in " + timeExpression);
+			System.out.println(completionCount + " of " + experimentContext.getScenarioCount() + " " + scenarioString + ", " + percentComplete + "% complete. Expected experiment completion in "
+					+ timeExpression);
 		}
 
 	}
