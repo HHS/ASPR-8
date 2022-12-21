@@ -103,14 +103,14 @@ public class AT_Partition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "build", args = {})
+	@UnitTestMethod(target = Partition.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		Partition partition = Partition.builder().build();
 		assertNotNull(partition);
 	}
 
 	@Test
-	@UnitTestMethod(name = "setFilter", args = { Filter.class })
+	@UnitTestMethod(target = Partition.Builder.class, name = "setFilter", args = { Filter.class })
 	public void testSetFilter() {
 		Partition.Builder builder = Partition.builder();
 		Filter filter = Filter.allPeople();
