@@ -18,22 +18,4 @@ public class AT_GroupMembershipAdditionEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupId", args = {})
-	public void testGetGroupId() {
-		PersonId personId = new PersonId(12);
-		GroupId groupId = new GroupId(23);
-		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
-		assertEquals(groupId, groupMembershipAdditionEvent.groupId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPersonId", args = {})
-	public void testGetPersonId() {
-		PersonId personId = new PersonId(12);
-		GroupId groupId = new GroupId(23);
-		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
-		assertEquals(personId, groupMembershipAdditionEvent.personId());
-	}
 }

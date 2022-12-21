@@ -19,12 +19,4 @@ public class AT_GroupTypeAdditionEvent {
 		// nothing to test
 	}
 
-	@Test
-	@UnitTestMethod(name = "getGroupTypeId", args = {})
-	public void testGetGroupTypeId() {
-		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
-		GroupTypeAdditionEvent groupTypeAdditionEvent = new GroupTypeAdditionEvent(groupTypeId);
-		assertEquals(groupTypeId, groupTypeAdditionEvent.groupTypeId());
-	}
-
 }

@@ -39,25 +39,4 @@ public class AT_GroupPropertyDefinitionEvent {
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupTypeId", args = {})
-	public void testGetGroupTypeId() {
-		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
-		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-		GroupPropertyDefinitionEvent groupPropertyDefinitionEvent = new GroupPropertyDefinitionEvent(groupTypeId,
-				groupPropertyId);
-		assertEquals(groupTypeId, groupPropertyDefinitionEvent.groupTypeId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupPropertyId", args = {})
-	public void testGetGroupPropertyId() {
-		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
-		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-
-		GroupPropertyDefinitionEvent groupPropertyDefinitionEvent = new GroupPropertyDefinitionEvent(groupTypeId,
-				groupPropertyId);
-		assertEquals(groupPropertyId, groupPropertyDefinitionEvent.groupPropertyId());
-	}
 }
