@@ -22,54 +22,6 @@ public class AT_MaterialsProducerResourceUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerId", args = {})
-	public void testGetMaterialsProducerId() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		ResourceId resourceId = TestResourceId.RESOURCE_4;
-		long previousResourceLevel = 23L;
-		long currentResourceLevel = 346L;
-		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
-				previousResourceLevel, currentResourceLevel);
-		assertEquals(materialsProducerId, materialsProducerResourceUpdateEvent.materialsProducerId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getResourceId", args = {})
-	public void testGetResourceId() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		ResourceId resourceId = TestResourceId.RESOURCE_4;
-		long previousResourceLevel = 23L;
-		long currentResourceLevel = 346L;
-		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
-				previousResourceLevel, currentResourceLevel);
-		assertEquals(resourceId, materialsProducerResourceUpdateEvent.resourceId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousResourceLevel", args = {})
-	public void testGetPreviousResourceLevel() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		ResourceId resourceId = TestResourceId.RESOURCE_4;
-		long previousResourceLevel = 23L;
-		long currentResourceLevel = 346L;
-		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
-				previousResourceLevel, currentResourceLevel);
-		assertEquals(previousResourceLevel, materialsProducerResourceUpdateEvent.previousResourceLevel());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getCurrentResourceLevel", args = {})
-	public void testGetCurrentResourceLevel() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		ResourceId resourceId = TestResourceId.RESOURCE_4;
-		long previousResourceLevel = 23L;
-		long currentResourceLevel = 346L;
-		MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent = new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId,
-				previousResourceLevel, currentResourceLevel);
-		assertEquals(currentResourceLevel, materialsProducerResourceUpdateEvent.currentResourceLevel());
-	}
-
-	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;

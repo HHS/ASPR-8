@@ -11,6 +11,10 @@ public record MaterialsProducerPropertyUpdateEvent(MaterialsProducerId materials
 												   Object previousPropertyValue,
 												   Object currentPropertyValue) implements Event {
 
+	public MaterialsProducerPropertyUpdateEvent {
+
+	}
+
 	@Override
 	public String toString() {
 		return "MaterialsProducerPropertyUpdateEvent [materialsProducerId=" + materialsProducerId + ", materialsProducerPropertyId=" + materialsProducerPropertyId + ", previousPropertyValue="

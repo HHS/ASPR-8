@@ -30,14 +30,4 @@ public class AT_MaterialIdAdditionEvent {
                 () -> new MaterialIdAdditionEvent(null));
         assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
     }
-
-    @Test
-    @UnitTestMethod(name = "getMaterialId", args = {})
-    public void testGetMaterialId() {
-        MaterialId materialId = TestMaterialId.MATERIAL_1;
-        MaterialIdAdditionEvent event = new MaterialIdAdditionEvent(materialId);
-
-        assertNotNull(event);
-        assertEquals(materialId, event.materialId());
-    }
 }

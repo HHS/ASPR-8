@@ -30,16 +30,4 @@ public class AT_MaterialsProducerPropertyDefinitionEvent {
                 () -> new MaterialsProducerPropertyDefinitionEvent(null));
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
     }
-
-    @Test
-    @UnitTestMethod(name = "getProducerPropertyId", args = {})
-    public void testGetProducerPropertyId() {
-        MaterialsProducerPropertyId producerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
-        MaterialsProducerPropertyDefinitionEvent event = new MaterialsProducerPropertyDefinitionEvent(
-                producerPropertyId);
-
-        assertNotNull(event);
-
-        assertEquals(producerPropertyId, event.materialsProducerPropertyId());
-    }
 }

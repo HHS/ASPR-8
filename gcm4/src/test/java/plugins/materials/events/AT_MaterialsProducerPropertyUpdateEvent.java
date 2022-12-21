@@ -22,54 +22,6 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerId", args = {})
-	public void testGetMaterialsProducerId() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 896.5;
-		Object currentPropertyValue = 3762.87;
-		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
-				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(materialsProducerId, materialsProducerPropertyUpdateEvent.materialsProducerId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getMaterialsProducerPropertyId", args = {})
-	public void testGetMaterialsProducerPropertyId() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 896.5;
-		Object currentPropertyValue = 3762.87;
-		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
-				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(materialsProducerPropertyId, materialsProducerPropertyUpdateEvent.materialsProducerPropertyId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousPropertyValue", args = {})
-	public void testGetPreviousPropertyValue() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 896.5;
-		Object currentPropertyValue = 3762.87;
-		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
-				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(previousPropertyValue, materialsProducerPropertyUpdateEvent.previousPropertyValue());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getCurrentPropertyValue", args = {})
-	public void testGetCurrentPropertyValue() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 896.5;
-		Object currentPropertyValue = 3762.87;
-		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
-				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		assertEquals(currentPropertyValue, materialsProducerPropertyUpdateEvent.currentPropertyValue());
-	}
-
-	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
