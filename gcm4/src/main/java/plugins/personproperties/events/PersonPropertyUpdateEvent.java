@@ -18,13 +18,6 @@ public record PersonPropertyUpdateEvent(PersonId personId,
 										Object previousPropertyValue,
 										Object currentPropertyValue) implements Event {
 
-
-	/**
-	 * Creates this event from valid, non-null inputs
-	 */
-	public PersonPropertyUpdateEvent {
-	}
-
 	/**
 	 * Returns this event in the form:
 	 * <p>

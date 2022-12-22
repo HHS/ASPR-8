@@ -15,11 +15,6 @@ import plugins.globalproperties.support.GlobalPropertyId;
 public record GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId,
 										Object previousPropertyValue,
 										Object currentPropertyValue) implements Event {
-	/**
-	 * Constructs the event.
-	 */
-	public GlobalPropertyUpdateEvent {
-	}
 
 	/**
 	 * Standard string implementation of the form

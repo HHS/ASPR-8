@@ -14,10 +14,4 @@ import plugins.people.support.PersonId;
 @Immutable
 public record GroupMembershipAdditionEvent(PersonId personId,
 										   GroupId groupId) implements Event {
-	/**
-	 * Constructs this event from the given person id and group id
-	 */
-	public GroupMembershipAdditionEvent {
-	}
-
 }

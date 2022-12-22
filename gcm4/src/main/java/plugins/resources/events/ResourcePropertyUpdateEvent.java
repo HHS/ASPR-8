@@ -15,10 +15,4 @@ public record ResourcePropertyUpdateEvent(ResourceId resourceId,
 										  ResourcePropertyId resourcePropertyId,
 										  Object previousPropertyValue,
 										  Object currentPropertyValue) implements Event {
-	/**
-	 * Constructs the event
-	 */
-	public ResourcePropertyUpdateEvent {
-	}
-
 }

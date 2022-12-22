@@ -9,10 +9,6 @@ import plugins.materials.support.StageId;
 public record StageMembershipAdditionEvent(BatchId batchId,
 										   StageId stageId) implements Event {
 
-	public StageMembershipAdditionEvent {
-
-	}
-
 	@Override
 	public String toString() {
 		return "StageMembershipAdditionEvent [batchId=" + batchId + ", stageId=" + stageId + "]";

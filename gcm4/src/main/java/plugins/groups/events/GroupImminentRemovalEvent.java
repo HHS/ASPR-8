@@ -12,10 +12,4 @@ import plugins.groups.support.GroupId;
 
 @Immutable
 public record GroupImminentRemovalEvent(GroupId groupId) implements Event {
-	/**
-	 * Constructs this event from the group id
-	 */
-	public GroupImminentRemovalEvent {
-	}
-
 }

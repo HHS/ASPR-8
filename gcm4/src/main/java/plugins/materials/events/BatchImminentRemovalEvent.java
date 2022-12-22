@@ -7,9 +7,6 @@ import plugins.materials.support.BatchId;
 @Immutable
 public record BatchImminentRemovalEvent(BatchId batchId) implements Event {
 
-	public BatchImminentRemovalEvent {
-
-	}
 
 	@Override
 	public String toString() {

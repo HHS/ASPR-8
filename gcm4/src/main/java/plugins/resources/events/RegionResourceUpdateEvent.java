@@ -15,10 +15,4 @@ import plugins.resources.support.ResourceId;
 public record RegionResourceUpdateEvent(RegionId regionId,
 										ResourceId resourceId, long previousResourceLevel,
 										long currentResourceLevel) implements Event {
-	/**
-	 * Constructs the event
-	 */
-	public RegionResourceUpdateEvent {
-	}
-
 }

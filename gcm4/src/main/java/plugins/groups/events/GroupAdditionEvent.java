@@ -11,11 +11,4 @@ import plugins.groups.support.GroupId;
  */
 @Immutable
 public record GroupAdditionEvent(GroupId groupId) implements Event {
-
-	/**
-	 * Constructs this event from the group id
-	 */
-	public GroupAdditionEvent {
-	}
-
 }

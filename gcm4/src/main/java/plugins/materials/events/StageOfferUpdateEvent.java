@@ -8,10 +8,6 @@ import plugins.materials.support.StageId;
 public record StageOfferUpdateEvent(StageId stageId, boolean previousOfferState,
 									boolean currentOfferState) implements Event {
 
-	public StageOfferUpdateEvent {
-
-	}
-
 	@Override
 	public String toString() {
 		return "StageOfferUpdateEvent [stageId=" + stageId + ", previousOfferState=" + previousOfferState + ", currentOfferState=" + currentOfferState + "]";

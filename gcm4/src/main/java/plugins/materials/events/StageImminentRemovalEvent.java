@@ -8,10 +8,6 @@ import plugins.materials.support.StageId;
 
 public record StageImminentRemovalEvent(StageId stageId) implements Event {
 
-	public StageImminentRemovalEvent {
-
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

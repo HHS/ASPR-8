@@ -10,10 +10,6 @@ public record PersonRegionUpdateEvent(PersonId personId,
 									  RegionId previousRegionId,
 									  RegionId currentRegionId) implements Event {
 
-	public PersonRegionUpdateEvent {
-
-	}
-
 	@Override
 	public String toString() {
 		return "PersonRegionUpdateEvent [personId=" + personId + ", previousRegionId=" + previousRegionId + ", currentRegionId=" + currentRegionId + "]";

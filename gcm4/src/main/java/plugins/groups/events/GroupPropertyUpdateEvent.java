@@ -15,11 +15,4 @@ public record GroupPropertyUpdateEvent(GroupId groupId,
 									   GroupPropertyId groupPropertyId,
 									   Object previousPropertyValue,
 									   Object currentPropertyValue) implements Event {
-	/**
-	 * Constructs this event from the given group id, group property id ,
-	 * previous property value and current property value.
-	 */
-	public GroupPropertyUpdateEvent {
-	}
-
 }

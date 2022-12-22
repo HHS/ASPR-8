@@ -10,10 +10,6 @@ public record StageMaterialsProducerUpdateEvent(StageId stageId,
 												MaterialsProducerId previousMaterialsProducerId,
 												MaterialsProducerId currentMaterialsProducerId) implements Event {
 
-	public StageMaterialsProducerUpdateEvent {
-
-	}
-
 	@Override
 	public String toString() {
 		return "StageMaterialsProducerUpdateEvent [stageId=" + stageId + ", previousMaterialsProducerId=" + previousMaterialsProducerId + ", currentMaterialsProducerId=" + currentMaterialsProducerId
