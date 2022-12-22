@@ -8,7 +8,6 @@ import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 import static org.junit.jupiter.api.Assertions.*;

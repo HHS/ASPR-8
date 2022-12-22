@@ -14,7 +14,6 @@ import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 @UnitTest(target = GroupPropertyDefinitionEvent.class)

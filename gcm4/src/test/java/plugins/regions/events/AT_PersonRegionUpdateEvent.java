@@ -1,6 +1,5 @@
 package plugins.regions.events;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,6 @@ import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = PersonRegionUpdateEvent.class)
 public class AT_PersonRegionUpdateEvent {

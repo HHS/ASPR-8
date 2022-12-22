@@ -11,7 +11,6 @@ import plugins.materials.support.MaterialsError;
 import plugins.materials.testsupport.TestMaterialId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 @UnitTest(target = MaterialIdAdditionEvent.class)
