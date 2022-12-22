@@ -31,11 +31,5 @@ public record BatchPropertyUpdateEvent(BatchId batchId,
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "BatchPropertyUpdateEvent [batchId=" + batchId + ", batchPropertyId=" + batchPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue="
-				+ currentPropertyValue + "]";
-	}
-
 
 }

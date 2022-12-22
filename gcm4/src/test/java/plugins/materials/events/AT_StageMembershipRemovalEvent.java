@@ -18,13 +18,4 @@ public class AT_StageMembershipRemovalEvent {
 	public void testConstructor() {
 		//nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name="toString",args = {})
-	public void testToString() {
-		BatchId batchId = new BatchId(23);
-		StageId stageId = new StageId(765);
-		StageMembershipRemovalEvent stageMembershipRemovalEvent = new StageMembershipRemovalEvent(batchId, stageId);
-		assertEquals("StageMembershipRemovalEvent [batchId=23, stageId=765]",stageMembershipRemovalEvent.toString());
-	}
 }

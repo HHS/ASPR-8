@@ -18,15 +18,4 @@ public class AT_BatchAmountUpdateEvent {
 	public void testConstructor() {
 		//nothing to test
 	}
-	
-	@Test
-	@UnitTestMethod(name="toString",args = {})
-	public void testToString() {
-		BatchId batchId = new BatchId(23423);
-		double previousAmount = 14.5;
-		double currentAmount = 44.7;		
-		BatchAmountUpdateEvent batchAmountUpdateEvent = new BatchAmountUpdateEvent(batchId, previousAmount, currentAmount);
-		assertEquals("BatchAmountUpdateEvent [batchId=23423, previousAmount=14.5, currentAmount=44.7]", batchAmountUpdateEvent.toString());
-	}
-
 }

@@ -6,10 +6,4 @@ import plugins.materials.support.BatchId;
 
 @Immutable
 public record BatchAdditionEvent(BatchId batchId) implements Event {
-
-	@Override
-	public String toString() {
-		return "BatchAdditionEvent [batchId=" + batchId + "]";
-	}
-
 }

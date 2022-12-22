@@ -6,11 +6,4 @@ import plugins.materials.support.StageId;
 
 @Immutable
 public record StageAdditionEvent(StageId stageId) implements Event {
-
-	@Override
-	public String toString() {
-		return "StageCreation [stageId=" + stageId + "]";
-	}
-
-
 }

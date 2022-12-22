@@ -14,5 +14,4 @@ import plugins.resources.support.ResourceId;
 public record PersonResourceUpdateEvent(PersonId personId,
 										ResourceId resourceId, long previousResourceLevel,
 										long currentResourceLevel) implements Event {
-
 }

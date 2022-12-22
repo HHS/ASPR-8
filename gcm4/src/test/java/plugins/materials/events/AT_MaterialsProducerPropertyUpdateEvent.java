@@ -20,20 +20,4 @@ public class AT_MaterialsProducerPropertyUpdateEvent {
 	public void testConstructor() {
 		//nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "toString", args = {})
-	public void testToString() {
-		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
-		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 896.5;
-		Object currentPropertyValue = 3762.87;
-		MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent = new MaterialsProducerPropertyUpdateEvent(materialsProducerId,
-				materialsProducerPropertyId, previousPropertyValue, currentPropertyValue);
-		
-		String expectedValue = "MaterialsProducerPropertyUpdateEvent [materialsProducerId=MATERIALS_PRODUCER_3, materialsProducerPropertyId=MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, previousPropertyValue=896.5, currentPropertyValue=3762.87]";
-		String actualValue = materialsProducerPropertyUpdateEvent.toString();
-		assertEquals(expectedValue, actualValue);
-	}
-
 }

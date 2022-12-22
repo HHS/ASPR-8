@@ -19,49 +19,4 @@ public class AT_GroupPropertyUpdateEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "getCurrentPropertyValue", args = {})
-	public void testGetCurrentPropertyValue() {
-		GroupId groupId = new GroupId(30);
-		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-		Object previousValue = "previous";
-		Object currentValue = "current";
-		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(currentValue, groupPropertyUpdateEvent.currentPropertyValue());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupId", args = {})
-	public void testGetGroupId() {
-		GroupId groupId = new GroupId(30);
-		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-		Object previousValue = "previous";
-		Object currentValue = "current";
-		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(groupId, groupPropertyUpdateEvent.groupId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupPropertyId", args = {})
-	public void testGetGroupPropertyId() {
-		GroupId groupId = new GroupId(30);
-		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-		Object previousValue = "previous";
-		Object currentValue = "current";
-		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(groupPropertyId, groupPropertyUpdateEvent.groupPropertyId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPreviousPropertyValue", args = {})
-	public void testGetPreviousPropertyValue() {
-		GroupId groupId = new GroupId(30);
-		GroupPropertyId groupPropertyId = TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK;
-		Object previousValue = "previous";
-		Object currentValue = "current";
-		GroupPropertyUpdateEvent groupPropertyUpdateEvent = new GroupPropertyUpdateEvent(groupId, groupPropertyId, previousValue, currentValue);
-		assertEquals(previousValue, groupPropertyUpdateEvent.previousPropertyValue());
-	}
-
 }

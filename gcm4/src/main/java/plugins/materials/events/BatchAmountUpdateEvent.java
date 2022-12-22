@@ -7,10 +7,4 @@ import plugins.materials.support.BatchId;
 @Immutable
 public record BatchAmountUpdateEvent(BatchId batchId, double previousAmount,
 									 double currentAmount) implements Event {
-
-	@Override
-	public String toString() {
-		return "BatchAmountUpdateEvent [batchId=" + batchId + ", previousAmount=" + previousAmount + ", currentAmount=" + currentAmount + "]";
-	}
-
 }

@@ -15,17 +15,4 @@ import plugins.globalproperties.support.GlobalPropertyId;
 public record GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId,
 										Object previousPropertyValue,
 										Object currentPropertyValue) implements Event {
-
-	/**
-	 * Standard string implementation of the form
-	 * <p>
-	 * GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ",
-	 * previousPropertyValue=" + previousPropertyValue + ",
-	 * currentPropertyValue=" + currentPropertyValue + "]
-	 */
-	@Override
-	public String toString() {
-		return "GlobalPropertyUpdateEvent [globalPropertyId=" + globalPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue=" + currentPropertyValue + "]";
-	}
-
 }

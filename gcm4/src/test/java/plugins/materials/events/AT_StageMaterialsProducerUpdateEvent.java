@@ -19,17 +19,4 @@ public class AT_StageMaterialsProducerUpdateEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "toString", args = {})
-	public void testToString() {
-		StageId stageId = new StageId(344);
-		MaterialsProducerId previousMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
-		MaterialsProducerId currentMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
-		StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent = new StageMaterialsProducerUpdateEvent(stageId, previousMaterialsProducerId,
-				currentMaterialsProducerId);
-		String expectedValue = "StageMaterialsProducerUpdateEvent [stageId=344, previousMaterialsProducerId=MATERIALS_PRODUCER_1, currentMaterialsProducerId=MATERIALS_PRODUCER_2]";
-		String actualValue = stageMaterialsProducerUpdateEvent.toString();
-		assertEquals(expectedValue, actualValue);
-	}
 }

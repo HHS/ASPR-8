@@ -10,11 +10,4 @@ public record MaterialsProducerResourceUpdateEvent(MaterialsProducerId materials
 												   ResourceId resourceId,
 												   long previousResourceLevel,
 												   long currentResourceLevel) implements Event {
-
-	@Override
-	public String toString() {
-		return "MaterialsProducerResourceUpdateEvent [materialsProducerId=" + materialsProducerId + ", resourceId=" + resourceId + ", previousResourceLevel=" + previousResourceLevel
-				+ ", currentResourceLevel=" + currentResourceLevel + "]";
-	}
-
 }

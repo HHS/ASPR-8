@@ -8,10 +8,4 @@ import plugins.materials.support.StageId;
 @Immutable
 public record StageMembershipRemovalEvent(BatchId batchId,
 										  StageId stageId) implements Event {
-
-	@Override
-	public String toString() {
-		return "StageMembershipRemovalEvent [batchId=" + batchId + ", stageId=" + stageId + "]";
-	}
-
 }

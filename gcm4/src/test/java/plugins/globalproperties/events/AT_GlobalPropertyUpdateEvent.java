@@ -25,19 +25,4 @@ public class AT_GlobalPropertyUpdateEvent {
 
 		assertNotNull(globalPropertyUpdateEvent);
 	}
-
-	@Test
-	@UnitTestMethod(name = "toString", args = {})
-	public void testToString() {
-		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id");
-		Integer previousValue = 12;
-		Integer currentValue = 13;
-		GlobalPropertyUpdateEvent globalPropertyUpdateEvent = new GlobalPropertyUpdateEvent(globalPropertyId, previousValue, currentValue);
-		String expectedValue = "GlobalPropertyUpdateEvent [globalPropertyId=id, previousPropertyValue=12, currentPropertyValue=13]";
-		String actualValue = globalPropertyUpdateEvent.toString();
-
-		assertEquals(expectedValue, actualValue);
-
-	}
-
 }

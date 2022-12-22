@@ -18,13 +18,4 @@ public class AT_StageImminentRemovalEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "toString", args = {})
-	public void testToString() {
-		StageId stageId = new StageId(4534);
-		StageImminentRemovalEvent stageImminentRemovalEvent = new StageImminentRemovalEvent(stageId);
-		assertEquals("StageImminentRemovalEvent [stageId=4534]", stageImminentRemovalEvent.toString());
-	}
-
 }

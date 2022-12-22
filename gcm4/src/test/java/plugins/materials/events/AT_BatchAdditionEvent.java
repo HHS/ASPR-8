@@ -17,13 +17,4 @@ public class AT_BatchAdditionEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "toString", args = {})
-	public void testToString() {
-		BatchId batchId = new BatchId(56456);
-		BatchAdditionEvent batchAdditionEvent = new BatchAdditionEvent(batchId);
-		assertEquals("BatchAdditionEvent [batchId=56456]", batchAdditionEvent.toString());
-	}
-
 }

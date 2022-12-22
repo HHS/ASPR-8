@@ -17,15 +17,4 @@ public class AT_StageOfferUpdateEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
-
-	@Test
-	@UnitTestMethod(name = "toString", args = {})
-	public void testToString() {
-		StageId stageId = new StageId(543);
-		boolean previousOfferState = true;
-		boolean currentOfferState = false;
-		StageOfferUpdateEvent stageOfferUpdateEvent = new StageOfferUpdateEvent(stageId, previousOfferState, currentOfferState);
-		assertEquals("StageOfferUpdateEvent [stageId=543, previousOfferState=true, currentOfferState=false]", stageOfferUpdateEvent.toString());
-	}
-
 }

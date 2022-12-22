@@ -9,11 +9,4 @@ import plugins.materials.support.StageId;
 public record StageMaterialsProducerUpdateEvent(StageId stageId,
 												MaterialsProducerId previousMaterialsProducerId,
 												MaterialsProducerId currentMaterialsProducerId) implements Event {
-
-	@Override
-	public String toString() {
-		return "StageMaterialsProducerUpdateEvent [stageId=" + stageId + ", previousMaterialsProducerId=" + previousMaterialsProducerId + ", currentMaterialsProducerId=" + currentMaterialsProducerId
-				+ "]";
-	}
-
 }

@@ -10,11 +10,4 @@ public record RegionPropertyUpdateEvent(RegionId regionId,
 										RegionPropertyId regionPropertyId,
 										Object previousPropertyValue,
 										Object currentPropertyValue) implements Event {
-
-	@Override
-	public String toString() {
-		return "RegionPropertyUpdateEvent [regionId=" + regionId + ", regionPropertyId=" + regionPropertyId + ", previousPropertyValue=" + previousPropertyValue + ", currentPropertyValue="
-				+ currentPropertyValue + "]";
-	}
-
 }

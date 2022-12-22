@@ -62,18 +62,4 @@ public class AT_BatchPropertyUpdateEvent {
 		assertNotNull(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue));
 
 	}
-
-	@Test
-	@UnitTestMethod(name = "toString", args = {})
-	public void testToString() {
-		BatchId batchId = new BatchId(5348);
-		BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
-		Object previousPropertyValue = 45;
-		Object currentPropertyValue = 643;
-		BatchPropertyUpdateEvent batchPropertyUpdateEvent = new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue);
-		String expectedValue = "BatchPropertyUpdateEvent [batchId=5348, batchPropertyId=BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, previousPropertyValue=45, currentPropertyValue=643]";
-		String actualValue = batchPropertyUpdateEvent.toString();
-		assertEquals(expectedValue, actualValue);
-	}
-
 }
