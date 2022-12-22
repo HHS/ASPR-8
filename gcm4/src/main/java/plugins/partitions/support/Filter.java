@@ -11,6 +11,8 @@ import util.errors.ContractException;
 
 public abstract class Filter {
 
+	protected Filter(){}
+	
 	private static class AndFilter extends Filter {
 		final Filter a;
 		final Filter b;
