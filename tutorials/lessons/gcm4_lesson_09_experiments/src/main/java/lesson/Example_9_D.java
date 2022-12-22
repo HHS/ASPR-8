@@ -107,7 +107,6 @@ public final class Example_9_D {
 					.addPlugin(policyPlugin)//
 					.addDimension(r0Dimension)//
 					.addDimension(policyDimension)//
-					.reportProgressToConsole(false)//
 					.build()//
 					.execute();
 	}

@@ -108,7 +108,6 @@ public final class Example_10_B {
 					.addPlugin(policyPlugin)//
 					.addDimension(r0Dimension)//
 					.addDimension(policyDimension)//
-					.reportProgressToConsole(false)//
 					.addExperimentContextConsumer(new OutputConsumer_B())//
 					.setThreadCount(4)//
 					.build()//

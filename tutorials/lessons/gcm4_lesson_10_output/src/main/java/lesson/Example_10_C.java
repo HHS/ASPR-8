@@ -107,8 +107,7 @@ public final class Example_10_C {
 					.addPlugin(modelPlugin)//
 					.addPlugin(policyPlugin)//
 					.addDimension(r0Dimension)//
-					.addDimension(policyDimension)//
-					.reportProgressToConsole(false)//
+					.addDimension(policyDimension)//					
 					.addExperimentContextConsumer(new OutputConsumer_C())//
 					.setThreadCount(4)//
 					.build()//

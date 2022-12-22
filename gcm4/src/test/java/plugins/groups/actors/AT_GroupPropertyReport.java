@@ -565,7 +565,6 @@ public class AT_GroupPropertyReport {
 
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-		builder.reportProgressToConsole(false);
 
 		// build and execute the engine
 		builder.build().execute();

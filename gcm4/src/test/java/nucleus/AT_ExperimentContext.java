@@ -34,8 +34,6 @@ public class AT_ExperimentContext {
 		 */
 		MutableDouble elapsedSeconds = new MutableDouble();
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
 					.addExperimentContextConsumer(c -> {
 						elapsedSeconds.setValue(c.getElapsedSeconds());
 					}).build()//
@@ -51,8 +49,6 @@ public class AT_ExperimentContext {
 
 		List<String> actualMetaData = new ArrayList<>();
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
 					.addExperimentContextConsumer(c -> {
 						actualMetaData.addAll(c.getExperimentMetaData());
 					}).build()//
@@ -90,8 +86,6 @@ public class AT_ExperimentContext {
 										.build();
 
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addDimension(dimension3)//
@@ -126,8 +120,6 @@ public class AT_ExperimentContext {
 		expectedMetaData.add("B");
 
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
 					.addDimension(dimension3)//
 					.addDimension(dimension2)//
 					.addDimension(dimension1)//
@@ -149,9 +141,6 @@ public class AT_ExperimentContext {
 		MutableInteger scenarioCount = new MutableInteger();
 
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addExperimentContextConsumer((c) -> {
 						scenarioCount.setValue(c.getScenarioCount());
 					})//
@@ -183,9 +172,6 @@ public class AT_ExperimentContext {
 
 		// execute the experiment
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
 					.addExperimentContextConsumer((c) -> {
@@ -247,9 +233,6 @@ public class AT_ExperimentContext {
 		// information
 		Set<MultiKey> combinedMetaData = new LinkedHashSet<>();
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
@@ -351,9 +334,6 @@ public class AT_ExperimentContext {
 
 		// execute the experiment
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addPlugin(plugin)//
 					.addDimension(dimension1)//
 					.addDimension(dimension2)//
@@ -427,12 +407,8 @@ public class AT_ExperimentContext {
 		 * notification of scenario failures.
 		 */
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addDimension(dimension)//
-					.addPlugin(plugin)//
-					.reportFailuresToConsole(false)//
+					.addPlugin(plugin)//					
 					.addExperimentContextConsumer((c) -> {
 						c.subscribeToExperimentOpen((c2) -> {
 							int scenarioCount = c2.getScenarioCount();
@@ -531,9 +507,7 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder	.reportProgressToConsole(false)//
-				.reportFailuresToConsole(false)//
-				.build()//
+		builder	.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation
@@ -569,9 +543,7 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder	.reportProgressToConsole(false)//
-				.reportFailuresToConsole(false)//
-				.build()//
+		builder	.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation
@@ -605,9 +577,6 @@ public class AT_ExperimentContext {
 		 */
 		Set<MultiKey> observedOutput = new LinkedHashSet<>();
 		Experiment	.builder()//
-					.reportProgressToConsole(false)//
-					.reportFailuresToConsole(false)//
-
 					.addPlugin(plugin)//
 					.addExperimentContextConsumer((c) -> {
 						c.subscribeToOutput(Integer.class, (c2, s, o) -> {
@@ -662,9 +631,7 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder	.reportProgressToConsole(false)//
-				.reportFailuresToConsole(false)//
-				.build()//
+		builder	.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation
@@ -701,10 +668,7 @@ public class AT_ExperimentContext {
 		}
 
 		// execute the experiment
-		builder//
-				.reportProgressToConsole(false)//
-				.reportFailuresToConsole(false)//
-				.build()//
+		builder	.build()//
 				.execute();//
 
 		// show the subscribers did observe the opening of the simulation

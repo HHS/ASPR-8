@@ -113,7 +113,6 @@ public final class Example_14 {
 					.addPlugin(reportsPlugin)//
 					.addExperimentContextConsumer(nioReportItemHandler)//
 					.addDimension(stochasticsDimension)//
-					.reportProgressToConsole(false)//
 					.build()//
 					.execute();//
 	}

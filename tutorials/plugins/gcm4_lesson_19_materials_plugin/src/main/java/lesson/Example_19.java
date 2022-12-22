@@ -82,7 +82,6 @@ public final class Example_19 {
 
 					.addExperimentContextConsumer(getNIOReportItemHandler())//
 					.setThreadCount(8)//
-					.reportProgressToConsole(true)//
 					.build()//
 					.execute();//
 

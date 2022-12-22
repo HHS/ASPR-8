@@ -82,7 +82,6 @@ public final class Example_11_A {
 					.addPlugin(modelPlugin)//
 					.addPlugin(policyPlugin)//
 					.addDimension(policyDimension)//
-					.reportProgressToConsole(false)//
 					.addExperimentContextConsumer(new SimpleOutputConsumer())//
 					.setThreadCount(4)//
 					.build()//

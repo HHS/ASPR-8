@@ -55,26 +55,27 @@ public class WarningGenerator {
 
 		final Method[] methods = c.getMethods();
 		boolean isEnum = c.isEnum();
-		boolean isRecord  = c.isRecord();
+		boolean isRecord = c.isRecord();
 
 		for (final Method method : methods) {
 
 			boolean addRec = method.getDeclaringClass().equals(c);
 			addRec &= !isRecord;
 			addRec &= !method.isBridge();
-			addRec &= !method.isSynthetic();
-			addRec &= !(Modifier.isAbstract(method.getModifiers()) && c.isInterface());
-
+			addRec &= !method.isSynthetic();			
+			addRec &= !Modifier.isAbstract(method.getModifiers());
+			addRec &= !c.isInterface();
+			
 			if (isEnum) {
 				if (method.getName().equals("values")) {
-					if (method.getParameters().length == 0) {						
+					if (method.getParameters().length == 0) {
 						addRec = false;
 					}
 				} else if (method.getName().equals("valueOf")) {
 					Parameter[] parameters = method.getParameters();
 					if (parameters.length == 1) {
 						Parameter parameter = parameters[0];
-						if (parameter.getType() == String.class) {							
+						if (parameter.getType() == String.class) {
 							addRec = false;
 						}
 					}
@@ -118,8 +119,8 @@ public class WarningGenerator {
 			if (Modifier.isPublic(subClass.getModifiers())) {
 				if (Modifier.isStatic(subClass.getModifiers())) {
 					getClasses(subClass, set);
-				} else {					
-					warningContainerBuilder.addGeneralWarning(WarningType.NONSTATIC_SUBCLASS.getDescription() +" "+ subClass);					
+				} else {
+					warningContainerBuilder.addGeneralWarning(WarningType.NONSTATIC_SUBCLASS.getDescription() + " " + subClass);
 				}
 			}
 		}
@@ -131,8 +132,6 @@ public class WarningGenerator {
 			if (isJavaFile(file)) {
 				final Class<?> c = getClassFromFile(data.sourcePath, file);
 				for (Class<?> c2 : getClasses(c)) {
-					// System.out.println(c.getSimpleName()+"\t"+c2.getSimpleName());
-
 					probeClass(c2);
 				}
 			}

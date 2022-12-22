@@ -30,7 +30,6 @@ public class AT_ExperimentPlanCompletionObserver {
 
 		Experiment	.builder()//
 					.addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
-					.reportProgressToConsole(false)//
 					.build()//
 					.execute();
 
@@ -49,7 +48,6 @@ public class AT_ExperimentPlanCompletionObserver {
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin).addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
-					.reportProgressToConsole(false)//
 					.build()//					
 					.execute();
 
