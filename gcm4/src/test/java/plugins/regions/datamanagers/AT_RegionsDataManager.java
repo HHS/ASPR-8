@@ -1530,7 +1530,7 @@ public class AT_RegionsDataManager {
 																.build();
 				regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
 			});
-			assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+			assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 		});
 
 		/*
