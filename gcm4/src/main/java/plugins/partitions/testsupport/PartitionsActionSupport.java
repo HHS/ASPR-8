@@ -25,6 +25,8 @@ import util.errors.ContractException;
 
 public class PartitionsActionSupport {
 
+	private PartitionsActionSupport(){}
+	
 	public static void testConsumer(int initialPopulation, long seed, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
