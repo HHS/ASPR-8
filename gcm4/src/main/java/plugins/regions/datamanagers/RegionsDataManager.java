@@ -252,7 +252,7 @@ public final class RegionsDataManager extends DataManager {
 	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_DEFINITION_INITIALIZATION}
 	 *             if the region property definition initialization is null</li>
 	 * 
-	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
+	 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *             if the region property is already defined</li>
 	 * 
 	 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
@@ -864,7 +864,7 @@ public final class RegionsDataManager extends DataManager {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
 		if (regionPropertyIdExists(regionPropertyId)) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId);
+			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, regionPropertyId);
 		}
 	}
 
