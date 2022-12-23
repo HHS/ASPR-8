@@ -20,10 +20,9 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-
 @UnitTest(target = Filter.class)
 public class AT_Filter {
-	
+
 	private static class LocalFilter extends Filter {
 
 		private final Set<FilterSensitivity<?>> filterSensitivities = new LinkedHashSet<>();
@@ -68,7 +67,7 @@ public class AT_Filter {
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
 			 */
-			assertEquals(100,peopleDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// create the filters
 			Filter filter = Filter.allPeople().and(Filter.allPeople());
@@ -104,14 +103,15 @@ public class AT_Filter {
 			expectedFilterSensitivities.add(fsD);
 			Set<FilterSensitivity<?>> actualFilterSensitivities = filter.getFilterSensitivities();
 			assertEquals(expectedFilterSensitivities, actualFilterSensitivities);
-			
+
 			// precondition tests
-			
-			//if the filter is null
-			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().and(null));
+
+			// if the filter is null
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> Filter.allPeople().and(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
 		});
-		
+
 	}
 
 	/**
@@ -121,14 +121,14 @@ public class AT_Filter {
 	@UnitTestMethod(name = "or", args = { Filter.class })
 	public void testOr() {
 		PartitionsActionSupport.testConsumer(100, 921279696119043098L, (c) -> {
-			
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			
+
 			/*
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
 			 */
-			assertEquals(100,peopleDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			// create the filters
 			Filter filter = Filter.allPeople().or(Filter.allPeople());
@@ -164,16 +164,17 @@ public class AT_Filter {
 			expectedFilterSensitivities.add(fsD);
 			Set<FilterSensitivity<?>> actualFilterSensitivities = filter.getFilterSensitivities();
 			assertEquals(expectedFilterSensitivities, actualFilterSensitivities);
-			
-			// precondition test
-			
-			//if the filter is null
 
-			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().or(null));
+			// precondition test
+
+			// if the filter is null
+
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> Filter.allPeople().or(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
-			
+
 		});
-		
+
 	}
 
 	/**
@@ -188,7 +189,7 @@ public class AT_Filter {
 			 * Show that there are enough people in the simulation to make a
 			 * valid test
 			 */
-			assertEquals(100,peopleDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			Filter filter = Filter.allPeople().negate();
 
@@ -204,7 +205,6 @@ public class AT_Filter {
 			assertEquals(filter.getFilterSensitivities().size(), 0);
 		});
 	}
-
 
 	/**
 	 * Tests {@link Filter#allPeople()}
@@ -235,7 +235,7 @@ public class AT_Filter {
 	public void testNoPeople() {
 		PartitionsActionSupport.testConsumer(100, 6400633994679307999L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			assertEquals(100,peopleDataManager.getPopulationCount());
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
 			final Filter filter = Filter.noPeople();
 
@@ -245,6 +245,6 @@ public class AT_Filter {
 
 			assertEquals(filter.getFilterSensitivities().size(), 0);
 		});
-		
+
 	}
 }

@@ -3,6 +3,7 @@ package plugins.partitions.support;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 /**
  * Test class for {@link LabelSetInfo}
@@ -64,9 +66,8 @@ public class AT_LabelSet {
 
 	}
 
-	
 	@Test
-	@UnitTestMethod(name = "getLabel", args = {Object.class})
+	@UnitTestMethod(name = "getLabel", args = { Object.class })
 	public void testGetLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
 		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, expectedCompartmentLabel).build();
@@ -128,4 +129,40 @@ public class AT_LabelSet {
 		assertEquals(labelSet1.hashCode(), labelSet2.hashCode());
 	}
 
+	@Test
+	@UnitTestMethod(name = "toString", args = {})
+	public void testToString() {
+		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
+
+		String expectedString = "LabelSet [labels={DIM_1=compartment label}]";
+		assertNotNull(labelSet);
+		assertEquals(expectedString, labelSet.toString());
+	}
+
+	@Test
+	@UnitTestMethod(target = LabelSet.Builder.class, name = "build", args = {})
+	public void testBuild() {
+		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
+		assertNotNull(labelSet);
+	}
+
+	@Test
+	@UnitTestMethod(target = LabelSet.Builder.class, name = "setLabel", args={Object.class, Object.class})
+	public void testSetLabel() {
+		String expectedLabel1 = "expected label 1";
+		String expectedLabel2 = "expected label 2";
+
+		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, expectedLabel1).setLabel(Dimension.DIM_2, expectedLabel2).build();
+		assertEquals(expectedLabel1, labelSet.getLabel(Dimension.DIM_1).get());
+		assertEquals(expectedLabel2, labelSet.getLabel(Dimension.DIM_2).get());
+		
+		//precondition test: if the label is null
+		ContractException contractException = assertThrows(ContractException.class, ()->	LabelSet.builder().setLabel(null, expectedLabel1));
+		assertEquals(PartitionError.NULL_PARTITION_LABEL_DIMENSION, contractException.getErrorType());
+		
+		//precondition test: if the dimension is null
+		contractException = assertThrows(ContractException.class, ()->	LabelSet.builder().setLabel(Dimension.DIM_1, null));
+		assertEquals(PartitionError.NULL_PARTITION_LABEL, contractException.getErrorType());
+
+	}
 }

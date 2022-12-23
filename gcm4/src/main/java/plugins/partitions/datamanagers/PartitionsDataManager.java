@@ -488,7 +488,7 @@ public final class PartitionsDataManager extends DataManager {
 			keys.add(key);
 		}
 
-		// pass the partition to the partition manager
+		// create the population partition
 
 		PopulationPartition populationPartition;
 		if (partition.isDegenerate()) {

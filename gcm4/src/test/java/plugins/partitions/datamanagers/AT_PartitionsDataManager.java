@@ -48,6 +48,7 @@ import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -55,6 +56,14 @@ import util.wrappers.MutableInteger;
 
 @UnitTest(target = PartitionsDataManager.class)
 public final class AT_PartitionsDataManager {
+
+	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructor() {
+		PartitionsDataManager dataManager = new PartitionsDataManager();
+
+		assertNotNull(dataManager);
+	}
 
 	/*
 	 * Assigns randomized values for all attributes to all people. Values are

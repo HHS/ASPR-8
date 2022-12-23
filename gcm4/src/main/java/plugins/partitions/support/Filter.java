@@ -11,6 +11,8 @@ import util.errors.ContractException;
 
 public abstract class Filter {
 
+	protected Filter(){}
+	
 	private static class AndFilter extends Filter {
 		final Filter a;
 		final Filter b;
@@ -204,12 +206,12 @@ public abstract class Filter {
 	 * Preconditions :
 	 * 
 	 * @throws ContractException 
-	 * <li>{@linkplain NucleusError#NULL_SIMULATION_CONTEXT} if the context is not null</li>
+	 * <li>{@linkplain NucleusError#NULL_SIMULATION_CONTEXT} if the context is null</li>
 	 * 
 	 * 
-	 * <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id is not null</li>
+	 * <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id is null</li>
 	 * 
-	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is known</li>
+	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is unknown</li>
 	 */
 	public abstract boolean evaluate(SimulationContext simulationContext, PersonId personId);
 

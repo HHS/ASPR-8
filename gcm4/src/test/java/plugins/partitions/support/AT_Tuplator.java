@@ -1,6 +1,7 @@
 package plugins.partitions.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,7 +25,6 @@ import util.random.RandomGeneratorProvider;
  */
 @UnitTest(target = Tuplator.class)
 public class AT_Tuplator {
-	
 
 	/**
 	 * Tests {@link Tuplator#size()}
@@ -32,7 +32,7 @@ public class AT_Tuplator {
 	@Test
 	@UnitTestMethod(name = "size", args = {})
 	public void testSize() {
-		
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7820715406750309229L);
 		for (int i = 0; i < 100; i++) {
 			Builder builder = Tuplator.builder();
@@ -63,7 +63,7 @@ public class AT_Tuplator {
 	@Test
 	@UnitTestMethod(name = "dimensions", args = {})
 	public void testDimensions() {
-		
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7661626069466374878L);
 		for (int i = 0; i < 100; i++) {
 			Builder builder = Tuplator.builder();
@@ -128,15 +128,38 @@ public class AT_Tuplator {
 		/**
 		 * precondition tests
 		 */
-		assertThrows(IndexOutOfBoundsException.class, ()->tuplator.fillTuple(-2, tuple));
-		assertThrows(IndexOutOfBoundsException.class, ()->tuplator.fillTuple(-1, tuple));
-		assertThrows(IndexOutOfBoundsException.class, ()->tuplator.fillTuple(tuplator.size(), tuple));
-		assertThrows(IndexOutOfBoundsException.class, ()->tuplator.fillTuple(tuplator.size()+1, tuple));
-		assertThrows(IllegalArgumentException.class, ()->tuplator.fillTuple(0, null));
-		assertThrows(IllegalArgumentException.class, ()->tuplator.fillTuple(0, new int[tuplator.dimensions()-1]));
-		assertThrows(IllegalArgumentException.class, ()->tuplator.fillTuple(0, new int[tuplator.dimensions()+1]));
-		
+		assertThrows(IndexOutOfBoundsException.class, () -> tuplator.fillTuple(-2, tuple));
+		assertThrows(IndexOutOfBoundsException.class, () -> tuplator.fillTuple(-1, tuple));
+		assertThrows(IndexOutOfBoundsException.class, () -> tuplator.fillTuple(tuplator.size(), tuple));
+		assertThrows(IndexOutOfBoundsException.class, () -> tuplator.fillTuple(tuplator.size() + 1, tuple));
+		assertThrows(IllegalArgumentException.class, () -> tuplator.fillTuple(0, null));
+		assertThrows(IllegalArgumentException.class, () -> tuplator.fillTuple(0, new int[tuplator.dimensions() - 1]));
+		assertThrows(IllegalArgumentException.class, () -> tuplator.fillTuple(0, new int[tuplator.dimensions() + 1]));
 
 	}
 
+	@Test
+	@UnitTestMethod(target = Tuplator.Builder.class, name = "build", args = {})
+	public void testBuild() {
+		Tuplator.Builder builder = Tuplator.builder();
+		Tuplator tuplator = builder.build();
+
+		assertNotNull(tuplator);
+	}
+
+	@Test
+	@UnitTestMethod(target = Tuplator.Builder.class, name = "addDimension", args = { int.class })
+	public void testAddDimension() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1967914502607382607L);
+		for (int i = 0; i < 100; i++) {
+			Builder builder = Tuplator.builder();
+			int dimensionCount = randomGenerator.nextInt(4) + 1;
+			for (int j = 0; j < dimensionCount; j++) {
+				int dimSize = randomGenerator.nextInt(10) + 1;
+				builder.addDimension(dimSize);
+			}
+			int actualDimensionCount = builder.build().dimensions();
+			assertEquals(dimensionCount, actualDimensionCount);
+		}
+	}
 }
