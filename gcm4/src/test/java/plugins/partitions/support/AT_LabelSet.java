@@ -3,6 +3,7 @@ package plugins.partitions.support;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
+import util.errors.ContractException;
 
 /**
  * Test class for {@link LabelSetInfo}
@@ -153,5 +155,14 @@ public class AT_LabelSet {
 		LabelSet labelSet = LabelSet.builder().setLabel(Dimension.DIM_1, expectedLabel1).setLabel(Dimension.DIM_2, expectedLabel2).build();
 		assertEquals(expectedLabel1, labelSet.getLabel(Dimension.DIM_1).get());
 		assertEquals(expectedLabel2, labelSet.getLabel(Dimension.DIM_2).get());
+		
+		//precondition test: if the label is null
+		ContractException contractException = assertThrows(ContractException.class, ()->	LabelSet.builder().setLabel(null, expectedLabel1));
+		assertEquals(PartitionError.NULL_PARTITION_LABEL_DIMENSION, contractException.getErrorType());
+		
+		//precondition test: if the dimension is null
+		contractException = assertThrows(ContractException.class, ()->	LabelSet.builder().setLabel(Dimension.DIM_1, null));
+		assertEquals(PartitionError.NULL_PARTITION_LABEL, contractException.getErrorType());
+
 	}
 }
