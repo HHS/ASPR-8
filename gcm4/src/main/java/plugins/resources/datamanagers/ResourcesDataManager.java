@@ -1278,8 +1278,8 @@ public final class ResourcesDataManager extends DataManager {
 	}
 
 	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
-		PersonId personId = personImminentAdditionEvent.getPersonId();
-		PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
+		PersonId personId = personImminentAdditionEvent.personId();
+		PersonConstructionData personConstructionData = personImminentAdditionEvent.personConstructionData();
 		validatePersonExists(personId);
 		List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);
 		for (final ResourceInitialization resourceAssignment : resourceAssignments) {
@@ -1296,7 +1296,7 @@ public final class ResourcesDataManager extends DataManager {
 
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
 
-		PersonId personId = personRemovalEvent.getPersonId();
+		PersonId personId = personRemovalEvent.personId();
 		for (final IntValueContainer intValueContainer : personResourceValues.values()) {
 			intValueContainer.setLongValue(personId.getValue(), 0);
 		}

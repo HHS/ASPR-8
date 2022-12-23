@@ -197,7 +197,7 @@ public final class ResourceReport extends PeriodicReport {
 
 
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
-		PersonId personId = personAdditionEvent.getPersonId();
+		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (final ResourceId resourceId : resourceIds) {
 			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
@@ -209,7 +209,7 @@ public final class ResourceReport extends PeriodicReport {
 
 	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 
-		PersonId personId = personImminentRemovalEvent.getPersonId();
+		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 
 		for (ResourceId resourceId : resourceIds) {

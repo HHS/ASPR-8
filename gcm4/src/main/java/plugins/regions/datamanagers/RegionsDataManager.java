@@ -539,10 +539,10 @@ public final class RegionsDataManager extends DataManager {
 	}
 
 	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
-		final PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
+		final PersonConstructionData personConstructionData = personImminentAdditionEvent.personConstructionData();
 		final RegionId regionId = personConstructionData.getValue(RegionId.class).orElse(null);
 		validateRegionId(regionId);
-		final PersonId personId = personImminentAdditionEvent.getPersonId();
+		final PersonId personId = personImminentAdditionEvent.personId();
 
 		validatePersonExists(personId);
 		validateRegionId(regionId);
@@ -575,7 +575,7 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 */
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
-		final PersonId personId = personRemovalEvent.getPersonId();
+		final PersonId personId = personRemovalEvent.personId();
 		validatePersonContained(personId);
 		final int regionIndex = regionValues.getValueAsInt(personId.getValue());
 		final RegionId oldRegionId = indexToRegionMap.get(regionIndex);

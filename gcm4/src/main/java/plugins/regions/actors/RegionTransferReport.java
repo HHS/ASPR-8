@@ -92,7 +92,7 @@ public final class RegionTransferReport extends PeriodicReport {
 
 
 	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
-		PersonId personId = personAdditionEvent.getPersonId();
+		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		increment(regionId, regionId);
 	}

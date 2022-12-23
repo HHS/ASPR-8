@@ -1597,7 +1597,7 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
-		PersonId personId = personRemovalEvent.getPersonId();
+		PersonId personId = personRemovalEvent.personId();
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		peopleToGroupsMap.setValue(personId.getValue(), null);
 		if (groups != null) {

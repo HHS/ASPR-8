@@ -559,9 +559,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
 
-		PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
+		PersonConstructionData personConstructionData = personImminentAdditionEvent.personConstructionData();
 
-		PersonId personId = personImminentAdditionEvent.getPersonId();
+		PersonId personId = personImminentAdditionEvent.personId();
 
 		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
 
@@ -640,7 +640,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
-		PersonId personId = personRemovalEvent.getPersonId();
+		PersonId personId = personRemovalEvent.personId();
 
 		for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
 			final IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);

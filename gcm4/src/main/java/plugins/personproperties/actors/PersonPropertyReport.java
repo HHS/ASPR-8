@@ -268,7 +268,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	private void handlePersonAdditionEvent(ActorContext context, PersonAdditionEvent personAdditionEvent) {
-		PersonId personId = personAdditionEvent.getPersonId();
+		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
@@ -289,7 +289,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	private void handlePersonImminentRemovalEvent(ActorContext context, PersonImminentRemovalEvent personImminentRemovalEvent) {
-		PersonId personId = personImminentRemovalEvent.getPersonId();
+		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (PersonPropertyId personPropertyId : includedPersonPropertyIds) {
 			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);

@@ -197,8 +197,8 @@ public final class AT_PeopleDataManager {
 		}
 
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
-			c.subscribe(EventFilter.builder(PersonImminentAdditionEvent.class).build(), (c2, e) -> observedImminentPersonIds.add(e.getPersonId()));
-			c.subscribe(EventFilter.builder(PersonAdditionEvent.class).build(), (c2, e) -> observedPersonIds.add(e.getPersonId()));
+			c.subscribe(EventFilter.builder(PersonImminentAdditionEvent.class).build(), (c2, e) -> observedImminentPersonIds.add(e.personId()));
+			c.subscribe(EventFilter.builder(PersonAdditionEvent.class).build(), (c2, e) -> observedPersonIds.add(e.personId()));
 		}));
 
 		// have the agent add a few people and show they were added
@@ -320,8 +320,8 @@ public final class AT_PeopleDataManager {
 		// have the observer subscribe to the removals and record them onto the
 		// observed removals
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
-			c.subscribe(EventFilter.builder(PersonRemovalEvent.class).build(), (c2, e) -> observedRemovals.add(e.getPersonId()));
-			c.subscribe(EventFilter.builder(PersonImminentRemovalEvent.class).build(), (c2, e) -> observedImminentRemovals.add(e.getPersonId()));
+			c.subscribe(EventFilter.builder(PersonRemovalEvent.class).build(), (c2, e) -> observedRemovals.add(e.personId()));
+			c.subscribe(EventFilter.builder(PersonImminentRemovalEvent.class).build(), (c2, e) -> observedImminentRemovals.add(e.personId()));
 		}));
 
 		// have the agent add a few people
@@ -496,7 +496,7 @@ public final class AT_PeopleDataManager {
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			EventFilter<PersonAdditionEvent> eventFilter = peopleDataManager.getEventFilterForPersonAdditionEvent();
-			c.subscribe(eventFilter, (c2, e) -> observedPersonIds.add(e.getPersonId()));
+			c.subscribe(eventFilter, (c2, e) -> observedPersonIds.add(e.personId()));
 		}));
 
 		// have the agent add a few people and show they were added
@@ -534,7 +534,7 @@ public final class AT_PeopleDataManager {
 		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(1, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			EventFilter<PersonImminentRemovalEvent> eventFilter = peopleDataManager.getEventFilterForPersonImminentRemovalEvent();
-			c.subscribe(eventFilter, (c2, e) -> observedRemovals.add(e.getPersonId()));			
+			c.subscribe(eventFilter, (c2, e) -> observedRemovals.add(e.personId()));
 		}));
 
 		// have the actor add a few people

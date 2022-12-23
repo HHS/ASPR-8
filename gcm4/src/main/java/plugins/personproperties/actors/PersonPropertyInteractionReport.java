@@ -190,7 +190,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 
 
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
-		PersonId personId = personAdditionEvent.getPersonId();
+		PersonId personId = personAdditionEvent.personId();
 		final Object regionId = regionsDataManager.getPersonRegion(personId);
 		increment(regionId, personId);
 	}
@@ -207,7 +207,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
-		PersonId personId = personImminentRemovalEvent.getPersonId();
+		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		decrement(regionId, personId);
 	}

@@ -408,7 +408,7 @@ public final class PartitionsDataManager extends DataManager {
 	}
 
 	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonAdditionEvent personAdditionEvent) {
-		final PersonId personId = personAdditionEvent.getPersonId();
+		final PersonId personId = personAdditionEvent.personId();
 		for (final Object key : getKeys()) {
 			final PopulationPartition populationPartition = getPopulationPartition(key);
 			populationPartition.attemptPersonAddition(personId);
@@ -419,7 +419,7 @@ public final class PartitionsDataManager extends DataManager {
 
 		for (final Object key : getKeys()) {
 			final PopulationPartition populationPartition = getPopulationPartition(key);
-			populationPartition.attemptPersonRemoval(personRemovalEvent.getPersonId());
+			populationPartition.attemptPersonRemoval(personRemovalEvent.personId());
 		}
 
 	}
