@@ -1,7 +1,6 @@
 package plugins.materials.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -23,10 +22,6 @@ public class AT_BatchPropertyDefinitionEvent {
     public void testConstructor() {
         MaterialId materialId = TestMaterialId.MATERIAL_1;
         BatchPropertyId batchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
-
-        BatchPropertyDefinitionEvent event = new BatchPropertyDefinitionEvent(materialId, batchPropertyId);
-
-        assertNotNull(event);
 
         // precondition: null material id
         ContractException contractException = assertThrows(ContractException.class,

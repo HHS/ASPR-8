@@ -1,13 +1,11 @@
 package plugins.personproperties.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
@@ -19,10 +17,6 @@ public class AT_PersonPropertyDefinitionEvent {
     @Test
     @UnitTestConstructor(args = { PersonPropertyId.class })
     public void testConstructor() {
-        PersonPropertyDefinitionEvent personPropertyDefinitionEvent = new PersonPropertyDefinitionEvent(
-                TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
-
-        assertNotNull(personPropertyDefinitionEvent);
 
         // precondition: person property id is null
         ContractException contractException = assertThrows(ContractException.class,
