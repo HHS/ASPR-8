@@ -145,7 +145,7 @@ public final class AttributesDataManager extends DataManager {
 
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
 		for (AttributeId attributeId : attributeValues.keySet()) {
-			attributeValues.get(attributeId).remove(personRemovalEvent.getPersonId());
+			attributeValues.get(attributeId).remove(personRemovalEvent.personId());
 		}
 	}
 
@@ -246,7 +246,7 @@ public final class AttributesDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<AttributeUpdateEvent> functionMap = //
 			IdentifiableFunctionMap	.builder(AttributeUpdateEvent.class)//
-									.put(EventFunctionId.ATTRIBUTE_ID, e -> e.getAttributeId())//
+									.put(EventFunctionId.ATTRIBUTE_ID, e -> e.attributeId())//
 									.build();//
 
 	/**

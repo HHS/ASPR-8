@@ -153,7 +153,7 @@ public final class PersonResourceReport extends PeriodicReport {
 	}
 
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
-		PersonId personId = personAdditionEvent.getPersonId();
+		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 
 		for (final ResourceId resourceId : resourceIds) {
@@ -170,7 +170,7 @@ public final class PersonResourceReport extends PeriodicReport {
 
 	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 
-		PersonId personId = personImminentRemovalEvent.getPersonId();
+		PersonId personId = personImminentRemovalEvent.personId();
 
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 
@@ -187,13 +187,13 @@ public final class PersonResourceReport extends PeriodicReport {
 	}
 
 	private void handlePersonResourceUpdateEvent(ActorContext actorContext, PersonResourceUpdateEvent personResourceUpdateEvent) {
-		ResourceId resourceId = personResourceUpdateEvent.getResourceId();
+		ResourceId resourceId = personResourceUpdateEvent.resourceId();
 		if (!resourceIds.contains(resourceId)) {
 			return;
 		}
-		PersonId personId = personResourceUpdateEvent.getPersonId();
-		long currentLevel = personResourceUpdateEvent.getCurrentResourceLevel();
-		long previousLevel = personResourceUpdateEvent.getPreviousResourceLevel();
+		PersonId personId = personResourceUpdateEvent.personId();
+		long currentLevel = personResourceUpdateEvent.currentResourceLevel();
+		long previousLevel = personResourceUpdateEvent.previousResourceLevel();
 		long amount = currentLevel - previousLevel;
 
 		if (amount == 0) {
@@ -224,9 +224,9 @@ public final class PersonResourceReport extends PeriodicReport {
 	}
 
 	private void handlePersonRegionUpdateEvent(ActorContext actorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
-		PersonId personId = personRegionUpdateEvent.getPersonId();
-		RegionId previousRegionId = personRegionUpdateEvent.getPreviousRegionId();
-		RegionId currentRegionId = personRegionUpdateEvent.getCurrentRegionId();
+		PersonId personId = personRegionUpdateEvent.personId();
+		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
+		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
 
 		for (final ResourceId resourceId : resourceIds) {
 			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
@@ -369,7 +369,7 @@ public final class PersonResourceReport extends PeriodicReport {
 	}
 
 	private void handleResourceIdAdditionEvent(ActorContext actorContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
-		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 		if (!resourceIds.contains(resourceId)) {
 			resourceIds.add(resourceId);
 			for (RegionId regionID : regionMap.keySet()) {

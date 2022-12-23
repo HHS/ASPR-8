@@ -72,11 +72,11 @@ public final class ResourceFilter extends Filter {
 	}
 
 	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonResourceUpdateEvent event) {
-		if (event.getResourceId().equals(resourceId)) {
-			long previousResourceLevel = event.getPreviousResourceLevel();
-			long currentResourceLevel = event.getCurrentResourceLevel();
+		if (event.resourceId().equals(resourceId)) {
+			long previousResourceLevel = event.previousResourceLevel();
+			long currentResourceLevel = event.currentResourceLevel();
 			if (equality.isCompatibleComparisonValue(Long.compare(previousResourceLevel, resourceValue)) != equality.isCompatibleComparisonValue(Long.compare(currentResourceLevel, resourceValue))) {
-				return Optional.of(event.getPersonId());
+				return Optional.of(event.personId());
 			}
 		}
 		return Optional.empty();

@@ -37,8 +37,8 @@ public final class PersonPropertyLabeler implements Labeler {
 
 	private Optional<PersonId> getPersonId(PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonId result = null;
-		if (personPropertyUpdateEvent.getPersonPropertyId().equals(personPropertyId)) {
-			result = personPropertyUpdateEvent.getPersonId();
+		if (personPropertyUpdateEvent.personPropertyId().equals(personPropertyId)) {
+			result = personPropertyUpdateEvent.personId();
 		}
 		return Optional.ofNullable(result);
 	}
@@ -70,7 +70,7 @@ public final class PersonPropertyLabeler implements Labeler {
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		PersonPropertyUpdateEvent personPropertyUpdateEvent =(PersonPropertyUpdateEvent)event;
-		return personPropertyValueLabelingFunction.apply(personPropertyUpdateEvent.getPreviousPropertyValue());
+		return personPropertyValueLabelingFunction.apply(personPropertyUpdateEvent.previousPropertyValue());
 	}
 
 }

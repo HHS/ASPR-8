@@ -166,7 +166,7 @@ public final class AT_GlobalPropertiesDataManager {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
 			EventFilter<GlobalPropertyUpdateEvent> eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(globalPropertyId);
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGlobalPropertyId(), e.getPreviousPropertyValue(), e.getCurrentPropertyValue());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.globalPropertyId(), e.previousPropertyValue(), e.currentPropertyValue());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -568,7 +568,7 @@ public final class AT_GlobalPropertiesDataManager {
 			EventFilter<GlobalPropertyUpdateEvent> eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent();
 			assertNotNull(eventFilter);
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c.getTime(), e.getGlobalPropertyId(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(c.getTime(), e.globalPropertyId(), e.currentPropertyValue()));
 			});
 
 		}));
@@ -624,13 +624,13 @@ public final class AT_GlobalPropertiesDataManager {
 			EventFilter<GlobalPropertyUpdateEvent> eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE);
 			assertNotNull(eventFilter);
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c.getTime(), e.getGlobalPropertyId(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(c.getTime(), e.globalPropertyId(), e.currentPropertyValue()));
 			});
 
 			eventFilter = globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE);
 			assertNotNull(eventFilter);
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c.getTime(), e.getGlobalPropertyId(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(c.getTime(), e.globalPropertyId(), e.currentPropertyValue()));
 			});
 
 		}));

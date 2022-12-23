@@ -162,36 +162,36 @@ public final class BatchStatusReport {
 	}
 
 	private void handleBatchAdditionEvent(ActorContext actorContext, BatchAdditionEvent batchAdditionEvent) {
-		BatchId batchId = batchAdditionEvent.getBatchId();
+		BatchId batchId = batchAdditionEvent.batchId();
 		BatchRecord batchRecord = createBatchRecord(actorContext, batchId);
 		reportBatch(actorContext, batchRecord);
 	}
 
 	private void handleBatchImminentRemovalEvent(ActorContext actorContext, BatchImminentRemovalEvent batchImminentRemovalEvent) {
-		BatchId batchId = batchImminentRemovalEvent.getBatchId();
+		BatchId batchId = batchImminentRemovalEvent.batchId();
 		BatchRecord batchRecord = batchRecords.remove(batchId);
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
 
 	private void handleBatchAmountUpdateEvent(ActorContext actorContext, BatchAmountUpdateEvent batchAmountUpdateEvent) {
-		BatchId batchId = batchAmountUpdateEvent.getBatchId();
+		BatchId batchId = batchAmountUpdateEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
-		batchRecord.amount = batchAmountUpdateEvent.getCurrentAmount();
+		batchRecord.amount = batchAmountUpdateEvent.currentAmount();
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
 
 	private void handleStageMembershipAdditionEvent(ActorContext actorContext, StageMembershipAdditionEvent stageMembershipAdditionEvent) {
-		BatchId batchId = stageMembershipAdditionEvent.getBatchId();
+		BatchId batchId = stageMembershipAdditionEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
-		batchRecord.stageId = stageMembershipAdditionEvent.getStageId();
+		batchRecord.stageId = stageMembershipAdditionEvent.stageId();
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}
 
 	private void handleStageMembershipRemovalEvent(ActorContext actorContext, StageMembershipRemovalEvent stageMembershipRemovalEvent) {
-		BatchId batchId = stageMembershipRemovalEvent.getBatchId();
+		BatchId batchId = stageMembershipRemovalEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
 		batchRecord.stageId = null;
 		batchRecord.time = actorContext.getTime();
@@ -199,9 +199,9 @@ public final class BatchStatusReport {
 	}
 
 	private void handleBatchPropertyUpdateEvent(ActorContext actorContext, BatchPropertyUpdateEvent batchPropertyUpdateEvent) {
-		BatchId batchId = batchPropertyUpdateEvent.getBatchId();
+		BatchId batchId = batchPropertyUpdateEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
-		batchRecord.propertyValues.put(batchPropertyUpdateEvent.getBatchPropertyId(), batchPropertyUpdateEvent.getCurrentPropertyValue());
+		batchRecord.propertyValues.put(batchPropertyUpdateEvent.batchPropertyId(), batchPropertyUpdateEvent.currentPropertyValue());
 		batchRecord.time = actorContext.getTime();
 		reportBatch(actorContext, batchRecord);
 	}

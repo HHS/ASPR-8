@@ -359,7 +359,7 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	private void handleResourceIdAdditionEvent(DataManagerContext dataManagerContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
-		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 		if (resourceId == null || resourceIds.contains(resourceId)) {
 			return;
 		}
@@ -2342,8 +2342,8 @@ public final class MaterialsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<MaterialsProducerPropertyUpdateEvent> materialsProducerPropertyUpdateMap = //
 			IdentifiableFunctionMap	.builder(MaterialsProducerPropertyUpdateEvent.class)//
-									.put(MaterialsProducerPropertyUpdateEventFunctionId.PRODUCER, e -> e.getMaterialsProducerId())//
-									.put(MaterialsProducerPropertyUpdateEventFunctionId.PROPERTY, e -> e.getMaterialsProducerPropertyId())//
+									.put(MaterialsProducerPropertyUpdateEventFunctionId.PRODUCER, e -> e.materialsProducerId())//
+									.put(MaterialsProducerPropertyUpdateEventFunctionId.PROPERTY, e -> e.materialsProducerPropertyId())//
 									.build();//
 
 	/**
@@ -2394,8 +2394,8 @@ public final class MaterialsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<MaterialsProducerResourceUpdateEvent> materialsProducerResourceUpdateMap = //
 			IdentifiableFunctionMap	.builder(MaterialsProducerResourceUpdateEvent.class)//
-									.put(MaterialsProducerResourceUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
-									.put(MaterialsProducerResourceUpdateEventFunctionId.PRODUCER, e -> e.getMaterialsProducerId())//
+									.put(MaterialsProducerResourceUpdateEventFunctionId.RESOURCE, e -> e.resourceId())//
+									.put(MaterialsProducerResourceUpdateEventFunctionId.PRODUCER, e -> e.materialsProducerId())//
 									.build();//
 
 	/**
@@ -2460,9 +2460,9 @@ public final class MaterialsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<StageMaterialsProducerUpdateEvent> stageMaterialsProducerUpdateMap = //
 			IdentifiableFunctionMap	.builder(StageMaterialsProducerUpdateEvent.class)//
-									.put(StageMaterialsProducerUpdateEventFunctionId.SOURCE, e -> e.getPreviousMaterialsProducerId())//
-									.put(StageMaterialsProducerUpdateEventFunctionId.DESTINATION, e -> e.getCurrentMaterialsProducerId())//
-									.put(StageMaterialsProducerUpdateEventFunctionId.STAGE, e -> e.getStageId())//
+									.put(StageMaterialsProducerUpdateEventFunctionId.SOURCE, e -> e.previousMaterialsProducerId())//
+									.put(StageMaterialsProducerUpdateEventFunctionId.DESTINATION, e -> e.currentMaterialsProducerId())//
+									.put(StageMaterialsProducerUpdateEventFunctionId.STAGE, e -> e.stageId())//
 									.build();//
 
 	/**
@@ -2543,7 +2543,7 @@ public final class MaterialsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<StageOfferUpdateEvent> stageOfferUpdateMap = //
 			IdentifiableFunctionMap	.builder(StageOfferUpdateEvent.class)//
-									.put(StageOfferUpdateEventFunctionId.STAGE, e -> e.getStageId())//
+									.put(StageOfferUpdateEventFunctionId.STAGE, e -> e.stageId())//
 									.build();//
 
 	/**

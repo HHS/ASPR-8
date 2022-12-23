@@ -1278,8 +1278,8 @@ public final class ResourcesDataManager extends DataManager {
 	}
 
 	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
-		PersonId personId = personImminentAdditionEvent.getPersonId();
-		PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
+		PersonId personId = personImminentAdditionEvent.personId();
+		PersonConstructionData personConstructionData = personImminentAdditionEvent.personConstructionData();
 		validatePersonExists(personId);
 		List<ResourceInitialization> resourceAssignments = personConstructionData.getValues(ResourceInitialization.class);
 		for (final ResourceInitialization resourceAssignment : resourceAssignments) {
@@ -1296,7 +1296,7 @@ public final class ResourcesDataManager extends DataManager {
 
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
 
-		PersonId personId = personRemovalEvent.getPersonId();
+		PersonId personId = personRemovalEvent.personId();
 		for (final IntValueContainer intValueContainer : personResourceValues.values()) {
 			intValueContainer.setLongValue(personId.getValue(), 0);
 		}
@@ -1309,9 +1309,9 @@ public final class ResourcesDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<PersonResourceUpdateEvent> personResourceUpdateFunctionMap = //
 			IdentifiableFunctionMap	.builder(PersonResourceUpdateEvent.class)//
-									.put(PersonResourceUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
-									.put(PersonResourceUpdateEventFunctionId.REGION, e -> regionsDataManager.getPersonRegion(e.getPersonId()))//
-									.put(PersonResourceUpdateEventFunctionId.PERSON, e -> e.getPersonId())//
+									.put(PersonResourceUpdateEventFunctionId.RESOURCE, e -> e.resourceId())//
+									.put(PersonResourceUpdateEventFunctionId.REGION, e -> regionsDataManager.getPersonRegion(e.personId()))//
+									.put(PersonResourceUpdateEventFunctionId.PERSON, e -> e.personId())//
 									.build();//
 
 	/**
@@ -1404,8 +1404,8 @@ public final class ResourcesDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<RegionResourceUpdateEvent> regionResourceUpdateMap = //
 			IdentifiableFunctionMap	.builder(RegionResourceUpdateEvent.class)//
-									.put(RegionResourceUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
-									.put(RegionResourceUpdateEventFunctionId.REGION, e -> e.getRegionId())//
+									.put(RegionResourceUpdateEventFunctionId.RESOURCE, e -> e.resourceId())//
+									.put(RegionResourceUpdateEventFunctionId.REGION, e -> e.regionId())//
 									.build();//
 
 	/**
@@ -1474,8 +1474,8 @@ public final class ResourcesDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<ResourcePropertyUpdateEvent> resourcePropertyUpdateMap = //
 			IdentifiableFunctionMap	.builder(ResourcePropertyUpdateEvent.class)//
-									.put(ResourcePropertyUpdateEventFunctionId.RESOURCE, e -> e.getResourceId())//
-									.put(ResourcePropertyUpdateEventFunctionId.PROPERTY, e -> e.getResourcePropertyId())//
+									.put(ResourcePropertyUpdateEventFunctionId.RESOURCE, e -> e.resourceId())//
+									.put(ResourcePropertyUpdateEventFunctionId.PROPERTY, e -> e.resourcePropertyId())//
 									.build();//
 
 	/**

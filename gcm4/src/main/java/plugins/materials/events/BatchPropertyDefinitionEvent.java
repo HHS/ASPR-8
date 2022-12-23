@@ -15,10 +15,7 @@ import util.errors.ContractException;
  *
  */
 @Immutable
-public class BatchPropertyDefinitionEvent implements Event{
-
-	private BatchPropertyId batchPropertyId;
-	private MaterialId materialId;
+public record BatchPropertyDefinitionEvent(MaterialId materialId, BatchPropertyId batchPropertyId) implements Event{
 
 	/**
 	 * Constructs the event
@@ -29,29 +26,13 @@ public class BatchPropertyDefinitionEvent implements Event{
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>
 	 */
-	public BatchPropertyDefinitionEvent(MaterialId materialId, BatchPropertyId batchPropertyId) {
+	public BatchPropertyDefinitionEvent {
 		if (materialId == null) {
 			throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 		}
 		if (batchPropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
-		this.materialId = materialId;
-		this.batchPropertyId = batchPropertyId;
-	}
-
-	/**
-	 * Returns the batch property id
-	 */
-	public BatchPropertyId getBatchPropertyId() {
-		return batchPropertyId;
-	}
-
-	/**
-	 * Returns the material id
-	 */
-	public MaterialId getMaterialId() {
-		return materialId;
 	}
 
 }

@@ -9,7 +9,6 @@ import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,34 +22,12 @@ public class AT_ResourcePropertyDefinitionEvent {
         TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
         TestResourceId testResourceId = TestResourceId.RESOURCE_1;
 
+        // test case: null resource id
         ContractException resourceIdContractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(null, testResourcePropertyId));
         assertEquals(resourceIdContractException.getErrorType(), ResourceError.NULL_RESOURCE_ID);
 
+        // test case: null property id
         ContractException propertyIdContractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(testResourceId, null));
         assertEquals(propertyIdContractException.getErrorType(), PropertyError.NULL_PROPERTY_ID);
     }
-
-    @Test
-    @UnitTestMethod(name = "getResourceId", args = {})
-    public void testGetResourceId() {
-        TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-        TestResourceId testResourceId = TestResourceId.RESOURCE_1;
-        ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent = new ResourcePropertyDefinitionEvent(testResourceId, testResourcePropertyId);
-
-        assertNotNull(resourcePropertyDefinitionEvent.getResourceId());
-        assertEquals(resourcePropertyDefinitionEvent.getResourceId(), testResourceId);
-    }
-
-    @Test
-    @UnitTestMethod(name = "getResourcePropertyId", args = {})
-    public void testGetResourcePropertyId() {
-        TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
-        TestResourceId testResourceId = TestResourceId.RESOURCE_1;
-        ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent = new ResourcePropertyDefinitionEvent(testResourceId, testResourcePropertyId);
-
-        assertNotNull(resourcePropertyDefinitionEvent.getResourcePropertyId());
-        assertEquals(resourcePropertyDefinitionEvent.getResourcePropertyId(), testResourcePropertyId);
-
-    }
-
 }

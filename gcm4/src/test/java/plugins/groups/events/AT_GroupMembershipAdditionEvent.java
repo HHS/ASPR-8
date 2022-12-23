@@ -1,14 +1,11 @@
 package plugins.groups.events;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 
 import plugins.groups.support.GroupId;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
-import tools.annotations.UnitTestMethod;
 
 @UnitTest(target = GroupMembershipAdditionEvent.class)
 public class AT_GroupMembershipAdditionEvent {
@@ -17,23 +14,5 @@ public class AT_GroupMembershipAdditionEvent {
 	@UnitTestConstructor(args = { PersonId.class, GroupId.class })
 	public void testConstructor() {
 		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(name = "getGroupId", args = {})
-	public void testGetGroupId() {
-		PersonId personId = new PersonId(12);
-		GroupId groupId = new GroupId(23);
-		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
-		assertEquals(groupId, groupMembershipAdditionEvent.getGroupId());
-	}
-
-	@Test
-	@UnitTestMethod(name = "getPersonId", args = {})
-	public void testGetPersonId() {
-		PersonId personId = new PersonId(12);
-		GroupId groupId = new GroupId(23);
-		GroupMembershipAdditionEvent groupMembershipAdditionEvent = new GroupMembershipAdditionEvent(personId, groupId);
-		assertEquals(personId, groupMembershipAdditionEvent.getPersonId());
 	}
 }

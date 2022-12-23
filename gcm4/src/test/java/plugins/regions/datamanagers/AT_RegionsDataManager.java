@@ -811,7 +811,7 @@ public class AT_RegionsDataManager {
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(testRegionId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+					recievedObservations.add(new MultiKey(e.previousRegionId(), e.currentRegionId(), e.personId(), c2.getTime()));
 				});
 			}
 		}));
@@ -976,12 +976,12 @@ public class AT_RegionsDataManager {
 			EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_1,
 					TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.regionId(), e.regionPropertyId(), e.currentPropertyValue()));
 			});
 
 			eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(TestRegionId.REGION_2, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE);
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.regionId(), e.regionPropertyId(), e.currentPropertyValue()));
 			});
 
 		}));
@@ -1427,7 +1427,7 @@ public class AT_RegionsDataManager {
 		// add an observer
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(RegionPropertyDefinitionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionPropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.regionPropertyId());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -1738,7 +1738,7 @@ public class AT_RegionsDataManager {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(testRegionId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+					recievedObservations.add(new MultiKey(e.previousRegionId(), e.currentRegionId(), e.personId(), c2.getTime()));
 				});
 			}
 		}));
@@ -1834,7 +1834,7 @@ public class AT_RegionsDataManager {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(testRegionId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+					recievedObservations.add(new MultiKey(e.previousRegionId(), e.currentRegionId(), e.personId(), c2.getTime()));
 				});
 			}
 		}));
@@ -1931,7 +1931,7 @@ public class AT_RegionsDataManager {
 					selectedPeople.add(personId);
 					EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent(personId);
 					c.subscribe(eventFilter, (c2, e) -> {
-						recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+						recievedObservations.add(new MultiKey(e.previousRegionId(), e.currentRegionId(), e.personId(), c2.getTime()));
 					});
 				}
 			}
@@ -2024,7 +2024,7 @@ public class AT_RegionsDataManager {
 			for (PersonId personId : people) {
 				EventFilter<PersonRegionUpdateEvent> eventFilter = regionsDataManager.getEventFilterForPersonRegionUpdateEvent(personId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					recievedObservations.add(new MultiKey(e.getPreviousRegionId(), e.getCurrentRegionId(), e.getPersonId(), c2.getTime()));
+					recievedObservations.add(new MultiKey(e.previousRegionId(), e.currentRegionId(), e.personId(), c2.getTime()));
 				});
 			}
 		}));
@@ -2088,7 +2088,7 @@ public class AT_RegionsDataManager {
 			for (TestRegionPropertyId testRegionPropertyId : selectedPropertyIds) {
 				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(testRegionPropertyId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.regionId(), e.regionPropertyId(), e.currentPropertyValue()));
 				});
 			}
 		}));
@@ -2173,7 +2173,7 @@ public class AT_RegionsDataManager {
 				RegionPropertyId regionPropertyId = pair.getSecond();
 				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(regionId, regionPropertyId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.regionId(), e.regionPropertyId(), e.currentPropertyValue()));
 				});
 			}
 		}));
@@ -2264,7 +2264,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getRegionId(), e.getRegionPropertyId(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.regionId(), e.regionPropertyId(), e.currentPropertyValue()));
 			});
 
 		}));
@@ -2370,7 +2370,7 @@ public class AT_RegionsDataManager {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			EventFilter<RegionPropertyDefinitionEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getRegionPropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.regionPropertyId());
 				actualObservations.add(multiKey);
 			});
 		}));

@@ -559,9 +559,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private void handlePersonImminentAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {
 
-		PersonConstructionData personConstructionData = personImminentAdditionEvent.getPersonConstructionData();
+		PersonConstructionData personConstructionData = personImminentAdditionEvent.personConstructionData();
 
-		PersonId personId = personImminentAdditionEvent.getPersonId();
+		PersonId personId = personImminentAdditionEvent.personId();
 
 		List<PersonPropertyInitialization> personPropertyAssignments = personConstructionData.getValues(PersonPropertyInitialization.class);
 
@@ -640,7 +640,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	private void handlePersonImminentRemovalEvent(final DataManagerContext dataManagerContext, final PersonRemovalEvent personRemovalEvent) {
-		PersonId personId = personRemovalEvent.getPersonId();
+		PersonId personId = personRemovalEvent.personId();
 
 		for (final PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
 			final IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
@@ -669,9 +669,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
 			IdentifiableFunctionMap	.builder(PersonPropertyUpdateEvent.class)//
-									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.getPersonPropertyId())//
-									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.getPersonId()))//
-									.put(EventFunctionId.PERSON_ID, e -> e.getPersonId())//
+									.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.personPropertyId())//
+									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.personId()))//
+									.put(EventFunctionId.PERSON_ID, e -> e.personId())//
 									.build();//
 
 

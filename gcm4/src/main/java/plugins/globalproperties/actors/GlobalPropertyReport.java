@@ -185,9 +185,9 @@ public final class GlobalPropertyReport {
 	}
 
 	private void handleGlobalPropertyUpdateEvent(final ActorContext actorContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
-		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.getGlobalPropertyId();
+		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.globalPropertyId();
 		if (data.includedPropertyIds.contains(globalPropertyId)) {
-			writeProperty(actorContext, globalPropertyId, globalPropertyUpdateEvent.getCurrentPropertyValue());
+			writeProperty(actorContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
 		}
 	}
 

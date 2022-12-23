@@ -1616,7 +1616,7 @@ public final class AT_PartitionsDataManager {
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(PersonImminentRemovalEvent.class).build(), (c2, e) -> {
 
-				PersonId personId = e.getPersonId();
+				PersonId personId = e.personId();
 
 				// show that the person is still in the partition
 				PartitionsDataManager partitionsDataManager = c2.getDataManager(PartitionsDataManager.class);

@@ -70,8 +70,8 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		if (groupsDataManager == null) {
 			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
-		if (groupsDataManager.getGroupType(event.getGroupId()).equals(groupTypeId)) {
-			return Optional.of(event.getPersonId());
+		if (groupsDataManager.getGroupType(event.groupId()).equals(groupTypeId)) {
+			return Optional.of(event.personId());
 		}
 		return Optional.empty();
 	}
@@ -80,8 +80,8 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		if (groupsDataManager == null) {
 			groupsDataManager = simulationContext.getDataManager(GroupsDataManager.class);
 		}
-		if (groupsDataManager.getGroupType(event.getGroupId()).equals(groupTypeId)) {
-			return Optional.of(event.getPersonId());
+		if (groupsDataManager.getGroupType(event.groupId()).equals(groupTypeId)) {
+			return Optional.of(event.personId());
 		}
 		return Optional.empty();
 	}

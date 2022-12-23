@@ -76,11 +76,11 @@ public final class MaterialsProducerResourceReport {
 	}
 
 	private void handleMaterialsProducerResourceUpdateEvent(ActorContext actorContext, MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
-		long currentResourceLevel = materialsProducerResourceUpdateEvent.getCurrentResourceLevel();
-		long previousResourceLevel = materialsProducerResourceUpdateEvent.getPreviousResourceLevel();
+		long currentResourceLevel = materialsProducerResourceUpdateEvent.currentResourceLevel();
+		long previousResourceLevel = materialsProducerResourceUpdateEvent.previousResourceLevel();
 		long amount = currentResourceLevel - previousResourceLevel;
-		ResourceId resourceId = materialsProducerResourceUpdateEvent.getResourceId();
-		MaterialsProducerId materialsProducerId = materialsProducerResourceUpdateEvent.getMaterialsProducerId();
+		ResourceId resourceId = materialsProducerResourceUpdateEvent.resourceId();
+		MaterialsProducerId materialsProducerId = materialsProducerResourceUpdateEvent.materialsProducerId();
 		if (amount > 0) {
 			writeReportItem(actorContext, resourceId, materialsProducerId, Action.ADDED, amount);
 		} else {
@@ -102,7 +102,7 @@ public final class MaterialsProducerResourceReport {
 	}
 
 	private void handleResourceIdAdditionEvent(ActorContext actorContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
-		ResourceId resourceId = resourceIdAdditionEvent.getResourceId();
+		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);

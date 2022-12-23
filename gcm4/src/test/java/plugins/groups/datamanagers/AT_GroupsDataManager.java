@@ -153,7 +153,7 @@ public class AT_GroupsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupMembershipAdditionEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
+				actualObservations.add(new MultiKey(e.groupId(), e.personId()));
 			});
 
 		}));
@@ -269,7 +269,7 @@ public class AT_GroupsDataManager {
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupAdditionEvent.class).build(), (c2, e) -> {
-				actualGroupObservations.add(e.getGroupId());
+				actualGroupObservations.add(e.groupId());
 			});
 
 		}));
@@ -301,8 +301,8 @@ public class AT_GroupsDataManager {
 				assertEquals(testGroupTypeId, groupsDataManager.getGroupType(groupId));
 				for (TestGroupPropertyId testGroupPropertyId : expectedPropertyValues.keySet()) {
 					Object expectedValue = expectedPropertyValues.get(testGroupPropertyId);
-					Object actaulValue = groupsDataManager.getGroupPropertyValue(groupId, testGroupPropertyId);
-					assertEquals(expectedValue, actaulValue);
+					Object actualValue = groupsDataManager.getGroupPropertyValue(groupId, testGroupPropertyId);
+					assertEquals(expectedValue, actualValue);
 				}
 
 			}
@@ -392,7 +392,7 @@ public class AT_GroupsDataManager {
 		// have the observer subscribe to group creation
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupAdditionEvent.class).build(), (c2, e) -> {
-				actualObservations.add(e.getGroupId());
+				actualObservations.add(e.groupId());
 			});
 
 		}));
@@ -454,7 +454,7 @@ public class AT_GroupsDataManager {
 		// add an agent to observe the group membership additions
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupMembershipAdditionEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
+				actualObservations.add(new MultiKey(e.groupId(), e.personId()));
 			});
 
 		}));
@@ -665,7 +665,7 @@ public class AT_GroupsDataManager {
 						/*
 						 * If we are using the weighting function, then only
 						 * select the odd people as eligible, otherwise select
-						 * everyone in the gropu
+						 * everyone in the group
 						 */
 						if (useWeightingFunction) {
 							for (PersonId personId : peopleForGroup) {
@@ -751,8 +751,8 @@ public class AT_GroupsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupPropertyUpdateEvent.class).build(), (c2, e) -> {
-				actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId(),
-						e.getPreviousPropertyValue(), e.getCurrentPropertyValue()));
+				actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId(),
+						e.previousPropertyValue(), e.currentPropertyValue()));
 
 			});
 		}));
@@ -1194,7 +1194,7 @@ public class AT_GroupsDataManager {
 						testGroupPropertyId));
 			}
 
-			// show that other group properties do not exits
+			// show that other group properties do not exist
 			assertFalse(groupsDataManager.getGroupPropertyExists(null, null));
 			assertFalse(
 					groupsDataManager.getGroupPropertyExists(null, TestGroupPropertyId.getUnknownGroupPropertyId()));
@@ -2509,14 +2509,14 @@ public class AT_GroupsDataManager {
 		}
 
 		// add the group memberships
-		Set<MultiKey> groupMemeberships = new LinkedHashSet<>();
-		while (groupMemeberships.size() < membershipCount) {
+		Set<MultiKey> groupMemberships = new LinkedHashSet<>();
+		while (groupMemberships.size() < membershipCount) {
 			PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 			GroupId groupId = groups.get(randomGenerator.nextInt(groups.size()));
-			groupMemeberships.add(new MultiKey(groupId, personId));
+			groupMemberships.add(new MultiKey(groupId, personId));
 		}
 
-		for (MultiKey multiKey : groupMemeberships) {
+		for (MultiKey multiKey : groupMemberships) {
 			GroupId groupId = multiKey.getKey(0);
 			PersonId personId = multiKey.getKey(1);
 			groupBuilder.addPersonToGroup(groupId, personId);
@@ -2647,7 +2647,7 @@ public class AT_GroupsDataManager {
 
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupTypeAdditionEvent.class).build(), (c2, e) -> {
-				actualGroupTypeIds.add(e.getGroupTypeId());
+				actualGroupTypeIds.add(e.groupTypeId());
 			});
 		}));
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
@@ -2696,7 +2696,7 @@ public class AT_GroupsDataManager {
 		// have an observer observe new group property definitions being created
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(GroupPropertyDefinitionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGroupTypeId(), e.getGroupPropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.groupTypeId(), e.groupPropertyId());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -2883,7 +2883,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupAdditionEvent(testGroupTypeId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(e.getGroupId());
+					actualObservations.add(e.groupId());
 				});
 			}
 		}));
@@ -2951,7 +2951,7 @@ public class AT_GroupsDataManager {
 
 			EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(e.getGroupId());
+				actualObservations.add(e.groupId());
 			});
 
 		}));
@@ -3021,7 +3021,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupImminentRemovalEvent(testGroupTypeId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c.getTime(), e.getGroupId()));
+					actualObservations.add(new MultiKey(c.getTime(), e.groupId()));
 				});
 			}
 		}));
@@ -3115,7 +3115,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupImminentRemovalEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(e.getGroupId());
+					actualObservations.add(e.groupId());
 				});
 			}
 		}));
@@ -3191,7 +3191,7 @@ public class AT_GroupsDataManager {
 			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager
 					.getEventFilterForGroupImminentRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(e.getGroupId());
+				actualObservations.add(e.groupId());
 			});
 		}));
 
@@ -3235,7 +3235,7 @@ public class AT_GroupsDataManager {
 
 		int groupCount = 20;
 		/*
-		 * have the actor create some groups and selected about half of them the
+		 * have the actor create some groups and selected about half of them they
 		 * will then be used for filtering membership addition observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
@@ -3259,7 +3259,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipAdditionEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -3340,7 +3340,7 @@ public class AT_GroupsDataManager {
 		int groupCount = 20;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and selected about half of them the
+		 * have the actor create some groups and selected about half of them they
 		 * will then be used for filtering membership addition observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
@@ -3371,7 +3371,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipAdditionEvent(groupId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -3472,7 +3472,7 @@ public class AT_GroupsDataManager {
 						.getEventFilterForGroupMembershipAdditionEvent(groupTypeId);
 
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(e.groupId(), e.personId()));
 
 				});
 			}
@@ -3584,7 +3584,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipAdditionEvent(groupTypeId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -3707,7 +3707,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipAdditionEvent(personId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -3779,7 +3779,7 @@ public class AT_GroupsDataManager {
 			EventFilter<GroupMembershipAdditionEvent> eventFilter = groupsDataManager
 					.getEventFilterForGroupMembershipAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 			});
 		}));
 
@@ -3826,7 +3826,7 @@ public class AT_GroupsDataManager {
 
 		int groupCount = 20;
 		/*
-		 * have the actor create some groups and selected about half of them the
+		 * have the actor create some groups and selected about half of them they
 		 * will then be used for filtering membership removal observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
@@ -3850,7 +3850,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipRemovalEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -3932,7 +3932,7 @@ public class AT_GroupsDataManager {
 		int groupCount = 20;
 		int peopleCount = 5;
 		/*
-		 * have the actor create some groups and selected about half of them the
+		 * have the actor create some groups and selected about half of them they
 		 * will then be used for filtering membership removal observations
 		 */
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
@@ -3963,7 +3963,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipRemovalEvent(groupId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -4064,7 +4064,7 @@ public class AT_GroupsDataManager {
 						.getEventFilterForGroupMembershipRemovalEvent(groupTypeId);
 
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(e.groupId(), e.personId()));
 
 				});
 			}
@@ -4176,7 +4176,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipRemovalEvent(groupTypeId, personId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -4299,7 +4299,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupMembershipRemovalEvent(personId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 				});
 			}
 		}));
@@ -4372,7 +4372,7 @@ public class AT_GroupsDataManager {
 			EventFilter<GroupMembershipRemovalEvent> eventFilter = groupsDataManager
 					.getEventFilterForGroupMembershipRemovalEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c2.getTime(), e.getGroupId(), e.getPersonId()));
+				actualObservations.add(new MultiKey(c2.getTime(), e.groupId(), e.personId()));
 			});
 		}));
 
@@ -4440,7 +4440,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupPropertyUpdateEvent(groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId()));
+					actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 				});
 			}
 		}));
@@ -4543,7 +4543,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId()));
+					actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 				});
 			}
 		}));
@@ -4643,7 +4643,7 @@ public class AT_GroupsDataManager {
 				EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
 						.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId()));
+					actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 				});
 			}
 		}));
@@ -4727,7 +4727,7 @@ public class AT_GroupsDataManager {
 						EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
 								.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
 						c.subscribe(eventFilter, (c2, e) -> {
-							actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId()));
+							actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 						});
 					}
 				}
@@ -4824,7 +4824,7 @@ public class AT_GroupsDataManager {
 			EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager
 					.getEventFilterForGroupPropertyUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(e.getGroupId(), e.getGroupPropertyId()));
+				actualObservations.add(new MultiKey(e.groupId(), e.groupPropertyId()));
 			});
 
 		}));
@@ -4876,7 +4876,7 @@ public class AT_GroupsDataManager {
 			EventFilter<GroupPropertyDefinitionEvent> eventFilter = groupsDataManager
 					.getEventFilterForGroupPropertyDefinitionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.getGroupTypeId(), e.getGroupPropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.groupTypeId(), e.groupPropertyId());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -4933,7 +4933,7 @@ public class AT_GroupsDataManager {
 			EventFilter<GroupTypeAdditionEvent> eventFilter = groupsDataManager
 					.getEventFilterForGroupTypeAdditionEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualGroupTypeIds.add(e.getGroupTypeId());
+				actualGroupTypeIds.add(e.groupTypeId());
 			});
 		}));
 

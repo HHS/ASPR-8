@@ -8,35 +8,23 @@ import util.errors.ContractException;
 
 /**
  * An event indicating that a material type has been added
- * 
+ *
  * @author Shawn Hatch
  */
 @Immutable
-public class MaterialIdAdditionEvent implements Event {
-	
-	private final MaterialId materialId;
+public record MaterialIdAdditionEvent(MaterialId materialId) implements Event {
 
 	/**
 	 * Constructs the event
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
-	 *             material id is null</li>
-	 * 
+	 *
+	 * @throws ContractException <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+	 *                           material id is null</li>
 	 */
-	public MaterialIdAdditionEvent(MaterialId materialId) {
+	public MaterialIdAdditionEvent {
 		if (materialId == null) {
 			throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 		}
 
-		this.materialId = materialId;
-	}
-
-	/**
-	 * Returns the recently added material id
-	 */
-	public MaterialId getMaterialId() {
-		return materialId;
 	}
 
 }

@@ -70,7 +70,7 @@ public class AT_AttributesDataManager {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			EventFilter<AttributeUpdateEvent> eventFilter = attributesDataManager.getEventFilterForAttributeUpdateEvent(TestAttributeId.BOOLEAN_0);
 			c.subscribe(eventFilter, (c2, e) -> {
-				peopleObserved.add(e.getPersonId());
+				peopleObserved.add(e.personId());
 			});
 		}));
 
@@ -281,7 +281,7 @@ public class AT_AttributesDataManager {
 			for (TestAttributeId testAttributeId : selectedTestAttributeIds) {
 				EventFilter<AttributeUpdateEvent> eventFilter = attributesDataManager.getEventFilterForAttributeUpdateEvent(testAttributeId);
 				c.subscribe(eventFilter, (c2, e) -> {
-					actualObservations.add(new MultiKey(c.getTime(), e.getAttributeId(), e.getPersonId()));
+					actualObservations.add(new MultiKey(c.getTime(), e.attributeId(), e.personId()));
 				});
 			}
 		}));
@@ -348,7 +348,7 @@ public class AT_AttributesDataManager {
 
 			EventFilter<AttributeUpdateEvent> eventFilter = attributesDataManager.getEventFilterForAttributeUpdateEvent();
 			c.subscribe(eventFilter, (c2, e) -> {
-				actualObservations.add(new MultiKey(c.getTime(), e.getAttributeId(), e.getPersonId()));
+				actualObservations.add(new MultiKey(c.getTime(), e.attributeId(), e.personId()));
 			});
 
 		}));

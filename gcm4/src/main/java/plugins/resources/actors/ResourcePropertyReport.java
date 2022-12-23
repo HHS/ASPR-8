@@ -49,9 +49,9 @@ public final class ResourcePropertyReport {
 	}
 
 	private void handleResourcePropertyUpdateEvent(ActorContext actorContext,ResourcePropertyUpdateEvent resourcePropertyUpdateEvent) {
-		ResourceId resourceId = resourcePropertyUpdateEvent.getResourceId();
-		ResourcePropertyId resourcePropertyId = resourcePropertyUpdateEvent.getResourcePropertyId();
-		Object currentPropertyValue = resourcePropertyUpdateEvent.getCurrentPropertyValue();
+		ResourceId resourceId = resourcePropertyUpdateEvent.resourceId();
+		ResourcePropertyId resourcePropertyId = resourcePropertyUpdateEvent.resourcePropertyId();
+		Object currentPropertyValue = resourcePropertyUpdateEvent.currentPropertyValue();
 		writeProperty(actorContext,resourceId, resourcePropertyId,currentPropertyValue);
 	}
 
@@ -72,8 +72,8 @@ public final class ResourcePropertyReport {
 	}
 	
 	private void handleResourcePropertyAdditionEvent(ActorContext actorContext, ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent) {
-		ResourceId resourceId = resourcePropertyDefinitionEvent.getResourceId();
-		ResourcePropertyId resourcePropertyId = resourcePropertyDefinitionEvent.getResourcePropertyId();
+		ResourceId resourceId = resourcePropertyDefinitionEvent.resourceId();
+		ResourcePropertyId resourcePropertyId = resourcePropertyDefinitionEvent.resourcePropertyId();
 		Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
 		writeProperty(actorContext,resourceId, resourcePropertyId,resourcePropertyValue);
 	}

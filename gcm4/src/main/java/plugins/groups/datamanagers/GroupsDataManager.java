@@ -1597,7 +1597,7 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	private void handlePersonRemovalEvent(final DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
-		PersonId personId = personRemovalEvent.getPersonId();
+		PersonId personId = personRemovalEvent.personId();
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		peopleToGroupsMap.setValue(personId.getValue(), null);
 		if (groups != null) {
@@ -1619,7 +1619,7 @@ public final class GroupsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<GroupAdditionEvent> groupAdditionFunctionMap = //
 			IdentifiableFunctionMap	.builder(GroupAdditionEvent.class)//
-									.put(GroupAdditionEventFunctionId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
+									.put(GroupAdditionEventFunctionId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
 									.build();//
 
 	/**
@@ -1659,8 +1659,8 @@ public final class GroupsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<GroupImminentRemovalEvent> groupImminentRemovalMap = //
 			IdentifiableFunctionMap	.builder(GroupImminentRemovalEvent.class)//
-									.put(GroupImminentRemovalEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
-									.put(GroupImminentRemovalEventId.GROUP_ID, e -> e.getGroupId())//
+									.put(GroupImminentRemovalEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+									.put(GroupImminentRemovalEventId.GROUP_ID, e -> e.groupId())//
 									.build();//
 
 	/**
@@ -1721,9 +1721,9 @@ public final class GroupsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<GroupMembershipAdditionEvent> groupMembershipAdditionMap = //
 			IdentifiableFunctionMap	.builder(GroupMembershipAdditionEvent.class)//
-									.put(GroupMembershipAdditionEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
-									.put(GroupMembershipAdditionEventId.GROUP_ID, e -> e.getGroupId())//
-									.put(GroupMembershipAdditionEventId.PERSON_ID, e -> e.getPersonId())//
+									.put(GroupMembershipAdditionEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+									.put(GroupMembershipAdditionEventId.GROUP_ID, e -> e.groupId())//
+									.put(GroupMembershipAdditionEventId.PERSON_ID, e -> e.personId())//
 									.build();//
 
 	/**
@@ -1859,9 +1859,9 @@ public final class GroupsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<GroupMembershipRemovalEvent> groupMembershipRemovalMap = //
 			IdentifiableFunctionMap	.builder(GroupMembershipRemovalEvent.class)//
-									.put(GroupMembershipRemovalEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
-									.put(GroupMembershipRemovalEventId.GROUP_ID, e -> e.getGroupId())//
-									.put(GroupMembershipRemovalEventId.PERSON_ID, e -> e.getPersonId())//
+									.put(GroupMembershipRemovalEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+									.put(GroupMembershipRemovalEventId.GROUP_ID, e -> e.groupId())//
+									.put(GroupMembershipRemovalEventId.PERSON_ID, e -> e.personId())//
 									.build();//
 
 	/**
@@ -1998,9 +1998,9 @@ public final class GroupsDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<GroupPropertyUpdateEvent> groupPropertyUpdateMap = //
 			IdentifiableFunctionMap	.builder(GroupPropertyUpdateEvent.class)//
-									.put(GroupPropertyUpdateEventId.GROUP_PROPERTY, e -> e.getGroupPropertyId())//
-									.put(GroupPropertyUpdateEventId.GROUP_TYPE, e -> getGroupType(e.getGroupId()))//
-									.put(GroupPropertyUpdateEventId.GROUP_ID, e -> e.getGroupId())//
+									.put(GroupPropertyUpdateEventId.GROUP_PROPERTY, e -> e.groupPropertyId())//
+									.put(GroupPropertyUpdateEventId.GROUP_TYPE, e -> getGroupType(e.groupId()))//
+									.put(GroupPropertyUpdateEventId.GROUP_ID, e -> e.groupId())//
 									.build();//
 
 

@@ -283,7 +283,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 
 	private IdentifiableFunctionMap<GlobalPropertyUpdateEvent> functionMap = //
 			IdentifiableFunctionMap	.builder(GlobalPropertyUpdateEvent.class)//
-									.put(EventFunctionId.GLOBAL_PROPERTY_ID, e -> e.getGlobalPropertyId())//
+									.put(EventFunctionId.GLOBAL_PROPERTY_ID, e -> e.globalPropertyId())//
 									.build();//
 
 	/**

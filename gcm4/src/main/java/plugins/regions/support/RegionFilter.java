@@ -78,10 +78,10 @@ public final class RegionFilter extends Filter {
 	}
 
 	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, PersonRegionUpdateEvent event) {
-		boolean previousRegionIdContained = regionIds.contains(event.getPreviousRegionId());
-		boolean currentRegionIdContained = regionIds.contains(event.getCurrentRegionId());
+		boolean previousRegionIdContained = regionIds.contains(event.previousRegionId());
+		boolean currentRegionIdContained = regionIds.contains(event.currentRegionId());
 		if (previousRegionIdContained != currentRegionIdContained) {
-			return Optional.of(event.getPersonId());
+			return Optional.of(event.personId());
 		}
 		return Optional.empty();
 	}
