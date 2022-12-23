@@ -36,8 +36,8 @@ public final class AttributeLabeler implements Labeler {
 
 	private Optional<PersonId> getPersonId(AttributeUpdateEvent attributeUpdateEvent) {
 		PersonId result = null;
-		if (attributeUpdateEvent.getAttributeId().equals(attributeId)) {
-			result = attributeUpdateEvent.getPersonId();
+		if (attributeUpdateEvent.attributeId().equals(attributeId)) {
+			result = attributeUpdateEvent.personId();
 		}
 		return Optional.ofNullable(result);
 	}
@@ -83,7 +83,7 @@ public final class AttributeLabeler implements Labeler {
 	@Override
 	public Object getPastLabel(SimulationContext simulationContext, Event event) {
 		AttributeUpdateEvent attributeUpdateEvent = (AttributeUpdateEvent)event;
-		return attributeValueLabelingFunction.apply(attributeUpdateEvent.getPreviousValue());
+		return attributeValueLabelingFunction.apply(attributeUpdateEvent.previousValue());
 	}
 
 }

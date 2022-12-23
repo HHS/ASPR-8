@@ -145,9 +145,9 @@ public final class AttributeFilter extends Filter {
 	}
 
 	private Optional<PersonId> requiresRefresh(SimulationContext simulationContext, AttributeUpdateEvent event) {
-		if (event.getAttributeId().equals(attributeId)) {
-			if (evaluate(event.getPreviousValue()) != evaluate(event.getCurrentValue())) {
-				return Optional.of(event.getPersonId());
+		if (event.attributeId().equals(attributeId)) {
+			if (evaluate(event.previousValue()) != evaluate(event.currentValue())) {
+				return Optional.of(event.personId());
 			}
 		}
 		return Optional.empty();
