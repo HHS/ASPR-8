@@ -13,7 +13,11 @@ import util.errors.ContractException;
  * @author Shawn Hatch
  *
  */
-public interface PluginContext {
+public final class PluginContext {
+	private final Simulation simulation;
+	protected PluginContext(Simulation simulation) {
+		this.simulation = simulation;
+	}
 
 	/**
 	 * 
@@ -24,8 +28,10 @@ public interface PluginContext {
 	 *             <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED} if
 	 *             plugin initialization is over</li>
 	 * 
-	 */
-	public void addDataManager(DataManager dataManager);
+	 */	
+	public void addDataManager(DataManager dataManager) {
+		simulation.addDataManager(dataManager);
+	}
 
 	/**
 	 * 
@@ -37,7 +43,9 @@ public interface PluginContext {
 	 *             plugin initialization is over</li>
 	 * 
 	 */
-	public ActorId addActor(Consumer<ActorContext> init);
+	public ActorId addActor(Consumer<ActorContext> init) {
+		return simulation.addActorForPlugin(init);
+	}
 
 	/**
 	 * Returns the plugin data object associated with the given class reference
@@ -55,5 +63,7 @@ public interface PluginContext {
 	 *             plugin data object matches the class reference</li> 
 	 * 
 	 */
-	public <T extends PluginData> T getPluginData(Class<T> pluginDataClass);
+	public <T extends PluginData> T getPluginData(Class<T> pluginDataClass) {
+		return simulation.getPluginData(pluginDataClass);
+	}
 }

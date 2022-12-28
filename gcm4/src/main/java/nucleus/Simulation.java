@@ -53,90 +53,7 @@ import util.path.Path;
  */
 @NotThreadSafe
 public class Simulation {
-
-	private class PluginContextImpl implements PluginContext {
-
-		@Override
-		public void addDataManager(DataManager dataManager) {
-
-			if (focalPluginId == null) {
-				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
-			}
-
-			if (dataManager == null) {
-				throw new ContractException(NucleusError.NULL_DATA_MANAGER);
-			}
-
-			if (baseClassToDataManagerMap.containsKey(dataManager.getClass())) {
-				throw new ContractException(NucleusError.DUPLICATE_DATA_MANAGER_TYPE, dataManager.getClass());
-			}
-
-			DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
-			DataManagerContext dataManagerContext = new DataManagerContext(Simulation.this, dataManagerId);
-			dataManagerIdToContextMap.put(dataManagerId, dataManagerContext);
-			baseClassToDataManagerMap.put(dataManager.getClass(), dataManager);
-			dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
-			dataManagerToDataManagerIdMap.put(dataManager, dataManagerId);
-			dataManagerIdToPluginIdMap.put(dataManagerId, focalPluginId);
-		}
-
-		@Override
-		public ActorId addActor(Consumer<ActorContext> consumer) {
-
-			if (consumer == null) {
-				throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
-			}
-
-			if (focalPluginId == null) {
-				throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
-			}
-
-			// assign an actorId
-			ActorId actorId = new ActorId(actorIds.size());
-			actorIds.add(actorId);
-
-			// add the actor's initialization to the actor queue
-			final ActorContentRec actorContentRec = new ActorContentRec();
-			actorContentRec.actorId = actorId;
-			actorContentRec.plan = consumer;
-			actorQueue.add(actorContentRec);
-
-			return actorId;
-
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-
-		public <T extends PluginData> T getPluginData(Class<T> pluginDataClass) {
-			if (pluginDataClass == null) {
-				throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
-			}
-
-			PluginData pluginData = workingPluginDataMap.get(pluginDataClass);
-			if (pluginData == null) {
-				List<Class<?>> candidates = new ArrayList<>();
-				for (Class<?> c : basePluginDataMap.keySet()) {
-					if (pluginDataClass.isAssignableFrom(c)) {
-						candidates.add(c);
-					}
-				}
-				if (candidates.size() > 1) {
-					throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
-				}
-				if (candidates.size() == 1) {
-					pluginData = basePluginDataMap.get(candidates.get(0));
-					workingPluginDataMap.put(pluginDataClass, pluginData);
-				}
-			}
-			if (pluginData == null) {
-				throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS);
-			}
-
-			return (T) pluginData;
-		}
-
-	}
+	
 
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -288,7 +205,7 @@ public class Simulation {
 
 	private boolean started;
 
-	private final PluginContext pluginContext = new PluginContextImpl();
+	private PluginContext pluginContext;
 
 	private PluginId focalPluginId;
 
@@ -312,7 +229,58 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 	}
+	@SuppressWarnings("unchecked")
+	
+	protected <T extends PluginData> T getPluginData(Class<T> pluginDataClass) {
+		if (pluginDataClass == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
+		}
 
+		PluginData pluginData = workingPluginDataMap.get(pluginDataClass);
+		if (pluginData == null) {
+			List<Class<?>> candidates = new ArrayList<>();
+			for (Class<?> c : basePluginDataMap.keySet()) {
+				if (pluginDataClass.isAssignableFrom(c)) {
+					candidates.add(c);
+				}
+			}
+			if (candidates.size() > 1) {
+				throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
+			}
+			if (candidates.size() == 1) {
+				pluginData = basePluginDataMap.get(candidates.get(0));
+				workingPluginDataMap.put(pluginDataClass, pluginData);
+			}
+		}
+		if (pluginData == null) {
+			throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS);
+		}
+
+		return (T) pluginData;
+	}
+	protected void addDataManager(DataManager dataManager) {
+
+		if (focalPluginId == null) {
+			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
+		}
+
+		if (dataManager == null) {
+			throw new ContractException(NucleusError.NULL_DATA_MANAGER);
+		}
+
+		if (baseClassToDataManagerMap.containsKey(dataManager.getClass())) {
+			throw new ContractException(NucleusError.DUPLICATE_DATA_MANAGER_TYPE, dataManager.getClass());
+		}
+
+		DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
+		DataManagerContext dataManagerContext = new DataManagerContext(Simulation.this, dataManagerId);
+		dataManagerIdToContextMap.put(dataManagerId, dataManagerContext);
+		baseClassToDataManagerMap.put(dataManager.getClass(), dataManager);
+		dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
+		dataManagerToDataManagerIdMap.put(dataManager, dataManagerId);
+		dataManagerIdToPluginIdMap.put(dataManagerId, focalPluginId);
+	}
+	
 	protected void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validatePlanTime(time);
@@ -561,6 +529,8 @@ public class Simulation {
 	 */
 	public void execute() {
 		actorContext = new ActorContext(this);
+		pluginContext = new PluginContext(this);
+		
 		// start the simulation
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
@@ -947,6 +917,16 @@ public class Simulation {
 		actorContentRec.plan = consumer;
 		actorQueue.add(actorContentRec);
 		return result;
+	}
+	
+	
+	protected ActorId addActorForPlugin(Consumer<ActorContext> consumer) {
+
+		if (focalPluginId == null) {
+			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
+		}
+		return addActor(consumer);
+		
 	}
 
 	protected void removeActor(final ActorId actorId) {
