@@ -17,7 +17,13 @@ import util.errors.ContractException;
  *
  */
 
-public interface ActorContext extends SimulationContext {
+public final class ActorContext implements SimulationContext {
+	
+	private final Simulation simulation;
+
+	protected ActorContext(Simulation simulation) {
+		this.simulation = simulation;
+	}
 
 	/**
 	 * Schedules a plan that will be executed at the given time.
@@ -31,8 +37,10 @@ public interface ActorContext extends SimulationContext {
 	 * 
 	 * 
 	 */
-	public void addPlan(Consumer<ActorContext> plan, double planTime);
-
+	
+	public void addPlan(final Consumer<ActorContext> plan, final double planTime) {
+		simulation.addActorPlan(plan, planTime, true, null);
+	}
 	/**
 	 * Schedules a plan that will be executed at the given time. The plan is
 	 * associated with the given key and can be canceled or retrieved via this
@@ -50,8 +58,12 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
 	 * 
-	 */
-	public void addKeyedPlan(Consumer<ActorContext> plan, double planTime, Object key);
+	 */	
+	public void addKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
+		simulation.validatePlanKeyNotNull(key);
+		simulation.validateActorPlanKeyNotDuplicate(key);
+		simulation.addActorPlan(plan, planTime, true, key);
+	}
 
 	/**
 	 * Schedules a plan that will be executed at the given time. Passive plans
@@ -67,8 +79,9 @@ public interface ActorContext extends SimulationContext {
 	 * 
 	 * 
 	 */
-	public void addPassivePlan(Consumer<ActorContext> plan, double planTime);
-
+	public void addPassivePlan(final Consumer<ActorContext> plan, final double planTime) {
+		simulation.addActorPlan(plan, planTime, false, null);
+	}
 	/**
 	 * Schedules a plan that will be executed at the given time. The plan is
 	 * associated with the given key and can be canceled or retrieved via this
@@ -88,9 +101,12 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
 	 * 
-	 */
-	public void addPassiveKeyedPlan(Consumer<ActorContext> plan, double planTime, Object key);
-
+	 */	
+	public void addPassiveKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
+		simulation.validatePlanKeyNotNull(key);
+		simulation.validateActorPlanKeyNotDuplicate(key);
+		simulation.addActorPlan(plan, planTime, false, key);
+	}
 	/**
 	 * Retrieves a plan stored for the given key.
 	 * 
@@ -98,8 +114,11 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public <T extends Consumer<ActorContext>> Optional<T> getPlan(final Object key);
-
+	
+	@SuppressWarnings("unchecked")	
+	public <T extends Consumer<ActorContext>> Optional<T> getPlan(final Object key) {
+		return (Optional<T>) simulation.getActorPlan(key);
+	}
 	/**
 	 * Returns the scheduled execution time for the plan associated with the
 	 * given key
@@ -108,7 +127,9 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public Optional<Double> getPlanTime(final Object key);
+	public Optional<Double> getPlanTime(final Object key) {
+		return simulation.getActorPlanTime(key);
+	}
 
 	/**
 	 * Removes and returns the plan associated with the given key.
@@ -117,20 +138,26 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public <T extends Consumer<ActorContext>> Optional<T> removePlan(final Object key);
+	
+	public <T extends Consumer<ActorContext>> Optional<T> removePlan(final Object key) {
+		return simulation.removeActorPlan(key);
+	}
 
 	/**
 	 * Returns a list of the current plan keys associated with the current actor
 	 * 
-	 */
-	public List<Object> getPlanKeys();
+	 */	
+	public List<Object> getPlanKeys() {
+		return simulation.getActorPlanKeys();
+	}
 
 	/**
 	 * Returns the ActorId of the current actor
-	 */
-	public ActorId getActorId();
+	 */	
+	public ActorId getActorId() {
+		return simulation.focalActorId;
+	}
 
-	
 	/**
 	 * Subscribes the current actor to the given event filter. Events of the
 	 * type T are processed by the event filter. If the event passes the filter
@@ -142,10 +169,10 @@ public interface ActorContext extends SimulationContext {
 	 *             filter is null
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
 	 *             consumer is null
-	 */
-	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer);
-
-	
+	 */	
+	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
+		simulation.subscribeActorToEventByFilter(eventFilter, eventConsumer);
+	}
 	/**
 	 * Unsubscribes the current actor from the given event filter.
 	 * 
@@ -153,9 +180,10 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT_FILTER} if the event
 	 *             filter is null
 	 *
-	 */
-	public <T extends Event> void unsubscribe(EventFilter<T> eventFilter);
-
+	 */	
+	public <T extends Event> void unsubscribe(EventFilter<T> eventFilter) {
+		simulation.unsubscribeActorFromEventByFilter(eventFilter);
+	}
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * Activity associated with the consumer should be limited to querying data
@@ -165,5 +193,43 @@ public interface ActorContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
 	 *             consumer is null</li>
 	 */
-	public void subscribeToSimulationClose(Consumer<ActorContext> consumer);
+	
+	public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
+		simulation.subscribeActorToSimulationClose(consumer);
+	}
+	
+	@Override
+	public boolean actorExists(final ActorId actorId) {
+		return simulation.actorExists(actorId);
+	}
+	
+	@Override
+	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
+		return simulation.getDataManagerForActor(dataManagerClass);
+	}
+	
+	@Override
+	public double getTime() {
+		return simulation.time;
+	}
+	
+	@Override
+	public void halt() {
+		simulation.halt();
+	}
+	
+	@Override
+	public void releaseOutput(Object output) {
+		simulation.releaseOutput(output);
+	}
+	
+	@Override
+	public ActorId addActor(Consumer<ActorContext> consumer) {
+		return simulation.addActor(consumer);
+	}
+
+	@Override
+	public void removeActor(ActorId actorId) {
+		simulation.removeActor(actorId);
+	}
 }

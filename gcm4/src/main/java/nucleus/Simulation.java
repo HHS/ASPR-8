@@ -138,111 +138,6 @@ public class Simulation {
 
 	}
 
-	private class ActorContextImpl implements ActorContext {
-
-		@Override
-		public void addPlan(final Consumer<ActorContext> plan, final double planTime) {
-			addActorPlan(plan, planTime, true, null);
-		}
-
-		@Override
-		public void addKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
-			validatePlanKeyNotNull(key);
-			validateActorPlanKeyNotDuplicate(key);
-			addActorPlan(plan, planTime, true, key);
-		}
-
-		@Override
-		public void addPassivePlan(final Consumer<ActorContext> plan, final double planTime) {
-			addActorPlan(plan, planTime, false, null);
-		}
-
-		@Override
-		public void addPassiveKeyedPlan(final Consumer<ActorContext> plan, final double planTime, final Object key) {
-			validatePlanKeyNotNull(key);
-			validateActorPlanKeyNotDuplicate(key);
-			addActorPlan(plan, planTime, false, key);
-		}
-
-		@Override
-		public boolean actorExists(final ActorId actorId) {
-			return Simulation.this.actorExists(actorId);
-		}
-
-		@Override
-		public ActorId getActorId() {
-			return focalActorId;
-		}
-
-		@Override
-		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
-			return Simulation.this.getDataManagerForActor(dataManagerClass);
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends Consumer<ActorContext>> Optional<T> getPlan(final Object key) {
-			return (Optional<T>) Simulation.this.getActorPlan(key);
-		}
-
-		@Override
-		public List<Object> getPlanKeys() {
-			return Simulation.this.getActorPlanKeys();
-		}
-
-		@Override
-		public Optional<Double> getPlanTime(final Object key) {
-			return Simulation.this.getActorPlanTime(key);
-		}
-
-		@Override
-		public double getTime() {
-			return time;
-		}
-
-		@Override
-		public void halt() {
-			Simulation.this.halt();
-		}
-
-		@Override
-		public <T extends Consumer<ActorContext>> Optional<T> removePlan(final Object key) {
-			return Simulation.this.removeActorPlan(key);
-		}
-
-		@Override
-		public void releaseOutput(Object output) {
-			Simulation.this.releaseOutput(output);
-
-		}
-
-		@Override
-		public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
-			Simulation.this.subscribeActorToEventByFilter(eventFilter, eventConsumer);
-		}
-
-		@Override
-		public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
-			subscribeActorToSimulationClose(consumer);
-		}
-
-		@Override
-		public ActorId addActor(Consumer<ActorContext> consumer) {
-			return Simulation.this.addActor(consumer);
-		}
-
-		@Override
-		public void removeActor(ActorId actorId) {
-			Simulation.this.removeActor(actorId);
-		}
-
-		@Override
-		public <T extends Event> void unsubscribe(EventFilter<T> eventFilter) {
-			unsubscribeActorFromEventByFilter(eventFilter);
-		}
-
-	}
-
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	private static class PlanRec {
@@ -506,7 +401,7 @@ public class Simulation {
 
 	// planning
 	private long masterPlanningArrivalId;
-	private double time;
+	protected double time;
 	private boolean processEvents = true;
 	private int activePlanCount;
 	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
@@ -544,7 +439,7 @@ public class Simulation {
 		}
 	}
 
-	private void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	protected void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validatePlanTime(time);
 		validateActorPlan(plan);
@@ -614,14 +509,14 @@ public class Simulation {
 		}
 	}
 
-	private void validateActorPlanKeyNotDuplicate(final Object key) {
+	protected void validateActorPlanKeyNotDuplicate(final Object key) {
 		if (getActorPlan(key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends Consumer<ActorContext>> Optional<T> removeActorPlan(final Object key) {
+	protected <T extends Consumer<ActorContext>> Optional<T> removeActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
@@ -791,7 +686,7 @@ public class Simulation {
 	 * 
 	 */
 	public void execute() {
-
+		actorContext = new ActorContext(this);
 		// start the simulation
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
@@ -945,7 +840,7 @@ public class Simulation {
 
 	}
 
-	private Optional<Consumer<ActorContext>> getActorPlan(final Object key) {
+	protected Optional<Consumer<ActorContext>> getActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 		Consumer<ActorContext> result = null;
@@ -971,7 +866,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private List<Object> getActorPlanKeys() {
+	protected List<Object> getActorPlanKeys() {
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
@@ -987,7 +882,7 @@ public class Simulation {
 		return new ArrayList<>();
 	}
 
-	private Optional<Double> getActorPlanTime(final Object key) {
+	protected Optional<Double> getActorPlanTime(final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 		Double result = null;
@@ -1013,7 +908,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private void halt() {
+	protected void halt() {
 		if (processEvents) {
 			processEvents = false;
 		}
@@ -1051,7 +946,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private void validatePlanKeyNotNull(final Object key) {
+	protected void validatePlanKeyNotNull(final Object key) {
 		if (key == null) {
 			throw new ContractException(NucleusError.NULL_PLAN_KEY, "");
 		}
@@ -1063,13 +958,13 @@ public class Simulation {
 		}
 	}
 
-	private void releaseOutput(Object output) {
+	protected void releaseOutput(Object output) {
 		if (outputConsumer != null) {
 			outputConsumer.accept(output);
 		}
 	}
 
-	private boolean actorExists(final ActorId actorId) {
+	protected boolean actorExists(final ActorId actorId) {
 		if (actorId == null) {
 			return false;
 		}
@@ -1084,7 +979,7 @@ public class Simulation {
 		return actorIds.get(index) != null;
 	}
 
-	private void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
+	protected void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
 		}
@@ -1164,7 +1059,7 @@ public class Simulation {
 		}
 	}
 
-	private ActorId addActor(Consumer<ActorContext> consumer) {
+	protected ActorId addActor(Consumer<ActorContext> consumer) {
 
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
@@ -1180,7 +1075,7 @@ public class Simulation {
 		return result;
 	}
 
-	private void removeActor(final ActorId actorId) {
+	protected void removeActor(final ActorId actorId) {
 		if (actorId == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_ID);
 		}
@@ -1207,7 +1102,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends DataManager> T getDataManagerForActor(Class<T> dataManagerClass) {
+	protected <T extends DataManager> T getDataManagerForActor(Class<T> dataManagerClass) {
 
 		if (dataManagerClass == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
@@ -1350,7 +1245,7 @@ public class Simulation {
 	// actor support
 	//////////////////////////////
 
-	private final ActorContext actorContext = new ActorContextImpl();
+	private ActorContext actorContext;
 
 	private final List<ActorId> actorIds = new ArrayList<>();
 
@@ -1360,7 +1255,7 @@ public class Simulation {
 
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 
-	private ActorId focalActorId;
+	protected ActorId focalActorId;
 
 	private static class ActorContentRec {
 
@@ -1484,7 +1379,7 @@ public class Simulation {
 	 * event filter. This overwrites the current consumer associated with this
 	 * event and filter if it is present.
 	 */
-	private <T extends Event> void subscribeActorToEventByFilter(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
+	protected <T extends Event> void subscribeActorToEventByFilter(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 		if (eventFilter == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
 		}
@@ -1536,7 +1431,7 @@ public class Simulation {
 	 * Removes the consumer from the filter node tree and removes nodes that are
 	 * empty(no children, no consumers), except for the root node.
 	 */
-	private <T extends Event> void unsubscribeActorFromEventByFilter(EventFilter<T> eventFilter) {
+	protected <T extends Event> void unsubscribeActorFromEventByFilter(EventFilter<T> eventFilter) {
 		if (eventFilter == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
 		}
