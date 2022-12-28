@@ -49,6 +49,9 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 
 		}
 
+		/**
+		 * Builds the ExperimentStatusConsole from the arguments gathered by the builder.
+		 */
 		public ExperimentStatusConsole build() {
 			try {
 				return new ExperimentStatusConsole(statusConsoleState);
@@ -84,7 +87,7 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 		 * immediately reported and those that are reported in the experiment
 		 * summary. Defaulted to 100.
 		 */
-		public Builder setStackTraceReportLimit(Integer stackTraceReportLimit) {
+		public Builder setStackTraceReportLimit(int stackTraceReportLimit) {
 			statusConsoleState.setStackTraceReportLimit(stackTraceReportLimit);
 			return this;
 		}
@@ -180,9 +183,9 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 			reportToConsole = true;
 		}
 
-		reportToConsole &= statusConsoleState.isReportScenarioProgress();
+		reportToConsole &= statusConsoleState.reportScenarioProgress();
 
-		if (statusConsoleState.isImmediateErrorReporting()) {
+		if (statusConsoleState.immediateErrorReporting()) {
 
 			ScenarioStatus scenarioStatus = experimentContext.getScenarioStatus(scenarioId).get();
 			if (scenarioStatus == ScenarioStatus.FAILED) {

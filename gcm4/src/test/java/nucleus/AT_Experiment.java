@@ -3,6 +3,7 @@ package nucleus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
+import util.wrappers.MutableInteger;
+import util.wrappers.MutableObject;
 
 @UnitTest(target = Experiment.class)
 public class AT_Experiment {
@@ -292,31 +295,25 @@ public class AT_Experiment {
 	@UnitTestMethod(target = Experiment.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		// show that an empty experiment will executed
-		Experiment experiment = Experiment	.builder().build();
+		Experiment experiment = Experiment.builder().build();
 		experiment.execute();
 
 		// Other aspects of the build are covered in the remaining capability
 		// specific tests
 	}
-	
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, tags = {UnitTag.MANUAL})	
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setExperimentProgressLog", args = { Path.class }, tags = { UnitTag.MANUAL })
 	public void testSetExperimentProgressLog() {
-		// should be manually tested		
+		// should be manually tested
 	}
 
-	
-	
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, tags = {UnitTag.MANUAL})
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setContinueFromProgressLog", args = { boolean.class }, tags = { UnitTag.MANUAL })
 	public void testSetContinueFromProgressLog() {
-		// should be manually tested	
+		// should be manually tested
 	}
-	
-	
 
-	
 	@Test
 	@UnitTestMethod(target = Experiment.Builder.class, name = "setThreadCount", args = { int.class })
 	public void testSetThreadCount() {
@@ -391,6 +388,84 @@ public class AT_Experiment {
 	@UnitTestMethod(name = "execute", args = {})
 	public void testExecute() {
 		// Covered by remaining tests that execute the experiment.
+	}
+
+	@Test
+	@UnitTestMethod(target = Experiment.Builder.class,name = "setHaltOnException", args = { boolean.class })
+	public void testSetHaltOnException() {
+		//This test will run the experiment two times in single thread mode
+		
+		// we create a counter that will be incremented by each actor on
+		// initialization
+		MutableInteger actorInitializationCounter = new MutableInteger();
+		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
+
+		// we create a dimension with two levels
+		Dimension dimension = Dimension	.builder()//
+										.addLevel((c) -> new ArrayList<>())//
+										.addLevel((c) -> new ArrayList<>())//
+										.build();
+
+		// we create a plugin that will instantiate three actors, with the
+		// second actor throwing a runtime exception
+		Plugin plugin = Plugin.builder().setPluginId(new SimplePluginId("plugin")).setInitializer((c) -> {
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+			});
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+				throw new RuntimeException();
+			});
+			c.addActor((c2) -> {
+				actorInitializationCounter.increment();
+			});
+		}).build();
+
+		Consumer<ExperimentContext> experimentContextConsumer = (c) -> {
+			experimentContext.setValue(c);
+		};
+
+		/*
+		 * The default behavior of the experiment is to have haltOnException
+		 * equal to false. The simulation should execute both scenarios, with
+		 * each scenario executing only two of the actors before the simulation
+		 * fails. Thus we expect that the counter will be equal to four after
+		 * the experiment executes and that there will be no exception bubbling
+		 * out of the execute() invocation
+		 */
+		Experiment	.builder()//
+					.addDimension(dimension)//
+					.addPlugin(plugin)//
+					.addExperimentContextConsumer(experimentContextConsumer)//
+					.build()//
+					.execute();
+		assertEquals(4, actorInitializationCounter.getValue());
+
+		// show that both scenarios executed and failed
+		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(0).get());
+		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(1).get());
+
+		// we reset the counter
+		actorInitializationCounter.setValue(0);
+
+		// We now set haltOnException to true
+		assertThrows(RuntimeException.class, () -> Experiment	.builder()//
+																.addDimension(dimension)//
+																.addPlugin(plugin)//
+																.addExperimentContextConsumer(experimentContextConsumer)//
+																.setHaltOnException(true)//
+																.build()//
+																.execute());
+
+		// since the experiment should halt on the first failure, we expect only
+		// two of the actors to have initialized
+		assertEquals(2, actorInitializationCounter.getValue());
+
+		// show that only the first scenario executed and failed. The second
+		// scenario should still be in READY status.
+		assertEquals(ScenarioStatus.FAILED, experimentContext.getValue().getScenarioStatus(0).get());
+		assertEquals(ScenarioStatus.READY, experimentContext.getValue().getScenarioStatus(1).get());
+
 	}
 
 }

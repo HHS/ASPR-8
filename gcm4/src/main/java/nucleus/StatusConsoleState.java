@@ -17,7 +17,7 @@ public final class StatusConsoleState {
 	private int lastReportedCompletionPercentage;	
 	private int immediateStackTraceCount;
 
-	public synchronized boolean isImmediateErrorReporting() {
+	public synchronized boolean immediateErrorReporting() {
 		return immediateErrorReporting;
 	}
 
@@ -25,7 +25,7 @@ public final class StatusConsoleState {
 		this.immediateErrorReporting = immediateErrorReportingx;
 	}
 
-	public synchronized boolean isReportScenarioProgress() {
+	public synchronized boolean reportScenarioProgress() {
 		return reportScenarioProgress;
 	}
 

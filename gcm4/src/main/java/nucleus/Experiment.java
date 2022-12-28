@@ -91,7 +91,6 @@ public final class Experiment {
 			}
 		}
 
-
 		/**
 		 * Sets the path for experiment progress log. A null path turns off
 		 * logging and run resumption. Default value is null.
@@ -131,6 +130,14 @@ public final class Experiment {
 			return this;
 		}
 
+		/**
+		 * Instructs the experiment to halt on any exception thrown by any of
+		 * the simulation instances. The experiment will attempt to gracefully
+		 * terminate, halting any ongoing simulation instances and completing
+		 * the experiment. Defaulted to false. When false, the experiment logs
+		 * the failure with the experiment context and continues with the rest
+		 * of the simulation instances.
+		 */
 		public Builder setHaltOnException(final boolean haltOnException) {
 			data.haltOnException = haltOnException;
 			return this;
@@ -214,7 +221,7 @@ public final class Experiment {
 				simulation.execute();
 				success = true;
 			} catch (final Exception e) {
-				failureCause = e;				
+				failureCause = e;
 			}
 			return new SimResult(scenarioId, success, failureCause);
 		}
@@ -365,12 +372,12 @@ public final class Experiment {
 				experimentStateManager.closeScenarioAsSuccess(simResult.scenarioId);
 			} else {
 				experimentStateManager.closeScenarioAsFailure(simResult.scenarioId, simResult.failureCause);
-				
+
 				if (data.haltOnException) {
 					throw simResult.failureCause;
 				}
 			}
-			
+
 			/*
 			 * Once the blocking call returns, we increment the
 			 * jobCompletionCount
@@ -426,7 +433,7 @@ public final class Experiment {
 				experimentStateManager.closeScenarioAsSuccess(scenarioId);
 			} else {
 				experimentStateManager.closeScenarioAsFailure(scenarioId, failureCause);
-				
+
 				if (data.haltOnException) {
 					throw failureCause;
 				}
