@@ -72,7 +72,7 @@ public class Simulation {
 			}
 
 			DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
-			DataManagerContext dataManagerContext = new DataManagerContextImpl(Simulation.this, dataManagerId);
+			DataManagerContext dataManagerContext = new DataManagerContext(Simulation.this, dataManagerId);
 			dataManagerIdToContextMap.put(dataManagerId, dataManagerContext);
 			baseClassToDataManagerMap.put(dataManager.getClass(), dataManager);
 			dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
@@ -246,132 +246,6 @@ public class Simulation {
 		DATA_MANAGER, ACTOR
 	}
 
-	private static class DataManagerContextImpl implements DataManagerContext {
-		private final DataManagerId dataManagerId;
-		private final Simulation simulation;
-
-		@Override
-		public ActorId getActorId() {
-			return simulation.focalActorId;
-		}
-
-		private DataManagerContextImpl(Simulation simulation, DataManagerId dataManagerId) {
-			this.simulation = simulation;
-			this.dataManagerId = dataManagerId;
-		}
-
-		@Override
-		public ActorId addActor(Consumer<ActorContext> consumer) {
-			return simulation.addActor(consumer);
-		}
-
-		@Override
-		public void addPlan(final Consumer<DataManagerContext> plan, final double planTime) {
-			simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, null);
-		}
-
-		@Override
-		public void addKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
-			simulation.validatePlanKeyNotNull(key);
-			simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
-			simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, key);
-		}
-
-		@Override
-		public void addPassivePlan(final Consumer<DataManagerContext> plan, final double planTime) {
-			simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, null);
-		}
-
-		@Override
-		public void addPassiveKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
-			simulation.validatePlanKeyNotNull(key);
-			simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
-			simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, key);
-		}
-
-		@Override
-		public boolean actorExists(final ActorId actorId) {
-			return simulation.actorExists(actorId);
-		}
-
-		@Override
-		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
-			return simulation.getDataManagerForDataManager(dataManagerClass, dataManagerId);
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key) {
-			return (Optional<T>) simulation.getDataManagerPlan(dataManagerId, key);
-		}
-
-		@Override
-		public List<Object> getPlanKeys() {
-			return simulation.getDataManagerPlanKeys(dataManagerId);
-		}
-
-		@Override
-		public Optional<Double> getPlanTime(final Object key) {
-			return simulation.getDataManagerPlanTime(dataManagerId, key);
-		}
-
-		@Override
-		public double getTime() {
-			return simulation.time;
-		}
-
-		@Override
-		public void halt() {
-			simulation.halt();
-		}
-
-		@Override
-		public void releaseEvent(final Event event) {
-			simulation.releaseEvent(event);
-		}
-
-		@Override
-		public void removeActor(final ActorId actorId) {
-			simulation.removeActor(actorId);
-		}
-
-		@Override
-		public <T> Optional<T> removePlan(final Object key) {
-			return simulation.removeDataManagerPlan(dataManagerId, key);
-		}
-
-		@Override
-		public void releaseOutput(Object output) {
-			simulation.releaseOutput(output);
-		}
-
-		@Override
-		public void unsubscribe(Class<? extends Event> eventClass) {
-			simulation.unSubscribeDataManagerFromEvent(dataManagerId, eventClass);
-		}
-
-		@Override
-		public boolean subscribersExist(Class<? extends Event> eventClass) {
-			return simulation.subscribersExistForEvent(eventClass);
-		}
-
-		@Override
-		public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-			simulation.subscribeDataManagerToEvent(dataManagerId, eventClass, eventConsumer);
-		}
-
-		@Override
-		public DataManagerId getDataManagerId() {
-			return dataManagerId;
-		}
-
-		@Override
-		public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
-			simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
-		}
-
-	}
-
 	private static class Data {
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
@@ -472,7 +346,7 @@ public class Simulation {
 
 	}
 
-	private void addDataManagerPlan(final DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	protected void addDataManagerPlan(final DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validateDataManagerPlan(plan);
 		validatePlanTime(time);
@@ -503,7 +377,7 @@ public class Simulation {
 		planningQueue.add(planRec);
 	}
 
-	private void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
+	protected void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
 		if (getDataManagerPlan(dataManagerId, key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
@@ -853,7 +727,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	protected Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		Consumer<DataManagerContext> result = null;
@@ -874,7 +748,7 @@ public class Simulation {
 		return new ArrayList<>();
 	}
 
-	private List<Object> getDataManagerPlanKeys(DataManagerId dataManagerId) {
+	protected List<Object> getDataManagerPlanKeys(DataManagerId dataManagerId) {
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
@@ -895,7 +769,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	private Optional<Double> getDataManagerPlanTime(final DataManagerId dataManagerId, final Object key) {
+	protected Optional<Double> getDataManagerPlanTime(final DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		Double result = null;
@@ -931,7 +805,7 @@ public class Simulation {
 	 */
 
 	@SuppressWarnings("unchecked")
-	private <T> Optional<T> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	protected <T> Optional<T> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
@@ -986,7 +860,7 @@ public class Simulation {
 		simulationCloseActorCallbacks.put(focalActorId, consumer);
 	}
 
-	private void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
+	protected void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CONTEXT_CONSUMER);
 		}
@@ -994,7 +868,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1021,7 +895,7 @@ public class Simulation {
 		Collections.sort(list);
 	}
 
-	private void unSubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
+	protected void unSubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1043,7 +917,7 @@ public class Simulation {
 		}
 	}
 
-	private void releaseEvent(final Event event) {
+	protected void releaseEvent(final Event event) {
 
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
@@ -1143,7 +1017,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends DataManager> T getDataManagerForDataManager(Class<T> dataManagerClass, DataManagerId dataManagerId) {
+	protected <T extends DataManager> T getDataManagerForDataManager(Class<T> dataManagerClass, DataManagerId dataManagerId) {
 
 		if (dataManagerClass == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
@@ -1269,7 +1143,7 @@ public class Simulation {
 
 	}
 
-	private boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
+	protected boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
 		return (dataManagerEventMap.containsKey(eventClass) || rootNode.children.containsKey(eventClass) || rootNode.consumers.containsKey(eventClass));
 	}
 

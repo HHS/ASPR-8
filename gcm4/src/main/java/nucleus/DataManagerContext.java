@@ -16,8 +16,15 @@ import util.errors.ContractException;
  *
  */
 
-public interface DataManagerContext extends SimulationContext {
-
+public final class DataManagerContext implements SimulationContext {
+	private final DataManagerId dataManagerId;
+	private final Simulation simulation;
+	
+	
+	protected DataManagerContext(Simulation simulation, DataManagerId dataManagerId) {
+		this.simulation = simulation;
+		this.dataManagerId = dataManagerId;
+	}
 	/**
 	 * Schedules a plan that will be executed at the given time.
 	 * 
@@ -28,7 +35,10 @@ public interface DataManagerContext extends SimulationContext {
 	 * 
 	 * 
 	 */
-	public void addPlan(Consumer<DataManagerContext> plan, double planTime);
+	
+	public void addPlan(final Consumer<DataManagerContext> plan, final double planTime) {
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, null);
+	}
 
 	/**
 	 * Schedules a plan that will be executed at the given time. The plan is
@@ -44,8 +54,12 @@ public interface DataManagerContext extends SimulationContext {
 	 *             already in use by an existing plan
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
-	 */
-	public void addKeyedPlan(Consumer<DataManagerContext> plan, double planTime, Object key);
+	 */	
+	public void addKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+		simulation.validatePlanKeyNotNull(key);
+		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, key);
+	}
 
 	/**
 	 * Schedules a plan that will be executed at the given time. Passive plans
@@ -58,8 +72,10 @@ public interface DataManagerContext extends SimulationContext {
 	 *             scheduled for a time in the past
 	 * 
 	 * 
-	 */
-	public void addPassivePlan(Consumer<DataManagerContext> plan, double planTime);
+	 */	
+	public void addPassivePlan(final Consumer<DataManagerContext> plan, final double planTime) {
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, null);
+	}
 
 	/**
 	 * Schedules a plan that will be executed at the given time. The plan is
@@ -77,9 +93,12 @@ public interface DataManagerContext extends SimulationContext {
 	 *             already in use by an existing plan
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
-	 */
-	public void addPassiveKeyedPlan(Consumer<DataManagerContext> plan, double planTime, Object key);
-
+	 */	
+	public void addPassiveKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+		simulation.validatePlanKeyNotNull(key);
+		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, key);
+	}
 	/**
 	 * Retrieves a plan for the given key.
 	 * 
@@ -87,7 +106,12 @@ public interface DataManagerContext extends SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key);
+	
+	@SuppressWarnings("unchecked")
+	
+	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key) {
+		return (Optional<T>) simulation.getDataManagerPlan(dataManagerId, key);
+	}
 
 	/**
 	 * Returns the scheduled execution time for the plan associated with the
@@ -96,8 +120,10 @@ public interface DataManagerContext extends SimulationContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
-	 */
-	public Optional<Double> getPlanTime(final Object key);
+	 */	
+	public Optional<Double> getPlanTime(final Object key) {
+		return simulation.getDataManagerPlanTime(dataManagerId, key);
+	}
 
 	/**
 	 * Broadcasts the given event to all subscribers. Data manager subscribers
@@ -106,8 +132,10 @@ public interface DataManagerContext extends SimulationContext {
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
-	 */
-	public void releaseEvent(final Event event);
+	 */	
+	public void releaseEvent(final Event event) {
+		simulation.releaseEvent(event);
+	}
 
 	
 	/**
@@ -116,14 +144,18 @@ public interface DataManagerContext extends SimulationContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
-	 */
-	public <T> Optional<T> removePlan(final Object key);
+	 */	
+	public <T> Optional<T> removePlan(final Object key) {
+		return simulation.removeDataManagerPlan(dataManagerId, key);
+	}
 
 	/**
 	 * Returns a list of the current plan keys associated with the current data
 	 * manager
-	 */
-	public List<Object> getPlanKeys();
+	 */	
+	public List<Object> getPlanKeys() {
+		return simulation.getDataManagerPlanKeys(dataManagerId);
+	}
 
 	/**
 	 * Subscribes the data manager to events of the given type for the purpose
@@ -134,8 +166,10 @@ public interface DataManagerContext extends SimulationContext {
 	 *             is null
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
 	 *             consumer is null
-	 */
-	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer);
+	 */	
+	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+		simulation.subscribeDataManagerToEvent(dataManagerId, eventClass, eventConsumer);
+	}
 
 	/**
 	 * Unsubscribes the data manager from events of the given type for all
@@ -144,19 +178,26 @@ public interface DataManagerContext extends SimulationContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
-	 */
-	public void unsubscribe(Class<? extends Event> eventClass);
+	 */	
+	public void unsubscribe(Class<? extends Event> eventClass) {
+		simulation.unSubscribeDataManagerFromEvent(dataManagerId, eventClass);
+	}
 
 	/**
 	 * Returns true if and only if there are actor or data managers subscribed
 	 * to the given event type.
 	 */
-	public boolean subscribersExist(Class<? extends Event> eventClass);
+	public boolean subscribersExist(Class<? extends Event> eventClass) {
+		return simulation.subscribersExistForEvent(eventClass);
+	}
+
 
 	/**
 	 * Returns the DataManagerId associated with this DataManagerContext
-	 */
-	public DataManagerId getDataManagerId();
+	 */	
+	public DataManagerId getDataManagerId() {
+		return dataManagerId;
+	}
 
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
@@ -166,12 +207,50 @@ public interface DataManagerContext extends SimulationContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER} if the
 	 *             consumer is null</li> 
-	 */
-	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer);
-	
+	 */	
+	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
+		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
+	}
 	/**
 	 * Returns the ActorId of the current actor
-	 */
-	public ActorId getActorId();
+	 */	
+	public ActorId getActorId() {
+		return simulation.focalActorId;
+	}
+	
+	@Override
+	public ActorId addActor(Consumer<ActorContext> consumer) {
+		return simulation.addActor(consumer);
+	}
 
+	@Override
+	public boolean actorExists(final ActorId actorId) {
+		return simulation.actorExists(actorId);
+	}
+	
+	@Override
+	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
+		return simulation.getDataManagerForDataManager(dataManagerClass, dataManagerId);
+	}
+	
+	@Override
+	public double getTime() {
+		return simulation.time;
+	}
+	
+	@Override
+	public void halt() {
+		simulation.halt();
+	}
+	
+	@Override
+	public void removeActor(final ActorId actorId) {
+		simulation.removeActor(actorId);
+	}
+
+	@Override
+	public void releaseOutput(Object output) {
+		simulation.releaseOutput(output);
+	}
+	
 }
