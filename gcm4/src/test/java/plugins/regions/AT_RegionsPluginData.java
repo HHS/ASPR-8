@@ -321,15 +321,6 @@ public class AT_RegionsPluginData {
 		contractException = assertThrows(ContractException.class,
 				() -> builder.defineRegionProperty(regionPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		/*
-		 * if a property definition for the given region id and property id was
-		 * previously defined.
-		 */
-		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
-		contractException = assertThrows(ContractException.class,
-				() -> builder.defineRegionProperty(regionPropertyId, propertyDefinition));
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 	}
 
 	@Test
@@ -413,12 +404,6 @@ public class AT_RegionsPluginData {
 				() -> builder.setRegionPropertyValue(regionId, null, validValue));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-		// if the region property value was previously defined
-		builder.setRegionPropertyValue(regionId, regionPropertyId, validValue);
-		contractException = assertThrows(ContractException.class,
-				() -> builder.setRegionPropertyValue(regionId, regionPropertyId, validValue));
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
 		// Note: Invalid values will not throw an exception and are caught
 		// during the build invocation.
 	}
@@ -433,12 +418,6 @@ public class AT_RegionsPluginData {
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> builder.setPersonRegionArrivalTracking(null));
 		assertEquals(RegionError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
-
-		// if the timeTrackingPolicy was previously defined
-		builder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		contractException = assertThrows(ContractException.class,
-				() -> builder.setPersonRegionArrivalTracking(TimeTrackingPolicy.DO_NOT_TRACK_TIME));
-		assertEquals(RegionError.DUPLICATE_TIME_TRACKING_POLICY, contractException.getErrorType());
 
 	}
 
@@ -461,12 +440,6 @@ public class AT_RegionsPluginData {
 		// if the region id is null
 		contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(personId, null));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
-
-		// if the person's region was previously defined
-		builder.setPersonRegion(personId, regionId);
-		contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(personId, regionId));
-		assertEquals(RegionError.DUPLICATE_PERSON_REGION_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test

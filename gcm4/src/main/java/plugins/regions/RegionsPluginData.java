@@ -90,21 +90,6 @@ public class RegionsPluginData implements PluginData {
 		}
 	}
 
-	private static void validatePersonRegionArrivalTrackingNotSet(Data data) {
-		if (data.regionArrivalTimeTrackingPolicy != null) {
-			throw new ContractException(RegionError.DUPLICATE_TIME_TRACKING_POLICY);
-		}
-	}
-
-	private static void validateRegionPropertyValueNotSet(final Data data, final RegionId regionId, final RegionPropertyId regionPropertyId) {
-		final Map<RegionPropertyId, Object> propertyMap = data.regionPropertyValues.get(regionId);
-		if (propertyMap != null) {
-			if (propertyMap.containsKey(regionPropertyId)) {
-				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, regionPropertyId + " = " + regionId);
-			}
-		}
-	}
-
 	private static void validateRegionIdNotNull(RegionId regionId) {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
@@ -128,12 +113,6 @@ public class RegionsPluginData implements PluginData {
 
 		if (!data.regionPropertyDefinitions.containsKey(regionPropertyId)) {
 			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID);
-		}
-	}
-
-	private static void validateRegionPropertyIsNotDefined(Data data, RegionPropertyId regionPropertyId) {
-		if (data.regionPropertyDefinitions.containsKey(regionPropertyId)) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION);
 		}
 	}
 
@@ -211,7 +190,6 @@ public class RegionsPluginData implements PluginData {
 			ensureDataMutability();
 			validateRegionIdNotNull(regionId);
 			validateRegionPropertyIdNotNull(regionPropertyId);
-			validateRegionPropertyValueNotSet(data, regionId, regionPropertyId);
 			Map<RegionPropertyId, Object> propertyMap = data.regionPropertyValues.get(regionId);
 			if (propertyMap == null) {
 				propertyMap = new LinkedHashMap<>();
@@ -240,7 +218,6 @@ public class RegionsPluginData implements PluginData {
 			ensureDataMutability();
 			validatePersonId(personId);
 			validateRegionIdNotNull(regionId);
-			validatePersonRegionNotAssigned(data, personId);
 			int personIndex = personId.getValue();
 			while (personIndex >= data.personRegions.size()) {
 				data.personRegions.add(null);
@@ -256,15 +233,11 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 *             <li>{@linkplain RegionError#NULL_TIME_TRACKING_POLICY}</li>if
 		 *             the timeTrackingPolicy is null
-		 * 
-		 *             <li>{@linkplain RegionError#DUPLICATE_TIME_TRACKING_POLICY}
-		 *             </li>if the timeTrackingPolicy was previously defined
-		 * 
+		 *
 		 */
 		public Builder setPersonRegionArrivalTracking(final TimeTrackingPolicy timeTrackingPolicy) {
 			ensureDataMutability();
 			validateTimeTrackingPolicyNotNull(timeTrackingPolicy);
-			validatePersonRegionArrivalTrackingNotSet(data);
 			data.regionArrivalTimeTrackingPolicy = timeTrackingPolicy;
 			return this;
 		}
@@ -304,7 +277,6 @@ public class RegionsPluginData implements PluginData {
 			ensureDataMutability();
 			validateRegionPropertyIdNotNull(regionPropertyId);
 			validateRegionPropertyDefinitionNotNull(propertyDefinition);
-			validateRegionPropertyIsNotDefined(data, regionPropertyId);
 			data.regionPropertyDefinitions.put(regionPropertyId, propertyDefinition);
 			return this;
 		}
@@ -451,16 +423,6 @@ public class RegionsPluginData implements PluginData {
 			throw new ContractException(PersonError.NULL_PERSON_ID);
 		}
 		
-	}
-
-	private static void validatePersonRegionNotAssigned(Data data, PersonId personId) {
-		int personIndex = personId.getValue();
-		if (personIndex >= data.personRegions.size()) {
-			return;
-		}
-		if (data.personRegions.get(personIndex) != null) {
-			throw new ContractException(RegionError.DUPLICATE_PERSON_REGION_ASSIGNMENT, personId);
-		}
 	}
 
 	/**

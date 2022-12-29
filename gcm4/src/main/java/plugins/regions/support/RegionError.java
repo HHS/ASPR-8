@@ -21,8 +21,7 @@ public enum RegionError implements ContractError {
 	NULL_REGION_PLUGIN_DATA("Null region plugin data"),
 	DUPLICATE_PERSON_REGION_ASSIGNMENT("Duplicate person region assignment"),
 	DUPLICATE_PERSON_ADDITION("Duplicate person region addition"),	
-NULL_TIME_TRACKING_POLICY("Null time tracking policy"),
-DUPLICATE_TIME_TRACKING_POLICY("Duplicate time tracking policy"),
+	NULL_TIME_TRACKING_POLICY("Null time tracking policy"),
 	REGION_ARRIVAL_TIMES_NOT_TRACKED("Person region arrival times not actively tracked");
 	
 
