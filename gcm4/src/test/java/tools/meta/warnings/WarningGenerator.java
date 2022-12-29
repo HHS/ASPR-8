@@ -63,7 +63,7 @@ public class WarningGenerator {
 			addRec &= !isRecord;
 			addRec &= !method.isBridge();
 			addRec &= !method.isSynthetic();			
-			addRec &= !Modifier.isAbstract(method.getModifiers());
+			addRec &= !(Modifier.isAbstract(method.getModifiers())&&!isEnum);
 			addRec &= !c.isInterface();
 			
 			if (isEnum) {
