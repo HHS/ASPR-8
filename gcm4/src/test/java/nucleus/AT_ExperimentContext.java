@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -15,6 +16,9 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
+import nucleus.testsupport.testplugin.TestActorPlan;
+import nucleus.testsupport.testplugin.TestPlugin;
+import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.TriConsumer;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
@@ -90,7 +94,8 @@ public class AT_ExperimentContext {
 					.addDimension(dimension2)//
 					.addDimension(dimension3)//
 					.addExperimentContextConsumer(c -> {
-						//this should execute exactly once since there is one scenario
+						// this should execute exactly once since there is one
+						// scenario
 						actualMetaData.addAll(c.getExperimentMetaData());
 					}).build()//
 					.execute();//
@@ -408,7 +413,7 @@ public class AT_ExperimentContext {
 		 */
 		Experiment	.builder()//
 					.addDimension(dimension)//
-					.addPlugin(plugin)//					
+					.addPlugin(plugin)//
 					.addExperimentContextConsumer((c) -> {
 						c.subscribeToExperimentOpen((c2) -> {
 							int scenarioCount = c2.getScenarioCount();
@@ -673,6 +678,35 @@ public class AT_ExperimentContext {
 
 		// show the subscribers did observe the opening of the simulation
 		assertEquals(expectedOpenObservationCount, simulationOpenObservationCount.getValue());
+	}
+
+	@Test
+	@UnitTestMethod(name = "getScenarioFailureCause", args = { int.class })
+	public void testGetScenarioFailureCause() {
+		RuntimeException e = new RuntimeException();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1,(c)->{
+			throw e;
+		}));
+		Plugin testPlugin = TestPlugin.getTestPlugin(pluginDataBuilder.build());
+
+		Consumer<ExperimentContext> experimentContestConsumer = (c)->{
+			c.subscribeToExperimentClose((c2)->{
+				Optional<Exception> optional = c2.getScenarioFailureCause(0);
+				assertTrue(optional.isPresent());
+				Exception e2 = optional.get();
+				assertEquals(e, e2);
+			});
+		};
+
+		Experiment.builder()//
+		.addPlugin(testPlugin)//
+		.addExperimentContextConsumer(experimentContestConsumer)//
+		.build()//
+		.execute();
+
+
 	}
 
 }

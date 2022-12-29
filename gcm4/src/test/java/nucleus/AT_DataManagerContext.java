@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
@@ -172,11 +173,11 @@ public class AT_DataManagerContext {
 		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
 		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
-		
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,(c)->{
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			TestDataManager1 testDataManager1 = c.getDataManager(TestDataManager1.class);
 			assertNotNull(testDataManager1);
-			
+
 			TestDataManager3A testDataManager3A = c.getDataManager(TestDataManager3A.class);
 			assertNotNull(testDataManager3A);
 
@@ -186,16 +187,11 @@ public class AT_DataManagerContext {
 			TestDataManager4A testDataManager4A = c.getDataManager(TestDataManager4A.class);
 			assertNotNull(testDataManager4A);
 
-			
-			
 		}));
-		
-		
+
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		
-		
-		
+
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
@@ -1022,89 +1018,98 @@ public class AT_DataManagerContext {
 
 	}
 
-//	private void combinedSubscriptionTest() {
-//
-//		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-//
-//		/*
-//		 * create a container that will record the phases of event resolution
-//		 * that were executed by the resolver that reflects the order in which
-//		 * they occured
-//		 */
-//
-//		List<String> observedPhases = new ArrayList<>();
-//
-//		/*
-//		 * Create a container with the phases we expect in the order we expect
-//		 * them.
-//		 */
-//		List<String> expectedPhases = new ArrayList<>();
-//		expectedPhases.add("execution");
-//		expectedPhases.add("post-action");
-//
-//		// have the resolver test preconditions for all the phases
-//		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-//		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-//
-//			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribe(null, (c2, e) -> {
-//			}));
-//			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
-//
-//			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, null));
-//			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
-//
-//			contractException = assertThrows(ContractException.class, () -> c.subscribePostOrder(null, (c2, e) -> {
-//			}));
-//			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
-//
-//			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, null));
-//			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
-//
-//		}));
-//
-//		// have the resolver subscribe to the two phases for test events.
-//		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-//
-//			c.subscribe(TestEvent.class, (c2, e) -> {
-//				observedPhases.add("execution");
-//			});
-//
-//			c.subscribePostOrder(TestEvent.class, (c2, e) -> {
-//				observedPhases.add("post-action");
-//			});
-//		}));
-//
-//		// create an agent that will generate a test event
-//
-//		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-//			c.releaseEvent(new TestEvent());
-//		}));
-//
-//		// build the plugin
-//		TestPluginData testPluginData = pluginDataBuilder.build();
-//		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-//
-//		// build and execute the engine
-//		Simulation	.builder()//
-//					.addPlugin(testPlugin)//
-//					.build()//
-//					.execute();//
-//
-//		/*
-//		 * show that the resolver engaged in the three event resolution phases
-//		 * in the proper order
-//		 */
-//		assertEquals(expectedPhases, observedPhases);
-//
-//	}
-	
+	// private void combinedSubscriptionTest() {
+	//
+	// TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+	//
+	// /*
+	// * create a container that will record the phases of event resolution
+	// * that were executed by the resolver that reflects the order in which
+	// * they occured
+	// */
+	//
+	// List<String> observedPhases = new ArrayList<>();
+	//
+	// /*
+	// * Create a container with the phases we expect in the order we expect
+	// * them.
+	// */
+	// List<String> expectedPhases = new ArrayList<>();
+	// expectedPhases.add("execution");
+	// expectedPhases.add("post-action");
+	//
+	// // have the resolver test preconditions for all the phases
+	// pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
+	// pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0,
+	// (c) -> {
+	//
+	// ContractException contractException =
+	// assertThrows(ContractException.class, () -> c.subscribe(null, (c2, e) ->
+	// {
+	// }));
+	// assertEquals(NucleusError.NULL_EVENT_CLASS,
+	// contractException.getErrorType());
+	//
+	// contractException = assertThrows(ContractException.class, () ->
+	// c.subscribe(TestEvent.class, null));
+	// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
+	// contractException.getErrorType());
+	//
+	// contractException = assertThrows(ContractException.class, () ->
+	// c.subscribePostOrder(null, (c2, e) -> {
+	// }));
+	// assertEquals(NucleusError.NULL_EVENT_CLASS,
+	// contractException.getErrorType());
+	//
+	// contractException = assertThrows(ContractException.class, () ->
+	// c.subscribe(TestEvent.class, null));
+	// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
+	// contractException.getErrorType());
+	//
+	// }));
+	//
+	// // have the resolver subscribe to the two phases for test events.
+	// pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0,
+	// (c) -> {
+	//
+	// c.subscribe(TestEvent.class, (c2, e) -> {
+	// observedPhases.add("execution");
+	// });
+	//
+	// c.subscribePostOrder(TestEvent.class, (c2, e) -> {
+	// observedPhases.add("post-action");
+	// });
+	// }));
+	//
+	// // create an agent that will generate a test event
+	//
+	// pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+	// c.releaseEvent(new TestEvent());
+	// }));
+	//
+	// // build the plugin
+	// TestPluginData testPluginData = pluginDataBuilder.build();
+	// Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+	//
+	// // build and execute the engine
+	// Simulation .builder()//
+	// .addPlugin(testPlugin)//
+	// .build()//
+	// .execute();//
+	//
+	// /*
+	// * show that the resolver engaged in the three event resolution phases
+	// * in the proper order
+	// */
+	// assertEquals(expectedPhases, observedPhases);
+	//
+	// }
+
 	private void combinedSubscriptionTest() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		
 		MutableBoolean observed = new MutableBoolean();
-		
 
 		// have the resolver test preconditions for all the phases
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
@@ -1116,7 +1121,6 @@ public class AT_DataManagerContext {
 
 			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, null));
 			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
-	
 
 		}));
 
@@ -1126,12 +1130,12 @@ public class AT_DataManagerContext {
 			c.subscribe(TestEvent.class, (c2, e) -> {
 				observed.setValue(true);
 			});
-			
+
 		}));
 
 		// create a data manager that will generate a test event
 
-		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
 			c.releaseEvent(new TestEvent());
 		}));
@@ -1154,18 +1158,18 @@ public class AT_DataManagerContext {
 
 	}
 
-
 	@Test
 	@UnitTestMethod(name = "subscribe", args = { Class.class, BiConsumer.class })
 	public void testSubscribe() {
 		combinedSubscriptionTest();
 	}
 
-//	@Test
-//	@UnitTestMethod(name = "subscribeToEventPostPhase", args = { Class.class, BiConsumer.class })
-//	public void testSubscribeToEventPostPhase() {
-//		combinedSubscriptionTest();
-//	}
+	// @Test
+	// @UnitTestMethod(name = "subscribeToEventPostPhase", args = { Class.class,
+	// BiConsumer.class })
+	// public void testSubscribeToEventPostPhase() {
+	// combinedSubscriptionTest();
+	// }
 
 	@Test
 	@UnitTestMethod(name = "unsubscribe", args = { Class.class })
@@ -1197,12 +1201,10 @@ public class AT_DataManagerContext {
 				phaseExecutionCount.increment();
 			});
 
-			
-
 		}));
 
 		// create a data manager that will produce a test event
-		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
 			c.releaseEvent(new TestEvent());
 		}));
@@ -1258,7 +1260,7 @@ public class AT_DataManagerContext {
 		 * create a simple event label as a place holder -- all test events will
 		 * be matched
 		 */
-		EventFilter<TestEvent> eventFilter = EventFilter	.builder(TestEvent.class)//
+		EventFilter<TestEvent> eventFilter = EventFilter.builder(TestEvent.class)//
 														.build();//
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1336,6 +1338,74 @@ public class AT_DataManagerContext {
 
 		// show that all actions were executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+	}
+	
+	private static class ActorObservingDataManager extends TestDataManager{
+		private List<Pair<Double,ActorId>> observedPairs;
+		private DataManagerContext dataManagerContext;
+		public ActorObservingDataManager(List<Pair<Double,ActorId>> observedPairs) {
+			this.observedPairs = observedPairs;
+		}
+		public void init(DataManagerContext dataManagerContext) {
+			super.init(dataManagerContext);
+			this.dataManagerContext = dataManagerContext;
+		}
+		public void observe() {
+			observedPairs.add(new Pair<>(dataManagerContext.getTime(),dataManagerContext.getActorId()));
+		}
+	}
+
+	@Test
+	@UnitTestMethod(name = "getActorId", args = {})
+	public void testGetActorId() {
+		List<Pair<Double,ActorId>> expectedPairs = new ArrayList<>();
+		List<Pair<Double,ActorId>> observedPairs = new ArrayList<>(); 
+		
+		
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		double testTime = 1;
+		// there are no precondition tests
+		
+		pluginDataBuilder.addTestDataManager("dm", () -> new ActorObservingDataManager(observedPairs));
+
+		/*
+		 * Have actors get their own actor ids and show that these ids match the
+		 * expected values established duing the initialization of the
+		 * TestActors.
+		 */
+		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(testTime++, (c) -> {
+			c.getDataManager(ActorObservingDataManager.class).observe();
+			expectedPairs.add(new Pair<>(c.getTime(),c.getActorId()));
+		}));
+
+		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(testTime++, (c) -> {
+			c.getDataManager(ActorObservingDataManager.class).observe();
+			expectedPairs.add(new Pair<>(c.getTime(),c.getActorId()));
+		}));
+
+		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(testTime++, (c) -> {
+			c.getDataManager(ActorObservingDataManager.class).observe();
+			expectedPairs.add(new Pair<>(c.getTime(),c.getActorId()));
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// run the simulation
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
+
+		// show that all action plans were executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+
+		// show that the number of actor ids matches the number of actor aliases
+		assertEquals(expectedPairs, observedPairs);
 	}
 
 }

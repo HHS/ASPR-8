@@ -44,76 +44,6 @@ public final class ExperimentStateManager {
 
 	private ExperimentContext experimentContext;
 
-	private class ExperimentContextImpl implements ExperimentContext {
-
-		@Override
-		public void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
-			ExperimentStateManager.this.subscribeToSimulationOpen(consumer);
-
-		}
-
-		@Override
-		public void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer) {
-			ExperimentStateManager.this.subscribeToSimulationClose(consumer);
-		}
-
-		@Override
-		public void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer) {
-			ExperimentStateManager.this.subscribeToExperimentOpen(consumer);
-		}
-
-		@Override
-		public void subscribeToExperimentClose(Consumer<ExperimentContext> consumer) {
-			ExperimentStateManager.this.subscribeToExperimentClose(consumer);
-		}
-
-		@Override
-		public <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer) {
-			ExperimentStateManager.this.subscribeToOutput(outputClass, consumer);
-		}
-
-		@Override
-		public Optional<List<String>> getScenarioMetaData(int scenarioId) {
-			return ExperimentStateManager.this.getScenarioMetaData(scenarioId);
-		}
-
-		@Override
-		public List<String> getExperimentMetaData() {
-			return ExperimentStateManager.this.getExperimentMetaData();
-		}
-
-		@Override
-		public int getScenarioCount() {
-			return ExperimentStateManager.this.getScenarioCount();
-		}
-
-		@Override
-		public Optional<ScenarioStatus> getScenarioStatus(int scenarioId) {
-			return ExperimentStateManager.this.getScenarioStatus(scenarioId);
-		}
-
-		@Override
-		public int getStatusCount(ScenarioStatus scenarioStatus) {
-			return ExperimentStateManager.this.getStatusCount(scenarioStatus);
-		}
-
-		@Override
-		public double getElapsedSeconds() {
-			return ExperimentStateManager.this.getElapsedSeconds();
-		}
-
-		@Override
-		public List<Integer> getScenarios(ScenarioStatus scenarioStatus) {
-			return ExperimentStateManager.this.getScenarios(scenarioStatus);
-		}
-
-		@Override
-		public Optional<Exception> getScenarioFailureCause(int scenarioId) {
-			return ExperimentStateManager.this.getScenarioFailureCause(scenarioId);
-		}
-
-	}
-
 	private TimeElapser timeElapser = new TimeElapser();
 
 	private Map<Integer, ScenarioRecord> scenarioRecords = new LinkedHashMap<>();
@@ -393,7 +323,9 @@ public final class ExperimentStateManager {
 
 		public ExperimentStateManager build() {
 			try {
-				return new ExperimentStateManager(data);
+				ExperimentStateManager result = new ExperimentStateManager(data);
+				result.init();
+				return result;
 			} finally {
 				data = new Data();
 			}
@@ -473,7 +405,10 @@ public final class ExperimentStateManager {
 
 	private ExperimentStateManager(Data data) {
 		this.data = data;
-		experimentContext = new ExperimentContextImpl();
+	}
+
+	private void init() {
+		experimentContext = new ExperimentContext(this);
 
 		for (int i = 0; i < data.scenarioCount; i++) {
 			ScenarioRecord scenarioRecord = new ScenarioRecord();
@@ -483,26 +418,26 @@ public final class ExperimentStateManager {
 
 	}
 
-	private void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
+	protected synchronized void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
 		simOpenConsumers.add(consumer);
 	}
 
-	private void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer) {
+	protected synchronized void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER);
 		}
 		simCloseConsumers.add(consumer);
 	}
 
-	private void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer) {
+	protected synchronized void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer) {
 		experimentOpenConsumers.add(consumer);
 	}
 
-	private void subscribeToExperimentClose(Consumer<ExperimentContext> consumer) {
+	protected synchronized void subscribeToExperimentClose(Consumer<ExperimentContext> consumer) {
 		experimentCloseConsumers.add(consumer);
 	}
 
-	private <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer) {
+	protected synchronized <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer) {
 		Set<TriConsumer<ExperimentContext, Integer, Object>> outputConsumers = outputConsumerMap.get(outputClass);
 		if (outputConsumers == null) {
 			outputConsumers = new LinkedHashSet<>();
@@ -724,7 +659,7 @@ public final class ExperimentStateManager {
 	 */
 	public synchronized void closeExperiment() {
 
-		if (experimentStatus != ExperimentStatus.OPENED) {			
+		if (experimentStatus != ExperimentStatus.OPENED) {
 			throw new ContractException(NucleusError.UNCLOSABLE_EXPERIMENT);
 		}
 		experimentStatus = ExperimentStatus.CLOSED;
@@ -737,7 +672,7 @@ public final class ExperimentStateManager {
 			if (writer != null) {
 				writer.close();
 			}
-		} catch (final IOException e) {			
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

@@ -18,8 +18,11 @@ import util.errors.ContractException;
  */
 
 @ThreadSafe
-public interface ExperimentContext {
-
+public final class ExperimentContext {
+	private final ExperimentStateManager experimentStateManager;
+	protected ExperimentContext(ExperimentStateManager experimentStateManager) {
+		this.experimentStateManager = experimentStateManager;
+	}
 	/**
 	 * Subscribes to the open of simulations
 	 * 
@@ -28,7 +31,9 @@ public interface ExperimentContext {
 	 *             <li>{@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER} if
 	 *             the consumer is null</li>
 	 */
-	public void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer);
+	public void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
+		experimentStateManager.subscribeToSimulationOpen(consumer);
+	}
 
 	/**
 	 * Subscribes to the close of simulations
@@ -39,7 +44,9 @@ public interface ExperimentContext {
 	 *             the consumer is null</li>
 	 */
 
-	public void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer);
+	public void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer) {
+		experimentStateManager.subscribeToSimulationClose(consumer);
+	}
 
 	/**
 	 * Subscribes to the open of the experiment
@@ -49,7 +56,9 @@ public interface ExperimentContext {
 	 *             <li>{@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER} if
 	 *             the consumer is null</li>
 	 */
-	public void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer);
+	public void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer) {
+		experimentStateManager.subscribeToExperimentOpen(consumer);
+	}
 
 	/**
 	 * Subscribes to the close of the experiment
@@ -59,7 +68,9 @@ public interface ExperimentContext {
 	 *             <li>{@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER} if
 	 *             the consumer is null</li>
 	 */
-	public void subscribeToExperimentClose(Consumer<ExperimentContext> consumer);
+	public void subscribeToExperimentClose(Consumer<ExperimentContext> consumer) {
+		experimentStateManager.subscribeToExperimentClose(consumer);
+	}
 
 	/**
 	 * Subscribes the output handler to output of the given type.
@@ -75,7 +86,9 @@ public interface ExperimentContext {
 	 * 
 	 * 
 	 */
-	public <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer);
+	public <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer) {
+		experimentStateManager.subscribeToOutput(outputClass, consumer);
+	}
 
 	/**
 	 * 
@@ -83,46 +96,63 @@ public interface ExperimentContext {
 	 * exists.
 	 * 
 	 */
-	public Optional<ScenarioStatus> getScenarioStatus(int scenarioId);
+	public Optional<ScenarioStatus> getScenarioStatus(int scenarioId){
+		return experimentStateManager.getScenarioStatus(scenarioId);
+	}
 
 	/**
 	 * 
 	 * Returns the current number of scenarios with the given status
 	 * 
 	 */
-	public int getStatusCount(ScenarioStatus scenarioStatus);
+	public int getStatusCount(ScenarioStatus scenarioStatus) {
+		return experimentStateManager.getStatusCount(scenarioStatus);
+	}
 
 	/**
 	 * Returns the number of seconds that have elapsed since the start of the
 	 * experiment
 	 */
-	public double getElapsedSeconds();
+	public double getElapsedSeconds() {
+		return experimentStateManager.getElapsedSeconds();
+	}
 
 	/**
 	 * Returns the list of meta data for the given scenario if it is available.
 	 */
-	public Optional<List<String>> getScenarioMetaData(int scenarioId);
+	public Optional<List<String>> getScenarioMetaData(int scenarioId){
+		return experimentStateManager.getScenarioMetaData(scenarioId);
+	}
+	
 
 	/**
 	 * Returns the list of meta data for the experiment. These meta data are
 	 * descriptors of the scenario meta data produced by each execution of the
 	 * simulation.
 	 */
-	public List<String> getExperimentMetaData();
+	public List<String> getExperimentMetaData(){
+		return experimentStateManager.getExperimentMetaData();
+	}
 
 	/**
 	 * Returns the number of scenarios in the experiment
 	 */
-	public int getScenarioCount();
+	public int getScenarioCount() {
+		return experimentStateManager.getScenarioCount();
+	}
 
 	/**
 	 * Returns the current list of scenario ids for the given scenario status
 	 */
-	public List<Integer> getScenarios(ScenarioStatus scenarioStatus);
+	public List<Integer> getScenarios(ScenarioStatus scenarioStatus){
+		return experimentStateManager.getScenarios(scenarioStatus);
+	}
 	
 	/**
 	 * Returns the exception associated with a failed sceario
 	 */
-	public Optional<Exception> getScenarioFailureCause(int scenarioId);
+	public Optional<Exception> getScenarioFailureCause(int scenarioId){
+		return experimentStateManager.getScenarioFailureCause(scenarioId);
+	}
 
 }
