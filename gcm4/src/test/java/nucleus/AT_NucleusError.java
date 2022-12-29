@@ -40,22 +40,4 @@ public class AT_NucleusError {
 		}
 	}
 
-	/**
-	 * Tests {@link NucleusError#valueOf(String)}
-	 */
-	@Test
-	@UnitTestMethod(name = "valueOf", args = { String.class })
-	public void testValueOf() {
-		// nothing to test
-	}
-
-	/**
-	 * Tests {@link NucleusError#values()}
-	 */
-	@Test
-	@UnitTestMethod(name = "values", args = {})
-	public void testValues() {
-		// nothing to test
-	}
-
 }

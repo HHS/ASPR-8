@@ -3,6 +3,7 @@ package tools.meta.warnings;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
 
 /**
@@ -52,7 +54,6 @@ public class WarningGenerator {
 	private WarningContainer.Builder warningContainerBuilder = WarningContainer.builder();
 
 	private void probeClass(Class<?> c) {
-
 		final Method[] methods = c.getMethods();
 		boolean isEnum = c.isEnum();
 		boolean isRecord = c.isRecord();
@@ -62,10 +63,9 @@ public class WarningGenerator {
 			boolean addRec = method.getDeclaringClass().equals(c);
 			addRec &= !isRecord;
 			addRec &= !method.isBridge();
-			addRec &= !method.isSynthetic();			
-			addRec &= !(Modifier.isAbstract(method.getModifiers())&&!isEnum);
-			addRec &= !c.isInterface();
-			
+			addRec &= !method.isSynthetic();
+			addRec &= !(Modifier.isAbstract(method.getModifiers()) && !isEnum);
+
 			if (isEnum) {
 				if (method.getName().equals("values")) {
 					if (method.getParameters().length == 0) {
@@ -96,12 +96,20 @@ public class WarningGenerator {
 			}
 		}
 
+		for (Field field : c.getFields()) {
+			if (!isEnum) {
+				sourceFields.add(field);
+			}
+		}
+
 	}
 
 	private Set<Method> sourceMethods = new LinkedHashSet<>();
 	private Set<Method> coveredSourceMethods = new LinkedHashSet<>();
 	private Set<Constructor<?>> sourceConstructors = new LinkedHashSet<>();
 	private Set<Constructor<?>> coveredSourceConstructors = new LinkedHashSet<>();
+	private Set<Field> sourceFields = new LinkedHashSet<>();
+	private Set<Field> coveredSourceFields = new LinkedHashSet<>();
 
 	private Set<Class<?>> getClasses(Class<?> c) {
 		Set<Class<?>> result = new LinkedHashSet<>();
@@ -163,12 +171,35 @@ public class WarningGenerator {
 		}
 	}
 
+	private void probeFieldTest(Method testMethod, UnitTest unitTest, UnitTestMethod unitTestMethod) {
+
+//		Method sourceMethod = null;
+//		String methodExceptionMessage = "";
+//		try {
+//			if (unitTestMethod.target() != Object.class) {
+//				sourceMethod = unitTestMethod.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
+//			} else {
+//				if (unitTest != null) {
+//					sourceMethod = unitTest.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
+//				}
+//			}
+//		} catch (NoSuchMethodException | SecurityException e) {
+//			methodExceptionMessage = e.getMessage();
+//			sourceMethod = null;
+//		}
+//		if (sourceMethod != null) {
+//			if (!sourceMethods.contains(sourceMethod)) {
+//				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD, sourceMethod.toString()));
+//			} else {
+//				coveredSourceMethods.add(sourceMethod);
+//			}
+//		} else {
+//			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_METHOD_CANNOT_BE_RESOLVED, methodExceptionMessage));
+//		}
+	}
+
 	private void probeMethodTest(Method testMethod, UnitTest unitTest, UnitTestMethod unitTestMethod) {
-		// if(testMethod.toString().equals("public void
-		// plugins.groups.testsupport.AT_GroupsActionSupport.testTestConsumer()"))
-		// {
-		// System.out.println("arrived");
-		// }
+
 		Method sourceMethod = null;
 		String methodExceptionMessage = "";
 		try {
@@ -201,15 +232,19 @@ public class WarningGenerator {
 			final Test test = testMethod.getAnnotation(Test.class);
 			final UnitTestMethod unitTestMethod = testMethod.getAnnotation(UnitTestMethod.class);
 			final UnitTestConstructor unitTestConstructor = testMethod.getAnnotation(UnitTestConstructor.class);
+			final UnitTestField unitTestField = testMethod.getAnnotation(UnitTestField.class);
 			int caseIndex = 0;
 			if (test != null) {
+				caseIndex += 8;
+			}
+			if (unitTestConstructor != null) {
 				caseIndex += 4;
 			}
 			if (unitTestMethod != null) {
 				caseIndex += 2;
 			}
-			if (unitTestConstructor != null) {
-				caseIndex++;
+			if (unitTestField != null) {
+				caseIndex += 1;
 			}
 
 			switch (caseIndex) {
@@ -217,26 +252,51 @@ public class WarningGenerator {
 				// ignore the method
 				break;
 			case 1:
-				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_CONSTRUCTOR_ANNOTATION_WITHOUT_TEST_ANNOTATION));
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_FIELD_ANNOTATION_WITHOUT_TEST_ANNOTATION));
 				break;
 			case 2:
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_METHOD_ANNOTATION_WITHOUT_TEST_ANNOTATION));
 				break;
 			case 3:
-				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT));
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
 				break;
 			case 4:
-				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION));
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_CONSTRUCTOR_ANNOTATION_WITHOUT_TEST_ANNOTATION));
 				break;
 			case 5:
-				probeConstructorTest(testMethod, unitTest, unitTestConstructor);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
 				break;
 			case 6:
-				probeMethodTest(testMethod, unitTest, unitTestMethod);
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
 				break;
 			case 7:
-				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT));
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
 				break;
+			case 8:
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION));
+				break;
+			case 9:
+				probeFieldTest(testMethod, unitTest, unitTestMethod);
+				break;
+			case 10:
+				probeMethodTest(testMethod, unitTest, unitTestMethod);
+				break;
+			case 11:
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
+				break;
+			case 12:
+				probeConstructorTest(testMethod, unitTest, unitTestConstructor);
+				break;
+			case 13:
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
+				break;
+			case 14:
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
+				break;
+			case 15:
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
+				break;
+
 			default:
 				throw new RuntimeException("unhandled case index " + caseIndex);
 			}
@@ -300,32 +360,6 @@ public class WarningGenerator {
 	private WarningGenerator(Data data) {
 		this.data = data;
 	}
-
-	// private void reportWarnings() {
-	//
-	// int warningCount = 0;
-	// for (WarningType warningType : WarningType.values()) {
-	// warningCount += warningMap.get(warningType).size();
-	// }
-	// System.out.println("(" + warningCount + ")");
-	// for (WarningType warningType : WarningType.values()) {
-	// List<String> warnings = warningMap.get(warningType);
-	// if (!warnings.isEmpty()) {
-	//
-	// System.out.println("(" + warnings.size() + ")" +
-	// warningType.getDescription());
-	// int n = warnings.size();
-	// for (int i = 0; i < n; i++) {
-	// String warning = warnings.get(i);
-	// System.out.println("\t" + warning);
-	// }
-	// System.out.println();
-	// }
-	// }
-	// if (warningCount == 0) {
-	// System.out.println("Test code is consistent with source code");
-	// }
-	// }
 
 	private void checkSourceMethodCoverage() {
 		for (Method method : sourceMethods) {
