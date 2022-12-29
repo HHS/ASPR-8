@@ -1,4 +1,4 @@
-package plugins.regions;
+package plugins.partitions;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
 
-@UnitTest(target = RegionsPluginId.class)
-public class AT_RegionPluginId {
+@UnitTest(target = PartitionsPluginId.class)
+public class AT_PartitionsPluginId {
 
 	@Test
 	public void test() {
-		assertNotNull(RegionsPluginId.PLUGIN_ID);
+		assertNotNull(PartitionsPluginId.PLUGIN_ID);
 	}
 }
