@@ -15,16 +15,21 @@ import tools.metaunit.warnings.WarningGenerator;
 import tools.metaunit.warnings.WarningType;
 
 /**
- * A script covering the details of the GCM Test Plan. It produces a console
- * report that measures the completeness/status of the test classes. It does not
- * measure the correctness of any test, but rather shows which tests exist and
- * their status.
+ * A script that produces a console report shows missing unit tests.
  *
  * @author Shawn Hatch
  *
  */
 public class MissingTestsReport {
 
+	/**
+	 * Runs the test and print the result to console. The first argument is the
+	 * path reference to the source folder for the production code base. The
+	 * second argument is the path reference to the source folder for the unit
+	 * test code. The third argument is optional and is a filter string that
+	 * will exclude all source classes that do not contain(case insensitive) the
+	 * filter string.
+	 */
 	public static void main(final String[] args) {
 
 		// Should point to src/main/java
@@ -33,16 +38,15 @@ public class MissingTestsReport {
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
 		WarningContainer warningContainer = WarningGenerator.builder()//
-				.setSourcePath(sourcePath)//
-				.setTestPath(testPath)//
-				.build()//
-				.execute();//
-		
-		String classNameFilter = null;
-		if(args.length>2) {
-			classNameFilter = args[2];
-		}
+															.setSourcePath(sourcePath)//
+															.setTestPath(testPath)//
+															.build()//
+															.execute();//
 
+		String classNameFilter = null;
+		if (args.length > 2) {
+			classNameFilter = args[2];			
+		}
 
 		reportWarnings(warningContainer, classNameFilter);
 
@@ -77,7 +81,7 @@ public class MissingTestsReport {
 				list.add(methodWarning.getMethod().toString());
 			}
 		}
-		
+
 		for (FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
 			if (fieldWarning.getWarningType().equals(WarningType.SOURCE_FIELD_REQUIRES_TEST)) {
 				String classRef = fieldWarning.getField().getDeclaringClass().getName();
@@ -91,8 +95,8 @@ public class MissingTestsReport {
 		}
 
 		if (filter != null) {
-			System.out.println("Results are filtered on the class references containing the string '"+filter+"'");
-			warningMap.keySet().removeIf((t)->!t.contains(filter));
+			System.out.println("Results are filtered on the class references containing the string '" + filter + "'");
+			warningMap.keySet().removeIf((t) -> !t.toLowerCase().contains(filter.toLowerCase()));
 		}
 
 		for (String classRef : warningMap.keySet()) {

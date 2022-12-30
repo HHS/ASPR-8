@@ -868,7 +868,7 @@ public class AT_MaterialsDataManager {
 	}
 
 	@Test
-	//@UnitTestMethod(name = "getBatchAmount", args = { BatchId.class })
+	@UnitTestMethod(name = "getBatchAmount", args = { BatchId.class })
 	public void testGetBatchAmount() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
