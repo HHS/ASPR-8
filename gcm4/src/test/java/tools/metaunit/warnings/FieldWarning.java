@@ -1,28 +1,28 @@
 package tools.metaunit.warnings;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 
-public final class MethodWarning {
-	private final Method method;
+public final class FieldWarning {
+	private final Field field;
 	private final WarningType warningType;
 	private final String details;
 
 	/**
-	 * Constructs the method warning. Null details are replaced with an empty
+	 * Constructs the field warning. Null details are replaced with an empty
 	 * details string.
 	 * 
 	 * @throws NullPointerException
-	 *             <li>if the method is null</li>
+	 *             <li>if the field is null</li>
 	 *             <li>if the warning type is null</li>
 	 */
-	public MethodWarning(Method method, WarningType warningType, String details) {
-		if (method == null) {
-			throw new NullPointerException("method is null");
+	public FieldWarning(Field field, WarningType warningType, String details) {
+		if (field == null) {
+			throw new NullPointerException("field is null");
 		}
 		if (warningType == null) {
 			throw new NullPointerException("warning type is null");
 		}
-		this.method = method;
+		this.field = field;
 		this.warningType = warningType;
 		if (details == null) {
 			this.details = "";
@@ -31,27 +31,27 @@ public final class MethodWarning {
 		}
 	}
 	/**
-	 * Constructs the method warning with a default empty string for
+	 * Constructs the field warning with a default empty string for
 	 * details.
 	 * 
 	 * @throws NullPointerException
-	 *             <li>if the method is null</li>
+	 *             <li>if the field is null</li>
 	 *             <li>if the warning type is null</li>
 	 */
-	public MethodWarning(Method method, WarningType warningType) {
-		if (method == null) {
-			throw new NullPointerException("method is null");
+	public FieldWarning(Field field, WarningType warningType) {
+		if (field == null) {
+			throw new NullPointerException("field is null");
 		}
 		if (warningType == null) {
 			throw new NullPointerException("warning type is null");
 		}
-		this.method = method;
+		this.field = field;
 		this.warningType = warningType;
 		this.details = "";
 	}
 
-	public Method getMethod() {
-		return method;
+	public Field getField() {
+		return field;
 	}
 
 	public WarningType getWarningType() {

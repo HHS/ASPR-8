@@ -1,15 +1,16 @@
-package tools.meta;
+package tools.metaunit.reports;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import tools.meta.warnings.ConstructorWarning;
-import tools.meta.warnings.MethodWarning;
-import tools.meta.warnings.WarningContainer;
-import tools.meta.warnings.WarningGenerator;
-import tools.meta.warnings.WarningType;
+import tools.metaunit.warnings.ConstructorWarning;
+import tools.metaunit.warnings.FieldWarning;
+import tools.metaunit.warnings.MethodWarning;
+import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.WarningGenerator;
+import tools.metaunit.warnings.WarningType;
 
 public final class IncompleteClassReport {
 	private IncompleteClassReport() {
@@ -31,6 +32,11 @@ public final class IncompleteClassReport {
 	
 	private static void displayWarningContainer(WarningContainer warningContainer) {
 		Set<Class<?>> incompleteClasses = new LinkedHashSet<>();
+		for(FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+			if(fieldWarning.getWarningType().equals(WarningType.SOURCE_FIELD_REQUIRES_TEST)) {
+				incompleteClasses.add(fieldWarning.getField().getDeclaringClass());
+			}			
+		}
 		for(MethodWarning methodWarning : warningContainer.getMethodWarnings()) {
 			if(methodWarning.getWarningType().equals(WarningType.SOURCE_METHOD_REQUIRES_TEST)) {
 				incompleteClasses.add(methodWarning.getMethod().getDeclaringClass());

@@ -1,4 +1,4 @@
-package tools.meta.warnings;
+package tools.metaunit.warnings;
 
 import java.io.File;
 import java.io.IOException;
@@ -171,31 +171,31 @@ public class WarningGenerator {
 		}
 	}
 
-	private void probeFieldTest(Method testMethod, UnitTest unitTest, UnitTestMethod unitTestMethod) {
+	private void probeFieldTest(Method testMethod, UnitTest unitTest, UnitTestField unitTestField) {
 
-//		Method sourceMethod = null;
-//		String methodExceptionMessage = "";
-//		try {
-//			if (unitTestMethod.target() != Object.class) {
-//				sourceMethod = unitTestMethod.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
-//			} else {
-//				if (unitTest != null) {
-//					sourceMethod = unitTest.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
-//				}
-//			}
-//		} catch (NoSuchMethodException | SecurityException e) {
-//			methodExceptionMessage = e.getMessage();
-//			sourceMethod = null;
-//		}
-//		if (sourceMethod != null) {
-//			if (!sourceMethods.contains(sourceMethod)) {
-//				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD, sourceMethod.toString()));
-//			} else {
-//				coveredSourceMethods.add(sourceMethod);
-//			}
-//		} else {
-//			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_METHOD_CANNOT_BE_RESOLVED, methodExceptionMessage));
-//		}
+		Field sourceField = null;
+		String fieldExceptionMessage = "";
+		try {
+			if (unitTestField.target() != Object.class) {
+				sourceField = unitTestField.target().getField(unitTestField.name());
+			} else {
+				if (unitTest != null) {
+					sourceField = unitTest.target().getField(unitTestField.name());
+				}
+			}
+		} catch (NoSuchFieldException | SecurityException e) {
+			fieldExceptionMessage = e.getMessage();
+			sourceField = null;
+		}
+		if (sourceField != null) {
+			if (!sourceFields.contains(sourceField)) {
+				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_FIELD, sourceField.toString()));
+			} else {
+				coveredSourceFields.add(sourceField);
+			}
+		} else {
+			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_FIELD_CANNOT_BE_RESOLVED, fieldExceptionMessage));
+		}
 	}
 
 	private void probeMethodTest(Method testMethod, UnitTest unitTest, UnitTestMethod unitTestMethod) {
@@ -276,7 +276,7 @@ public class WarningGenerator {
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION));
 				break;
 			case 9:
-				probeFieldTest(testMethod, unitTest, unitTestMethod);
+				probeFieldTest(testMethod, unitTest, unitTestField);
 				break;
 			case 10:
 				probeMethodTest(testMethod, unitTest, unitTestMethod);
@@ -368,6 +368,14 @@ public class WarningGenerator {
 			}
 		}
 	}
+	
+	private void checkSourceFieldCoverage() {
+		for (Field field : sourceFields) {
+			if (!coveredSourceFields.contains(field)) {
+				warningContainerBuilder.addFieldWarning(new FieldWarning(field, WarningType.SOURCE_FIELD_REQUIRES_TEST));
+			}
+		}
+	}
 
 	private void checkSourceConstructorCoverage() {
 		for (Constructor<?> constructor : sourceConstructors) {
@@ -403,6 +411,8 @@ public class WarningGenerator {
 
 		loadTestClasses();
 
+		checkSourceFieldCoverage();
+		
 		checkSourceMethodCoverage();
 
 		checkSourceConstructorCoverage();

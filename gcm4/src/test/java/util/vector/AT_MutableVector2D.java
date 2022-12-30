@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.spherical.Chirality;
@@ -25,6 +26,17 @@ public class AT_MutableVector2D {
 
 	private static final double TOLERANCE = 0.000001;
 
+	@Test
+	@UnitTestField(name = "NORMAL_LENGTH_TOLERANCE")
+	public void testNormalLengthTolerance() {
+		assertEquals(1E-13,	MutableVector2D.NORMAL_LENGTH_TOLERANCE,0);
+	}
+	
+	@Test
+	@UnitTestField(name = "PERPENDICULAR_ANGLE_TOLERANCE")
+	public void testPerpendicularAngleTolerance() {
+		assertEquals(1E-13,	MutableVector2D.PERPENDICULAR_ANGLE_TOLERANCE,0);
+	}
 
 
 	/**
@@ -1380,11 +1392,11 @@ public class AT_MutableVector2D {
 			assertTrue(v1.isPerpendicularTo(v3));
 
 			v3 = new Vector2D(v1);
-			v3 = v3.rotateToward(new Vector2D(v2), FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3 = v3.rotateToward(new Vector2D(v2), FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICULAR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 
 			v3 = new Vector2D(v1);
-			v3 = v3.rotateToward(new Vector2D(v2), FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3 = v3.rotateToward(new Vector2D(v2), FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICULAR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 		}
 
@@ -1417,11 +1429,11 @@ public class AT_MutableVector2D {
 			assertTrue(v1.isPerpendicularTo(v3));
 
 			v3 = new MutableVector2D(v1);
-			v3.rotateToward(v2, FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3.rotateToward(v2, FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICULAR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 
 			v3 = new MutableVector2D(v1);
-			v3.rotateToward(v2, FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3.rotateToward(v2, FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICULAR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 		}
 

@@ -1,4 +1,4 @@
-package tools.meta;
+package tools.metaunit.reports;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,11 +8,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 
-import tools.meta.warnings.ConstructorWarning;
-import tools.meta.warnings.MethodWarning;
-import tools.meta.warnings.WarningContainer;
-import tools.meta.warnings.WarningGenerator;
-import tools.meta.warnings.WarningType;
+import tools.metaunit.warnings.ConstructorWarning;
+import tools.metaunit.warnings.FieldWarning;
+import tools.metaunit.warnings.MethodWarning;
+import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.WarningGenerator;
+import tools.metaunit.warnings.WarningType;
 
 /**
  * A script covering the details of the GCM Test Plan. It produces a console
@@ -69,6 +70,18 @@ public class MissingTestsReport {
 					warningMap.put(classRef, list);
 				}
 				list.add(methodWarning.getMethod().toString());
+			}
+		}
+		
+		for (FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+			if (fieldWarning.getWarningType().equals(WarningType.SOURCE_FIELD_REQUIRES_TEST)) {
+				String classRef = fieldWarning.getField().getDeclaringClass().getName();
+				List<String> list = warningMap.get(classRef);
+				if (list == null) {
+					list = new ArrayList<>();
+					warningMap.put(classRef, list);
+				}
+				list.add(fieldWarning.getField().toString());
 			}
 		}
 

@@ -16,7 +16,7 @@ public final class Vector3D {
 
 	public final static double NORMAL_LENGTH_TOLERANCE = 1E-13;
 
-	public final static double PERPENDICUALR_ANGLE_TOLERANCE = 1E-13;
+	public final static double PERPENDICULAR_ANGLE_TOLERANCE = 1E-13;
 
 	/*
 	 * A function that returns the value if the value is in the interval [-1,1].
@@ -423,10 +423,10 @@ public final class Vector3D {
 	/**
 	 * Returns true if and only if this {@link Vector3D} is perpendicular to the
 	 * given {@link Vector3D} within the
-	 * {@link Vector3D#PERPENDICUALR_ANGLE_TOLERANCE}
+	 * {@link Vector3D#PERPENDICULAR_ANGLE_TOLERANCE}
 	 */
 	public boolean isPerpendicularTo(Vector3D v) {
-		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICUALR_ANGLE_TOLERANCE;
+		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICULAR_ANGLE_TOLERANCE;
 	}
 
 	/**

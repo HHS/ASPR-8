@@ -1,4 +1,4 @@
-package tools.meta.warnings;
+package tools.metaunit.warnings;
 
 import java.lang.reflect.Constructor;
 

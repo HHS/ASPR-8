@@ -988,23 +988,23 @@ public final class MutableVector3D {
 		assign(0, 0, 0);
 	}
 
-	public final static double PERPENDICUALR_ANGLE_TOLERANCE = 1E-13;
+	public final static double PERPENDICULAR_ANGLE_TOLERANCE = 1E-13;
 
 	/**
 	 * Returns true if and only if this {@link MutableVector3D} is perpendicular
 	 * to the given {@link MutableVector3D} within the
-	 * {@link Vector3D#PERPENDICUALR_ANGLE_TOLERANCE}
+	 * {@link Vector3D#PERPENDICULAR_ANGLE_TOLERANCE}
 	 */
 	public boolean isPerpendicularTo(MutableVector3D v) {
-		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICUALR_ANGLE_TOLERANCE;
+		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICULAR_ANGLE_TOLERANCE;
 	}
 
 	/**
 	 * Returns true if and only if this {@link Vector3D} is perpendicular to the
 	 * given {@link Vector3D} within the
-	 * {@link Vector3D#PERPENDICUALR_ANGLE_TOLERANCE}
+	 * {@link Vector3D#PERPENDICULAR_ANGLE_TOLERANCE}
 	 */
 	public boolean isPerpendicularTo(Vector3D v) {
-		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICUALR_ANGLE_TOLERANCE;
+		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICULAR_ANGLE_TOLERANCE;
 	}
 }

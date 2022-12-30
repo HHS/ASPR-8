@@ -1,14 +1,14 @@
-package tools.meta.classgraph;
+package tools.dependencyanalysis.classgraph;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import tools.meta.classgraph.reports.CircularClassDependencyReport;
-import tools.meta.classgraph.reports.CircularPackageDependencyReport;
-import tools.meta.classgraph.reports.WildCardReport;
-import tools.meta.classgraph.support.ClassDependencyScan;
-import tools.meta.classgraph.support.ClassDependencyScanner;
+import tools.dependencyanalysis.classgraph.reports.CircularClassDependencyReport;
+import tools.dependencyanalysis.classgraph.reports.CircularPackageDependencyReport;
+import tools.dependencyanalysis.classgraph.reports.WildCardReport;
+import tools.dependencyanalysis.classgraph.support.ClassDependencyScan;
+import tools.dependencyanalysis.classgraph.support.ClassDependencyScanner;
 
 public final class ClassGraphDriver {
 

@@ -1,12 +1,13 @@
-package tools.meta;
+package tools.metaunit.reports;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import tools.meta.warnings.ConstructorWarning;
-import tools.meta.warnings.MethodWarning;
-import tools.meta.warnings.WarningContainer;
-import tools.meta.warnings.WarningGenerator;
+import tools.metaunit.warnings.ConstructorWarning;
+import tools.metaunit.warnings.FieldWarning;
+import tools.metaunit.warnings.MethodWarning;
+import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.WarningGenerator;
 
 public final class StatusReport {
 	private StatusReport() {
@@ -27,6 +28,9 @@ public final class StatusReport {
 	}
 	
 	private static void displayWarningContainer(WarningContainer warningContainer) {
+		for(FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+			System.out.println(fieldWarning.getWarningType().getDescription()+"\t"+fieldWarning.getField()+"\t"+fieldWarning.getDetails());
+		}
 		for(MethodWarning methodWarning : warningContainer.getMethodWarnings()) {
 			System.out.println(methodWarning.getWarningType().getDescription()+"\t"+methodWarning.getMethod()+"\t"+methodWarning.getDetails());
 		}
