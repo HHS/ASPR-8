@@ -2,6 +2,7 @@ package tools.metaunit.warnings;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestField;
@@ -171,17 +173,13 @@ public class WarningGenerator {
 		}
 	}
 
-	private void probeFieldTest(Method testMethod, UnitTest unitTest, UnitTestField unitTestField) {
+	private void probeFieldTest(Method testMethod, UnitTestField unitTestField) {
 
 		Field sourceField = null;
 		String fieldExceptionMessage = "";
 		try {
 			if (unitTestField.target() != Object.class) {
 				sourceField = unitTestField.target().getField(unitTestField.name());
-			} else {
-				if (unitTest != null) {
-					sourceField = unitTest.target().getField(unitTestField.name());
-				}
 			}
 		} catch (NoSuchFieldException | SecurityException e) {
 			fieldExceptionMessage = e.getMessage();
@@ -225,6 +223,52 @@ public class WarningGenerator {
 		}
 	}
 
+	private static class LocalUnitTestField implements UnitTestField {
+
+		private final UnitTestField unitTestField;
+		private final UnitTest unitTest;
+
+		public LocalUnitTestField(UnitTestField unitTestField, UnitTest unitTest) {
+			this.unitTest = unitTest;
+			this.unitTestField = unitTestField;
+		}
+
+		@Override
+		public Class<? extends Annotation> annotationType() {
+			return unitTestField.annotationType();
+		}
+
+		@Override
+		public String name() {
+			return unitTestField.name();
+		}
+
+		@Override
+		public Class<?> target() {
+			Class<?> result = unitTestField.target();
+			if (result.equals(Object.class)) {
+				if (unitTest != null) {
+					result = unitTest.target();
+				}
+			}
+			return result;
+		}
+
+		@Override
+		public UnitTag[] tags() {
+			return unitTestField.tags();
+		}
+	}
+
+	private UnitTestField getUnitTestField(Method testMethod, UnitTest unitTest) {
+		UnitTestField unitTestField = testMethod.getAnnotation(UnitTestField.class);
+		if (unitTestField == null) {
+			return null;
+		}
+		LocalUnitTestField result = new LocalUnitTestField(unitTestField, unitTest);
+		return result;
+	}
+
 	private void probeTestClass(Class<?> c) {
 		final UnitTest unitTest = c.getAnnotation(UnitTest.class);
 		final Method[] methods = c.getMethods();
@@ -232,7 +276,7 @@ public class WarningGenerator {
 			final Test test = testMethod.getAnnotation(Test.class);
 			final UnitTestMethod unitTestMethod = testMethod.getAnnotation(UnitTestMethod.class);
 			final UnitTestConstructor unitTestConstructor = testMethod.getAnnotation(UnitTestConstructor.class);
-			final UnitTestField unitTestField = testMethod.getAnnotation(UnitTestField.class);
+			final UnitTestField unitTestField = getUnitTestField(testMethod, unitTest);
 			int caseIndex = 0;
 			if (test != null) {
 				caseIndex += 8;
@@ -276,7 +320,7 @@ public class WarningGenerator {
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION));
 				break;
 			case 9:
-				probeFieldTest(testMethod, unitTest, unitTestField);
+				probeFieldTest(testMethod, unitTestField);
 				break;
 			case 10:
 				probeMethodTest(testMethod, unitTest, unitTestMethod);
@@ -368,7 +412,7 @@ public class WarningGenerator {
 			}
 		}
 	}
-	
+
 	private void checkSourceFieldCoverage() {
 		for (Field field : sourceFields) {
 			if (!coveredSourceFields.contains(field)) {
@@ -412,7 +456,7 @@ public class WarningGenerator {
 		loadTestClasses();
 
 		checkSourceFieldCoverage();
-		
+
 		checkSourceMethodCoverage();
 
 		checkSourceConstructorCoverage();

@@ -2,7 +2,7 @@ package tools.metaunit.warnings;
 
 public enum WarningType {
 
-	SOURCE_FIELD_CANNOT_BE_RESOLVED("The source field for a test method cannot be resolved"),
+	SOURCE_FIELD_CANNOT_BE_RESOLVED("The source field for a test method cannot be resolved since it lacks a class target"),
 	
 	SOURCE_METHOD_CANNOT_BE_RESOLVED("The source method for a test method cannot be resolved"),
 
