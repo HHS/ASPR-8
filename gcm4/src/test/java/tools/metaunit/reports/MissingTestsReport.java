@@ -94,7 +94,7 @@ public class MissingTestsReport {
 			}
 		}
 
-		if (filter != null) {
+		if (filter != null && !filter.isEmpty()) {
 			System.out.println("Results are filtered on the class references containing the string '" + filter + "'");
 			warningMap.keySet().removeIf((t) -> !t.toLowerCase().contains(filter.toLowerCase()));
 		}
