@@ -405,15 +405,15 @@ public final class Vector2D {
 		return "Vector2D [x=" + x + ", y=" + y + "]";
 	}
 
-	public final static double PERPENDICUALR_ANGLE_TOLERANCE = 1E-13;
+	public final static double PERPENDICULAR_ANGLE_TOLERANCE = 1E-13;
 
 	/**
 	 * Returns true if and only if this {@link Vector2D} is perpendicular to the
 	 * given {@link Vector2D} within the
-	 * {@link Vector3D#PERPENDICUALR_ANGLE_TOLERANCE}
+	 * {@link Vector3D#PERPENDICULAR_ANGLE_TOLERANCE}
 	 */
 	public boolean isPerpendicularTo(Vector2D v) {
-		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICUALR_ANGLE_TOLERANCE;
+		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICULAR_ANGLE_TOLERANCE;
 	}
 
 }

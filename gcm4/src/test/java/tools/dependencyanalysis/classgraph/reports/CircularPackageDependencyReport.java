@@ -1,4 +1,4 @@
-package tools.meta.classgraph.reports;
+package tools.dependencyanalysis.classgraph.reports;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -6,20 +6,20 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import tools.meta.classgraph.support.ClassDependencyScan;
-import tools.meta.classgraph.support.JavaDependency;
+import tools.dependencyanalysis.classgraph.support.ClassDependencyScan;
+import tools.dependencyanalysis.classgraph.support.JavaDependency;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
 import util.graph.Graphs;
 import util.graph.MutableGraph;
 
-public final class CircularClassDependencyReport {
-	private CircularClassDependencyReport() {
+public final class CircularPackageDependencyReport {
+	private CircularPackageDependencyReport() {
 	}
 
 	public static void report(ClassDependencyScan classDependencyScan) {
 		System.out.println();
-		System.out.println("circular class dependency report");
+		System.out.println("circular package dependency report");
 		
 
 		Set<JavaDependency> javaDependencies = classDependencyScan.getJavaDependencies();
@@ -28,13 +28,12 @@ public final class CircularClassDependencyReport {
 		
 		MutableGraph<String, Object> m = new MutableGraph<>();
 		for (JavaDependency javaDependency : javaDependencies) {
-			String sourceFileName = javaDependency.getDependentRef().getPackageName()+"."+javaDependency.getDependentRef().getClassName();
-			String importFileName = javaDependency.getSupportRef().getPackageName()+"."+javaDependency.getSupportRef().getClassName();
-			if (localPackageNames.contains(javaDependency.getSupportRef().getPackageName())) {
-				m.addEdge(new Object(), sourceFileName, importFileName);
+			String sourcePackageName = javaDependency.getDependentRef().getPackageName();
+			String importPackageName = javaDependency.getSupportRef().getPackageName();
+			if (localPackageNames.contains(importPackageName)) {
+				m.addEdge(new Object(), sourcePackageName, importPackageName);
 			}
 		}
-		
 
 		Optional<GraphDepthEvaluator<String>> optional = GraphDepthEvaluator.getGraphDepthEvaluator(m.toGraph());
 		if (optional.isPresent()) {
@@ -54,7 +53,7 @@ public final class CircularClassDependencyReport {
 			System.out.println("cyclic groups");
 			
 			Graph<String, Object> g = m.toGraph();
-			
+
 			g = Graphs.getSourceSinkReducedGraph(g);
 			
 			g = Graphs.getEdgeReducedGraph(g);

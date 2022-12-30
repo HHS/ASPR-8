@@ -1,4 +1,4 @@
-package tools.meta.warnings;
+package tools.metaunit.warnings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ public final class WarningContainer {
 	private static class Data {
 		private List<ConstructorWarning> constructorWarnings = new ArrayList<>();
 		private List<MethodWarning> methodWarnings = new ArrayList<>();
+		private List<FieldWarning> fieldWarnings = new ArrayList<>();
 		private List<String> generalWarnings = new ArrayList<>();
 	}
 
@@ -57,6 +58,20 @@ public final class WarningContainer {
 		}
 		
 		/**
+		 * Adds a field warning
+		 * 
+		 * @throws NullPointerException
+		 *             <li>if the field warning is null</li>
+		 */
+		public Builder addFieldWarning(FieldWarning fieldWarning) {
+			if (fieldWarning == null) {
+				throw new NullPointerException("field warning is null");
+			}
+			data.fieldWarnings.add(fieldWarning);
+			return this;
+		}
+		
+		/**
 		 * Adds a method warning
 		 * 
 		 * @throws NullPointerException
@@ -77,6 +92,10 @@ public final class WarningContainer {
 		this.data = data;
 	}
 
+	public List<FieldWarning> getFieldWarnings() {
+		return new ArrayList<>(data.fieldWarnings);
+	}
+	
 	public List<MethodWarning> getMethodWarnings() {
 		return new ArrayList<>(data.methodWarnings);
 	}

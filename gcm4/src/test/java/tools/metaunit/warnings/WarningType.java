@@ -1,15 +1,21 @@
-package tools.meta.warnings;
+package tools.metaunit.warnings;
 
 public enum WarningType {
 
+	SOURCE_FIELD_CANNOT_BE_RESOLVED("The source field for a test method cannot be resolved since it lacks a class target"),
+	
 	SOURCE_METHOD_CANNOT_BE_RESOLVED("The source method for a test method cannot be resolved"),
 
 	SOURCE_CONSTRUCTOR_CANNOT_BE_RESOLVED("The source constructor for a Test method cannot be resolved"),
 
+	TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_FIELD("Test method linked to unknown source field"),
+	
 	TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD("Test method linked to unknown source method"),
 
 	TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_CONSTRUCTOR("Test method linked to unknown source contructor"),
 
+	SOURCE_FIELD_REQUIRES_TEST("Source field requires a test method but does not have one"),
+	
 	SOURCE_METHOD_REQUIRES_TEST("Source method requires a test method but does not have one"),
 
 	SOURCE_CONSTRUCTOR_REQUIRES_TEST("Source constructor requires a test method but does not have one"),

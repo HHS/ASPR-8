@@ -1,12 +1,20 @@
 package plugins.globalproperties;
 
-import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import nucleus.PluginData;
+import nucleus.PluginDataBuilder;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
@@ -16,8 +24,6 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = GlobalPropertiesPluginData.class)
 

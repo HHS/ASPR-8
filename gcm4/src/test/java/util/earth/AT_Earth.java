@@ -10,6 +10,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTest;
+import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
@@ -22,10 +23,31 @@ import util.vector.Vector3D;
  */
 @UnitTest(target = Earth.class)
 public class AT_Earth {
-	
 
 	private static final double TOLERANCE = 0.0001;
+
+	@Test
+	@UnitTestField(name = "WGS84_EQUATORIAL_RADIUS_METERS")
+	public void testWgs84EquatorialRadiusMeters() {
+		assertEquals(6378137, Earth.WGS84_EQUATORIAL_RADIUS_METERS, 0);
+	}
 	
+	@Test
+	@UnitTestField(name = "WGS84_POLAR_RADIUS_METERS")
+	public void testWgs84PolarRadiusMeters() {
+		assertEquals(6356752.314245, Earth.WGS84_POLAR_RADIUS_METERS, 0);
+	}
+	
+	@Test
+	@UnitTestField(name = "WGS84_MEAN_RADIUS_METERS")
+	public void testWgs84MeanRadiusMeters() {
+		
+		double expectedValue = (2 * Earth.WGS84_EQUATORIAL_RADIUS_METERS + Earth.WGS84_POLAR_RADIUS_METERS) / 3;
+		
+		assertEquals(expectedValue, Earth.WGS84_MEAN_RADIUS_METERS, 0);
+	}
+
+
 	/**
 	 * Tests {@linkplain Earth#fromLatitude(double)
 	 */

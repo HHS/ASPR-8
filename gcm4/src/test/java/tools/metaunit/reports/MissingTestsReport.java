@@ -1,4 +1,4 @@
-package tools.meta;
+package tools.metaunit.reports;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -6,25 +6,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Predicate;
 
-import tools.meta.warnings.ConstructorWarning;
-import tools.meta.warnings.MethodWarning;
-import tools.meta.warnings.WarningContainer;
-import tools.meta.warnings.WarningGenerator;
-import tools.meta.warnings.WarningType;
+import tools.metaunit.warnings.ConstructorWarning;
+import tools.metaunit.warnings.FieldWarning;
+import tools.metaunit.warnings.MethodWarning;
+import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.WarningGenerator;
+import tools.metaunit.warnings.WarningType;
 
 /**
- * A script covering the details of the GCM Test Plan. It produces a console
- * report that measures the completeness/status of the test classes. It does not
- * measure the correctness of any test, but rather shows which tests exist and
- * their status.
+ * A script that produces a console report shows missing unit tests.
  *
  * @author Shawn Hatch
  *
  */
 public class MissingTestsReport {
 
+	/**
+	 * Runs the test and print the result to console. The first argument is the
+	 * path reference to the source folder for the production code base. The
+	 * second argument is the path reference to the source folder for the unit
+	 * test code. The third argument is optional and is a filter string that
+	 * will exclude all source classes that do not contain(case insensitive) the
+	 * filter string.
+	 */
 	public static void main(final String[] args) {
 
 		// Should point to src/main/java
@@ -33,12 +38,17 @@ public class MissingTestsReport {
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
 		WarningContainer warningContainer = WarningGenerator.builder()//
-				.setSourcePath(sourcePath)//
-				.setTestPath(testPath)//
-				.build()//
-				.execute();//
+															.setSourcePath(sourcePath)//
+															.setTestPath(testPath)//
+															.build()//
+															.execute();//
 
-		reportWarnings(warningContainer, null);
+		String classNameFilter = null;
+		if (args.length > 2) {
+			classNameFilter = args[2];			
+		}
+
+		reportWarnings(warningContainer, classNameFilter);
 
 	}
 
@@ -72,16 +82,21 @@ public class MissingTestsReport {
 			}
 		}
 
-		if (filter != null) {
-			Predicate<String> predicate = new Predicate<String>() {
-
-				@Override
-				public boolean test(String t) {
-					return !t.contains(filter);
+		for (FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+			if (fieldWarning.getWarningType().equals(WarningType.SOURCE_FIELD_REQUIRES_TEST)) {
+				String classRef = fieldWarning.getField().getDeclaringClass().getName();
+				List<String> list = warningMap.get(classRef);
+				if (list == null) {
+					list = new ArrayList<>();
+					warningMap.put(classRef, list);
 				}
+				list.add(fieldWarning.getField().toString());
+			}
+		}
 
-			};
-			warningMap.keySet().removeIf(predicate);
+		if (filter != null && !filter.isEmpty()) {
+			System.out.println("Results are filtered on the class references containing the string '" + filter + "'");
+			warningMap.keySet().removeIf((t) -> !t.toLowerCase().contains(filter.toLowerCase()));
 		}
 
 		for (String classRef : warningMap.keySet()) {

@@ -1,5 +1,6 @@
 package util.earth;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
@@ -7,11 +8,20 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
 import util.vector.Vector2D;
 
 @UnitTest(target = EarthGrid.class)
 public class AT_EarthGrid {
+	
+	
+	@Test
+	@UnitTestField(name = "MIN_ANGLE_FROM_POLE")
+	public void testMinAngleFromPole() {
+		assertEquals(0.001,	EarthGrid.MIN_ANGLE_FROM_POLE, 0);
+	}
+	
 
 	@Test
 	@UnitTestConstructor(args = { LatLon.class, double.class })

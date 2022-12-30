@@ -1,4 +1,4 @@
-package tools.meta;
+package tools.metaunit.reports;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,11 +7,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import tools.meta.warnings.ConstructorWarning;
-import tools.meta.warnings.MethodWarning;
-import tools.meta.warnings.WarningContainer;
-import tools.meta.warnings.WarningGenerator;
-import tools.meta.warnings.WarningType;
+import tools.metaunit.warnings.ConstructorWarning;
+import tools.metaunit.warnings.FieldWarning;
+import tools.metaunit.warnings.MethodWarning;
+import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.WarningGenerator;
+import tools.metaunit.warnings.WarningType;
 
 /**
  * A script covering the details of the GCM Test Plan. It produces a console
@@ -50,6 +51,11 @@ public class WarningTypeReport {
 		for (WarningType warningType : WarningType.values()) {
 			warningMap.put(warningType, new ArrayList<>());
 		}
+		
+		for (FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+			List<String> list = warningMap.get(fieldWarning.getWarningType());
+			list.add(fieldWarning.getField().getDeclaringClass().getSimpleName()+"\t"+fieldWarning.getField().toString() + " " + fieldWarning.getDetails());
+		}	
 
 		for (MethodWarning methodWarning : warningContainer.getMethodWarnings()) {
 			List<String> list = warningMap.get(methodWarning.getWarningType());

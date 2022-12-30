@@ -1,17 +1,25 @@
 package plugins.resources.testsupport;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
+
 import plugins.resources.support.ResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = TestResourcePropertyId.class)
 public class AT_TestResourcePropertyId {

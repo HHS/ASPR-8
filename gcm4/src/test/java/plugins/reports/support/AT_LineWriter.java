@@ -1,13 +1,14 @@
 package plugins.reports.support;
 
-import nucleus.ExperimentContext;
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
+
+import nucleus.ExperimentContext;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
-
-import java.nio.file.Path;
 
 @UnitTest(target = LineWriter.class)
 public class AT_LineWriter {

@@ -1,4 +1,4 @@
-package tools.meta.dependency;
+package tools.dependencyanalysis.dependency;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

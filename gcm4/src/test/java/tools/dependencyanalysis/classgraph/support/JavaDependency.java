@@ -1,4 +1,4 @@
-package tools.meta.classgraph.support;
+package tools.dependencyanalysis.classgraph.support;
 
 import net.jcip.annotations.Immutable;
 

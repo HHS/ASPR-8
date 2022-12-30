@@ -1,7 +1,8 @@
 package plugins.resources.actors;
 
-import nucleus.ActorContext;
 import org.junit.jupiter.api.Test;
+
+import nucleus.ActorContext;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportPeriod;
 import plugins.resources.support.ResourceId;

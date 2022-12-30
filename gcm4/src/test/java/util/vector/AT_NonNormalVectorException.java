@@ -5,16 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 
 @UnitTest(target = NonNormalVectorException.class)
 public class AT_NonNormalVectorException {
 	@Test
-	@UnitTestConstructor(args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestConstructor(args = {})
 	public void testConstructor() {
-		// nothing to test
+		NonNormalVectorException nonNormalVectorException = new NonNormalVectorException(null);
+		assertNull(nonNormalVectorException.getMessage());
 	}
 
 	@Test
@@ -25,8 +25,6 @@ public class AT_NonNormalVectorException {
 		assertEquals(details, nonNormalVectorException.getMessage());
 		
 		nonNormalVectorException = new NonNormalVectorException(null);
-		assertNull(nonNormalVectorException.getMessage());
-		
+		assertNull(nonNormalVectorException.getMessage());		
 	}
-
 }
