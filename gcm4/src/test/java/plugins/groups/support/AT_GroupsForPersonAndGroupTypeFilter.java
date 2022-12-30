@@ -26,34 +26,29 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = GroupsForPersonAndGroupTypeFilter.class)
 public class AT_GroupsForPersonAndGroupTypeFilter {
 
 	@Test
-	@UnitTestConstructor(args = { GroupTypeId.class, Equality.class, int.class })
+	@UnitTestConstructor(target = GroupsForPersonAndGroupTypeFilter.class, args = { GroupTypeId.class, Equality.class, int.class })
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 5854778167265102928L, (c) -> {
 
-			final Filter filter = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, Equality.EQUAL,
-					5);
+			final Filter filter = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, Equality.EQUAL, 5);
 			assertNotNull(filter);
 
 			// precondition tests
 
 			// if the group type id is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonAndGroupTypeFilter(null, Equality.EQUAL, 5).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new GroupsForPersonAndGroupTypeFilter(null, Equality.EQUAL, 5).validate(c));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// if the equality operator is null
-			contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, null, 5).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, null, 5).validate(c));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 		});
@@ -61,7 +56,7 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = GroupsForPersonAndGroupTypeFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 1469082977858605268L, (c) -> {
@@ -87,7 +82,7 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = GroupsForPersonAndGroupTypeFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		GroupsActionSupport.testConsumer(100, 0, 10, 4592268926831796100L, (c) -> {
@@ -107,27 +102,26 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 			for (PersonId personId : people) {
 				int groupCount = randomGenerator.nextInt(4);
 				switch (groupCount) {
-					case 0:
-						break;
-					case 1:
-						groupsDataManager.addPersonToGroup(personId, groupId1);
-						break;
-					case 2:
-						groupsDataManager.addPersonToGroup(personId, groupId1);
-						groupsDataManager.addPersonToGroup(personId, groupId2);
-						break;
-					default:
-						groupsDataManager.addPersonToGroup(personId, groupId1);
-						groupsDataManager.addPersonToGroup(personId, groupId2);
-						groupsDataManager.addPersonToGroup(personId, groupId3);
-						break;
+				case 0:
+					break;
+				case 1:
+					groupsDataManager.addPersonToGroup(personId, groupId1);
+					break;
+				case 2:
+					groupsDataManager.addPersonToGroup(personId, groupId1);
+					groupsDataManager.addPersonToGroup(personId, groupId2);
+					break;
+				default:
+					groupsDataManager.addPersonToGroup(personId, groupId1);
+					groupsDataManager.addPersonToGroup(personId, groupId2);
+					groupsDataManager.addPersonToGroup(personId, groupId3);
+					break;
 				}
 
 			}
 
 			for (PersonId personId : people) {
-				boolean expected = groupsDataManager.getGroupCountForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_1,
-						personId) == 2;
+				boolean expected = groupsDataManager.getGroupCountForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_1, personId) == 2;
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);
 			}
@@ -137,15 +131,14 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			/* precondition: if the person id is unknown */
-			contractException = assertThrows(ContractException.class,
-					() -> filter.evaluate(c, new PersonId(123412342)));
+			contractException = assertThrows(ContractException.class, () -> filter.evaluate(c, new PersonId(123412342)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = GroupsForPersonAndGroupTypeFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		GroupsActionSupport.testConsumer(100, 0, 10, 3710154078488599088L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
@@ -153,24 +146,20 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 			groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			Filter filter = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, Equality.EQUAL, 1);
 
-			// show filter is valid when group type is valid and equality is valid
+			// show filter is valid when group type is valid and equality is
+			// valid
 			assertDoesNotThrow(() -> filter.validate(c));
 
 			// precondition: equality is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, null, 2).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1, null, 2).validate(c));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
 
 			// precondition: group type id is null
-			contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonAndGroupTypeFilter(null, Equality.EQUAL, 2).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new GroupsForPersonAndGroupTypeFilter(null, Equality.EQUAL, 2).validate(c));
 			assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
 			// precondition: group type id is unknown
-			contractException = assertThrows(ContractException.class,
-					() -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.getUnknownGroupTypeId(), Equality.EQUAL,
-							2)
-							.validate(c));
+			contractException = assertThrows(ContractException.class, () -> new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.getUnknownGroupTypeId(), Equality.EQUAL, 2).validate(c));
 			assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 
 		});

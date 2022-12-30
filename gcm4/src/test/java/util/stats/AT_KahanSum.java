@@ -7,15 +7,13 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = KahanSum.class)
 public class AT_KahanSum {
 
 	@Test
-	@UnitTestMethod(name = "add", args = { double.class }, tags = { UnitTag.MANUAL })
+	@UnitTestMethod(target = KahanSum.class, name = "add", args = { double.class }, tags = { UnitTag.MANUAL })
 	public void testAdd() {
 
 		/*
@@ -61,13 +59,13 @@ public class AT_KahanSum {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getSum", args = {}, tags = { UnitTag.LOCAL_PROXY })
+	@UnitTestMethod(target = KahanSum.class, name = "getSum", args = {}, tags = { UnitTag.LOCAL_PROXY })
 	public void testGetSum() {
 		// covered by testAdd()
 	}
 
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = KahanSum.class, args = {})
 	public void testConstructor() {
 		assertEquals(0.0, new KahanSum().getSum());
 	}

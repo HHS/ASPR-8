@@ -7,15 +7,13 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = IdentifiableFunction.class)
 public class AT_IdentifiableFunction {
 
 	@Test
-	@UnitTestConstructor(args = { Object.class, Function.class })
+	@UnitTestConstructor(target = IdentifiableFunction.class, args = { Object.class, Function.class })
 	public void testConstructor() {
 		for (int i = 0; i < 30; i++) {
 			int input = i;
@@ -27,7 +25,7 @@ public class AT_IdentifiableFunction {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = IdentifiableFunction.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		// identifiable functions are equal if and only if their internal id
 		// values are equal
@@ -57,7 +55,7 @@ public class AT_IdentifiableFunction {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getFunction", args = {})
+	@UnitTestMethod(target = IdentifiableFunction.class, name = "getFunction", args = {})
 	public void testGetFunction() {
 		/*
 		 * Show that the event function is retrievable by executing that
@@ -74,7 +72,7 @@ public class AT_IdentifiableFunction {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = IdentifiableFunction.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		IdentifiableFunction<Integer> a1 = new IdentifiableFunction<>("A", (n) -> Integer.toString(n));

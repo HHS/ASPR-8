@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -18,17 +17,15 @@ import util.random.RandomGeneratorProvider;
  *
  */
 
-@UnitTest(target = LatLon.class)
 public class AT_LatLon {
 
 	private static final double TOLERANCE = 0.0001;
-
 
 	/**
 	 * Tests {@link LatLon#getLatitude()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getLatitude", args = {})
+	@UnitTestMethod(target = LatLon.class, name = "getLatitude", args = {})
 	public void testGetLatitude() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(50223838619731639L);
 		for (int i = 0; i < 100; i++) {
@@ -44,7 +41,7 @@ public class AT_LatLon {
 	 */
 
 	@Test
-	@UnitTestMethod(name = "getLongitude", args = {})
+	@UnitTestMethod(target = LatLon.class, name = "getLongitude", args = {})
 	public void testGetLongitude() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(62285879847543313L);
 		for (int i = 0; i < 100; i++) {
@@ -59,7 +56,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#toString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = LatLon.class, name = "toString", args = {})
 	public void testToString() {
 		LatLon latLon = new LatLon(35, 128);
 		assertEquals("LatLon [latitude=35.0, longitude=128.0]", latLon.toString());
@@ -78,7 +75,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#hashCode()}
 	 */
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = LatLon.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// Show equal objects have equal hash codes
@@ -97,7 +94,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#equals(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = LatLon.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7754088364991626671L);
 		for (int i = 0; i < 100; i++) {
@@ -124,7 +121,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#LatLon(double, double)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { double.class, double.class })
+	@UnitTestConstructor(target = LatLon.class, args = { double.class, double.class })
 	public void testConstructor_Doubles() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4045297957712951231L);
@@ -152,7 +149,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#LatLon(LatLonAlt)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { LatLonAlt.class })
+	@UnitTestConstructor(target = LatLon.class, args = { LatLonAlt.class })
 	public void testConstructor_LatLonAlt() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5811539292023379121L);

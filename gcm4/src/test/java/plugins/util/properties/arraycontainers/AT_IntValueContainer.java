@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
@@ -18,14 +17,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = IntValueContainer.class)
 public class AT_IntValueContainer {
 
 	/**
 	 * Test for {@link IntValueContainer#getValueAsByte(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValueAsByte", args = { int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsByte", args = { int.class })
 	public void testGetValueAsByte() {
 		long defaultValue = 123;
 		IntValueContainer intValueContainer = new IntValueContainer(defaultValue);
@@ -65,7 +63,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getValueAsInt(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValueAsInt", args = { int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsInt", args = { int.class })
 	public void testGetValueAsInt() {
 		long defaultValue = 9546754;
 		IntValueContainer intValueContainer = new IntValueContainer(defaultValue);
@@ -103,7 +101,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getValueAsLong(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValueAsLong", args = { int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsLong", args = { int.class })
 	public void testGetValueAsLong() {
 		long defaultValue = 9546754;
 		IntValueContainer intValueContainer = new IntValueContainer(defaultValue);
@@ -141,7 +139,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getValueAsShort(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValueAsShort", args = { int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "getValueAsShort", args = { int.class })
 	public void testGetValueAsShort() {
 		short defaultValue = 30467;
 		IntValueContainer intValueContainer = new IntValueContainer(defaultValue);
@@ -181,7 +179,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#setCapacity(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setCapacity", args = { int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "setCapacity", args = { int.class })
 	public void testSetCapacity() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -207,7 +205,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getCapacity()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getCapacity", args = {})
+	@UnitTestMethod(target = IntValueContainer.class, name = "getCapacity", args = {})
 	public void testGetCapacity() {
 
 		IntValueContainer intValueContainer = new IntValueContainer(0);
@@ -235,7 +233,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#setLongValue(int, long)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setLongValue", args = { int.class, long.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "setLongValue", args = { int.class, long.class })
 	public void testSetLongValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -254,7 +252,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#setIntValue(int, int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setIntValue", args = { int.class, int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "setIntValue", args = { int.class, int.class })
 	public void testSetIntValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -273,7 +271,7 @@ public class AT_IntValueContainer {
 	 */
 
 	@Test
-	@UnitTestMethod(name = "setShortValue", args = { int.class, short.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "setShortValue", args = { int.class, short.class })
 	public void testSetShortValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -293,7 +291,7 @@ public class AT_IntValueContainer {
 	 */
 
 	@Test
-	@UnitTestMethod(name = "setByteValue", args = { int.class, byte.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "setByteValue", args = { int.class, byte.class })
 	public void testSetByteValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -313,7 +311,7 @@ public class AT_IntValueContainer {
 	 */
 
 	@Test
-	@UnitTestMethod(name = "incrementIntValue", args = { int.class, int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "incrementIntValue", args = { int.class, int.class })
 	public void testIncrementIntValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -336,7 +334,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#incrementLongValue(int, long)}
 	 */
 	@Test
-	@UnitTestMethod(name = "incrementLongValue", args = { int.class, long.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "incrementLongValue", args = { int.class, long.class })
 	public void testIncrementLongValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -359,7 +357,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#incrementShortValue(int, short)}
 	 */
 	@Test
-	@UnitTestMethod(name = "incrementShortValue", args = { int.class, short.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "incrementShortValue", args = { int.class, short.class })
 	public void testIncrementShortValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -382,7 +380,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#incrementByteValue(int, byte)}
 	 */
 	@Test
-	@UnitTestMethod(name = "incrementByteValue", args = { int.class, byte.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "incrementByteValue", args = { int.class, byte.class })
 	public void testIncrementByteValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -405,7 +403,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#decrementByteValue(int, byte)}
 	 */
 	@Test
-	@UnitTestMethod(name = "decrementByteValue", args = { int.class, byte.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "decrementByteValue", args = { int.class, byte.class })
 	public void testDecrementByteValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -429,7 +427,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#decrementShortValue(int, short)}
 	 */
 	@Test
-	@UnitTestMethod(name = "decrementShortValue", args = { int.class, short.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "decrementShortValue", args = { int.class, short.class })
 	public void testDecrementShortValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -452,7 +450,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#decrementIntValue(int, int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "decrementIntValue", args = { int.class, int.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "decrementIntValue", args = { int.class, int.class })
 	public void testDecrementIntValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -475,7 +473,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#decrementLongValue(int, long)}
 	 */
 	@Test
-	@UnitTestMethod(name = "decrementLongValue", args = { int.class, long.class })
+	@UnitTestMethod(target = IntValueContainer.class, name = "decrementLongValue", args = { int.class, long.class })
 	public void testDecrementLongValue() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 
@@ -498,7 +496,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#IntValueContainer(long)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { long.class })
+	@UnitTestConstructor(target = IntValueContainer.class, args = { long.class })
 	public void testConstructor_Long() {
 		IntValueContainer intValueContainer = new IntValueContainer(12);
 		assertNotNull(intValueContainer);
@@ -508,7 +506,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#IntValueContainer(long, int)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { long.class, int.class })
+	@UnitTestConstructor(target = IntValueContainer.class, args = { long.class, int.class })
 	public void testConstructor_LongInt() {
 		IntValueContainer intValueContainer = new IntValueContainer(12, 0);
 		assertNotNull(intValueContainer);
@@ -524,7 +522,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#size()}
 	 */
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = IntValueContainer.class, name = "size", args = {})
 	public void testSize() {
 
 		IntValueContainer intValueContainer = new IntValueContainer(0, 100);
@@ -547,7 +545,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getDefaultValueAsByte()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDefaultValueAsByte", args = {})
+	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsByte", args = {})
 	public void testGetDefaultValueAsByte() {
 		byte expected = 120;
 		IntValueContainer intValueContainer = new IntValueContainer(expected);
@@ -571,7 +569,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getDefaultValueAsShort()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDefaultValueAsShort", args = {})
+	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsShort", args = {})
 	public void testGetDefaultValueAsShort() {
 		short expected = 32000;
 		IntValueContainer intValueContainer = new IntValueContainer(expected);
@@ -591,7 +589,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getDefaultValueAsInt()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDefaultValueAsInt", args = {})
+	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsInt", args = {})
 	public void testGetDefaultValueAsInt() {
 		int expected = 52000;
 		IntValueContainer intValueContainer = new IntValueContainer(expected);
@@ -608,7 +606,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getDefaultValueAsLong()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDefaultValueAsLong", args = {})
+	@UnitTestMethod(target = IntValueContainer.class, name = "getDefaultValueAsLong", args = {})
 	public void testGetDefaultValueAsLong() {
 		long expected = 364534534534534345L;
 		IntValueContainer intValueContainer = new IntValueContainer(expected);
@@ -622,7 +620,7 @@ public class AT_IntValueContainer {
 	 * Test for {@link IntValueContainer#getIntValueType()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getIntValueType", args = {})
+	@UnitTestMethod(target = IntValueContainer.class, name = "getIntValueType", args = {})
 	public void testGetIntValueType() {
 		IntValueContainer intValueContainer = new IntValueContainer(0);
 		assertEquals(IntValueType.BYTE, intValueContainer.getIntValueType());

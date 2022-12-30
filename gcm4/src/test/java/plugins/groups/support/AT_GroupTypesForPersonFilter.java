@@ -26,26 +26,24 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = GroupTypesForPersonFilter.class)
 public class AT_GroupTypesForPersonFilter {
 
 	@Test
-	@UnitTestConstructor(args = { Equality.class, int.class })
+	@UnitTestConstructor(target = GroupTypesForPersonFilter.class, args = { Equality.class, int.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = {SimulationContext.class})
+	@UnitTestMethod(target = GroupTypesForPersonFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
-		//precondition tests
-		
-		//if the equality operator is null
+		// precondition tests
+
+		// if the equality operator is null
 		GroupsActionSupport.testConsumer(100, 3, 10, 1499199255771310930L, (c) -> {
 			ContractException contractException = assertThrows(ContractException.class, () -> new GroupTypesForPersonFilter(null, 5).validate(c));
 			assertEquals(PartitionError.NULL_EQUALITY_OPERATOR, contractException.getErrorType());
@@ -54,7 +52,7 @@ public class AT_GroupTypesForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = GroupTypesForPersonFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 770617124373530907L, (c) -> {
@@ -75,11 +73,11 @@ public class AT_GroupTypesForPersonFilter {
 			}
 			assertEquals(expected, actual);
 		});
-		
+
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = GroupTypesForPersonFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 2954287333801626073L, (c) -> {
@@ -88,30 +86,30 @@ public class AT_GroupTypesForPersonFilter {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			List<PersonId> people = peopleDataManager.getPeople();
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			
+
 			GroupId groupId1 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_1);
 			GroupId groupId2 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_2);
 			GroupId groupId3 = groupsDataManager.addGroup(TestGroupTypeId.GROUP_TYPE_3);
 
 			Filter filter = new GroupTypesForPersonFilter(Equality.EQUAL, 2);
 
-			assertEquals(100,people.size());
+			assertEquals(100, people.size());
 			for (PersonId personId : people) {
 				int typeCount = randomGenerator.nextInt(4);
 				switch (typeCount) {
 				case 0:
 					break;
 				case 1:
-					groupsDataManager.addPersonToGroup(personId,groupId1);					
+					groupsDataManager.addPersonToGroup(personId, groupId1);
 					break;
 				case 2:
-					groupsDataManager.addPersonToGroup(personId,groupId1);
-					groupsDataManager.addPersonToGroup(personId,groupId2);
+					groupsDataManager.addPersonToGroup(personId, groupId1);
+					groupsDataManager.addPersonToGroup(personId, groupId2);
 					break;
 				default:
-					groupsDataManager.addPersonToGroup(personId,groupId1);
-					groupsDataManager.addPersonToGroup(personId,groupId2);
-					groupsDataManager.addPersonToGroup(personId,groupId3);
+					groupsDataManager.addPersonToGroup(personId, groupId1);
+					groupsDataManager.addPersonToGroup(personId, groupId2);
+					groupsDataManager.addPersonToGroup(personId, groupId3);
 					break;
 				}
 
@@ -136,6 +134,6 @@ public class AT_GroupTypesForPersonFilter {
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 		});
-		
+
 	}
 }

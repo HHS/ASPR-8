@@ -25,23 +25,20 @@ import plugins.partitions.support.PartitionError;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-
-@UnitTest(target = GroupsForPersonFilter.class)
 public class AT_GroupsForPersonFilter {
 
 	@Test
-	@UnitTestConstructor(args = { Equality.class, int.class })
+	@UnitTestConstructor(target = GroupsForPersonFilter.class,args = { Equality.class, int.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = GroupsForPersonFilter.class,name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		GroupsActionSupport.testConsumer(100, 3, 10, 5329703278551588697L, (c) -> {
 			// precondition tests
@@ -54,7 +51,7 @@ public class AT_GroupsForPersonFilter {
 	}
 	
 	@Test
-	@UnitTestMethod(name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = GroupsForPersonFilter.class,name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 		GroupsActionSupport.testConsumer(100, 3, 10, 8314387061888020596L, (c) -> {
 			Filter filter = new GroupsForPersonFilter(Equality.EQUAL, 5);
@@ -78,7 +75,7 @@ public class AT_GroupsForPersonFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = GroupsForPersonFilter.class,name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		GroupsActionSupport.testConsumer(100, 0, 10, 6164158277278234559L, (c) -> {

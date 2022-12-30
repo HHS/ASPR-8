@@ -11,23 +11,25 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = LabelerSensitivity.class)
 public final class AT_LabelerSensitivity {
-	 
 
 	@Test
-	@UnitTestConstructor(args = { Class.class, Function.class })
+	@UnitTestConstructor(target = LabelerSensitivity.class, args = { Class.class, Function.class })
 	public void testConstructor() {
 		// nothing to test
 	}
-	private static class Event2 implements Event{}
-	private static class Event3 implements Event{}
+
+	private static class Event2 implements Event {
+	}
+
+	private static class Event3 implements Event {
+	}
+
 	@Test
-	@UnitTestMethod(name = "getEventClass", args = {})
+	@UnitTestMethod(target = LabelerSensitivity.class, name = "getEventClass", args = {})
 	public void testGetEventClass() {
 		LabelerSensitivity<Event> labelerSensitivity1 = new LabelerSensitivity<>(Event.class, (e) -> Optional.ofNullable(null));
 		assertEquals(Event.class, labelerSensitivity1.getEventClass());
@@ -47,11 +49,11 @@ public final class AT_LabelerSensitivity {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonId", args = { Event.class })
+	@UnitTestMethod(target = LabelerSensitivity.class, name = "getPersonId", args = { Event.class })
 	public void testGetPersonId() {
-		
+
 		LabelerSensitivity<Event> labelerSensitivity = new LabelerSensitivity<>(Event.class, (e) -> Optional.empty());
-		Optional<PersonId> optional = labelerSensitivity.getPersonId( new Event() {
+		Optional<PersonId> optional = labelerSensitivity.getPersonId(new Event() {
 		});
 		assertFalse(optional.isPresent());
 
