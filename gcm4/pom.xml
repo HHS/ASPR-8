@@ -66,6 +66,16 @@
 			<organization>Leidos</organization>
 			<organizationUrl>https://www.leidos.com</organizationUrl>
 		</developer>
+		<developer>
+			<name>Baldwin-Akin Varner</name>
+			<organization>Leidos</organization>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Zachary Bischoff</name>
+			<organization>Leidos</organization>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
 	</developers>
 
 	<!-- Configure Build -->

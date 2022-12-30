@@ -11,19 +11,18 @@ import util.errors.ContractException;
  *
  */
 public enum RegionError implements ContractError {
-	NULL_AUXILIARY_DATA("Null auxiliary data"),
-	NULL_REGION_PROPERTY_DEFINITION_INITIALIZATION("Null region property definition initialization"),
-	NULL_REGION_ID("Null region id"),
+	DUPLICATE_PERSON_ADDITION("Duplicate person region addition"),
 	DUPLICATE_REGION_ID("Duplicate region id"),
-	UNKNOWN_REGION_ID("Unknown region id"),
 	MISSING_REGION_ASSIGNMENT("Region assignment is missing"),
+	NULL_AUXILIARY_DATA("Null auxiliary data"),
 	NULL_REGION_CONSTRUCTION_DATA("Null region construction data"),
+	NULL_REGION_ID("Null region id"),
 	NULL_REGION_PLUGIN_DATA("Null region plugin data"),
-	DUPLICATE_PERSON_REGION_ASSIGNMENT("Duplicate person region assignment"),
-	DUPLICATE_PERSON_ADDITION("Duplicate person region addition"),	
-NULL_TIME_TRACKING_POLICY("Null time tracking policy"),
-DUPLICATE_TIME_TRACKING_POLICY("Duplicate time tracking policy"),
-	REGION_ARRIVAL_TIMES_NOT_TRACKED("Person region arrival times not actively tracked");
+	NULL_REGION_PROPERTY_DEFINITION_INITIALIZATION("Null region property definition initialization"),
+	NULL_TIME_TRACKING_POLICY("Null time tracking policy"),
+	REGION_ARRIVAL_TIMES_NOT_TRACKED("Person region arrival times not actively tracked"),
+	UNKNOWN_REGION_ID("Unknown region id"),
+	;
 	
 
 	
