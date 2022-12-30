@@ -26,6 +26,7 @@ import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
+import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -88,8 +89,7 @@ public class AT_RegionsPluginData {
 		int defaultValue = 0;
 		Map<RegionPropertyId, PropertyDefinition> expectedDefinitions = new LinkedHashMap<>();
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
-					.setDefaultValue(defaultValue++).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(defaultValue++).build();
 			expectedDefinitions.put(testRegionPropertyId, propertyDefinition);
 			builder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
 		}
@@ -115,13 +115,11 @@ public class AT_RegionsPluginData {
 		// precondition tests
 
 		// if the region property id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> regionsPluginData.getRegionPropertyDefinition(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyDefinition(null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the region property id is unknown
-		contractException = assertThrows(ContractException.class,
-				() -> regionsPluginData.getRegionPropertyDefinition(TestRegionPropertyId.getUnknownRegionPropertyId()));
+		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyDefinition(TestRegionPropertyId.getUnknownRegionPropertyId()));
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
 	}
@@ -142,8 +140,7 @@ public class AT_RegionsPluginData {
 		}
 
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
-					.setDefaultValue(0).build();
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
 			builder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
 			expectedPropertyIds.add(testRegionPropertyId);
 		}
@@ -226,13 +223,11 @@ public class AT_RegionsPluginData {
 		}
 
 		// precondition test: if the region id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> regionsPluginData.getRegionPropertyValues(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValues(null));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		// precondition test: if the region id is unknown
-		contractException = assertThrows(ContractException.class,
-				() -> regionsPluginData.getRegionPropertyValues(TestRegionId.getUnknownRegionId()));
+		contractException = assertThrows(ContractException.class, () -> regionsPluginData.getRegionPropertyValues(TestRegionId.getUnknownRegionId()));
 		assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 	}
@@ -264,8 +259,7 @@ public class AT_RegionsPluginData {
 		 * not properly added with an initial agent behavior.
 		 */
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class)
-				.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
 		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
 		builder.setRegionPropertyValue(TestRegionId.REGION_1, regionPropertyId, 5);
 		ContractException contractException = assertThrows(ContractException.class, () -> builder.build());
@@ -303,23 +297,19 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "defineRegionProperty", args = {
-			RegionPropertyId.class, PropertyDefinition.class })
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "defineRegionProperty", args = { RegionPropertyId.class, PropertyDefinition.class })
 	public void testDefineRegionProperty() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(9).setType(Integer.class)
-				.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(9).setType(Integer.class).build();
 
 		// if the region property id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> builder.defineRegionProperty(null, propertyDefinition));
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.defineRegionProperty(null, propertyDefinition));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// if the property definition is null
-		contractException = assertThrows(ContractException.class,
-				() -> builder.defineRegionProperty(regionPropertyId, null));
+		contractException = assertThrows(ContractException.class, () -> builder.defineRegionProperty(regionPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 	}
 
@@ -370,15 +360,13 @@ public class AT_RegionsPluginData {
 		}
 
 		// precondition test: if the person id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> RegionsPluginData.builder().build().getPersonRegion(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> RegionsPluginData.builder().build().getPersonRegion(null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setRegionPropertyValue", args = { RegionId.class,
-			RegionPropertyId.class, Object.class })
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class })
 	public void testSetRegionPropertyValue() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 
@@ -386,8 +374,7 @@ public class AT_RegionsPluginData {
 
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE;
 		Object validValue = 5;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class)
-				.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
 
 		builder.addRegion(regionId);
 		builder.defineRegionProperty(regionPropertyId, propertyDefinition);
@@ -395,13 +382,11 @@ public class AT_RegionsPluginData {
 		// non-precondition tests covered by testGetRegionPropertyValue
 
 		// if the region id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> builder.setRegionPropertyValue(null, regionPropertyId, validValue));
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.setRegionPropertyValue(null, regionPropertyId, validValue));
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		// if the region property id is null
-		contractException = assertThrows(ContractException.class,
-				() -> builder.setRegionPropertyValue(regionId, null, validValue));
+		contractException = assertThrows(ContractException.class, () -> builder.setRegionPropertyValue(regionId, null, validValue));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 		// Note: Invalid values will not throw an exception and are caught
@@ -409,21 +394,18 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegionArrivalTracking", args = {
-			TimeTrackingPolicy.class })
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegionArrivalTracking", args = { TimeTrackingPolicy.class })
 	public void testSetPersonRegionArrivalTracking() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 
 		// if the timeTrackingPolicy is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> builder.setPersonRegionArrivalTracking(null));
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.setPersonRegionArrivalTracking(null));
 		assertEquals(RegionError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegion", args = { PersonId.class,
-			RegionId.class })
+	@UnitTestMethod(target = RegionsPluginData.Builder.class, name = "setPersonRegion", args = { PersonId.class, RegionId.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testSetPersonRegion() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 
@@ -433,8 +415,7 @@ public class AT_RegionsPluginData {
 		// non-precondition tests covered by testGetPersonRegion
 
 		// if the person id is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> builder.setPersonRegion(null, regionId));
+		ContractException contractException = assertThrows(ContractException.class, () -> builder.setPersonRegion(null, regionId));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 		// if the region id is null
@@ -452,16 +433,13 @@ public class AT_RegionsPluginData {
 			regionPluginDataBuilder.addRegion(testRegionId);
 		}
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId,
-					testRegionPropertyId.getPropertyDefinition());
+			regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
 		}
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-						|| randomGenerator.nextBoolean()) {
+				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty() || randomGenerator.nextBoolean()) {
 					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
-					regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId,
-							randomPropertyValue);
+					regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId, randomPropertyValue);
 				}
 			}
 		}
@@ -481,8 +459,7 @@ public class AT_RegionsPluginData {
 		RegionsPluginData cloneRegionPluginData = (RegionsPluginData) pluginData;
 
 		// show that the two plugin datas have the same arrival tracking policy
-		assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(),
-				cloneRegionPluginData.getPersonRegionArrivalTrackingPolicy());
+		assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(), cloneRegionPluginData.getPersonRegionArrivalTrackingPolicy());
 
 		// show that the two plugin datas have the same region ids
 		assertEquals(regionsPluginData.getRegionIds(), cloneRegionPluginData.getRegionIds());
@@ -493,19 +470,15 @@ public class AT_RegionsPluginData {
 		// show that the two plugin datas have the same region property
 		// definitions
 		for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
-			PropertyDefinition expectedPropertyDefinition = regionsPluginData
-					.getRegionPropertyDefinition(regionPropertyId);
-			PropertyDefinition actualPropertyDefinition = cloneRegionPluginData
-					.getRegionPropertyDefinition(regionPropertyId);
+			PropertyDefinition expectedPropertyDefinition = regionsPluginData.getRegionPropertyDefinition(regionPropertyId);
+			PropertyDefinition actualPropertyDefinition = cloneRegionPluginData.getRegionPropertyDefinition(regionPropertyId);
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
 
 		// show that the two plugin datas have the same region property values
 		for (RegionId regionId : regionsPluginData.getRegionIds()) {
-			Map<RegionPropertyId, Object> expectedRegionPropertyValues = regionsPluginData
-					.getRegionPropertyValues(regionId);
-			Map<RegionPropertyId, Object> actualRegionPropertyValues = cloneRegionPluginData
-					.getRegionPropertyValues(regionId);
+			Map<RegionPropertyId, Object> expectedRegionPropertyValues = regionsPluginData.getRegionPropertyValues(regionId);
+			Map<RegionPropertyId, Object> actualRegionPropertyValues = cloneRegionPluginData.getRegionPropertyValues(regionId);
 			assertEquals(expectedRegionPropertyValues, actualRegionPropertyValues);
 		}
 
@@ -541,16 +514,13 @@ public class AT_RegionsPluginData {
 				regionPluginDataBuilder.addRegion(testRegionId);
 			}
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId,
-						testRegionPropertyId.getPropertyDefinition());
+				regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId, testRegionPropertyId.getPropertyDefinition());
 			}
 			for (TestRegionId testRegionId : TestRegionId.values()) {
 				for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-					if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-							|| randomGenerator.nextBoolean()) {
+					if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty() || randomGenerator.nextBoolean()) {
 						Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
-						regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId,
-								randomPropertyValue);
+						regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId, randomPropertyValue);
 					}
 				}
 			}
@@ -558,17 +528,15 @@ public class AT_RegionsPluginData {
 			int offset = j;
 			for (int i = 0; i < personCount; i++) {
 				/*
-				 * the offset matters in this case because the setPersonRegion method
-				 * skips all indexes of people based on the PersonId
-				 * So if you had PersonId 1 and PersonId 3
-				 * The internal logic will place a blank value in index 2 (where PersonId 2
-				 * would have been)
-				 * So to acurately test this functionality, the offset must be added here and
-				 * subtracted in the assert clause
-				 * Because the offset is tied to the value of j, the offset will increase from 0
-				 * to 9
-				 * The effect of this is that the internal list will start at the offset index
-				 * value instead of index 0
+				 * the offset matters in this case because the setPersonRegion
+				 * method skips all indexes of people based on the PersonId So
+				 * if you had PersonId 1 and PersonId 3 The internal logic will
+				 * place a blank value in index 2 (where PersonId 2 would have
+				 * been) So to acurately test this functionality, the offset
+				 * must be added here and subtracted in the assert clause
+				 * Because the offset is tied to the value of j, the offset will
+				 * increase from 0 to 9 The effect of this is that the internal
+				 * list will start at the offset index value instead of index 0
 				 */
 				PersonId personId = new PersonId(i + offset);
 				TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);

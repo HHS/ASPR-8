@@ -182,9 +182,6 @@ public class RegionsPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
 		 *             </li>if the region property id is null
 		 * 
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             </li>if the region property value was previously defined
-		 * 
 		 */
 		public Builder setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 			ensureDataMutability();
@@ -209,9 +206,6 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li>if the
 		 *             region id is null
-		 * 
-		 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_REGION_ASSIGNMENT}
-		 *             </li>if the person's region was previously defined
 		 * 
 		 */
 		public Builder setPersonRegion(final PersonId personId, final RegionId regionId) {
@@ -267,10 +261,6 @@ public class RegionsPluginData implements PluginData {
 		 * 
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
-		 *
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             </li> if a property definition for the given property id
-		 *             was previously defined.
 		 * 
 		 */
 		public Builder defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition) {
