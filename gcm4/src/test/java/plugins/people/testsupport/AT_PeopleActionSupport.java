@@ -1,12 +1,13 @@
 package plugins.people.testsupport;
 
-import nucleus.Plugin;
+import java.util.function.Consumer;
+
 import org.junit.jupiter.api.Test;
+
+import nucleus.Plugin;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
-
-import java.util.function.Consumer;
 
 @UnitTest(target = PeopleActionSupport.class)
 public class AT_PeopleActionSupport {

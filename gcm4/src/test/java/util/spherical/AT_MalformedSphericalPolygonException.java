@@ -5,16 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 
 @UnitTest(target = MalformedSphericalPolygonException.class)
 public class AT_MalformedSphericalPolygonException {
 	@Test
-	@UnitTestConstructor(args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestConstructor(args = {})
 	public void testConstructor() {
-		// nothing to test
+		MalformedSphericalPolygonException malformedSphericalPolygonException = new MalformedSphericalPolygonException(null);
+		assertNull(malformedSphericalPolygonException.getMessage());
 	}
 
 	@Test

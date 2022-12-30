@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Predicate;
 
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
@@ -38,8 +37,14 @@ public class MissingTestsReport {
 				.setTestPath(testPath)//
 				.build()//
 				.execute();//
+		
+		String classNameFilter = null;
+		if(args.length>2) {
+			classNameFilter = args[2];
+		}
 
-		reportWarnings(warningContainer, null);
+
+		reportWarnings(warningContainer, classNameFilter);
 
 	}
 
@@ -86,15 +91,8 @@ public class MissingTestsReport {
 		}
 
 		if (filter != null) {
-			Predicate<String> predicate = new Predicate<String>() {
-
-				@Override
-				public boolean test(String t) {
-					return !t.contains(filter);
-				}
-
-			};
-			warningMap.keySet().removeIf(predicate);
+			System.out.println("Results are filtered on the class references containing the string '"+filter+"'");
+			warningMap.keySet().removeIf((t)->!t.contains(filter));
 		}
 
 		for (String classRef : warningMap.keySet()) {

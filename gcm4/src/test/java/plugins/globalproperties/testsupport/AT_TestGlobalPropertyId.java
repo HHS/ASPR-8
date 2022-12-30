@@ -1,5 +1,10 @@
 package plugins.globalproperties.testsupport;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,8 +18,6 @@ import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = TestGlobalPropertyId.class)
 public class AT_TestGlobalPropertyId {

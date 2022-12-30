@@ -1,13 +1,16 @@
 package plugins.globalproperties.support;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
+
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target =GlobalPropertyInitialization.class)
 

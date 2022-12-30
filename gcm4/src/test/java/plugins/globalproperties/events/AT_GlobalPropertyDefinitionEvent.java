@@ -1,14 +1,16 @@
 package plugins.globalproperties.events;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
+
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = GlobalPropertyDefinitionEvent.class)
 public class AT_GlobalPropertyDefinitionEvent {

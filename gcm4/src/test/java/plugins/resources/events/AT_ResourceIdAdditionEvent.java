@@ -1,6 +1,10 @@
 package plugins.resources.events;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
+
 import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
@@ -9,8 +13,6 @@ import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = ResourceIdAdditionEvent.class)
 public class AT_ResourceIdAdditionEvent {

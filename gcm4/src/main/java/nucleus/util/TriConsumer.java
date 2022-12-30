@@ -1,6 +1,7 @@
 package nucleus.util;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Represents an operation that accepts three input arguments and returns no

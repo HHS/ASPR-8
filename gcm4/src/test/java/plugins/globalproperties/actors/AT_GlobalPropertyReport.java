@@ -1,5 +1,10 @@
 package plugins.globalproperties.actors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -20,7 +25,11 @@ import plugins.globalproperties.support.GlobalPropertyInitialization;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import plugins.reports.support.*;
+import plugins.reports.support.ReportError;
+import plugins.reports.support.ReportHeader;
+import plugins.reports.support.ReportId;
+import plugins.reports.support.ReportItem;
+import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
@@ -28,8 +37,6 @@ import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = GlobalPropertyReport.class)
 public class AT_GlobalPropertyReport {

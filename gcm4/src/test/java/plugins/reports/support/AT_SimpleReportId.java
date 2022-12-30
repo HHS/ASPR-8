@@ -1,17 +1,22 @@
 package plugins.reports.support;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
+
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @UnitTest(target = SimpleReportId.class)
 public class AT_SimpleReportId {
