@@ -7,18 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = DoubleValueContainer.class)
 public class AT_DoubleValueContainer {
 
 	/**
 	 * Tests {@link DoubleValueContainer#DoubleValueContainer(double)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { double.class })
+	@UnitTestConstructor(target = DoubleValueContainer.class, args = { double.class })
 	public void testConstructor_Double() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 		assertNotNull(doubleValueContainer);
@@ -28,7 +26,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#DoubleValueContainer(double, int)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { double.class, int.class })
+	@UnitTestConstructor(target = DoubleValueContainer.class, args = { double.class, int.class })
 	public void testConstructor_DoubleInt() {
 
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0, 1000);
@@ -44,7 +42,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#getCapacity()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getCapacity", args = {})
+	@UnitTestMethod(target = DoubleValueContainer.class, name = "getCapacity", args = {})
 	public void testGetCapacity() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 
@@ -70,7 +68,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#getDefaultValue()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDefaultValue", args = {})
+	@UnitTestMethod(target = DoubleValueContainer.class, name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		double defaultValue = 0;
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(defaultValue);
@@ -90,7 +88,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#getValue(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValue", args = { int.class })
+	@UnitTestMethod(target = DoubleValueContainer.class, name = "getValue", args = { int.class })
 	public void testGetValue() {
 		double defaultValue = -345.34;
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(defaultValue);
@@ -126,7 +124,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#setCapacity(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setCapacity", args = { int.class })
+	@UnitTestMethod(target = DoubleValueContainer.class, name = "setCapacity", args = { int.class })
 	public void testSetCapacity() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 
@@ -151,7 +149,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#setValue(int, double)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setValue", args = { int.class, double.class })
+	@UnitTestMethod(target = DoubleValueContainer.class, name = "setValue", args = { int.class, double.class })
 	public void testSetValue() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 
@@ -169,7 +167,7 @@ public class AT_DoubleValueContainer {
 	 * Tests {@link DoubleValueContainer#size()}
 	 */
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = DoubleValueContainer.class, name = "size", args = {})
 	public void testSize() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0, 100);
 		assertEquals(0, doubleValueContainer.size());

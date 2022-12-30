@@ -19,7 +19,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -34,11 +33,10 @@ import util.random.RandomGeneratorProvider;
  *
  */
 
-@UnitTest(target = DoublePropertyManager.class)
 public class AT_DoublePropertyManager {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
+	@UnitTestMethod(target = DoublePropertyManager.class,name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3799865640223574835L);
@@ -97,7 +95,7 @@ public class AT_DoublePropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
+	@UnitTestMethod(target = DoublePropertyManager.class,name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 		/**
 		 * Returns the assignment time when the id's property was last set. Note
@@ -150,7 +148,7 @@ public class AT_DoublePropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = DoublePropertyManager.class,name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1599837792379294459L);
@@ -195,7 +193,7 @@ public class AT_DoublePropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeId", args = { int.class })
+	@UnitTestMethod(target = DoublePropertyManager.class,name = "removeId", args = { int.class })
 	public void testRemoveId() {
 		TestActionSupport.testConsumer((c) -> {
 			/*
@@ -255,7 +253,7 @@ public class AT_DoublePropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = DoublePropertyManager.class,args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		TestActionSupport.testConsumer((c) -> {
 
@@ -282,7 +280,7 @@ public class AT_DoublePropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
+	@UnitTestMethod(target = DoublePropertyManager.class,name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		TestActionSupport.testConsumer((c) -> {
 

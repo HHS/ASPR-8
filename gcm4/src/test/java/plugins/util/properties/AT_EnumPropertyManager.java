@@ -19,7 +19,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -34,11 +33,10 @@ import util.random.RandomGeneratorProvider;
  *
  */
 
-@UnitTest(target = EnumPropertyManager.class)
 public class AT_EnumPropertyManager {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
+	@UnitTestMethod(target = EnumPropertyManager.class, name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5102684240650614254L);
@@ -97,7 +95,7 @@ public class AT_EnumPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
+	@UnitTestMethod(target = EnumPropertyManager.class, name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 		/**
 		 * Returns the assignment time when the id's property was last set. Note
@@ -126,7 +124,7 @@ public class AT_EnumPropertyManager {
 		}));
 
 		// add the local data manager
-		pluginDataBuilder.addTestDataManager("dm", ()->new LocalDM());
+		pluginDataBuilder.addTestDataManager("dm", () -> new LocalDM());
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -150,7 +148,7 @@ public class AT_EnumPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = EnumPropertyManager.class, name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6716984272666831621L);
@@ -194,7 +192,7 @@ public class AT_EnumPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeId", args = { int.class })
+	@UnitTestMethod(target = EnumPropertyManager.class, name = "removeId", args = { int.class })
 	public void testRemoveId() {
 		TestActionSupport.testConsumer((c) -> {
 			/*
@@ -260,13 +258,12 @@ public class AT_EnumPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = EnumPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		TestActionSupport.testConsumer((c) -> {
 
 			PropertyDefinition goodPropertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.BLUE).build();
 			PropertyDefinition badPropertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).build();
-			
 
 			// if the property definition is null
 			ContractException contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(c, null, 0));
@@ -275,7 +272,7 @@ public class AT_EnumPropertyManager {
 			// if the property definition does not have a type of Enum.class
 			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(c, badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
-			
+
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new EnumPropertyManager(c, goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
@@ -286,7 +283,7 @@ public class AT_EnumPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
+	@UnitTestMethod(target = EnumPropertyManager.class, name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		TestActionSupport.testConsumer((c) -> {
 

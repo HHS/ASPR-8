@@ -39,14 +39,12 @@ import plugins.globalproperties.testsupport.TestAuxiliaryGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 
-@UnitTest(target = GlobalPropertiesDataManager.class)
 
 public final class AT_GlobalPropertiesDataManager {
 
@@ -54,14 +52,14 @@ public final class AT_GlobalPropertiesDataManager {
 	// from the resolver
 	////////////////////
 	@Test
-	@UnitTestConstructor(args = { GlobalPropertiesPluginData.class })
+	@UnitTestConstructor(target = GlobalPropertiesDataManager.class,args = { GlobalPropertiesPluginData.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new GlobalPropertiesDataManager(null));
 		assertEquals(GlobalPropertiesError.NULL_GLOBAL_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "init", args = { DataManagerContext.class })
 	public void testInit() {
 
 		Map<GlobalPropertyId, Object> expectedPropertyValues = new LinkedHashMap<>();
@@ -126,7 +124,7 @@ public final class AT_GlobalPropertiesDataManager {
 	////////////////////////////////
 
 	@Test
-	@UnitTestMethod(name = "globalPropertyIdExists", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "globalPropertyIdExists", args = { GlobalPropertyId.class })
 	public void testGlobalPropertyIdExists() {
 
 		GlobalsPropertiesActionSupport.testConsumer((c) -> {
@@ -149,7 +147,7 @@ public final class AT_GlobalPropertiesDataManager {
 	//////////////////
 
 	@Test
-	@UnitTestMethod(name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testSetGlobalPropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7837412421821851663L);
@@ -249,7 +247,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1059537118783693383L);
 
@@ -285,7 +283,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyTime", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyTime", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyTime() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5323616867741088481L);
@@ -320,7 +318,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyIds", args = {})
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyIds", args = {})
 	public void testGetGlobalPropertyIds() {
 		GlobalsPropertiesActionSupport.testConsumer((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
@@ -334,7 +332,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {
 
 		GlobalsPropertiesActionSupport.testConsumer((c) -> {
@@ -366,7 +364,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineGlobalProperty", args = { GlobalPropertyInitialization.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "defineGlobalProperty", args = { GlobalPropertyInitialization.class })
 	public void testDefineGlobalProperty() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -488,7 +486,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForGlobalPropertyDefinitionEvent", args = {})
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getEventFilterForGlobalPropertyDefinitionEvent", args = {})
 	public void testGetEventFilterForGlobalPropertyDefinitionEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -551,7 +549,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForGlobalPropertyUpdateEvent", args = {})
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getEventFilterForGlobalPropertyUpdateEvent", args = {})
 	public void testGetEventFilterForGlobalPropertyUpdateEvent() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5410948605660305794L);
@@ -606,7 +604,7 @@ public final class AT_GlobalPropertiesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForGlobalPropertyUpdateEvent", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "getEventFilterForGlobalPropertyUpdateEvent", args = { GlobalPropertyId.class })
 	public void testGetEventFilterForGlobalPropertyUpdateEvent_property() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2014699212749132531L);

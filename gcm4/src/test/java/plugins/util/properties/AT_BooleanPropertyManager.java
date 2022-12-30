@@ -21,7 +21,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -36,11 +35,10 @@ import util.random.RandomGeneratorProvider;
  *
  */
 
-@UnitTest(target = BooleanPropertyManager.class)
 public class AT_BooleanPropertyManager {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
+	@UnitTestMethod(target = BooleanPropertyManager.class, name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4879223247393954289L);
@@ -99,7 +97,7 @@ public class AT_BooleanPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
+	@UnitTestMethod(target = BooleanPropertyManager.class, name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6779797760333524552L);
 
@@ -118,7 +116,7 @@ public class AT_BooleanPropertyManager {
 		}));
 
 		// add the local data manager
-		pluginDataBuilder.addTestDataManager("dm", ()->new LocalDM());
+		pluginDataBuilder.addTestDataManager("dm", () -> new LocalDM());
 
 		// build and run the simulation
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -142,7 +140,7 @@ public class AT_BooleanPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = BooleanPropertyManager.class, name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4827517950755837724L);
@@ -185,7 +183,7 @@ public class AT_BooleanPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeId", args = { int.class })
+	@UnitTestMethod(target = BooleanPropertyManager.class, name = "removeId", args = { int.class })
 	public void testRemoveId() {
 		TestActionSupport.testConsumer((c) -> {
 
@@ -239,7 +237,7 @@ public class AT_BooleanPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = BooleanPropertyManager.class, args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		TestActionSupport.testConsumer((c) -> {
 
@@ -255,7 +253,7 @@ public class AT_BooleanPropertyManager {
 			// if the property definition does not have a type of Boolean.class
 			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, badPropertyDefinition, 0));
 			assertEquals(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, contractException.getErrorType());
-			
+
 			// if the initial size is negative
 			contractException = assertThrows(ContractException.class, () -> new BooleanPropertyManager(c, goodPropertyDefinition, -1));
 			assertEquals(PropertyError.NEGATIVE_INITIAL_SIZE, contractException.getErrorType());
@@ -266,7 +264,7 @@ public class AT_BooleanPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
+	@UnitTestMethod(target = BooleanPropertyManager.class, name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		TestActionSupport.testConsumer((c) -> {
 

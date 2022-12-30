@@ -17,13 +17,11 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = AbstractIndexedPropertyManager.class)
 
 public class AT_AbstractIndexedPropertyManager {
 
@@ -47,7 +45,7 @@ public class AT_AbstractIndexedPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = AbstractIndexedPropertyManager.class,args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		TestActionSupport.testConsumer((c) -> {
 
@@ -67,7 +65,7 @@ public class AT_AbstractIndexedPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = AbstractIndexedPropertyManager.class,name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 
@@ -96,7 +94,7 @@ public class AT_AbstractIndexedPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
+	@UnitTestMethod(target = AbstractIndexedPropertyManager.class,name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1003433950467196390L);
@@ -142,7 +140,7 @@ public class AT_AbstractIndexedPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeId", args = { int.class })
+	@UnitTestMethod(target = AbstractIndexedPropertyManager.class,name = "removeId", args = { int.class })
 	public void testRemoveId() {
 		TestActionSupport.testConsumer((c) -> {
 			// precondition tests
@@ -155,7 +153,7 @@ public class AT_AbstractIndexedPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
+	@UnitTestMethod(target = AbstractIndexedPropertyManager.class,name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		TestActionSupport.testConsumer((c) -> {
 

@@ -25,23 +25,21 @@ import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = AttributeLabeler.class)
 public final class AT_AttributeLabeler {
 
 	@Test
-	@UnitTestConstructor(args = { AttributeId.class, Function.class })
+	@UnitTestConstructor(target = AttributeLabeler.class, args = { AttributeId.class, Function.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabelerSensitivities", args = {})
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 		/*
 		 * Get the labeler sensitivities and show that they are consistent with
@@ -63,8 +61,7 @@ public final class AT_AttributeLabeler {
 		// show that the sensitivity will return the person id from a
 		// AttributeUpdateEvent
 		PersonId personId = new PersonId(56);
-		AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false,
-				true);
+		AttributeUpdateEvent attributeUpdateEvent = new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, false, true);
 		Optional<PersonId> optional = labelerSensitivity.getPersonId(attributeUpdateEvent);
 		assertTrue(optional.isPresent());
 		assertEquals(personId, optional.get());
@@ -72,7 +69,7 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 		// build an attribute function
 		Function<Object, Object> function = (c) -> {
@@ -114,8 +111,7 @@ public final class AT_AttributeLabeler {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> attributeLabeler.getLabel(c, new PersonId(100000)));
+			ContractException contractException = assertThrows(ContractException.class, () -> attributeLabeler.getLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
@@ -131,7 +127,7 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 		Function<Object, Object> function = (c) -> {
 			return c;
@@ -176,7 +172,7 @@ public final class AT_AttributeLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDimension", args = {})
+	@UnitTestMethod(target = AttributeLabeler.class, name = "getDimension", args = {})
 	public void testGetDimension() {
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 			assertEquals(testAttributeId, new AttributeLabeler(testAttributeId, (c) -> null).getDimension());

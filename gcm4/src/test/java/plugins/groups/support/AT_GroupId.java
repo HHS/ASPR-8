@@ -7,17 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = GroupId.class)
 public class AT_GroupId {
 
 	
 	@Test
-	@UnitTestConstructor(args = { int.class })
+	@UnitTestConstructor(target = GroupId.class,args = { int.class })
 	public void testConstructor() {
 		for (int i = 0; i < 10; i++) {
 			GroupId GroupId = new GroupId(i);
@@ -30,7 +28,7 @@ public class AT_GroupId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "compareTo", args = { GroupId.class })
+	@UnitTestMethod(target = GroupId.class,name = "compareTo", args = { GroupId.class })
 	public void testCompareTo() {
 		for (int i = 0; i < 10; i++) {
 			GroupId groupA = new GroupId(i);
@@ -49,7 +47,7 @@ public class AT_GroupId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = GroupId.class,name = "equals", args = { Object.class })
 	public void testEquals() {
 		for (int i = 0; i < 10; i++) {
 			GroupId groupA = new GroupId(i);
@@ -65,7 +63,7 @@ public class AT_GroupId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = GroupId.class,name = "getValue", args = {})
 	public void testGetValue() {
 		for (int i = 0; i < 10; i++) {
 			GroupId group = new GroupId(i);
@@ -74,7 +72,7 @@ public class AT_GroupId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = GroupId.class,name = "hashCode", args = {})
 	public void testHashCode() {
 		for (int i = 0; i < 10; i++) {
 			GroupId group = new GroupId(i);
@@ -83,7 +81,7 @@ public class AT_GroupId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = GroupId.class,name = "toString", args = {})
 	public void testToString() {
 		for (int i = 0; i < 10; i++) {
 			GroupId group = new GroupId(i);

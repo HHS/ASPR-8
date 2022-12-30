@@ -9,7 +9,6 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
@@ -19,14 +18,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = BooleanContainer.class)
 public class AT_BooleanContainer {
 
 	/**
 	 * Test {@link BooleanContainer#BooleanContainer(boolean)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { boolean.class })
+	@UnitTestConstructor(target = BooleanContainer.class, args = { boolean.class })
 	public void testConstructor_Boolean() {
 		BooleanContainer booleanContainer = new BooleanContainer(true);
 
@@ -46,7 +44,7 @@ public class AT_BooleanContainer {
 	 * Test {@link BooleanContainer#BooleanContainer(boolean, int)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { boolean.class, int.class })
+	@UnitTestConstructor(target = BooleanContainer.class, args = { boolean.class, int.class })
 	public void testConstructor_BooleanInt() {
 
 		BooleanContainer booleanContainer = new BooleanContainer(true, 100);
@@ -67,7 +65,7 @@ public class AT_BooleanContainer {
 	 * Test {@link BooleanContainer#get(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "get", args = { int.class })
+	@UnitTestMethod(target = BooleanContainer.class, name = "get", args = { int.class })
 	public void testGet() {
 		Random random = new Random(53463457457456456L);
 		int n = 1000;
@@ -102,13 +100,13 @@ public class AT_BooleanContainer {
 	 * Test {@link BooleanContainer#set(int, boolean)}
 	 */
 	@Test
-	@UnitTestMethod(name = "set", args = { int.class, boolean.class })
+	@UnitTestMethod(target = BooleanContainer.class, name = "set", args = { int.class, boolean.class })
 	public void testSet() {
 		// proxy via testGet()
 	}
 
 	@Test
-	@UnitTestMethod(name = "expandCapacity", args = {int.class}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestMethod(target = BooleanContainer.class, name = "expandCapacity", args = { int.class }, tags = { UnitTag.INCOMPLETE })
 	public void testExpandCapacity() {
 		// requires a manual performance test
 	}

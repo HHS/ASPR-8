@@ -37,16 +37,14 @@ import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = AttributeFilter.class)
 public final class AT_AttributeFilter {
 
 	@Test
-	@UnitTestConstructor(args = { AttributeId.class, Equality.class, Object.class })
+	@UnitTestConstructor(target = AttributeFilter.class, args = { AttributeId.class, Equality.class, Object.class })
 	public void testConstructor() {
 		// nothing to test
 	}
@@ -87,7 +85,7 @@ public final class AT_AttributeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = AttributeFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		int initialPopulation = 100;
 
@@ -106,9 +104,9 @@ public final class AT_AttributeFilter {
 
 		final PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 		for (int i = 0; i < initialPopulation; i++) {
-			peopleBuilder.addPersonId(new PersonId(i));			
+			peopleBuilder.addPersonId(new PersonId(i));
 		}
-		
+
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 		builder.addPlugin(peoplePlugin);
@@ -164,7 +162,7 @@ public final class AT_AttributeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = AttributeFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		PartitionsActionSupport.testConsumer(100, 2853953940626718331L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
@@ -181,15 +179,14 @@ public final class AT_AttributeFilter {
 				assertEquals(expected, actual);
 			}
 
-			
 		});
-		
+
 		/* precondition: if the context is null */
 		PartitionsActionSupport.testConsumer(100, 1011872226453537614L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			assertThrows(RuntimeException.class, () -> filter.evaluate(null, new PersonId(0)));
 		});
-		
+
 		/* precondition: if the person id is null */
 		PartitionsActionSupport.testConsumer(100, 6858667758520667469L, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
@@ -205,7 +202,7 @@ public final class AT_AttributeFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = AttributeFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
 		PartitionsActionSupport.testConsumer(100, 3455263917994200075L, (c) -> {
@@ -229,9 +226,8 @@ public final class AT_AttributeFilter {
 
 			/*
 			 * Show that the sensitivity requires refresh for
-			 * AttributeUpdateEvent events if and only if the
-			 * attribute ids are equal and the event has different previous and
-			 * current values.
+			 * AttributeUpdateEvent events if and only if the attribute ids are
+			 * equal and the event has different previous and current values.
 			 */
 			PersonId personId = new PersonId(0);
 

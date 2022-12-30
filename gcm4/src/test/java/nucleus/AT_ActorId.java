@@ -8,22 +8,20 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ActorId.class)
 public final class AT_ActorId {
 
-	@UnitTestConstructor( args = {int.class})
+	@UnitTestConstructor(target = ActorId.class, args = { int.class })
 	@Test
 	public void testConstructor() {
 		for (int i = 0; i < 100; i++) {
 			assertEquals(i, new ActorId(i).getValue());
 		}
 	}
-	
-	@UnitTestMethod(name = "getValue", args = {})
+
+	@UnitTestMethod(target = ActorId.class, name = "getValue", args = {})
 	@Test
 	public void testGetValue() {
 		for (int i = 0; i < 100; i++) {
@@ -31,7 +29,7 @@ public final class AT_ActorId {
 		}
 	}
 
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = ActorId.class, name = "toString", args = {})
 	@Test
 	public void testToString() {
 		for (int i = 0; i < 100; i++) {
@@ -39,7 +37,7 @@ public final class AT_ActorId {
 		}
 	}
 
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = ActorId.class, name = "hashCode", args = {})
 	@Test
 	public void testHashCode() {
 		// show equal objects have equal hashcodes
@@ -49,17 +47,17 @@ public final class AT_ActorId {
 			assertEquals(a, b);
 			assertEquals(a.hashCode(), b.hashCode());
 		}
-		
-		//show that hash codes are dispersed
+
+		// show that hash codes are dispersed
 		Set<Integer> hashcodes = new LinkedHashSet<>();
 		for (int i = 0; i < 1000; i++) {
 			hashcodes.add(new ActorId(i).hashCode());
 		}
 		assertEquals(1000, hashcodes.size());
-		
+
 	}
 
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = ActorId.class, name = "equals", args = { Object.class })
 	@Test
 	public void testEquals() {
 		// show actor ids are equal if and only if they have the same base int

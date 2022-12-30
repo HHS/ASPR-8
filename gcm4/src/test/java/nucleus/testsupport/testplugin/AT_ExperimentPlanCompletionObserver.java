@@ -11,15 +11,13 @@ import nucleus.Experiment;
 import nucleus.ExperimentContext;
 import nucleus.Plugin;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ExperimentPlanCompletionObserver.class)
 public class AT_ExperimentPlanCompletionObserver {
 
 	@Test
-	@UnitTestMethod(name = "getActionCompletionReport", args = { Integer.class })
+	@UnitTestMethod(target = ExperimentPlanCompletionObserver.class, name = "getActionCompletionReport", args = { Integer.class })
 	public void testGetActionCompletionReport() {
 
 		/*
@@ -48,15 +46,16 @@ public class AT_ExperimentPlanCompletionObserver {
 
 		Experiment	.builder()//
 					.addPlugin(testPlugin).addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
-					.build()//					
+					.build()//
 					.execute();
 
 		/*
-		 * Scenario zero is the default scenario even when there are no dimensions in the experiment
+		 * Scenario zero is the default scenario even when there are no
+		 * dimensions in the experiment
 		 */
 		optional = experimentPlanCompletionObserver.getActionCompletionReport(0);
 		assertTrue(optional.isPresent());
-				
+
 		/*
 		 * No other scenarios should be present
 		 */
@@ -66,13 +65,13 @@ public class AT_ExperimentPlanCompletionObserver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {ExperimentContext.class}, tags = { UnitTag.LOCAL_PROXY })
+	@UnitTestMethod(target = ExperimentPlanCompletionObserver.class, name = "init", args = { ExperimentContext.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testInit() {
 		// covered by the test: testGetActionCompletionReport()
 	}
-	
+
 	@Test
-	@UnitTestConstructor(args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestConstructor(target = ExperimentPlanCompletionObserver.class, args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testConstructor() {
 		// nothing to test
 	}

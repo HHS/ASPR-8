@@ -5,14 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = DataManager.class)
+
 public class AT_DataManager {
+	
+	
+	
 	@Test
-	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
+	@UnitTestMethod(target = DataManager.class ,name = "init", args = {DataManagerContext.class})
 	public void testInit() {
 		DataManager dataManager = new DataManager();
 		assertFalse(dataManager.isInitialized());
@@ -20,7 +22,7 @@ public class AT_DataManager {
 		assertTrue(dataManager.isInitialized());
 	}
 	
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = DataManager.class ,args = {})
 	@Test
 	public void testConstructor() {
 		//nothing to test

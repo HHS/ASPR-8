@@ -38,11 +38,8 @@ import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
-
-@UnitTest(target = BatchStatusReport.class)
 
 public final class AT_BatchStatusReport {
 
@@ -84,7 +81,7 @@ public final class AT_BatchStatusReport {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { ReportId.class })
+	@UnitTestConstructor(target = BatchStatusReport.class, args = { ReportId.class })
 	public void testConstructor() {
 		BatchStatusReport report = new BatchStatusReport(REPORT_ID);
 
@@ -92,7 +89,7 @@ public final class AT_BatchStatusReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 
 		Set<ReportItem> expectedReportItems = new LinkedHashSet<>();
@@ -112,8 +109,7 @@ public final class AT_BatchStatusReport {
 				for (int i = 0; i < 20; i++) {
 					TestMaterialId materialId = TestMaterialId.getRandomMaterialId(randomGenerator);
 					double amount = randomGenerator.nextDouble();
-					BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo
-							.getBatchConstructionInfo(testMaterialsProducerId, materialId, amount, randomGenerator);
+					BatchConstructionInfo batchConstructionInfo = TestBatchConstructionInfo.getBatchConstructionInfo(testMaterialsProducerId, materialId, amount, randomGenerator);
 					BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
 					expectedReportItems.add(getReportItemFromBatch(c, batchId));
 				}
@@ -128,8 +124,7 @@ public final class AT_BatchStatusReport {
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 				for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-					List<BatchId> batches = materialsDataManager
-							.getInventoryBatchesByMaterialId(testMaterialsProducerId, testMaterialId);
+					List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(testMaterialsProducerId, testMaterialId);
 
 					if (batches.size() > 1) {
 						for (int i = 0; i < batches.size(); i++) {
@@ -177,8 +172,7 @@ public final class AT_BatchStatusReport {
 
 				for (BatchId batchId : inventoryBatches) {
 					TestMaterialId materialId = materialsDataManager.getBatchMaterial(batchId);
-					TestBatchPropertyId propertyId = TestBatchPropertyId.getRandomMutableBatchPropertyId(materialId,
-							randomGenerator);
+					TestBatchPropertyId propertyId = TestBatchPropertyId.getRandomMutableBatchPropertyId(materialId, randomGenerator);
 					Object value = propertyId.getRandomPropertyValue(randomGenerator);
 					materialsDataManager.setBatchPropertyValue(batchId, propertyId, value);
 					expectedReportItems.add(getReportItemFromBatch(c, batchId));
@@ -232,10 +226,10 @@ public final class AT_BatchStatusReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		// Set<ReportItem> actualReportItems =
-		// MaterialsActionSupport.testConsumers(8914112012010329946L, testPlugin, new
+		// MaterialsActionSupport.testConsumers(8914112012010329946L,
+		// testPlugin, new
 		// BatchStatusReport(REPORT_ID)::init);
-		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(2819236410498978100L, testPlugin,
-				new BatchStatusReport(REPORT_ID)::init);
+		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(2819236410498978100L, testPlugin, new BatchStatusReport(REPORT_ID)::init);
 
 		assertEquals(expectedReportItems, actualReportItems);
 	}
@@ -254,17 +248,16 @@ public final class AT_BatchStatusReport {
 
 	private static ReportHeader getReportHeader() {
 
-		ReportHeader.Builder builder = ReportHeader.builder()//
-				.add("time")//
-				.add("batch")//
-				.add("materials_producer")//
-				.add("stage")//
-				.add("material")//
-				.add("amount");//
+		ReportHeader.Builder builder = ReportHeader	.builder()//
+													.add("time")//
+													.add("batch")//
+													.add("materials_producer")//
+													.add("stage")//
+													.add("material")//
+													.add("amount");//
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId
-					.getTestBatchPropertyIds(testMaterialId)) {
+			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
 				builder.add(testMaterialId + "." + testBatchPropertyId);
 			}
 		}

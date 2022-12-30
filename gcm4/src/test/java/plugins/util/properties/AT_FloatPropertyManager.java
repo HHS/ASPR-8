@@ -19,7 +19,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -34,11 +33,10 @@ import util.random.RandomGeneratorProvider;
  *
  */
 
-@UnitTest(target = FloatPropertyManager.class)
 public class AT_FloatPropertyManager {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyValue", args = { int.class })
+	@UnitTestMethod(target = FloatPropertyManager.class,name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
 
 		TestActionSupport.testConsumer((c) -> {
@@ -98,7 +96,7 @@ public class AT_FloatPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyTime", args = { int.class })
+	@UnitTestMethod(target = FloatPropertyManager.class,name = "getPropertyTime", args = { int.class })
 	public void testGetPropertyTime() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6894984813418975068L);
@@ -143,7 +141,7 @@ public class AT_FloatPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setPropertyValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = FloatPropertyManager.class,name = "setPropertyValue", args = { int.class, Object.class })
 	public void testSetPropertyValue() {
 		TestActionSupport.testConsumer((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6087185710247012204L);
@@ -187,7 +185,7 @@ public class AT_FloatPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeId", args = { int.class })
+	@UnitTestMethod(target = FloatPropertyManager.class,name = "removeId", args = { int.class })
 	public void testRemoveId() {
 
 		TestActionSupport.testConsumer((c) -> {
@@ -247,7 +245,7 @@ public class AT_FloatPropertyManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, PropertyDefinition.class, int.class })
+	@UnitTestConstructor(target = FloatPropertyManager.class,args = { SimulationContext.class, PropertyDefinition.class, int.class })
 	public void testConstructor() {
 		TestActionSupport.testConsumer((c) -> {
 
@@ -272,7 +270,7 @@ public class AT_FloatPropertyManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "incrementCapacity", args = { int.class })
+	@UnitTestMethod(target = FloatPropertyManager.class,name = "incrementCapacity", args = { int.class })
 	public void testIncrementCapacity() {
 		TestActionSupport.testConsumer((c) -> {
 

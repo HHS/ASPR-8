@@ -28,17 +28,15 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MultiKey;
 
-@UnitTest(target = AttributesDataManager.class)
 public class AT_AttributesDataManager {
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = AttributesDataManager.class,name = "init", args = { DataManagerContext.class })
 	public void testAttributesDataViewInitialization() {
 		PartitionsActionSupport.testConsumer(0, 5241628071704306523L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -53,7 +51,7 @@ public class AT_AttributesDataManager {
 
 	
 	@Test
-	@UnitTestMethod(name = "setAttributeValue", args = { PersonId.class, AttributeId.class, Object.class })
+	@UnitTestMethod(target = AttributesDataManager.class,name = "setAttributeValue", args = { PersonId.class, AttributeId.class, Object.class })
 
 	public void testSetAttributeValue() {
 
@@ -104,14 +102,14 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { AttributesPluginData.class })
+	@UnitTestConstructor(target = AttributesDataManager.class,args = { AttributesPluginData.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new AttributesDataManager(null));
 		assertEquals(AttributeError.NULL_ATTRIBUTE_INITIAL_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(name = "attributeExists", args = { AttributeId.class })
+	@UnitTestMethod(target = AttributesDataManager.class,name = "attributeExists", args = { AttributeId.class })
 	public void testAttributeExists() {
 		PartitionsActionSupport.testConsumer(100, 6136319242032948471L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -127,7 +125,7 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getAttributeDefinition", args = { AttributeId.class })
+	@UnitTestMethod(target = AttributesDataManager.class,name = "getAttributeDefinition", args = { AttributeId.class })
 	public void testGetAttributeDefinition() {
 
 		PartitionsActionSupport.testConsumer(100, 7056826773207732206L, (c) -> {
@@ -153,7 +151,7 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getAttributeIds", args = {})
+	@UnitTestMethod(target = AttributesDataManager.class,name = "getAttributeIds", args = {})
 	public void testGetAttributeIds() {
 		PartitionsActionSupport.testConsumer(100, 3922883805893258744L, (c) -> {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
@@ -162,7 +160,7 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getAttributeValue", args = { PersonId.class, AttributeId.class })
+	@UnitTestMethod(target = AttributesDataManager.class,name = "getAttributeValue", args = { PersonId.class, AttributeId.class })
 	public void testGetAttributeValue() {
 
 		PartitionsActionSupport.testConsumer(100, 6311231823303553715L, (c) -> {
@@ -260,7 +258,7 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForAttributeUpdateEvent", args = { AttributeId.class })
+	@UnitTestMethod(target = AttributesDataManager.class,name = "getEventFilterForAttributeUpdateEvent", args = { AttributeId.class })
 	public void testGetEventFilterForAttributeUpdateEvent_attribute() {
 
 		// select a proper subset of the attribute ids for filtering
@@ -334,7 +332,7 @@ public class AT_AttributesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForAttributeUpdateEvent", args = {})
+	@UnitTestMethod(target = AttributesDataManager.class,name = "getEventFilterForAttributeUpdateEvent", args = {})
 	public void testGetEventFilterForAttributeUpdateEvent() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();

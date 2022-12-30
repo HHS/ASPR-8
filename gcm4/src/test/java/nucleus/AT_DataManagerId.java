@@ -9,15 +9,13 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = DataManagerId.class)
 public final class AT_DataManagerId {
 
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = DataManagerId.class, name = "getValue", args = {})
 	@Test
 	public void testGetValue() {
 		for (int i = 0; i < 100; i++) {
@@ -25,7 +23,7 @@ public final class AT_DataManagerId {
 		}
 	}
 
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = DataManagerId.class, name = "toString", args = {})
 	@Test
 	public void testToString() {
 		for (int i = 0; i < 100; i++) {
@@ -33,7 +31,7 @@ public final class AT_DataManagerId {
 		}
 	}
 
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = DataManagerId.class, name = "hashCode", args = {})
 	@Test
 	public void testHashCode() {
 		// show equal objects have equal hashcodes
@@ -53,7 +51,7 @@ public final class AT_DataManagerId {
 
 	}
 
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = DataManagerId.class, name = "equals", args = { Object.class })
 	@Test
 	public void testEquals() {
 		// show data manager ids are equal if and only if they have the same
@@ -73,7 +71,7 @@ public final class AT_DataManagerId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "compareTo", args = { DataManagerId.class })
+	@UnitTestMethod(target = DataManagerId.class, name = "compareTo", args = { DataManagerId.class })
 	public void testCompareTo() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8041307094727012939L);
@@ -89,7 +87,7 @@ public final class AT_DataManagerId {
 	}
 
 	@Test
-	@UnitTestConstructor( args = { int.class })
+	@UnitTestConstructor(target = DataManagerId.class, args = { int.class })
 	public void testConstructor() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7051188045588654915L);
 		for (int i = 0; i < 100; i++) {

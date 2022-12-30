@@ -12,15 +12,13 @@ import nucleus.Event;
 import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = FilterSensitivity.class)
 public class AT_FilterSensitivity {
 
 	@Test
-	@UnitTestConstructor(args = { Class.class, EventPredicate.class })
+	@UnitTestConstructor(target = FilterSensitivity.class,args = { Class.class, EventPredicate.class })
 	public void testConstructor() {
 		// nothing to test
 	}
@@ -29,7 +27,7 @@ public class AT_FilterSensitivity {
 	private static class Event3 implements Event{}
 
 	@Test
-	@UnitTestMethod(name = "getEventClass", args = {})
+	@UnitTestMethod(target = FilterSensitivity.class,name = "getEventClass", args = {})
 	public void testGetEventClass() {
 
 		FilterSensitivity<Event> filterSensitivity1 = new FilterSensitivity<>(Event.class, (c, e) -> Optional.empty());
@@ -49,7 +47,7 @@ public class AT_FilterSensitivity {
 	}
 
 	@Test
-	@UnitTestMethod(name = "requiresRefresh", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = FilterSensitivity.class,name = "requiresRefresh", args = { SimulationContext.class, Event.class })
 	public void testRequiresRefresh() {
 		PartitionsActionSupport.testConsumer(10, 8678712526990350206L, (context)->{
 			FilterSensitivity<Event> filterSensitivity = new FilterSensitivity<>(Event.class, (c, e) -> Optional.empty());

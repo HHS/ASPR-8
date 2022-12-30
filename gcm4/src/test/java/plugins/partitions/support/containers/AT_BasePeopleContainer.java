@@ -5,66 +5,61 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.SimulationContext;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-
-@UnitTest(target = BasePeopleContainer.class)
 public class AT_BasePeopleContainer {
 
-	
 	private PeopleContainer getPeopleContainer(SimulationContext context) {
 		return new BasePeopleContainer(context);
 	}
-	
+
 	@Test
-	@UnitTestConstructor(args = {SimulationContext.class})
+	@UnitTestConstructor(target = BasePeopleContainer.class, args = { SimulationContext.class })
 	public void testConstructor() {
-		//nothing to test
+		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeople", args= {})
-	public void testGetPeople(){
-		PeopleContainerTester.testGetPeople(this::getPeopleContainer,473484353360778267L);
-	}
-	
-	@Test
-	@UnitTestMethod(name = "safeAdd", args= {PersonId.class})
-	public void testSafeAdd(){
-		PeopleContainerTester.testSafeAdd(this::getPeopleContainer,1067260810269284703L);
-	}
-
-
-	@Test
-	@UnitTestMethod(name = "unsafeAdd", args= {PersonId.class})
-	public void testUnsafeAdd(){
-		PeopleContainerTester.testUnsafeAdd(this::getPeopleContainer,2640497434656632684L);
+	@UnitTestMethod(target = BasePeopleContainer.class, name = "getPeople", args = {})
+	public void testGetPeople() {
+		PeopleContainerTester.testGetPeople(this::getPeopleContainer, 473484353360778267L);
 	}
 
 	@Test
-	@UnitTestMethod(name = "remove", args= {PersonId.class})
-	public void testRemove(){
-		PeopleContainerTester.testRemove(this::getPeopleContainer,1461315035567239819L);
+	@UnitTestMethod(target = BasePeopleContainer.class, name = "safeAdd", args = { PersonId.class })
+	public void testSafeAdd() {
+		PeopleContainerTester.testSafeAdd(this::getPeopleContainer, 1067260810269284703L);
 	}
 
 	@Test
-	@UnitTestMethod(name = "size", args= {})
-	public void testSize(){
-		PeopleContainerTester.testSize(this::getPeopleContainer,5880341220076297803L);
+	@UnitTestMethod(target = BasePeopleContainer.class, name = "unsafeAdd", args = { PersonId.class })
+	public void testUnsafeAdd() {
+		PeopleContainerTester.testUnsafeAdd(this::getPeopleContainer, 2640497434656632684L);
 	}
 
 	@Test
-	@UnitTestMethod(name = "contains", args= {PersonId.class})
-	public void testContains(){
-		PeopleContainerTester.testContains(this::getPeopleContainer,6865277196728541573L);
+	@UnitTestMethod(target = BasePeopleContainer.class, name = "remove", args = { PersonId.class })
+	public void testRemove() {
+		PeopleContainerTester.testRemove(this::getPeopleContainer, 1461315035567239819L);
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPersonId", args= {RandomGenerator.class})
-	public void testGetRandomPersonId(){
-		PeopleContainerTester.testGetRandomPersonId(this::getPeopleContainer,1976658500916036734L);
+	@UnitTestMethod(target = BasePeopleContainer.class, name = "size", args = {})
+	public void testSize() {
+		PeopleContainerTester.testSize(this::getPeopleContainer, 5880341220076297803L);
+	}
+
+	@Test
+	@UnitTestMethod(target = BasePeopleContainer.class, name = "contains", args = { PersonId.class })
+	public void testContains() {
+		PeopleContainerTester.testContains(this::getPeopleContainer, 6865277196728541573L);
+	}
+
+	@Test
+	@UnitTestMethod(target = BasePeopleContainer.class, name = "getRandomPersonId", args = { RandomGenerator.class })
+	public void testGetRandomPersonId() {
+		PeopleContainerTester.testGetRandomPersonId(this::getPeopleContainer, 1976658500916036734L);
 	}
 
 }

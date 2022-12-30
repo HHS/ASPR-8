@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 public @interface UnitTestConstructor {
 	Class<?> target() default Object.class;
+//	Class<?> target();
 
 	Class<?>[] args();
 

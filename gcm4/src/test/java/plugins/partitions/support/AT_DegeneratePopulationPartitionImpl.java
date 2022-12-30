@@ -29,17 +29,15 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = DegeneratePopulationPartitionImpl.class)
 public class AT_DegeneratePopulationPartitionImpl {
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, Partition.class })
+	@UnitTestConstructor(target = DegeneratePopulationPartitionImpl.class, args = { SimulationContext.class, Partition.class })
 	public void testConstructor() {
 
 		PartitionsActionSupport.testConsumer(100, 3760806761100897313L, (c) -> {
@@ -88,7 +86,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "attemptPersonAddition", args = { PersonId.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "attemptPersonAddition", args = { PersonId.class })
 	public void testAttemptPersonAddition() {
 
 		PartitionsActionSupport.testConsumer(100, 2545018253500191849L, (c) -> {
@@ -112,12 +110,12 @@ public class AT_DegeneratePopulationPartitionImpl {
 			 * true and false
 			 */
 			for (int i = 0; i < 20; i++) {
-				
+
 				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-				
+
 				boolean attributeValue = i % 2 == 0;
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, attributeValue);
-				
+
 				populationPartition.attemptPersonAddition(personId);
 
 				/*
@@ -130,7 +128,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "attemptPersonRemoval", args = { PersonId.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "attemptPersonRemoval", args = { PersonId.class })
 	public void testAttemptPersonRemoval() {
 		PartitionsActionSupport.testConsumer(100, 1924419629240381672L, (c) -> {
 			// establish data views
@@ -149,7 +147,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			// of true
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
-					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
+					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
 					expectedPeople.add(personId);
 				}
 			}
@@ -171,7 +169,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			 * Remove people and show that they are no longer in the partition
 			 */
 			for (PersonId personId : expectedPeople) {
-				peopleDataManager.removePerson(personId);				
+				peopleDataManager.removePerson(personId);
 				populationPartition.attemptPersonRemoval(personId);
 				// show that the person was removed
 				assertFalse(populationPartition.contains(personId));
@@ -180,7 +178,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "handleEvent", args = { Event.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "handleEvent", args = { Event.class })
 	public void testHandleEvent() {
 
 		PartitionsActionSupport.testConsumer(100, 5331854470768144150L, (c) -> {
@@ -205,7 +203,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, !b0);				
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, !b0);
 				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, b0, !b0));
 
 				assertEquals(!b0, populationPartition.contains(personId));
@@ -216,7 +214,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validateLabelSetInfo", args = { LabelSet.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "validateLabelSetInfo", args = { LabelSet.class })
 	public void testValidateLabelSetInfo() {
 		PartitionsActionSupport.testConsumer(100, 7896267308674363012L, (c) -> {
 			/*
@@ -236,7 +234,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleCount", args = {})
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeopleCount", args = {})
 	public void testGetPeopleCount() {
 
 		PartitionsActionSupport.testConsumer(100, 2295886123984917407L, (c) -> {
@@ -256,7 +254,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			// of true
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
-					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
+					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
 					expectedPeople.add(personId);
 				}
 			}
@@ -279,7 +277,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			int expectedPeopleCount = expectedPeople.size();
 			for (PersonId personId : expectedPeople) {
 				expectedPeopleCount--;
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, false);				
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, false);
 				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, true, false));
 				assertEquals(expectedPeopleCount, populationPartition.getPeopleCount());
 			}
@@ -287,7 +285,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleCount", args = { LabelSet.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeopleCount", args = { LabelSet.class })
 	public void testGetPeopleCount_LabelSet() {
 		PartitionsActionSupport.testConsumer(1000, 1957059921486084637L, (c) -> {
 
@@ -333,7 +331,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleCountMap", args = { LabelSet.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeopleCountMap", args = { LabelSet.class })
 	public void testGetPeopleCountMap() {
 
 		PartitionsActionSupport.testConsumer(1000, 5254073186909000918L, (c) -> {
@@ -363,7 +361,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "contains", args = { PersonId.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "contains", args = { PersonId.class })
 	public void testContains() {
 		PartitionsActionSupport.testConsumer(100, 2907418341194860848L, (c) -> {
 			// establish data views
@@ -382,7 +380,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			// of true
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
-					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
+					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
 					expectedPeople.add(personId);
 				}
 			}
@@ -404,7 +402,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "contains", args = { PersonId.class, LabelSet.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "contains", args = { PersonId.class, LabelSet.class })
 	public void testContains_LabelSet() {
 		PartitionsActionSupport.testConsumer(100, 2888054511830289156L, (c) -> {
 			// establish data views
@@ -423,7 +421,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			// of true
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
-					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
+					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
 					expectedPeople.add(personId);
 				}
 			}
@@ -447,7 +445,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeople", args = { LabelSet.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeople", args = { LabelSet.class })
 	public void testGetPeople_LabelSet() {
 		PartitionsActionSupport.testConsumer(1000, 8577028018353363458L, (c) -> {
 
@@ -494,7 +492,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeople", args = {})
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeople", args = {})
 	public void testGetPeople() {
 		PartitionsActionSupport.testConsumer(100, 3706541397073246652L, (c) -> {
 			// establish data views
@@ -513,7 +511,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			// of true
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
-					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);					
+					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
 					expectedPeople.add(personId);
 				}
 			}
@@ -538,7 +536,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "samplePartition", args = { PartitionSampler.class })
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "samplePartition", args = { PartitionSampler.class })
 	public void testSamplePartition() {
 
 		/*
@@ -673,19 +671,19 @@ public class AT_DegeneratePopulationPartitionImpl {
 				int intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, intValue);
 
-				intValue = (int) (randomGenerator.nextDouble() * 100);				
+				intValue = (int) (randomGenerator.nextDouble() * 100);
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_1, intValue);
 
-				double doubleValue = randomGenerator.nextDouble() * 100;				
+				double doubleValue = randomGenerator.nextDouble() * 100;
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_0, doubleValue);
 
-				doubleValue = randomGenerator.nextDouble() * 100;				
+				doubleValue = randomGenerator.nextDouble() * 100;
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_1, doubleValue);
 
 				boolean booleanValue = randomGenerator.nextBoolean();
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, booleanValue);
 
-				booleanValue = randomGenerator.nextBoolean();				
+				booleanValue = randomGenerator.nextBoolean();
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, booleanValue);
 
 			}

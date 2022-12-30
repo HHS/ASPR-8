@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
@@ -17,14 +16,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = FloatValueContainer.class)
 public class AT_FloatValueContainer {
 
 	/**
 	 * Tests {@link FloatValueContainer#FloatValueContainer(float, int)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { float.class, int.class })
+	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class, int.class })
 	public void testConstructor_FloatInt() {
 
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0, 1000);
@@ -39,7 +37,7 @@ public class AT_FloatValueContainer {
 	 * Tests {@link FloatValueContainer#FloatValueContainer(float)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { float.class })
+	@UnitTestConstructor(target = FloatValueContainer.class, args = { float.class })
 	public void testConstructor_Float() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 		assertNotNull(floatValueContainer);
@@ -49,7 +47,7 @@ public class AT_FloatValueContainer {
 	 * Tests {@link FloatValueContainer#getCapacity()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getCapacity", args = {})
+	@UnitTestMethod(target = FloatValueContainer.class, name = "getCapacity", args = {})
 	public void testGetCapacity() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 
@@ -75,7 +73,7 @@ public class AT_FloatValueContainer {
 	 * Tests {@link FloatValueContainer#getDefaultValue()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDefaultValue", args = {})
+	@UnitTestMethod(target = FloatValueContainer.class, name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		float defaultValue = 0;
 		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue);
@@ -95,7 +93,7 @@ public class AT_FloatValueContainer {
 	 * Test {@link FloatValueContainer#getValue(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValue", args = { int.class })
+	@UnitTestMethod(target = FloatValueContainer.class, name = "getValue", args = { int.class })
 	public void testGetValue() {
 		float defaultValue = -345.34f;
 		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue);
@@ -131,7 +129,7 @@ public class AT_FloatValueContainer {
 	 * Tests {@link FloatValueContainer#setCapacity(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setCapacity", args = { int.class })
+	@UnitTestMethod(target = FloatValueContainer.class, name = "setCapacity", args = { int.class })
 	public void testSetCapacity() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 
@@ -156,7 +154,7 @@ public class AT_FloatValueContainer {
 	 * Test {@link FloatValueContainer#setValue(int, float)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setValue", args = { int.class, float.class })
+	@UnitTestMethod(target = FloatValueContainer.class, name = "setValue", args = { int.class, float.class })
 	public void testSetValue() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 
@@ -174,7 +172,7 @@ public class AT_FloatValueContainer {
 	 * Tests {@link FloatValueContainer#size()}
 	 */
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = FloatValueContainer.class, name = "size", args = {})
 	public void testSize() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0, 100);
 		assertEquals(0, floatValueContainer.size());

@@ -25,16 +25,14 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = GroupMemberFilter.class)
 public class AT_GroupMemberFilter {
 
 	@Test
-	@UnitTestConstructor(args = { GroupId.class })
+	@UnitTestConstructor(target = GroupMemberFilter.class,args = { GroupId.class })
 	public void testConstructor() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 8499169041100865476L, (c) -> {
@@ -54,7 +52,7 @@ public class AT_GroupMemberFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = GroupMemberFilter.class,name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 7283631979607042406L, (c) -> {
@@ -84,7 +82,7 @@ public class AT_GroupMemberFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = GroupMemberFilter.class,name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 6248106595116941770L, (c) -> {
@@ -118,7 +116,7 @@ public class AT_GroupMemberFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = GroupMemberFilter.class,name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
 		GroupsActionSupport.testConsumer(100, 3, 10, 8525809821136960274L, (c) -> {

@@ -11,7 +11,6 @@ import java.util.Random;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
@@ -22,7 +21,6 @@ import tools.annotations.UnitTestMethod;
  *
  */
 
-@UnitTest(target = EnumContainer.class)
 public class AT_EnumContainer {
 	public enum Animal {
 		CAT, PIG, SHEEP, DOG, HORSE;
@@ -32,7 +30,7 @@ public class AT_EnumContainer {
 	 * Tests {@link EnumContainer#EnumContainer(Class, Object)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Class.class, Object.class })
+	@UnitTestConstructor(target = EnumContainer.class, args = { Class.class, Object.class })
 	public void testConstructor_ClassObject() {
 		assertNotNull(new EnumContainer(Animal.class, Animal.DOG));
 
@@ -53,7 +51,7 @@ public class AT_EnumContainer {
 	 * Tests {@link EnumContainer#EnumContainer(Class, Object, int)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Class.class, Object.class, int.class })
+	@UnitTestConstructor(target = EnumContainer.class, args = { Class.class, Object.class, int.class })
 	public void testConstructor_ClassObjectInt() {
 		assertNotNull(new EnumContainer(Animal.class, Animal.DOG));
 
@@ -77,7 +75,7 @@ public class AT_EnumContainer {
 	 * Tests {@link EnumContainer#getValue(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValue", args = { int.class })
+	@UnitTestMethod(target = EnumContainer.class, name = "getValue", args = { int.class })
 	public void testGetValue() {
 		EnumContainer enumContainer = new EnumContainer(Animal.class, Animal.DOG);
 		enumContainer.setValue(3, Animal.CAT);
@@ -121,7 +119,7 @@ public class AT_EnumContainer {
 	 * Test {@link EnumContainer#setValue(int, Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = EnumContainer.class, name = "setValue", args = { int.class, Object.class })
 	public void testSetValue() {
 
 		Map<Integer, Animal> animalMap = new LinkedHashMap<>();
@@ -160,13 +158,13 @@ public class AT_EnumContainer {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCapacity", args = {}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestMethod(target = EnumContainer.class, name = "getCapacity", args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testGetCapacity() {
 		// requires a manual performance test
 	}
 
 	@Test
-	@UnitTestMethod(name = "setCapacity", args = {int.class}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestMethod(target = EnumContainer.class, name = "setCapacity", args = { int.class }, tags = { UnitTag.INCOMPLETE })
 	public void testSetCapacity() {
 		// requires a manual performance test
 	}
