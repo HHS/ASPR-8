@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
 /**
@@ -21,14 +20,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Partition.class)
 public class AT_Partition {
 
 	/**
 	 * Tests {@linkplain Partition#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = Partition.class, name = "builder", args = {})
 	public void testBuilder() {
 		Partition partition = Partition.builder().build();
 		assertNotNull(partition);
@@ -41,7 +39,7 @@ public class AT_Partition {
 	 * Tests {@linkplain Partition#getLabelers()
 	 */
 	@Test
-	@UnitTestMethod(name = "getLabelers", args = {})
+	@UnitTestMethod(target = Partition.class, name = "getLabelers", args = {})
 	public void testGetLabelers() {
 
 		Set<Labeler> expectedLabelers = new LinkedHashSet<>();
@@ -66,7 +64,7 @@ public class AT_Partition {
 	 * Tests {@linkplain Partition#getFilter()
 	 */
 	@Test
-	@UnitTestMethod(name = "getFilter", args = {})
+	@UnitTestMethod(target = Partition.class, name = "getFilter", args = {})
 	public void testGetFilter() {
 
 		Partition partition = Partition.builder().build();//
@@ -81,19 +79,18 @@ public class AT_Partition {
 	 * Tests {@linkplain Partition#isDegenerate()
 	 */
 	@Test
-	@UnitTestMethod(name = "isDegenerate", args = {})
+	@UnitTestMethod(target = Partition.class, name = "isDegenerate", args = {})
 	public void testIsDegenerate() {
 
 		Partition partition = Partition.builder().build();//
 		assertTrue(partition.isDegenerate());
 
-		partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object()))
-				.build();
+		partition = Partition.builder().addLabeler(new AttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> new Object())).build();
 		assertFalse(partition.isDegenerate());
 	}
 
 	@Test
-	@UnitTestMethod(name = "retainPersonKeys", args = {})
+	@UnitTestMethod(target = Partition.class, name = "retainPersonKeys", args = {})
 	public void testRetainPersonKeys() {
 		Partition retainKeys = Partition.builder().setRetainPersonKeys(true).build();
 		Partition dontRetainKeys = Partition.builder().setRetainPersonKeys(false).build();

@@ -11,15 +11,13 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = SimpleAttributeId.class)
 public class AT_SimpleAttributeId {
 
 	@Test
-	@UnitTestConstructor(args = { Object.class })
+	@UnitTestConstructor(target = SimpleAttributeId.class, args = { Object.class })
 	public void testConstructor() {
 		assertNotNull(new SimpleAttributeId(5));
 
@@ -27,7 +25,7 @@ public class AT_SimpleAttributeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = SimpleAttributeId.class, name = "toString", args = {})
 	public void testToString() {
 		/*
 		 * Show that the toString of the SimpleAttributeId equals its input's
@@ -41,7 +39,7 @@ public class AT_SimpleAttributeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = {Object.class})
+	@UnitTestMethod(target = SimpleAttributeId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleAttributeId id_1 = new SimpleAttributeId(2);
 		SimpleAttributeId id_2 = new SimpleAttributeId(5);
@@ -109,7 +107,7 @@ public class AT_SimpleAttributeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = SimpleAttributeId.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// equal objects have equal hash codes
@@ -118,7 +116,7 @@ public class AT_SimpleAttributeId {
 			SimpleAttributeId s2 = new SimpleAttributeId(i);
 			assertEquals(s1.hashCode(), s2.hashCode());
 		}
-		
+
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {
 			boolean unique = hashCodes.add(new SimpleAttributeId(i).hashCode());

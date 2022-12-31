@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
 /**
@@ -17,14 +16,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = NucleusError.class)
 public class AT_NucleusError {
 
 	/**
 	 * Tests {@link NucleusError#getDescription()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = NucleusError.class, name = "getDescription", args = {})
 	public void testGetDescription() {
 		// show that each ErrorType has a non-null, non-empty description
 		for (NucleusError nucleusError : NucleusError.values()) {
@@ -36,7 +34,7 @@ public class AT_NucleusError {
 		Set<String> descriptions = new LinkedHashSet<>();
 		for (NucleusError nucleusError : NucleusError.values()) {
 			boolean isUnique = descriptions.add(nucleusError.getDescription().toLowerCase());
-			assertTrue(isUnique, nucleusError+" duplicates the description of another member");
+			assertTrue(isUnique, nucleusError + " duplicates the description of another member");
 		}
 	}
 

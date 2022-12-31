@@ -37,17 +37,15 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 
-@UnitTest(target = MaterialsPluginData.class)
 public class AT_MaterialsPluginData {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(MaterialsPluginData.builder());
 	}
@@ -98,7 +96,7 @@ public class AT_MaterialsPluginData {
 			MaterialsPluginData	.builder()//
 								.addMaterial(materialId)//
 								.addMaterialsProducerId(materialsProducerId)//
-								.addBatch(new BatchId(12), materialId, 12.3, materialsProducerId)//							
+								.addBatch(new BatchId(12), materialId, 12.3, materialsProducerId)//
 								.defineBatchProperty(materialId, propertyId, propertyDefinition).build();//
 		});
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
@@ -501,7 +499,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addMaterialsProducerId", args = { MaterialsProducerId.class})
+	@UnitTestMethod(target = MaterialsPluginData.Builder.class, name = "addMaterialsProducerId", args = { MaterialsProducerId.class })
 	public void testAddMaterialsProducerId() {
 		MaterialsProducerId materialsProducerId1 = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
 		MaterialsProducerId materialsProducerId2 = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
@@ -689,8 +687,8 @@ public class AT_MaterialsPluginData {
 					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue);
 					expectedBatchPropertyValues.put(multiKey, propertyValue);
-				} 
-				
+				}
+
 			}
 		}
 
@@ -865,7 +863,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchAmount", args = { BatchId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchAmount", args = { BatchId.class })
 	public void testGetBatchAmount() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6746980823689022132L);
@@ -912,7 +910,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchIds", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchIds", args = {})
 	public void testGetBatchIds() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1361793252807708004L);
@@ -944,7 +942,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchMaterial", args = { BatchId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchMaterial", args = { BatchId.class })
 	public void testGetBatchMaterial() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(116943580559448312L);
@@ -991,7 +989,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchMaterialsProducer", args = { BatchId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchMaterialsProducer", args = { BatchId.class })
 	public void testGetBatchMaterialsProducer() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4201153583410535220L);
@@ -1037,7 +1035,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchPropertyDefinition", args = { MaterialId.class, BatchPropertyId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchPropertyDefinition", args = { MaterialId.class, BatchPropertyId.class })
 	public void testGetBatchPropertyDefinition() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
@@ -1086,7 +1084,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchPropertyIds", args = { MaterialId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchPropertyIds", args = { MaterialId.class })
 	public void testGetBatchPropertyIds() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
@@ -1124,7 +1122,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getBatchPropertyValues", args = { BatchId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getBatchPropertyValues", args = { BatchId.class })
 	public void testGetBatchPropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4884114879424388887L);
@@ -1156,13 +1154,13 @@ public class AT_MaterialsPluginData {
 			builder.addBatch(batchId, testMaterialId, randomGenerator.nextDouble(), TestMaterialsProducerId.getRandomMaterialsProducerId(randomGenerator));
 			for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId)) {
 				MultiKey multiKey = new MultiKey(batchId, testBatchPropertyId);
-				
+
 				boolean required = testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty();
 				if (required || randomGenerator.nextBoolean()) {
 					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue);
 					expectedBatchPropertyValues.put(multiKey, propertyValue);
-				}				
+				}
 			}
 		}
 
@@ -1190,7 +1188,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialIds", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialIds", args = {})
 	public void testGetMaterialIds() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
@@ -1204,7 +1202,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerIds", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerIds", args = {})
 	public void testGetMaterialsProducerIds() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
@@ -1219,7 +1217,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerPropertyDefinition", args = { MaterialsProducerPropertyId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerPropertyDefinition", args = { MaterialsProducerPropertyId.class })
 	public void testGetMaterialsProducerPropertyDefinition() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
@@ -1250,7 +1248,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerPropertyIds", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerPropertyIds", args = {})
 	public void testGetMaterialsProducerPropertyIds() {
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();//
 
@@ -1263,7 +1261,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerPropertyValues", args = { MaterialsProducerId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerPropertyValues", args = { MaterialsProducerId.class })
 	public void testGetMaterialsProducerPropertyValues() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(175219330466509056L);
@@ -1313,7 +1311,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class })
 	public void testGetMaterialsProducerResourceLevel() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4448010834982849838L);
@@ -1365,7 +1363,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStageBatches", args = { StageId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getStageBatches", args = { StageId.class })
 	public void testGetStageBatches() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
@@ -1437,7 +1435,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStageIds", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getStageIds", args = {})
 	public void testGetStageIds() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3725911532254654669L);
@@ -1463,7 +1461,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStageMaterialsProducer", args = { StageId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getStageMaterialsProducer", args = { StageId.class })
 	public void testGetStageMaterialsProducer() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4722411464538864709L);
@@ -1504,7 +1502,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "isStageOffered", args = { StageId.class })
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "isStageOffered", args = { StageId.class })
 	public void testIsStageOffered() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1042601351499648378L);
@@ -1544,7 +1542,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourceIds", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getResourceIds", args = {})
 	public void testGetResourceIds() {
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
@@ -1570,7 +1568,7 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1064212917574117854L);
 

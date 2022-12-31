@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.groups.testsupport.TestGroupTypeId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -25,14 +24,13 @@ import util.random.RandomGeneratorProvider;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = GroupTypeCountMap.class)
 public class AT_GroupTypeCountMap {
 
 	/**
 	 * Tests {@linkplain GroupTypeCountMap#equals(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = GroupTypeCountMap.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		// 4832988525233013426L
 		/*
@@ -81,7 +79,7 @@ public class AT_GroupTypeCountMap {
 	 * Tests {@linkplain GroupTypeCountMap#hashCode()
 	 */
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = GroupTypeCountMap.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		/*
 		 * Equal objects have equal hash codes
@@ -117,7 +115,7 @@ public class AT_GroupTypeCountMap {
 	 * Tests {@linkplain GroupTypeCountMap#getGroupCount(GroupTypeId)
 	 */
 	@Test
-	@UnitTestMethod(name = "getGroupCount", args = { GroupTypeId.class })
+	@UnitTestMethod(target = GroupTypeCountMap.class, name = "getGroupCount", args = { GroupTypeId.class })
 	public void testGetGroupCount() {
 		// covered by testBuilder() test method
 	}
@@ -126,7 +124,7 @@ public class AT_GroupTypeCountMap {
 	 * Tests {@linkplain GroupTypeCountMap#toString()
 	 */
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = GroupTypeCountMap.class, name = "toString", args = {})
 	public void testToString() {
 		GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
 
@@ -146,7 +144,7 @@ public class AT_GroupTypeCountMap {
 	 * Tests {@linkplain GroupTypeCountMap#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = GroupTypeCountMap.class, name = "builder", args = {})
 	public void testBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1353590720789078598L);
@@ -173,12 +171,10 @@ public class AT_GroupTypeCountMap {
 		}
 
 		// precondition checks
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> GroupTypeCountMap.builder().setCount(null, 10));
+		ContractException contractException = assertThrows(ContractException.class, () -> GroupTypeCountMap.builder().setCount(null, 10));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class,
-				() -> GroupTypeCountMap.builder().setCount(TestGroupTypeId.GROUP_TYPE_1, -1));
+		contractException = assertThrows(ContractException.class, () -> GroupTypeCountMap.builder().setCount(TestGroupTypeId.GROUP_TYPE_1, -1));
 		assertEquals(GroupError.NEGATIVE_GROUP_COUNT, contractException.getErrorType());
 
 	}
@@ -188,7 +184,7 @@ public class AT_GroupTypeCountMap {
 	 * Tests {@linkplain GroupTypeCountMap#getGroupTypeIds()
 	 */
 	@Test
-	@UnitTestMethod(name = "getGroupTypeIds", args = {})
+	@UnitTestMethod(target = GroupTypeCountMap.class, name = "getGroupTypeIds", args = {})
 	public void testGetGroupTypeIds() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1310699113269703296L);
 
@@ -243,8 +239,7 @@ public class AT_GroupTypeCountMap {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "setCount", args = { GroupTypeId.class,
-			int.class })
+	@UnitTestMethod(target = GroupTypeCountMap.Builder.class, name = "setCount", args = { GroupTypeId.class, int.class })
 	public void testSetCount() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1446391997583651047L);

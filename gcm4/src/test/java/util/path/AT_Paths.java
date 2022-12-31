@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.graph.Graph;
 import util.path.Paths.EdgeCostEvaluator;
@@ -23,14 +22,13 @@ import util.vector.Vector2D;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Paths.class)
 public class AT_Paths {
 
 	/**
 	 * Tests {@link Paths#getCost(Path, EdgeCostEvaluator)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getCost", args = { Path.class, EdgeCostEvaluator.class })
+	@UnitTestMethod(target = Paths.class, name = "getCost", args = { Path.class, EdgeCostEvaluator.class })
 	public void testGetCost() {
 		Path.Builder<String> builder = Path.builder();
 		Path<String> path = builder.build();
@@ -118,7 +116,7 @@ public class AT_Paths {
 	 * {@link Paths#getPath(Graph, Object, Object, EdgeCostEvaluator, TravelCostEvaluator)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getPath", args = { Graph.class, Object.class, Object.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
+	@UnitTestMethod(target = Paths.class, name = "getPath", args = { Graph.class, Object.class, Object.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
 	public void testGetPath() {
 
 		// create a few nodes

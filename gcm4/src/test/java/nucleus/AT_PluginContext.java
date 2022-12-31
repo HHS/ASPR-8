@@ -15,7 +15,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestDataManager;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -28,7 +27,6 @@ import util.wrappers.MutableBoolean;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = PluginContext.class)
 public class AT_PluginContext {
 
 	private static class TestDataManager1 extends TestDataManager {
@@ -56,7 +54,7 @@ public class AT_PluginContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addActor", args = { Consumer.class })
+	@UnitTestMethod(target = PluginContext.class, name = "addActor", args = { Consumer.class })
 	public void testAddActor() {
 
 		/*
@@ -93,7 +91,7 @@ public class AT_PluginContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addDataManager", args = { DataManager.class })
+	@UnitTestMethod(target = PluginContext.class, name = "addDataManager", args = { DataManager.class })
 	public void testAddDataManager() {
 
 		/*
@@ -108,20 +106,19 @@ public class AT_PluginContext {
 
 		// add the actors to the action plugin
 		final TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager("A", ()->new TestDataManager1());
-		pluginDataBuilder.addTestDataManager("B", ()->new TestDataManager2());
-		pluginDataBuilder.addTestDataManager("C", ()->new TestDataManager3());
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {			
+		pluginDataBuilder.addTestDataManager("A", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("B", () -> new TestDataManager2());
+		pluginDataBuilder.addTestDataManager("C", () -> new TestDataManager3());
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			actorExecuted.setValue(true);
 		}));
 
 		// build the action plugin
 		final TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		
 
 		// build and execute the engine
-		Simulation	.builder()//					
+		Simulation	.builder()//
 					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
@@ -155,7 +152,7 @@ public class AT_PluginContext {
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 	private static class PluginData4 implements PluginData {
 		@Override
 		public PluginDataBuilder getCloneBuilder() {
@@ -164,7 +161,7 @@ public class AT_PluginContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPluginData", args = { Class.class })
+	@UnitTestMethod(target = PluginContext.class, name = "getPluginData", args = { Class.class })
 	public void testGetPluginData() {
 
 		MutableBoolean assertionsExecuted = new MutableBoolean();
@@ -179,26 +176,25 @@ public class AT_PluginContext {
 									assertNotNull(c.getPluginData(PluginData1.class));
 									assertNotNull(c.getPluginData(PluginData2.class));
 									assertNotNull(c.getPluginData(PluginData3.class));
-									
-									ContractException contractException = assertThrows(ContractException.class,()->{
+
+									ContractException contractException = assertThrows(ContractException.class, () -> {
 										c.getPluginData(PluginData.class);
 									});
-									
-									assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS,contractException.getErrorType());
 
-									contractException = assertThrows(ContractException.class,()->{
+									assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS, contractException.getErrorType());
+
+									contractException = assertThrows(ContractException.class, () -> {
 										c.getPluginData(PluginData4.class);
 									});
-									
-									assertEquals(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS,contractException.getErrorType());
 
-									contractException = assertThrows(ContractException.class,()->{
+									assertEquals(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS, contractException.getErrorType());
+
+									contractException = assertThrows(ContractException.class, () -> {
 										c.getPluginData(null);
 									});
-									
-									assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS,contractException.getErrorType());
 
-									
+									assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS, contractException.getErrorType());
+
 									assertionsExecuted.setValue(true);
 								})//
 								.addPluginData(new PluginData1())//

@@ -12,11 +12,9 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = Plugin.class)
 public class AT_Plugin {
 
 	private static final class XPluginData implements PluginData {
@@ -33,13 +31,13 @@ public class AT_Plugin {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = Plugin.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(Plugin.builder());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getInitializer", args = {})
+	@UnitTestMethod(target = Plugin.class, name = "getInitializer", args = {})
 	public void testGetInitializer() {
 		Plugin plugin = Plugin	.builder()//
 								.setPluginId(PluginIds.PLUGIN_ID_1)//
@@ -61,7 +59,7 @@ public class AT_Plugin {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPluginDatas", args = {})
+	@UnitTestMethod(target = Plugin.class, name = "getPluginDatas", args = {})
 	public void testGetPluginDatas() {
 		Plugin plugin = Plugin	.builder()//
 								.setPluginId(PluginIds.PLUGIN_ID_1)//
@@ -85,7 +83,7 @@ public class AT_Plugin {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPluginDependencies", args = {})
+	@UnitTestMethod(target = Plugin.class, name = "getPluginDependencies", args = {})
 	public void testGetPluginDependencies() {
 		Plugin plugin = Plugin	.builder()//
 								.setPluginId(PluginIds.PLUGIN_ID_1)//
@@ -107,7 +105,7 @@ public class AT_Plugin {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPluginId", args = {})
+	@UnitTestMethod(target = Plugin.class, name = "getPluginId", args = {})
 	public void testGetPluginId() {
 
 		Plugin plugin = Plugin	.builder()//
@@ -215,10 +213,10 @@ public class AT_Plugin {
 						.build();//
 
 		assertEquals(PluginIds.PLUGIN_ID_2, plugin.getPluginId());
-		
-		//precondition test: if the plugin id is null
-		assertThrows(ContractException.class,()->Plugin	.builder().setPluginId(null));
-		
+
+		// precondition test: if the plugin id is null
+		assertThrows(ContractException.class, () -> Plugin.builder().setPluginId(null));
+
 	}
 
 }

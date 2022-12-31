@@ -22,16 +22,14 @@ import plugins.personproperties.support.PersonPropertyInitialization;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = PersonPropertiesPluginData.class)
 public class AT_PersonPropertyPluginData {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(PersonPropertiesPluginData.builder());
 	}
@@ -39,7 +37,7 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		
+
 		assertNotNull(PersonPropertiesPluginData.builder().build());
 
 		/*
@@ -68,24 +66,24 @@ public class AT_PersonPropertyPluginData {
 		assertEquals(PropertyError.INCOMPATIBLE_VALUE, contractException.getErrorType());
 
 		/*
-		 * precondition test: if a person is not assigned a property value for a property id where
-		 * the associated property definition does not contain a default value
+		 * precondition test: if a person is not assigned a property value for a
+		 * property id where the associated property definition does not contain
+		 * a default value
 		 */
 		contractException = assertThrows(ContractException.class, //
 				() -> {//
-					
+
 					TestPersonPropertyId prop1 = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 					PropertyDefinition def1 = prop1.getPropertyDefinition();
-					
-					//this property has no associated default value
+
+					// this property has no associated default value
 					TestPersonPropertyId prop2 = TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK;
 					PropertyDefinition def2 = prop2.getPropertyDefinition();
-					
+
 					PersonPropertiesPluginData	.builder()//
-												.definePersonProperty(prop1, def1)//												
+												.definePersonProperty(prop1, def1)//
 												.definePersonProperty(prop2, def2)//
-												.setPersonPropertyValue(new PersonId(0), prop1, false)
-												.build();//
+												.setPersonPropertyValue(new PersonId(0), prop1, false).build();//
 				});//
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
@@ -94,7 +92,7 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "definePersonProperty", args = { PersonPropertyId.class, PropertyDefinition.class })
 	public void testDefinePersonProperty() {
-		
+
 		// create a builder
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
 
@@ -145,7 +143,7 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonPropertyDefinition", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonPropertyDefinition", args = { PersonPropertyId.class })
 	public void testGetPersonPropertyDefinition() {
 		// create a builder
 		PersonPropertiesPluginData.Builder personPropertyBuilder = PersonPropertiesPluginData.builder();
@@ -181,7 +179,7 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonPropertyIds", args = {})
 	public void testGetPersonPropertyIds() {
 
 		// create a builder
@@ -203,7 +201,7 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3666595741799189966L);
 		PersonPropertiesPluginData.Builder pluginBuilder = PersonPropertiesPluginData.builder();
@@ -259,7 +257,7 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.Builder.class, name = "setPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
 	public void testSetPersonPropertyValue() {
-		
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6340277988168121078L);
 
 		// create a builder
@@ -286,12 +284,12 @@ public class AT_PersonPropertyPluginData {
 				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
 				list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
 			}
-			for(TestPersonPropertyId  testPersonPropertyId : propertiesWithoutDefaultValues) {
+			for (TestPersonPropertyId testPersonPropertyId : propertiesWithoutDefaultValues) {
 				Object value = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 				personPropertyBuilder.setPersonPropertyValue(personId, testPersonPropertyId, value);
 				list.add(new PersonPropertyInitialization(testPersonPropertyId, value));
 			}
-			
+
 		}
 
 		// build the person property initial data
@@ -333,7 +331,7 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonCount", args = {})
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPersonCount", args = {})
 	public void testGetPersonCount() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3422619272027560361L);
 
@@ -347,8 +345,6 @@ public class AT_PersonPropertyPluginData {
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 
-		
-
 		int personCount = 50;
 		int expectedPersonCount = 0;
 		for (int i = 0; i < personCount; i++) {
@@ -356,8 +352,8 @@ public class AT_PersonPropertyPluginData {
 			if (randomGenerator.nextBoolean()) {
 				PersonId personId = new PersonId(i);
 				int propertyCount = randomGenerator.nextInt(5);
-				if(propertyCount>0) {
-					expectedPersonCount = i + 1;	
+				if (propertyCount > 0) {
+					expectedPersonCount = i + 1;
 				}
 				for (int j = 0; j < propertyCount; j++) {
 					TestPersonPropertyId testPersonPropertyId = propertiesWithDefaultValues.get(randomGenerator.nextInt(propertiesWithDefaultValues.size()));
@@ -380,7 +376,7 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyValues", args = { int.class })
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyValues", args = { int.class })
 	public void testGetPropertyValues() {
 		// covered by testSetPersonPropertyValues()
 	}

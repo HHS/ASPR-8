@@ -8,14 +8,12 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = IdentifiableFunctionMap.class)
 public class AT_IdentifiableFunctionMap {
 	@Test
-	@UnitTestMethod(name = "builder", args = { Class.class })
+	@UnitTestMethod(target = IdentifiableFunctionMap.class, name = "builder", args = { Class.class })
 	public void testBuilder() {
 		// show that the builder is returned
 		assertNotNull(IdentifiableFunctionMap.builder(Object.class));
@@ -26,7 +24,7 @@ public class AT_IdentifiableFunctionMap {
 	}
 
 	@Test
-	@UnitTestMethod(name = "get", args = { Object.class })
+	@UnitTestMethod(target = IdentifiableFunctionMap.class, name = "get", args = { Object.class })
 	public void testGet() {
 		IdentifiableFunctionMap<Integer> functionMap = //
 				IdentifiableFunctionMap	.builder(Integer.class)//
@@ -43,18 +41,16 @@ public class AT_IdentifiableFunctionMap {
 		identifiableFunction = functionMap.get("C");
 		assertEquals(88, identifiableFunction.getFunction().apply(88));
 
-		//if the function id is null
+		// if the function id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> IdentifiableFunctionMap.builder(Integer.class).build().get(null));//
 		assertEquals(NucleusError.NULL_FUNCTION_ID, contractException.getErrorType());
-		
-		//if the function id is unknown
+
+		// if the function id is unknown
 		contractException = assertThrows(ContractException.class, () -> IdentifiableFunctionMap.builder(Integer.class).build().get("unknown id"));//
 		assertEquals(NucleusError.UNKNOWN_FUNCTION_ID, contractException.getErrorType());
 
-
 	}
-	
-	
+
 	@Test
 	@UnitTestMethod(target = IdentifiableFunctionMap.Builder.class, name = "put", args = { Object.class, Function.class })
 	public void testPut() {
@@ -73,21 +69,19 @@ public class AT_IdentifiableFunctionMap {
 		identifiableFunction = functionMap.get("C");
 		assertEquals(88, identifiableFunction.getFunction().apply(88));
 
-		//if the function id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> IdentifiableFunctionMap.builder(Integer.class).put(null,(n)->3));//
+		// if the function id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> IdentifiableFunctionMap.builder(Integer.class).put(null, (n) -> 3));//
 		assertEquals(NucleusError.NULL_FUNCTION_ID, contractException.getErrorType());
-		
-		//if the function is null
-		contractException = assertThrows(ContractException.class, () -> IdentifiableFunctionMap.builder(Integer.class).put("A",null));//
+
+		// if the function is null
+		contractException = assertThrows(ContractException.class, () -> IdentifiableFunctionMap.builder(Integer.class).put("A", null));//
 		assertEquals(NucleusError.NULL_FUNCTION, contractException.getErrorType());
 	}
 
 	@Test
 	@UnitTestMethod(target = IdentifiableFunctionMap.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		//covered by the other tests
+		// covered by the other tests
 	}
-
-	
 
 }

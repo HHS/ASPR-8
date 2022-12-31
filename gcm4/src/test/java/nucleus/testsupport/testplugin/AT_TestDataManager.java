@@ -13,12 +13,10 @@ import nucleus.DataManagerContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
 
-@UnitTest(target = TestDataManager.class)
 public class AT_TestDataManager {
 
 	private static class TestDataManagerType1 extends TestDataManager {
@@ -30,7 +28,7 @@ public class AT_TestDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = TestDataManager.class,name = "init", args = { DataManagerContext.class })
 	public void testInit() {
 		// create two aliases
 		Object alias1 = "alias 1";
@@ -51,8 +49,8 @@ public class AT_TestDataManager {
 
 		// add the actors to the action plugin
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestDataManager(alias1, ()->new TestDataManagerType1());
-		pluginDataBuilder.addTestDataManager(alias2, ()->new TestDataManagerType2());
+		pluginDataBuilder.addTestDataManager(alias1, () -> new TestDataManagerType1());
+		pluginDataBuilder.addTestDataManager(alias2, () -> new TestDataManagerType2());
 
 		/*
 		 * Create ActorActionPlans from the expected observations. Each action
@@ -66,8 +64,6 @@ public class AT_TestDataManager {
 			}));
 		}
 
-		
-
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
@@ -75,7 +71,7 @@ public class AT_TestDataManager {
 		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
 
 		// build and execute the engine
-		Experiment	.builder()//					
+		Experiment	.builder()//
 					.addExperimentContextConsumer(experimentPlanCompletionObserver::init)//
 					.addPlugin(testPlugin)//
 					.build()//
@@ -92,11 +88,11 @@ public class AT_TestDataManager {
 		assertEquals(expectedObservations, actualObservations);
 
 	}
-	
+
 	@Test
-	@UnitTestConstructor(args = {}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestConstructor(target = TestDataManager.class, args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testConstructor() {
-		//nothing to test		
+		// nothing to test
 	}
 
 }

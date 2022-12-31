@@ -13,14 +13,12 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PersonConstructionData.class)
 public final class AT_PersonConstructionData {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = PersonConstructionData.class,name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(PersonConstructionData.builder());
 	}
@@ -76,7 +74,7 @@ public final class AT_PersonConstructionData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {Class.class})
+	@UnitTestMethod(target = PersonConstructionData.class,name = "getValue", args = {Class.class})
 	public void testGetValue() {
 		Map<Class<?>, List<Object>> expectedValues = new LinkedHashMap<>();
 
@@ -124,7 +122,7 @@ public final class AT_PersonConstructionData {
 
 	
 	@Test
-	@UnitTestMethod(name = "getValues", args = {Class.class})
+	@UnitTestMethod(target = PersonConstructionData.class,name = "getValues", args = {Class.class})
 	public void testGetValues() {
 		Map<Class<?>, List<Object>> expectedValues = new LinkedHashMap<>();
 

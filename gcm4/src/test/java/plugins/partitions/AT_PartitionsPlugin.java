@@ -12,14 +12,12 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPluginId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PartitionsPlugin.class)
 public final class AT_PartitionsPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getPartitionsPlugin", args = {PluginId[].class})
+	@UnitTestMethod(target = PartitionsPlugin.class, name = "getPartitionsPlugin", args = { PluginId[].class })
 	public void testGetPartitionsPlugin() {
 		Plugin partitionsPlugin = PartitionsPlugin.getPartitionsPlugin();
 

@@ -12,14 +12,12 @@ import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.regions.RegionsPluginId;
 import plugins.resources.ResourcesPluginId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = MaterialsPlugin.class)
 public class AT_MaterialsPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsPlugin", args = { MaterialsPluginData.class })
+	@UnitTestMethod(target = MaterialsPlugin.class, name = "getMaterialsPlugin", args = { MaterialsPluginData.class })
 	public void testGetMaterialsPlugin() {
 		MaterialsPluginData materialsPluginData = MaterialsPluginData.builder().build();
 		Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(materialsPluginData);

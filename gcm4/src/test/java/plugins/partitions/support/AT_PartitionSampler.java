@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import plugins.people.support.PersonId;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
 /**
@@ -18,14 +17,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = PartitionSampler.class)
 public class AT_PartitionSampler {
 
 	/**
 	 * Tests {@linkplain PartitionSampler#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = PartitionSampler.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(PartitionSampler.builder());
 	}
@@ -34,7 +32,7 @@ public class AT_PartitionSampler {
 	 * Tests {@linkplain PartitionSampler#getExcludedPerson()
 	 */
 	@Test
-	@UnitTestMethod(name = "getExcludedPerson", args = {})
+	@UnitTestMethod(target = PartitionSampler.class, name = "getExcludedPerson", args = {})
 	public void testGetExcludedPerson() {
 		PartitionSampler partitionSampler = PartitionSampler.builder().setExcludedPerson(new PersonId(67)).build();
 		assertNotNull(partitionSampler);
@@ -47,11 +45,9 @@ public class AT_PartitionSampler {
 	 * Tests {@linkplain PartitionSampler#getRandomNumberGeneratorId()
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomNumberGeneratorId", args = {})
+	@UnitTestMethod(target = PartitionSampler.class, name = "getRandomNumberGeneratorId", args = {})
 	public void testGetRandomNumberGeneratorId() {
-		PartitionSampler partitionSampler = PartitionSampler.builder()
-				.setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER)
-				.setRandomNumberGeneratorId(TestRandomGeneratorId.VIXEN).build();
+		PartitionSampler partitionSampler = PartitionSampler.builder().setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER).setRandomNumberGeneratorId(TestRandomGeneratorId.VIXEN).build();
 
 		assertNotNull(partitionSampler);
 		assertNotNull(partitionSampler.getRandomNumberGeneratorId());
@@ -67,12 +63,12 @@ public class AT_PartitionSampler {
 	 * Tests {@linkplain PartitionSampler#getLabelSet()
 	 */
 	@Test
-	@UnitTestMethod(name = "getLabelSet", args = {})
+	@UnitTestMethod(target = PartitionSampler.class, name = "getLabelSet", args = {})
 	public void testGetLabelSet() {
-		PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(LabelSet.builder()//
-				.setLabel(Dimensions.DIM_1, "compartmentLabel")//
-				.setLabel(Dimensions.DIM_2, "regionLabel").build())//
-				.build();
+		PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(LabelSet	.builder()//
+																							.setLabel(Dimensions.DIM_1, "compartmentLabel")//
+																							.setLabel(Dimensions.DIM_2, "regionLabel").build())//
+															.build();
 
 		assertNotNull(partitionSampler);
 		assertNotNull(partitionSampler.getLabelSet());
@@ -89,13 +85,12 @@ public class AT_PartitionSampler {
 	 * Tests {@linkplain PartitionSampler#getLabelSetWeightingFunction()
 	 */
 	@Test
-	@UnitTestMethod(name = "getLabelSetWeightingFunction", args = {})
+	@UnitTestMethod(target = PartitionSampler.class, name = "getLabelSetWeightingFunction", args = {})
 	public void testGetLabelSetWeightingFunction() {
 
 		double expectedValue = 17.5;
 
-		PartitionSampler partitionSampler = PartitionSampler.builder()
-				.setLabelSetWeightingFunction((context, labelSet) -> expectedValue).build();
+		PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSetWeightingFunction((context, labelSet) -> expectedValue).build();
 
 		assertNotNull(partitionSampler);
 		assertNotNull(partitionSampler.getLabelSetWeightingFunction());
@@ -117,12 +112,9 @@ public class AT_PartitionSampler {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setRandomNumberGeneratorId", args = {
-			RandomNumberGeneratorId.class })
+	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setRandomNumberGeneratorId", args = { RandomNumberGeneratorId.class })
 	public void testSetRandomNumberGeneratorId() {
-		PartitionSampler partitionSampler = PartitionSampler.builder()
-				.setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER)
-				.setRandomNumberGeneratorId(TestRandomGeneratorId.VIXEN).build();
+		PartitionSampler partitionSampler = PartitionSampler.builder().setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER).setRandomNumberGeneratorId(TestRandomGeneratorId.VIXEN).build();
 
 		assertNotNull(partitionSampler);
 		assertNotNull(partitionSampler.getRandomNumberGeneratorId());
@@ -131,13 +123,11 @@ public class AT_PartitionSampler {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setLabelSetWeightingFunction", args = {
-			LabelSetWeightingFunction.class })
+	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setLabelSetWeightingFunction", args = { LabelSetWeightingFunction.class })
 	public void testSetLabelSetWeightingFunction() {
 		double expectedValue = 20.5;
 
-		PartitionSampler partitionSampler = PartitionSampler.builder()
-				.setLabelSetWeightingFunction((context, labelSet) -> expectedValue).build();
+		PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSetWeightingFunction((context, labelSet) -> expectedValue).build();
 
 		assertNotNull(partitionSampler);
 		assertNotNull(partitionSampler.getLabelSetWeightingFunction());
@@ -149,8 +139,7 @@ public class AT_PartitionSampler {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setExcludedPerson", args = {
-			PersonId.class })
+	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setExcludedPerson", args = { PersonId.class })
 	public void testSetExcludedPerson() {
 		PartitionSampler partitionSampler = PartitionSampler.builder().setExcludedPerson(new PersonId(67)).build();
 		assertNotNull(partitionSampler);
@@ -160,13 +149,12 @@ public class AT_PartitionSampler {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setLabelSet", args = {
-			LabelSet.class })
+	@UnitTestMethod(target = PartitionSampler.Builder.class, name = "setLabelSet", args = { LabelSet.class })
 	public void testSetLabelSet() {
-		PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(LabelSet.builder()//
-				.setLabel(Dimensions.DIM_1, "compartmentLabel")//
-				.setLabel(Dimensions.DIM_2, "regionLabel").build())//
-				.build();
+		PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(LabelSet	.builder()//
+																							.setLabel(Dimensions.DIM_1, "compartmentLabel")//
+																							.setLabel(Dimensions.DIM_2, "regionLabel").build())//
+															.build();
 
 		assertNotNull(partitionSampler);
 		assertNotNull(partitionSampler.getLabelSet());

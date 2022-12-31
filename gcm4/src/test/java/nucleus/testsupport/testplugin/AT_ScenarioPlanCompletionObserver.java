@@ -8,15 +8,13 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ScenarioPlanCompletionObserver.class)
 public class AT_ScenarioPlanCompletionObserver {
 
 	@Test
-	@UnitTestMethod(name = "allPlansExecuted", args = {})
+	@UnitTestMethod(target = ScenarioPlanCompletionObserver.class, name = "allPlansExecuted", args = {})
 	public void testAllPlansExecuted() {
 		/*
 		 * If there is no test plugin, then there will no plans to execute
@@ -94,13 +92,13 @@ public class AT_ScenarioPlanCompletionObserver {
 	}
 
 	@Test
-	@UnitTestMethod(name = "handleOutput", args = { Object.class }, tags= {UnitTag.LOCAL_PROXY})
+	@UnitTestMethod(target = ScenarioPlanCompletionObserver.class, name = "handleOutput", args = { Object.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testHandleOutput() {
-		//covered by testAllPlansExecuted()
+		// covered by testAllPlansExecuted()
 	}
 
 	@Test
-	@UnitTestConstructor(args = {}, tags = { UnitTag.INCOMPLETE })
+	@UnitTestConstructor(target = ScenarioPlanCompletionObserver.class, args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testConstructor() {
 		// nothing to test
 	}

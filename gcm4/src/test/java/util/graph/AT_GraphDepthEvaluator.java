@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
 /**
@@ -21,14 +20,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = GraphDepthEvaluator.class)
 public class AT_GraphDepthEvaluator {
 
 	/**
 	 * Tests {@link GraphDepthEvaluator#getGraphDepthEvaluator(Graph)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getGraphDepthEvaluator", args = { Graph.class })
+	@UnitTestMethod(target = GraphDepthEvaluator.class, name = "getGraphDepthEvaluator", args = { Graph.class })
 	public void testGetGraphDepthEvaluator() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		// empty graphs are acyclic
@@ -50,7 +48,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getDepth(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getDepth", args = { Object.class })
+	@UnitTestMethod(target = GraphDepthEvaluator.class, name = "getDepth", args = { Object.class })
 	public void testGetDepth() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -73,7 +71,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getMaxDepth()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getMaxDepth", args = {})
+	@UnitTestMethod(target = GraphDepthEvaluator.class, name = "getMaxDepth", args = {})
 	public void testGetMaxDepth() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -94,7 +92,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getNodesForDepth(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getNodesForDepth", args = { int.class })
+	@UnitTestMethod(target = GraphDepthEvaluator.class, name = "getNodesForDepth", args = { int.class })
 	public void testGetNodesForDepth() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -137,7 +135,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getNodesInRankOrder()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getNodesInRankOrder", args = {})
+	@UnitTestMethod(target = GraphDepthEvaluator.class, name = "getNodesInRankOrder", args = {})
 	public void testGetNodesInRankOrder() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");

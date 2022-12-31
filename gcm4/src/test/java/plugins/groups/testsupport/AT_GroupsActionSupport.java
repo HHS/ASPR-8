@@ -15,16 +15,14 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.people.datamanagers.PeopleDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
-@UnitTest(target = GroupsActionSupport.class)
 public class AT_GroupsActionSupport {
 
 	@Test
-	@UnitTestMethod(name = "testConsumer", args = { int.class, double.class, double.class, long.class, Consumer.class })	
+	@UnitTestMethod(target = GroupsActionSupport.class, name = "testConsumer", args = { int.class, double.class, double.class, long.class, Consumer.class })
 	public void testTestConsumer() {
 		MutableBoolean executed = new MutableBoolean();
 		GroupsActionSupport.testConsumer(100, 3, 5, 3765548905828391577L, (c) -> {
@@ -56,11 +54,11 @@ public class AT_GroupsActionSupport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "testConsumers", args = { int.class, double.class, double.class, long.class, Plugin.class })
+	@UnitTestMethod(target = GroupsActionSupport.class, name = "testConsumers", args = { int.class, double.class, double.class, long.class, Plugin.class })
 	public void testTestConsumers() {
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> GroupsActionSupport.testConsumers(100, 3, 5, 5220283745188783777L, TestPlugin.getTestPlugin(TestPluginData.builder().build())));
-		
+
 		assertEquals(TestError.TEST_EXECUTION_FAILURE, contractException.getErrorType());
 	}
 

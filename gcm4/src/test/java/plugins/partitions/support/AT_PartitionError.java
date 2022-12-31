@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
@@ -19,10 +18,9 @@ import util.errors.ContractException;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = PartitionError.class)
 public class AT_PartitionError {
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = PartitionError.class, name = "getDescription", args = {})
 	public void test() {
 		// show that each description is a unique, non-null and non-empty string
 		Set<String> descriptions = new LinkedHashSet<>();

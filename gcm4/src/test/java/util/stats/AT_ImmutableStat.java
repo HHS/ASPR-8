@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
@@ -17,7 +16,6 @@ import util.random.RandomGeneratorProvider;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = ImmutableStat.class)
 public class AT_ImmutableStat {
 
 	@Test
@@ -244,13 +242,13 @@ public class AT_ImmutableStat {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(ImmutableStat.builder());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMean", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "getMean", args = {})
 	public void testGetMean() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6876193335436069229L);
 
@@ -269,7 +267,7 @@ public class AT_ImmutableStat {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMax", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "getMax", args = {})
 	public void testGetMax() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1155316418087853792L);
 
@@ -288,7 +286,7 @@ public class AT_ImmutableStat {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMin", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "getMin", args = {})
 	public void testGetMin() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3698755887947285191L);
 
@@ -308,13 +306,13 @@ public class AT_ImmutableStat {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStandardDeviation", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "getStandardDeviation", args = {})
 	public void testGetStandardDeviation() {
 		// covered by testBuilder()
 	}
 
 	@Test
-	@UnitTestMethod(name = "getVariance", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "getVariance", args = {})
 	public void testGetVariance() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6224775885223191513L);
 
@@ -333,7 +331,7 @@ public class AT_ImmutableStat {
 	}
 
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "size", args = {})
 	public void testSize() {
 		for (int i = 0; i < 100; i++) {
 			int size = i + 1;
@@ -350,7 +348,7 @@ public class AT_ImmutableStat {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = ImmutableStat.class, name = "toString", args = {})
 	public void testToString() {
 		ImmutableStat immutableStat = ImmutableStat.builder().setMax(3.4).setMin(1.1).setMean(1.9).setSize(20).setVariance(0.5).build();
 

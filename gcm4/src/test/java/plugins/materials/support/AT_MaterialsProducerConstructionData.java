@@ -18,16 +18,14 @@ import plugins.resources.support.ResourceError;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = MaterialsProducerConstructionData.class)
 public class AT_MaterialsProducerConstructionData {
 
     @Test
-    @UnitTestMethod(name = "builder", args = {})
+    @UnitTestMethod(target = MaterialsProducerConstructionData.class,name = "builder", args = {})
     public void testBuilder() {
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
 
@@ -35,7 +33,7 @@ public class AT_MaterialsProducerConstructionData {
     }
 
     @Test
-    @UnitTestMethod(name = "getValues", args = { Class.class })
+    @UnitTestMethod(target = MaterialsProducerConstructionData.class,name = "getValues", args = { Class.class })
     public void testGetValues() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7180465772129297639L);
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
@@ -64,7 +62,7 @@ public class AT_MaterialsProducerConstructionData {
     }
 
     @Test
-    @UnitTestMethod(name = "getMaterialsProducerId", args = {})
+    @UnitTestMethod(target = MaterialsProducerConstructionData.class,name = "getMaterialsProducerId", args = {})
     public void testGetMaterialsProducerId() {
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
         builder.setMaterialsProducerId(TestMaterialsProducerId.MATERIALS_PRODUCER_1);
@@ -75,7 +73,7 @@ public class AT_MaterialsProducerConstructionData {
     }
 
     @Test
-    @UnitTestMethod(name = "getMaterialsProducerPropertyValues", args = {})
+    @UnitTestMethod(target = MaterialsProducerConstructionData.class,name = "getMaterialsProducerPropertyValues", args = {})
     public void testGetMaterialsProducerPropertyValues() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6832539036105490849L);
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
@@ -99,7 +97,7 @@ public class AT_MaterialsProducerConstructionData {
     }
 
     @Test
-    @UnitTestMethod(name = "getResourceLevels", args = {})
+	@UnitTestMethod(target = MaterialsProducerConstructionData.class,name = "getResourceLevels", args = {})
     public void testGetResourceLevels() {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6832539036105490849L);
         MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();

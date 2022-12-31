@@ -13,16 +13,14 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestActorPlan.class)
 public class AT_TestActorPlan {
 
 	@Test
-	@UnitTestConstructor(args = { double.class, Consumer.class })
+	@UnitTestConstructor(target = TestActorPlan.class, args = { double.class, Consumer.class })
 	public void testConstructor() {
 
 		TestActorPlan testActorPlan = new TestActorPlan(0.0, (c) -> {
@@ -31,7 +29,7 @@ public class AT_TestActorPlan {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { double.class, Consumer.class, boolean.class })
+	@UnitTestConstructor(target = TestActorPlan.class, args = { double.class, Consumer.class, boolean.class })
 	public void testConstructor_withKeyControl() {
 		TestActorPlan testActorPlan = new TestActorPlan(0.0, (c) -> {
 		}, false);
@@ -43,7 +41,7 @@ public class AT_TestActorPlan {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { TestActorPlan.class })
+	@UnitTestConstructor(target = TestActorPlan.class, args = { TestActorPlan.class })
 	public void testConstructor_fromExistingPlan() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7814286176804755234L);
 
@@ -67,7 +65,7 @@ public class AT_TestActorPlan {
 	 * executed() returning true even if an exception is thrown in the plan.
 	 */
 	@Test
-	@UnitTestMethod(name = "executed", args = {})
+	@UnitTestMethod(target = TestActorPlan.class, name = "executed", args = {})
 	public void testExecuted() {
 
 		TestActorPlan testActorPlan = new TestActorPlan(0.0, (c) -> {
@@ -89,7 +87,7 @@ public class AT_TestActorPlan {
 	 * the keys are unique.
 	 */
 	@Test
-	@UnitTestMethod(name = "getKey", args = {})
+	@UnitTestMethod(target = TestActorPlan.class, name = "getKey", args = {})
 	public void testGetKey() {
 
 		/*
@@ -127,7 +125,7 @@ public class AT_TestActorPlan {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getScheduledTime", args = {})
+	@UnitTestMethod(target = TestActorPlan.class, name = "getScheduledTime", args = {})
 	public void testGetScheduledTime() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(918257164535899051L);
@@ -151,7 +149,7 @@ public class AT_TestActorPlan {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = TestActorPlan.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 
 		/*
@@ -163,15 +161,15 @@ public class AT_TestActorPlan {
 		TestActorPlan plan2 = new TestActorPlan(4.5, (c) -> {
 		}, false);
 		assertEquals(plan1, plan2);
-		
-		//with auto generated keys, there is no way to force them to be equal
+
+		// with auto generated keys, there is no way to force them to be equal
 		plan1 = new TestActorPlan(4.5, (c) -> {
 		});
 		plan2 = new TestActorPlan(4.5, (c) -> {
 		});
 		assertNotEquals(plan1, plan2);
-		
-		//unless we use the copy constructor
+
+		// unless we use the copy constructor
 		plan1 = new TestActorPlan(4.5, (c) -> {
 		});
 		plan2 = new TestActorPlan(plan1);
@@ -180,7 +178,7 @@ public class AT_TestActorPlan {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = TestActorPlan.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		/*
 		 * show that equal objects have equal hash codes
@@ -190,8 +188,8 @@ public class AT_TestActorPlan {
 		TestActorPlan plan2 = new TestActorPlan(4.5, (c) -> {
 		}, false);
 		assertEquals(plan1.hashCode(), plan2.hashCode());
-		
-		//via the copy constructor
+
+		// via the copy constructor
 		plan1 = new TestActorPlan(4.5, (c) -> {
 		});
 		plan2 = new TestActorPlan(plan1);

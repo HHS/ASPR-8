@@ -13,12 +13,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.util.properties.PropertyDefinition.Builder;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = PropertyDefinition.class)
 public class AT_PropertyDefinition {
 	private static enum BooleanType {
 		TRUE(Boolean.TRUE), FALSE(Boolean.FALSE);
@@ -118,7 +116,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = PropertyDefinition.class, name = "toString", args = {})
 	public void testToString() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2790643065916150473L);
 
@@ -135,7 +133,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDefaultValue", args = {})
+	@UnitTestMethod(target = PropertyDefinition.class, name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5344086660090478893L);
 
@@ -188,7 +186,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTimeTrackingPolicy", args = {})
+	@UnitTestMethod(target = PropertyDefinition.class, name = "getTimeTrackingPolicy", args = {})
 	public void testGetTimeTrackingPolicy() {
 
 		/*
@@ -207,7 +205,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getType", args = {})
+	@UnitTestMethod(target = PropertyDefinition.class, name = "getType", args = {})
 	public void testGetType() {
 
 		/*
@@ -248,7 +246,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "propertyValuesAreMutable", args = {})
+	@UnitTestMethod(target = PropertyDefinition.class, name = "propertyValuesAreMutable", args = {})
 	public void testPropertyValuesAreMutable() {
 
 		/*
@@ -297,7 +295,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = PropertyDefinition.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
@@ -401,7 +399,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = PropertyDefinition.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
@@ -421,7 +419,7 @@ public class AT_PropertyDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = PropertyDefinition.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(PropertyDefinition.builder());
 	}
@@ -484,12 +482,12 @@ public class AT_PropertyDefinition {
 
 		// show that not setting the default yields an empty optional
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Integer.class)//																	
+																	.setType(Integer.class)//
 																	.build();//
 
 		Optional<Object> optional = propertyDefinition.getDefaultValue();
 		assertFalse(optional.isPresent());
-		
+
 	}
 
 	@Test

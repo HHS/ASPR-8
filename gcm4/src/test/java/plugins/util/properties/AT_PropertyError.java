@@ -8,23 +8,21 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PropertyError.class)
 public class AT_PropertyError {
 
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = PropertyError.class, name = "getDescription", args = {})
 	public void test() {
-		//show that each description is a unique, non-null and non-empty string 
+		// show that each description is a unique, non-null and non-empty string
 		Set<String> descriptions = new LinkedHashSet<>();
-		for(PropertyError propertyError : PropertyError.values()) {
-			String description = propertyError.getDescription();			
-			assertNotNull(description,"null description for "+propertyError);			
-			assertTrue(description.length()>0, "empty string for "+propertyError);
+		for (PropertyError propertyError : PropertyError.values()) {
+			String description = propertyError.getDescription();
+			assertNotNull(description, "null description for " + propertyError);
+			assertTrue(description.length() > 0, "empty string for " + propertyError);
 			boolean unique = descriptions.add(description);
-			assertTrue(unique,"description for "+propertyError+" is not unique");
+			assertTrue(unique, "description for " + propertyError + " is not unique");
 		}
 	}
 }

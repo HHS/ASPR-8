@@ -9,11 +9,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = PluginDataBuilderContext.class)
 public class AT_PluginDataBuilderContext {
 
 	private static class PluginDataBuilder1 implements PluginDataBuilder {
@@ -38,13 +36,13 @@ public class AT_PluginDataBuilderContext {
 	};
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = PluginDataBuilderContext.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(PluginDataBuilderContext.builder());
 	}
 
 	@Test
-	@UnitTestMethod(name = "get", args = { Class.class })
+	@UnitTestMethod(target = PluginDataBuilderContext.class, name = "get", args = { Class.class })
 	public void testGet() {
 		PluginDataBuilder p1 = new PluginDataBuilder1();
 
@@ -84,7 +82,7 @@ public class AT_PluginDataBuilderContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getContents", args = {})
+	@UnitTestMethod(target = PluginDataBuilderContext.class, name = "getContents", args = {})
 	public void testGetContents() {
 		PluginDataBuilder p1 = new PluginDataBuilder1();
 

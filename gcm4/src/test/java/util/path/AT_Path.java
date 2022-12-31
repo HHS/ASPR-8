@@ -11,14 +11,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = Path.class)
 public class AT_Path {
-	
+
 	@Test
-	@UnitTestMethod(target = Path.Builder.class,name = "addEdge", args = {Object.class})
+	@UnitTestMethod(target = Path.Builder.class, name = "addEdge", args = { Object.class })
 	public void testAddEdge() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
@@ -33,9 +31,9 @@ public class AT_Path {
 		path = builder.build();
 		assertNotNull(path);
 	}
-	
+
 	@Test
-	@UnitTestMethod(target = Path.Builder.class,name = "build", args = {})
+	@UnitTestMethod(target = Path.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
@@ -50,16 +48,16 @@ public class AT_Path {
 		path = builder.build();
 		assertNotNull(path);
 	}
-	
+
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = Path.class, name = "builder", args = {})
 	public void testBuilder() {
 		Path.Builder<Integer> builder = Path.builder();
-		assertNotNull(builder);		
+		assertNotNull(builder);
 	}
-	
+
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = Path.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		Path.Builder<Integer> builder = Path.builder();
 
@@ -94,9 +92,9 @@ public class AT_Path {
 		assertNotEquals(path1, path3);
 
 	}
-	
+
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = Path.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		Path.Builder<Integer> builder = Path.builder();
 
@@ -123,7 +121,7 @@ public class AT_Path {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEdges", args = {})
+	@UnitTestMethod(target = Path.class, name = "getEdges", args = {})
 	public void testGetEdges() {
 		Path.Builder<Integer> builder = Path.builder();
 
@@ -147,7 +145,7 @@ public class AT_Path {
 	}
 
 	@Test
-	@UnitTestMethod(name = "isEmpty", args = {})
+	@UnitTestMethod(target = Path.class, name = "isEmpty", args = {})
 	public void testIsEmpty() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
@@ -159,7 +157,7 @@ public class AT_Path {
 	}
 
 	@Test
-	@UnitTestMethod(name = "length", args = {})
+	@UnitTestMethod(target = Path.class, name = "length", args = {})
 	public void testLength() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
