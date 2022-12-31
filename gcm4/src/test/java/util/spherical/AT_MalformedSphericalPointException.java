@@ -5,20 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 
-@UnitTest(target = MalformedSphericalPointException.class)
 public class AT_MalformedSphericalPointException {
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = MalformedSphericalPointException.class, args = {})
 	public void testConstructor() {
 		MalformedSphericalPointException malformedSphericalPointException = new MalformedSphericalPointException(null);
 		assertNull(malformedSphericalPointException.getMessage());
 	}
 
 	@Test
-	@UnitTestConstructor(args = { String.class })
+	@UnitTestConstructor(target = MalformedSphericalPointException.class, args = { String.class })
 	public void testConstructor_String() {
 		String details = "details";
 		MalformedSphericalPointException malformedSphericalPointException = new MalformedSphericalPointException(details);

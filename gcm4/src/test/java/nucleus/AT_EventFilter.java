@@ -10,11 +10,9 @@ import java.util.List;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = EventFilter.class)
 public class AT_EventFilter {
 
 	private static enum functionId {
@@ -36,7 +34,7 @@ public class AT_EventFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = { Class.class })
+	@UnitTestMethod(target = EventFilter.class,name = "builder", args = { Class.class })
 	public void testBuilder() {
 		// show that a builder instance is returned
 		assertNotNull(EventFilter.builder(EventA.class));
@@ -47,7 +45,7 @@ public class AT_EventFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventClass", args = {})
+	@UnitTestMethod(target = EventFilter.class,name = "getEventClass", args = {})
 	public void testGetEventClass() {
 		/*
 		 * Show that the event class used to build the event filter can be
@@ -66,7 +64,7 @@ public class AT_EventFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getFunctionValuePairs", args = {})
+	@UnitTestMethod(target = EventFilter.class,name = "getFunctionValuePairs", args = {})
 	public void testGetFunctionValuePairs() {
 		// create two identifiable functions -- one for each field of EventA
 		IdentifiableFunction<EventA> xFunction = new IdentifiableFunction<>(functionId.X, (e) -> e.x);

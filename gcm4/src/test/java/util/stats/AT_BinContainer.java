@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.stats.BinContainer.Bin;
@@ -22,7 +21,6 @@ import util.stats.BinContainer.Builder;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = BinContainer.class)
 public class AT_BinContainer {
 	/**
 	 * Tests {@link BinContainer.Bin#Bin(double, double, int)} construction
@@ -50,7 +48,7 @@ public class AT_BinContainer {
 	 * Tests {@link BinContainer#builder(double)} construction
 	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = { double.class })
+	@UnitTestMethod(target = BinContainer.class, name = "builder", args = { double.class })
 	public void testBuilder() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
@@ -101,7 +99,7 @@ public class AT_BinContainer {
 	 * Tests {@link BinContainer#binCount()}
 	 */
 	@Test
-	@UnitTestMethod(name = "binCount", args = {})
+	@UnitTestMethod(target = BinContainer.class, name = "binCount", args = {})
 	public void testBinCount() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
@@ -118,7 +116,7 @@ public class AT_BinContainer {
 	 * Tests {@link BinContainer#getBin(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getBin", args = { int.class })
+	@UnitTestMethod(target = BinContainer.class, name = "getBin", args = { int.class })
 	public void testGetBin() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);

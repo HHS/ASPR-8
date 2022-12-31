@@ -7,15 +7,13 @@ import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
 
-@UnitTest(target = MaterialsProducerPropertyDefinitionEvent.class)
 public class AT_MaterialsProducerPropertyDefinitionEvent {
 
     @Test
-    @UnitTestConstructor(args = { MaterialsProducerPropertyId.class })
+    @UnitTestConstructor(target = MaterialsProducerPropertyDefinitionEvent.class,args = { MaterialsProducerPropertyId.class })
     public void testConstructor() {
 
         // precondition: null producer property id

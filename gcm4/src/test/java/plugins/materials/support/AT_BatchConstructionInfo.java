@@ -15,16 +15,14 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = BatchConstructionInfo.class)
 public class AT_BatchConstructionInfo {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = BatchConstructionInfo.class,name = "builder", args = {})
 	public void testBuilder() {
 
 		assertNotNull(BatchConstructionInfo.builder());
@@ -136,7 +134,7 @@ public class AT_BatchConstructionInfo {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialsProducerId", args = {})
+	@UnitTestMethod(target = BatchConstructionInfo.class,name = "getMaterialsProducerId", args = {})
 	public void testGetMaterialsProdcuerId() {
 		BatchConstructionInfo.Builder builder = BatchConstructionInfo.builder();
 		MaterialId materialId = TestMaterialId.MATERIAL_2;
@@ -210,7 +208,7 @@ public class AT_BatchConstructionInfo {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMaterialId", args = {})
+	@UnitTestMethod(target = BatchConstructionInfo.class,name = "getMaterialId", args = {})
 	public void testGetMaterialId() {
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -224,7 +222,7 @@ public class AT_BatchConstructionInfo {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getAmount", args = {})
+	@UnitTestMethod(target = BatchConstructionInfo.class,name = "getAmount", args = {})
 	public void testGetAmount() {
 		for (int i = 0; i < 10; i++) {
 			double amount = 1000 * i;
@@ -237,7 +235,7 @@ public class AT_BatchConstructionInfo {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyValues", args = {})
+	@UnitTestMethod(target = BatchConstructionInfo.class,name = "getPropertyValues", args = {})
 	public void testGetPropertyValues() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1805920219436314340L);

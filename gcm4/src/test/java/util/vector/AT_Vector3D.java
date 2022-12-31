@@ -8,7 +8,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
@@ -20,28 +19,27 @@ import util.random.RandomGeneratorProvider;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Vector3D.class)
 public class AT_Vector3D {
 
 	private static final double TOLERANCE = 0.000001;
 
 	@Test
-	@UnitTestField(name = "NORMAL_LENGTH_TOLERANCE")
+	@UnitTestField(target = Vector3D.class, name = "NORMAL_LENGTH_TOLERANCE")
 	public void testNormalLengthTolerance() {
-		assertEquals(1E-13,	MutableVector2D.NORMAL_LENGTH_TOLERANCE,0);
+		assertEquals(1E-13, MutableVector2D.NORMAL_LENGTH_TOLERANCE, 0);
 	}
-	
+
 	@Test
-	@UnitTestField(name = "PERPENDICULAR_ANGLE_TOLERANCE")
+	@UnitTestField(target = Vector3D.class, name = "PERPENDICULAR_ANGLE_TOLERANCE")
 	public void testPerpendicularAngleTolerance() {
-		assertEquals(1E-13,	MutableVector2D.PERPENDICULAR_ANGLE_TOLERANCE,0);
+		assertEquals(1E-13, MutableVector2D.PERPENDICULAR_ANGLE_TOLERANCE, 0);
 	}
 
 	/**
 	 * Tests {@linkplain Vector3D#add(Vector3D)}
 	 */
 	@Test
-	@UnitTestMethod(name = "add", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "add", args = { Vector3D.class })
 	public void testAdd_Vector3D() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7836660604999880350L);
@@ -70,7 +68,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#add(double, double, double)}
 	 */
 	@Test
-	@UnitTestMethod(name = "add", args = { double.class, double.class, double.class })
+	@UnitTestMethod(target = Vector3D.class, name = "add", args = { double.class, double.class, double.class })
 	public void testAdd_Doubles() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7125211715849393284L);
@@ -98,7 +96,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#Vector3D()}
 	 */
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = Vector3D.class, args = {})
 	public void testConstructors_Empty() {
 
 		Vector3D v = new Vector3D();
@@ -112,7 +110,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#Vector3D(MutableVector3D)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { MutableVector3D.class })
+	@UnitTestConstructor(target = Vector3D.class, args = { MutableVector3D.class })
 	public void testConstructors_MutableVector3D() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6902413344220415519L);
@@ -138,7 +136,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#Vector3D(Vector3D)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Vector3D.class })
+	@UnitTestConstructor(target = Vector3D.class, args = { Vector3D.class })
 	public void testConstructors_Vector3D() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5764958408005452265L);
@@ -163,7 +161,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#Vector3D(double, double, double)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { double.class, double.class, double.class })
+	@UnitTestConstructor(target = Vector3D.class, args = { double.class, double.class, double.class })
 	public void testConstructors_Doubles() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4063392888561806538L);
@@ -188,7 +186,7 @@ public class AT_Vector3D {
 	 * 
 	 */
 	@Test
-	@UnitTestMethod(name = "addScaled", args = { Vector3D.class, double.class })
+	@UnitTestMethod(target = Vector3D.class, name = "addScaled", args = { Vector3D.class, double.class })
 	public void testAddScaled() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3690133693531615503L);
@@ -232,7 +230,7 @@ public class AT_Vector3D {
 	 * 
 	 */
 	@Test
-	@UnitTestMethod(name = "angle", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "angle", args = { Vector3D.class })
 	public void testAngle() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(951350942348320391L);
@@ -268,7 +266,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#cross(Vector3D))}
 	 */
 	@Test
-	@UnitTestMethod(name = "cross", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "cross", args = { Vector3D.class })
 	public void testCross() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6840870992153579167L);
@@ -302,7 +300,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#distanceTo(Vector3D)}
 	 */
 	@Test
-	@UnitTestMethod(name = "distanceTo", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "distanceTo", args = { Vector3D.class })
 	public void testDistanceTo() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7530267238221574008L);
@@ -334,7 +332,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#dot(Vector3D)}
 	 */
 	@Test
-	@UnitTestMethod(name = "dot", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "dot", args = { Vector3D.class })
 	public void testDot() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7381648601624753148L);
@@ -365,7 +363,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#get(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "get", args = { int.class })
+	@UnitTestMethod(target = Vector3D.class, name = "get", args = { int.class })
 	public void testGet() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5822494443076549477L);
@@ -389,7 +387,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#getX()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getX", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "getX", args = {})
 	public void testGetX() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5619096689466232458L);
@@ -410,7 +408,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#getY()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getY", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "getY", args = {})
 	public void testGetY() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9011643938864970700L);
@@ -431,7 +429,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#getZ()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getZ", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "getZ", args = {})
 	public void testGetZ() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8418814888059666319L);
@@ -452,7 +450,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#scale(double)}
 	 */
 	@Test
-	@UnitTestMethod(name = "scale", args = { double.class })
+	@UnitTestMethod(target = Vector3D.class, name = "scale", args = { double.class })
 	public void testScale() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(788959907719176256L);
@@ -478,7 +476,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#sub(Vector3D)}
 	 */
 	@Test
-	@UnitTestMethod(name = "sub", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "sub", args = { Vector3D.class })
 	public void testSub_Vector3D() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7254476776881600886L);
@@ -517,7 +515,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#sub(double, double, double)}
 	 */
 	@Test
-	@UnitTestMethod(name = "sub", args = { double.class, double.class, double.class })
+	@UnitTestMethod(target = Vector3D.class, name = "sub", args = { double.class, double.class, double.class })
 	public void testSub_Doubles() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6577953305162290972L);
@@ -557,7 +555,7 @@ public class AT_Vector3D {
 	 * 
 	 */
 	@Test
-	@UnitTestMethod(name = "isInfinite", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "isInfinite", args = {})
 	public void testIsInfinite() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7403620333466856112L);
@@ -594,7 +592,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#isNaN()}
 	 */
 	@Test
-	@UnitTestMethod(name = "isNaN", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "isNaN", args = {})
 	public void testIsNaN() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2792478867330703600L);
@@ -622,7 +620,7 @@ public class AT_Vector3D {
 	 * 
 	 */
 	@Test
-	@UnitTestMethod(name = "isFinite", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "isFinite", args = {})
 	public void testIsFinite() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5468039318586500858L);
@@ -669,7 +667,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#squareDistanceTo(Vector3D)}
 	 */
 	@Test
-	@UnitTestMethod(name = "squareDistanceTo", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "squareDistanceTo", args = { Vector3D.class })
 	public void testSquareDistanceTo() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4408285762517228447L);
@@ -701,7 +699,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#reverse()}
 	 */
 	@Test
-	@UnitTestMethod(name = "reverse", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "reverse", args = {})
 	public void testReverse() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1607695966329330649L);
@@ -725,7 +723,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#length()}
 	 */
 	@Test
-	@UnitTestMethod(name = "length", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "length", args = {})
 	public void testLength() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(892356071941813021L);
@@ -748,7 +746,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#squareLength()}
 	 */
 	@Test
-	@UnitTestMethod(name = "squareLength", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "squareLength", args = {})
 	public void testSquareLength() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5116359435826650990L);
@@ -771,7 +769,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#toArray()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toArray", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "toArray", args = {})
 	public void testToArray() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1585465023735434312L);
@@ -795,7 +793,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#normalize()}
 	 */
 	@Test
-	@UnitTestMethod(name = "normalize", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "normalize", args = {})
 	public void testNormalize() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7753068915847520635L);
@@ -818,7 +816,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#isNormal()}
 	 */
 	@Test
-	@UnitTestMethod(name = "isNormal", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "isNormal", args = {})
 	public void testIsNormal() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8273142075158529624L);
@@ -852,7 +850,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#isPerpendicularTo(Vector3D)}
 	 */
 	@Test
-	@UnitTestMethod(name = "isPerpendicularTo", args = { Vector3D.class })
+	@UnitTestMethod(target = Vector3D.class, name = "isPerpendicularTo", args = { Vector3D.class })
 	public void testIsPerpendicularTo() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7136200979729764353L);
@@ -891,7 +889,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#equals(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = Vector3D.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(713907792984443541L);
@@ -927,7 +925,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#hashCode()}
 	 */
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1626510424735965103L);
@@ -951,7 +949,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#toString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = Vector3D.class, name = "toString", args = {})
 	public void testToString() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8190009794791481605L);
@@ -977,7 +975,7 @@ public class AT_Vector3D {
 	 * 
 	 */
 	@Test
-	@UnitTestMethod(name = "rotateAbout", args = { Vector3D.class, double.class })
+	@UnitTestMethod(target = Vector3D.class, name = "rotateAbout", args = { Vector3D.class, double.class })
 	public void testRotateAbout() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1807065951741732731L);
@@ -1026,7 +1024,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#rotateToward(Vector3D, double)}
 	 */
 	@Test
-	@UnitTestMethod(name = "rotateToward", args = { Vector3D.class, double.class })
+	@UnitTestMethod(target = Vector3D.class, name = "rotateToward", args = { Vector3D.class, double.class })
 	public void testRotateToward() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(540427496183068832L);

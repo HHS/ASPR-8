@@ -8,23 +8,21 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GlobalPropertiesError.class)
 public class AT_GlobalPropertiesError {
 
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = GlobalPropertiesError.class, name = "getDescription", args = {})
 	public void test() {
-		//show that each description is a unique, non-null and non-empty string 
+		// show that each description is a unique, non-null and non-empty string
 		Set<String> descriptions = new LinkedHashSet<>();
-		for(GlobalPropertiesError globalPropertiesError : GlobalPropertiesError.values()) {
-			String description = globalPropertiesError.getDescription();			
-			assertNotNull(description,"null description for "+globalPropertiesError);			
-			assertTrue(description.length()>0, "empty string for "+globalPropertiesError);
+		for (GlobalPropertiesError globalPropertiesError : GlobalPropertiesError.values()) {
+			String description = globalPropertiesError.getDescription();
+			assertNotNull(description, "null description for " + globalPropertiesError);
+			assertTrue(description.length() > 0, "empty string for " + globalPropertiesError);
 			boolean unique = descriptions.add(description);
-			assertTrue(unique,"description for "+globalPropertiesError+" is not unique");
+			assertTrue(unique, "description for " + globalPropertiesError + " is not unique");
 		}
 	}
 }

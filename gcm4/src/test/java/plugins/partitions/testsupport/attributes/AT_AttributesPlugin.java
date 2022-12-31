@@ -24,20 +24,18 @@ import plugins.people.PeoplePluginData;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = AttributesPlugin.class)
 public class AT_AttributesPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getAttributesPlugin", args = { AttributesPluginData.class })
+	@UnitTestMethod(target = AttributesPlugin.class, name = "getAttributesPlugin", args = { AttributesPluginData.class })
 	public void testGetAttributesPlugin() {
 
 		/*
 		 * Create an attributes plugin
 		 */
-		AttributesPluginData attributesPluginData = AttributesPluginData.builder().build();		
+		AttributesPluginData attributesPluginData = AttributesPluginData.builder().build();
 		Plugin attributesPlugin = AttributesPlugin.getAttributesPlugin(attributesPluginData);
 
 		// show that the plugin data is present
@@ -54,15 +52,16 @@ public class AT_AttributesPlugin {
 		expectedDependencies.add(PeoplePluginId.PLUGIN_ID);
 		Set<PluginId> actualDependencies = attributesPlugin.getPluginDependencies();
 		assertEquals(expectedDependencies, actualDependencies);
-		
-		//show that the plugin contributed the AttributesDataManager to the simulation
+
+		// show that the plugin contributed the AttributesDataManager to the
+		// simulation
 		Builder testPluginDataBuilder = TestPluginData.builder();
-		
-		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,(c)->{
+
+		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			AttributesDataManager dataManager = c.getDataManager(AttributesDataManager.class);
 			assertNotNull(dataManager);
 		}));
-		
+
 		TestPluginData testPluginData = testPluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
@@ -72,14 +71,11 @@ public class AT_AttributesPlugin {
 					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
 					.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(435346454564566L).build()))//
 					.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()))//
-					.addPlugin(PartitionsPlugin.getPartitionsPlugin())
-					.addPlugin(attributesPlugin)//
+					.addPlugin(PartitionsPlugin.getPartitionsPlugin()).addPlugin(attributesPlugin)//
 					.addPlugin(testPlugin)//
 					.build()//
 					.execute();//
-		
-		
-		
+
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 
 	}

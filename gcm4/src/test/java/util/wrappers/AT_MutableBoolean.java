@@ -5,23 +5,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = MutableBoolean.class)
 public class AT_MutableBoolean {
 
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = MutableBoolean.class, args = {})
 	public void testConstructor() {
 		MutableBoolean mutableBoolean = new MutableBoolean();
 		assertEquals(false, mutableBoolean.getValue());
 	}
 
 	@Test
-	@UnitTestConstructor(args = { boolean.class })
+	@UnitTestConstructor(target = MutableBoolean.class, args = { boolean.class })
 	public void testConstructor_Double() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8591378582633844530L);
 		for (int i = 0; i < 30; i++) {
@@ -32,7 +30,7 @@ public class AT_MutableBoolean {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = MutableBoolean.class, name = "getValue", args = {})
 	public void testGetValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2338302122366053723L);
 		for (int i = 0; i < 30; i++) {
@@ -43,7 +41,7 @@ public class AT_MutableBoolean {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setValue", args = { boolean.class })
+	@UnitTestMethod(target = MutableBoolean.class, name = "setValue", args = { boolean.class })
 	public void testSetValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7814242037959487534L);
 		for (int i = 0; i < 30; i++) {
@@ -56,7 +54,7 @@ public class AT_MutableBoolean {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = MutableBoolean.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4984973082700728337L);
 		for (int i = 0; i < 30; i++) {
@@ -68,7 +66,7 @@ public class AT_MutableBoolean {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = MutableBoolean.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// show equal objects have equal hash codes
@@ -82,7 +80,7 @@ public class AT_MutableBoolean {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = MutableBoolean.class, name = "toString", args = {})
 	public void testToString() {
 		MutableBoolean mutableBoolean = new MutableBoolean(true);
 		String expectedValue = "MutableBoolean [value=true]";

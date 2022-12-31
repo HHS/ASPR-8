@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.graph.Graph;
@@ -25,7 +24,6 @@ import util.vector.Vector2D;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = MapPathSolver.class)
 public class AT_MapPathSolver {
 	/*
 	 * The travel cost will be the straight-line distance
@@ -90,7 +88,7 @@ public class AT_MapPathSolver {
 	 * {@link MapPathSolver#MapPathSolver(Graph, EdgeCostEvaluator, TravelCostEvaluator)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Graph.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
+	@UnitTestConstructor(target = MapPathSolver.class, args = { Graph.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
 	public void testConstructor() {
 		Graph.Builder<String, Integer> builder = Graph.builder();
 		MapPathSolver<String, Integer> arrayPathSolver = new MapPathSolver<>(builder.build(), (e) -> 0.0, (n1, n2) -> 0);
@@ -101,7 +99,7 @@ public class AT_MapPathSolver {
 	 * Tests {@link MapPathSolver#getPath(Object, Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getPath", args = { Object.class, Object.class })
+	@UnitTestMethod(target = MapPathSolver.class, name = "getPath", args = { Object.class, Object.class })
 	public void testGetPath() {
 
 		// create a few nodes

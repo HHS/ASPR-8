@@ -6,23 +6,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = MutableObject.class)
 public class MT_MutableObject {
 	
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = MutableObject.class,args = {})
 	public void testConstructor() {
 		MutableObject<String> mutableObject = new MutableObject<>();
 		assertNull(mutableObject.getValue());
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Object.class })
+	@UnitTestConstructor(target = MutableObject.class,args = { Object.class })
 	public void testConstructor_Double() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3527814400767115920L);
 		for (int i = 0; i < 30; i++) {
@@ -33,7 +31,7 @@ public class MT_MutableObject {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = MutableObject.class,name = "getValue", args = {})
 	public void testGetValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1262778239913204399L);
 		for (int i = 0; i < 30; i++) {
@@ -44,7 +42,7 @@ public class MT_MutableObject {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setValue", args = { Object.class })
+	@UnitTestMethod(target = MutableObject.class,name = "setValue", args = { Object.class })
 	public void testSetValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3426888451617179735L);
 		for (int i = 0; i < 30; i++) {
@@ -57,7 +55,7 @@ public class MT_MutableObject {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = MutableObject.class,name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8850768319450625485L);
 		for (int i = 0; i < 30; i++) {
@@ -69,7 +67,7 @@ public class MT_MutableObject {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = MutableObject.class,name = "hashCode", args = {})
 	public void testHashCode() {
 		// show equal objects have equal hash codes
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4349805918351369003L);
@@ -82,7 +80,7 @@ public class MT_MutableObject {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = MutableObject.class,name = "toString", args = {})
 	public void testToString() {
 		MutableObject<String> mutableObject = new MutableObject<>("test value 1");
 		String expectedValue = "MutableObject [value=test value 1]";

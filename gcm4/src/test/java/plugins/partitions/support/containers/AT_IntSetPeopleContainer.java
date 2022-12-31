@@ -15,7 +15,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_IntSetPeopleContainer {
 
 	@Test
-	@UnitTestField(name = "DEFAULT_TARGET_DEPTH")
+	@UnitTestField(target = IntSetPeopleContainer.class,name = "DEFAULT_TARGET_DEPTH")
 	public void testDefaultTargetDepth() {
 		assertEquals(80, IntSetPeopleContainer.DEFAULT_TARGET_DEPTH);
 	}

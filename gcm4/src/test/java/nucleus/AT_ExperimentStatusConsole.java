@@ -5,20 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ExperimentStatusConsole.class)
 public class AT_ExperimentStatusConsole {
 
 	@Test
-	@UnitTestMethod(name = "accept", args = { ExperimentContext.class }, tags = { UnitTag.MANUAL })
+	@UnitTestMethod(target = ExperimentStatusConsole.class, name = "accept", args = { ExperimentContext.class }, tags = { UnitTag.MANUAL })
 	public void testAccept() {
 		// deferred to manual test
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {}, tags = { UnitTag.LOCAL_PROXY })
+	@UnitTestMethod(target = ExperimentStatusConsole.class, name = "builder", args = {}, tags = { UnitTag.LOCAL_PROXY })
 	public void testBuilder() {
 		assertNotNull(ExperimentStatusConsole.builder().build());
 	}

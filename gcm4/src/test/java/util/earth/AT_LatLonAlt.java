@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -18,18 +17,15 @@ import util.vector.Vector3D;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = LatLonAlt.class)
 public class AT_LatLonAlt {
 
 	private static final double TOLERANCE = 0.0001;
-
-
 
 	/**
 	 * Tests {@link LatLonAlt#getLatitude()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getLatitude", args = {})
+	@UnitTestMethod(target = LatLonAlt.class, name = "getLatitude", args = {})
 	public void testGetLatitude() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7062845400521947521L);
 		for (int i = 0; i < 100; i++) {
@@ -45,7 +41,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#getLongitude()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getLongitude", args = {})
+	@UnitTestMethod(target = LatLonAlt.class, name = "getLongitude", args = {})
 	public void testGetLongitude() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9178151003715988391L);
 		for (int i = 0; i < 100; i++) {
@@ -61,7 +57,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#getAltitude()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getAltitude", args = {})
+	@UnitTestMethod(target = LatLonAlt.class, name = "getAltitude", args = {})
 	public void testGetAltitude() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3210941165573781662L);
 		for (int i = 0; i < 100; i++) {
@@ -77,7 +73,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#toString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = LatLonAlt.class, name = "toString", args = {})
 	public void testToString() {
 		LatLonAlt latLonAlt = new LatLonAlt(35, 128, 1000);
 		assertEquals("LatLonAlt [latitude=35.0, longitude=128.0, altitude=1000.0]", latLonAlt.toString());
@@ -108,7 +104,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#hashCode()}
 	 */
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = LatLonAlt.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// Show equal objects have equal hash codes
@@ -128,7 +124,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#equals(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = LatLonAlt.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3854552470387902715L);
 		for (int i = 0; i < 100; i++) {
@@ -156,7 +152,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#LatLonAlt(LatLon)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { LatLon.class })
+	@UnitTestConstructor(target = LatLonAlt.class, args = { LatLon.class })
 	public void testConstructor_LatLon() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7719374094024568257L);
 		for (int i = 0; i < 100; i++) {
@@ -187,7 +183,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#LatLonAlt(double, double, double)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Vector3D.class })
+	@UnitTestConstructor(target = LatLonAlt.class, args = { Vector3D.class })
 	public void testConstructor_Vector3D() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1423864170984280158L);
 		for (int i = 0; i < 100; i++) {
@@ -223,7 +219,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#LatLonAlt(double, double, double)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { double.class, double.class, double.class })
+	@UnitTestConstructor(target = LatLonAlt.class, args = { double.class, double.class, double.class })
 	public void testConstructor_Doubles() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5395751744049862772L);
 		for (int i = 0; i < 100; i++) {
@@ -252,7 +248,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#toVector3D()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toVector3D", args = {})
+	@UnitTestMethod(target = LatLonAlt.class, name = "toVector3D", args = {})
 	public void testToVector3D() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1014093707230518248L);
 		for (int i = 0; i < 100; i++) {

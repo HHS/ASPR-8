@@ -9,7 +9,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -21,25 +20,24 @@ import util.vector.Vector3D;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Earth.class)
 public class AT_Earth {
 
 	private static final double TOLERANCE = 0.0001;
 
 	@Test
-	@UnitTestField(name = "WGS84_EQUATORIAL_RADIUS_METERS")
+	@UnitTestField(target = Earth.class,name = "WGS84_EQUATORIAL_RADIUS_METERS")
 	public void testWgs84EquatorialRadiusMeters() {
 		assertEquals(6378137, Earth.WGS84_EQUATORIAL_RADIUS_METERS, 0);
 	}
 	
 	@Test
-	@UnitTestField(name = "WGS84_POLAR_RADIUS_METERS")
+	@UnitTestField(target = Earth.class,name = "WGS84_POLAR_RADIUS_METERS")
 	public void testWgs84PolarRadiusMeters() {
 		assertEquals(6356752.314245, Earth.WGS84_POLAR_RADIUS_METERS, 0);
 	}
 	
 	@Test
-	@UnitTestField(name = "WGS84_MEAN_RADIUS_METERS")
+	@UnitTestField(target = Earth.class,name = "WGS84_MEAN_RADIUS_METERS")
 	public void testWgs84MeanRadiusMeters() {
 		
 		double expectedValue = (2 * Earth.WGS84_EQUATORIAL_RADIUS_METERS + Earth.WGS84_POLAR_RADIUS_METERS) / 3;
@@ -52,7 +50,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#fromLatitude(double)
 	 */
 	@Test
-	@UnitTestMethod(name = "fromLatitude", args = { double.class })
+	@UnitTestMethod(target = Earth.class,name = "fromLatitude", args = { double.class })
 	public void testFromLatitude() {
 		for (int i = -89; i < 90; i++) {
 			double latitude = i;
@@ -65,7 +63,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#fromRadius(double)
 	 */
 	@Test
-	@UnitTestMethod(name = "fromRadius", args = { double.class })
+	@UnitTestMethod(target = Earth.class,name = "fromRadius", args = { double.class })
 	public void testFromRadius() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3373674409757874366L);
 		for (int i = 0; i < 100; i++) {
@@ -79,7 +77,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#fromMeanRadius()
 	 */
 	@Test
-	@UnitTestMethod(name = "fromMeanRadius", args = {})
+	@UnitTestMethod(target = Earth.class,name = "fromMeanRadius", args = {})
 	public void testFromMeanRadius() {
 		Earth earth = Earth.fromMeanRadius();
 		assertEquals(Earth.WGS84_MEAN_RADIUS_METERS, earth.getRadius(), 0);
@@ -89,7 +87,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getEffectiveEarthRadius(double)
 	 */
 	@Test
-	@UnitTestMethod(name = "getEffectiveEarthRadius", args = { double.class })
+	@UnitTestMethod(target = Earth.class,name = "getEffectiveEarthRadius", args = { double.class })
 	public void testGetEffectiveEarthRadius() {
 		Map<Double, Double> expectedValues = new LinkedHashMap<>();
 
@@ -288,7 +286,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getRadius()
 	 */
 	@Test
-	@UnitTestMethod(name = "getRadius", args = {})
+	@UnitTestMethod(target = Earth.class,name = "getRadius", args = {})
 	public void testGetRadius() {
 		// covered by testFromRadius
 	}
@@ -297,7 +295,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getECCFromLatLonAlt(LatLonAlt)
 	 */
 	@Test
-	@UnitTestMethod(name = "getECCFromLatLonAlt", args = { LatLonAlt.class })
+	@UnitTestMethod(target = Earth.class,name = "getECCFromLatLonAlt", args = { LatLonAlt.class })
 	public void testGetECCFromLatLonAlt() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7867550291868680129L);
@@ -331,7 +329,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getLatLonAlt(Vector3D)
 	 */
 	@Test
-	@UnitTestMethod(name = "getLatLonAlt", args = { Vector3D.class })
+	@UnitTestMethod(target = Earth.class,name = "getLatLonAlt", args = { Vector3D.class })
 	public void testGetLatLonAlt() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1462458115304058705L);
@@ -360,7 +358,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getECCFromLatLon(LatLon))
 	 */
 	@Test
-	@UnitTestMethod(name = "getECCFromLatLon", args = { LatLon.class })
+	@UnitTestMethod(target = Earth.class,name = "getECCFromLatLon", args = { LatLon.class })
 	public void testGetECCFromLatLon() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4107285998527165778L);
@@ -392,7 +390,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getGroundDistanceFromECC(Vector3D, Vector3D))
 	 */
 	@Test
-	@UnitTestMethod(name = "getGroundDistanceFromECC", args = { Vector3D.class, Vector3D.class })
+	@UnitTestMethod(target = Earth.class,name = "getGroundDistanceFromECC", args = { Vector3D.class, Vector3D.class })
 	public void testGetGroundDistanceFromECC() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1693567521780632468L);
@@ -423,7 +421,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getGroundDistanceFromLatLon(LatLon, LatLon))
 	 */
 	@Test
-	@UnitTestMethod(name = "getGroundDistanceFromLatLon", args = { LatLon.class, LatLon.class })
+	@UnitTestMethod(target = Earth.class,name = "getGroundDistanceFromLatLon", args = { LatLon.class, LatLon.class })
 	public void testGetGroundDistanceFromLatLon() {
 
 		// covered by testGetGroundDistanceFromECC()
@@ -434,7 +432,7 @@ public class AT_Earth {
 	 * LatLonAlt))
 	 */
 	@Test
-	@UnitTestMethod(name = "getGroundDistanceFromLatLonAlt", args = { LatLonAlt.class, LatLonAlt.class })
+	@UnitTestMethod(target = Earth.class,name = "getGroundDistanceFromLatLonAlt", args = { LatLonAlt.class, LatLonAlt.class })
 	public void testGetGroundDistanceFromLatLonAlt() {
 
 		// covered by testGetGroundDistanceFromECC()

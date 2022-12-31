@@ -16,11 +16,9 @@ import nucleus.SimulationContext;
 import plugins.partitions.testsupport.PartitionsActionSupport;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = Filter.class)
 public class AT_Filter {
 
 	private static class LocalFilter extends Filter {
@@ -59,7 +57,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#and(Filter)}
 	 */
 	@Test
-	@UnitTestMethod(name = "and", args = { Filter.class })
+	@UnitTestMethod(target = Filter.class, name = "and", args = { Filter.class })
 	public void testAnd() {
 		PartitionsActionSupport.testConsumer(100, 254308828477050611L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -107,8 +105,7 @@ public class AT_Filter {
 			// precondition tests
 
 			// if the filter is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> Filter.allPeople().and(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().and(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
 		});
 
@@ -118,7 +115,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#or(Filter)}
 	 */
 	@Test
-	@UnitTestMethod(name = "or", args = { Filter.class })
+	@UnitTestMethod(target = Filter.class, name = "or", args = { Filter.class })
 	public void testOr() {
 		PartitionsActionSupport.testConsumer(100, 921279696119043098L, (c) -> {
 
@@ -169,8 +166,7 @@ public class AT_Filter {
 
 			// if the filter is null
 
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> Filter.allPeople().or(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> Filter.allPeople().or(null));
 			assertEquals(PartitionError.NULL_FILTER, contractException.getErrorType());
 
 		});
@@ -181,7 +177,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#negate()}
 	 */
 	@Test
-	@UnitTestMethod(name = "negate", args = {})
+	@UnitTestMethod(target = Filter.class, name = "negate", args = {})
 	public void testNegate() {
 		PartitionsActionSupport.testConsumer(100, 4038710674336002107L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -210,7 +206,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#allPeople()}
 	 */
 	@Test
-	@UnitTestMethod(name = "allPeople", args = {})
+	@UnitTestMethod(target = Filter.class, name = "allPeople", args = {})
 	public void testAllPeople() {
 		PartitionsActionSupport.testConsumer(30, 847391904888351863L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -231,7 +227,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#noPeople()}
 	 */
 	@Test
-	@UnitTestMethod(name = "noPeople", args = {})
+	@UnitTestMethod(target = Filter.class, name = "noPeople", args = {})
 	public void testNoPeople() {
 		PartitionsActionSupport.testConsumer(100, 6400633994679307999L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);

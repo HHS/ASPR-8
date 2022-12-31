@@ -19,7 +19,6 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.time.TimeElapser;
@@ -31,7 +30,6 @@ import util.time.TimeElapser;
  *
  */
 
-@UnitTest(target = DimensionTree.class)
 
 public class AT_DimensionTree {
 	
@@ -89,7 +87,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getMembersInSphere(double, double[])
 	 */
 	@Test
-	@UnitTestMethod(name = "getMembersInSphere", args = { double.class, double[].class })
+	@UnitTestMethod(target = DimensionTree.class,name = "getMembersInSphere", args = { double.class, double[].class })
 	public void testGetMembersInSphere() {
 
 
@@ -146,7 +144,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getNearestMember(double[])
 	 */
 	@Test
-	@UnitTestMethod(name = "getNearestMember", args = { double[].class })
+	@UnitTestMethod(target = DimensionTree.class,name = "getNearestMember", args = { double[].class })
 	public void testGetNearestMember() {
 		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1704585910834495981L);
@@ -198,7 +196,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getMembersInRectanguloid(double[], double[])
 	 */
 	@Test
-	@UnitTestMethod(name = "getMembersInRectanguloid", args = { double[].class, double[].class })
+	@UnitTestMethod(target = DimensionTree.class,name = "getMembersInRectanguloid", args = { double[].class, double[].class })
 	public void testGetMembersInRectanguloid() {
 		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7067981743992714824L);
@@ -262,7 +260,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getAll()
 	 */
 	@Test
-	@UnitTestMethod(name = "getAll", args = {})
+	@UnitTestMethod(target = DimensionTree.class,name = "getAll", args = {})
 	public void testGetAll() {
 		/*
 		 * See test for add()
@@ -273,7 +271,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#add(double[], Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "add", args = { double[].class, Object.class })
+	@UnitTestMethod(target = DimensionTree.class,name = "add", args = { double[].class, Object.class })
 	public void testAdd() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7699215262915366096L);
 
@@ -318,7 +316,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#contains(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "contains", args = { Object.class })
+	@UnitTestMethod(target = DimensionTree.class,name = "contains", args = { Object.class })
 	public void testContains() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7408475895380756180L);
 
@@ -354,7 +352,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#remove(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "remove", args = { Object.class })
+	@UnitTestMethod(target = DimensionTree.class,name = "remove", args = { Object.class })
 	public void testRemove() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7030760224206012399L);
 
@@ -427,7 +425,7 @@ public class AT_DimensionTree {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = DimensionTree.class,name = "builder", args = {})
 	public void testBuilder() {
 		/*
 		 * Precondition tests

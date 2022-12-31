@@ -18,7 +18,6 @@ import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.earth.Earth;
 import util.earth.LatLon;
@@ -33,10 +32,7 @@ import util.vector.Vector3D;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = GeoLocator.class)
 public class AT_GeoLocator {
-
-
 
 	private static LatLon generateRandomizedLatLon(RandomGenerator randomGenerator, double lat, double lon, double radiusKilometers) {
 		Earth earth = Earth.fromMeanRadius();
@@ -67,7 +63,7 @@ public class AT_GeoLocator {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = GeoLocator.class, name = "builder", args = {})
 	public void testBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2026864228657861590L);
 		List<LatLon> locations = generateLocations(randomGenerator, 35, 128, 50, 100);
@@ -75,7 +71,7 @@ public class AT_GeoLocator {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLocations", args = { double.class, double.class, double.class })
+	@UnitTestMethod(target = GeoLocator.class, name = "getLocations", args = { double.class, double.class, double.class })
 	public void testGetLocations() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1240444416174704003L);
 
@@ -111,7 +107,7 @@ public class AT_GeoLocator {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getNearestLocation", args = { double.class, double.class })
+	@UnitTestMethod(target = GeoLocator.class, name = "getNearestLocation", args = { double.class, double.class })
 	public void testGetNearestLocation() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4915853160875930674L);
 
@@ -155,7 +151,7 @@ public class AT_GeoLocator {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPrioritizedLocations", args = { double.class, double.class, double.class })
+	@UnitTestMethod(target = GeoLocator.class, name = "getPrioritizedLocations", args = { double.class, double.class, double.class })
 	public void testGetPrioritizedLocations() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3451435198166238489L);
 
@@ -195,24 +191,26 @@ public class AT_GeoLocator {
 			});
 
 			// Get the locations from the GeoLocator
-			List<Pair<LatLon, Double>> actualLocations = geoLocator.getPrioritizedLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream().collect(Collectors.toCollection(ArrayList::new));
+			List<Pair<LatLon, Double>> actualLocations = geoLocator	.getPrioritizedLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream()
+																	.collect(Collectors.toCollection(ArrayList::new));
 
 			// compare the two sets
 			assertEquals(expectedLocations, actualLocations);
 		}
 	}
-	
+
 	@Test
-	@UnitTestMethod(target = GeoLocator.Builder.class,name = "build", args = {}, tags= {UnitTag.LOCAL_PROXY})
+	@UnitTestMethod(target = GeoLocator.Builder.class, name = "build", args = {}, tags = { UnitTag.LOCAL_PROXY })
 	public void testBuild() {
-		//test is covered by the tests associated with the GeoLocator rather than the builder class	
-	}
-	
-	@Test
-	@UnitTestMethod(target = GeoLocator.Builder.class,name = "addLocation", args = {double.class, double.class, Object.class}, tags= {UnitTag.LOCAL_PROXY})
-	public void testAddLocation() {
-		//test is covered by the tests associated with the GeoLocator rather than the builder class	
+		// test is covered by the tests associated with the GeoLocator rather
+		// than the builder class
 	}
 
-	
+	@Test
+	@UnitTestMethod(target = GeoLocator.Builder.class, name = "addLocation", args = { double.class, double.class, Object.class }, tags = { UnitTag.LOCAL_PROXY })
+	public void testAddLocation() {
+		// test is covered by the tests associated with the GeoLocator rather
+		// than the builder class
+	}
+
 }

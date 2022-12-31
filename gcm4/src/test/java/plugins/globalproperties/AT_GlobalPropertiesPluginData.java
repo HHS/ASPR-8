@@ -20,12 +20,9 @@ import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
-
-@UnitTest(target = GlobalPropertiesPluginData.class)
 
 public class AT_GlobalPropertiesPluginData {
 
@@ -68,7 +65,6 @@ public class AT_GlobalPropertiesPluginData {
 		builder.defineGlobalProperty(globalPropertyId1, propertyDefinition);
 		contractException = assertThrows(ContractException.class, () -> builder.build());
 		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
 
 	}
 
@@ -172,23 +168,27 @@ public class AT_GlobalPropertiesPluginData {
 		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
-//		// if the global property value was previously defined for the given
-//		// global property id
-//		builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, 4);
-//		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, 5));
-//		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+		// // if the global property value was previously defined for the given
+		// // global property id
+		// builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE,
+		// 4);
+		// contractException = assertThrows(ContractException.class, () ->
+		// builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE,
+		// 5));
+		// assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT,
+		// contractException.getErrorType());
 
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		// show that the builder can be created
 		assertNotNull(GlobalPropertiesPluginData.builder());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyDefinition", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
@@ -225,7 +225,7 @@ public class AT_GlobalPropertiesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyIds", args = {})
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyIds", args = {})
 	public void testGetGlobalPropertyIds() {
 
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
@@ -250,7 +250,7 @@ public class AT_GlobalPropertiesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyValue", args = { GlobalPropertyId.class })
 	public void testGetGlobalPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250048639082754761L);
 
@@ -301,7 +301,7 @@ public class AT_GlobalPropertiesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
@@ -327,7 +327,8 @@ public class AT_GlobalPropertiesPluginData {
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition expectedPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
 			PropertyDefinition actualPropertyDefinition = cloneGlobalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);}
+			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
+		}
 
 		// show that the two plugin datas have the same values
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
@@ -335,7 +336,6 @@ public class AT_GlobalPropertiesPluginData {
 			Object actualValues = cloneGlobalPropertiesPluginData.getGlobalPropertyValue(globalPropertyId);
 			assertEquals(expectedValues, actualValues);
 		}
-
 
 	}
 

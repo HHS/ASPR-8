@@ -24,18 +24,15 @@ import nucleus.testsupport.testplugin.TestDataManagerPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = DataManagerContext.class)
-
 public class AT_DataManagerContext {
 
 	@Test
-	@UnitTestMethod(name = "getTime", args = {})
+	@UnitTestMethod(target = DataManagerContext.class, name = "getTime", args = {})
 	public void testGetTime() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -81,7 +78,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "releaseOutput", args = { Object.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "releaseOutput", args = { Object.class })
 	public void testReleaseOutput() {
 
 		// begin building the action plugin
@@ -127,7 +124,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToSimulationClose", args = { Consumer.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "subscribeToSimulationClose", args = { Consumer.class })
 	public void testSubscribeToSimulationClose() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -161,7 +158,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDataManager", args = { Class.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
 
 		// create the test plugin data builder
@@ -260,7 +257,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDataManagerId", args = {})
+	@UnitTestMethod(target = DataManagerContext.class, name = "getDataManagerId", args = {})
 	public void testGetDataManagerId() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -296,7 +293,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "addPlan", args = { Consumer.class, double.class })
 	public void testAddPlan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -346,7 +343,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPassivePlan", args = { Consumer.class, double.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "addPassivePlan", args = { Consumer.class, double.class })
 	public void testAddPassivePlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
@@ -418,7 +415,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPassiveKeyedPlan", args = { Consumer.class, double.class, Object.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "addPassiveKeyedPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddPassiveKeyedPlan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -520,7 +517,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addKeyedPlan", args = { Consumer.class, double.class, Object.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "addKeyedPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddKeyedPlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -582,7 +579,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPlan", args = { Object.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "getPlan", args = { Object.class })
 	public void testGetPlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -624,7 +621,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPlanTime", args = { Object.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "getPlanTime", args = { Object.class })
 	public void testGetPlanTime() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -669,7 +666,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removePlan", args = { Object.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "removePlan", args = { Object.class })
 	public void testRemovePlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -722,7 +719,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPlanKeys", args = {})
+	@UnitTestMethod(target = DataManagerContext.class, name = "getPlanKeys", args = {})
 	public void testGetPlanKeys() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -763,7 +760,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "releaseEvent", args = { Event.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "releaseEvent", args = { Event.class })
 	public void testReleaseEvent() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -836,7 +833,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "actorExists", args = { ActorId.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "actorExists", args = { ActorId.class })
 	public void testActorExists() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -880,7 +877,7 @@ public class AT_DataManagerContext {
 
 	@Test
 
-	@UnitTestMethod(name = "addActor", args = { Consumer.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "addActor", args = { Consumer.class })
 	public void testAddActor() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -911,7 +908,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeActor", args = { ActorId.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "removeActor", args = { ActorId.class })
 	public void testRemoveActor() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -966,7 +963,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "halt", args = {})
+	@UnitTestMethod(target = DataManagerContext.class, name = "halt", args = {})
 	public void testHalt() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1159,20 +1156,21 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribe", args = { Class.class, BiConsumer.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "subscribe", args = { Class.class, BiConsumer.class })
 	public void testSubscribe() {
 		combinedSubscriptionTest();
 	}
 
 	// @Test
-	// @UnitTestMethod(name = "subscribeToEventPostPhase", args = { Class.class,
+	// @UnitTestMethod(target = DataManagerContext.class,name =
+	// "subscribeToEventPostPhase", args = { Class.class,
 	// BiConsumer.class })
 	// public void testSubscribeToEventPostPhase() {
 	// combinedSubscriptionTest();
 	// }
 
 	@Test
-	@UnitTestMethod(name = "unsubscribe", args = { Class.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "unsubscribe", args = { Class.class })
 	public void testUnSubscribeToEvent() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1253,7 +1251,7 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribersExist", args = { Class.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "subscribersExist", args = { Class.class })
 	public void testSubscribersExist() {
 
 		/*
@@ -1339,34 +1337,36 @@ public class AT_DataManagerContext {
 		// show that all actions were executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 	}
-	
-	private static class ActorObservingDataManager extends TestDataManager{
-		private List<Pair<Double,ActorId>> observedPairs;
+
+	private static class ActorObservingDataManager extends TestDataManager {
+		private List<Pair<Double, ActorId>> observedPairs;
 		private DataManagerContext dataManagerContext;
-		public ActorObservingDataManager(List<Pair<Double,ActorId>> observedPairs) {
+
+		public ActorObservingDataManager(List<Pair<Double, ActorId>> observedPairs) {
 			this.observedPairs = observedPairs;
 		}
+
 		public void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			this.dataManagerContext = dataManagerContext;
 		}
+
 		public void observe() {
-			observedPairs.add(new Pair<>(dataManagerContext.getTime(),dataManagerContext.getActorId()));
+			observedPairs.add(new Pair<>(dataManagerContext.getTime(), dataManagerContext.getActorId()));
 		}
 	}
 
 	@Test
-	@UnitTestMethod(name = "getActorId", args = {})
+	@UnitTestMethod(target = DataManagerContext.class, name = "getActorId", args = {})
 	public void testGetActorId() {
-		List<Pair<Double,ActorId>> expectedPairs = new ArrayList<>();
-		List<Pair<Double,ActorId>> observedPairs = new ArrayList<>(); 
-		
-		
+		List<Pair<Double, ActorId>> expectedPairs = new ArrayList<>();
+		List<Pair<Double, ActorId>> observedPairs = new ArrayList<>();
+
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		double testTime = 1;
 		// there are no precondition tests
-		
+
 		pluginDataBuilder.addTestDataManager("dm", () -> new ActorObservingDataManager(observedPairs));
 
 		/*
@@ -1376,17 +1376,17 @@ public class AT_DataManagerContext {
 		 */
 		pluginDataBuilder.addTestActorPlan("Alpha", new TestActorPlan(testTime++, (c) -> {
 			c.getDataManager(ActorObservingDataManager.class).observe();
-			expectedPairs.add(new Pair<>(c.getTime(),c.getActorId()));
+			expectedPairs.add(new Pair<>(c.getTime(), c.getActorId()));
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Beta", new TestActorPlan(testTime++, (c) -> {
 			c.getDataManager(ActorObservingDataManager.class).observe();
-			expectedPairs.add(new Pair<>(c.getTime(),c.getActorId()));
+			expectedPairs.add(new Pair<>(c.getTime(), c.getActorId()));
 		}));
 
 		pluginDataBuilder.addTestActorPlan("Gamma", new TestActorPlan(testTime++, (c) -> {
 			c.getDataManager(ActorObservingDataManager.class).observe();
-			expectedPairs.add(new Pair<>(c.getTime(),c.getActorId()));
+			expectedPairs.add(new Pair<>(c.getTime(), c.getActorId()));
 		}));
 
 		// build the plugin

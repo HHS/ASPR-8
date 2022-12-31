@@ -378,23 +378,23 @@ public class AT_Experiment {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = Experiment.class, name = "builder", args = {})
 	public void testBuilder() {
 		// show that a builder is returned
 		assertNotNull(Experiment.builder());
 	}
 
 	@Test
-	@UnitTestMethod(name = "execute", args = {})
+	@UnitTestMethod(target = Experiment.class, name = "execute", args = {})
 	public void testExecute() {
 		// Covered by remaining tests that execute the experiment.
 	}
 
 	@Test
-	@UnitTestMethod(target = Experiment.Builder.class,name = "setHaltOnException", args = { boolean.class })
+	@UnitTestMethod(target = Experiment.Builder.class, name = "setHaltOnException", args = { boolean.class })
 	public void testSetHaltOnException() {
-		//This test will run the experiment two times in single thread mode
-		
+		// This test will run the experiment two times in single thread mode
+
 		// we create a counter that will be incremented by each actor on
 		// initialization
 		MutableInteger actorInitializationCounter = new MutableInteger();

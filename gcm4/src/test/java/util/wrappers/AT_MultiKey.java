@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
@@ -19,14 +18,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = MultiKey.class)
 public class AT_MultiKey {
 
 	/**
 	 * Tests the equals contract for {@link AT_MultiKey#equals(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = MultiKey.class, name = "equals", args = { Object.class })
 	public void testEqualsContract() {
 		final MultiKey multiKey1 = new MultiKey(3, "B", false);
 		final MultiKey multiKey2 = new MultiKey(3, "B", false);
@@ -85,7 +83,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#getKey(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getKey", args = { int.class })
+	@UnitTestMethod(target = MultiKey.class, name = "getKey", args = { int.class })
 	public void testGetKey() {
 
 		MultiKey multiKey = new MultiKey(3, "B", false);
@@ -116,7 +114,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#getKeys()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getKeys", args = {})
+	@UnitTestMethod(target = MultiKey.class, name = "getKeys", args = {})
 	public void testGetKeys() {
 		MultiKey multiKey = new MultiKey(3, "B", false);
 		Object[] expectedKeys = new Object[] { 3, "B", false };
@@ -205,7 +203,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#MultiKey(Object...)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Object[].class })
+	@UnitTestConstructor(target = MultiKey.class, args = { Object[].class })
 	public void testConstructor() {
 		/*
 		 * We will show that the MultiKey constructor produces the expected
@@ -230,14 +228,14 @@ public class AT_MultiKey {
 		assertEquals(multiKey.getKey(1), Double.valueOf(2.75));
 		assertEquals(multiKey.getKey(2), true);
 		assertEquals(3, multiKey.size());
-		
+
 	}
 
 	/**
 	 * Tests {@link MultiKey#size()}
 	 */
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = MultiKey.class, name = "size", args = {})
 	public void testSize() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals(0, multiKey.size());
@@ -260,7 +258,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#toKeyString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toKeyString", args = {})
+	@UnitTestMethod(target = MultiKey.class, name = "toKeyString", args = {})
 	public void testToKeyString() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals("[]", multiKey.toKeyString());
@@ -282,7 +280,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#toTabString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toTabString", args = {})
+	@UnitTestMethod(target = MultiKey.class, name = "toTabString", args = {})
 	public void testToTabString() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals("", multiKey.toTabString());
@@ -305,7 +303,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#toString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = MultiKey.class, name = "toString", args = {})
 	public void testToString() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals("MultiKey [objects=[]]", multiKey.toString());
@@ -327,7 +325,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#equals(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = MultiKey.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		MultiKey multiKey1 = new MultiKey(3, "B", false);
 		MultiKey multiKey2 = new MultiKey(3, "B", false);
@@ -359,7 +357,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#hashCode()}
 	 */
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = MultiKey.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		MultiKey multiKey1 = new MultiKey(3, "B", false);
 		MultiKey multiKey2 = new MultiKey(3, "B", false);

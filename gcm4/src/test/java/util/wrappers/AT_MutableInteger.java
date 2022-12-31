@@ -5,22 +5,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = MutableInteger.class)
 public class AT_MutableInteger {
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = MutableInteger.class, args = {})
 	public void testConstructor() {
 		MutableInteger mutableInteger = new MutableInteger();
 		assertEquals(0.0, mutableInteger.getValue());
 	}
 
 	@Test
-	@UnitTestConstructor(args = { int.class })
+	@UnitTestConstructor(target = MutableInteger.class, args = { int.class })
 	public void testConstructor_Double() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2425763952527863898L);
 		for (int i = 0; i < 30; i++) {
@@ -31,7 +29,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "decrement", args = {})
+	@UnitTestMethod(target = MutableInteger.class, name = "decrement", args = {})
 	public void testDecrement() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2140415989642505862L);
 		for (int i = 0; i < 30; i++) {
@@ -43,7 +41,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "decrement", args = { int.class })
+	@UnitTestMethod(target = MutableInteger.class, name = "decrement", args = { int.class })
 	public void testDecrement_Double() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3822082757204031187L);
 		for (int i = 0; i < 30; i++) {
@@ -56,7 +54,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "increment", args = {})
+	@UnitTestMethod(target = MutableInteger.class, name = "increment", args = {})
 	public void testIncrement() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4329402035984439237L);
 		for (int i = 0; i < 30; i++) {
@@ -68,7 +66,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "increment", args = { int.class })
+	@UnitTestMethod(target = MutableInteger.class, name = "increment", args = { int.class })
 	public void testIncrement_Double() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5369197584271833059L);
 		for (int i = 0; i < 30; i++) {
@@ -81,7 +79,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = MutableInteger.class, name = "getValue", args = {})
 	public void testGetValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7622823941392079489L);
 		for (int i = 0; i < 30; i++) {
@@ -92,7 +90,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setValue", args = { int.class })
+	@UnitTestMethod(target = MutableInteger.class, name = "setValue", args = { int.class })
 	public void testSetValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5421290049195575337L);
 		for (int i = 0; i < 30; i++) {
@@ -105,7 +103,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = MutableInteger.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8177269948678825053L);
 		for (int i = 0; i < 30; i++) {
@@ -117,7 +115,7 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = MutableInteger.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// show equal objects have equal hash codes
@@ -132,17 +130,17 @@ public class AT_MutableInteger {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = MutableInteger.class, name = "toString", args = {})
 	public void testToString() {
 		MutableInteger mutableInteger = new MutableInteger(2);
 		String expectedValue = "MutableInteger [value=2]";
 		String actualValue = mutableInteger.toString();
-		assertEquals(expectedValue,actualValue);
-		
+		assertEquals(expectedValue, actualValue);
+
 		mutableInteger = new MutableInteger(62);
 		expectedValue = "MutableInteger [value=62]";
 		actualValue = mutableInteger.toString();
-		assertEquals(expectedValue,actualValue);
+		assertEquals(expectedValue, actualValue);
 
 	}
 

@@ -15,7 +15,7 @@ import util.errors.ContractException;
 public final class AT_AttributeDefinition {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = AttributeDefinition.class,name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(AttributeDefinition.builder());
 	}
@@ -61,7 +61,7 @@ public final class AT_AttributeDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDefaultValue", args = {})
+	@UnitTestMethod(target = AttributeDefinition.class,name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		AttributeDefinition attributeDefinition = AttributeDefinition.builder().setDefaultValue(12).setType(Integer.class).build();
 		assertEquals(12, attributeDefinition.getDefaultValue());
@@ -71,7 +71,7 @@ public final class AT_AttributeDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getType", args = {})
+	@UnitTestMethod(target = AttributeDefinition.class,name = "getType", args = {})
 	public void testGetType() {
 		AttributeDefinition attributeDefinition = AttributeDefinition.builder().setDefaultValue(12).setType(Integer.class).build();
 		assertEquals(Integer.class, attributeDefinition.getType());
@@ -82,7 +82,7 @@ public final class AT_AttributeDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = AttributeDefinition.class,name = "hashCode", args = {})
 	public void testHashCode() {
 		
 
@@ -94,7 +94,7 @@ public final class AT_AttributeDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = AttributeDefinition.class,name = "equals", args = { Object.class })
 	public void testEquals() {
 		AttributeDefinition attributeDefinition1 = AttributeDefinition.builder().setDefaultValue(12).setType(Integer.class).build();
 		AttributeDefinition attributeDefinition2 = AttributeDefinition.builder().setDefaultValue(13).setType(Integer.class).build();
@@ -115,7 +115,7 @@ public final class AT_AttributeDefinition {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = AttributeDefinition.class,name = "toString", args = {})
 	public void testToString() {
 		AttributeDefinition attributeDefinition = AttributeDefinition.builder().setDefaultValue(12).setType(Integer.class).build();
 		String expectedValue = "AttributeDefinition [type=class java.lang.Integer, defaultValue=12]";

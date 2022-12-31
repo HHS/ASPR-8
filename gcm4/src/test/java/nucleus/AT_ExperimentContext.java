@@ -30,7 +30,7 @@ import util.wrappers.MutableInteger;
 public class AT_ExperimentContext {
 
 	@Test
-	@UnitTestMethod(name = "getElapsedSeconds", args = {})
+	@UnitTestMethod(target = ExperimentContext.class, name = "getElapsedSeconds", args = {})
 	public void testGetElapsedSeconds() {
 		/*
 		 * This is a very limited test of the elapsed time and requires a manual
@@ -48,7 +48,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getExperimentMetaData", args = {})
+	@UnitTestMethod(target = ExperimentContext.class, name = "getExperimentMetaData", args = {})
 	public void testGetExperimentMetaData() {
 
 		List<String> actualMetaData = new ArrayList<>();
@@ -138,7 +138,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getScenarioCount", args = {})
+	@UnitTestMethod(target = ExperimentContext.class, name = "getScenarioCount", args = {})
 	public void testGetScenarioCount() {
 
 		// create an experiment that has no dimension and show that the scenario
@@ -190,7 +190,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getScenarioMetaData", args = { int.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "getScenarioMetaData", args = { int.class })
 	public void testGetScenarioMetaData() {
 
 		// create an experiment with two dimensions with some experiment meta
@@ -291,7 +291,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getScenarios", args = { ScenarioStatus.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "getScenarios", args = { ScenarioStatus.class })
 	public void testGetScenarios() {
 		// create an experiment with two dimensions with some experiment meta
 		// data
@@ -367,7 +367,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getScenarioStatus", args = { int.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "getScenarioStatus", args = { int.class })
 	public void testGetScenarioStatus() {
 
 		/*
@@ -478,13 +478,13 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStatusCount", args = { ScenarioStatus.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "getStatusCount", args = { ScenarioStatus.class })
 	public void testGetStatusCount() {
 		// covered by the test method : testScenarioStatus()
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToExperimentClose", args = { Consumer.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "subscribeToExperimentClose", args = { Consumer.class })
 	public void testSubscribeToExperimentClose() {
 		/*
 		 * Run an experiment that has several clients of the experiment context
@@ -520,7 +520,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToExperimentOpen", args = { Consumer.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "subscribeToExperimentOpen", args = { Consumer.class })
 	public void testSubscribeToExperimentOpen() {
 		/*
 		 * Run an experiment that has several clients of the experiment context
@@ -556,7 +556,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToOutput", args = { Class.class, TriConsumer.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "subscribeToOutput", args = { Class.class, TriConsumer.class })
 	public void testSubscribeToOutput() {
 
 		/*
@@ -608,7 +608,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToSimulationClose", args = { BiConsumer.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "subscribeToSimulationClose", args = { BiConsumer.class })
 	public void testSubscribeToSimulationClose() {
 		/*
 		 * Run an experiment that has several clients of the experiment context
@@ -644,7 +644,7 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToSimulationOpen", args = { BiConsumer.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "subscribeToSimulationOpen", args = { BiConsumer.class })
 	public void testSubscribeToSimulationOpen() {
 
 		/*
@@ -681,18 +681,18 @@ public class AT_ExperimentContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getScenarioFailureCause", args = { int.class })
+	@UnitTestMethod(target = ExperimentContext.class, name = "getScenarioFailureCause", args = { int.class })
 	public void testGetScenarioFailureCause() {
 		RuntimeException e = new RuntimeException();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1,(c)->{
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			throw e;
 		}));
 		Plugin testPlugin = TestPlugin.getTestPlugin(pluginDataBuilder.build());
 
-		Consumer<ExperimentContext> experimentContestConsumer = (c)->{
-			c.subscribeToExperimentClose((c2)->{
+		Consumer<ExperimentContext> experimentContestConsumer = (c) -> {
+			c.subscribeToExperimentClose((c2) -> {
 				Optional<Exception> optional = c2.getScenarioFailureCause(0);
 				assertTrue(optional.isPresent());
 				Exception e2 = optional.get();
@@ -700,12 +700,11 @@ public class AT_ExperimentContext {
 			});
 		};
 
-		Experiment.builder()//
-		.addPlugin(testPlugin)//
-		.addExperimentContextConsumer(experimentContestConsumer)//
-		.build()//
-		.execute();
-
+		Experiment	.builder()//
+					.addPlugin(testPlugin)//
+					.addExperimentContextConsumer(experimentContestConsumer)//
+					.build()//
+					.execute();
 
 	}
 

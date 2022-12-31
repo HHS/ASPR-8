@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
 /**
@@ -15,14 +14,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Equality.class)
 public class AT_Equality {
 
 	/**
 	 * Tests {@link Equality#isCompatibleComparisonValue(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "isCompatibleComparisonValue", args = { int.class })
+	@UnitTestMethod(target = Equality.class, name = "isCompatibleComparisonValue", args = { int.class })
 	public void testIsCompatibleComparisonValue() {
 
 		assertEquals(6, Equality.values().length);
@@ -63,7 +61,7 @@ public class AT_Equality {
 	 * Tests {@link Equality#getNegation(Equality)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getNegation", args = { Equality.class })
+	@UnitTestMethod(target = Equality.class, name = "getNegation", args = { Equality.class })
 	public void testGetNegation() {
 		assertEquals(6, Equality.values().length);
 		assertEquals(Equality.NOT_EQUAL, Equality.getNegation(Equality.EQUAL));
@@ -73,6 +71,5 @@ public class AT_Equality {
 		assertEquals(Equality.GREATER_THAN_EQUAL, Equality.getNegation(Equality.LESS_THAN));
 		assertEquals(Equality.GREATER_THAN, Equality.getNegation(Equality.LESS_THAN_EQUAL));
 	}
-
 
 }

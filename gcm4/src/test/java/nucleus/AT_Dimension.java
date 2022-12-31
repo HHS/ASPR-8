@@ -9,14 +9,12 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = Dimension.class)
 public class AT_Dimension {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = Dimension.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(Dimension.builder());
 	}
@@ -37,7 +35,7 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getMetaData", args = {})
+	@UnitTestMethod(target = Dimension.class, name = "getMetaData", args = {})
 	public void testGetMetatData() {
 		// test several numbers and duplications of meta data
 		testGetMetaDataValues();
@@ -48,7 +46,7 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLevel", args = {int.class})
+	@UnitTestMethod(target = Dimension.class, name = "getLevel", args = { int.class })
 	public void testGetLevel() {
 
 		Dimension.Builder builder = Dimension.builder();
@@ -73,7 +71,7 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = Dimension.class, name = "size", args = {})
 	public void testSize() {
 		Dimension.Builder builder = Dimension.builder();
 		Dimension dimension = builder.build();
@@ -108,7 +106,7 @@ public class AT_Dimension {
 	}
 
 	@Test
-	@UnitTestMethod(target = Dimension.Builder.class, name = "addLevel", args = { Function.class})
+	@UnitTestMethod(target = Dimension.Builder.class, name = "addLevel", args = { Function.class })
 	public void testAddLevel() {
 		Dimension.Builder builder = Dimension.builder();
 		builder.addLevel((map) -> {
@@ -128,13 +126,13 @@ public class AT_Dimension {
 		for (int i = 0; i < dimension.size(); i++) {
 			assertNotNull(dimension.getLevel(i));
 		}
-		
+
 	}
 
 	@Test
 	@UnitTestMethod(target = Dimension.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		//covered by other tests
+		// covered by other tests
 	}
 
 }

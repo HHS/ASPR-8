@@ -34,22 +34,20 @@ import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = GlobalPropertyReport.class)
 public class AT_GlobalPropertyReport {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = GlobalPropertyReport.class, name = "builder", args = {})
 	public void testBuilder() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
 		assertNotNull(builder);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {ActorContext.class}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestMethod(target = GlobalPropertyReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 
 		/*
@@ -217,8 +215,8 @@ public class AT_GlobalPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includePropertyId", args = {GlobalPropertyId.class})
-	public void testIncludePropertyId () {
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includePropertyId", args = { GlobalPropertyId.class })
+	public void testIncludePropertyId() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
 
 		// precondition test: if the property id is null
@@ -228,20 +226,20 @@ public class AT_GlobalPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includeAllExtantPropertyIds", args = {boolean.class})
-	public void testIncludeAllExtantPropertyIds () {
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includeAllExtantPropertyIds", args = { boolean.class })
+	public void testIncludeAllExtantPropertyIds() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(target =  GlobalPropertyReport.Builder.class, name = "includeNewPropertyIds", args = {boolean.class})
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "includeNewPropertyIds", args = { boolean.class })
 	public void testIncludeNewPropertyIds() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "excludePropertyId", args = {GlobalPropertyId.class})
-	public void testExcludePropertyId () {
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "excludePropertyId", args = { GlobalPropertyId.class })
+	public void testExcludePropertyId() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
 
 		// precondition test: if the property id is null
@@ -250,8 +248,8 @@ public class AT_GlobalPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "setReportId", args = {ReportId.class})
-	public void testSetReportId () {
+	@UnitTestMethod(target = GlobalPropertyReport.Builder.class, name = "setReportId", args = { ReportId.class })
+	public void testSetReportId() {
 		GlobalPropertyReport.Builder builder = GlobalPropertyReport.builder();
 
 		// precondition test: if the report id is null
@@ -259,8 +257,6 @@ public class AT_GlobalPropertyReport {
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 
 	}
-
-
 
 	private static final ReportId REPORT_ID = new SimpleReportId("global property report");
 

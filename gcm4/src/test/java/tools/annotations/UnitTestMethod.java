@@ -19,8 +19,8 @@ import java.lang.annotation.Target;
 public @interface UnitTestMethod {
 	String name();
 
-//	Class<?> target() default Object.class;
-	Class<?> target();
+	Class<?> target() default Object.class;
+//	Class<?> target();
 
 	Class<?>[] args();
 	

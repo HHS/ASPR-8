@@ -5,20 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 
-@UnitTest(target = MalformedSphericalPolygonException.class)
 public class AT_MalformedSphericalPolygonException {
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = MalformedSphericalPolygonException.class, args = {})
 	public void testConstructor() {
 		MalformedSphericalPolygonException malformedSphericalPolygonException = new MalformedSphericalPolygonException(null);
 		assertNull(malformedSphericalPolygonException.getMessage());
 	}
 
 	@Test
-	@UnitTestConstructor(args = { String.class })
+	@UnitTestConstructor(target = MalformedSphericalPolygonException.class, args = { String.class })
 	public void testConstructor_String() {
 		String details = "details";
 		MalformedSphericalPolygonException malformedSphericalPolygonException = new MalformedSphericalPolygonException(details);

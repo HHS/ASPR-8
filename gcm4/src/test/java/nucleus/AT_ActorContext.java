@@ -23,7 +23,6 @@ import nucleus.testsupport.testplugin.TestDataManagerPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MultiKey;
@@ -36,7 +35,6 @@ import util.wrappers.MutableBoolean;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = ActorContext.class)
 public class AT_ActorContext {
 
 	/*
@@ -123,7 +121,6 @@ public class AT_ActorContext {
 		TYPE_1, TYPE_2
 	}
 
-
 	private static enum Local_Function_ID {
 		DATUM, VALUE;
 	}
@@ -140,12 +137,11 @@ public class AT_ActorContext {
 		HIGH, LOW
 	}
 
-
 	/**
 	 * Tests {@link AgentContext#agentExists(AgentId)
 	 */
 	@Test
-	@UnitTestMethod(name = "actorExists", args = { ActorId.class })
+	@UnitTestMethod(target = ActorContext.class, name = "actorExists", args = { ActorId.class })
 	public void testActorExists() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -178,7 +174,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addActor", args = { Consumer.class })
+	@UnitTestMethod(target = ActorContext.class, name = "addActor", args = { Consumer.class })
 	public void testAddActor() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -209,7 +205,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#addPlan(Consumer, double, Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "addKeyedPlan", args = { Consumer.class, double.class, Object.class })
+	@UnitTestMethod(target = ActorContext.class, name = "addKeyedPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddKeyedPlan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -269,7 +265,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPassiveKeyedPlan", args = { Consumer.class, double.class, Object.class })
+	@UnitTestMethod(target = ActorContext.class, name = "addPassiveKeyedPlan", args = { Consumer.class, double.class, Object.class })
 	public void testAddPassiveKeyedPlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -369,7 +365,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPassivePlan", args = { Consumer.class, double.class })
+	@UnitTestMethod(target = ActorContext.class, name = "addPassivePlan", args = { Consumer.class, double.class })
 	public void testAddPassivePlan() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -446,7 +442,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#addPlan(Consumer, double)
 	 */
 	@Test
-	@UnitTestMethod(name = "addPlan", args = { Consumer.class, double.class })
+	@UnitTestMethod(target = ActorContext.class, name = "addPlan", args = { Consumer.class, double.class })
 	public void testAddPlan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -494,7 +490,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getActorId", args = {})
+	@UnitTestMethod(target = ActorContext.class, name = "getActorId", args = {})
 	public void testGetActorId() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -550,7 +546,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDataManager", args = { Class.class })
+	@UnitTestMethod(target = ActorContext.class, name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
 
 		// create the test plugin data builder
@@ -637,7 +633,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#getPlan(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "getPlan", args = { Object.class })
+	@UnitTestMethod(target = ActorContext.class, name = "getPlan", args = { Object.class })
 	public void testGetPlan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -680,7 +676,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#getPlanKeys()
 	 */
 	@Test
-	@UnitTestMethod(name = "getPlanKeys", args = {})
+	@UnitTestMethod(target = ActorContext.class, name = "getPlanKeys", args = {})
 	public void testGetPlanKeys() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -725,7 +721,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#getPlanTime(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "getPlanTime", args = { Object.class })
+	@UnitTestMethod(target = ActorContext.class, name = "getPlanTime", args = { Object.class })
 	public void testGetPlanTime() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -768,7 +764,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTime", args = {})
+	@UnitTestMethod(target = ActorContext.class, name = "getTime", args = {})
 
 	public void testGetTime() {
 
@@ -816,7 +812,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#halt()
 	 */
 	@Test
-	@UnitTestMethod(name = "halt", args = {})
+	@UnitTestMethod(target = ActorContext.class, name = "halt", args = {})
 	public void testHalt() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -866,7 +862,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "releaseOutput", args = {Object.class})
+	@UnitTestMethod(target = ActorContext.class, name = "releaseOutput", args = { Object.class })
 	public void testReleaseOutput() {
 
 		// begin building the action plugin
@@ -912,7 +908,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeActor", args = { ActorId.class })
+	@UnitTestMethod(target = ActorContext.class, name = "removeActor", args = { ActorId.class })
 	public void testRemoveActor() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -969,7 +965,7 @@ public class AT_ActorContext {
 	 * Tests {@link AgentContext#removePlan(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "removePlan", args = { Object.class })
+	@UnitTestMethod(target = ActorContext.class, name = "removePlan", args = { Object.class })
 	public void testRemovePlan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1021,7 +1017,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribeToSimulationClose", args = { Consumer.class })
+	@UnitTestMethod(target = ActorContext.class, name = "subscribeToSimulationClose", args = { Consumer.class })
 	public void testSubscribeToSimulationClose() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -1053,7 +1049,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(name = "subscribe", args = { EventFilter.class, BiConsumer.class })
+	@UnitTestMethod(target = ActorContext.class, name = "subscribe", args = { EventFilter.class, BiConsumer.class })
 	public void testSubscribe() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1105,7 +1101,7 @@ public class AT_ActorContext {
 		 * Have a data manager generate several data change observation events
 		 * with differing types and values.
 		 */
-		pluginDataBuilder.addTestDataManager("generator", ()->new TestDataManager());
+		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(2, (c) -> {
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_1, 0));
 			c.releaseEvent(new DataChangeEvent(DatumType.TYPE_2, 5));
@@ -1141,9 +1137,9 @@ public class AT_ActorContext {
 
 		assertEquals(expectedEvents, receivedEvents);
 	}
-	
+
 	@Test
-	@UnitTestMethod(name = "unsubscribe", args = { EventFilter.class })
+	@UnitTestMethod(target = ActorContext.class, name = "unsubscribe", args = { EventFilter.class })
 	public void testUnsubscribe() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1152,7 +1148,7 @@ public class AT_ActorContext {
 		 * Generate an event label that will match all TestEvents. This will be
 		 * used throughout.
 		 */
-		EventFilter<BaseEvent> eventFilter = EventFilter	.builder(BaseEvent.class).build();//
+		EventFilter<BaseEvent> eventFilter = EventFilter.builder(BaseEvent.class).build();//
 
 		// create some times for the resolver to generate events
 		List<Double> eventGenerationTimes = new ArrayList<>();
@@ -1167,12 +1163,12 @@ public class AT_ActorContext {
 		eventGenerationTimes.add(9.0);
 
 		/*
-		 * At time 0, have the test data manager generate plans to generate events
-		 * at various times
+		 * At time 0, have the test data manager generate plans to generate
+		 * events at various times
 		 */
-		pluginDataBuilder.addTestDataManager("generator",()-> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(0, (c) -> {
-			
+
 			for (Double time : eventGenerationTimes) {
 				c.addPlan((c2) -> {
 					c2.releaseEvent(new BaseEvent());
@@ -1264,6 +1260,5 @@ public class AT_ActorContext {
 		assertEquals(expectedEvents, recievedEvents);
 
 	}
-
 
 }

@@ -13,7 +13,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -24,9 +23,7 @@ import util.random.RandomGeneratorProvider;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = MutableStat.class)
 public class AT_MutableStat {
-	
 
 	private static final double TOLERANCE = 0.0001;
 
@@ -56,7 +53,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#combineStats(Stat...)}
 	 */
 	@Test
-	@UnitTestMethod(name = "combineStats", args = { Stat[].class })
+	@UnitTestMethod(target = MutableStat.class, name = "combineStats", args = { Stat[].class })
 	public void testCombineStats() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5642328443843803200L);
 
@@ -98,7 +95,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#combineStatsCollection(Collection)}
 	 */
 	@Test
-	@UnitTestMethod(name = "combineStatsCollection", args = { Collection.class })
+	@UnitTestMethod(target = MutableStat.class, name = "combineStatsCollection", args = { Collection.class })
 	public void testCombineStatsCollection() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2697343520338303649L);
 
@@ -144,7 +141,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#add(double)}
 	 */
 	@Test
-	@UnitTestMethod(name = "add", args = { double.class })
+	@UnitTestMethod(target = MutableStat.class, name = "add", args = { double.class })
 	public void testAdd() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4090068094278660804L);
 
@@ -219,7 +216,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getMean()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getMean", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "getMean", args = {})
 	public void testGetMean() {
 		// covered by testAdd()
 	}
@@ -228,7 +225,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getMax()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getMax", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "getMax", args = {})
 	public void testGetMax() {
 		// covered by testAdd()
 	}
@@ -237,7 +234,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getMin()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getMin", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "getMin", args = {})
 	public void testGetMin() {
 		// covered by testAdd()
 	}
@@ -246,7 +243,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getStandardDeviation()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getStandardDeviation", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "getStandardDeviation", args = {})
 	public void testGetStandardDeviation() {
 		// covered by testAdd()
 	}
@@ -255,7 +252,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getVariance()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getVariance", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "getVariance", args = {})
 	public void testGetVariance() {
 		// covered by testAdd()
 	}
@@ -264,7 +261,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#MutableStat()}
 	 */
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = MutableStat.class, args = {})
 	public void testConstructor() {
 		MutableStat mutableStat = new MutableStat();
 		assertEquals(0, mutableStat.size());
@@ -279,7 +276,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#clear()}
 	 */
 	@Test
-	@UnitTestMethod(name = "clear", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "clear", args = {})
 	public void testClear() {
 		MutableStat mutableStat = new MutableStat();
 		mutableStat.add(1);
@@ -307,7 +304,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#size()}
 	 */
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "size", args = {})
 	public void testSize() {
 		// covered by testAdd()
 	}
@@ -316,7 +313,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#toString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = MutableStat.class, name = "toString", args = {})
 	public void testToString() {
 		MutableStat mutableStat = new MutableStat();
 		mutableStat.add(1);
