@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
@@ -147,16 +146,10 @@ public class WarningGenerator {
 		}
 	}
 
-	private void probeConstructorTest(Method testMethod, UnitTest unitTest, UnitTestConstructor unitTestConstructor) {
+	private void probeConstructorTest(Method testMethod, UnitTestConstructor unitTestConstructor) {
 		Constructor<?> sourceConstructor = null;
 		try {
-			if (unitTestConstructor.target() != Object.class) {
-				sourceConstructor = unitTestConstructor.target().getConstructor(unitTestConstructor.args());
-			} else {
-				if (unitTest != null) {
-					sourceConstructor = unitTest.target().getConstructor(unitTestConstructor.args());
-				}
-			}
+			sourceConstructor = unitTestConstructor.target().getConstructor(unitTestConstructor.args());
 		} catch (NoSuchMethodException | SecurityException e) {
 			sourceConstructor = null;
 		}
@@ -171,18 +164,12 @@ public class WarningGenerator {
 		}
 	}
 
-	private void probeFieldTest(Method testMethod, UnitTest unitTest, UnitTestField unitTestField) {
+	private void probeFieldTest(Method testMethod, UnitTestField unitTestField) {
 
 		Field sourceField = null;
 		String fieldExceptionMessage = "";
 		try {
-			if (unitTestField.target() != Object.class) {
-				sourceField = unitTestField.target().getField(unitTestField.name());
-			} else {
-				if (unitTest != null) {
-					sourceField = unitTest.target().getField(unitTestField.name());
-				}
-			}
+			sourceField = unitTestField.target().getField(unitTestField.name());
 		} catch (NoSuchFieldException | SecurityException e) {
 			fieldExceptionMessage = e.getMessage();
 			sourceField = null;
@@ -198,18 +185,12 @@ public class WarningGenerator {
 		}
 	}
 
-	private void probeMethodTest(Method testMethod, UnitTest unitTest, UnitTestMethod unitTestMethod) {
+	private void probeMethodTest(Method testMethod, UnitTestMethod unitTestMethod) {
 
 		Method sourceMethod = null;
 		String methodExceptionMessage = "";
 		try {
-			if (unitTestMethod.target() != Object.class) {
-				sourceMethod = unitTestMethod.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
-			} else {
-				if (unitTest != null) {
-					sourceMethod = unitTest.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
-				}
-			}
+			sourceMethod = unitTestMethod.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
 		} catch (NoSuchMethodException | SecurityException e) {
 			methodExceptionMessage = e.getMessage();
 			sourceMethod = null;
@@ -226,13 +207,13 @@ public class WarningGenerator {
 	}
 
 	private void probeTestClass(Class<?> c) {
-		final UnitTest unitTest = c.getAnnotation(UnitTest.class);
+
 		final Method[] methods = c.getMethods();
 		for (final Method testMethod : methods) {
 			final Test test = testMethod.getAnnotation(Test.class);
-			final UnitTestMethod unitTestMethod = testMethod.getAnnotation(UnitTestMethod.class);			
+			final UnitTestMethod unitTestMethod = testMethod.getAnnotation(UnitTestMethod.class);
 			final UnitTestConstructor unitTestConstructor = testMethod.getAnnotation(UnitTestConstructor.class);
-			final UnitTestField unitTestField =  testMethod.getAnnotation(UnitTestField.class);
+			final UnitTestField unitTestField = testMethod.getAnnotation(UnitTestField.class);
 			int caseIndex = 0;
 			if (test != null) {
 				caseIndex += 8;
@@ -276,16 +257,16 @@ public class WarningGenerator {
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION));
 				break;
 			case 9:
-				probeFieldTest(testMethod, unitTest, unitTestField);
+				probeFieldTest(testMethod, unitTestField);
 				break;
 			case 10:
-				probeMethodTest(testMethod, unitTest, unitTestMethod);
+				probeMethodTest(testMethod, unitTestMethod);
 				break;
 			case 11:
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
 				break;
 			case 12:
-				probeConstructorTest(testMethod, unitTest, unitTestConstructor);
+				probeConstructorTest(testMethod,unitTestConstructor);
 				break;
 			case 13:
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
@@ -368,7 +349,7 @@ public class WarningGenerator {
 			}
 		}
 	}
-	
+
 	private void checkSourceFieldCoverage() {
 		for (Field field : sourceFields) {
 			if (!coveredSourceFields.contains(field)) {
@@ -412,7 +393,7 @@ public class WarningGenerator {
 		loadTestClasses();
 
 		checkSourceFieldCoverage();
-		
+
 		checkSourceMethodCoverage();
 
 		checkSourceConstructorCoverage();
