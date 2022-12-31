@@ -50,7 +50,7 @@ public class WarningGenerator {
 		}
 	}
 
-	private WarningContainer.Builder warningContainerBuilder = WarningContainer.builder();
+	private MetaInfoContainer.Builder warningContainerBuilder = MetaInfoContainer.builder();
 
 	private void probeClass(Class<?> c) {
 		final Method[] methods = c.getMethods();
@@ -158,7 +158,7 @@ public class WarningGenerator {
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_CONSTRUCTOR));
 			}
 			coveredSourceConstructors.add(sourceConstructor);
-
+			warningContainerBuilder.addUnitTestConstructor(unitTestConstructor);
 		} else {
 			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_CONSTRUCTOR_CANNOT_BE_RESOLVED));
 		}
@@ -179,6 +179,7 @@ public class WarningGenerator {
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_FIELD, sourceField.toString()));
 			} else {
 				coveredSourceFields.add(sourceField);
+				warningContainerBuilder.addUnitTestField(unitTestField);
 			}
 		} else {
 			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_FIELD_CANNOT_BE_RESOLVED, fieldExceptionMessage));
@@ -200,6 +201,7 @@ public class WarningGenerator {
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD, sourceMethod.toString()));
 			} else {
 				coveredSourceMethods.add(sourceMethod);
+				warningContainerBuilder.addUnitTestMethod(unitTestMethod);
 			}
 		} else {
 			warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.SOURCE_METHOD_CANNOT_BE_RESOLVED, methodExceptionMessage));
@@ -266,7 +268,7 @@ public class WarningGenerator {
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
 				break;
 			case 12:
-				probeConstructorTest(testMethod,unitTestConstructor);
+				probeConstructorTest(testMethod, unitTestConstructor);
 				break;
 			case 13:
 				warningContainerBuilder.addMethodWarning(new MethodWarning(testMethod, WarningType.MULTIPLE_UNIT_ANNOTATIONS_PRESENT));
@@ -386,7 +388,7 @@ public class WarningGenerator {
 		}
 	}
 
-	public WarningContainer execute() {
+	public MetaInfoContainer execute() {
 
 		loadSourceClasses();
 

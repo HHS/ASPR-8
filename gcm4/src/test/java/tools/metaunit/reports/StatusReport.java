@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.MetaInfoContainer;
 import tools.metaunit.warnings.WarningGenerator;
 
 public final class StatusReport {
@@ -21,20 +21,20 @@ public final class StatusReport {
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
 
-		WarningContainer warningContainer = WarningGenerator.builder().setSourcePath(sourcePath).setTestPath(testPath).build().execute();
+		MetaInfoContainer metaInfoContainer = WarningGenerator.builder().setSourcePath(sourcePath).setTestPath(testPath).build().execute();
 		
-		displayWarningContainer(warningContainer);
+		displayWarningContainer(metaInfoContainer);
 
 	}
 	
-	private static void displayWarningContainer(WarningContainer warningContainer) {
-		for(FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+	private static void displayWarningContainer(MetaInfoContainer metaInfoContainer) {
+		for(FieldWarning fieldWarning : metaInfoContainer.getFieldWarnings()) {
 			System.out.println(fieldWarning.getWarningType().getDescription()+"\t"+fieldWarning.getField()+"\t"+fieldWarning.getDetails());
 		}
-		for(MethodWarning methodWarning : warningContainer.getMethodWarnings()) {
+		for(MethodWarning methodWarning : metaInfoContainer.getMethodWarnings()) {
 			System.out.println(methodWarning.getWarningType().getDescription()+"\t"+methodWarning.getMethod()+"\t"+methodWarning.getDetails());
 		}
-		for(ConstructorWarning constructorWarning : warningContainer.getConstructorWarnings()) {
+		for(ConstructorWarning constructorWarning : metaInfoContainer.getConstructorWarnings()) {
 			System.out.println(constructorWarning.getWarningType().getDescription()+"\t"+constructorWarning.getConstructor()+"\t"+constructorWarning.getDetails());
 		}
 

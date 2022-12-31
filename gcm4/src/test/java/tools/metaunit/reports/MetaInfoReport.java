@@ -3,14 +3,19 @@ package tools.metaunit.reports;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import tools.annotations.UnitTag;
+import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestField;
+import tools.annotations.UnitTestMethod;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.MetaInfoContainer;
 import tools.metaunit.warnings.WarningGenerator;
 import tools.metaunit.warnings.WarningType;
 
@@ -23,7 +28,7 @@ import tools.metaunit.warnings.WarningType;
  * @author Shawn Hatch
  *
  */
-public class WarningTypeReport {
+public class MetaInfoReport {
 
 	public static void main(final String[] args) {
 
@@ -32,48 +37,97 @@ public class WarningTypeReport {
 
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
-		WarningContainer warningContainer = WarningGenerator.builder()//
-															.setSourcePath(sourcePath)//
-															.setTestPath(testPath)//
-															.build()//
-															.execute();//
+		MetaInfoContainer metaInfoContainer = WarningGenerator	.builder()//
+																.setSourcePath(sourcePath)//
+																.setTestPath(testPath)//
+																.build()//
+																.execute();//
 
-		reportWarnings(warningContainer);
+		reportWarnings(metaInfoContainer);
+		reportTags(metaInfoContainer);
 
 	}
 
-	private WarningTypeReport() {
+	private MetaInfoReport() {
 	}
 
-	private static void reportWarnings(WarningContainer warningContainer) {
+	private static String getFieldString(UnitTestField unitTestField) {
+		return "Field: " + unitTestField.target().getCanonicalName() + "." + unitTestField.name();
+	}
+	
+	private static String getMethodString(UnitTestMethod unitTestMethod) {
+		
+		return "Method: " + unitTestMethod.target().getCanonicalName() + "." + unitTestMethod.name()+Arrays.toString(unitTestMethod.args());
+	}
+	
+	private static String getConstructorString(UnitTestConstructor unitTestConstructor) {
+		return "Constructor: " + unitTestConstructor.target().getCanonicalName() + "." + Arrays.toString(unitTestConstructor.args());
+	}
+
+
+	private static void reportTags(MetaInfoContainer metaInfoContainer) {
+		Map<UnitTag,List<String>> taggedAnnotations = new LinkedHashMap<>();
+		for(UnitTag unitTag : UnitTag.values()) {
+			taggedAnnotations.put(unitTag, new ArrayList<>());
+		}
+		for (UnitTestField unitTestField : metaInfoContainer.getUnitTestFields()) {			
+			String fieldString = getFieldString(unitTestField);
+			for(UnitTag unitTag : unitTestField.tags()) {
+				taggedAnnotations.get(unitTag).add(fieldString);
+			}
+		}
+		for (UnitTestMethod unitTestMethod : metaInfoContainer.getUnitTestMethods()) {			
+			String methodString = getMethodString(unitTestMethod);
+			for(UnitTag unitTag : unitTestMethod.tags()) {
+				taggedAnnotations.get(unitTag).add(methodString);
+			}
+		}
+		for (UnitTestConstructor unitTestConstructor : metaInfoContainer.getUnitTestConstructors()) {			
+			String constructorString = getConstructorString(unitTestConstructor);
+			for(UnitTag unitTag : unitTestConstructor.tags()) {
+				taggedAnnotations.get(unitTag).add(constructorString);
+			}
+		}
+		
+		for(UnitTag unitTag : taggedAnnotations.keySet()) {
+			List<String> annotationStrings = taggedAnnotations.get(unitTag);
+			if(!annotationStrings.isEmpty()) {
+				System.out.println("Tag = "+unitTag);
+				for(String annotationString : annotationStrings) {
+					System.out.println("\t"+annotationString);
+				}
+			}
+		}
+
+	}
+
+	private static void reportWarnings(MetaInfoContainer metaInfoContainer) {
 
 		Map<WarningType, List<String>> warningMap = new LinkedHashMap<>();
 		for (WarningType warningType : WarningType.values()) {
 			warningMap.put(warningType, new ArrayList<>());
 		}
-		
-		for (FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+
+		for (FieldWarning fieldWarning : metaInfoContainer.getFieldWarnings()) {
 			List<String> list = warningMap.get(fieldWarning.getWarningType());
-			list.add(fieldWarning.getField().getDeclaringClass().getSimpleName()+"\t"+fieldWarning.getField().toString() + " " + fieldWarning.getDetails());
-		}	
+			list.add(fieldWarning.getField().getDeclaringClass().getSimpleName() + "\t" + fieldWarning.getField().toString() + " " + fieldWarning.getDetails());
+		}
 
-		for (MethodWarning methodWarning : warningContainer.getMethodWarnings()) {
+		for (MethodWarning methodWarning : metaInfoContainer.getMethodWarnings()) {
 			List<String> list = warningMap.get(methodWarning.getWarningType());
-			list.add(methodWarning.getMethod().getDeclaringClass().getSimpleName()+"\t"+methodWarning.getMethod().toString() + " " + methodWarning.getDetails());
-		}		
+			list.add(methodWarning.getMethod().getDeclaringClass().getSimpleName() + "\t" + methodWarning.getMethod().toString() + " " + methodWarning.getDetails());
+		}
 
-		for (ConstructorWarning constructorWarning : warningContainer.getConstructorWarnings()) {
+		for (ConstructorWarning constructorWarning : metaInfoContainer.getConstructorWarnings()) {
 			List<String> list = warningMap.get(constructorWarning.getWarningType());
-			list.add(constructorWarning.getConstructor().getDeclaringClass().getSimpleName()+"\t"+constructorWarning.getConstructor().toString() + " " + constructorWarning.getDetails());
+			list.add(constructorWarning.getConstructor().getDeclaringClass().getSimpleName() + "\t" + constructorWarning.getConstructor().toString() + " " + constructorWarning.getDetails());
 		}
 
 		int warningCount = 0;
 		for (WarningType warningType : WarningType.values()) {
 			warningCount += warningMap.get(warningType).size();
 		}
-		
-		
-		
+
 		System.out.println("(" + warningCount + ")");
 		for (WarningType warningType : WarningType.values()) {
 			List<String> warnings = warningMap.get(warningType);
@@ -88,15 +142,14 @@ public class WarningTypeReport {
 				System.out.println();
 			}
 		}
-		
-		
-		List<String> generalWarnings = warningContainer.getGeneralWarnings();
-		if(!generalWarnings.isEmpty()) {
+
+		List<String> generalWarnings = metaInfoContainer.getGeneralWarnings();
+		if (!generalWarnings.isEmpty()) {
 			System.out.println("(" + generalWarnings.size() + ")" + "General warnings");
 		}
 		for (String generalWarning : generalWarnings) {
 			warningCount++;
-			System.out.println("\t" + generalWarning);			
+			System.out.println("\t" + generalWarning);
 		}
 
 		if (warningCount == 0) {

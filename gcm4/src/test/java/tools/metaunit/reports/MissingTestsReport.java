@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.WarningContainer;
+import tools.metaunit.warnings.MetaInfoContainer;
 import tools.metaunit.warnings.WarningGenerator;
 import tools.metaunit.warnings.WarningType;
 
@@ -37,7 +37,7 @@ public class MissingTestsReport {
 
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
-		WarningContainer warningContainer = WarningGenerator.builder()//
+		MetaInfoContainer metaInfoContainer = WarningGenerator.builder()//
 															.setSourcePath(sourcePath)//
 															.setTestPath(testPath)//
 															.build()//
@@ -48,17 +48,17 @@ public class MissingTestsReport {
 			classNameFilter = args[2];			
 		}
 
-		reportWarnings(warningContainer, classNameFilter);
+		reportWarnings(metaInfoContainer, classNameFilter);
 
 	}
 
 	private MissingTestsReport() {
 	}
 
-	private static void reportWarnings(WarningContainer warningContainer, String filter) {
+	private static void reportWarnings(MetaInfoContainer metaInfoContainer, String filter) {
 		Map<String, List<String>> warningMap = new TreeMap<>();
 
-		for (ConstructorWarning constructorWarning : warningContainer.getConstructorWarnings()) {
+		for (ConstructorWarning constructorWarning : metaInfoContainer.getConstructorWarnings()) {
 			if (constructorWarning.getWarningType().equals(WarningType.SOURCE_CONSTRUCTOR_REQUIRES_TEST)) {
 				String classRef = constructorWarning.getConstructor().getDeclaringClass().getName();
 				List<String> list = warningMap.get(classRef);
@@ -70,7 +70,7 @@ public class MissingTestsReport {
 			}
 		}
 
-		for (MethodWarning methodWarning : warningContainer.getMethodWarnings()) {
+		for (MethodWarning methodWarning : metaInfoContainer.getMethodWarnings()) {
 			if (methodWarning.getWarningType().equals(WarningType.SOURCE_METHOD_REQUIRES_TEST)) {
 				String classRef = methodWarning.getMethod().getDeclaringClass().getName();
 				List<String> list = warningMap.get(classRef);
@@ -82,7 +82,7 @@ public class MissingTestsReport {
 			}
 		}
 
-		for (FieldWarning fieldWarning : warningContainer.getFieldWarnings()) {
+		for (FieldWarning fieldWarning : metaInfoContainer.getFieldWarnings()) {
 			if (fieldWarning.getWarningType().equals(WarningType.SOURCE_FIELD_REQUIRES_TEST)) {
 				String classRef = fieldWarning.getField().getDeclaringClass().getName();
 				List<String> list = warningMap.get(classRef);
