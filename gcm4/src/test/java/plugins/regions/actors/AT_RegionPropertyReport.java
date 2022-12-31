@@ -38,15 +38,13 @@ import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = RegionPropertyReport.class)
 public class AT_RegionPropertyReport {
 
 	@Test
-	@UnitTestConstructor(args = { ReportId.class, RegionPropertyId[].class })
+	@UnitTestConstructor(target = RegionPropertyReport.class, args = { ReportId.class, RegionPropertyId[].class })
 	public void testConstructor() {
 		RegionPropertyReport regionPropertyReport = new RegionPropertyReport(REPORT_ID);
 
@@ -60,15 +58,14 @@ public class AT_RegionPropertyReport {
 		RegionPropertyId prop_policy = new SimpleRegionPropertyId("prop_policy");
 		RegionPropertyId prop_vaccine = new SimpleRegionPropertyId("prop_vaccine");
 
-		regionPropertyReport = new RegionPropertyReport(REPORT_ID, prop_age, prop_infected, prop_length, prop_height,
-				prop_policy, prop_vaccine);
+		regionPropertyReport = new RegionPropertyReport(REPORT_ID, prop_age, prop_infected, prop_length, prop_height, prop_policy, prop_vaccine);
 
 		// Show not null when given 1 or more RegionPropertyIds
 		assertNotNull(regionPropertyReport);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 
 		/*
@@ -97,8 +94,7 @@ public class AT_RegionPropertyReport {
 
 		// add the region properties
 		RegionPropertyId prop_age = new SimpleRegionPropertyId("prop_age");
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class)
-				.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class).build();
 		regionBuilder.defineRegionProperty(prop_age, propertyDefinition);
 
 		RegionPropertyId prop_infected = new SimpleRegionPropertyId("prop_infected");
@@ -122,16 +118,15 @@ public class AT_RegionPropertyReport {
 		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionBuilder.build()));
 
 		// add the report
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder()//
-				.addReport(() -> new RegionPropertyReport(REPORT_ID)::init)//
-				.build();//
+		ReportsPluginData reportsPluginData = ReportsPluginData	.builder()//
+																.addReport(() -> new RegionPropertyReport(REPORT_ID)::init)//
+																.build();//
 
 		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsPluginData));
 
 		// add remaining plugins
 		builder.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-		builder.addPlugin(StochasticsPlugin
-				.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(8833508541323194123L).build()));
+		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(8833508541323194123L).build()));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -158,13 +153,12 @@ public class AT_RegionPropertyReport {
 			regionsDataManager.setRegionPropertyValue(regionA, prop_age, 100);
 			regionsDataManager.setRegionPropertyValue(regionB, prop_height, 13.6);
 			regionsDataManager.setRegionPropertyValue(regionC, prop_policy, "hold");
-			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(regionD)
-					.build();
+			RegionConstructionData regionConstructionData = RegionConstructionData.builder().setRegionId(regionD).build();
 			regionsDataManager.addRegion(regionConstructionData);
 
 			PropertyDefinition def = PropertyDefinition.builder().setDefaultValue(0).setType(Integer.class).build();
-			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization
-					.builder().setPropertyDefinition(def).setRegionPropertyId(prop_vaccine).build();
+			RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = RegionPropertyDefinitionInitialization	.builder().setPropertyDefinition(def)
+																																	.setRegionPropertyId(prop_vaccine).build();
 			regionsDataManager.defineRegionProperty(regionPropertyDefinitionInitialization);
 
 		}));
@@ -263,6 +257,5 @@ public class AT_RegionPropertyReport {
 
 	private static final ReportId REPORT_ID = new SimpleReportId("region property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property")
-			.add("Value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property").add("Value").build();
 }

@@ -8,7 +8,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -21,16 +20,13 @@ import util.vector.Vector3D;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = SphericalPoint.class)
 public class AT_SphericalPoint {
-
-	
 
 	/**
 	 * Tests {@link SphericalPoint#SphericalPoint(MutableVector3D)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { MutableVector3D.class })
+	@UnitTestConstructor(target = SphericalPoint.class, args = { MutableVector3D.class })
 	public void testConstructors_MutableVector3D() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8382813671696213293L);
 
@@ -54,7 +50,7 @@ public class AT_SphericalPoint {
 	 * Tests {@link SphericalPoint#SphericalPoint(Vector3D)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Vector3D.class })
+	@UnitTestConstructor(target = SphericalPoint.class, args = { Vector3D.class })
 	public void testConstructors_Vector3D() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1115082964305662816L);
 
@@ -83,11 +79,11 @@ public class AT_SphericalPoint {
 	 * Tests {@link SphericalPoint#getPosition()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getPosition", args = {})
+	@UnitTestMethod(target = SphericalPoint.class, name = "getPosition", args = {})
 	public void testGetPosition() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4303335398336843747L);
 		for (int i = 0; i < 100; i++) {
-			
+
 			double x = randomGenerator.nextDouble() * 2 - 1;
 			double y = randomGenerator.nextDouble() * 2 - 1;
 			double z = randomGenerator.nextDouble() * 2 - 1;
@@ -105,11 +101,11 @@ public class AT_SphericalPoint {
 	 * Tests {@link SphericalPoint#toString()}
 	 */
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = SphericalPoint.class, name = "toString", args = {})
 	public void testToString() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4890458493568164342L);
 		for (int i = 0; i < 100; i++) {
-			
+
 			double x = randomGenerator.nextDouble() * 2 - 1;
 			double y = randomGenerator.nextDouble() * 2 - 1;
 			double z = randomGenerator.nextDouble() * 2 - 1;

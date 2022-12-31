@@ -8,15 +8,13 @@ import org.junit.jupiter.api.Test;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
 
-@UnitTest(target = PersonImminentAdditionEvent.class)
 public class AT_PersonImminentAdditionEvent {
 
 	@Test
-	@UnitTestConstructor(args = { PersonId.class, PersonConstructionData.class })
+	@UnitTestConstructor(target = PersonImminentAdditionEvent.class, args = { PersonId.class, PersonConstructionData.class })
 	public void testConstructor() {
 		PersonId personId = new PersonId(0);
 		PersonConstructionData personConstructionData = PersonConstructionData.builder().build();

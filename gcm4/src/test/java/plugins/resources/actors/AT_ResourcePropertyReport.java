@@ -41,12 +41,10 @@ import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = ResourcePropertyReport.class)
 public class AT_ResourcePropertyReport {
 
 	public enum TestAuxiliaryResourcePropertyId implements ResourcePropertyId {
@@ -73,13 +71,13 @@ public class AT_ResourcePropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(args = {ReportId.class})
+	@UnitTestConstructor(target = ResourcePropertyReport.class, args = { ReportId.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {ActorContext.class})
+	@UnitTestMethod(target = ResourcePropertyReport.class, name = "init", args = { ActorContext.class })
 	public void testInit() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8914112012010329946L);
 		int initialPopulation = 20;
@@ -175,11 +173,12 @@ public class AT_ResourcePropertyReport {
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_4, TestResourcePropertyId.ResourceProperty_4_1_BOOLEAN_MUTABLE, true);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestResourcePropertyId.ResourceProperty_2_1_BOOLEAN_MUTABLE, false);
 
-			//add new property definitions
+			// add new property definitions
 			for (TestAuxiliaryResourcePropertyId propertyId : TestAuxiliaryResourcePropertyId.values()) {
 				TestResourceId testResourceId = propertyId.getTestResourceId();
 				PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();
-				ResourcePropertyInitialization resourcePropertyInitialization = ResourcePropertyInitialization.builder().setResourceId(testResourceId).setResourcePropertyId(propertyId).setPropertyDefinition(propertyDefinition).build();
+				ResourcePropertyInitialization resourcePropertyInitialization = ResourcePropertyInitialization	.builder().setResourceId(testResourceId).setResourcePropertyId(propertyId)
+																												.setPropertyDefinition(propertyDefinition).build();
 				resourcesDataManager.defineResourceProperty(resourcePropertyInitialization);
 			}
 
@@ -196,7 +195,6 @@ public class AT_ResourcePropertyReport {
 			// and now a third setting of the same property to a new value
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 100);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE, 60);
-			
 
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_1, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_1_BOOLEAN_MUTABLE, true);
 			resourcesDataManager.setResourcePropertyValue(TestResourceId.RESOURCE_2, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 137);
@@ -244,9 +242,9 @@ public class AT_ResourcePropertyReport {
 		expectedMap.put(getReportItem(2.0, TestResourceId.RESOURCE_2, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 0), 1);
 		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_1, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_1_BOOLEAN_MUTABLE, true), 1);
 		expectedMap.put(getReportItem(3.0, TestResourceId.RESOURCE_2, TestAuxiliaryResourcePropertyId.AUX_RESOURCE_PROPERTY_2_INTEGER_MUTABLE, 137), 1);
-		
+
 		Map<ReportItem, Integer> actualMap = testReportItemOutputConsumer.getReportItems().get(0);
-		
+
 		assertEquals(expectedMap, actualMap);
 
 	}

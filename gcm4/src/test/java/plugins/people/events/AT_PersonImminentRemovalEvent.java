@@ -7,15 +7,13 @@ import org.junit.jupiter.api.Test;
 
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
 
-@UnitTest(target = PersonImminentRemovalEvent.class)
 public class AT_PersonImminentRemovalEvent {
 
 	@Test
-	@UnitTestConstructor(args = { PersonId.class })
+	@UnitTestConstructor(target = PersonImminentRemovalEvent.class, args = { PersonId.class })
 	public void testConstructor() {
 
 		// precondition tests

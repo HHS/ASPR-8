@@ -6,19 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
-@UnitTest(target = SimplePluginId.class)
+
 public class AT_SimplePluginId {
 	@Test
-	@UnitTestConstructor(args = { Object.class })
+	@UnitTestConstructor(target = SimplePluginId.class, args = { Object.class })
 	public void testConstructor() {
 		assertThrows(RuntimeException.class, () -> new SimplePluginId(null));
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = SimplePluginId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		/*
 		 * SimplePluginIds are equal if and only if their contained values are
@@ -35,7 +34,7 @@ public class AT_SimplePluginId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = SimplePluginId.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		/*
 		 * Equal objects have equal hash codes
@@ -48,10 +47,10 @@ public class AT_SimplePluginId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = SimplePluginId.class, name = "toString", args = {})
 	public void testToString() {
-		assertEquals("A",new SimplePluginId("A").toString());
-		assertEquals("ASDF",new SimplePluginId("ASDF").toString());
-		assertEquals(Integer.toString(12),new SimplePluginId(12).toString());
+		assertEquals("A", new SimplePluginId("A").toString());
+		assertEquals("ASDF", new SimplePluginId("ASDF").toString());
+		assertEquals(Integer.toString(12), new SimplePluginId(12).toString());
 	}
 }

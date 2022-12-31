@@ -59,7 +59,6 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -68,11 +67,10 @@ import util.wrappers.MultiKey;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = RegionsDataManager.class)
 public class AT_RegionsDataManager {
 
 	@Test
-	@UnitTestMethod(name = "expandCapacity", args = { int.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
 		RegionsActionSupport.testConsumer(20, 3161087621160007875L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			// show that a negative growth causes an exception
@@ -85,7 +83,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { RegionsPluginData.class })
+	@UnitTestConstructor(target = RegionsDataManager.class, args = { RegionsPluginData.class })
 	public void testConstructor() {
 		// this test is covered by the remaining tests
 		ContractException contractException = assertThrows(ContractException.class, () -> new RegionsDataManager(null));
@@ -93,7 +91,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleInRegion", args = { RegionId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getPeopleInRegion", args = { RegionId.class })
 	public void testGetPeopleInRegion() {
 
 		// create a container to hold expectations
@@ -159,7 +157,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonRegion", args = { PersonId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getPersonRegion", args = { PersonId.class })
 	public void testGetPersonRegion() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -251,7 +249,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonRegionArrivalTime", args = { PersonId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getPersonRegionArrivalTime", args = { PersonId.class })
 	public void testGetPersonRegionArrivalTime() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -373,10 +371,10 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonRegionArrivalTrackingPolicy", args = {})
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7220786446142555493L);
-		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {			
+		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
 			RegionsActionSupport.testConsumer(0, randomGenerator.nextLong(), timeTrackingPolicy, (c) -> {
 				RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 				assertEquals(timeTrackingPolicy, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
@@ -385,7 +383,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionIds", args = {})
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
 		RegionsActionSupport.testConsumer(0, 87615823520161580L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -399,7 +397,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPopulationCount", args = { RegionId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPopulationCount", args = { RegionId.class })
 	public void testGetRegionPopulationCount() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -453,7 +451,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPopulationTime", args = { RegionId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPopulationTime", args = { RegionId.class })
 	public void testGetRegionPopulationTime() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -529,7 +527,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyDefinition", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPropertyDefinition", args = { RegionPropertyId.class })
 	public void testGetRegionPropertyDefinition() {
 		RegionsActionSupport.testConsumer(0, 8915683065425449883L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -560,7 +558,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyIds", args = {})
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPropertyIds", args = {})
 	public void testGetRegionPropertyIds() {
 		RegionsActionSupport.testConsumer(0, 2658585233315606268L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -575,7 +573,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class })
 	public void testGetRegionPropertyValue() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -661,7 +659,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyTime", args = { RegionId.class, RegionPropertyId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getRegionPropertyTime", args = { RegionId.class, RegionPropertyId.class })
 	public void testGetRegionPropertyTime() {
 		Map<MultiKey, MutableDouble> expectedPropertyTimes = new LinkedHashMap<>();
 		for (TestRegionId testRegionId : TestRegionId.values()) {
@@ -750,7 +748,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "regionIdExists", args = { RegionId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "regionIdExists", args = { RegionId.class })
 	public void testRegionIdExists() {
 		RegionsActionSupport.testConsumer(0, 8636579794186794067L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -771,7 +769,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "regionPropertyIdExists", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "regionPropertyIdExists", args = { RegionPropertyId.class })
 	public void testRegionPropertyIdExists() {
 		RegionsActionSupport.testConsumer(0, 3797498566412748237L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
@@ -792,7 +790,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setPersonRegion", args = { PersonId.class, RegionId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "setPersonRegion", args = { PersonId.class, RegionId.class })
 	public void testSetPersonRegion() {
 		int numberOfPeople = 30;
 
@@ -961,7 +959,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "setRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class })
 	public void testSetRegionPropertyValue() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1129,7 +1127,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testRegionPluginData() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4454658950052475227L);
 		int initialPopulation = 30;
@@ -1230,7 +1228,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPluginDataLoaded() {
 
 		long seed = 4228466028646070532L;
@@ -1316,7 +1314,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonImmimentAdditionEvent() {
 		/*
 		 * Have the agent create some people over time and show that each person
@@ -1413,7 +1411,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineRegionProperty", args = { RegionPropertyDefinitionInitialization.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "defineRegionProperty", args = { RegionPropertyDefinitionInitialization.class })
 	public void testDefineRegionProperty() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -1566,7 +1564,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addRegion", args = { RegionConstructionData.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "addRegion", args = { RegionConstructionData.class })
 	public void testAddRegion() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1712,7 +1710,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion", args = { RegionId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion", args = { RegionId.class })
 	public void testGetEventFilterForPersonRegionUpdateEvent_ByArrivalRegion() {
 
 		int numberOfPeople = 30;
@@ -1807,7 +1805,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion", args = { RegionId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion", args = { RegionId.class })
 	public void testGetEventFilterForPersonRegionUpdateEvent_ByDepartureRegion() {
 
 		int numberOfPeople = 30;
@@ -1903,7 +1901,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent", args = { PersonId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForPersonRegionUpdateEvent", args = { PersonId.class })
 	public void testGetEventFilterForPersonRegionUpdateEvent_Person() {
 		int numberOfPeople = 30;
 
@@ -2001,7 +1999,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonRegionUpdateEvent", args = {})
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForPersonRegionUpdateEvent", args = {})
 	public void testGetEventFilterForPersonRegionUpdateEvent() {
 
 		int numberOfPeople = 30;
@@ -2069,7 +2067,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionPropertyUpdateEvent", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForRegionPropertyUpdateEvent", args = { RegionPropertyId.class })
 	public void testGetEventFilterForRegionPropertyUpdateEvent_Region() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2148,7 +2146,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionPropertyUpdateEvent", args = { RegionId.class, RegionPropertyId.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForRegionPropertyUpdateEvent", args = { RegionId.class, RegionPropertyId.class })
 	public void getEventFilterForRegionPropertyUpdateEvent_Region_Property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -2250,7 +2248,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionPropertyUpdateEvent", args = {})
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForRegionPropertyUpdateEvent", args = {})
 	public void testGetEventFilterForRegionPropertyUpdateEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -2306,7 +2304,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionAdditionEvent", args = {})
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForRegionAdditionEvent", args = {})
 	public void testGetEventFilterForRegionAdditionEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2357,7 +2355,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionPropertyDefinitionEvent", args = {})
+	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForRegionPropertyDefinitionEvent", args = {})
 	public void testGetEventFilterForRegionPropertyDefinitionEvent() {
 
 		Set<MultiKey> expectedObservations = new LinkedHashSet<>();
@@ -2420,7 +2418,7 @@ public class AT_RegionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = RegionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalEvent() {
 
 		MutableInteger pId = new MutableInteger();
@@ -2503,7 +2501,6 @@ public class AT_RegionsDataManager {
 		Plugin testPlugin2 = TestPlugin.getTestPlugin(testPluginData);
 		ContractException contractException = assertThrows(ContractException.class, () -> RegionsActionSupport.testConsumers(0, 3490172254703369545L, TimeTrackingPolicy.TRACK_TIME, testPlugin2));
 		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
-
 
 	}
 

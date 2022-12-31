@@ -19,7 +19,7 @@ import tools.annotations.UnitTestMethod;
 public class AT_SimpleRegionId {
 
 	@Test
-	@UnitTestConstructor(args = { Object.class })
+	@UnitTestConstructor(target = SimpleRegionId.class, args = { Object.class })
 	public void testConstructor() {
 		assertNotNull(new SimpleRegionId(5));
 
@@ -27,7 +27,7 @@ public class AT_SimpleRegionId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = SimpleRegionId.class, name = "toString", args = {})
 	public void testToString() {
 		/*
 		 * Show that the toString of the SimpleRegionId equals its input's
@@ -41,7 +41,7 @@ public class AT_SimpleRegionId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = SimpleRegionId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleRegionId id_1 = new SimpleRegionId(2);
 		SimpleRegionId id_2 = new SimpleRegionId(5);
@@ -106,7 +106,7 @@ public class AT_SimpleRegionId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = SimpleRegionId.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// equal objects have equal hash codes

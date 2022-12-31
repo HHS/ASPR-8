@@ -47,18 +47,16 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = PartitionsDataManager.class)
 public final class AT_PartitionsDataManager {
 
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = PartitionsDataManager.class, args = {})
 	public void testConstructor() {
 		PartitionsDataManager dataManager = new PartitionsDataManager();
 
@@ -240,7 +238,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addPartition", args = { Partition.class, Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "addPartition", args = { Partition.class, Object.class })
 	public void testAddPartition() {
 
 		// Have the simulation initialized with 1000 people. Have an agent
@@ -351,7 +349,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removePartition", args = { Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "removePartition", args = { Object.class })
 	public void testRemovePartition() {
 
 		PartitionsActionSupport.testConsumer(0, 5767679585616452606L, (c) -> {
@@ -376,7 +374,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "partitionExists", args = { Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "partitionExists", args = { Object.class })
 	public void testPartitionExists() {
 
 		PartitionsActionSupport.testConsumer(0, 1968926333881399732L, (c) -> {
@@ -418,7 +416,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "contains", args = { PersonId.class, Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "contains", args = { PersonId.class, Object.class })
 	public void testContains() {
 
 		PartitionsActionSupport.testConsumer(100, 607630153604184177L, (c) -> {
@@ -460,7 +458,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "contains", args = { PersonId.class, LabelSet.class, Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "contains", args = { PersonId.class, LabelSet.class, Object.class })
 	public void testContains_LabelSet() {
 
 		PartitionsActionSupport.testConsumer(100, 7338572401998066291L, (c) -> {
@@ -602,7 +600,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeople", args = { Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPeople", args = { Object.class })
 	public void testGetPeople() {
 
 		// initialized with 100 people
@@ -656,7 +654,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeople", args = { Object.class, LabelSet.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPeople", args = { Object.class, LabelSet.class })
 	public void testGetPeople_LabelSet() {
 		// initialized with 100 people
 		PartitionsActionSupport.testConsumer(100, 7761046492495930843L, (c) -> {
@@ -746,7 +744,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleCountMap", args = { Object.class, LabelSet.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPeopleCountMap", args = { Object.class, LabelSet.class })
 	public void testGetPeopleCountMap() {
 		// initialized with 1000 people
 		PartitionsActionSupport.testConsumer(1000, 3993911184725585603L, (c) -> {
@@ -946,7 +944,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonCount", args = { Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonCount", args = { Object.class })
 	public void getPersonCount() {
 
 		// initialized with 100 people
@@ -998,7 +996,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonCount", args = { Object.class, LabelSet.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonCount", args = { Object.class, LabelSet.class })
 	public void testGetPersonCount_LabelSet() {
 		// initialized with 100 people
 		PartitionsActionSupport.testConsumer(100, 3217787540697556531L, (c) -> {
@@ -1085,7 +1083,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "samplePartition", args = { Object.class, PartitionSampler.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "samplePartition", args = { Object.class, PartitionSampler.class })
 	public void testSamplePartition_General() {
 
 		/*
@@ -1396,7 +1394,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "samplePartition", args = { Object.class, PartitionSampler.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "samplePartition", args = { Object.class, PartitionSampler.class })
 	public void testSamplePartition_PreconditionChecks() {
 
 		// precondition: if the key is null
@@ -1505,7 +1503,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPartitionDataManagerInitialization() {
 		PartitionsActionSupport.testConsumer(0, 2954766214498605129L, (c) -> {
 			PartitionsDataManager dataManager = c.getDataManager(PartitionsDataManager.class);
@@ -1514,7 +1512,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonAdditionEvent() {
 		PartitionsActionSupport.testConsumer(100, 6964380012813498875L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -1551,7 +1549,7 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1602,11 +1600,10 @@ public final class AT_PartitionsDataManager {
 		}));
 
 		/*
-		 * Create an observer that subscribes to the
-		 * PersonImminentRemovalEvent. This will be used to show that
-		 * a report or any other observer can still see a person and their
-		 * membership in a partition even though the removal of the person is
-		 * already underway.
+		 * Create an observer that subscribes to the PersonImminentRemovalEvent.
+		 * This will be used to show that a report or any other observer can
+		 * still see a person and their membership in a partition even though
+		 * the removal of the person is already underway.
 		 * 
 		 * The report will record the ids of the people who were in the removal
 		 * process
@@ -1644,7 +1641,7 @@ public final class AT_PartitionsDataManager {
 			}
 
 			// show that the people still exist
-			
+
 			for (PersonId personId : people) {
 				assertTrue(peopleDataManager.personExists(personId));
 			}

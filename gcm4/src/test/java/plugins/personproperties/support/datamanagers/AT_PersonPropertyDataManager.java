@@ -58,7 +58,6 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -66,11 +65,10 @@ import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = PersonPropertiesDataManager.class)
 public final class AT_PersonPropertyDataManager {
 
 	@Test
-	@UnitTestMethod(name = "getPeopleWithPropertyValue", args = { PersonPropertyId.class, Object.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getPeopleWithPropertyValue", args = { PersonPropertyId.class, Object.class })
 	public void testGetPeopleWithPropertyValue() {
 
 		PersonPropertiesActionSupport.testConsumer(100, 7917315534360369845L, (c) -> {
@@ -110,7 +108,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonCountForPropertyValue", args = { PersonPropertyId.class, Object.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getPersonCountForPropertyValue", args = { PersonPropertyId.class, Object.class })
 	public void testGetPersonCountForPropertyValue() {
 
 		PersonPropertiesActionSupport.testConsumer(100, 686456599634987511L, (c) -> {
@@ -148,7 +146,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonPropertyDefinition", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getPersonPropertyDefinition", args = { PersonPropertyId.class })
 	public void testGetPersonPropertyDefinition() {
 
 		PersonPropertiesActionSupport.testConsumer(0, 138806179316502662L, (c) -> {
@@ -175,7 +173,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getPersonPropertyIds", args = {})
 	public void testGetPersonPropertyIds() {
 		PersonPropertiesActionSupport.testConsumer(0, 8485097765777963229L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
@@ -186,7 +184,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonPropertyTime", args = { PersonId.class, PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getPersonPropertyTime", args = { PersonId.class, PersonPropertyId.class })
 	public void testGetPersonPropertyTime() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -289,7 +287,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class })
 	public void testGetPersonPropertyValue() {
 
 		PersonPropertiesActionSupport.testConsumer(10, 816143115345188642L, (c) -> {
@@ -342,14 +340,14 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { PersonPropertiesPluginData.class })
+	@UnitTestConstructor(target = PersonPropertiesDataManager.class, args = { PersonPropertiesPluginData.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new PersonPropertiesDataManager(null));
 		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(name = "expandCapacity", args = { int.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
 		PersonPropertiesActionSupport.testConsumer(20, 7153865371557964932L, (c) -> {
 			// show that a negative growth causes an exception
@@ -361,7 +359,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "personPropertyIdExists", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "personPropertyIdExists", args = { PersonPropertyId.class })
 	public void testPersonPropertyIdExists() {
 
 		PersonPropertiesActionSupport.testConsumer(0, 4797443283568888200L, (c) -> {
@@ -375,7 +373,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "setPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
 	public void testSetPersonPropertyValue() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -502,7 +500,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonPropertyDataManagerInitialization() {
 
 		List<PersonId> people = new ArrayList<>();
@@ -630,7 +628,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonAdditionEvent() {
 
 		PersonPropertiesActionSupport.testConsumer(100, 4771130331997762252L, (c) -> {
@@ -784,7 +782,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -843,7 +841,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "definePersonProperty", args = { PersonPropertyDefinitionInitialization.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "definePersonProperty", args = { PersonPropertyDefinitionInitialization.class })
 	public void testDefinePersonProperty() {
 
 		/*
@@ -1047,7 +1045,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonPropertyId.class })
 	public void testGetEventFilterForPersonPropertyUpdateEvent_property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1116,13 +1114,14 @@ public final class AT_PersonPropertyDataManager {
 		// precondition test: if the person property id is not known
 		PersonPropertiesActionSupport.testConsumer(0, 334179992057034848L, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
-			ContractException contractException = assertThrows(ContractException.class, () -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(TestPersonPropertyId.getUnknownPersonPropertyId()));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(TestPersonPropertyId.getUnknownPersonPropertyId()));
 			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 		});
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonId.class, PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyUpdateEvent", args = { PersonId.class, PersonPropertyId.class })
 	public void testGetEventFilterForPersonPropertyUpdateEvent_person_property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1286,7 +1285,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonPropertyDefinitionEvent", args = {})
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyDefinitionEvent", args = {})
 	public void testGetEventFilterForPersonPropertyDefinitionEvent() {
 		//
 
@@ -1352,7 +1351,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = { RegionId.class, PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyUpdateEvent", args = { RegionId.class, PersonPropertyId.class })
 	public void testGetEventFilterForPersonPropertyUpdateEvent_region_property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1480,7 +1479,7 @@ public final class AT_PersonPropertyDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonPropertyUpdateEvent", args = {})
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "getEventFilterForPersonPropertyUpdateEvent", args = {})
 	public void testGetEventFilterForPersonPropertyUpdateEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 

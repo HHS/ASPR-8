@@ -6,21 +6,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = StatusConsoleState.class)
 public class AT_StatusConsoleState {
 
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = StatusConsoleState.class, args = {})
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "immediateErrorReporting", args = {})
+	@UnitTestMethod(target = StatusConsoleState.class, name = "immediateErrorReporting", args = {})
 	public void testImmediateErrorReporting() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 		assertFalse(statusConsoleState.immediateErrorReporting());
@@ -33,7 +31,7 @@ public class AT_StatusConsoleState {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setImmediateErrorReporting", args = { boolean.class })
+	@UnitTestMethod(target = StatusConsoleState.class, name = "setImmediateErrorReporting", args = { boolean.class })
 	public void testSetImmediateErrorReporting() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 		assertFalse(statusConsoleState.immediateErrorReporting());
@@ -46,7 +44,7 @@ public class AT_StatusConsoleState {
 	}
 
 	@Test
-	@UnitTestMethod(name = "reportScenarioProgress", args = {})
+	@UnitTestMethod(target = StatusConsoleState.class, name = "reportScenarioProgress", args = {})
 	public void testReportScenarioProgress() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 		assertFalse(statusConsoleState.reportScenarioProgress());
@@ -59,7 +57,7 @@ public class AT_StatusConsoleState {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setReportScenarioProgress", args = { boolean.class })
+	@UnitTestMethod(target = StatusConsoleState.class, name = "setReportScenarioProgress", args = { boolean.class })
 	public void testSetReportScenarioProgress() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 
@@ -71,7 +69,7 @@ public class AT_StatusConsoleState {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getStackTraceReportLimit", args = {})
+	@UnitTestMethod(target = StatusConsoleState.class, name = "getStackTraceReportLimit", args = {})
 	public void testGetStackTraceReportLimit() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 		assertEquals(0, statusConsoleState.getStackTraceReportLimit());
@@ -84,7 +82,7 @@ public class AT_StatusConsoleState {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setStackTraceReportLimit", args = { int.class })
+	@UnitTestMethod(target = StatusConsoleState.class, name = "setStackTraceReportLimit", args = { int.class })
 	public void testSetStackTraceReportLimit() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 
@@ -96,24 +94,24 @@ public class AT_StatusConsoleState {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLastReportedCompletionPercentage", args = {})
+	@UnitTestMethod(target = StatusConsoleState.class, name = "getLastReportedCompletionPercentage", args = {})
 	public void testGetLastReportedCompletionPercentage() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 		assertEquals(0, statusConsoleState.getLastReportedCompletionPercentage());
-		
+
 		statusConsoleState.setLastReportedCompletionPercentage(14);
 		assertEquals(14, statusConsoleState.getLastReportedCompletionPercentage());
-		
+
 	}
 
 	@Test
-	@UnitTestMethod(name = "setLastReportedCompletionPercentage", args = { int.class })
+	@UnitTestMethod(target = StatusConsoleState.class, name = "setLastReportedCompletionPercentage", args = { int.class })
 	public void testSetLastReportedCompletionPercentage() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
-		
+
 		statusConsoleState.setLastReportedCompletionPercentage(14);
 		assertEquals(14, statusConsoleState.getLastReportedCompletionPercentage());
-		
+
 		statusConsoleState.setLastReportedCompletionPercentage(88);
 		assertEquals(88, statusConsoleState.getLastReportedCompletionPercentage());
 
@@ -122,31 +120,30 @@ public class AT_StatusConsoleState {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getImmediateStackTraceCount", args = {})
+	@UnitTestMethod(target = StatusConsoleState.class, name = "getImmediateStackTraceCount", args = {})
 	public void testGetImmediateStackTraceCount() {
 		StatusConsoleState statusConsoleState = new StatusConsoleState();
 		assertEquals(0, statusConsoleState.getImmediateStackTraceCount());
-		
+
 		statusConsoleState.incrementImmediateStackTraceCount();
 		assertEquals(1, statusConsoleState.getImmediateStackTraceCount());
-		
+
 		statusConsoleState.incrementImmediateStackTraceCount();
 		assertEquals(2, statusConsoleState.getImmediateStackTraceCount());
 
 		statusConsoleState.incrementImmediateStackTraceCount();
 		assertEquals(3, statusConsoleState.getImmediateStackTraceCount());
 
-		
 	}
 
 	@Test
-	@UnitTestMethod(name = "incrementImmediateStackTraceCount", args = {})
+	@UnitTestMethod(target = StatusConsoleState.class, name = "incrementImmediateStackTraceCount", args = {})
 	public void testIncrementImmediateStackTraceCount() {
-		StatusConsoleState statusConsoleState = new StatusConsoleState();		
-		
+		StatusConsoleState statusConsoleState = new StatusConsoleState();
+
 		statusConsoleState.incrementImmediateStackTraceCount();
 		assertEquals(1, statusConsoleState.getImmediateStackTraceCount());
-		
+
 		statusConsoleState.incrementImmediateStackTraceCount();
 		assertEquals(2, statusConsoleState.getImmediateStackTraceCount());
 

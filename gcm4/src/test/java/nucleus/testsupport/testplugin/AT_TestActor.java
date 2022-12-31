@@ -12,16 +12,14 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Experiment;
 import nucleus.Plugin;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
 
-@UnitTest(target = TestActor.class)
 public class AT_TestActor {
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = TestActor.class, name = "init", args = { ActorContext.class })
 	public void testInit() {
 		// create two aliases
 		Object alias1 = "actor alias 1";
@@ -81,7 +79,7 @@ public class AT_TestActor {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Object.class })
+	@UnitTestConstructor(target = TestActor.class, args = { Object.class })
 	public void testConstructor() {
 		/*
 		 * The test of the init() method suffices to show that the alias value

@@ -13,16 +13,14 @@ import org.junit.jupiter.api.Test;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = GroupConstructionInfo.class)
 public final class AT_GroupConstructionInfo {
 
 	@Test
-	@UnitTestMethod(name = "getGroupTypeId", args = {})
+	@UnitTestMethod(target = GroupConstructionInfo.class, name = "getGroupTypeId", args = {})
 	public void testGetGroupTypeId() {
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(testGroupTypeId).build();
@@ -31,7 +29,7 @@ public final class AT_GroupConstructionInfo {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyValues", args = {})
+	@UnitTestMethod(target = GroupConstructionInfo.class, name = "getPropertyValues", args = {})
 	public void testGetPropertyValues() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6591155321511911942L);
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
@@ -61,7 +59,7 @@ public final class AT_GroupConstructionInfo {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = GroupConstructionInfo.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(GroupConstructionInfo.builder());
 
@@ -74,8 +72,8 @@ public final class AT_GroupConstructionInfo {
 		assertNotNull(GroupConstructionInfo.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1).build());
 
 		// precondition tests
-		
-		//if the group property value is not set
+
+		// if the group property value is not set
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupConstructionInfo.builder().build());
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 	}
@@ -94,8 +92,8 @@ public final class AT_GroupConstructionInfo {
 			assertEquals(expectedGroupTypeId, groupConstructionInfo.getGroupTypeId());
 		}
 		// precondition tests
-		
-		//if the group property value is set to null
+
+		// if the group property value is set to null
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupConstructionInfo.builder().setGroupTypeId(null).build());
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 
@@ -133,25 +131,22 @@ public final class AT_GroupConstructionInfo {
 			}
 		}
 		// precondition tests
-		
-		//if a group property id is null 
+
+		// if a group property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			GroupConstructionInfo.builder()//
-			.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
-			.setGroupPropertyValue(null, 12)
-			.build();//
+			GroupConstructionInfo	.builder()//
+									.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
+									.setGroupPropertyValue(null, 12).build();//
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-		
-		//if a group property value is null
+
+		// if a group property value is null
 		contractException = assertThrows(ContractException.class, () -> {
-			GroupConstructionInfo.builder()//
-			.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
-			.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, null)
-			.build();//
+			GroupConstructionInfo	.builder()//
+									.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
+									.setGroupPropertyValue(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, null).build();//
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-
 
 	}
 

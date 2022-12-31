@@ -6,16 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-
-@UnitTest(target = StageId.class)
-public class AT_StageId  {
+public class AT_StageId {
 
 	@Test
-	@UnitTestConstructor(args = { int.class })
+	@UnitTestConstructor(target = StageId.class, args = { int.class })
 	public void testConstructor() {
 		for (int i = 0; i < 10; i++) {
 			StageId StageId = new StageId(i);
@@ -25,7 +22,7 @@ public class AT_StageId  {
 	}
 
 	@Test
-	@UnitTestMethod(name = "compareTo", args = { StageId.class })
+	@UnitTestMethod(target = StageId.class, name = "compareTo", args = { StageId.class })
 	public void testCompareTo() {
 		for (int i = 0; i < 10; i++) {
 			StageId stageA = new StageId(i);
@@ -44,23 +41,23 @@ public class AT_StageId  {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = StageId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		for (int i = 0; i < 10; i++) {
 			StageId stageA = new StageId(i);
 			for (int j = 0; j < 10; j++) {
-				StageId stageB = new StageId(j);				
+				StageId stageB = new StageId(j);
 				if (i == j) {
-					assertEquals(stageA,stageB);
+					assertEquals(stageA, stageB);
 				} else {
-					assertNotEquals(stageA,stageB);
+					assertNotEquals(stageA, stageB);
 				}
 			}
 		}
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = StageId.class, name = "getValue", args = {})
 	public void testGetValue() {
 		for (int i = 0; i < 10; i++) {
 			StageId stage = new StageId(i);
@@ -69,7 +66,7 @@ public class AT_StageId  {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = StageId.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		for (int i = 0; i < 10; i++) {
 			StageId stage = new StageId(i);
@@ -78,13 +75,12 @@ public class AT_StageId  {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = StageId.class, name = "toString", args = {})
 	public void testToString() {
 		for (int i = 0; i < 10; i++) {
 			StageId stage = new StageId(i);
 			assertEquals(Integer.toString(i), stage.toString());
 		}
 	}
-
 
 }

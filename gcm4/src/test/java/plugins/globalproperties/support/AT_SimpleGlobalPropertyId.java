@@ -11,15 +11,13 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = SimpleGlobalPropertyId.class)
 public class AT_SimpleGlobalPropertyId {
 
 	@Test
-	@UnitTestConstructor(args = { Object.class })
+	@UnitTestConstructor(target = SimpleGlobalPropertyId.class, args = { Object.class })
 	public void testConstructor() {
 		assertNotNull(new SimpleGlobalPropertyId(5));
 
@@ -27,11 +25,11 @@ public class AT_SimpleGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = SimpleGlobalPropertyId.class, name = "toString", args = {})
 	public void testToString() {
 		/*
-		 * Show that the toString of the SimpleGlobalPropertyId equals its input's
-		 * toString
+		 * Show that the toString of the SimpleGlobalPropertyId equals its
+		 * input's toString
 		 */
 
 		assertEquals(Integer.toString(5), new SimpleGlobalPropertyId(5).toString());
@@ -41,7 +39,7 @@ public class AT_SimpleGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = SimpleGlobalPropertyId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleGlobalPropertyId id_1 = new SimpleGlobalPropertyId(2);
 		SimpleGlobalPropertyId id_2 = new SimpleGlobalPropertyId(5);
@@ -51,9 +49,9 @@ public class AT_SimpleGlobalPropertyId {
 		SimpleGlobalPropertyId id_6 = new SimpleGlobalPropertyId("B");
 		SimpleGlobalPropertyId id_7 = new SimpleGlobalPropertyId("A");
 
-		assertEquals(id_1, id_1); 		// testing reflexive property
+		assertEquals(id_1, id_1); // testing reflexive property
 		assertNotEquals(id_1, id_2);
-		assertEquals(id_1, id_3);		// part of reflective property test
+		assertEquals(id_1, id_3); // part of reflective property test
 		assertNotEquals(id_1, id_4);
 		assertNotEquals(id_1, id_5);
 		assertNotEquals(id_1, id_6);
@@ -65,7 +63,7 @@ public class AT_SimpleGlobalPropertyId {
 		assertNotEquals(id_2, id_5);
 		assertNotEquals(id_2, id_6);
 
-		assertEquals(id_3, id_1);		// part of reflective property test
+		assertEquals(id_3, id_1); // part of reflective property test
 		assertNotEquals(id_3, id_2);
 		assertEquals(id_3, id_3);
 		assertNotEquals(id_3, id_4);
@@ -76,9 +74,9 @@ public class AT_SimpleGlobalPropertyId {
 		assertNotEquals(id_4, id_2);
 		assertNotEquals(id_4, id_3);
 		assertEquals(id_4, id_4);
-		assertEquals(id_4, id_5);		// part of transitive property test
+		assertEquals(id_4, id_5); // part of transitive property test
 		assertNotEquals(id_4, id_6);
-		assertEquals(id_4, id_7);		// part of transitive property test
+		assertEquals(id_4, id_7); // part of transitive property test
 
 		assertNotEquals(id_5, id_1);
 		assertNotEquals(id_5, id_2);
@@ -86,7 +84,7 @@ public class AT_SimpleGlobalPropertyId {
 		assertEquals(id_5, id_4);
 		assertEquals(id_5, id_5);
 		assertNotEquals(id_5, id_6);
-		assertEquals(id_5, id_7);		// part of transitive property test
+		assertEquals(id_5, id_7); // part of transitive property test
 
 		assertNotEquals(id_6, id_1);
 		assertNotEquals(id_6, id_2);
@@ -106,7 +104,7 @@ public class AT_SimpleGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = SimpleGlobalPropertyId.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// equal objects have equal hash codes
@@ -115,7 +113,7 @@ public class AT_SimpleGlobalPropertyId {
 			SimpleGlobalPropertyId s2 = new SimpleGlobalPropertyId(i);
 			assertEquals(s1.hashCode(), s2.hashCode());
 		}
-		
+
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {
 			boolean unique = hashCodes.add(new SimpleGlobalPropertyId(i).hashCode());

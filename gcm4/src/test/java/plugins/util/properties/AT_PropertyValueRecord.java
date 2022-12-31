@@ -11,20 +11,18 @@ import nucleus.testsupport.testplugin.TestActionSupport;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PropertyValueRecord.class)
 public class AT_PropertyValueRecord {
 
 	/**
 	 * test for {@link PropertyValueRecord#getValue()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = PropertyValueRecord.class, name = "getValue", args = {})
 	public void testGetValue() {
-		
+
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(345.6, (c) -> {
@@ -49,7 +47,7 @@ public class AT_PropertyValueRecord {
 	 * test for {@link PropertyValueRecord#setPropertyValue(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setPropertyValue", args = { Object.class })
+	@UnitTestMethod(target = PropertyValueRecord.class, name = "setPropertyValue", args = { Object.class })
 	public void testSetPropertyValue() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -73,7 +71,7 @@ public class AT_PropertyValueRecord {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getAssignmentTime", args = {})
+	@UnitTestMethod(target = PropertyValueRecord.class, name = "getAssignmentTime", args = {})
 	public void testGetAssignmentTime() {
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -97,7 +95,7 @@ public class AT_PropertyValueRecord {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class })
+	@UnitTestConstructor(target = PropertyValueRecord.class, args = { SimulationContext.class })
 	public void testConstructor() {
 		TestActionSupport.testConsumer((c) -> {
 			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(c);

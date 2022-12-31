@@ -7,17 +7,15 @@ import org.junit.jupiter.api.Test;
 
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
 
-@UnitTest(target = PersonAdditionEvent.class)
 public class AT_PersonAdditionEvent {
 
-    @Test
-    @UnitTestConstructor(args = {PersonId.class})
-    public void testConstructor() {
-        ContractException contractException = assertThrows(ContractException.class, () -> new PersonAdditionEvent(null));
-        assertEquals(contractException.getErrorType(), PersonError.NULL_PERSON_ID);
-    }
+	@Test
+	@UnitTestConstructor(target = PersonAdditionEvent.class, args = { PersonId.class })
+	public void testConstructor() {
+		ContractException contractException = assertThrows(ContractException.class, () -> new PersonAdditionEvent(null));
+		assertEquals(contractException.getErrorType(), PersonError.NULL_PERSON_ID);
+	}
 }

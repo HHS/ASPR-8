@@ -13,16 +13,14 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestDataManagerPlan.class)
 public class AT_TestDataManagerPlan {
 
 	@Test
-	@UnitTestConstructor(args = { double.class, Consumer.class })
+	@UnitTestConstructor(target = TestDataManagerPlan.class, args = { double.class, Consumer.class })
 	public void testConstructor() {
 
 		TestDataManagerPlan testDataManagerPlan = new TestDataManagerPlan(0.0, (c) -> {
@@ -31,7 +29,7 @@ public class AT_TestDataManagerPlan {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { double.class, Consumer.class, boolean.class })
+	@UnitTestConstructor(target = TestDataManagerPlan.class, args = { double.class, Consumer.class, boolean.class })
 	public void testConstructor_withKeyControl() {
 		TestDataManagerPlan testDataManagerPlan = new TestDataManagerPlan(0.0, (c) -> {
 		}, false);
@@ -43,7 +41,7 @@ public class AT_TestDataManagerPlan {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { TestDataManagerPlan.class })
+	@UnitTestConstructor(target = TestDataManagerPlan.class, args = { TestDataManagerPlan.class })
 	public void testConstructor_fromExistingPlan() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(340643142108466727L);
 
@@ -62,9 +60,8 @@ public class AT_TestDataManagerPlan {
 		}
 	}
 
-	
 	@Test
-	@UnitTestMethod(name = "executed", args = {})
+	@UnitTestMethod(target = TestDataManagerPlan.class, name = "executed", args = {})
 	public void testExecuted() {
 
 		TestDataManagerPlan testDataManagerPlan = new TestDataManagerPlan(0.0, (c) -> {
@@ -86,7 +83,7 @@ public class AT_TestDataManagerPlan {
 	 * the keys are unique.
 	 */
 	@Test
-	@UnitTestMethod(name = "getKey", args = {})
+	@UnitTestMethod(target = TestDataManagerPlan.class, name = "getKey", args = {})
 	public void testGetKey() {
 
 		/*
@@ -124,7 +121,7 @@ public class AT_TestDataManagerPlan {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getScheduledTime", args = {})
+	@UnitTestMethod(target = TestDataManagerPlan.class, name = "getScheduledTime", args = {})
 	public void testGetScheduledTime() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9009925072863118451L);
@@ -146,9 +143,9 @@ public class AT_TestDataManagerPlan {
 		}
 
 	}
-	
+
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = TestDataManagerPlan.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 
 		/*
@@ -160,15 +157,15 @@ public class AT_TestDataManagerPlan {
 		TestDataManagerPlan plan2 = new TestDataManagerPlan(4.5, (c) -> {
 		}, false);
 		assertEquals(plan1, plan2);
-		
-		//with auto generated keys, there is no way to force them to be equal
+
+		// with auto generated keys, there is no way to force them to be equal
 		plan1 = new TestDataManagerPlan(4.5, (c) -> {
 		});
 		plan2 = new TestDataManagerPlan(4.5, (c) -> {
 		});
 		assertNotEquals(plan1, plan2);
-		
-		//unless we use the copy constructor
+
+		// unless we use the copy constructor
 		plan1 = new TestDataManagerPlan(4.5, (c) -> {
 		});
 		plan2 = new TestDataManagerPlan(plan1);
@@ -177,7 +174,7 @@ public class AT_TestDataManagerPlan {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = { })
+	@UnitTestMethod(target = TestDataManagerPlan.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		/*
 		 * show that equal objects have equal hash codes
@@ -187,8 +184,8 @@ public class AT_TestDataManagerPlan {
 		TestDataManagerPlan plan2 = new TestDataManagerPlan(4.5, (c) -> {
 		}, false);
 		assertEquals(plan1.hashCode(), plan2.hashCode());
-		
-		//via the copy constructor
+
+		// via the copy constructor
 		plan1 = new TestDataManagerPlan(4.5, (c) -> {
 		});
 		plan2 = new TestDataManagerPlan(plan1);

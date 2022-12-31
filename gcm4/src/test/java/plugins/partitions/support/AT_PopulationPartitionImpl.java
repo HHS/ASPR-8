@@ -32,16 +32,14 @@ import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = PopulationPartitionImpl.class)
 public class AT_PopulationPartitionImpl {
 
 	@Test
-	@UnitTestConstructor(args = { SimulationContext.class, Partition.class })
+	@UnitTestConstructor(target = PopulationPartitionImpl.class,args = { SimulationContext.class, Partition.class })
 	public void testConstructor() {
 		PartitionsActionSupport.testConsumer(100, 2997202170895856110L, (c) -> {
 			// establish data view
@@ -85,7 +83,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "attemptPersonAddition", args = { PersonId.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "attemptPersonAddition", args = { PersonId.class })
 	public void testAttemptPersonAddition() {
 
 		PartitionsActionSupport.testConsumer(100, 3063819509780972206L, (c) -> {
@@ -124,7 +122,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "attemptPersonRemoval", args = { PersonId.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "attemptPersonRemoval", args = { PersonId.class })
 	public void testAttemptPersonRemoval() {
 
 		PartitionsActionSupport.testConsumer(100, 4856457716960397685L, (c) -> {
@@ -175,7 +173,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "handleEvent", args = { Event.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "handleEvent", args = { Event.class })
 	public void testHandleEvent() {
 		PartitionsActionSupport.testConsumer(100, 8982209428616460818L, (c) -> {
 			// establish data views
@@ -223,7 +221,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validateLabelSetInfo", args = { LabelSet.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "validateLabelSetInfo", args = { LabelSet.class })
 	public void testValidateLabelSetInfo() {
 
 		PartitionsActionSupport.testConsumer(100, 4662203440339012044L, (c) -> {
@@ -249,7 +247,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleCount", args = {})
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeopleCount", args = {})
 	public void testGetPeopleCount() {
 		PartitionsActionSupport.testConsumer(100, 9050139615348413060L, (c) -> {
 			// establish data views
@@ -406,7 +404,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleCount", args = { LabelSet.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeopleCount", args = { LabelSet.class })
 	public void testGetPeopleCount_LabelSet() {
 		PartitionsActionSupport.testConsumer(1000, 8522399796145249846L, (c) -> {
 
@@ -450,7 +448,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleCountMap", args = { LabelSet.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeopleCountMap", args = { LabelSet.class })
 	public void testGetPeopleCountMap() {
 		PartitionsActionSupport.testConsumer(1000, 4793886153660135719L, (c) -> {
 
@@ -540,7 +538,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "contains", args = { PersonId.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "contains", args = { PersonId.class })
 	public void testContains() {
 		PartitionsActionSupport.testConsumer(100, 2652052463264971998L, (c) -> {
 			// establish data views
@@ -585,7 +583,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "contains", args = { PersonId.class, LabelSet.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "contains", args = { PersonId.class, LabelSet.class })
 	public void testContains_LabelSet() {
 		PartitionsActionSupport.testConsumer(1000, 827063967966581841L, (c) -> {
 
@@ -634,7 +632,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeople", args = { LabelSet.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeople", args = { LabelSet.class })
 	public void testGetPeople_LabelSet() {
 		PartitionsActionSupport.testConsumer(1000, 1040083420377037302L, (c) -> {
 
@@ -679,7 +677,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeople", args = {})
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "getPeople", args = {})
 	public void testGetPeople() {
 		PartitionsActionSupport.testConsumer(100, 4597503339659285165L, (c) -> {
 			// establish data views
@@ -723,7 +721,7 @@ public class AT_PopulationPartitionImpl {
 	}
 
 	@Test
-	@UnitTestMethod(name = "samplePartition", args = { PartitionSampler.class })
+	@UnitTestMethod(target = PopulationPartitionImpl.class,name = "samplePartition", args = { PartitionSampler.class })
 	public void testSamplePartition() {
 		/*
 		 * Tests the sample mechanism under a variety of partition samplers.

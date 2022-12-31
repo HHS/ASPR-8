@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
@@ -18,14 +17,13 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = ObjectValueContainer.class)
 public class AT_ObjectValueContainer {
 
 	/**
 	 * Tests {@link ObjectValueContainer#ObjectValueContainer(Object, int)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { Object.class, int.class })
+	@UnitTestConstructor(target = ObjectValueContainer.class,args = { Object.class, int.class })
 	public void testConstructor() {
 		String defaultValue = "default";
 		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, 20);
@@ -43,7 +41,7 @@ public class AT_ObjectValueContainer {
 	 * Tests {@link ObjectValueContainer#setValue(int, Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "setValue", args = { int.class, Object.class })
+	@UnitTestMethod(target = ObjectValueContainer.class,name = "setValue", args = { int.class, Object.class })
 	public void testSetValue() {
 		String defaultValue = "default";
 		ObjectValueContainer objectValueContainer = new ObjectValueContainer(defaultValue, 20);
@@ -73,7 +71,7 @@ public class AT_ObjectValueContainer {
 	 * Tests {@link ObjectValueContainer#getValue(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getValue", args = { int.class })
+	@UnitTestMethod(target = ObjectValueContainer.class,name = "getValue", args = { int.class })
 	public void testGetValue() {
 
 		String defaultValue = "default";
@@ -101,13 +99,13 @@ public class AT_ObjectValueContainer {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setCapacity", args = {int.class}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestMethod(target = ObjectValueContainer.class,name = "setCapacity", args = {int.class}, tags = {UnitTag.INCOMPLETE})
 	public void testSetCapacity() {
 		// requires a manual performance test
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCapacity", args = {}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestMethod(target = ObjectValueContainer.class,name = "getCapacity", args = {}, tags = {UnitTag.INCOMPLETE})
 	public void testGetCapacity() {
 		// requires a manual performance test
 	}

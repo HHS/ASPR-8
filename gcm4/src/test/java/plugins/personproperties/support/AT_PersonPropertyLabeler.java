@@ -24,22 +24,20 @@ import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.testsupport.PersonPropertiesActionSupport;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = PersonPropertyLabeler.class)
 public class AT_PersonPropertyLabeler {
 
 	@Test
-	@UnitTestConstructor(args = { PersonPropertyId.class, Function.class })
+	@UnitTestConstructor(target = PersonPropertyLabeler.class, args = { PersonPropertyId.class, Function.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabelerSensitivities", args = {})
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 
 		/*
@@ -62,20 +60,19 @@ public class AT_PersonPropertyLabeler {
 
 		/*
 		 * Show that the sensitivity will return the person id from a
-		 * PersonPropertyUpdateEvent if the event matches the
-		 * person property id.
+		 * PersonPropertyUpdateEvent if the event matches the person property
+		 * id.
 		 */
 		PersonId personId = new PersonId(56);
-		PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId,
-				false, true);
+		PersonPropertyUpdateEvent personPropertyUpdateEvent = new PersonPropertyUpdateEvent(personId, personPropertyId, false, true);
 		Optional<PersonId> optional = labelerSensitivity.getPersonId(personPropertyUpdateEvent);
 		assertTrue(optional.isPresent());
 		assertEquals(personId, optional.get());
 
 		/*
 		 * Show that the sensitivity will return an empty optional of person id
-		 * from a PersonPropertyUpdateEvent if the event does not
-		 * match the person property id.
+		 * from a PersonPropertyUpdateEvent if the event does not match the
+		 * person property id.
 		 */
 
 		personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
@@ -86,7 +83,7 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 		/*
 		 * Have the agent show that the person property labeler produces a label
@@ -96,8 +93,7 @@ public class AT_PersonPropertyLabeler {
 		PersonPropertiesActionSupport.testConsumer(10, 6445109933336671672L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonPropertiesDataManager personPropertiesDataManager = c
-					.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
@@ -110,8 +106,7 @@ public class AT_PersonPropertyLabeler {
 			 */
 			List<PersonId> people = peopleDataManager.getPeople();
 			for (PersonId personId : people) {
-				personPropertiesDataManager.setPersonPropertyValue(personId, personPropertyId,
-						randomGenerator.nextBoolean());
+				personPropertiesDataManager.setPersonPropertyValue(personId, personPropertyId, randomGenerator.nextBoolean());
 			}
 
 			/*
@@ -134,7 +129,8 @@ public class AT_PersonPropertyLabeler {
 			 */
 			for (PersonId personId : people) {
 
-				// get the person's property value and apply the function directly
+				// get the person's property value and apply the function
+				// directly
 				Boolean value = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 				Object expectedLabel = function.apply(value);
 
@@ -149,8 +145,7 @@ public class AT_PersonPropertyLabeler {
 			// precondition tests
 
 			// if the person does not exist
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertyLabeler.getLabel(c, new PersonId(100000)));
+			ContractException contractException = assertThrows(ContractException.class, () -> personPropertyLabeler.getLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is null
@@ -160,22 +155,20 @@ public class AT_PersonPropertyLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDimension", args = {})
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getDimension", args = {})
 	public void testGetDimension() {
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			assertEquals(testPersonPropertyId,
-					new PersonPropertyLabeler(testPersonPropertyId, (c) -> null).getDimension());
+			assertEquals(testPersonPropertyId, new PersonPropertyLabeler(testPersonPropertyId, (c) -> null).getDimension());
 		}
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = PersonPropertyLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 		PersonPropertiesActionSupport.testConsumer(10, 770141763380713425L, (c) -> {
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonPropertiesDataManager personPropertiesDataManager = c
-					.getDataManager(PersonPropertiesDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
@@ -188,8 +181,7 @@ public class AT_PersonPropertyLabeler {
 			 */
 			List<PersonId> people = peopleDataManager.getPeople();
 			for (PersonId personId : people) {
-				personPropertiesDataManager.setPersonPropertyValue(personId, personPropertyId,
-						randomGenerator.nextInt(100));
+				personPropertiesDataManager.setPersonPropertyValue(personId, personPropertyId, randomGenerator.nextInt(100));
 			}
 
 			/*
@@ -219,8 +211,7 @@ public class AT_PersonPropertyLabeler {
 				Object expectedLabel = function.apply(oldValue);
 
 				// get the label
-				Object actualLabel = personPropertyLabeler.getPastLabel(c,
-						new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, newValue));
+				Object actualLabel = personPropertyLabeler.getPastLabel(c, new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, newValue));
 
 				// show that the two labels are equal
 				assertEquals(expectedLabel, actualLabel);

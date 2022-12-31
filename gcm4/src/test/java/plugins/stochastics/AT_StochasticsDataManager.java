@@ -18,22 +18,20 @@ import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.StochasticsActionSupport;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = StochasticsDataManager.class)
 public class AT_StochasticsDataManager {
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class })
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testInit() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomNumberGeneratorIds", args = {})
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomNumberGeneratorIds", args = {})
 	public void testGetRandomNumberGeneratorIds() {
 
 		StochasticsActionSupport.testConsumer(1244273915891145733L, (c) -> {
@@ -51,7 +49,7 @@ public class AT_StochasticsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomGeneratorFromId", args = { RandomNumberGeneratorId.class })
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomGeneratorFromId", args = { RandomNumberGeneratorId.class })
 	public void testGetRandomGeneratorFromId() {
 
 		// show that random generators can be retrieved by ids.
@@ -62,43 +60,45 @@ public class AT_StochasticsDataManager {
 				assertNotNull(randomGeneratorFromId);
 			}
 		});
-		
-		// show that an unknown random number generator id will retrieve a random generator
+
+		// show that an unknown random number generator id will retrieve a
+		// random generator
 		StochasticsActionSupport.testConsumer(5985120270606833945L, (c) -> {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			
+
 			RandomNumberGeneratorId randomNumberGeneratorIdA = new RandomNumberGeneratorId() {
 				@Override
 				public String toString() {
 					return "some string";
-				}				
+				}
 			};
-			
+
 			RandomNumberGeneratorId randomNumberGeneratorIdB = new RandomNumberGeneratorId() {
 				@Override
 				public String toString() {
 					return "some string";
-				}				
+				}
 			};
 
-
-			//show that random number generators can be retrieved for new id values
+			// show that random number generators can be retrieved for new id
+			// values
 			RandomGenerator randomGeneratorFromIdA = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorIdA);
 			assertNotNull(randomGeneratorFromIdA);
-			
+
 			RandomGenerator randomGeneratorFromIdB = stochasticsDataManager.getRandomGeneratorFromId(randomNumberGeneratorIdB);
 			assertNotNull(randomGeneratorFromIdB);
-			
-			//show that the random generators are identical since their ids evaluate to same string and were generated under the same base seed value(no reseed invocations between generators)
-			
-			for(int i = 0;i<10;i++) {
+
+			// show that the random generators are identical since their ids
+			// evaluate to same string and were generated under the same base
+			// seed value(no reseed invocations between generators)
+
+			for (int i = 0; i < 10; i++) {
 				long valueA = randomGeneratorFromIdA.nextLong();
 				long valueB = randomGeneratorFromIdB.nextLong();
 				assertEquals(valueA, valueB);
 			}
-			
-		});
 
+		});
 
 		// precondition test : if the random number generator is null
 		StochasticsActionSupport.testConsumer(1893848105389404535L, (c) -> {
@@ -107,11 +107,10 @@ public class AT_StochasticsDataManager {
 			assertEquals(StochasticsError.NULL_RANDOM_NUMBER_GENERATOR_ID, contractException.getErrorType());
 		});
 
-
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomGenerator", args = {})
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "getRandomGenerator", args = {})
 	public void testGetRandomGenerator() {
 		// show that random generators can be retrieved by ids
 		StochasticsActionSupport.testConsumer(683597885444214892L, (c) -> {
@@ -122,13 +121,13 @@ public class AT_StochasticsDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { StochasticsPluginData.class })
+	@UnitTestConstructor(target = StochasticsDataManager.class, args = { StochasticsPluginData.class })
 	public void testConstructor() {
 		// test of constructor is covered by the method tests
 	}
 
 	@Test
-	@UnitTestMethod(name = "resetSeeds", args = { long.class })
+	@UnitTestMethod(target = StochasticsDataManager.class, name = "resetSeeds", args = { long.class })
 	public void testResetSeeds() {
 
 		StochasticsActionSupport.testConsumer(7392476210385850542L, (c) -> {

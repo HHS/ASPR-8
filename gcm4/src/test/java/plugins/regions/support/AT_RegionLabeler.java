@@ -30,28 +30,26 @@ import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = RegionLabeler.class)
 public class AT_RegionLabeler {
 
 	@Test
-	@UnitTestConstructor(args = { Function.class })
+	@UnitTestConstructor(target = RegionLabeler.class,args = { Function.class })
 	public void testConstructor() {
 		assertNotNull(new RegionLabeler((c) -> null));
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDimension", args = {})
+	@UnitTestMethod(target = RegionLabeler.class,name = "getDimension", args = {})
 	public void testGetDimension() {
 		assertEquals(RegionId.class, new RegionLabeler((c) -> null).getDimension());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 
 		/*
@@ -133,7 +131,7 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabelerSensitivities", args = {})
+	@UnitTestMethod(target = RegionLabeler.class,name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 
 		/*
@@ -163,7 +161,7 @@ public class AT_RegionLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = RegionLabeler.class,name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 
 		RegionsActionSupport.testConsumer(30, 349819763474394472L, TimeTrackingPolicy.TRACK_TIME, (c) -> {

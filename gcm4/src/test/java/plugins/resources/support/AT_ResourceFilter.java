@@ -24,7 +24,6 @@ import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -35,10 +34,9 @@ import util.errors.ContractException;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = ResourceFilter.class)
 public class AT_ResourceFilter {
 	@Test
-	@UnitTestMethod(name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = ResourceFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 
 		ResourcesActionSupport.testConsumer(12, 5802033011343021047L, (c) -> {
@@ -54,9 +52,9 @@ public class AT_ResourceFilter {
 		});
 
 	}
-	
+
 	@Test
-	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = ResourceFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 
 		ResourcesActionSupport.testConsumer(12, 6989281647149803633L, (c) -> {
@@ -80,7 +78,7 @@ public class AT_ResourceFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = ResourceFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 
 		ResourcesActionSupport.testConsumer(100, 5313696152098995059L, (c) -> {
@@ -96,7 +94,7 @@ public class AT_ResourceFilter {
 				long amount = randomGenerator.nextInt(10) + 7;
 				RegionId regionId = regionsDataManager.getPersonRegion(personId);
 				resourcesDataManager.addResourceToRegion(TestResourceId.RESOURCE_1, regionId, amount);
-				resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_1, personId, amount);				
+				resourcesDataManager.transferResourceToPersonFromRegion(TestResourceId.RESOURCE_1, personId, amount);
 			}
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
@@ -119,7 +117,7 @@ public class AT_ResourceFilter {
 	}
 
 	@Test
-	@UnitTestConstructor(args = {ResourceId.class, Equality.class, long.class})
+	@UnitTestConstructor(target = ResourceFilter.class, args = { ResourceId.class, Equality.class, long.class })
 	public void testConstructor() {
 		// nothing to test
 	}

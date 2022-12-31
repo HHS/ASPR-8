@@ -27,12 +27,10 @@ import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = StageReport.class)
 public final class AT_StageReport {
 
 	private static enum Action {
@@ -51,29 +49,28 @@ public final class AT_StageReport {
 		}
 	}
 
-	private ReportItem getReportItem(ActorContext agentContext, StageId stageId,
-			MaterialsProducerId materialsProducerId, boolean isOffered, Action action) {
+	private ReportItem getReportItem(ActorContext agentContext, StageId stageId, MaterialsProducerId materialsProducerId, boolean isOffered, Action action) {
 
-		return ReportItem.builder()//
-				.setReportId(REPORT_ID)//
-				.setReportHeader(REPORT_HEADER)//
-				.addValue(agentContext.getTime())//
-				.addValue(stageId)//
-				.addValue(materialsProducerId)//
-				.addValue(action.displayName)//
-				.addValue(isOffered)//
-				.build();//
+		return ReportItem	.builder()//
+							.setReportId(REPORT_ID)//
+							.setReportHeader(REPORT_HEADER)//
+							.addValue(agentContext.getTime())//
+							.addValue(stageId)//
+							.addValue(materialsProducerId)//
+							.addValue(action.displayName)//
+							.addValue(isOffered)//
+							.build();//
 	}
 
 	@Test
-	@UnitTestConstructor(args = { ReportId.class })
+	@UnitTestConstructor(target = StageReport.class, args = { ReportId.class })
 	public void testConstructor() {
 		StageReport report = new StageReport(REPORT_ID);
 		assertNotNull(report);
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = StageReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 		/*
 		 * Create containers for the expected and actual report items that will
@@ -149,41 +146,36 @@ public final class AT_StageReport {
 				StageId stageId;
 				boolean stageOffered;
 				switch (action) {
-					case CREATED:
-						stageId = materialsDataManager.addStage(testMaterialsProducerId);
-						stageOffered = materialsDataManager.isStageOffered(stageId);
-						expectedReportItems
-								.add(getReportItem(c, stageId, testMaterialsProducerId, stageOffered, action));
-						break;
-					case DESTROYED:
-						stages.removeAll(offeredStages);
-						stageId = stages.get(randomGenerator.nextInt(stages.size()));
-						stageOffered = materialsDataManager.isStageOffered(stageId);
-						materialsDataManager.removeStage(stageId, false);
-						expectedReportItems
-								.add(getReportItem(c, stageId, testMaterialsProducerId, stageOffered, action));
-						break;
-					case OFFERED:
-						stageId = stages.get(randomGenerator.nextInt(stages.size()));
-						stageOffered = materialsDataManager.isStageOffered(stageId);
-						materialsDataManager.setStageOfferState(stageId, !stageOffered);
-						expectedReportItems
-								.add(getReportItem(c, stageId, testMaterialsProducerId, !stageOffered, action));
-						break;
-					case TRANSFERRED:
-						stageId = offeredStages.get(randomGenerator.nextInt(offeredStages.size()));
-						stageOffered = materialsDataManager.isStageOffered(stageId);
-						List<MaterialsProducerId> candidateProducerIds = new ArrayList<>(
-								materialsDataManager.getMaterialsProducerIds());
-						candidateProducerIds.remove(testMaterialsProducerId);
-						MaterialsProducerId materialsProducerId = candidateProducerIds
-								.get(randomGenerator.nextInt(candidateProducerIds.size()));
-						materialsDataManager.transferOfferedStage(stageId, materialsProducerId);
-						expectedReportItems.add(getReportItem(c, stageId, materialsProducerId, true, action));
-						expectedReportItems.add(getReportItem(c, stageId, materialsProducerId, false, Action.OFFERED));
-						break;
-					default:
-						throw new RuntimeException("unhandled action type");
+				case CREATED:
+					stageId = materialsDataManager.addStage(testMaterialsProducerId);
+					stageOffered = materialsDataManager.isStageOffered(stageId);
+					expectedReportItems.add(getReportItem(c, stageId, testMaterialsProducerId, stageOffered, action));
+					break;
+				case DESTROYED:
+					stages.removeAll(offeredStages);
+					stageId = stages.get(randomGenerator.nextInt(stages.size()));
+					stageOffered = materialsDataManager.isStageOffered(stageId);
+					materialsDataManager.removeStage(stageId, false);
+					expectedReportItems.add(getReportItem(c, stageId, testMaterialsProducerId, stageOffered, action));
+					break;
+				case OFFERED:
+					stageId = stages.get(randomGenerator.nextInt(stages.size()));
+					stageOffered = materialsDataManager.isStageOffered(stageId);
+					materialsDataManager.setStageOfferState(stageId, !stageOffered);
+					expectedReportItems.add(getReportItem(c, stageId, testMaterialsProducerId, !stageOffered, action));
+					break;
+				case TRANSFERRED:
+					stageId = offeredStages.get(randomGenerator.nextInt(offeredStages.size()));
+					stageOffered = materialsDataManager.isStageOffered(stageId);
+					List<MaterialsProducerId> candidateProducerIds = new ArrayList<>(materialsDataManager.getMaterialsProducerIds());
+					candidateProducerIds.remove(testMaterialsProducerId);
+					MaterialsProducerId materialsProducerId = candidateProducerIds.get(randomGenerator.nextInt(candidateProducerIds.size()));
+					materialsDataManager.transferOfferedStage(stageId, materialsProducerId);
+					expectedReportItems.add(getReportItem(c, stageId, materialsProducerId, true, action));
+					expectedReportItems.add(getReportItem(c, stageId, materialsProducerId, false, Action.OFFERED));
+					break;
+				default:
+					throw new RuntimeException("unhandled action type");
 				}
 
 			}));
@@ -191,8 +183,7 @@ public final class AT_StageReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(542686524159732447L, testPlugin,
-				new StageReport(REPORT_ID)::init);
+		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(542686524159732447L, testPlugin, new StageReport(REPORT_ID)::init);
 
 		assertEquals(expectedReportItems, actualReportItems);
 	}
@@ -202,13 +193,13 @@ public final class AT_StageReport {
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 
 	private static ReportHeader getReportHeader() {
-		return ReportHeader.builder()//
-				.add("time")//
-				.add("stage")//
-				.add("materials_producer")//
-				.add("action")//
-				.add("offered")//
-				.build();
+		return ReportHeader	.builder()//
+							.add("time")//
+							.add("stage")//
+							.add("materials_producer")//
+							.add("action")//
+							.add("offered")//
+							.build();
 
 	}
 

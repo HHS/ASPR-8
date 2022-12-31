@@ -8,7 +8,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
@@ -20,15 +19,14 @@ import util.vector.Vector3D;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = SphericalTriangle.class)
 public class AT_SphericalTriangle {
-	
+
 	/**
 	 * Tests
 	 * {@link SphericalTriangle#SphericalTriangle(SphericalPoint, SphericalPoint, SphericalPoint)}
 	 */
 	@Test
-	@UnitTestConstructor(args = { SphericalPoint.class, SphericalPoint.class, SphericalPoint.class })
+	@UnitTestConstructor(target = SphericalTriangle.class, args = { SphericalPoint.class, SphericalPoint.class, SphericalPoint.class })
 	public void testConstructor() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1516981394291616444L);
 
@@ -61,7 +59,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#contains(SphericalPoint)}
 	 */
 	@Test
-	@UnitTestMethod(name = "contains", args = { SphericalPoint.class })
+	@UnitTestMethod(target = SphericalTriangle.class, name = "contains", args = { SphericalPoint.class })
 	public void testContains() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9196011045677894651L);
 		int containsCount = 0;
@@ -138,7 +136,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#distanceTo(SphericalPoint)}
 	 */
 	@Test
-	@UnitTestMethod(name = "distanceTo", args = { SphericalPoint.class })
+	@UnitTestMethod(target = SphericalTriangle.class, name = "distanceTo", args = { SphericalPoint.class })
 	public void testDistanceTo() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7990273909659377244L);
@@ -209,7 +207,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getArea()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getArea", args = {})
+	@UnitTestMethod(target = SphericalTriangle.class, name = "getArea", args = {})
 	public void testGetArea() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2718440263756572706L);
 
@@ -263,7 +261,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getCentroid()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getCentroid", args = {})
+	@UnitTestMethod(target = SphericalTriangle.class, name = "getCentroid", args = {})
 	public void testGetCentroid() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8983815604783536421L);
 
@@ -328,7 +326,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getChirality()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getChirality", args = {})
+	@UnitTestMethod(target = SphericalTriangle.class, name = "getChirality", args = {})
 	public void testGetChirality() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8318155766608307004L);
 
@@ -371,7 +369,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getRadius()}
 	 */
 	@Test
-	@UnitTestMethod(name = "getRadius", args = {})
+	@UnitTestMethod(target = SphericalTriangle.class, name = "getRadius", args = {})
 	public void testGetRadius() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(858839356108815818L);
 
@@ -412,7 +410,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getSphericalArc(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getSphericalArc", args = { int.class })
+	@UnitTestMethod(target = SphericalTriangle.class, name = "getSphericalArc", args = { int.class })
 	public void testGetSphericalArc() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7281272754332690959L);
 
@@ -468,7 +466,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getSphericalPoint(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getSphericalPoint", args = { int.class })
+	@UnitTestMethod(target = SphericalTriangle.class, name = "getSphericalPoint", args = { int.class })
 	public void testGetSphericalPoint() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5799569940995229412L);
 
@@ -508,7 +506,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#intersects(SphericalTriangle)}
 	 */
 	@Test
-	@UnitTestMethod(name = "intersects", args = { SphericalTriangle.class })
+	@UnitTestMethod(target = SphericalTriangle.class, name = "intersects", args = { SphericalTriangle.class })
 	public void testIntersects_Triangle() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3736978332919299911L);
 
@@ -592,7 +590,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#intersects(SphericalArc)}
 	 */
 	@Test
-	@UnitTestMethod(name = "intersects", args = { SphericalArc.class })
+	@UnitTestMethod(target = SphericalTriangle.class, name = "intersects", args = { SphericalArc.class })
 	public void testIntersects_Arc() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2722369694139955276L);
 

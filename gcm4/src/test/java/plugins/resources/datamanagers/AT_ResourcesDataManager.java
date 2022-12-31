@@ -60,7 +60,6 @@ import plugins.stochastics.StochasticsPluginData;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -70,10 +69,9 @@ import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
-@UnitTest(target = ResourcesDataManager.class)
 public final class AT_ResourcesDataManager {
 	@Test
-	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonRemovalEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -126,7 +124,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleWithoutResource", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPeopleWithoutResource", args = { ResourceId.class })
 	public void testGetPeopleWithoutResource() {
 
 		ResourcesActionSupport.testConsumer(100, 3641510187112920884L, (c) -> {
@@ -170,14 +168,14 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { ResourcesPluginData.class })
+	@UnitTestConstructor(target = ResourcesDataManager.class, args = { ResourcesPluginData.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new ResourcesDataManager(null));
 		assertEquals(ResourceError.NULL_RESOURCE_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(name = "expandCapacity", args = { int.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "expandCapacity", args = { int.class })
 	public void testExpandCapacity() {
 		ResourcesActionSupport.testConsumer(100, 9107703044214388523L, (c) -> {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
@@ -187,7 +185,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPeopleWithResource", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPeopleWithResource", args = { ResourceId.class })
 	public void testGetPeopleWithResource() {
 
 		ResourcesActionSupport.testConsumer(100, 1030108367649001208L, (c) -> {
@@ -229,7 +227,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonResourceLevel", args = { ResourceId.class, PersonId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceLevel", args = { ResourceId.class, PersonId.class })
 	public void testGetPersonResourceLevel() {
 
 		ResourcesActionSupport.testConsumer(20, 110987310555566746L, (c) -> {
@@ -281,7 +279,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonResourceTime", args = { ResourceId.class, PersonId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceTime", args = { ResourceId.class, PersonId.class })
 	public void testGetPersonResourceTime() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -461,7 +459,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonResourceTimeTrackingPolicy", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getPersonResourceTimeTrackingPolicy", args = { ResourceId.class })
 	public void testGetPersonResourceTimeTrackingPolicy() {
 
 		ResourcesActionSupport.testConsumer(5, 757175164544632409L, (c) -> {
@@ -490,7 +488,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionResourceLevel", args = { RegionId.class, ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getRegionResourceLevel", args = { RegionId.class, ResourceId.class })
 	public void testGetRegionResourceLevel() {
 
 		ResourcesActionSupport.testConsumer(20, 6606932435911201728L, (c) -> {
@@ -547,7 +545,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionResourceTime", args = { RegionId.class, ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getRegionResourceTime", args = { RegionId.class, ResourceId.class })
 	public void testGetRegionResourceTime() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -692,7 +690,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourceIds", args = {})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourceIds", args = {})
 	public void testGetResourceIds() {
 
 		ResourcesActionSupport.testConsumer(5, 2601236547109660988L, (c) -> {
@@ -709,7 +707,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourcePropertyDefinition", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyDefinition", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyDefinition() {
 
 		ResourcesActionSupport.testConsumer(5, 7619546908709928867L, (c) -> {
@@ -725,7 +723,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourcePropertyIds", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyIds", args = { ResourceId.class })
 	public void testGetResourcePropertyIds() {
 
 		ResourcesActionSupport.testConsumer(5, 1203402714876510055L, (c) -> {
@@ -756,7 +754,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourcePropertyTime", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyTime", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyTime() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -910,7 +908,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyValue() {
 
 		ResourcesActionSupport.testConsumer(10, 8757871520559824784L, (c) -> {
@@ -999,7 +997,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "resourceIdExists", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "resourceIdExists", args = { ResourceId.class })
 	public void testResourceIdExists() {
 
 		ResourcesActionSupport.testConsumer(5, 4964974931601945506L, (c) -> {
@@ -1017,7 +1015,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "resourcePropertyIdExists", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "resourcePropertyIdExists", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testResourcePropertyIdExists() {
 
 		ResourcesActionSupport.testConsumer(5, 8074706630609416041L, (c) -> {
@@ -1041,8 +1039,8 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "defineResourceProperty", args = { ResourcePropertyInitialization.class })
-	
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "defineResourceProperty", args = { ResourcePropertyInitialization.class })
+
 	public void testDefineResourceProperty() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1146,7 +1144,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addResourceId", args = { ResourceId.class, TimeTrackingPolicy.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceId", args = { ResourceId.class, TimeTrackingPolicy.class })
 	public void testAddResourceId() {
 
 		ResourceId newResourceId1 = TestResourceId.getUnknownResourceId();
@@ -1216,7 +1214,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "setResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class, Object.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "setResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class, Object.class })
 	public void testSetResourcePropertyValue() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1346,7 +1344,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeResourceFromPerson", args = { ResourceId.class, PersonId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "removeResourceFromPerson", args = { ResourceId.class, PersonId.class, long.class })
 	public void testPersonResourceRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1536,7 +1534,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "removeResourceFromRegion", args = { ResourceId.class, RegionId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "removeResourceFromRegion", args = { ResourceId.class, RegionId.class, long.class })
 	public void testRegionResourceRemovalEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -1675,7 +1673,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "transferResourceBetweenRegions", args = { ResourceId.class, RegionId.class, RegionId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceBetweenRegions", args = { ResourceId.class, RegionId.class, RegionId.class, long.class })
 	public void testTransferResourceBetweenRegions() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -1948,7 +1946,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "transferResourceFromPersonToRegion", args = { ResourceId.class, PersonId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceFromPersonToRegion", args = { ResourceId.class, PersonId.class, long.class })
 	public void testResourceTransferFromPersonEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -2121,7 +2119,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "transferResourceToPersonFromRegion", args = { ResourceId.class, PersonId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "transferResourceToPersonFromRegion", args = { ResourceId.class, PersonId.class, long.class })
 	public void testResourceTransferToPersonEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -2355,7 +2353,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "addResourceToRegion", args = { ResourceId.class, RegionId.class, long.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "addResourceToRegion", args = { ResourceId.class, RegionId.class, long.class })
 	public void testAddResourceToRegion() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -2480,7 +2478,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testPersonAdditionEvent() {
 
 		// Have an actor create a few people with random resource levels
@@ -2592,7 +2590,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testRegionAdditionEvent() {
 
 		/*
@@ -2645,7 +2643,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = {DataManagerContext.class})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testInitializeResourceDataManager() {
 
 		int initialPopulation = 10;
@@ -2811,7 +2809,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class })
 	public void testGetEventFilterForPersonResourceUpdateEvent_Resource() {
 
 		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
@@ -2911,7 +2909,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, PersonId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, PersonId.class })
 	public void testGetEventFilterForPersonResourceUpdateEvent_Resource_Person() {
 
 		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
@@ -3037,7 +3035,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, RegionId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = { ResourceId.class, RegionId.class })
 	public void testGetEventFilterForPersonResourceUpdateEvent_Resource_Region() {
 		Set<TestResourceId> selectedResources = new LinkedHashSet<>();
 		selectedResources.add(TestResourceId.RESOURCE_1);
@@ -3162,7 +3160,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForPersonResourceUpdateEvent", args = {})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForPersonResourceUpdateEvent", args = {})
 	public void testGetEventFilterForPersonResourceUpdateEvent() {
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -3240,7 +3238,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionResourceUpdateEvent", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForRegionResourceUpdateEvent", args = { ResourceId.class })
 	public void testGetEventFilterForRegionResourceUpdateEvent_Resource() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3323,7 +3321,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionResourceUpdateEvent", args = { ResourceId.class, RegionId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForRegionResourceUpdateEvent", args = { ResourceId.class, RegionId.class })
 	public void testGetEventFilterForRegionResourceUpdateEvent_Resource_Region() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3412,7 +3410,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForRegionResourceUpdateEvent", args = {})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForRegionResourceUpdateEvent", args = {})
 	public void testGetEventFilterForRegionResourceUpdateEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3470,7 +3468,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForResourcePropertyUpdateEvent", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForResourcePropertyUpdateEvent", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testGetEventFilterForResourcePropertyUpdateEvent_Resource_Property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3593,7 +3591,7 @@ public final class AT_ResourcesDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEventFilterForResourcePropertyUpdateEvent", args = {})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForResourcePropertyUpdateEvent", args = {})
 	public void testGetEventFilterForResourcePropertyUpdateEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3651,10 +3649,9 @@ public final class AT_ResourcesDataManager {
 		ResourcesActionSupport.testConsumers(0, 4428711217570070234L, testPlugin);
 
 	}
-	
-	
+
 	@Test
-	@UnitTestMethod(name = "getEventFilterForResourceIdAdditionEvent", args = {})
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForResourceIdAdditionEvent", args = {})
 	public void testGetEventFilterForResourceIdAdditionEvent() {
 		ResourceId newResourceId1 = TestResourceId.getUnknownResourceId();
 		ResourceId newResourceId2 = TestResourceId.getUnknownResourceId();
@@ -3677,7 +3674,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
 			assertFalse(resourcesDataManager.resourceIdExists(newResourceId1));
-			resourcesDataManager.addResourceId(newResourceId1, timeTrackingPolicy);			
+			resourcesDataManager.addResourceId(newResourceId1, timeTrackingPolicy);
 			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId1, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 			expectedObservations.add(multiKey);
 		}));
@@ -3686,7 +3683,7 @@ public final class AT_ResourcesDataManager {
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.TRACK_TIME;
 			assertFalse(resourcesDataManager.resourceIdExists(newResourceId2));
-			resourcesDataManager.addResourceId(newResourceId2, timeTrackingPolicy);			
+			resourcesDataManager.addResourceId(newResourceId2, timeTrackingPolicy);
 			MultiKey multiKey = new MultiKey(c.getTime(), newResourceId2, TimeTrackingPolicy.TRACK_TIME);
 			expectedObservations.add(multiKey);
 		}));
@@ -3699,9 +3696,9 @@ public final class AT_ResourcesDataManager {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		ResourcesActionSupport.testConsumers(5, 6169797168816977272L, testPlugin);
 	}
-	
+
 	@Test
-	@UnitTestMethod(name = "getEventFilterForResourcePropertyDefinitionEvent", args = {})	
+	@UnitTestMethod(target = ResourcesDataManager.class, name = "getEventFilterForResourcePropertyDefinitionEvent", args = {})
 	public void testGetEventFilterForResourcePropertyDefinitionEvent() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -3761,6 +3758,6 @@ public final class AT_ResourcesDataManager {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		ResourcesActionSupport.testConsumers(5, 1942435631952524244L, testPlugin);
-		
+
 	}
 }

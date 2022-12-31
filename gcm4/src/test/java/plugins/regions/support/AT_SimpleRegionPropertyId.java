@@ -11,15 +11,13 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = SimpleRegionPropertyId.class)
 public class AT_SimpleRegionPropertyId {
 
 	@Test
-	@UnitTestConstructor(args = { Object.class })
+	@UnitTestConstructor(target = SimpleRegionPropertyId.class, args = { Object.class })
 	public void testConstructor() {
 		assertNotNull(new SimpleRegionPropertyId(5));
 
@@ -27,11 +25,11 @@ public class AT_SimpleRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = SimpleRegionPropertyId.class, name = "toString", args = {})
 	public void testToString() {
 		/*
-		 * Show that the toString of the SimpleRegionPropertyId equals its input's
-		 * toString
+		 * Show that the toString of the SimpleRegionPropertyId equals its
+		 * input's toString
 		 */
 
 		assertEquals(Integer.toString(5), new SimpleRegionPropertyId(5).toString());
@@ -41,7 +39,7 @@ public class AT_SimpleRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = SimpleRegionPropertyId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		SimpleRegionId id_1 = new SimpleRegionId(2);
 		SimpleRegionId id_2 = new SimpleRegionId(5);
@@ -106,7 +104,7 @@ public class AT_SimpleRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = SimpleRegionPropertyId.class, name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// equal objects have equal hash codes

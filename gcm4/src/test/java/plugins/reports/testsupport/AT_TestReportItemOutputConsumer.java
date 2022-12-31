@@ -19,12 +19,10 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = TestReportItemOutputConsumer.class)
 public class AT_TestReportItemOutputConsumer {
 
 	private enum ReportIds implements ReportId {
@@ -46,13 +44,13 @@ public class AT_TestReportItemOutputConsumer {
 	private final static Map<Integer, Map<ReportItem, Integer>> expectedReportItems = new LinkedHashMap<>();
 
 	@Test
-	@UnitTestConstructor(args = {})
+	@UnitTestConstructor(target = TestReportItemOutputConsumer.class, args = {})
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "getReportItems", args = {})
+	@UnitTestMethod(target = TestReportItemOutputConsumer.class, name = "getReportItems", args = {})
 	public void testGetReportItems() {
 		/*
 		 * Have an actor generate a few report items with occasional duplicate
@@ -131,7 +129,7 @@ public class AT_TestReportItemOutputConsumer {
 
 		experimentBuilder.addDimension(dimension);
 		experimentBuilder.addPlugin(testPlugin);
-		experimentBuilder.setThreadCount(0);		
+		experimentBuilder.setThreadCount(0);
 		experimentBuilder.build().execute();
 
 		Map<Integer, Map<ReportItem, Integer>> actualReportItems = testReportItemOutputConsumer.getReportItems();
@@ -161,7 +159,7 @@ public class AT_TestReportItemOutputConsumer {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ExperimentContext.class })
+	@UnitTestMethod(target = TestReportItemOutputConsumer.class, name = "init", args = { ExperimentContext.class })
 	public void testInit() {
 		// covered by testGetReportItems
 	}

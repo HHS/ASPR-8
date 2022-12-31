@@ -7,20 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyError;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import util.errors.ContractException;
 
-@UnitTest(target = PersonPropertyDefinitionEvent.class)
 public class AT_PersonPropertyDefinitionEvent {
 
-    @Test
-    @UnitTestConstructor(args = { PersonPropertyId.class })
-    public void testConstructor() {
+	@Test
+	@UnitTestConstructor(target = PersonPropertyDefinitionEvent.class, args = { PersonPropertyId.class })
+	public void testConstructor() {
 
-        // precondition: person property id is null
-        ContractException contractException = assertThrows(ContractException.class,
-                () -> new PersonPropertyDefinitionEvent(null));
-        assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-    }
+		// precondition: person property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> new PersonPropertyDefinitionEvent(null));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+	}
 }

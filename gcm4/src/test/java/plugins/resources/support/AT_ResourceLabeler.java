@@ -31,22 +31,20 @@ import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.stochastics.StochasticsDataManager;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = ResourceLabeler.class)
 public final class AT_ResourceLabeler {
 
 	@Test
-	@UnitTestConstructor(args = { ResourceId.class, Function.class })
+	@UnitTestConstructor(target = ResourceLabeler.class, args = { ResourceId.class, Function.class })
 	public void testConstructor() {
 		assertNotNull(new ResourceLabeler(TestResourceId.RESOURCE_3, (v) -> null));
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabelerSensitivities", args = {})
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 		/*
 		 * Get the labeler sensitivities and show that they are consistent with
@@ -84,7 +82,7 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 		/*
 		 * Create a resource labeler from a function. Have an agent apply the
@@ -120,9 +118,9 @@ public final class AT_ResourceLabeler {
 		}));
 
 		/*
-		 * Have the agent show that the resource labeler created above
-		 * produces a label for each person that is consistent with the function
-		 * passed to the resource labeler.
+		 * Have the agent show that the resource labeler created above produces
+		 * a label for each person that is consistent with the function passed
+		 * to the resource labeler.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -163,7 +161,7 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getDimension", args = {})
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getDimension", args = {})
 	public void testGetDimension() {
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			assertEquals(testResourceId, new ResourceLabeler(testResourceId, (c) -> null).getDimension());
@@ -171,7 +169,7 @@ public final class AT_ResourceLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = ResourceLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 		ResourcesActionSupport.testConsumer(10, 6601261985382450295L, (c) -> {
 

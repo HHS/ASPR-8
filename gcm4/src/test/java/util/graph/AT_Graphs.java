@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.graph.Graphs.GraphConnectedness;
 import util.graph.Graphs.GraphCyclisity;
@@ -20,18 +19,17 @@ import util.graph.Graphs.GraphCyclisity;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Graphs.class)
 public class AT_Graphs {
 
 	/**
 	 * Tests {@link Graphs#cutGraph(Graph)}
 	 */
 	@Test
-	@UnitTestMethod(name = "cutGraph", args = { Graph.class })
+	@UnitTestMethod(target = Graphs.class, name = "cutGraph", args = { Graph.class })
 	public void testCutGraph() {
-		
-		assertEquals(0,Graphs.cutGraph(new MutableGraph<>().toGraph()).size());
-		
+
+		assertEquals(0, Graphs.cutGraph(new MutableGraph<>().toGraph()).size());
+
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
 		m.addEdge("B->C", "B", "C");
@@ -63,7 +61,7 @@ public class AT_Graphs {
 	 * Tests {@link Graphs#getGraphConnectedness(Graph)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getGraphConnectedness", args = { Graph.class })
+	@UnitTestMethod(target = Graphs.class, name = "getGraphConnectedness", args = { Graph.class })
 	public void testGetGraphConnectedness() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		assertEquals(GraphConnectedness.DISCONNECTED, Graphs.getGraphConnectedness(m.toGraph()));
@@ -91,7 +89,7 @@ public class AT_Graphs {
 	 * Tests {@link Graphs#getGraphCyclisity(Graph)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getGraphCyclisity", args = { Graph.class })
+	@UnitTestMethod(target = Graphs.class, name = "getGraphCyclisity", args = { Graph.class })
 	public void testGetGraphCyclisity() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		// empty graphs are acyclic
@@ -120,7 +118,7 @@ public class AT_Graphs {
 	 * Tests {@link Graphs#getReverseGraph(Graph)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getReverseGraph", args = { Graph.class })
+	@UnitTestMethod(target = Graphs.class, name = "getReverseGraph", args = { Graph.class })
 	public void testGetReverseGraph() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -148,7 +146,7 @@ public class AT_Graphs {
 	 * Tests {@link Graphs#getSourceSinkReducedGraph(Graph)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getSourceSinkReducedGraph", args = { Graph.class })
+	@UnitTestMethod(target = Graphs.class, name = "getSourceSinkReducedGraph", args = { Graph.class })
 	public void testGetSourceSinkReducedGraph() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -184,7 +182,7 @@ public class AT_Graphs {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getEdgeReducedGraph", args = {Graph.class})
+	@UnitTestMethod(target = Graphs.class, name = "getEdgeReducedGraph", args = { Graph.class })
 	public void testGetEdgeReducedGraph() {
 
 		MutableGraph<String, String> mutableGraph;
@@ -215,7 +213,7 @@ public class AT_Graphs {
 		mutableGraph = new MutableGraph<>();
 		mutableGraph.addAll(graph);
 		mutableGraph.removeEdge("A->B");
-		expectedGraph =  mutableGraph.toGraph();
+		expectedGraph = mutableGraph.toGraph();
 		assertEquals(expectedGraph, reducedGraph);
 
 		// case: two cyclic edges
@@ -231,7 +229,7 @@ public class AT_Graphs {
 		mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->F", "A", "F");
 		mutableGraph.addEdge("B->F", "B", "F");
-		mutableGraph.addEdge("C->F", "C","F");
+		mutableGraph.addEdge("C->F", "C", "F");
 		mutableGraph.addEdge("D->F", "D", "F");
 		mutableGraph.addEdge("E->F", "E", "F");
 		graph = mutableGraph.toGraph();
@@ -247,12 +245,12 @@ public class AT_Graphs {
 		mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("F->A", "F", "A");
 		mutableGraph.addEdge("F->B", "F", "B");
-		mutableGraph.addEdge("F->C", "F","C");
+		mutableGraph.addEdge("F->C", "F", "C");
 		mutableGraph.addEdge("F->D", "F", "D");
 		mutableGraph.addEdge("F->E", "F", "E");
 		graph = mutableGraph.toGraph();
 		reducedGraph = Graphs.getEdgeReducedGraph(graph);
-		for (String edge: mutableGraph.getEdges()) {
+		for (String edge : mutableGraph.getEdges()) {
 			mutableGraph.removeEdge(edge);
 		}
 		graph = mutableGraph.toGraph();

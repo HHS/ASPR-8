@@ -7,17 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 
-@UnitTest(target = PersonId.class)
 public final class AT_PersonId {
 
 	@Test
-	@UnitTestConstructor(args = { int.class })
+	@UnitTestConstructor(target = PersonId.class,args = { int.class })
 	public void testConstructor() {
 		for (int i = 0; i < 10; i++) {
 			PersonId personId = new PersonId(i);
@@ -32,7 +30,7 @@ public final class AT_PersonId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "compareTo", args = { PersonId.class })
+	@UnitTestMethod(target = PersonId.class,name = "compareTo", args = { PersonId.class })
 	public void testCompareTo() {
 		for (int i = 0; i < 10; i++) {
 			PersonId personA = new PersonId(i);
@@ -51,7 +49,7 @@ public final class AT_PersonId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = PersonId.class,name = "equals", args = { Object.class })
 	public void testEquals() {
 		for (int i = 0; i < 10; i++) {
 			PersonId personA = new PersonId(i);
@@ -67,7 +65,7 @@ public final class AT_PersonId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = PersonId.class,name = "getValue", args = {})
 	public void testGetValue() {
 		for (int i = 0; i < 10; i++) {
 			PersonId person = new PersonId(i);
@@ -76,7 +74,7 @@ public final class AT_PersonId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = PersonId.class,name = "hashCode", args = {})
 	public void testHashCode() {
 		for (int i = 0; i < 10; i++) {
 			PersonId person = new PersonId(i);
@@ -85,7 +83,7 @@ public final class AT_PersonId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = PersonId.class,name = "toString", args = {})
 	public void testToString() {
 		for (int i = 0; i < 10; i++) {
 			PersonId person = new PersonId(i);

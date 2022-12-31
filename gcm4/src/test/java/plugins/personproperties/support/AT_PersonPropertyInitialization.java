@@ -6,60 +6,44 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import org.junit.jupiter.api.Test;
 
 import plugins.personproperties.testsupport.TestPersonPropertyId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = PersonPropertyInitialization.class)
 public class AT_PersonPropertyInitialization {
 
 	@Test
-	@UnitTestConstructor(args = { PersonPropertyId.class, Object.class })
+	@UnitTestConstructor(target = PersonPropertyInitialization.class, args = { PersonPropertyId.class, Object.class })
 	public void testConstructor() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonPropertyId", args = {})
+	@UnitTestMethod(target = PersonPropertyInitialization.class, name = "getPersonPropertyId", args = {})
 	public void testGetPersonPropertyId() {
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		Double value = 2.7;
-		PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId,
-				value);
+		PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId, value);
 		assertEquals(personPropertyId, personPropertyInitialization.getPersonPropertyId());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = {})
+	@UnitTestMethod(target = PersonPropertyInitialization.class, name = "getValue", args = {})
 	public void testGetValue() {
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		Double value = 2.7;
-		PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId,
-				value);
+		PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId, value);
 		assertEquals(value, personPropertyInitialization.getValue());
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = PersonPropertyInitialization.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		PersonPropertyInitialization personProp1 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK,
-				2.7);
-		PersonPropertyInitialization personProp2 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK,
-				false);
-		PersonPropertyInitialization personProp3 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK,
-				true);
-		PersonPropertyInitialization personProp4 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK,
-				20);
-		PersonPropertyInitialization personProp5 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK,
-				2.7);
-		PersonPropertyInitialization personProp6 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK,
-				20);
+		PersonPropertyInitialization personProp1 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
+		PersonPropertyInitialization personProp2 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false);
+		PersonPropertyInitialization personProp3 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true);
+		PersonPropertyInitialization personProp4 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
+		PersonPropertyInitialization personProp5 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
+		PersonPropertyInitialization personProp6 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
 
 		// reflexive
 		assertEquals(personProp1, personProp1);
@@ -116,35 +100,24 @@ public class AT_PersonPropertyInitialization {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = PersonPropertyInitialization.class, name = "toString", args = {})
 	public void testToString() {
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 		Double value = 2.7;
-		PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId,
-				value);
+		PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId, value);
 		String expectedString = "PersonPropertyAssignment [personPropertyId=PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, value=2.7]";
 
 		assertEquals(expectedString, personPropertyInitialization.toString());
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = PersonPropertyInitialization.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		PersonPropertyInitialization personProp1 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK,
-				2.7);
-		PersonPropertyInitialization personProp2 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK,
-				false);
-		PersonPropertyInitialization personProp3 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK,
-				20);
-		PersonPropertyInitialization personProp4 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK,
-				2.7);
-		PersonPropertyInitialization personProp5 = new PersonPropertyInitialization(
-				TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK,
-				20);
+		PersonPropertyInitialization personProp1 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
+		PersonPropertyInitialization personProp2 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false);
+		PersonPropertyInitialization personProp3 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
+		PersonPropertyInitialization personProp4 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
+		PersonPropertyInitialization personProp5 = new PersonPropertyInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
 
 		// reflexive
 		assertEquals(personProp1.hashCode(), personProp1.hashCode());

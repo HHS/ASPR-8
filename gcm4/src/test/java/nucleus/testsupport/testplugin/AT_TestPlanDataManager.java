@@ -11,11 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.DataManagerContext;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = TestPlanDataManager.class)
 public class AT_TestPlanDataManager {
 	private static class TestDataManager1 extends TestDataManager {
 
@@ -26,19 +24,19 @@ public class AT_TestPlanDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { DataManagerContext.class }, tags = { UnitTag.LOCAL_PROXY })
+	@UnitTestMethod(target = TestPlanDataManager.class, name = "init", args = { DataManagerContext.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testInit() {
 		// covered by other tests
 	}
 
 	@Test
-	@UnitTestConstructor(args = { TestPluginData.class }, tags = { UnitTag.LOCAL_PROXY })
+	@UnitTestConstructor(target = TestPlanDataManager.class, args = { TestPluginData.class }, tags = { UnitTag.LOCAL_PROXY })
 	public void testConstructor() {
 		// covered by other tests
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestActorPlans", args = { Object.class })
+	@UnitTestMethod(target = TestPlanDataManager.class, name = "getTestActorPlans", args = { Object.class })
 	public void testGetActorActionPlans() {
 		// create a few TestActorPlan items associated with two aliases
 		Map<String, Set<TestActorPlan>> expectedTestActorPlans = new LinkedHashMap<>();
@@ -81,7 +79,7 @@ public class AT_TestPlanDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestDataManagerPlans", args = { Object.class })
+	@UnitTestMethod(target = TestPlanDataManager.class, name = "getTestDataManagerPlans", args = { Object.class })
 	public void testGetTestDataManagerPlans() {
 		// build a few test data manager plans
 		Map<Object, Set<TestDataManagerPlan>> planMap = new LinkedHashMap<>();

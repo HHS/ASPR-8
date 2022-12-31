@@ -8,23 +8,21 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = GroupError.class)
 public class AT_GroupError {
 
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = GroupError.class, name = "getDescription", args = {})
 	public void test() {
-		//show that each description is a unique, non-null and non-empty string 
+		// show that each description is a unique, non-null and non-empty string
 		Set<String> descriptions = new LinkedHashSet<>();
-		for(GroupError groupError : GroupError.values()) {
-			String description = groupError.getDescription();			
-			assertNotNull(description,"null description for "+groupError);			
-			assertTrue(description.length()>0, "empty string for "+groupError);
+		for (GroupError groupError : GroupError.values()) {
+			String description = groupError.getDescription();
+			assertNotNull(description, "null description for " + groupError);
+			assertTrue(description.length() > 0, "empty string for " + groupError);
 			boolean unique = descriptions.add(description);
-			assertTrue(unique,"description for "+groupError+" is not unique");
+			assertTrue(unique, "description for " + groupError + " is not unique");
 		}
 	}
 }

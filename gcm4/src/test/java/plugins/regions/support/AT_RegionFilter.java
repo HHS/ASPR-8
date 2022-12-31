@@ -20,16 +20,14 @@ import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.testsupport.RegionsActionSupport;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-@UnitTest(target = RegionFilter.class)
 public class AT_RegionFilter {
 
 	@Test
-	@UnitTestConstructor(args = { RegionId[].class })
+	@UnitTestConstructor(target = RegionFilter.class, args = { RegionId[].class })
 	public void testConstructorWithArray() {
 		RegionsActionSupport.testConsumer(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
@@ -39,13 +37,11 @@ public class AT_RegionFilter {
 			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
 
 			/* precondition: if the region is unknown */
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 			// precondition: null region id
-			contractException = assertThrows(ContractException.class,
-					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -53,7 +49,7 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { Set.class })
+	@UnitTestConstructor(target = RegionFilter.class, args = { Set.class })
 	public void testConstructorWithSet() {
 		RegionsActionSupport.testConsumer(100, 4602637405159227338L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
@@ -63,13 +59,11 @@ public class AT_RegionFilter {
 			assertThrows(RuntimeException.class, () -> new RegionFilter(regionIds));
 
 			/* precondition: if the region is unknown */
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
+			ContractException contractException = assertThrows(ContractException.class, () -> new RegionFilter(TestRegionId.getUnknownRegionId()).validate(c));
 			assertEquals(RegionError.UNKNOWN_REGION_ID, contractException.getErrorType());
 
 			// precondition: null region id
-			contractException = assertThrows(ContractException.class,
-					() -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
+			contractException = assertThrows(ContractException.class, () -> new RegionFilter(null, TestRegionId.REGION_1).validate(c));
 			assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 
 		});
@@ -77,7 +71,7 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getFilterSensitivities", args = {})
+	@UnitTestMethod(target = RegionFilter.class, name = "getFilterSensitivities", args = {})
 	public void testGetFilterSensitivities() {
 		RegionsActionSupport.testConsumer(100, 2916119612012950359L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
@@ -93,7 +87,7 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "evaluate", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = RegionFilter.class, name = "evaluate", args = { SimulationContext.class, PersonId.class })
 	public void testEvaluate() {
 		RegionsActionSupport.testConsumer(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 
@@ -103,8 +97,7 @@ public class AT_RegionFilter {
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1)
-						|| regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
+				boolean expected = regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_1) || regionsDataManager.getPersonRegion(personId).equals(TestRegionId.REGION_2);
 				boolean actual = filter.evaluate(c, personId);
 				assertEquals(expected, actual);
 			}
@@ -123,7 +116,7 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = RegionFilter.class, name = "toString", args = {})
 	public void testToString() {
 		Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);
 
@@ -133,7 +126,7 @@ public class AT_RegionFilter {
 	}
 
 	@Test
-	@UnitTestMethod(name = "validate", args = { SimulationContext.class })
+	@UnitTestMethod(target = RegionFilter.class, name = "validate", args = { SimulationContext.class })
 	public void testValidate() {
 		RegionsActionSupport.testConsumer(100, 28072097989345652L, TimeTrackingPolicy.DO_NOT_TRACK_TIME, (c) -> {
 			Filter filter = new RegionFilter(TestRegionId.REGION_1, TestRegionId.REGION_2);

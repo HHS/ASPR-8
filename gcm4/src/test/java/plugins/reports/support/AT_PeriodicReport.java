@@ -18,14 +18,12 @@ import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = PeriodicReport.class)
 public class AT_PeriodicReport {
 
 	private static class TestReport extends PeriodicReport {
@@ -172,7 +170,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestConstructor(args = { ReportId.class,ReportPeriod.class })	
+	@UnitTestConstructor(target = PeriodicReport.class, args = { ReportId.class, ReportPeriod.class })
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class, () -> new TestReport(null, ReportPeriod.DAILY));
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
@@ -183,7 +181,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class})
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
 	public void testAddTimeFieldHeaders() {
 
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
@@ -214,7 +212,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
 	public void testFillTimeFields_Daily() {
 		double simulationEndTime = 10.6;
 
@@ -250,14 +248,14 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
 	public void testFillTimeFields_Hourly() {
 		double simulationEndTime = 3.6;
 
 		Simulation.Builder builder = Simulation.builder();
 
 		ReportId reportId = new SimpleReportId("report");
-		HourlyTestReport hourlyTestReport = new HourlyTestReport(reportId,ReportPeriod.HOURLY);
+		HourlyTestReport hourlyTestReport = new HourlyTestReport(reportId, ReportPeriod.HOURLY);
 		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 			return hourlyTestReport::init;
 		}).build();
@@ -266,10 +264,9 @@ public class AT_PeriodicReport {
 		// add the reports plugin
 		builder.addPlugin(reportPlugin);
 
-
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-		// create an agent that will make the engine run for a few days		
+		// create an agent that will make the engine run for a few days
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(simulationEndTime, (c) -> {
 		}));
 
@@ -287,27 +284,27 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
 	public void testFillTimeFields_EndOfSimulation() {
 		double simulationEndTime = 3.6;
 
 		Simulation.Builder builder = Simulation.builder();
 
 		ReportId reportId = new SimpleReportId("report");
-		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(reportId,ReportPeriod.END_OF_SIMULATION);
-		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport( () -> {
+		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(reportId, ReportPeriod.END_OF_SIMULATION);
+		ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 			return endOfSimulationTestReport::init;
 		}).build();
 
 		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
-		
+
 		// add the reports plugin
 		builder.addPlugin(reportPlugin);
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// create an agent that will make the engine run for a few days
-	
+
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(simulationEndTime, (c) -> {
 		}));
 
@@ -329,7 +326,7 @@ public class AT_PeriodicReport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ActorContext.class })
 	public void testInit() {
 
 		for (ReportPeriod reportPeriod : ReportPeriod.values()) {
@@ -339,8 +336,8 @@ public class AT_PeriodicReport {
 			Simulation.Builder builder = Simulation.builder();
 
 			ReportId reportId = new SimpleReportId("report");
-			InitTestReport initTestReport = new InitTestReport(reportId,reportPeriod);
-			ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport( () -> {
+			InitTestReport initTestReport = new InitTestReport(reportId, reportPeriod);
+			ReportsPluginData reportsInitialData = ReportsPluginData.builder().addReport(() -> {
 				return initTestReport::init;
 			}).build();
 
@@ -348,11 +345,10 @@ public class AT_PeriodicReport {
 			Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsInitialData);
 			builder.addPlugin(reportPlugin);
 
-
 			TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 			// create an agent that will make the engine run for a few days
-			
+
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(simulationEndTime, (c) -> {
 			}));
 
@@ -410,14 +406,14 @@ public class AT_PeriodicReport {
 			}
 
 			// precondition tests
-			
-			TestReport testReport = new TestReport(reportId,ReportPeriod.DAILY);
+
+			TestReport testReport = new TestReport(reportId, ReportPeriod.DAILY);
 			ContractException contractException = assertThrows(ContractException.class, () -> testReport.init(null));
 			assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 		}
 
 		// precondition tests
-		TestReport testReport = new TestReport(new SimpleReportId("report"),ReportPeriod.DAILY);
+		TestReport testReport = new TestReport(new SimpleReportId("report"), ReportPeriod.DAILY);
 		ContractException contractException = assertThrows(ContractException.class, () -> testReport.init(null));
 		assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 	}
