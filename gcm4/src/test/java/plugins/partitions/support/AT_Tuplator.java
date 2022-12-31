@@ -13,7 +13,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.partitions.support.Tuplator.Builder;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
@@ -23,14 +22,13 @@ import util.random.RandomGeneratorProvider;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Tuplator.class)
 public class AT_Tuplator {
 
 	/**
 	 * Tests {@link Tuplator#size()}
 	 */
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = Tuplator.class, name = "size", args = {})
 	public void testSize() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7820715406750309229L);
@@ -52,7 +50,7 @@ public class AT_Tuplator {
 	 * Tests {@link Tuplator#builder()}
 	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = Tuplator.class, name = "builder", args = {})
 	public void testBuilder() {
 		// covered by other tests
 	}
@@ -61,7 +59,7 @@ public class AT_Tuplator {
 	 * Tests {@link Tuplator#dimensions()}
 	 */
 	@Test
-	@UnitTestMethod(name = "dimensions", args = {})
+	@UnitTestMethod(target = Tuplator.class, name = "dimensions", args = {})
 	public void testDimensions() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7661626069466374878L);
@@ -81,7 +79,7 @@ public class AT_Tuplator {
 	 * Tests {@link Tuplator#fillTuple(int, int[])}
 	 */
 	@Test
-	@UnitTestMethod(name = "fillTuple", args = { int.class, int[].class })
+	@UnitTestMethod(target = Tuplator.class, name = "fillTuple", args = { int.class, int[].class })
 	public void testFillTuple() {
 
 		Tuplator tuplator = Tuplator.builder().addDimension(2).addDimension(3).addDimension(5).build();

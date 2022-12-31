@@ -17,49 +17,44 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
-@UnitTest(target = RegionsActionSupport.class)
 public class AT_RegionsActionSupport {
-    @Test
-    @UnitTestMethod(name = "testConsumer", args = { int.class, long.class, TimeTrackingPolicy.class,
-            Consumer.class }, tags = { UnitTag.INCOMPLETE })
-    public void testTestConsumer() {
-        MutableBoolean executed = new MutableBoolean();
-        RegionsActionSupport.testConsumer(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
+	@Test
+	@UnitTestMethod(target = RegionsActionSupport.class, name = "testConsumer", args = { int.class, long.class, TimeTrackingPolicy.class, Consumer.class }, tags = { UnitTag.INCOMPLETE })
+	public void testTestConsumer() {
+		MutableBoolean executed = new MutableBoolean();
+		RegionsActionSupport.testConsumer(100, 5785172948650781925L, TimeTrackingPolicy.TRACK_TIME, (c) -> {
 
-            // show that there are 100 people
-            PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-            assertEquals(100, peopleDataManager.getPopulationCount());
+			// show that there are 100 people
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			assertEquals(100, peopleDataManager.getPopulationCount());
 
-            // show that time tracking policy
-            RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-            assertEquals(TimeTrackingPolicy.TRACK_TIME, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
+			// show that time tracking policy
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			assertEquals(TimeTrackingPolicy.TRACK_TIME, regionsDataManager.getPersonRegionArrivalTrackingPolicy());
 
-            // show that there are regions
-            assertTrue(!regionsDataManager.getRegionIds().isEmpty());
+			// show that there are regions
+			assertTrue(!regionsDataManager.getRegionIds().isEmpty());
 
-            // show that each region has a person
-            for (RegionId regionId : regionsDataManager.getRegionIds()) {
-                assertTrue(!regionsDataManager.getPeopleInRegion(regionId).isEmpty());
-            }
+			// show that each region has a person
+			for (RegionId regionId : regionsDataManager.getRegionIds()) {
+				assertTrue(!regionsDataManager.getPeopleInRegion(regionId).isEmpty());
+			}
 
-            executed.setValue(true);
-        });
+			executed.setValue(true);
+		});
 
-        assertTrue(executed.getValue());
-    }
+		assertTrue(executed.getValue());
+	}
 
-    @Test
-    @UnitTestMethod(name = "testConsumers", args = { int.class, long.class, TimeTrackingPolicy.class,
-            Plugin.class }, tags = { UnitTag.INCOMPLETE })
-    public void testTestConsumers() {
-        ContractException contractException = assertThrows(ContractException.class,
-                () -> RegionsActionSupport.testConsumers(100, 5166994853007999229L, TimeTrackingPolicy.TRACK_TIME,
-                        TestPlugin.getTestPlugin(TestPluginData.builder().build())));
-        assertEquals(TestError.TEST_EXECUTION_FAILURE, contractException.getErrorType());
-    }
+	@Test
+	@UnitTestMethod(target = RegionsActionSupport.class, name = "testConsumers", args = { int.class, long.class, TimeTrackingPolicy.class, Plugin.class }, tags = { UnitTag.INCOMPLETE })
+	public void testTestConsumers() {
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> RegionsActionSupport.testConsumers(100, 5166994853007999229L, TimeTrackingPolicy.TRACK_TIME, TestPlugin.getTestPlugin(TestPluginData.builder().build())));
+		assertEquals(TestError.TEST_EXECUTION_FAILURE, contractException.getErrorType());
+	}
 }

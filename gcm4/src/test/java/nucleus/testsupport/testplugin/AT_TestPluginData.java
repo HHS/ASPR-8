@@ -19,12 +19,10 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.PluginId;
 import nucleus.SimplePluginId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestPluginData.class)
 public class AT_TestPluginData {
 
 	private static class TestDataManager1 extends TestDataManager {
@@ -40,13 +38,13 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = TestPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(TestPluginData.builder());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestDataManager", args = { Object.class })
+	@UnitTestMethod(target = TestPluginData.class, name = "getTestDataManager", args = { Object.class })
 	public void testGetTestDataManagerType() {
 		TestPluginData testPluginData = TestPluginData	.builder()//
 														.addTestDataManager("A", () -> new TestDataManager1())//
@@ -70,7 +68,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestActorPlans", args = { Object.class })
+	@UnitTestMethod(target = TestPluginData.class, name = "getTestActorPlans", args = { Object.class })
 	public void testGetTestActorPlans() {
 		// create a few TestActorPlan items associated with two aliases
 		Map<String, Set<TestActorPlan>> expectedTestActorPlans = new LinkedHashMap<>();
@@ -113,7 +111,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestActorAliases", args = {})
+	@UnitTestMethod(target = TestPluginData.class, name = "getTestActorAliases", args = {})
 	public void testGetTestActorAliases() {
 
 		Set<Object> expectedAliases = new LinkedHashSet<>();
@@ -135,7 +133,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = TestPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 
 		TestPluginData.Builder builder = TestPluginData.builder();//
@@ -175,7 +173,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestDataManagerPlans", args = { Object.class })
+	@UnitTestMethod(target = TestPluginData.class, name = "getTestDataManagerPlans", args = { Object.class })
 	public void testGetTestDataManagerPlans() {
 		// create a few plans
 		Map<Object, Set<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
@@ -219,7 +217,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestDataManagerAliases", args = {})
+	@UnitTestMethod(target = TestPluginData.class, name = "getTestDataManagerAliases", args = {})
 	public void testGetTestDataManagerAliases() {
 		Set<Object> expectedAliases = new LinkedHashSet<>();
 
@@ -385,7 +383,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = TestPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 
 		SimplePluginId simplePluginIdA = new SimplePluginId("A");
@@ -474,7 +472,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = TestPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		/*
 		 * Show that equal objects have equal hash codes over a few example
@@ -552,7 +550,7 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPluginDependencies", args = {})
+	@UnitTestMethod(target = TestPluginData.class, name = "getPluginDependencies", args = {})
 	public void testGetPluginDependencies() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4923209038525994062L);
 		Set<PluginId> candidatePluginIds = new LinkedHashSet<>();

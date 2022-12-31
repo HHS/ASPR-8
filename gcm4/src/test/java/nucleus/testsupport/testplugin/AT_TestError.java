@@ -8,14 +8,12 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = TestError.class)
 public class AT_TestError {
 
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = TestError.class,name = "getDescription", args = {})
 	public void testGetDescription() {
 		// show that each ErrorType has a non-null, non-empty description
 		for (TestError nucleusError : TestError.values()) {

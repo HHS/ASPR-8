@@ -27,7 +27,6 @@ import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -42,18 +41,17 @@ import util.random.RandomGeneratorProvider;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = RegionsPluginData.class)
 public class AT_RegionsPluginData {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = RegionsPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		// show that we can create a builder
 		assertNotNull(RegionsPluginData.builder());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionIds", args = {})
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
 		// use the test region ids
 		Set<RegionId> expectedRegionIds = new LinkedHashSet<>();
@@ -73,7 +71,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyDefinition", args = { RegionPropertyId.class })
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getRegionPropertyDefinition", args = { RegionPropertyId.class })
 	public void testGetRegionPropertyDefinition() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 		/*
@@ -125,7 +123,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyIds", args = {})
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getRegionPropertyIds", args = {})
 	public void testGetRegionPropertyIds() {
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 		/*
@@ -162,7 +160,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionPropertyValues", args = { RegionId.class })
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getRegionPropertyValues", args = { RegionId.class })
 	public void testGetRegionPropertyValues() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(887285678478260177L);
 
@@ -233,7 +231,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonRegionArrivalTrackingPolicy", args = {})
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
 
 		RegionsPluginData.Builder builder = RegionsPluginData.builder();
@@ -324,7 +322,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonRegion", args = { PersonId.class })
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getPersonRegion", args = { PersonId.class })
 	public void testGetPersonRegion() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8722606929396924838L);
@@ -424,7 +422,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6712645837048772782L);
 		RegionsPluginData.Builder regionPluginDataBuilder = RegionsPluginData.builder();
@@ -504,7 +502,7 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonCount", args = {})
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getPersonCount", args = {})
 	public void testGetPersonCount() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(101704379866671191L);
 		for (int j = 0; j < 10; j++) {

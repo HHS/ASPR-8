@@ -11,16 +11,14 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.PluginId;
 import plugins.people.PeoplePluginId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = RegionsPlugin.class)
 public class AT_RegionPlugin {
 
 	
 
 	@Test
-	@UnitTestMethod(name = "getRegionsPlugin", args = {RegionsPluginData.class})
+	@UnitTestMethod(target = RegionsPlugin.class,name = "getRegionsPlugin", args = {RegionsPluginData.class})
 	public void testGetRegionPlugin() {
 		RegionsPluginData regionsPluginData = RegionsPluginData.builder().build();
 		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);

@@ -13,16 +13,14 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = ReportHeader.class)
 public class AT_ReportHeader {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = ReportHeader.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(ReportHeader.builder());
 	}
@@ -85,7 +83,7 @@ public class AT_ReportHeader {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getHeaderStrings", args = {})
+	@UnitTestMethod(target = ReportHeader.class, name = "getHeaderStrings", args = {})
 	public void testGetHeaderStrings() {
 		/*
 		 * Show that when no strings are added, the resulting header is empty
@@ -125,7 +123,7 @@ public class AT_ReportHeader {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = ReportHeader.class, name = "toString", args = {})
 	public void testToString() {
 
 		ReportHeader reportHeader = ReportHeader.builder().build();
@@ -147,8 +145,8 @@ public class AT_ReportHeader {
 	}
 
 	private static Character generateRandomCharacter(RandomGenerator randomGenerator) {
-		int i = randomGenerator.nextInt(26)+97;
-		return (char)i;
+		int i = randomGenerator.nextInt(26) + 97;
+		return (char) i;
 	}
 
 	private static String generateRandomString(RandomGenerator randomGenerator, int length) {
@@ -160,7 +158,7 @@ public class AT_ReportHeader {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = ReportHeader.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2142808365770946523L);
 
@@ -205,7 +203,7 @@ public class AT_ReportHeader {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = {Object.class})
+	@UnitTestMethod(target = ReportHeader.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		ReportHeader.Builder builder = ReportHeader.builder();
 		ReportHeader AB1 = builder.add("A").add("B").build();

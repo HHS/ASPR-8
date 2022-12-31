@@ -20,13 +20,11 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.util.TriConsumer;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = ExperimentContext.class)
 public class AT_ExperimentContext {
 
 	@Test

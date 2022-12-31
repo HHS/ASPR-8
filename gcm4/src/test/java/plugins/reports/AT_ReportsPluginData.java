@@ -13,14 +13,12 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.SimpleReportId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ReportsPluginData.class)
 public class AT_ReportsPluginData {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = ReportsPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(ReportsPluginData.builder());
 	}
@@ -67,7 +65,7 @@ public class AT_ReportsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getReports", args = {})
+	@UnitTestMethod(target = ReportsPluginData.class, name = "getReports", args = {})
 	public void testGetReportIds() {
 
 		ReportId reportId_1 = new SimpleReportId("report 1");
@@ -103,7 +101,7 @@ public class AT_ReportsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = ReportsPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		ReportId reportId_1 = new SimpleReportId("report 1");
 		ReportId reportId_2 = new SimpleReportId("report 2");
@@ -123,7 +121,7 @@ public class AT_ReportsPluginData {
 		});
 
 		ReportsPluginData reportsPluginData = builder.build();
-		ReportsPluginData cloneReportsPluginData = (ReportsPluginData)reportsPluginData.getCloneBuilder().build();
+		ReportsPluginData cloneReportsPluginData = (ReportsPluginData) reportsPluginData.getCloneBuilder().build();
 
 		Set<Consumer<ActorContext>> reports = cloneReportsPluginData.getReports();
 

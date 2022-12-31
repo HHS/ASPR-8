@@ -12,16 +12,14 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = ReportItem.class)
 public final class AT_ReportItem {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = ReportItem.class,name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(ReportItem.builder());
 	}
@@ -98,7 +96,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getReportId", args = {})
+	@UnitTestMethod(target = ReportItem.class,name = "getReportId", args = {})
 	public void testGetReportId() {
 		SimpleReportId reportId = new SimpleReportId("report");
 
@@ -108,7 +106,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getReportHeader", args = {})
+	@UnitTestMethod(target = ReportItem.class,name = "getReportHeader", args = {})
 
 	public void testGetReportHeader() {
 		ReportHeader reportHeader = ReportHeader.builder().add("A").add("B").build();
@@ -119,7 +117,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getValue", args = { int.class })
+	@UnitTestMethod(target = ReportItem.class,name = "getValue", args = { int.class })
 
 	public void testGetValue() {
 		ReportHeader reportHeader = ReportHeader.builder().add("A").add("B").add("C").add("D").build();
@@ -140,7 +138,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = ReportItem.class,name = "size", args = {})
 
 	public void testSize() {
 		ReportHeader reportHeader = ReportHeader.builder().build();
@@ -158,7 +156,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(name = "toString", args = {})
+	@UnitTestMethod(target = ReportItem.class,name = "toString", args = {})
 	public void testToString() {
 		ReportHeader reportHeader = ReportHeader.builder().build();
 		SimpleReportId reportId = new SimpleReportId("report");
@@ -171,7 +169,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(name = "hashCode", args = {})
+	@UnitTestMethod(target = ReportItem.class,name = "hashCode", args = {})
 	public void testHashCode() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7481311225319288863L);
@@ -227,7 +225,7 @@ public final class AT_ReportItem {
 	}
 
 	@Test
-	@UnitTestMethod(name = "equals", args = { Object.class })
+	@UnitTestMethod(target = ReportItem.class,name = "equals", args = { Object.class })
 
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7530977954336798039L);

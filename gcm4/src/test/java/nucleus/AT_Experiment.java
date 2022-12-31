@@ -20,13 +20,12 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 import util.wrappers.MutableObject;
 
-@UnitTest(target = Experiment.class)
+
 public class AT_Experiment {
 
 	@Test

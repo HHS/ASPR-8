@@ -18,16 +18,14 @@ import org.junit.jupiter.api.Test;
 
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = TestPersonPropertyId.class)
 public class AT_TestPersonPropertyId implements PersonPropertyId {
 
 	@Test
-	@UnitTestMethod(name = "getRandomPersonPropertyId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestPersonPropertyId.class, name = "getRandomPersonPropertyId", args = { RandomGenerator.class })
 	public void testGetRandomPersonPropertyId() {
 		Map<TestPersonPropertyId, MutableInteger> countMap = new LinkedHashMap<>();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
@@ -36,8 +34,7 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5471359242434395756L);
 		int sampleCount = 1000;
 		for (int i = 0; i < sampleCount; i++) {
-			TestPersonPropertyId randomPersonPropertyId = TestPersonPropertyId
-					.getRandomPersonPropertyId(randomGenerator);
+			TestPersonPropertyId randomPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
 			assertNotNull(randomPersonPropertyId);
 			countMap.get(randomPersonPropertyId).increment();
 		}
@@ -51,7 +48,7 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestPersonPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8507625070108242089L);
 
@@ -78,7 +75,7 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestPersonPropertyId.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
@@ -87,7 +84,7 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownPersonPropertyId", args = {})
+	@UnitTestMethod(target = TestPersonPropertyId.class, name = "getUnknownPersonPropertyId", args = {})
 	public void testGetUnknownPersonPropertyId() {
 		/*
 		 * Shows that a generated unknown person property id is unique, not null
@@ -105,7 +102,7 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertiesWithDefaultValues", args = {})
+	@UnitTestMethod(target = TestPersonPropertyId.class, name = "getPropertiesWithDefaultValues", args = {})
 	public void testGetPropertiesWithDefaultValues() {
 		List<TestPersonPropertyId> expectedValues = new ArrayList<>();
 
@@ -127,7 +124,7 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertiesWithoutDefaultValues", args = {})
+	@UnitTestMethod(target = TestPersonPropertyId.class, name = "getPropertiesWithoutDefaultValues", args = {})
 	public void testGetPropertiesWithoutDefaultValues() {
 		List<TestPersonPropertyId> expectedValues = new ArrayList<>();
 

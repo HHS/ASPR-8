@@ -13,24 +13,22 @@ import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.BatchPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestBatchPropertyId.class)
 public class AT_TestBatchPropertyId {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testBatchPropertyId.getPropertyDefinition();
-			assertNotNull(propertyDefinition);			
+			assertNotNull(propertyDefinition);
 		}
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestMaterialId", args = {})
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getTestMaterialId", args = {})
 	public void testGetTestMaterialId() {
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			assertNotNull(testBatchPropertyId.getTestMaterialId());
@@ -38,7 +36,7 @@ public class AT_TestBatchPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestBatchPropertyIds", args = { TestMaterialId.class })
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getTestBatchPropertyIds", args = { TestMaterialId.class })
 	public void testGetTestBatchPropertyIds() {
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 			Set<TestBatchPropertyId> expectedBatchPropertyIds = new LinkedHashSet<>();
@@ -53,7 +51,7 @@ public class AT_TestBatchPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownBatchPropertyId", args = {})
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getUnknownBatchPropertyId", args = {})
 	public void testGetUnknownBatchPropertyId() {
 		BatchPropertyId unknownBatchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
 		assertNotNull(unknownBatchPropertyId);
@@ -65,7 +63,7 @@ public class AT_TestBatchPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomMutableBatchPropertyId", args = { TestMaterialId.class, RandomGenerator.class })
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getRandomMutableBatchPropertyId", args = { TestMaterialId.class, RandomGenerator.class })
 	public void testGetRandomMutableBatchPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7432312917768892660L);
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
@@ -76,7 +74,7 @@ public class AT_TestBatchPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestBatchPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2839187347342327244L);
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {

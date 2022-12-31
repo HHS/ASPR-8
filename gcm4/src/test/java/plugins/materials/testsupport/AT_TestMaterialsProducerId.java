@@ -8,15 +8,13 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.MaterialsProducerId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestMaterialsProducerId.class)
 public class AT_TestMaterialsProducerId {
 
 	@Test
-	@UnitTestMethod(name = "getRandomMaterialsProducerId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestMaterialsProducerId.class,name = "getRandomMaterialsProducerId", args = { RandomGenerator.class })
 	public void testGetRandomMaterialsProducerId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2141886758156469650L);
 		for (int i = 0; i < 10; i++) {
@@ -25,13 +23,13 @@ public class AT_TestMaterialsProducerId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerId.class,name = "size", args = {})
 	public void testSize() {
 		assertEquals(TestMaterialsProducerId.values().length, TestMaterialId.size());
 	}
 
 	@Test
-	@UnitTestMethod(name = "next", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerId.class,name = "next", args = {})
 	public void testNext() {
 		TestMaterialsProducerId[] values = TestMaterialsProducerId.values();
 		for (int i = 0; i < values.length; i++) {
@@ -40,7 +38,7 @@ public class AT_TestMaterialsProducerId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownMaterialsProducerId", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerId.class,name = "getUnknownMaterialsProducerId", args = {})
 	public void testGetUnknownMaterialsProducerId() {
 		MaterialsProducerId unknownMaterialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
 		assertNotNull(unknownMaterialsProducerId);

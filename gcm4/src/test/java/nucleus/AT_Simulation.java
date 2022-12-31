@@ -15,7 +15,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -27,11 +26,10 @@ import util.wrappers.MutableBoolean;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = Simulation.class)
 public class AT_Simulation {
 
 	@Test
-	@UnitTestMethod(name = "execute", args = {})
+	@UnitTestMethod(target = Simulation.class, name = "execute", args = {})
 	public void testExecute() {
 
 		// run the simulation
@@ -45,16 +43,16 @@ public class AT_Simulation {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = Simulation.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(Simulation.builder());
 	}
 
 	@Test
-	@UnitTestMethod(target = Simulation.Builder.class, name = "build", args = {}, tags = {UnitTag.INCOMPLETE})
+	@UnitTestMethod(target = Simulation.Builder.class, name = "build", args = {}, tags = { UnitTag.INCOMPLETE })
 	public void testbuild() {
 		/*
-		 * There is no test that reflects circular dependency 
+		 * There is no test that reflects circular dependency
 		 */
 
 		assertNotNull(Simulation.builder().build());

@@ -19,8 +19,7 @@ import java.lang.annotation.Target;
 public @interface UnitTestField {
 	String name();
 
-	Class<?> target() default Object.class;
-//	Class<?> target();
+	Class<?> target();
 	
 	UnitTag[] tags() default {};
 

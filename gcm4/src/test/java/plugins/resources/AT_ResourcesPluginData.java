@@ -29,18 +29,16 @@ import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = ResourcesPluginData.class)
 public final class AT_ResourcesPluginData {
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		assertNotNull(ResourcesPluginData.builder());
 	}
@@ -155,7 +153,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "addResource", args = {ResourceId.class})
+	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "addResource", args = { ResourceId.class })
 	public void testAddResource() {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
@@ -496,7 +494,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourcePropertyDefinition", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourcePropertyDefinition", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyDefinition() {
 		// 1866861448895276970L
 
@@ -556,7 +554,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourcePropertyIds", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourcePropertyIds", args = { ResourceId.class })
 	public void testGetResourcePropertyIds() {
 		// 7475098698397765251L
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
@@ -591,7 +589,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class })
 	public void testGetResourcePropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1876340540126853882L);
@@ -654,7 +652,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonResourceLevels", args = { PersonId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getPersonResourceLevels", args = { PersonId.class })
 	public void testGetPersonResourceLevels() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2902745806851600371L);
@@ -709,7 +707,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getResourceIds", args = {})
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getResourceIds", args = {})
 	public void testGetResourceIds() {
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
@@ -724,7 +722,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionResourceLevels", args = { RegionId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getRegionResourceLevels", args = { RegionId.class })
 	public void testGetRegionResourceLevel() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6794457915874374469L);
@@ -776,7 +774,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonResourceTimeTrackingPolicy", args = { ResourceId.class })
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getPersonResourceTimeTrackingPolicy", args = { ResourceId.class })
 	public void testGetPersonResourceTimeTrackingPolicy() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2435473102993121457L);
@@ -837,7 +835,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPersonCount", args = {})
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getPersonCount", args = {})
 	public void testGetPersonCount() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1188005474782684784L);
@@ -884,7 +882,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRegionIds", args = {})
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7912521358724932418L);
@@ -913,7 +911,7 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7644775230297230691L);
 		ResourcesPluginData.Builder pluginDataBuilder = ResourcesPluginData.builder();

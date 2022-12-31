@@ -14,16 +14,14 @@ import org.junit.jupiter.api.Test;
 
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = TestGlobalPropertyId.class)
 public class AT_TestGlobalPropertyId {
 
 	@Test
-	@UnitTestMethod(name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
+	@UnitTestMethod(target = TestGlobalPropertyId.class,name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
 	public void testGetRandomGlobalPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(242770195073333036L);
 		HashMap<TestGlobalPropertyId, MutableInteger> idCounter = new HashMap<>();
@@ -48,7 +46,7 @@ public class AT_TestGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomMutableGlobalPropertyId", args = {RandomGenerator.class})
+	@UnitTestMethod(target = TestGlobalPropertyId.class,name = "getRandomMutableGlobalPropertyId", args = {RandomGenerator.class})
 	public void testGetRandomMutableGlobalPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6104930304058715301L);
 		HashMap<TestGlobalPropertyId, MutableInteger> idCounter = new HashMap<>();
@@ -77,7 +75,7 @@ public class AT_TestGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestGlobalPropertyId.class,name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			assertNotNull(testGlobalPropertyId.getPropertyDefinition());
@@ -85,7 +83,7 @@ public class AT_TestGlobalPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestGlobalPropertyId.class,name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3456870569545355468L);
 
@@ -112,7 +110,7 @@ public class AT_TestGlobalPropertyId {
 	}
 	
 	@Test
-	@UnitTestMethod(name = "getUnknownGlobalPropertyId", args = {})
+	@UnitTestMethod(target = TestGlobalPropertyId.class,name = "getUnknownGlobalPropertyId", args = {})
 	public void testGetUnknownRegionId() {
 		Set<GlobalPropertyId> unknownGlobalPropertyIds = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {

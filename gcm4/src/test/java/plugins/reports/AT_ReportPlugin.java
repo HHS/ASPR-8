@@ -11,16 +11,14 @@ import nucleus.Plugin;
 import nucleus.Simulation;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.SimpleReportId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ReportsPlugin.class)
 public class AT_ReportPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getReportsPlugin", args = {ReportsPluginData.class})
+	@UnitTestMethod(target = ReportsPlugin.class, name = "getReportsPlugin", args = { ReportsPluginData.class })
 	public void testGetReportPlugin() {
-		//Build the report plugin from two reports
+		// Build the report plugin from two reports
 		ReportId reportId_1 = new SimpleReportId("report 1");
 		ReportId reportId_2 = new SimpleReportId("report 2");
 
@@ -42,14 +40,14 @@ public class AT_ReportPlugin {
 		ReportsPluginData reportsPluginData = builder.build();
 
 		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		
-		//show that the report has the reports plugin data
+
+		// show that the report has the reports plugin data
 		reportPlugin.getPluginDatas().contains(reportsPluginData);
-		
-		//show that the plugin has the correct idea
+
+		// show that the plugin has the correct idea
 		assertEquals(ReportsPluginId.PLUGIN_ID, reportPlugin.getPluginId());
 
-		//show that plugin correctly adds the reports to the simulation 
+		// show that plugin correctly adds the reports to the simulation
 		Simulation.builder().addPlugin(reportPlugin).build().execute();
 
 		assertEquals(observedReportIds, expectedReportIds);

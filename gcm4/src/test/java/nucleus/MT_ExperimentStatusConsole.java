@@ -2,9 +2,6 @@ package nucleus;
 
 import java.util.ArrayList;
 
-import tools.annotations.UnitTest;
-
-@UnitTest(target = ExperimentStatusConsole.class)
 public class MT_ExperimentStatusConsole {
 	private MT_ExperimentStatusConsole() {
 	}
@@ -39,9 +36,9 @@ public class MT_ExperimentStatusConsole {
 		/*
 		 * tests for stack trace report limit
 		 */
-		//testSetStackTraceReportLimit_Default();
-		//testSetStackTraceReportLimit_5();
-		//testSetStackTraceReportLimit_0();
+		// testSetStackTraceReportLimit_Default();
+		// testSetStackTraceReportLimit_5();
+		// testSetStackTraceReportLimit_0();
 
 	}
 
@@ -224,7 +221,7 @@ public class MT_ExperimentStatusConsole {
 		 * are 100 stack traces reported in the summary.
 		 */
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void testSetStackTraceReportLimit_5() {
 		ExperimentStatusConsole experimentStatusConsole = //
@@ -251,11 +248,11 @@ public class MT_ExperimentStatusConsole {
 
 		/*
 		 * Observe: There are 1000 exceptions but reporting is limited to 5
-		 * stack traces. The are 5 stack traces reported immediately. There
-		 * are 5 stack traces reported in the summary.
+		 * stack traces. The are 5 stack traces reported immediately. There are
+		 * 5 stack traces reported in the summary.
 		 */
 	}
-	
+
 	@SuppressWarnings("unused")
 	private void testSetStackTraceReportLimit_0() {
 		ExperimentStatusConsole experimentStatusConsole = //

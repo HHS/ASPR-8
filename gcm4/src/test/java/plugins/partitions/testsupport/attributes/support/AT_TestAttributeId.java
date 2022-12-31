@@ -11,15 +11,13 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestAttributeId.class)
 public class AT_TestAttributeId {
 
 	@Test
-	@UnitTestMethod(name = "getUnknownAttributeId", args = {})
+	@UnitTestMethod(target = TestAttributeId.class,name = "getUnknownAttributeId", args = {})
 	public void testGetUnknownAttributeId() {
 		/*
 		 * Show that a generated unknown attribute id is not null and not a
@@ -38,7 +36,7 @@ public class AT_TestAttributeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getAttributeDefinition", args = {})
+	@UnitTestMethod(target = TestAttributeId.class,name = "getAttributeDefinition", args = {})
 	public void testGetAttributeDefinition() {
 		// show that each member has an attribute definition
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
@@ -47,7 +45,7 @@ public class AT_TestAttributeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestAttributeId.class,name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(675234329644922354L);
 

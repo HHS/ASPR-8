@@ -15,24 +15,22 @@ import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.MaterialsProducerPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestMaterialsProducerPropertyId.class)
 public class AT_TestMaterialsProducerPropertyId {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
-			assertNotNull(propertyDefinition);			
+			assertNotNull(propertyDefinition);
 		}
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownMaterialsProducerPropertyId", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "getUnknownMaterialsProducerPropertyId", args = {})
 	public void testGetUnknownMaterialsProducerPropertyId() {
 		MaterialsProducerPropertyId unknownMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId();
 		assertNotNull(unknownMaterialsProducerPropertyId);
@@ -45,7 +43,7 @@ public class AT_TestMaterialsProducerPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7973900878959109442L);
@@ -62,7 +60,7 @@ public class AT_TestMaterialsProducerPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomMaterialsProducerPropertyId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "getRandomMaterialsProducerPropertyId", args = { RandomGenerator.class })
 	public void testGetRandomMaterialsProducerPropertyId() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5963531689679394818L);
@@ -75,7 +73,7 @@ public class AT_TestMaterialsProducerPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomMutableMaterialsProducerPropertyId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "getRandomMutableMaterialsProducerPropertyId", args = { RandomGenerator.class })
 	public void testGetRandomMutableMaterialsProducerPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8476649750185982818L);
 		for (int i = 0; i < 10; i++) {
@@ -84,17 +82,16 @@ public class AT_TestMaterialsProducerPropertyId {
 			assertTrue(producerPropertyId.getPropertyDefinition().propertyValuesAreMutable());
 		}
 
-		
 	}
 
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "size", args = {})
 	public void testSize() {
 		assertEquals(TestMaterialsProducerPropertyId.values().length, TestMaterialsProducerPropertyId.size());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertiesWithDefaultValues", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "getPropertiesWithDefaultValues", args = {})
 	public void testGetPropertesWithDefaultValues() {
 		List<TestMaterialsProducerPropertyId> expectedValues = new ArrayList<>();
 
@@ -116,7 +113,7 @@ public class AT_TestMaterialsProducerPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertiesWithoutDefaultValues", args = {})
+	@UnitTestMethod(target = TestMaterialsProducerPropertyId.class, name = "getPropertiesWithoutDefaultValues", args = {})
 	public void testGetPropertesWithoutDefaultValues() {
 		List<TestMaterialsProducerPropertyId> expectedValues = new ArrayList<>();
 

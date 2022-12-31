@@ -18,20 +18,18 @@ import org.junit.jupiter.api.Test;
 
 import plugins.regions.support.RegionPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = TestRegionPropertyId.class)
 public class AT_TestRegionPropertyId {
 
 	/**
-	 * Shows that a generated unknown region property id is not null and
-	 * not a member of the enum and is unique.
+	 * Shows that a generated unknown region property id is not null and not a
+	 * member of the enum and is unique.
 	 */
 	@Test
-	@UnitTestMethod(name = "getUnknownRegionPropertyId", args = {})
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getUnknownRegionPropertyId", args = {})
 	public void testGetUnknownRegionPropertyId() {
 		RegionPropertyId unknownRegionPropertyId = TestRegionPropertyId.getUnknownRegionPropertyId();
 		assertNotNull(unknownRegionPropertyId);
@@ -49,17 +47,16 @@ public class AT_TestRegionPropertyId {
 	}
 
 	/**
-	 * Shows that size() returns the number of members in the TestRegionId
-	 * enum
+	 * Shows that size() returns the number of members in the TestRegionId enum
 	 */
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "size", args = {})
 	public void testSize() {
 		assertEquals(TestRegionPropertyId.values().length, TestRegionPropertyId.size());
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestRegionPropertyId propertyId : TestRegionPropertyId.values()) {
 			PropertyDefinition propertyDefinition = propertyId.getPropertyDefinition();
@@ -68,7 +65,7 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9052754083757003238L);
 
@@ -95,7 +92,7 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertiesWithDefaultValues", args = {})
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getPropertiesWithDefaultValues", args = {})
 	public void testGetPropertesWithDefaultValues() {
 		List<TestRegionPropertyId> expectedValues = new ArrayList<>();
 
@@ -117,7 +114,7 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertiesWithoutDefaultValues", args = {})
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getPropertiesWithoutDefaultValues", args = {})
 	public void testGetPropertesWithoutDefaultValues() {
 		List<TestRegionPropertyId> expectedValues = new ArrayList<>();
 
@@ -139,12 +136,11 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomMutableRegionPropertyId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomMutableRegionPropertyId", args = { RandomGenerator.class })
 	public void testGetRandomMutableRegionPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4772298816496492540L);
 
-		Set<TestRegionPropertyId> applicableValues = Set.of(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE,
-				TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE,
+		Set<TestRegionPropertyId> applicableValues = Set.of(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE, TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE,
 				TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE);
 
 		for (int i = 0; i < 15; i++) {
@@ -156,7 +152,7 @@ public class AT_TestRegionPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomRegionPropertyId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestRegionPropertyId.class, name = "getRandomRegionPropertyId", args = { RandomGenerator.class })
 	public void testGetRandomRegionPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8246696863539332004L);
 

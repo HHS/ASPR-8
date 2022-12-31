@@ -15,22 +15,20 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.groups.support.GroupTypeId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = TestAuxiliaryGroupTypeId.class)
 public class AT_TestAuxiliaryGroupTypeId {
 
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = TestAuxiliaryGroupTypeId.class, name = "size", args = {})
 	public void testSize() {
 		assertEquals(TestAuxiliaryGroupTypeId.values().length, TestAuxiliaryGroupTypeId.size());
 	}
 
 	@Test
-	@UnitTestMethod(name = "next", args = {})
+	@UnitTestMethod(target = TestAuxiliaryGroupTypeId.class, name = "next", args = {})
 	public void testNext() {
 		for (TestAuxiliaryGroupTypeId testGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
 			int index = (testGroupTypeId.ordinal() + 1) % TestAuxiliaryGroupTypeId.values().length;
@@ -40,7 +38,7 @@ public class AT_TestAuxiliaryGroupTypeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomGroupTypeId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestAuxiliaryGroupTypeId.class, name = "getRandomGroupTypeId", args = { RandomGenerator.class })
 	public void testGetRandomGroupTypeId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8706009409831897125L);
 
@@ -71,7 +69,7 @@ public class AT_TestAuxiliaryGroupTypeId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownGroupTypeId", args = {})
+	@UnitTestMethod(target = TestAuxiliaryGroupTypeId.class, name = "getUnknownGroupTypeId", args = {})
 	public void testGetUnknownGroupTypeId() {
 		/*
 		 * Shows that a generated unknown group type id is unique, not null and

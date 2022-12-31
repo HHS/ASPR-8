@@ -14,7 +14,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector2D;
@@ -25,8 +24,6 @@ import util.vector.Vector2D;
  * @author Shawn Hatch
  *
  */
-
-@UnitTest(target = VolumetricDimensionTree.class)
 
 public class AT_VolumetricDimensionTree {
 
@@ -76,7 +73,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#getMembersInSphere(double, double[])
 	 */
 	@Test
-	@UnitTestMethod(name = "getMembersInSphere", args = { double.class, double[].class })
+	@UnitTestMethod(target = VolumetricDimensionTree.class, name = "getMembersInSphere", args = { double.class, double[].class })
 	public void testGetMembersInSphere() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6999798233863944694L);
 
@@ -124,7 +121,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#getAll()
 	 */
 	@Test
-	@UnitTestMethod(name = "getAll", args = {})
+	@UnitTestMethod(target = VolumetricDimensionTree.class, name = "getAll", args = {})
 	public void testGetAll() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7850509241104624831L);
 
@@ -158,7 +155,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#add(double[], double, Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "add", args = { double[].class, double.class, Object.class })
+	@UnitTestMethod(target = VolumetricDimensionTree.class, name = "add", args = { double[].class, double.class, Object.class })
 	public void testAdd() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8144068492710937714L);
@@ -210,7 +207,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#contains(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "contains", args = { Object.class })
+	@UnitTestMethod(target = VolumetricDimensionTree.class, name = "contains", args = { Object.class })
 	public void testContains() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7101516806363352895L);
 
@@ -249,7 +246,7 @@ public class AT_VolumetricDimensionTree {
 	 * 
 	 */
 	@Test
-	@UnitTestMethod(name = "remove", args = { Object.class })
+	@UnitTestMethod(target = VolumetricDimensionTree.class, name = "remove", args = { Object.class })
 	public void testRemove_Object() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5635646758825222227L);
@@ -289,7 +286,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#remove(double, Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "remove", args = { double.class, Object.class })
+	@UnitTestMethod(target = VolumetricDimensionTree.class, name = "remove", args = { double.class, Object.class })
 	public void testRemove() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4986556383522453940L);
@@ -357,7 +354,7 @@ public class AT_VolumetricDimensionTree {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = VolumetricDimensionTree.class, name = "builder", args = {})
 	public void testBuilder() {
 		/*
 		 * Precondition tests

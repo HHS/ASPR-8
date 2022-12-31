@@ -8,15 +8,13 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.MaterialId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestMaterialId.class)
 public class AT_TestMaterialId {
 
 	@Test
-	@UnitTestMethod(name = "getRandomMaterialId", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestMaterialId.class, name = "getRandomMaterialId", args = { RandomGenerator.class })
 	public void testGetRandomMaterialId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3905846017447134736L);
 		for (int i = 0; i < 10; i++) {
@@ -25,13 +23,13 @@ public class AT_TestMaterialId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "size", args = {})
+	@UnitTestMethod(target = TestMaterialId.class, name = "size", args = {})
 	public void testSize() {
 		assertEquals(TestMaterialId.values().length, TestMaterialId.size());
 	}
 
 	@Test
-	@UnitTestMethod(name = "next", args = {})
+	@UnitTestMethod(target = TestMaterialId.class, name = "next", args = {})
 	public void testNext() {
 		TestMaterialId[] values = TestMaterialId.values();
 		for (int i = 0; i < values.length; i++) {
@@ -40,7 +38,7 @@ public class AT_TestMaterialId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownMaterialId", args = {})
+	@UnitTestMethod(target = TestMaterialId.class, name = "getUnknownMaterialId", args = {})
 	public void testGetUnknownMaterialId() {
 		MaterialId unknownMaterialId = TestMaterialId.getUnknownMaterialId();
 		assertNotNull(unknownMaterialId);

@@ -14,15 +14,13 @@ import org.junit.jupiter.api.Test;
 
 import plugins.groups.support.GroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestGroupPropertyId.class)
 public class AT_TestGroupPropertyId {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestGroupPropertyId.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
 			assertNotNull(testGroupPropertyId.getPropertyDefinition());
@@ -31,7 +29,7 @@ public class AT_TestGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestGroupTypeId", args = {})
+	@UnitTestMethod(target = TestGroupPropertyId.class, name = "getTestGroupTypeId", args = {})
 	public void testGetTestGroupTypeId() {
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
 			assertNotNull(testGroupPropertyId.getTestGroupTypeId());
@@ -39,18 +37,17 @@ public class AT_TestGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestGroupPropertyIds", args = { TestGroupTypeId.class })
+	@UnitTestMethod(target = TestGroupPropertyId.class, name = "getTestGroupPropertyIds", args = { TestGroupTypeId.class })
 	public void testGetTestGroupPropertyIds() {
-		
-		
-		
+
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
-			//show that each group type has at least one associated property id
+			// show that each group type has at least one associated property id
 			Set<TestGroupPropertyId> testGroupPropertyIds = TestGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId);
 			assertNotNull(testGroupPropertyIds);
 			assertFalse(testGroupPropertyIds.isEmpty());
-			
-			//show that each such property id is associated with that group type
+
+			// show that each such property id is associated with that group
+			// type
 			for (TestGroupPropertyId testGroupPropertyId : testGroupPropertyIds) {
 				assertEquals(testGroupTypeId, testGroupPropertyId.getTestGroupTypeId());
 			}
@@ -58,7 +55,7 @@ public class AT_TestGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownGroupPropertyId", args = {})
+	@UnitTestMethod(target = TestGroupPropertyId.class, name = "getUnknownGroupPropertyId", args = {})
 	public void testGetUnknownGroupPropertyId() {
 		/*
 		 * Shows that a generated unknown group property id is unique, not null
@@ -76,7 +73,7 @@ public class AT_TestGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestGroupPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6173923848365818813L);
 
@@ -91,9 +88,9 @@ public class AT_TestGroupPropertyId {
 			for (int i = 0; i < 100; i++) {
 				Object propertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 				values.add(propertyValue);
-				assertTrue(propertyDefinition.getType().isAssignableFrom(propertyValue.getClass()));				
+				assertTrue(propertyDefinition.getType().isAssignableFrom(propertyValue.getClass()));
 			}
-			//show that the values are reasonable unique
+			// show that the values are reasonable unique
 			if (propertyDefinition.getType() != Boolean.class) {
 				assertTrue(values.size() > 10);
 			} else {

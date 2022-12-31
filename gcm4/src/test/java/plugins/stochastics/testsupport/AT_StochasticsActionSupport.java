@@ -11,15 +11,13 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MutableBoolean;
 
-@UnitTest(target = StochasticsActionSupport.class)
 public class AT_StochasticsActionSupport {
 
 	@Test
-	@UnitTestMethod(name = "testConsumer", args = { long.class, Consumer.class })
+	@UnitTestMethod(target = StochasticsActionSupport.class,name = "testConsumer", args = { long.class, Consumer.class })
 	public void testTestConsumer() {
 		MutableBoolean actorExecuted = new MutableBoolean();
 		Consumer<ActorContext> consumer = (c) -> actorExecuted.setValue(true);
@@ -28,7 +26,7 @@ public class AT_StochasticsActionSupport {
 	}
 
 	@Test
-	@UnitTestMethod(name = "testConsumers", args = {long.class, Plugin.class })
+	@UnitTestMethod(target = StochasticsActionSupport.class,name = "testConsumers", args = {long.class, Plugin.class })
 	public void testTestConsumers() {
 		MutableBoolean actorExecuted = new MutableBoolean();
 

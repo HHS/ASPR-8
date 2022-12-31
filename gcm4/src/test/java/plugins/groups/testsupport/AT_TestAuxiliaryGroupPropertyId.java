@@ -14,15 +14,13 @@ import org.junit.jupiter.api.Test;
 
 import plugins.groups.support.GroupPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = TestAuxiliaryGroupPropertyId.class)
 public class AT_TestAuxiliaryGroupPropertyId {
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestAuxiliaryGroupPropertyId.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestAuxiliaryGroupPropertyId testGroupPropertyId : TestAuxiliaryGroupPropertyId.values()) {
 			assertNotNull(testGroupPropertyId.getPropertyDefinition());
@@ -30,7 +28,7 @@ public class AT_TestAuxiliaryGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestAuxiliaryGroupPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4599982550528313954L);
 
@@ -57,7 +55,7 @@ public class AT_TestAuxiliaryGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestGroupTypeId", args = {})
+	@UnitTestMethod(target = TestAuxiliaryGroupPropertyId.class, name = "getTestGroupTypeId", args = {})
 	public void testGetTestGroupTypeId() {
 		for (TestAuxiliaryGroupPropertyId testGroupPropertyId : TestAuxiliaryGroupPropertyId.values()) {
 			assertNotNull(testGroupPropertyId.getTestGroupTypeId());
@@ -65,7 +63,7 @@ public class AT_TestAuxiliaryGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownGroupPropertyId", args = {})
+	@UnitTestMethod(target = TestAuxiliaryGroupPropertyId.class, name = "getUnknownGroupPropertyId", args = {})
 	public void testGetUnknownGroupPropertyId() {
 		/*
 		 * Shows that a generated unknown group property id is unique, not null
@@ -83,17 +81,17 @@ public class AT_TestAuxiliaryGroupPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getTestGroupPropertyIds", args = { TestAuxiliaryGroupTypeId.class })
+	@UnitTestMethod(target = TestAuxiliaryGroupPropertyId.class, name = "getTestGroupPropertyIds", args = { TestAuxiliaryGroupTypeId.class })
 	public void testGetTestAuxiliaryGroupPropertyIds() {
 
 		for (TestAuxiliaryGroupTypeId testGroupTypeId : TestAuxiliaryGroupTypeId.values()) {
 			// show that each group type has at least one associated property id
-			Set<TestAuxiliaryGroupPropertyId> testGroupPropertyIds = TestAuxiliaryGroupPropertyId
-					.getTestGroupPropertyIds(testGroupTypeId);
+			Set<TestAuxiliaryGroupPropertyId> testGroupPropertyIds = TestAuxiliaryGroupPropertyId.getTestGroupPropertyIds(testGroupTypeId);
 			assertNotNull(testGroupPropertyIds);
 			assertFalse(testGroupPropertyIds.isEmpty());
 
-			// show that each such property id is associated with that group type
+			// show that each such property id is associated with that group
+			// type
 			for (TestAuxiliaryGroupPropertyId testGroupPropertyId : testGroupPropertyIds) {
 				assertEquals(testGroupTypeId, testGroupPropertyId.getTestGroupTypeId());
 			}

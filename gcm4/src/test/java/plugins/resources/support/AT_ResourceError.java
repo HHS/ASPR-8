@@ -8,23 +8,21 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ResourceError.class)
 public class AT_ResourceError {
 
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = ResourceError.class, name = "getDescription", args = {})
 	public void test() {
-		//show that each description is a unique, non-null and non-empty string 
+		// show that each description is a unique, non-null and non-empty string
 		Set<String> descriptions = new LinkedHashSet<>();
-		for(ResourceError resourceError : ResourceError.values()) {
-			String description = resourceError.getDescription();			
-			assertNotNull(description,"null description for "+resourceError);			
-			assertTrue(description.length()>0, "empty string for "+resourceError);
+		for (ResourceError resourceError : ResourceError.values()) {
+			String description = resourceError.getDescription();
+			assertNotNull(description, "null description for " + resourceError);
+			assertTrue(description.length() > 0, "empty string for " + resourceError);
 			boolean unique = descriptions.add(description);
-			assertTrue(unique,"description for "+resourceError+" is not unique");
+			assertTrue(unique, "description for " + resourceError + " is not unique");
 		}
 	}
 }

@@ -15,38 +15,35 @@ import nucleus.PluginDataBuilder;
 import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
-@UnitTest(target = StochasticsPluginData.class)
 public class AT_StochasticsPluginData {
 
 	@Test
-	@UnitTestMethod(name = "getCloneBuilder", args = {})
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 
-		
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
 																			.setSeed(4970625656919510170L)//
 																			.addRandomGeneratorId(TestRandomGeneratorId.BLITZEN)//
 																			.addRandomGeneratorId(TestRandomGeneratorId.COMET)//
 																			.build();//
 
-		//show that the clone builder is not null
+		// show that the clone builder is not null
 		PluginDataBuilder cloneBuilder = stochasticsPluginData.getCloneBuilder();
 		assertNotNull(cloneBuilder);
 		StochasticsPluginData cloneData = (StochasticsPluginData) cloneBuilder.build();
 
-		//show that the clone builder is properly initialized
+		// show that the clone builder is properly initialized
 		assertEquals(cloneData.getRandomNumberGeneratorIds(), stochasticsPluginData.getRandomNumberGeneratorIds());
 		assertEquals(cloneData.getSeed(), stochasticsPluginData.getSeed());
 
 	}
 
 	@Test
-	@UnitTestMethod(name = "getSeed", args = {})
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "getSeed", args = {})
 	public void testGetSeed() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4970625656919510170L);
 		for (int i = 0; i < 30; i++) {
@@ -57,7 +54,7 @@ public class AT_StochasticsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomNumberGeneratorIds", args = {})
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "getRandomNumberGeneratorIds", args = {})
 	public void testGetRandomNumberGeneratorIds() {
 		Set<RandomNumberGeneratorId> expectedRandomNumberGeneratorIds = new LinkedHashSet<>();
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
@@ -72,7 +69,7 @@ public class AT_StochasticsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(name = "builder", args = {})
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "builder", args = {})
 	public void testBuilder() {
 		// show that the builder returns a non-null instance of
 		// StochasticsPluginData.Builder
@@ -82,8 +79,8 @@ public class AT_StochasticsPluginData {
 	@Test
 	@UnitTestMethod(target = StochasticsPluginData.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		ContractException contractException = assertThrows(ContractException.class,()->StochasticsPluginData.builder().build());
-		assertEquals(StochasticsError.NULL_SEED,contractException.getErrorType());
+		ContractException contractException = assertThrows(ContractException.class, () -> StochasticsPluginData.builder().build());
+		assertEquals(StochasticsError.NULL_SEED, contractException.getErrorType());
 	}
 
 	@Test

@@ -12,15 +12,13 @@ import org.junit.jupiter.api.Test;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.Simulation;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.wrappers.MutableBoolean;
 
-@UnitTest(target = TestPlugin.class)
 public class AT_TestPlugin {
 
 	@Test
-	@UnitTestMethod(name = "getTestPlugin", args = { TestPluginData.class })
+	@UnitTestMethod(target = TestPlugin.class,name = "getTestPlugin", args = { TestPluginData.class })
 	public void testGetTestPlugin() {
 		TestPluginData testPluginData = TestPluginData.builder().build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);

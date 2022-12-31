@@ -10,18 +10,16 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import plugins.stochastics.support.RandomNumberGeneratorId;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = TestRandomGeneratorId.class)
 public class AT_TestRandomGeneratorId {
-	
+
 	/**
-	 * Shows that a generated unknown RandomGeneratorId is not null and not a member
-	 * of the enum
+	 * Shows that a generated unknown RandomGeneratorId is not null and not a
+	 * member of the enum
 	 */
 	@Test
-	@UnitTestMethod(name = "getUnknownRandomNumberGeneratorId", args = {})
+	@UnitTestMethod(target = TestRandomGeneratorId.class, name = "getUnknownRandomNumberGeneratorId", args = {})
 	public void testGetUnknownRandomNumberGeneratorId() {
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
 		for (int i = 0; i < 30; i++) {
@@ -34,6 +32,5 @@ public class AT_TestRandomGeneratorId {
 			}
 		}
 	}
-	
-	
+
 }

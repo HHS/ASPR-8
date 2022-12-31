@@ -8,14 +8,12 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 
-@UnitTest(target = ReportError.class)
 public class AT_ReportError {
 
 	@Test
-	@UnitTestMethod(name = "getDescription", args = {})
+	@UnitTestMethod(target = ReportError.class,name = "getDescription", args = {})
 	public void test() {
 		//show that each description is a unique, non-null and non-empty string 
 		Set<String> descriptions = new LinkedHashSet<>();

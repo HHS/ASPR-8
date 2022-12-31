@@ -16,15 +16,13 @@ import org.junit.jupiter.api.Test;
 
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyDefinition;
-import tools.annotations.UnitTest;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
 
-@UnitTest(target = TestAuxiliaryPersonPropertyId.class)
 public class AT_TestAuxiliaryPersonPropertyId {
-    @Test
-	@UnitTestMethod(name = "getRandomPersonPropertyId", args = { RandomGenerator.class })
+	@Test
+	@UnitTestMethod(target = TestAuxiliaryPersonPropertyId.class, name = "getRandomPersonPropertyId", args = { RandomGenerator.class })
 	public void testGetRandomPersonPropertyId() {
 		Map<TestAuxiliaryPersonPropertyId, MutableInteger> countMap = new LinkedHashMap<>();
 		for (TestAuxiliaryPersonPropertyId testPersonPropertyId : TestAuxiliaryPersonPropertyId.values()) {
@@ -47,7 +45,7 @@ public class AT_TestAuxiliaryPersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getRandomPropertyValue", args = { RandomGenerator.class })
+	@UnitTestMethod(target = TestAuxiliaryPersonPropertyId.class, name = "getRandomPropertyValue", args = { RandomGenerator.class })
 	public void testGetRandomPropertyValue() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(890505028463718572L);
 
@@ -62,9 +60,9 @@ public class AT_TestAuxiliaryPersonPropertyId {
 			for (int i = 0; i < 100; i++) {
 				Object propertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 				values.add(propertyValue);
-				assertTrue(propertyDefinition.getType().isAssignableFrom(propertyValue.getClass()));				
+				assertTrue(propertyDefinition.getType().isAssignableFrom(propertyValue.getClass()));
 			}
-			//show that the values are reasonable unique
+			// show that the values are reasonable unique
 			if (propertyDefinition.getType() != Boolean.class) {
 				assertTrue(values.size() > 10);
 			} else {
@@ -74,7 +72,7 @@ public class AT_TestAuxiliaryPersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getPropertyDefinition", args = {})
+	@UnitTestMethod(target = TestAuxiliaryPersonPropertyId.class, name = "getPropertyDefinition", args = {})
 	public void testGetPropertyDefinition() {
 		for (TestAuxiliaryPersonPropertyId testPersonPropertyId : TestAuxiliaryPersonPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
@@ -83,7 +81,7 @@ public class AT_TestAuxiliaryPersonPropertyId {
 	}
 
 	@Test
-	@UnitTestMethod(name = "getUnknownPersonPropertyId", args = {})
+	@UnitTestMethod(target = TestAuxiliaryPersonPropertyId.class, name = "getUnknownPersonPropertyId", args = {})
 	public void testGetUnknownPersonPropertyId() {
 		/*
 		 * Shows that a generated unknown person property id is unique, not null

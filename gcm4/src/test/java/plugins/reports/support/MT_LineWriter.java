@@ -1,8 +1,5 @@
 package plugins.reports.support;
 
-import tools.annotations.UnitTest;
-
-@UnitTest(target = LineWriter.class)
 public class MT_LineWriter {
 
     //@UnitTestConstructor(args = {ExperimentContext.class, Path.class, boolean.class}, tags = {UnitTag.CLASS_PROXY})
