@@ -3,11 +3,11 @@ package tools.metaunit.reports;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import tools.metaunit.MetaInfoContainer;
+import tools.metaunit.MetaInfoGenerator;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.MetaInfoContainer;
-import tools.metaunit.warnings.WarningGenerator;
 
 public final class StatusReport {
 	private StatusReport() {
@@ -21,7 +21,7 @@ public final class StatusReport {
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
 
-		MetaInfoContainer metaInfoContainer = WarningGenerator.builder().setSourcePath(sourcePath).setTestPath(testPath).build().execute();
+		MetaInfoContainer metaInfoContainer = MetaInfoGenerator.builder().setSourcePath(sourcePath).setTestPath(testPath).build().execute();
 		
 		displayWarningContainer(metaInfoContainer);
 

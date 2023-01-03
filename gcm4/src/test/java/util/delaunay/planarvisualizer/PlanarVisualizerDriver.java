@@ -12,6 +12,15 @@ import util.random.RandomGeneratorProvider;
 import util.time.TimeElapser;
 import util.vector.Vector2D;
 
+/**
+ * A demonstration application driver that displays a randomized set of 5000
+ * points in the unit square.The display is on a 2D plane where the points are
+ * connected to one another in a Delaunay triangle mesh.
+ * 
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public class PlanarVisualizerDriver {
 
 	public static void main(String[] args) {

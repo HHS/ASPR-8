@@ -5,11 +5,11 @@ import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import tools.metaunit.MetaInfoContainer;
+import tools.metaunit.MetaInfoGenerator;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.MetaInfoContainer;
-import tools.metaunit.warnings.WarningGenerator;
 import tools.metaunit.warnings.WarningType;
 
 public final class IncompleteClassReport {
@@ -24,7 +24,7 @@ public final class IncompleteClassReport {
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
 
-		MetaInfoContainer metaInfoContainer = WarningGenerator.builder().setSourcePath(sourcePath).setTestPath(testPath).build().execute();
+		MetaInfoContainer metaInfoContainer = MetaInfoGenerator.builder().setSourcePath(sourcePath).setTestPath(testPath).build().execute();
 		
 		displayWarningContainer(metaInfoContainer);
 

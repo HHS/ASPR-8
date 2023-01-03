@@ -12,11 +12,11 @@ import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
+import tools.metaunit.MetaInfoContainer;
+import tools.metaunit.MetaInfoGenerator;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.MetaInfoContainer;
-import tools.metaunit.warnings.WarningGenerator;
 import tools.metaunit.warnings.WarningType;
 
 /**
@@ -37,7 +37,7 @@ public class MetaInfoReport {
 
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
-		MetaInfoContainer metaInfoContainer = WarningGenerator	.builder()//
+		MetaInfoContainer metaInfoContainer = MetaInfoGenerator	.builder()//
 																.setSourcePath(sourcePath)//
 																.setTestPath(testPath)//
 																.build()//
@@ -54,47 +54,70 @@ public class MetaInfoReport {
 	private static String getFieldString(UnitTestField unitTestField) {
 		return "Field: " + unitTestField.target().getCanonicalName() + "." + unitTestField.name();
 	}
-	
+
 	private static String getMethodString(UnitTestMethod unitTestMethod) {
-		
-		return "Method: " + unitTestMethod.target().getCanonicalName() + "." + unitTestMethod.name()+Arrays.toString(unitTestMethod.args());
+
+		return "Method: " + unitTestMethod.target().getCanonicalName() + "." + unitTestMethod.name() + Arrays.toString(unitTestMethod.args());
 	}
-	
+
 	private static String getConstructorString(UnitTestConstructor unitTestConstructor) {
 		return "Constructor: " + unitTestConstructor.target().getCanonicalName() + "." + Arrays.toString(unitTestConstructor.args());
 	}
 
-
 	private static void reportTags(MetaInfoContainer metaInfoContainer) {
-		Map<UnitTag,List<String>> taggedAnnotations = new LinkedHashMap<>();
-		for(UnitTag unitTag : UnitTag.values()) {
-			taggedAnnotations.put(unitTag, new ArrayList<>());
+		Map<UnitTag, Map<Class<?>, List<String>>> taggedAnnotations = new LinkedHashMap<>();
+		for (UnitTag unitTag : UnitTag.values()) {
+			taggedAnnotations.put(unitTag, new LinkedHashMap<>());
 		}
-		for (UnitTestField unitTestField : metaInfoContainer.getUnitTestFields()) {			
+		for (UnitTestField unitTestField : metaInfoContainer.getUnitTestFields()) {
+			Class<?> target = unitTestField.target();
 			String fieldString = getFieldString(unitTestField);
-			for(UnitTag unitTag : unitTestField.tags()) {
-				taggedAnnotations.get(unitTag).add(fieldString);
+			for (UnitTag unitTag : unitTestField.tags()) {
+				Map<Class<?>, List<String>> map = taggedAnnotations.get(unitTag);
+				List<String> list = map.get(target);
+				if (list == null) {
+					list = new ArrayList<>();
+					map.put(target, list);
+				}
+				list.add(fieldString);
 			}
 		}
-		for (UnitTestMethod unitTestMethod : metaInfoContainer.getUnitTestMethods()) {			
-			String methodString = getMethodString(unitTestMethod);
-			for(UnitTag unitTag : unitTestMethod.tags()) {
-				taggedAnnotations.get(unitTag).add(methodString);
+		for (UnitTestMethod unitTestMethod : metaInfoContainer.getUnitTestMethods()) {
+			Class<?> target = unitTestMethod.target();
+			String fieldString = getMethodString(unitTestMethod);
+			for (UnitTag unitTag : unitTestMethod.tags()) {
+				Map<Class<?>, List<String>> map = taggedAnnotations.get(unitTag);
+				List<String> list = map.get(target);
+				if (list == null) {
+					list = new ArrayList<>();
+					map.put(target, list);
+				}
+				list.add(fieldString);
 			}
 		}
-		for (UnitTestConstructor unitTestConstructor : metaInfoContainer.getUnitTestConstructors()) {			
-			String constructorString = getConstructorString(unitTestConstructor);
-			for(UnitTag unitTag : unitTestConstructor.tags()) {
-				taggedAnnotations.get(unitTag).add(constructorString);
+		for (UnitTestConstructor unitTestConstructor : metaInfoContainer.getUnitTestConstructors()) {
+			Class<?> target = unitTestConstructor.target();
+			String fieldString = getConstructorString(unitTestConstructor);
+			for (UnitTag unitTag : unitTestConstructor.tags()) {
+				Map<Class<?>, List<String>> map = taggedAnnotations.get(unitTag);
+				List<String> list = map.get(target);
+				if (list == null) {
+					list = new ArrayList<>();
+					map.put(target, list);
+				}
+				list.add(fieldString);
 			}
 		}
-		
-		for(UnitTag unitTag : taggedAnnotations.keySet()) {
-			List<String> annotationStrings = taggedAnnotations.get(unitTag);
-			if(!annotationStrings.isEmpty()) {
-				System.out.println("Tag = "+unitTag);
-				for(String annotationString : annotationStrings) {
-					System.out.println("\t"+annotationString);
+
+		for (UnitTag unitTag : taggedAnnotations.keySet()) {
+			Map<Class<?>, List<String>> map = taggedAnnotations.get(unitTag);
+			if (!map.isEmpty()) {
+				System.out.println("Tag = " + unitTag);
+				for (Class<?> target : map.keySet()) {
+					List<String> list = map.get(target);
+					for (String annotationString : list) {
+						System.out.println("\t"+target.getSimpleName()+"\t" + annotationString);
+					}
 				}
 			}
 		}

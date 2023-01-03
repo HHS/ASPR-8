@@ -14,6 +14,27 @@ import util.delaunay.GeoDelaunaySolver;
 import util.earth.LatLon;
 import util.time.TimeElapser;
 
+/**
+ * A demonstration application driver that displays population data consisting
+ * of fields in a tab delimited file:
+ * 
+ * <pre>
+ *     
+ * id(string)
+ * lon(degrees)
+ * lat(degrees)
+ * population(int)
+ * </pre>
+ * 
+ * 
+ * The display is on a 3D spherical earth where the points are connected to one
+ * another in a Delaunay triangle mesh. An example file in contained in the test
+ * resources of this project.
+ * 
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public class GeoVisualizerDriver {
 
 	private GeoVisualizerDriver() {

@@ -1,4 +1,4 @@
-package util.delaunay.geovisualizer;
+package util.delaunay;
 
 import java.util.Map;
 
@@ -6,14 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestMethod;
-import util.delaunay.GeoDelaunaySolver;
 
 public class AT_GeoDelaunaySolver {
 
 	@Test
 	@UnitTestMethod(target = GeoDelaunaySolver.class, name = "solve", args = { Map.class }, tags = { UnitTag.MANUAL })
 	public void testSolve() {
-		// Should be manually tested. See GeoVisualzerFrame for a manual
+		// Should be manually tested. See GeoVisualizerDriver for a manual
 		// demonstration that displays points on a 3D globe.
 	}
 }

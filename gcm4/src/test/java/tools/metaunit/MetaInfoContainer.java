@@ -1,4 +1,4 @@
-package tools.metaunit.warnings;
+package tools.metaunit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
+import tools.metaunit.warnings.ConstructorWarning;
+import tools.metaunit.warnings.FieldWarning;
+import tools.metaunit.warnings.MethodWarning;
 
 public final class MetaInfoContainer {
 	private static class Data {

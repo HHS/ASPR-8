@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import tools.metaunit.MetaInfoContainer;
+import tools.metaunit.MetaInfoGenerator;
 import tools.metaunit.warnings.ConstructorWarning;
 import tools.metaunit.warnings.FieldWarning;
 import tools.metaunit.warnings.MethodWarning;
-import tools.metaunit.warnings.MetaInfoContainer;
-import tools.metaunit.warnings.WarningGenerator;
 import tools.metaunit.warnings.WarningType;
 
 /**
@@ -37,7 +37,7 @@ public class MissingTestsReport {
 
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
-		MetaInfoContainer metaInfoContainer = WarningGenerator.builder()//
+		MetaInfoContainer metaInfoContainer = MetaInfoGenerator.builder()//
 															.setSourcePath(sourcePath)//
 															.setTestPath(testPath)//
 															.build()//

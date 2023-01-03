@@ -15,7 +15,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import plugins.resources.support.ResourceId;
-import tools.annotations.UnitTag;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;
@@ -74,7 +73,7 @@ public class AT_TestResourceId {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestResourceId.class, name = "next", args = {}, tags = UnitTag.INCOMPLETE)
+	@UnitTestMethod(target = TestResourceId.class, name = "next", args = {})
 	public void testNext() {
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			int index = (testResourceId.ordinal() + 1) % TestResourceId.values().length;

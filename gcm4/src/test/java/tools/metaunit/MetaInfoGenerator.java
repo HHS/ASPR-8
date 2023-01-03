@@ -1,4 +1,4 @@
-package tools.metaunit.warnings;
+package tools.metaunit;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,10 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
+import tools.metaunit.warnings.ConstructorWarning;
+import tools.metaunit.warnings.FieldWarning;
+import tools.metaunit.warnings.MethodWarning;
+import tools.metaunit.warnings.WarningType;
 
 /**
  * A utility class for generating various warnings on the coverage deficiencies
@@ -28,7 +32,7 @@ import tools.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-public class WarningGenerator {
+public class MetaInfoGenerator {
 
 	private static boolean isJavaFile(Path file) {
 		return Files.isRegularFile(file) && file.toString().endsWith(".java");
@@ -315,10 +319,10 @@ public class WarningGenerator {
 
 		private Data data = new Data();
 
-		public WarningGenerator build() {
+		public MetaInfoGenerator build() {
 			try {
 				validate();
-				return new WarningGenerator(data);
+				return new MetaInfoGenerator(data);
 			} finally {
 				data = new Data();
 			}
@@ -340,7 +344,7 @@ public class WarningGenerator {
 
 	}
 
-	private WarningGenerator(Data data) {
+	private MetaInfoGenerator(Data data) {
 		this.data = data;
 	}
 
