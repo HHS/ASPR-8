@@ -11,7 +11,6 @@ import plugins.people.support.PersonId;
  * PeopleContainer implementor that uses hash-bucketed ArrayLists and an
  * array-based tree to contain the people. Uses ~ 45 bits per person contained.
  * 
- * @author Shawn Hatch
  */
 public final class IntSetPeopleContainer implements PeopleContainer {
 

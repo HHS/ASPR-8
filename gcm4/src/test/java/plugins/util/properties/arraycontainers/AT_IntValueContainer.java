@@ -11,12 +11,6 @@ import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link IntValueContainer}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_IntValueContainer {
 
 	/**

@@ -7,7 +7,6 @@ import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 /**
  * A plugin providing a global property data manager to the simulation.
  * 
- * @author Shawn Hatch
  *
  */
 public final class GlobalPropertiesPlugin {

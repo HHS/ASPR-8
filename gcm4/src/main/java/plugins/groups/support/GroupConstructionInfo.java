@@ -13,7 +13,6 @@ import util.errors.ContractException;
  * Represents the information to add a group, but not its relationship to
  * people.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

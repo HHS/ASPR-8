@@ -22,7 +22,6 @@ import util.errors.ContractException;
 /**
  * Published data view that provides attribute information.
  * 
- * @author Shawn Hatch
  *
  */
 

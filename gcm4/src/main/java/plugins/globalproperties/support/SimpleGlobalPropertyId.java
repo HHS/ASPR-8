@@ -4,7 +4,6 @@ import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 /**
  * A simple implementor of {@link GlobalPropertyId} that wraps a value. 
- * @author Shawn Hatch
  *
  */
 public final class SimpleGlobalPropertyId implements GlobalPropertyId {

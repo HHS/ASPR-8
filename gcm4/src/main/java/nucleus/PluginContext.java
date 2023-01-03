@@ -10,7 +10,6 @@ import util.errors.ContractException;
  * experiment. It provides the set of plugin data objects gathered from the
  * plugins that compose the experiment.
  * 
- * @author Shawn Hatch
  *
  */
 public final class PluginContext {

@@ -8,7 +8,6 @@ import plugins.resources.ResourcesPluginId;
 /**
  * A plugin providing a materials data manager to the simulation.
  * 
- * @author Shawn Hatch
  *
  */
 public final class MaterialsPlugin {

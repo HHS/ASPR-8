@@ -27,7 +27,6 @@ import util.errors.ContractException;
  *
  * Value -- the value of the global property
  *
- * @author Shawn Hatch
  *
  */
 public final class GlobalPropertyReport {
@@ -42,7 +41,6 @@ public final class GlobalPropertyReport {
 	/**
 	 * Builder class for the global property report
 	 *
-	 * @author Shawn Hatch
 	 *
 	 */
 	public final static class Builder {

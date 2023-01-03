@@ -9,7 +9,6 @@ import net.jcip.annotations.ThreadSafe;
  * A {@link Stat} implementor that is immutable and is constructed via the
  * contained builder class.
  * 
- * @author Shawn Hatch
  *
  */
 @ThreadSafe
@@ -18,7 +17,6 @@ public final class ImmutableStat implements Stat {
 	/**
 	 * A container for collecting the five characteristics of a Stat
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private static class Scaffold {
@@ -39,7 +37,6 @@ public final class ImmutableStat implements Stat {
 	/**
 	 * A builder class for {@link ImmutableStat}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	@NotThreadSafe

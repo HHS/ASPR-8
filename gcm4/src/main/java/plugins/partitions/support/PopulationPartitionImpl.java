@@ -29,7 +29,6 @@ import util.errors.ContractException;
  * Primary implementor for {@link PopulationPartition}
  *
  *
- * @author Shawn Hatch
  *
  */
 public final class PopulationPartitionImpl implements PopulationPartition {

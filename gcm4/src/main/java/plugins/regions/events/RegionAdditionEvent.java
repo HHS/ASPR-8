@@ -12,7 +12,6 @@ import util.errors.ContractException;
 /**
  * An event indicating that a region has been added
  * 
- * @author Shawn Hatch
  *
  */
 
@@ -36,7 +35,6 @@ public class RegionAdditionEvent implements Event {
 	/**
 	 * Builder class for {@link RegionAdditionEvent}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

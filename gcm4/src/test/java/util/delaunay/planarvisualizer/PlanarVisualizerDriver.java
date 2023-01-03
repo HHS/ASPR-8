@@ -18,7 +18,6 @@ import util.vector.Vector2D;
  * connected to one another in a Delaunay triangle mesh.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public class PlanarVisualizerDriver {

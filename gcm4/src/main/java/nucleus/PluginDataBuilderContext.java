@@ -14,7 +14,6 @@ import util.errors.ContractException;
  * A context containing PluginDataBuilder instances that are used to build a
  * particular scenario within an experiment.
  * 
- * @author Shawn Hatch
  *
  * 
  */
@@ -74,7 +73,6 @@ public final class PluginDataBuilderContext {
 	/**
 	 * A builder class for PluginDataBuilderContext
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

@@ -16,12 +16,6 @@ import util.path.Paths.EdgeCostEvaluator;
 import util.path.Paths.TravelCostEvaluator;
 import util.vector.Vector2D;
 
-/**
- * Test class for {@link Paths}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_Paths {
 
 	/**

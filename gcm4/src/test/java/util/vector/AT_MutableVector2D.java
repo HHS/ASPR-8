@@ -14,12 +14,6 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.spherical.Chirality;
 
-/**
- * Test class for {@link MutableVector2D}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_MutableVector2D {
 
 	private static final double TOLERANCE = 0.000001;

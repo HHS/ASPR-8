@@ -12,7 +12,6 @@ import util.errors.ContractException;
  * managers for data managers. It is supplied by the engine each time it
  * interacts with a data manager.
  * 
- * @author Shawn Hatch
  *
  */
 

@@ -11,7 +11,6 @@ import java.util.function.Function;
  * 2) updates those builders to create alternate inputs for each scenario and 3)
  * returns a list of strings representing the variant values in the scenario.
  * 
- * @author Shawn Hatch
  *
  */
 

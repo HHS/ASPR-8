@@ -10,7 +10,6 @@ import util.errors.ContractException;
  * An event released by the materials data manager whenever a materials producer property
  * definition is added to the simulation.
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record MaterialsProducerPropertyDefinitionEvent(

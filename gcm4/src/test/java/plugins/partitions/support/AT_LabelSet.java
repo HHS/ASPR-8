@@ -15,12 +15,6 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-/**
- * Test class for {@link LabelSetInfo}
- * 
- * @author Shawn Hatch
- *
- */
 
 public class AT_LabelSet {
 

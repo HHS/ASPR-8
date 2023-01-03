@@ -16,7 +16,6 @@ import util.errors.ContractException;
  * and property values for extant materials producers.
  * 
  * 
- * @author Shawn Hatch
  *
  
  */
@@ -45,7 +44,6 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 	/**
 	 * Builder class for a MaterialsProducerPropertyDefinitionInitialization
 	 * 
-	 * @author Shawn Hatch
 	 *
 	
 	 */

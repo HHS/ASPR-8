@@ -45,7 +45,6 @@ import util.random.RandomGeneratorProvider;
  * test harness.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public class MaterialsActionSupport {

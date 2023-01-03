@@ -25,7 +25,6 @@ import plugins.reports.support.ReportPeriod;
  * 
  * GroupCount -- the number of groups having the person count
  *
- * @author Shawn Hatch
  *
  */
 public final class GroupPopulationReport extends PeriodicReport {

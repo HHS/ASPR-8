@@ -36,7 +36,6 @@ import util.errors.ContractException;
  * <li>person group assignments</li>
  * </ul>
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -202,7 +201,6 @@ public final class GroupsPluginData implements PluginData {
 	/**
 	 * Builder class for GroupInitialData
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder implements PluginDataBuilder {

@@ -9,15 +9,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTestMethod;
-import util.errors.ContractException;
 
-/**
- * An enumeration supporting {@link ContractException} that acts as a general
- * description of the exception.
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_AttributeError {
 	@Test
 	@UnitTestMethod(target = AttributeError.class, name = "getDescription", args = {})

@@ -30,7 +30,6 @@ import util.time.TimeElapser;
  * A utility class used by the experiment to manage experiment context consumers
  * and ensure thread safe access to scenario related state.
  * 
- * @author Shawn Hatch
  *
  */
 @ThreadSafe
@@ -311,7 +310,6 @@ public final class ExperimentStateManager {
 	/**
 	 * Builder class for ExperimentStateManager
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

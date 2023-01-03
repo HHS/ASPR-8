@@ -35,7 +35,6 @@ import util.wrappers.MutableInteger;
  * Transfers -- the number of transfers from the source region to the
  * destination region
  *
- * @author Shawn Hatch
  *
  */
 public final class RegionTransferReport extends PeriodicReport {

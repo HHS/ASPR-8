@@ -5,7 +5,6 @@ import util.errors.ContractException;
 /**
  * A convenience class for representing PluginId as a wrapped object.
  * 
- * @author Shawn Hatch
  *
  *
  */

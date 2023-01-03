@@ -15,7 +15,6 @@ import util.wrappers.MultiKey;
  * Manages shortest path solutions for a given graph with reasonable efficiency
  * using maps of previous path solutions and their sub-paths.
  * 
- * @author Shawn Hatch
  * 
  */
 public class MapPathSolver<N, E> implements PathSolver<N, E> {

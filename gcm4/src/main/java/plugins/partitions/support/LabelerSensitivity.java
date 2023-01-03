@@ -16,7 +16,6 @@ import plugins.people.support.PersonId;
  * Partition labelers describe their sensitivity to events via this
  * generics-base class.
  * 
- * @author Shawn Hatch
  *
  * 
  */

@@ -87,7 +87,6 @@ public final class BinContainer {
 	 * Represents a half open interval [lowerBound,upperBound) that contains a
 	 * count of values.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 

@@ -43,7 +43,6 @@ import util.errors.ContractException;
  * person_count -- the number of people having the property value within the
  * region
  *
- * @author Shawn Hatch
  *
  */
 public final class PersonPropertyReport extends PeriodicReport {
@@ -69,7 +68,6 @@ public final class PersonPropertyReport extends PeriodicReport {
 	/**
 	 * Builder class for the report
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public final static class Builder {

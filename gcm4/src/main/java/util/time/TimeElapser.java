@@ -3,7 +3,6 @@ package util.time;
 /**
  * A debug-convenience class for measuring elapsed time via System.nanoTime()
  *
- * @author Shawn Hatch
  *
  */
 public final class TimeElapser {

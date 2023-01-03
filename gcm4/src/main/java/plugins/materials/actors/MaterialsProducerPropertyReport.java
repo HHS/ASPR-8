@@ -25,7 +25,6 @@ import plugins.reports.support.ReportItem;
  *
  * Value -- the value of the region property
  *
- * @author Shawn Hatch
  *
  */
 public final class MaterialsProducerPropertyReport {

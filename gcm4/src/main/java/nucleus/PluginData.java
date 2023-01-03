@@ -16,7 +16,6 @@ import net.jcip.annotations.ThreadSafe;
  * Plugin data classes require a corresponding PluginDataBuilder that builds the
  * plugin.
  * 
- * @author Shawn Hatch
  *
  */
 

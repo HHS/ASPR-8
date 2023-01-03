@@ -9,8 +9,6 @@ import nucleus.testsupport.testplugin.TestPluginData;
 /**
  * Manual experiment test focusing on the generation and handling of exceptions.
  * 
- * @author Shawn Hatch
- *
  */
 public class MT_Experiment {
 

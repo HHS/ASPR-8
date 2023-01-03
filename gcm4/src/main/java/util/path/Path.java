@@ -11,7 +11,6 @@ import net.jcip.annotations.Immutable;
  * containing repeated edges. A path may be a degenerate, having no edges.
  * Degenerate paths are the expected results for paths that do not exist.
  * 
- * @author Shawn Hatch
  * 
  */
 @Immutable

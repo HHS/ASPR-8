@@ -15,10 +15,6 @@ import util.errors.ContractException;
  * A class for defining a person property with an associated property id
  * and property values for extant people.
  * 
- * 
- * @author Shawn Hatch
- *
- 
  */
 @Immutable
 public final class RegionPropertyDefinitionInitialization {
@@ -45,9 +41,6 @@ public final class RegionPropertyDefinitionInitialization {
 	/**
 	 * Builder class for a PropertyDefinitionInitialization
 	 * 
-	 * @author Shawn Hatch
-	 *
-	
 	 */
 	public final static class Builder {
 		

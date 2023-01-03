@@ -17,12 +17,6 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-/**
- * Test class for {@link MutableStat}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_MutableStat {
 
 	private static final double TOLERANCE = 0.0001;

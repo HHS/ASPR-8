@@ -10,12 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link NucleusError}
- * 
- * @author Shawn Hatch
- *
- */
+
 public class AT_NucleusError {
 
 	/**

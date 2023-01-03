@@ -4,7 +4,6 @@ package nucleus;
  * The unique identifier for data managers. DataManagerId values are constructed
  * dynamically and are distributed contiguously from 0.
  * 
- * @author Shawn Hatch
  *
  */
 public final class DataManagerId implements Comparable<DataManagerId> {

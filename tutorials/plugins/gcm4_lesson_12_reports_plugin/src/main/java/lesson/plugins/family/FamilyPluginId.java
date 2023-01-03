@@ -5,7 +5,6 @@ import nucleus.SimplePluginId;
 /**
  * Static plugin id implementation for the Family Plugin
  * 
- * @author Shawn Hatch
  *
  */
 

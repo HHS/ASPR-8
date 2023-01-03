@@ -5,7 +5,6 @@ import net.jcip.annotations.Immutable;
 /**
  * Identifier for all material stages
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

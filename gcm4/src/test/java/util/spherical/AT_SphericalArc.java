@@ -14,12 +14,6 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
 
-/**
- * Test class for {@link SphericalArc}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_SphericalArc {
 
 	/**

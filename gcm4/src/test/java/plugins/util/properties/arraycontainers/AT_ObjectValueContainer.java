@@ -11,12 +11,6 @@ import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link ObjectValueContainer}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_ObjectValueContainer {
 
 	/**

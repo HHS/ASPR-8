@@ -38,7 +38,6 @@ import util.random.RandomGeneratorProvider;
  * ordering on the invocation of its methods and many validation tests are
  * deferred to the build invocation.
  * 
- * @author Shawn Hatch
  *
  */
 public class AT_RegionsPluginData {

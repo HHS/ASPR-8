@@ -12,7 +12,6 @@ import util.errors.ContractException;
  * this event is received. No further events or plans should be generated that
  * reference the person.
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record PersonImminentRemovalEvent(PersonId personId) implements Event {

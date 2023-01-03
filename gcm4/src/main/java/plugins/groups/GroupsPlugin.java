@@ -8,7 +8,6 @@ import plugins.stochastics.StochasticsPluginId;
 /**
  * A plugin providing a group data manager to the simulation.
  * 
- * @author Shawn Hatch
  *
  */
 public final class GroupsPlugin {

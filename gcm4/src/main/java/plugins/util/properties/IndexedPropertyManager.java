@@ -6,7 +6,6 @@ import util.errors.ContractException;
  * Common interface to all property managers. A property manager manages
  * property values associated with int-based identifiers.
  * 
- * @author Shawn Hatch
  *
  */
 public interface IndexedPropertyManager {

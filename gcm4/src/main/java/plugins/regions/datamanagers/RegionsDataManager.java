@@ -49,7 +49,6 @@ import util.errors.ContractException;
  * inputs are performed and mutation methods have invocation ordering
  * requirements.
  *
- * @author Shawn Hatch
  *
  */
 public final class RegionsDataManager extends DataManager {
@@ -641,7 +640,6 @@ public final class RegionsDataManager extends DataManager {
 	 *             <ul>
 	 *             </p>
 	 *
-	 * @author Shawn Hatch
 	 *
 	 */
 	@Override

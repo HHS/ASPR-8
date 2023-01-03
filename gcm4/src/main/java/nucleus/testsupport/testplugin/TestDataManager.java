@@ -14,7 +14,6 @@ import nucleus.DataManagerContext;
  * Alias identification exists for the convenience of the test implementor so
  * that tests can name data managers.
  * 
- * @author Shawn Hatch
  *
  */
 

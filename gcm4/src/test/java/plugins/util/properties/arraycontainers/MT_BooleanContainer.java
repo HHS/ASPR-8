@@ -22,7 +22,6 @@ package plugins.util.properties.arraycontainers;
  * using the LinkedHashSet and those have more than 1% should be stored using a
  * BooleanContainer.
  *
- * @author Shawn Hatch
  *
  */
 public class MT_BooleanContainer {

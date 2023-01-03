@@ -11,12 +11,6 @@ import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link PartitionSampler}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_PartitionSampler {
 
 	/**

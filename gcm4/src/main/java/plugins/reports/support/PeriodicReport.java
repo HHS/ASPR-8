@@ -17,7 +17,6 @@ import util.errors.ContractException;
  * invocation. This can result in the duplication of time values for last data
  * released.
  *
- * @author Shawn Hatch
  *
  */
 public abstract class PeriodicReport {

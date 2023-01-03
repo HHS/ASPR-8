@@ -28,7 +28,6 @@ import util.errors.ContractException;
  * <li>person property definitions</li>
  * </ul>
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -64,7 +63,6 @@ public class PersonPropertiesPluginData implements PluginData {
 	/**
 	 * Builder class for PersonPropertyInitialData
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder implements PluginDataBuilder {

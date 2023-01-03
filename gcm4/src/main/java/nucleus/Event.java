@@ -9,7 +9,6 @@ package nucleus;
  * current actor and data managers have completed their current processing and
  * before the next plan is processed from the simulation's planning queue.
  * 
- * @author Shawn Hatch
  *
  */
 public interface Event {

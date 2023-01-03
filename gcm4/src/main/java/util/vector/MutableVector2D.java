@@ -7,7 +7,6 @@ import util.spherical.Chirality;
 /**
  * A mutable 2-dimensional vector class supporting common 2D transforms.
  *
- * @author Shawn Hatch
  *
  */
 public final class MutableVector2D {

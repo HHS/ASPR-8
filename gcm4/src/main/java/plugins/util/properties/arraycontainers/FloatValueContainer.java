@@ -11,7 +11,6 @@ import util.errors.ContractException;
  * index value until the value is explicitly set by an invocation to the set()
  * method.
  * 
- * @author Shawn Hatch
  *
  */
 public final class FloatValueContainer {

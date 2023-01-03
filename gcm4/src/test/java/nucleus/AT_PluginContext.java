@@ -19,14 +19,7 @@ import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
-/**
- * The PluginContext interface is implemented by the {@link Simulation}. These
- * tests cover that implementation.
- *
- *
- * @author Shawn Hatch
- *
- */
+
 public class AT_PluginContext {
 
 	private static class TestDataManager1 extends TestDataManager {

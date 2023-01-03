@@ -5,7 +5,6 @@ import nucleus.SimplePluginId;
 /**
  * Static plugin id implementation for the Vaccine Plugin
  * 
- * @author Shawn Hatch
  *
  */
 

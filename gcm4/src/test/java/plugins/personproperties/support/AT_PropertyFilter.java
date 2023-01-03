@@ -28,12 +28,6 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
-/**
- * Test unit for {@link PropertyFilter}.
- *
- * @author Shawn Hatch
- *
- */
 public class AT_PropertyFilter {
 
 	@Test

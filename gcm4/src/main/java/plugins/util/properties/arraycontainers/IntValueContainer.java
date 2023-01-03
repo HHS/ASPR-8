@@ -13,7 +13,6 @@ import util.errors.ContractException;
  * a short array since 300 exceeds the highest value of byte.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public final class IntValueContainer {

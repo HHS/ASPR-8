@@ -14,12 +14,6 @@ import util.random.RandomGeneratorProvider;
 import util.vector.MutableVector3D;
 import util.vector.Vector3D;
 
-/**
- * Test class for {@link SphericalPoint}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_SphericalPoint {
 
 	/**

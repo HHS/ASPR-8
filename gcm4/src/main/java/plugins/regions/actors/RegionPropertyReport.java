@@ -31,7 +31,6 @@ import util.errors.ContractException;
  *
  * Value -- the value of the region property
  *
- * @author Shawn Hatch
  *
  */
 public final class RegionPropertyReport {

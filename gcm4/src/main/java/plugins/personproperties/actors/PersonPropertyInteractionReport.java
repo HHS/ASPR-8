@@ -42,7 +42,6 @@ import plugins.reports.support.ReportPeriod;
  * person count -- the number of people having the tuple of property values
  * within the region pair
  *
- * @author Shawn Hatch
  *
  */
 public final class PersonPropertyInteractionReport extends PeriodicReport {

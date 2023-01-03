@@ -39,7 +39,6 @@ import util.path.Path.Builder;
  * 
  * If a path cannot be found then a degenerate, node-less path is returned.
  * 
- * @author Shawn Hatch
  * 
  */
 public final class Paths {

@@ -22,7 +22,6 @@ import plugins.people.support.PersonId;
  * {@linkplain GroupMembershipRemovalEvent} and the labeling function
  * is composed from the given Function.
  * 
- * @author Shawn Hatch
  *
  */
 public final class GroupLabeler implements Labeler {

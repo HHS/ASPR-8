@@ -10,12 +10,6 @@ import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-/**
- * Test class for {@link LatLon}
- * 
- * @author Shawn Hatch
- *
- */
 
 public class AT_LatLon {
 

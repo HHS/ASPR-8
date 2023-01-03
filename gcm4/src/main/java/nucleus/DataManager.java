@@ -6,7 +6,6 @@ import util.errors.ContractException;
  * Base class for all data managers.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public class DataManager {

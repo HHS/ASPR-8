@@ -13,7 +13,6 @@ import util.errors.ContractException;
  * an actor. Actors are defined by this context. If this context is passed to a
  * method invocation, then that method is an actor method.
  * 
- * @author Shawn Hatch
  *
  */
 

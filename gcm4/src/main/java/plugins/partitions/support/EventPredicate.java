@@ -13,7 +13,6 @@ import plugins.people.support.PersonId;
  * filter that owns the filter sensitivity.
  * 
  * 
- * @author Shawn Hatch
  *
  * 
  */

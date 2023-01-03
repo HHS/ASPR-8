@@ -14,7 +14,6 @@ import util.vector.Vector3D;
  * is approximated by a sphere using the WGS84 earth radius for the latitude of
  * the center of the grid.
  * 
- * @author Shawn Hatch
  *
  */
 public final class EarthGrid {

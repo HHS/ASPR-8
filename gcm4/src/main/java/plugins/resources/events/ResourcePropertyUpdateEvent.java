@@ -8,7 +8,6 @@ import plugins.resources.support.ResourcePropertyId;
 /**
  * An observation event indicating that a resource property has changed.
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record ResourcePropertyUpdateEvent(ResourceId resourceId,

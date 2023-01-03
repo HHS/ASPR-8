@@ -8,7 +8,6 @@ import util.errors.ContractException;
  * An event released by the global data manager whenever a global property
  * definition is added to the simulation.
  * 
- * @author Shawn Hatch
  *
  */
 

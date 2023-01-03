@@ -16,7 +16,6 @@ import util.errors.ContractException;
  * match people in a {@link Partition} who are associated with some specific
  * numbers of groups of specific group types.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -111,7 +110,6 @@ public final class GroupTypeCountMap {
 	 * Standard builder class for group type count maps. All inputs are
 	 * optional.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	@NotThreadSafe

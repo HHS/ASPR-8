@@ -21,7 +21,6 @@ import net.jcip.annotations.Immutable;
  * Dependency in the graph is represented by edges. An edge directed from node A
  * to node B is taken to mean that A depends on B.
  * 
- * @author Shawn Hatch
  * 
  */
 @Immutable

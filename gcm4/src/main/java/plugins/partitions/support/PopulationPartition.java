@@ -15,7 +15,6 @@ import plugins.people.support.PersonId;
  * 
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public interface PopulationPartition {

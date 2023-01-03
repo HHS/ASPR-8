@@ -8,7 +8,6 @@ import plugins.people.support.PersonId;
 /**
  * Event to indicating that person was removed from a group
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record GroupMembershipRemovalEvent(PersonId personId,

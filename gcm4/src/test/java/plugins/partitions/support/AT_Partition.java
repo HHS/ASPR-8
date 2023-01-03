@@ -14,12 +14,6 @@ import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 import plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link PartitionInfo}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_Partition {
 
 	/**

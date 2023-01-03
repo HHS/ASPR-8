@@ -46,7 +46,6 @@ import util.errors.ContractException;
  * GroupCount -- the number of groups having the property value for the given
  * group type
  *
- * @author Shawn Hatch
  *
  */
 public final class GroupPropertyReport extends PeriodicReport {

@@ -7,7 +7,6 @@ import util.errors.ContractException;
  * An enumeration supporting {@link ContractException} that acts as a general
  * description of the exception.
  * 
- * @author Shawn Hatch
  *
  */
 public enum RegionError implements ContractError {

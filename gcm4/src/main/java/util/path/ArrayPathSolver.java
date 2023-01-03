@@ -15,7 +15,6 @@ import util.path.Paths.TravelCostEvaluator;
  * Manages shortest path solutions for a given graph with reasonable efficiency
  * using arrays of previous path solutions and their sub-paths.
  * 
- * @author Shawn Hatch
  * 
  */
 public final class ArrayPathSolver<N, E> implements PathSolver<N, E> {

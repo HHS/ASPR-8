@@ -8,7 +8,6 @@ import java.util.Arrays;
  * set for a particular index. This allows this container to return the default
  * value for indices outside of the range of the internal array.
  * 
- * @author Shawn Hatch
  *
  */
 public final class ObjectValueContainer {

@@ -3,7 +3,6 @@ package plugins.partitions.support;
 /**
  * Enumeration used by various filters to perform equality comparisons
  *
- * @author Shawn Hatch
  *
  */
 public enum Equality {

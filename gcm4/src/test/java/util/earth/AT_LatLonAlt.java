@@ -11,12 +11,6 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
 
-/**
- * Test class for {@link LatLonAlt}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_LatLonAlt {
 
 	private static final double TOLERANCE = 0.0001;

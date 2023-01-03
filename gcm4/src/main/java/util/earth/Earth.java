@@ -9,7 +9,6 @@ import util.vector.Vector3D;
  * calculating ground ranges. Earth instances are created from approximations to
  * the WGS84 oblate earth.
  * 
- * @author Shawn Hatch
  *
  */
 public class Earth {

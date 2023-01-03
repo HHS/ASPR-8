@@ -4,7 +4,6 @@ package util.errors;
  * A {@link RuntimeException} that indicates that the cause of the error as a
  * precondition(contract) violation
  * 
- * @author Shawn Hatch
  *
  */
 public final class ContractException extends RuntimeException {

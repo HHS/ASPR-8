@@ -33,7 +33,6 @@ import util.errors.ContractException;
  * 
  * Label Sets are built by the modeler via the supplied Builder class.
  *
- * @author Shawn Hatch
  *
  */
 

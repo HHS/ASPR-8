@@ -10,7 +10,6 @@ import plugins.people.support.PersonId;
  * Interface for abstracting the details of how people ids are stored as either
  * a Set or a Boolean container.
  * 
- * @author Shawn Hatch
  */
 public interface PeopleContainer {
 

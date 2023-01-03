@@ -28,7 +28,6 @@ public final class PersonConstructionData {
 	/**
 	 * Builder class for {@link PersonConstructionData}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

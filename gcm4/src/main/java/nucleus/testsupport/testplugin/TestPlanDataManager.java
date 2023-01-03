@@ -12,7 +12,6 @@ import nucleus.DataManagerContext;
  * A data manager used by test actors and test data managers to retrieve plans
  * by alias ids.
  * 
- * @author Shawn Hatch
  *
  */
 

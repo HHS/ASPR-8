@@ -6,7 +6,6 @@ import java.util.Optional;
  * Stat contains the values of several useful statistical values for a sequence,
  * but not the values in the sequence.
  * 
- * @author Shawn Hatch
  *
  */
 public interface Stat {

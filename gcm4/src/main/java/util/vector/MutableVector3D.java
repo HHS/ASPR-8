@@ -31,8 +31,6 @@ import org.apache.commons.math3.util.FastMath;
  * @see <a href=
  *      "http://mathworld.wolfram.com/Vector.html">http://mathworld.wolfram.com/Vector.html</a>
  *
- * @author Shawn R. Hatch
- * @author Christopher R. Ludka
  */
 public final class MutableVector3D {
 

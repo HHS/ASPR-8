@@ -9,7 +9,6 @@ import plugins.personproperties.support.PersonPropertyId;
  * An observation event indicating that a person's property assignment has
  * changed.
  *
- * @author Shawn Hatch
  */
 
 @Immutable

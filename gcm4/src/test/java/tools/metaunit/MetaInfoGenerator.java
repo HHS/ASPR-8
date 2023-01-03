@@ -29,7 +29,6 @@ import tools.metaunit.warnings.WarningType;
  * A utility class for generating various warnings on the coverage deficiencies
  * of the the unit test suite.
  *
- * @author Shawn Hatch
  *
  */
 public class MetaInfoGenerator {

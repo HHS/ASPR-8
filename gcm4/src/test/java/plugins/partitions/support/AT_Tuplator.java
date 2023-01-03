@@ -16,12 +16,6 @@ import plugins.partitions.support.Tuplator.Builder;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-/**
- * Test class for {@link Tuplator}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_Tuplator {
 
 	/**

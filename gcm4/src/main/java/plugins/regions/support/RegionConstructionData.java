@@ -27,7 +27,6 @@ public class RegionConstructionData {
 	/**
 	 * Static builder class for {@link RegionConstructionData}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

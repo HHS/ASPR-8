@@ -10,7 +10,6 @@ import net.jcip.annotations.ThreadSafe;
  * A Consumer<ExperimentContext> implementation that can be used in an
  * Experiment for reporting experiment progress to the console.
  * 
- * @author Shawn Hatch
  *
  */
 

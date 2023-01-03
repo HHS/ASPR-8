@@ -12,12 +12,6 @@ import plugins.stochastics.support.RandomNumberGeneratorId;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link GroupSamplerInfo}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_GroupSampler {
 
 	@Test

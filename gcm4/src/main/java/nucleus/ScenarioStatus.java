@@ -10,7 +10,6 @@ package nucleus;
  * an exception, the scenario is updated to SUCCEDED. Otherwise, it is updated
  * to FAILED.
  * 
- * @author Shawn Hatch
  *
  */
 

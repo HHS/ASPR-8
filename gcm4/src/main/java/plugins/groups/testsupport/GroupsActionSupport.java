@@ -36,7 +36,6 @@ import util.wrappers.MultiKey;
  * harness.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public class GroupsActionSupport {

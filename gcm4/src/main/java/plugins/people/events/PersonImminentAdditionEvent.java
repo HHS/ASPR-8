@@ -12,7 +12,6 @@ import util.errors.ContractException;
  * simulation. During this process, the person is not fully formed until all
  * subscribers to the event have been invoked.
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record PersonImminentAdditionEvent(PersonId personId,

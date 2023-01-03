@@ -4,7 +4,6 @@ package plugins.util.properties;
  * An enumeration used to control the tracking of assignment times of properties
  * and other values.
  * 
- * @author Shawn Hatch
  *
  */
 public enum TimeTrackingPolicy {

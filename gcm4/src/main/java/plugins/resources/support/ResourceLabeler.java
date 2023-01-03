@@ -21,7 +21,6 @@ import util.errors.ContractException;
  * {@linkplain PersonResourceUpdateEvent} and the labeling function
  * is composed from the given Function.
  * 
- * @author Shawn Hatch
  *
  */
 public final class ResourceLabeler implements Labeler {

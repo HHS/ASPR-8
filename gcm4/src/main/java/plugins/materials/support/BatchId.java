@@ -5,7 +5,6 @@ import net.jcip.annotations.Immutable;
 /**
  * Identifier for all batches
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

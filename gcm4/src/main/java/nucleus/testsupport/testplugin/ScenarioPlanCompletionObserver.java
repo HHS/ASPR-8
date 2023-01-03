@@ -11,7 +11,6 @@ import util.errors.ContractException;
  * report. Used to determine if 1)the test plugin contained at least one plan
  * and 2) all such plans were executed.
  * 
- * @author Shawn Hatch
  *
  */
 @ThreadSafe

@@ -28,13 +28,7 @@ import util.errors.ContractException;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableBoolean;
 
-/**
- *
- * Test for the implementation of AgentContext by the nucleus Engine
- *
- * @author Shawn Hatch
- *
- */
+
 public class AT_ActorContext {
 
 	/*

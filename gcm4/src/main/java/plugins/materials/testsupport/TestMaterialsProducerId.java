@@ -8,7 +8,6 @@ import plugins.materials.support.MaterialsProducerId;
  * A test support enumeration that contains a variety of materials producer id values.
  * Supports random selection and generation of unique, unknown material producer ids.
  * 
- * @author Shawn Hatch
  *
  */
 public enum TestMaterialsProducerId implements MaterialsProducerId {

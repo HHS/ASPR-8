@@ -17,7 +17,6 @@ import tools.metaunit.warnings.WarningType;
 /**
  * A script that produces a console report shows missing unit tests.
  *
- * @author Shawn Hatch
  *
  */
 public class MissingTestsReport {

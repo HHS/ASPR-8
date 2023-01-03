@@ -16,7 +16,6 @@ import util.errors.ContractException;
  * property values for extant groups.
  * 
  * 
- * @author Shawn Hatch
  *
  * 
  */
@@ -46,7 +45,6 @@ public final class GroupPropertyDefinitionInitialization {
 	/**
 	 * Builder class for a GroupPropertyDefinitionInitialization
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 *
 	 */

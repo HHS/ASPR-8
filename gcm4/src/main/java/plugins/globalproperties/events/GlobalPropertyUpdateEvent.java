@@ -8,7 +8,6 @@ import plugins.globalproperties.support.GlobalPropertyId;
  * An event released by the global data manager whenever a global property is
  * changed.
  *
- * @author Shawn Hatch
  */
 
 @Immutable

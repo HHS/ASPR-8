@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 /**
  * Annotation for JUnit test methods that are testing public source constructors.
  * 
- * @author Shawn Hatch
  *
  */
 

@@ -20,7 +20,6 @@ import util.errors.ContractException;
  * initialization</li>
  * </ul>
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

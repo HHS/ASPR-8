@@ -7,7 +7,6 @@ import plugins.people.support.PersonId;
  * A functional interface for selecting people from a group based on assigning a
  * weighting value to a person.
  * 
- * @author Shawn Hatch
  *
  */
 public interface GroupWeightingFunction {

@@ -18,12 +18,6 @@ import util.path.Paths.EdgeCostEvaluator;
 import util.path.Paths.TravelCostEvaluator;
 import util.vector.Vector2D;
 
-/**
- * Test class for {@link ArrayPathSolver}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_ArrayPathSolver {
 	/*
 	 * The travel cost will be the straight-line distance

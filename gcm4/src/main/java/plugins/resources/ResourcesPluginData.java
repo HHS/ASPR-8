@@ -36,7 +36,6 @@ import util.errors.ContractException;
  * <li>person resource levels</li>
  * </ul>
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -240,7 +239,6 @@ public final class ResourcesPluginData implements PluginData {
 	/**
 	 * Builder class for ResourceInitialData
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder implements PluginDataBuilder {

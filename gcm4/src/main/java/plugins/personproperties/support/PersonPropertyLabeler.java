@@ -21,7 +21,6 @@ import util.errors.ContractException;
  * {@linkplain PersonPropertyUpdateEvent} and the labeling function
  * is composed from the given Function.
  * 
- * @author Shawn Hatch
  *
  */
 public final class PersonPropertyLabeler implements Labeler {

@@ -9,7 +9,6 @@ import util.vector.Vector3D;
 /**
  * Represents an immutable triangle on the unit sphere.
  * 
- * @author Shawn Hatch
  *
  */
 

@@ -9,7 +9,6 @@ import util.errors.ContractException;
  * indicate the role that attribute is playing or the identifier of the
  * attribute.
  *
- * @author Shawn Hatch
  *
  */
 @ThreadSafe
@@ -30,7 +29,6 @@ public final class AttributeDefinition {
 	/**
 	 * Builder class for {@linkplain AttributeDefinition}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

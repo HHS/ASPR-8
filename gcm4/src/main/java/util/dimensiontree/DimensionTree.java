@@ -39,7 +39,6 @@ import util.errors.ContractException;
  * requires significantly more memory.
  * </p>
  * 
- * @author Shawn Hatch
  **/
 
 public final class DimensionTree<T> {
@@ -608,7 +607,6 @@ public final class DimensionTree<T> {
 	 * The common parameters shared by all nodes that takes up less memory than
 	 * storing these values on each node
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private static class CommonState {
@@ -630,7 +628,6 @@ public final class DimensionTree<T> {
 	/*
 	 * Represents a single node the in dimension tree.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private static class Node<T> {
@@ -956,7 +953,6 @@ public final class DimensionTree<T> {
 	/*
 	 * Represents a rectangular box in the dimension of the tree.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private static class Rectanguloid implements Shape {
@@ -1021,7 +1017,6 @@ public final class DimensionTree<T> {
 	/*
 	 * General interface for shapes used for gathering member from the tree.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private interface Shape {
@@ -1042,7 +1037,6 @@ public final class DimensionTree<T> {
 	/*
 	 * Represents a sphere in the dimension of the tree.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private static class Sphere implements Shape {
@@ -1105,7 +1099,6 @@ public final class DimensionTree<T> {
 	 * Represents the evolving answer to finding the nearest member to a given
 	 * position.
 	 * 
-	 * @author Shawn Hatch
 	 */
 	private static class NearestMemberQuery<T> {
 
@@ -1133,7 +1126,6 @@ public final class DimensionTree<T> {
 	/*
 	 * Represents the degree of intersection of the shape and a node.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private static enum ShapeIntersectionType {

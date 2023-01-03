@@ -20,7 +20,6 @@ import util.vector.Vector3D;
  * earth of WGS-84 mean radius. This utility specifically finds locations based
  * on a lat-lon coordinates and a search radius.
  * 
- * @author Shawn Hatch
  * 
  */
 public class GeoLocator<T> {
@@ -59,7 +58,6 @@ public class GeoLocator<T> {
 	 * Builder class for {@linkplain GeoLocator}. Builder instances return to an
 	 * empty and ready state post build invocation.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 * @param <T>
 	 */

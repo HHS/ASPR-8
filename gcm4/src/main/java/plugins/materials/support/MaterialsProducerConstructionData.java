@@ -30,7 +30,6 @@ public class MaterialsProducerConstructionData {
 	/**
 	 * Static builder class for {@link MaterialsProducerConstructionData}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

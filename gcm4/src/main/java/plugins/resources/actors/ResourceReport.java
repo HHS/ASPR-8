@@ -89,7 +89,6 @@ import util.errors.ContractException;
  * person
  *
  *
- * @author Shawn Hatch
  *
  */
 public final class ResourceReport extends PeriodicReport {

@@ -12,7 +12,6 @@ import util.errors.ContractException;
  * An event released by the groups data manager whenever a group property
  * definition is added to the simulation.
  *
- * @author Shawn Hatch
  */
 
 @Immutable

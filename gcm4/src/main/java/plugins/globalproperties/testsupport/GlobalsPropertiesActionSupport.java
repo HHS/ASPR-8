@@ -20,7 +20,6 @@ import util.errors.ContractException;
  * test harness.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 

@@ -13,7 +13,6 @@ import java.util.Set;
  * immutable and will throw UnsupportedOperationException runtime exception on
  * remove().
  * 
- * @author Shawn Hatch
  *
  */
 public final class MutableGraph<N, E> {

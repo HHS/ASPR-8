@@ -15,7 +15,6 @@ import util.errors.ContractException;
  * An immutable container of the initial state of people containing person ids.
  * All other person initialization data is provided by other plugins.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

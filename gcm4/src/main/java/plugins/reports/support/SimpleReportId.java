@@ -6,7 +6,6 @@ import util.errors.ContractException;
 /**
  * A convenience implementor of ReportId that wraps a value.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

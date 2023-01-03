@@ -6,7 +6,6 @@ import nucleus.SimulationContext;
  * A functional interface for selecting people from a {@link Partition} based on
  * assigning a weighting value to a {@link LabelSet}.
  * 
- * @author Shawn Hatch
  *
  */
 public interface LabelSetWeightingFunction {

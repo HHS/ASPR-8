@@ -9,7 +9,6 @@ import net.jcip.annotations.NotThreadSafe;
 /**
  * A utility class that allows an ordered set of objects to be used as a key.
  *
- * @author Shawn Hatch
  *
  */
 @NotThreadSafe

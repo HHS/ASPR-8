@@ -7,7 +7,6 @@ import util.errors.ContractException;
 /**
  * Identifier for all regions
  * 
- * @author Shawn Hatch
  *
  */
 

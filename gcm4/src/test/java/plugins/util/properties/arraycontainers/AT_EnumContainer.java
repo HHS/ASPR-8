@@ -14,12 +14,6 @@ import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link EnumContainer}
- * 
- * @author Shawn Hatch
- *
- */
 
 public class AT_EnumContainer {
 	public enum Animal {

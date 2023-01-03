@@ -9,7 +9,6 @@ import util.errors.ContractException;
  * Implementor of IndexedPropertyManager that compresses Byte, Short, Integer or
  * Long property values into a byte-based array data structure.
  * 
- * @author Shawn Hatch
  *
  */
 public final class IntPropertyManager extends AbstractIndexedPropertyManager {

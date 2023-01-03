@@ -44,7 +44,6 @@ import util.errors.ContractException;
  * people_without_resource -- the number of people in the region pair who do not
  * have any units of the given resource
  *
- * @author Shawn Hatch
  *
  */
 public final class PersonResourceReport extends PeriodicReport {
@@ -61,7 +60,6 @@ public final class PersonResourceReport extends PeriodicReport {
 	 * An enmeration mirroring the differentiation in the report for populations
 	 * of people with and without a resource.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	private static enum InventoryType {

@@ -46,7 +46,6 @@ import util.errors.ContractException;
 /**
  * Mutable data manager for person properties
  * 
- * @author Shawn Hatch
  *
  */
 

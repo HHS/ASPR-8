@@ -8,7 +8,6 @@ import util.vector.Vector3D;
  * Represents an immutable point on the unit sphere. Instances are created via
  * included builder class.
  *
- * @author Shawn Hatch
  *
  */
 @Immutable

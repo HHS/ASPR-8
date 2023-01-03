@@ -15,7 +15,6 @@ import util.stats.MutableStat;
  * A report that groups people at the end of the simulation by their shared
  * person property values.
  * 
- * @author Shawn Hatch
  *
  */
 public final class QuestionnaireReport {

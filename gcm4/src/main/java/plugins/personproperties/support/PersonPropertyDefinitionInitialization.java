@@ -18,7 +18,6 @@ import util.errors.ContractException;
  * and property values for extant people.
  * 
  * 
- * @author Shawn Hatch
  *
  
  */
@@ -47,9 +46,6 @@ public final class PersonPropertyDefinitionInitialization {
 	/**
 	 * Builder class for a PersonPropertyDefinitionInitialization
 	 * 
-	 * @author Shawn Hatch
-	 *
-	
 	 */
 	public final static class Builder {
 		

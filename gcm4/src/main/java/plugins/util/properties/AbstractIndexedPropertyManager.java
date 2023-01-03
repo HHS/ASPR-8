@@ -16,7 +16,6 @@ import util.errors.ContractException;
  * Finally, it leaves the implementation of getPropertyValue() to its descendant
  * classes
  * 
- * @author Shawn Hatch
  *
  */
 public abstract class AbstractIndexedPropertyManager implements IndexedPropertyManager {

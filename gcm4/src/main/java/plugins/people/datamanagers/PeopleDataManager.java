@@ -21,7 +21,6 @@ import util.errors.ContractException;
 /**
  * Mutable data manager for people.
  *
- * @author Shawn Hatch
  *
  */
 public final class PeopleDataManager extends DataManager {

@@ -22,12 +22,6 @@ import util.random.RandomGeneratorProvider;
 import util.spherical.SphericalPolygon.Builder;
 import util.vector.Vector3D;
 
-/**
- * Test class for {@link SphericalPolygon}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_SphericalPolygon {
 
 	private static SphericalPoint generateRandomizedSphericalPoint(RandomGenerator randomGenerator) {

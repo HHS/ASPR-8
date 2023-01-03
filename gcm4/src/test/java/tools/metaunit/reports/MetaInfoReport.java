@@ -25,7 +25,6 @@ import tools.metaunit.warnings.WarningType;
  * measure the correctness of any test, but rather shows which tests exist and
  * their status.
  *
- * @author Shawn Hatch
  *
  */
 public class MetaInfoReport {

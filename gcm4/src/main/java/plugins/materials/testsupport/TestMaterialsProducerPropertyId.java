@@ -15,7 +15,6 @@ import plugins.util.properties.TimeTrackingPolicy;
  * selection, random property value generation and generation of unique, unknown
  * batch property ids.
  * 
- * @author Shawn Hatch
  *
  */
 public enum TestMaterialsProducerPropertyId implements MaterialsProducerPropertyId {

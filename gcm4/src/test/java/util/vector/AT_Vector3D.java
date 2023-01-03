@@ -13,12 +13,7 @@ import tools.annotations.UnitTestField;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-/**
- * Test class for {@link Vector3D}
- * 
- * @author Shawn Hatch
- *
- */
+
 public class AT_Vector3D {
 
 	private static final double TOLERANCE = 0.000001;

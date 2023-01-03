@@ -9,7 +9,6 @@ import util.errors.ContractException;
 /**
  * Event indicating the addition of a region property
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record RegionPropertyDefinitionEvent(

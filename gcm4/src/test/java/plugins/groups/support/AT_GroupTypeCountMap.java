@@ -21,7 +21,6 @@ import util.random.RandomGeneratorProvider;
 /**
  * Test class for {@link GroupTypeCountMap}
  * 
- * @author Shawn Hatch
  *
  */
 public class AT_GroupTypeCountMap {

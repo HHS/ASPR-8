@@ -26,12 +26,6 @@ import util.geolocator.GeoLocator.Builder;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
 
-/**
- * Test class for {@link GeoLocatorO}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_GeoLocator {
 
 	private static LatLon generateRandomizedLatLon(RandomGenerator randomGenerator, double lat, double lon, double radiusKilometers) {

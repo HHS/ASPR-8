@@ -16,7 +16,6 @@ import plugins.people.support.PersonId;
  * Partition filters describe their sensitivity to events via this generics-base
  * class.
  * 
- * @author Shawn Hatch
  *
  * 
  */

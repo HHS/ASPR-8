@@ -11,7 +11,6 @@ import plugins.stochastics.support.RandomNumberGeneratorId;
  * {@link Partition}. All inputs to the {@link PartitionSampler} are optional.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public final class PartitionSampler {
@@ -39,7 +38,6 @@ public final class PartitionSampler {
 	/**
 	 * Standard builder class for partition samplers. All inputs are optional.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

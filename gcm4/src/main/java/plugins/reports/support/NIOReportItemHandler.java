@@ -13,7 +13,6 @@ import util.errors.ContractException;
  * An experiment-level output management utility for writing report items to
  * multiple files.
  * 
- * @author Shawn Hatch
  *
  */
 public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
@@ -25,7 +24,6 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext>{
 	/**
 	 * Builder class for NIOReportItemHandlerImpl
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

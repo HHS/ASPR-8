@@ -21,7 +21,6 @@ import util.errors.ContractException;
  * <li>global property values</li>
  * </ul>
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -39,7 +38,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	/**
 	 * Builder class for GloblaInitialData
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder implements PluginDataBuilder {

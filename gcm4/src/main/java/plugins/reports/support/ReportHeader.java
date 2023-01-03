@@ -11,7 +11,6 @@ import util.errors.ContractException;
  * An immutable, ordered container for the string values in the header of a
  * report. Constructed via the contained builder class.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -33,7 +32,6 @@ public final class ReportHeader {
 	/**
 	 * Builder class for ReportHeader
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	@NotThreadSafe

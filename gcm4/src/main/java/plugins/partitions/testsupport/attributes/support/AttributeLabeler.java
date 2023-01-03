@@ -20,7 +20,6 @@ import plugins.people.support.PersonId;
  * {@linkplain AttributeUpdateEvent} and the labeling function is
  * composed from the given Function.
  * 
- * @author Shawn Hatch
  *
  */
 public final class AttributeLabeler implements Labeler {

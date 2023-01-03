@@ -9,7 +9,6 @@ import util.errors.ContractException;
 /**
  * An event indicating that a material type has been added
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record MaterialIdAdditionEvent(MaterialId materialId) implements Event {

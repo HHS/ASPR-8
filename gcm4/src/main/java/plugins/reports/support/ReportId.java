@@ -7,7 +7,6 @@ import net.jcip.annotations.ThreadSafe;
  * with a report id that allows an output manager to determine the final
  * disposition of the report item. Report ids must be thread-safe.
  * 
- * @author Shawn Hatch
  *
  */
 @ThreadSafe

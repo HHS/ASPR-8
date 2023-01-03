@@ -20,11 +20,11 @@ import util.vector.Circle2D.SolutionAlgorithm;
  * the various algorithms for forming a minimal bounding circle about a list of
  * 2D positions.
  * 
- * @author Shawn Hatch
+ * 
  *
  */
 
-public class MT_CircleTest {
+public class MT_Circle2D {
 	
 
 	private static Circle2D generateCircle(RandomGenerator randomGenerator, SolutionAlgorithm solutionAlgorithm, List<Vector2D> points) {
@@ -77,7 +77,7 @@ public class MT_CircleTest {
 	 * Non-JUnit test that displays the various solutions
 	 */
 	public static void main(String[] args) {
-		new MT_CircleTest().testWithStats();
+		new MT_Circle2D().testWithStats();
 
 		
 
@@ -121,7 +121,7 @@ public class MT_CircleTest {
 		new PlanarVisualzerFrame(dataMap, pairs);
 	}
 
-	private MT_CircleTest() {
+	private MT_Circle2D() {
 
 	}
 

@@ -7,7 +7,6 @@ import plugins.groups.support.GroupId;
 /**
  * An event indicating that a group has been created
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record GroupAdditionEvent(GroupId groupId) implements Event {

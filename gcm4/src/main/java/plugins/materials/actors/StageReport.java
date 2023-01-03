@@ -38,7 +38,6 @@ import plugins.reports.support.ReportItem;
  * 
  * Amount
  *
- * @author Shawn Hatch
  *
  */
 public final class StageReport {

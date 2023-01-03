@@ -5,7 +5,6 @@ import nucleus.PluginId;
 /**
  * Static plugin id implementation for the person properties plugin
  * 
- * @author Shawn Hatch
  *
  */
 

@@ -5,7 +5,6 @@ import java.util.Optional;
 /**
  * Interface for path solvers that retain previously solved paths.
  * 
- * @author Shawn Hatch
  *
  * 
  */

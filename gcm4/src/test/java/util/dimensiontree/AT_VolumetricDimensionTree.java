@@ -18,12 +18,6 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector2D;
 
-/**
- * Test class for {@link VolumetricDimensionTree}
- * 
- * @author Shawn Hatch
- *
- */
 
 public class AT_VolumetricDimensionTree {
 

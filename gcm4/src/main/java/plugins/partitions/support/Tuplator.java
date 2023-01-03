@@ -9,7 +9,6 @@ import java.util.List;
  * 
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public final class Tuplator {

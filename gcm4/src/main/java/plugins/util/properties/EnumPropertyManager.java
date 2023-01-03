@@ -8,7 +8,6 @@ import util.errors.ContractException;
  * Implementor of IndexedPropertyManager that compresses Enum property values
  * into a byte-based data structure of the various int-like primitives.
  * 
- * @author Shawn Hatch
  *
  */
 public final class EnumPropertyManager extends AbstractIndexedPropertyManager {

@@ -1,9 +1,4 @@
 package util.wrappers;
-/**
- * 
- * @author Shawn Hatch
- *
- */
 public final class MutableDouble {
 	private double value;
 

@@ -4,7 +4,6 @@ package nucleus;
  * The unique identifier for actors. Actors are constructed dynamically and ids
  * are distributed contiguously from 0.
  * 
- * @author Shawn Hatch
  *
  */
 

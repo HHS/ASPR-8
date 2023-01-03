@@ -8,7 +8,6 @@ import plugins.people.support.PersonId;
 /**
  * Event to indicating that person was added to a group
  *
- * @author Shawn Hatch
  */
 
 @Immutable

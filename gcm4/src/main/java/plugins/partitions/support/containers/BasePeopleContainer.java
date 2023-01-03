@@ -12,7 +12,6 @@ import plugins.people.support.PersonId;
  * Implementor of PeopleContainer that acts as a dynamic switching mechanism
  * between the two lower-level PeopleContainer implementors
  * 
- * @author Shawn Hatch
  */
 public class BasePeopleContainer implements PeopleContainer {
 	/*

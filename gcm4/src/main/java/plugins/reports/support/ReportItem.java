@@ -12,7 +12,6 @@ import util.errors.ContractException;
  * reports. The values contained in a report item should be immutable and
  * support toString().
  *
- * @author Shawn Hatch
  *
  */
 @ThreadSafe

@@ -11,7 +11,6 @@ import plugins.people.support.PersonId;
  * object dimension which is a dimension within a partition and the label
  * occupies a point in that dimension.
  * 
- * @author Shawn Hatch
  *
  */
 

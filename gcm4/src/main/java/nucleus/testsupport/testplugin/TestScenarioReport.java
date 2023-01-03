@@ -8,7 +8,6 @@ import net.jcip.annotations.ThreadSafe;
  * least one plan for a test actor or test data manager and all such plans were
  * executed by the simulation.
  * 
- * @author Shawn Hatch
  *
  */
 

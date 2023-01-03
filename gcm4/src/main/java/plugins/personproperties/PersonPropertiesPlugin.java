@@ -8,7 +8,6 @@ import plugins.regions.RegionsPluginId;
 /**
  * A plugin providing a person property management to the simulation.
  * 
- * @author Shawn Hatch
  *
  */
 

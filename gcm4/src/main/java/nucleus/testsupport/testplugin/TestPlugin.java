@@ -14,7 +14,6 @@ import util.errors.ContractException;
  * framework. It provides for the injection of behavior into actors and data
  * managers to test various simulation behaviors in a function/system setting.
  * 
- * @author Shawn Hatch
  *
  */
 public class TestPlugin {

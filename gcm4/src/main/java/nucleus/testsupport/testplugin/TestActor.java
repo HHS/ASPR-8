@@ -15,7 +15,6 @@ import nucleus.ActorContext;
  * that tests can name actors and are not bound to the forced ordering pattern
  * implied by ActorId values.
  * 
- * @author Shawn Hatch
  *
  */
 public final class TestActor {

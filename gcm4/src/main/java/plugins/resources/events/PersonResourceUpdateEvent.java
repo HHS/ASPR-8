@@ -8,7 +8,6 @@ import plugins.resources.support.ResourceId;
 /**
  * An observation event indicating that a person's resource level has changed.
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record PersonResourceUpdateEvent(PersonId personId,

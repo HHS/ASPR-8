@@ -2,7 +2,6 @@ package lesson.plugins.vaccine;
 
 /**
  * Represents the initial vaccine count for a person 
- * @author Shawn Hatch
  *
  */
 

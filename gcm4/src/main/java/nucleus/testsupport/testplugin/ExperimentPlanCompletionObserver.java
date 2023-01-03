@@ -13,7 +13,6 @@ import nucleus.ExperimentContext;
  * TestPlanDataManager contributed by the TestPlugin. Each report is kept and
  * can be accessed by scenario id.
  * 
- * @author Shawn Hatch
  *
  */
 

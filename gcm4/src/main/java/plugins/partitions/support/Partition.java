@@ -63,7 +63,6 @@ import net.jcip.annotations.NotThreadSafe;
  * return the same label(OLD) in every invocation of the function. Without this
  * the partition will not function correctly.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -80,7 +79,6 @@ public final class Partition {
 	/**
 	 * Standard builder class for partitions. All inputs are optional.
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

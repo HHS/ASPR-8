@@ -6,7 +6,6 @@ import util.errors.ContractException;
 /**
  * Identifier for all people
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

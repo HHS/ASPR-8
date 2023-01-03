@@ -32,7 +32,6 @@ import util.time.TimeElapser;
  * resources of this project.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public class GeoVisualizerDriver {

@@ -26,7 +26,6 @@ import nucleus.ScenarioStatus;
  * from a previous experiment, the header remains at originally written.
  * Supports continuation of experiment progress across multiple experiment runs.
  * 
- * @author Shawn Hatch
  *
  */
 @ThreadSafe

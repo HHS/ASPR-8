@@ -4,7 +4,6 @@ import nucleus.PluginId;
 /**
  * Static plugin id implementation for the Attributes Plugin
  * 
- * @author Shawn Hatch
  *
  */
 

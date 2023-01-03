@@ -13,7 +13,6 @@ import util.vector.MutableVector3D;
  * Represents an immutable, non-crossing polygon on the surface of a unit
  * sphere.
  * 
- * @author Shawn Hatch
  *
  */
 
@@ -34,7 +33,6 @@ public class SphericalPolygon {
 	/**
 	 * Builder class for {@link SphericalPolygon}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

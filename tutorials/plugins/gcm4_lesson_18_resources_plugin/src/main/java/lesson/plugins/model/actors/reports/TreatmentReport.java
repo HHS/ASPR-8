@@ -18,7 +18,6 @@ import util.wrappers.MutableInteger;
  * A report that groups people at the end of the simulation by their shared
  * person property values.
  * 
- * @author Shawn Hatch
  *
  */
 public final class TreatmentReport {

@@ -24,7 +24,6 @@ import util.errors.ContractException;
 /**
  * A mutable data manager for global properties.
  * 
- * @author Shawn Hatch
  *
  */
 

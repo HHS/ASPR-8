@@ -8,7 +8,6 @@ import util.spherical.Chirality;
 /**
  * A immutable 2-dimensional vector class supporting common 2D transforms.
  *
- * @author Shawn Hatch
  *
  */
 @Immutable

@@ -12,7 +12,6 @@ import util.vector.Vector3D;
  * Represents an immutable great arc segment on the unit sphere defined by two
  * distinct SphericalPoints. Instances are created via included builder class.
  * 
- * @author Shawn Hatch
  *
  */
 

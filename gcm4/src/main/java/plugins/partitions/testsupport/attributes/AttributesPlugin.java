@@ -82,7 +82,6 @@ import util.errors.ContractException;
  * </ul>
  * </p>
  *
- * @author Shawn Hatch
  *
  */
 public final class AttributesPlugin {

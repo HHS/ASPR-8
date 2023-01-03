@@ -14,12 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link GraphDepthEvaluator}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_GraphDepthEvaluator {
 
 	/**

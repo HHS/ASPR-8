@@ -8,7 +8,6 @@ import nucleus.Plugin;
 /**
  * A plugin providing a report actors to the simulation.
  * 
- * @author Shawn Hatch
  *
  */
 public class ReportsPlugin {

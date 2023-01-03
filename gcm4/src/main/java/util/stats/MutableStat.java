@@ -13,7 +13,6 @@ import net.jcip.annotations.NotThreadSafe;
  * 
  * Adapted from https://www.johndcook.com/blog/standard_deviation/
  * 
- * @author Shawn Hatch
  *
  */
 @NotThreadSafe

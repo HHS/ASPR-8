@@ -12,7 +12,6 @@ import util.errors.ContractException;
  * Represents the information to fully specify a batch, but not its relationship
  * to stages
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

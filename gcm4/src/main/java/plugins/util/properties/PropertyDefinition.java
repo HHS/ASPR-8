@@ -9,7 +9,6 @@ import util.errors.ContractException;
  * A thread-safe, immutable class that defines a property, but does not indicate
  * the role that property is playing or the identifier of the property.
  *
- * @author Shawn Hatch
  *
  */
 @ThreadSafe
@@ -32,7 +31,6 @@ public final class PropertyDefinition {
 	/**
 	 * Builder class for {@linkplain PropertyDefinition}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

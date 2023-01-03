@@ -10,12 +10,6 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
-/**
- * Test class for {@link ImmutableStat}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_ImmutableStat {
 
 	@Test

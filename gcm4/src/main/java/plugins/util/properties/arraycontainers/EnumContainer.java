@@ -5,7 +5,6 @@ package plugins.util.properties.arraycontainers;
  * by int index. It is designed to generally require approximately 1 byte per
  * index rather than a 4 or 8 byte object reference.
  * 
- * @author Shawn Hatch
  *
  */
 public final class EnumContainer {

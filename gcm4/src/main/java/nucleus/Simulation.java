@@ -48,7 +48,6 @@ import util.path.Path;
  * remain, the simulation halts.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 @NotThreadSafe

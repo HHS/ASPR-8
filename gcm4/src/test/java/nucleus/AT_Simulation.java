@@ -19,13 +19,7 @@ import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
 
-/**
- * Test unit for Engine. See the various Context tests for test's of engine's
- * implementation of internal simulation behaviors.
- * 
- * @author Shawn Hatch
- *
- */
+
 public class AT_Simulation {
 
 	@Test

@@ -16,7 +16,6 @@ import util.errors.ContractException;
  * property values for extant batches.
  * 
  * 
- * @author Shawn Hatch
  *
  * 
  */
@@ -46,7 +45,6 @@ public final class BatchPropertyDefinitionInitialization {
 	/**
 	 * Builder class for a BatchPropertyDefinitionInitialization
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 *
 	 */

@@ -13,7 +13,6 @@ import util.errors.ContractException;
 /**
  * A thread-safe container for the initial state of random generators.
  *
- * @author Shawn Hatch
  *
  */
 @ThreadSafe
@@ -57,7 +56,6 @@ public final class StochasticsPluginData implements PluginData {
 	/**
 	 * Builder class for StochasticsPluginData
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder implements PluginDataBuilder {

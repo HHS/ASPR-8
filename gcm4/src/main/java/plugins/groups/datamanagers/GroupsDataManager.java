@@ -88,7 +88,6 @@ import util.errors.ContractException;
  * convert group-type Object references to and from integers.
  * </p>
  *
- * @author Shawn Hatch
  */
 
 public final class GroupsDataManager extends DataManager {

@@ -35,7 +35,6 @@ import util.errors.ContractException;
  * <li>person region arrival time tracking policy</li>
  * </ul>
  * 
- * @author Shawn Hatch
  *
  */
 

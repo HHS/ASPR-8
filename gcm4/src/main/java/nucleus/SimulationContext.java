@@ -8,7 +8,6 @@ import util.errors.ContractException;
  * A context provides basic access to the nucleus simulation and the data
  * managers contributed by the plugins that formed the experiment.
  * 
- * @author Shawn Hatch
  *
  */
 public interface SimulationContext {

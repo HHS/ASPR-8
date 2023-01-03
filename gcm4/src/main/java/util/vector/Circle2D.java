@@ -34,7 +34,6 @@ import util.spherical.Chirality;
  * Megiddo's O(n) algorithm as well as a version of this utility for spherical
  * polygons.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

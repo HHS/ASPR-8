@@ -56,7 +56,6 @@ import util.errors.ContractException;
  * </P>
  * 
  *
- * @author Shawn Hatch
  *
  */
 

@@ -58,7 +58,6 @@ import util.errors.ContractError;
  * <b>Required Plugins</b> This plugin has no plugin dependencies
  * </p>
  *
- * @author Shawn Hatch
  *
  */
 @ThreadSafe

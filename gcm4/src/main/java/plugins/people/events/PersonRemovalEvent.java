@@ -10,7 +10,6 @@ import util.errors.ContractException;
  * Indicates that the given person has been removed from the simulation. All
  * references to the person are invalid.
  *
- * @author Shawn Hatch
  */
 @Immutable
 public record PersonRemovalEvent(PersonId personId) implements Event {

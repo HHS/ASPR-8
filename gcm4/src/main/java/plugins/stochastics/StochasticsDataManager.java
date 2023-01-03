@@ -16,7 +16,6 @@ import util.random.RandomGeneratorProvider;
 /**
  * A mutable data manager for random number generators.
  * 
- * @author Shawn Hatch
  */
 public final class StochasticsDataManager extends DataManager {
 

@@ -19,7 +19,6 @@ import util.errors.ContractException;
  * true for each person contained. Uses ~1.3 bits for each person in the ENTIRE
  * POPULATION OF THE SIMULATION.
  * 
- * @author Shawn Hatch
  */
 public class TreeBitSetPeopleContainer implements PeopleContainer {
 

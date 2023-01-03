@@ -13,7 +13,6 @@ import util.errors.ContractException;
 /**
  * An event indicating that a materials producer has been added
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
@@ -36,7 +35,6 @@ public class MaterialsProducerAdditionEvent implements Event {
 	/**
 	 * Builder class for {@link RegionAdditionEvent}
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

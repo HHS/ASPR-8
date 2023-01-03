@@ -29,7 +29,6 @@ import util.random.RandomGeneratorProvider;
  * manages all the property values for people for a particular person property
  * identifier.
  * 
- * @author Shawn Hatch
  *
  */
 

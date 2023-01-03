@@ -33,7 +33,6 @@ import util.errors.ContractException;
  * The experiment then executes the scenarios concurrently based on the number
  * of threads chosen for the execution.
  *
- * @author Shawn Hatch
  *
  */
 

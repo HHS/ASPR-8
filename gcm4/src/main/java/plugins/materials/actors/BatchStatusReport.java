@@ -46,7 +46,6 @@ import plugins.reports.support.ReportItem;
  * Material.PropertyId -- multiple columns for the batch properties selected for
  * the report
  * 
- * @author Shawn Hatch
  *
  */
 public final class BatchStatusReport {

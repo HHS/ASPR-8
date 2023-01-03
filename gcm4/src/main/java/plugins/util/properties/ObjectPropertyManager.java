@@ -8,7 +8,6 @@ import util.errors.ContractException;
  * Implementor of IndexedPropertyManager that stores Object property values in an
  * Object array based data structure.
  * 
- * @author Shawn Hatch
  *
  */
 public final class ObjectPropertyManager extends AbstractIndexedPropertyManager {

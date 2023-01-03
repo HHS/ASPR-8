@@ -8,7 +8,6 @@ import util.errors.ContractException;
  * Implementor of IndexedPropertyManager that compresses Float property values
  * into a float[]-based data structure.
  * 
- * @author Shawn Hatch
  *
  */
 public final class FloatPropertyManager extends AbstractIndexedPropertyManager {

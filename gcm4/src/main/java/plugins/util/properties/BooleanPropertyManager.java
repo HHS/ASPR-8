@@ -8,7 +8,6 @@ import util.errors.ContractException;
  * Implementor of IndexedPropertyManager that compresses Boolean property values
  * into a bit-based data structure.
  * 
- * @author Shawn Hatch
  *
  */
 public final class BooleanPropertyManager extends AbstractIndexedPropertyManager {

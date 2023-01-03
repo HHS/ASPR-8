@@ -15,12 +15,6 @@ import tools.annotations.UnitTestMethod;
 import util.stats.BinContainer.Bin;
 import util.stats.BinContainer.Builder;
 
-/**
- * Test class for {@link BinContainer}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_BinContainer {
 	/**
 	 * Tests {@link BinContainer.Bin#Bin(double, double, int)} construction

@@ -29,7 +29,6 @@ import plugins.resources.support.ResourceId;
  *
  * Amount -- the amount of resource
  *
- * @author Shawn Hatch
  *
  */
 public final class MaterialsProducerResourceReport {

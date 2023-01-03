@@ -26,7 +26,6 @@ package plugins.partitions.support.containers;
  * 2,500,000 people.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 public class MT_ArrayIntSet {

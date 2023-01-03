@@ -11,7 +11,6 @@ import util.errors.ContractException;
 /**
  * An observation event indicating that a resource id has been added.
  *
- * @author Shawn Hatch
  */
 
 @Immutable

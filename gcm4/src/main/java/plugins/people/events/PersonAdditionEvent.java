@@ -10,7 +10,6 @@ import util.errors.ContractException;
  * An event to notify the plugins that a person has been fully added to the
  * simulation.
  *
- * @author Shawn Hatch
  */
 
 @Immutable

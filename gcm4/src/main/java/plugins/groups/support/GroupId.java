@@ -7,7 +7,6 @@ import util.errors.ContractException;
 /**
  * Identifier for all groups
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable

@@ -15,7 +15,6 @@ import util.errors.ContractException;
  * the form F(event) = value that are used in conjunction to filter events.
  * 
  * 
- * @author Shawn Hatch
  *
  * 
  */
@@ -48,7 +47,6 @@ public final class EventFilter<T extends Event> {
 	/**
 	 * Builder class for EventFilter
 	 * 
-	 * @author Shawn Hatch
 	 * 
 	 */
 	public static class Builder<N extends Event> {

@@ -8,7 +8,6 @@ import util.errors.ContractException;
  * Implementor of IndexedPropertyManager that compresses Double property values
  * into a double[]-based data structure.
  * 
- * @author Shawn Hatch
  *
  */
 public final class DoublePropertyManager extends AbstractIndexedPropertyManager {

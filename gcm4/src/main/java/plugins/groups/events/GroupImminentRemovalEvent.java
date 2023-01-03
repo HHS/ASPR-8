@@ -7,7 +7,6 @@ import plugins.groups.support.GroupId;
 /**
  * Event to signal the imminent removal of a group from the simulation
  *
- * @author Shawn Hatch
  */
 
 @Immutable

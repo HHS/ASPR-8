@@ -14,7 +14,6 @@ import util.errors.ContractException;
  * each simulation at the startup.
  * 
  * 
- * @author Shawn Hatch
  *
  */
 @ThreadSafe
@@ -37,7 +36,6 @@ public final class Plugin {
 	/**
 	 * A builder class for Plugin
 	 * 
-	 * @author Shawn Hatch
 	 *
 	 */
 	public static class Builder {

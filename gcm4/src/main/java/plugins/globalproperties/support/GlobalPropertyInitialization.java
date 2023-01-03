@@ -10,7 +10,6 @@ import util.errors.ContractException;
 /**
  * Immutable data class that represents the addition of a global property
  * 
- * @author Shawn Hatch
  *
  */
 

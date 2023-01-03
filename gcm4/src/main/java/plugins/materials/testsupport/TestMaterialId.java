@@ -8,7 +8,6 @@ import plugins.materials.support.MaterialId;
  * A test support enumeration that contains a variety of material id values.
  * Supports random selection and generation of unique, unknown material ids.
  * 
- * @author Shawn Hatch
  *
  */
 public enum TestMaterialId implements MaterialId {

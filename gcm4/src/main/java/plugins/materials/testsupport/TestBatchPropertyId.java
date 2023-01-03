@@ -15,7 +15,6 @@ import plugins.util.properties.TimeTrackingPolicy;
  * Material Ids. Supports random selection, random property value generation and
  * generation of unique, unknown batch property ids.
  * 
- * @author Shawn Hatch
  *
  */
 public enum TestBatchPropertyId implements BatchPropertyId {

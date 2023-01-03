@@ -14,12 +14,6 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.vector.Vector3D;
 
-/**
- * Test class for {@link Earth}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_Earth {
 
 	private static final double TOLERANCE = 0.0001;

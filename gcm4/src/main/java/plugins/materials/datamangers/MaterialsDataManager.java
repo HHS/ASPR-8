@@ -61,7 +61,6 @@ import util.errors.ContractException;
 /**
  * General manager for all material activities.
  *
- * @author Shawn Hatch
  *
  */
 public final class MaterialsDataManager extends DataManager {

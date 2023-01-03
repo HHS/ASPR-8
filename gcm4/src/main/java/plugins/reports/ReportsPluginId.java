@@ -5,7 +5,6 @@ import nucleus.PluginId;
 /**
  * Static plugin id implementation for the ReportsPlugin
  * 
- * @author Shawn Hatch
  *
  */
 

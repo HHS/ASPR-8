@@ -19,7 +19,6 @@ import util.errors.ContractException;
  * Thread safe plugin data container for associating plans with actor and data
  * manager aliases.
  * 
- * @author Shawn Hatch
  *
  */
 @ThreadSafe

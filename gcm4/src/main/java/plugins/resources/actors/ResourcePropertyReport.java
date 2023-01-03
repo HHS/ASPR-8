@@ -25,7 +25,6 @@ import plugins.resources.support.ResourcePropertyId;
  *
  * Value -- the value of the resource property
  *
- * @author Shawn Hatch
  *
  */
 public final class ResourcePropertyReport {

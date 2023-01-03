@@ -7,7 +7,6 @@ import net.jcip.annotations.Immutable;
  * in degrees where latitude is in the interval [-90,90] and longitude is in the
  * interval [-180,180]
  * 
- * @author Shawn Hatch
  *
  */
 

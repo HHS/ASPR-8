@@ -13,12 +13,6 @@ import tools.annotations.UnitTestMethod;
 import util.graph.Graphs.GraphConnectedness;
 import util.graph.Graphs.GraphCyclisity;
 
-/**
- * Test class for {@link Graphs}
- * 
- * @author Shawn Hatch
- *
- */
 public class AT_Graphs {
 
 	/**

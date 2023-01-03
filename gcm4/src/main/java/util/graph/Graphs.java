@@ -112,7 +112,6 @@ public final class Graphs {
 	 * Note that strongly connected graphs are weakly connected. Empty graphs
 	 * are considered strongly connected.
 	 * 
-	 * @author Shawn Hatch
 	 * 
 	 */
 	public static enum GraphConnectedness {

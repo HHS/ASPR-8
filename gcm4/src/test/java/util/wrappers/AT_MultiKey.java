@@ -12,12 +12,7 @@ import org.junit.jupiter.api.Test;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 
-/**
- * Test class for {@link MultiKey}
- *
- * @author Shawn Hatch
- *
- */
+
 public class AT_MultiKey {
 
 	/**

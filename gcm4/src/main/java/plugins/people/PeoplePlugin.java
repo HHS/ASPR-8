@@ -6,7 +6,6 @@ import plugins.people.datamanagers.PeopleDataManager;
 /**
  * A nucleus plugin for representing people, dealing only with their existence.
  * 
- * @author Shawn Hatch
  *
  */
 

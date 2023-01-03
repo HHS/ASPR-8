@@ -3,7 +3,6 @@ package nucleus;
 /**
  * PlugingDataBuilder is an interface for the builders of plugins.
  * 
- * @author Shawn Hatch
  *
  */
 

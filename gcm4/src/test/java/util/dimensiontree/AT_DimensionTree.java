@@ -23,12 +23,6 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.time.TimeElapser;
 
-/**
- * Test class for {@link DimensionTree}
- * 
- * @author Shawn Hatch
- *
- */
 
 
 public class AT_DimensionTree {

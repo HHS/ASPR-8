@@ -47,7 +47,6 @@ import util.errors.ContractException;
  * Data manager for resources. Resource property values are generally mutable
  * and specific to the type of resource.
  * 
- * @author Shawn Hatch
  *
  */
 

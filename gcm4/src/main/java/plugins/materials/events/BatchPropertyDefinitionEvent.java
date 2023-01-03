@@ -11,7 +11,6 @@ import util.errors.ContractException;
 /**
  * An event indicating the addition of a batch property for the given material.
  * 
- * @author Shawn Hatch
  *
  */
 @Immutable
