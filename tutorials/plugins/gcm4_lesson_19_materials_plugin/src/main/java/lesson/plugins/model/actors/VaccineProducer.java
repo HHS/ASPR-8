@@ -85,7 +85,7 @@ public final class VaccineProducer {
 
 	private void handleStageOfferUpdateEvent(final ActorContext actorContext, final StageOfferUpdateEvent stageOfferUpdateEvent) {
 		if (isCapturableStage(stageOfferUpdateEvent)) {
-			captureStage(stageOfferUpdateEvent.getStageId());
+			captureStage(stageOfferUpdateEvent.stageId());
 			planVaccinePrepartion();
 		}
 	}
@@ -137,12 +137,12 @@ public final class VaccineProducer {
 
 	private boolean isCapturableStage(final StageOfferUpdateEvent stageOfferUpdateEvent) {
 		// the stage must be offered
-		if (!stageOfferUpdateEvent.isCurrentOfferState()) {
+		if (!stageOfferUpdateEvent.currentOfferState()) {
 			return false;
 		}
 
 		// the stage must be from a materials producer not managed by this actor
-		final StageId stageId = stageOfferUpdateEvent.getStageId();
+		final StageId stageId = stageOfferUpdateEvent.stageId();
 		final MaterialsProducerId producerId = materialsDataManager.getStageProducer(stageId);
 		if (materialsProducerId.equals(producerId)) {
 			return false;

@@ -62,7 +62,7 @@ public final class Vaccinator {
 		 */
 		Boolean refusesVaccine = personPropertyUpdateEvent.getCurrentPropertyValue();
 		if (!refusesVaccine) {
-			PersonId personId = personPropertyUpdateEvent.getPersonId();
+			PersonId personId = personPropertyUpdateEvent.personId();
 			// drop the current plan
 			actorContext.removePlan(personId);
 			vaccinatePerson(personId);
@@ -111,7 +111,7 @@ public final class Vaccinator {
 
 		actorContext.subscribe(
 				peopleDataManager.getEventFilterForPersonAdditionEvent(), (c, e) -> {
-					handleNewPerson(e.getPersonId());
+					handleNewPerson(e.personId());
 		});
 
 	}

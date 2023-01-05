@@ -16,4 +16,15 @@ public record PersonPropertyUpdateEvent(PersonId personId,
 										PersonPropertyId personPropertyId,
 										Object previousPropertyValue,
 										Object currentPropertyValue) implements Event {
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getCurrentPropertyValue() {
+		return (T)currentPropertyValue;	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getPreviousPropertyValue() {
+		return (T)previousPropertyValue;
+	}
+	
 }

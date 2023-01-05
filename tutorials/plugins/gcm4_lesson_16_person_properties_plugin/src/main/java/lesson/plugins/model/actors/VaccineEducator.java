@@ -80,7 +80,7 @@ public class VaccineEducator {
 		}
 
 		actorContext.subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), (c, e) -> {
-			handleNewPerson(e.getPersonId());
+			handleNewPerson(e.personId());
 		});
 	}
 
