@@ -121,6 +121,7 @@ public class Vaccinator {
 		infectedPersonCount = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS).size();
 		infectionPersonCountThreshold = (int) (peopleDataManager.getPopulationCount() * infectionThreshold);
 		determineVaccineManufacutureStart();
+		scheduleVaccinations();
 	}
 
 	private boolean isCapturableResource(final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
