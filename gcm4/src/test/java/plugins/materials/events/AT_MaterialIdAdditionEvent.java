@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_MaterialIdAdditionEvent {
@@ -20,4 +21,29 @@ public class AT_MaterialIdAdditionEvent {
 		ContractException contractException = assertThrows(ContractException.class, () -> new MaterialIdAdditionEvent(null));
 		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
 	}
+
+	@Test
+	@UnitTestMethod(target = MaterialIdAdditionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialIdAdditionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialIdAdditionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialIdAdditionEvent.class, name = "materialId", args = {})
+	public void testMaterialId() {
+		// nothing to test
+	}
+
 }

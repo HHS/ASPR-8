@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PersonImminentRemovalEvent {
@@ -21,4 +22,29 @@ public class AT_PersonImminentRemovalEvent {
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentRemovalEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentRemovalEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentRemovalEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentRemovalEvent.class, name = "personId", args = {})
+	public void testPersonId() {
+		// nothing to test
+	}
+
 }

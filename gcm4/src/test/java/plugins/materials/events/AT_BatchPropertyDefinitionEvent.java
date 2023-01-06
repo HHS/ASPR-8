@@ -12,6 +12,7 @@ import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_BatchPropertyDefinitionEvent {
@@ -29,4 +30,35 @@ public class AT_BatchPropertyDefinitionEvent {
 		contractException = assertThrows(ContractException.class, () -> new BatchPropertyDefinitionEvent(materialId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyDefinitionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyDefinitionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyDefinitionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyDefinitionEvent.class, name = "materialId", args = {})
+	public void testMaterialId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyDefinitionEvent.class, name = "batchPropertyId", args = {})
+	public void testBatchPropertyId() {
+		// nothing to test
+	}
+
 }

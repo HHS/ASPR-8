@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 
@@ -32,6 +33,36 @@ public class AT_GroupPropertyValue {
 		contractException = assertThrows(ContractException.class, () -> new GroupPropertyValue(groupPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
 
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyValue.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyValue.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyValue.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyValue.class, name = "groupPropertyId", args = {})
+	public void testGroupPropertyId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyValue.class, name = "value", args = {})
+	public void testValue() {
+		// nothing to test
 	}
 
 }

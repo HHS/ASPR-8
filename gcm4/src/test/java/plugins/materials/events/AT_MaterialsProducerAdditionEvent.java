@@ -150,4 +150,6 @@ public class AT_MaterialsProducerAdditionEvent {
 		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsProducerAdditionEvent.builder().setMaterialsProducerId(null));
 		assertEquals(MaterialsError.NULL_MATERIALS_PRODUCER_ID, contractException.getErrorType());
 	}
+	
+	
 }

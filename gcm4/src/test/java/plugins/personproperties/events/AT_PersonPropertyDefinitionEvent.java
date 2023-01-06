@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PersonPropertyDefinitionEvent {
@@ -20,4 +21,29 @@ public class AT_PersonPropertyDefinitionEvent {
 		ContractException contractException = assertThrows(ContractException.class, () -> new PersonPropertyDefinitionEvent(null));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyDefinitionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyDefinitionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyDefinitionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyDefinitionEvent.class, name = "personPropertyId", args = {})
+	public void testPersonPropertyId() {
+		// nothing to test
+	}
+
 }

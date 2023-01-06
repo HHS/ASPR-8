@@ -9,6 +9,7 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PersonImminentAdditionEvent {
@@ -25,4 +26,35 @@ public class AT_PersonImminentAdditionEvent {
 		contractException = assertThrows(ContractException.class, () -> new PersonImminentAdditionEvent(personId, null));
 		assertEquals(PersonError.NULL_PERSON_CONSTRUCTION_DATA, contractException.getErrorType());
 	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentAdditionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentAdditionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentAdditionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentAdditionEvent.class, name = "personId", args = {})
+	public void testPersonId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonImminentAdditionEvent.class, name = "personConstructionData", args = {})
+	public void testPersonConstructionData() {
+		// nothing to test
+	}
+
 }

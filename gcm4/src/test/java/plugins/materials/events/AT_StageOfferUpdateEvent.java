@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import plugins.materials.support.StageId;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 public class AT_StageOfferUpdateEvent {
 
@@ -12,4 +13,41 @@ public class AT_StageOfferUpdateEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
+
+	@Test
+	@UnitTestMethod(target = StageOfferUpdateEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = StageOfferUpdateEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = StageOfferUpdateEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = StageOfferUpdateEvent.class, name = "stageId", args = {})
+	public void testStageId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = StageOfferUpdateEvent.class, name = "previousOfferState", args = {})
+	public void testPreviousOfferState() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = StageOfferUpdateEvent.class, name = "currentOfferState", args = {})
+	public void testCurrentOfferState() {
+		// nothing to test
+	}
+	
 }

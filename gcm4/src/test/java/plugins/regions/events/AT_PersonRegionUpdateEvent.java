@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import plugins.people.support.PersonId;
 import plugins.regions.support.RegionId;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 
 public class AT_PersonRegionUpdateEvent {
 
@@ -13,4 +14,41 @@ public class AT_PersonRegionUpdateEvent {
 	public void testConstructor() {
 		// nothing to test
 	}
+
+	@Test
+	@UnitTestMethod(target = PersonRegionUpdateEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonRegionUpdateEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonRegionUpdateEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonRegionUpdateEvent.class, name = "personId", args = {})
+	public void testPersonId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonRegionUpdateEvent.class, name = "previousRegionId", args = {})
+	public void testPreviousRegionId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonRegionUpdateEvent.class, name = "currentRegionId", args = {})
+	public void testCurrentRegionId() {
+		// nothing to test
+	}
+
 }

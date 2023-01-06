@@ -9,6 +9,7 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_GlobalPropertyDefinitionEvent {
@@ -25,6 +26,36 @@ public class AT_GlobalPropertyDefinitionEvent {
 		ContractException contractException2 = assertThrows(ContractException.class, () -> new GlobalPropertyDefinitionEvent(goodId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException2.getErrorType());
 
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyDefinitionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyDefinitionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyDefinitionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+	
+	@Test
+	@UnitTestMethod(target = GlobalPropertyDefinitionEvent.class, name = "globalPropertyId", args = {})
+	public void testGlobalPropertyId() {
+		// nothing to test
+	}
+	
+	@Test
+	@UnitTestMethod(target = GlobalPropertyDefinitionEvent.class, name = "initialPropertyValue", args = {})
+	public void testInitialPropertyValue() {
+		// nothing to test
 	}
 
 }
