@@ -169,4 +169,14 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 
 		}
 	}
+
+	/*
+	* Returns the next GroupPropertyId with wrap around
+	 */
+	public TestGroupPropertyId next() {
+		int index = this.ordinal();
+		index++;
+		index %= TestGroupPropertyId.values().length;
+		return TestGroupPropertyId.values()[index];
+	}
 }

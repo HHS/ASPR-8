@@ -1,12 +1,6 @@
 package plugins.groups;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -122,15 +116,6 @@ public final class GroupsPluginData implements PluginData {
 		return new Builder(new Data());
 	}
 
-	private static void validateGroupPropertyIsNotDefined(Data data, GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
-		Map<GroupPropertyId, PropertyDefinition> map = data.groupPropertyDefinitions.get(groupTypeId);
-		if (map != null) {
-			if (map.containsKey(groupPropertyId)) {
-				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, groupTypeId + ": " + groupPropertyId);
-			}
-		}
-	}
-
 	private static void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
@@ -149,31 +134,6 @@ public final class GroupsPluginData implements PluginData {
 		}
 	}
 
-	private static void validateGroupTypeDoesNotExist(final Data data, final GroupTypeId groupTypeId) {
-
-		if (data.groupTypeIds.contains(groupTypeId)) {
-			throw new ContractException(GroupError.DUPLICATE_GROUP_TYPE, groupTypeId);
-		}
-	}
-
-	private static void validateGroupPropertyValueNotSet(Data data, GroupId groupId, GroupPropertyId groupPropertyId) {
-		int groupIndex = groupId.getValue();
-		if (groupIndex >= data.groupSpecifications.size()) {
-			return;
-		}
-		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
-		if (groupSpecification == null) {
-			return;
-		}
-		if (groupSpecification.groupPropertyValues != null) {
-			for (GroupPropertyValue groupPropertyValue : groupSpecification.groupPropertyValues) {
-				if (groupPropertyValue.groupPropertyId().equals(groupPropertyId)) {
-					throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, groupId + ": " + groupPropertyId);
-				}
-			}
-		}
-	}
-
 	private static void validateGroupPropertyValueNotNull(Object groupPropertyValue) {
 		if (groupPropertyValue == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
@@ -187,16 +147,6 @@ public final class GroupsPluginData implements PluginData {
 
 	}
 
-	private static void validateGroupDoesNotExist(final Data data, final GroupId groupId) {
-		int groupIndex = groupId.getValue();
-		if (groupIndex >= data.groupSpecifications.size()) {
-			return;
-		}
-		GroupSpecification groupSpecification = data.groupSpecifications.get(groupIndex);
-		if (groupSpecification != null && groupSpecification.groupTypeId != null) {
-			throw new ContractException(GroupError.DUPLICATE_GROUP_ID, groupId);
-		}
-	}
 
 	/**
 	 * Builder class for GroupInitialData
@@ -227,7 +177,7 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 * 
 		 * 
-		 *             <li>{@linkplain PersonError#UNKNOWN_GROUP_TYPE_ID}</li>
+		 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}</li>
 		 *             if a group was added with a group type id that was not
 		 *             defined
 		 * 
@@ -268,6 +218,7 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Adds a person to a group
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -276,18 +227,14 @@ public final class GroupsPluginData implements PluginData {
 		 * 
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
 		 *             person id is null
-		 * 
-		 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_MEMBERSHIP}</li>
-		 *             if the person is already a member of the group
-		 * 
+		 *
+		 *
 		 */
 		public Builder addPersonToGroup(final GroupId groupId, final PersonId personId) {
 
-			// StopwatchManager.start(Watch.GROUPS_PLUGIN_DATA_INTERNAL);
 			ensureDataMutability();
 			validateGroupIdIsLegal(groupId);
 			validatePersonId(personId);
-			validatePersonNotInGroup(data, groupId, personId);
 
 			int personIndex = personId.getValue();
 			data.personCount = FastMath.max(data.personCount, personIndex + 1);
@@ -299,33 +246,32 @@ public final class GroupsPluginData implements PluginData {
 				groups = new ArrayList<>();
 				data.groupMemberships.set(personIndex, groups);
 			}
-			groups.add(groupId);
-			// StopwatchManager.stop(Watch.GROUPS_PLUGIN_DATA_INTERNAL);
+			if (!groups.contains(groupId)) {
+				groups.add(groupId);
+			}
 			return this;
 		}
 
 		/**
 		 * Adds a group type id
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
 		 *             the group type id is null
 		 * 
-		 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_TYPE}</li> if
-		 *             the group type was already added
-		 * 
 		 */
 		public Builder addGroupTypeId(final GroupTypeId groupTypeId) {
 			ensureDataMutability();
 			validateGroupTypeIdNotNull(groupTypeId);
-			validateGroupTypeDoesNotExist(data, groupTypeId);
 			data.groupTypeIds.add(groupTypeId);
 			return this;
 		}
 
 		/**
 		 * Adds a group with the given group type
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if the
@@ -334,15 +280,11 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
 		 *             the group type id is null
 		 * 
-		 *             <li>{@linkplain GroupError#DUPLICATE_GROUP_ID}</li> if
-		 *             the group was already added
-		 * 
 		 */
 		public Builder addGroup(final GroupId groupId, final GroupTypeId groupTypeId) {
 			ensureDataMutability();
 			validateGroupIdIsLegal(groupId);
 			validateGroupTypeIdNotNull(groupTypeId);
-			validateGroupDoesNotExist(data, groupId);
 			int groupIndex = groupId.getValue();
 			while (groupIndex >= data.groupSpecifications.size()) {
 				data.groupSpecifications.add(null);
@@ -360,6 +302,7 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Defines a group property
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
@@ -371,9 +314,6 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}</li>
 		 *             if the property definition is null
 		 *
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             </li> if a property definition for the given group type
-		 *             id and property id was previously defined.
 		 * 
 		 */
 		public Builder defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final PropertyDefinition propertyDefinition) {
@@ -381,7 +321,6 @@ public final class GroupsPluginData implements PluginData {
 			validateGroupTypeIdNotNull(groupTypeId);
 			validateGroupPropertyIdNotNull(groupPropertyId);
 			validatePropertyDefinitionNotNull(propertyDefinition);
-			validateGroupPropertyIsNotDefined(data, groupTypeId, groupPropertyId);
 			Map<GroupPropertyId, PropertyDefinition> propertyDefinitionsMap = data.groupPropertyDefinitions.get(groupTypeId);
 			if (propertyDefinitionsMap == null) {
 				propertyDefinitionsMap = new LinkedHashMap<>();
@@ -394,6 +333,7 @@ public final class GroupsPluginData implements PluginData {
 		/**
 		 * Sets the group property value that overrides the default value of the
 		 * corresponding property definition
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -406,16 +346,12 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
 		 *             the group property value is null
 		 * 
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             </li>if the group property value was previously assigned
-		 * 
 		 */
 		public Builder setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object value) {
 			ensureDataMutability();
 			validateGroupIdIsLegal(groupId);
 			validateGroupPropertyIdNotNull(groupPropertyId);
 			validateGroupPropertyValueNotNull(value);
-			validateGroupPropertyValueNotSet(data, groupId, groupPropertyId);
 
 			int groupIndex = groupId.getValue();
 			while (groupIndex >= data.groupSpecifications.size()) {
@@ -434,6 +370,16 @@ public final class GroupsPluginData implements PluginData {
 				groupPropertyValues = new ArrayList<>();
 				groupSpecification.groupPropertyValues = groupPropertyValues;
 			}
+
+			Iterator<GroupPropertyValue> iterator = groupSpecification.groupPropertyValues.iterator();
+			while (iterator.hasNext()) {
+				GroupPropertyValue next = iterator.next();
+				if (next.groupPropertyId().equals(groupPropertyId)) {
+					iterator.remove();
+					break;
+				}
+			}
+
 			GroupPropertyValue groupPropertyValue = new GroupPropertyValue(groupPropertyId, value);
 			groupPropertyValues.add(groupPropertyValue);
 
@@ -705,18 +651,6 @@ public final class GroupsPluginData implements PluginData {
 			return data.emptyGroupList;
 		}
 		return Collections.unmodifiableList(list);
-	}
-
-	private static void validatePersonNotInGroup(Data data, GroupId groupId, PersonId personId) {
-		int personIndex = personId.getValue();
-		if (personIndex < data.groupMemberships.size()) {
-			List<GroupId> groups = data.groupMemberships.get(personIndex);
-			if (groups != null) {
-				if (groups.contains(groupId)) {
-					throw new ContractException(GroupError.DUPLICATE_GROUP_MEMBERSHIP, personId + ": " + groupId);
-				}
-			}
-		}
 	}
 
 	private static void validatePersonId(PersonId personId) {

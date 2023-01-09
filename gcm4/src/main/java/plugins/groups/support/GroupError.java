@@ -17,7 +17,6 @@ public enum GroupError implements ContractError {
 	NULL_GROUP_DATA_MANAGER("Null group data manager"),
 	DUPLICATE_GROUP_MEMBERSHIP("Person was previously assigned to group"),
 	DUPLICATE_GROUP_TYPE("Duplicate group type"),
-	DUPLICATE_GROUP_ID("Duplicate group id"),
 	MALFORMED_GROUP_SAMPLE_WEIGHTING_FUNCTION("Data used to form an enumerated distribution for group sampling was malformed"),
 	NON_GROUP_MEMBERSHIP("Person is not currently assigned to group"),
 	NULL_GROUP_CONSTRUCTION_INFO("Null group construction info"),

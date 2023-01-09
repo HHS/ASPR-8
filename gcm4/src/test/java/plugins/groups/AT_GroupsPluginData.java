@@ -166,6 +166,7 @@ public class AT_GroupsPluginData {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
+			builder.addGroupTypeId(testGroupTypeId);
 		}
 		GroupsPluginData groupInitialData = builder.build();
 
@@ -175,39 +176,44 @@ public class AT_GroupsPluginData {
 		// precondition test: if the group type id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroupTypeId(null));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-
-		// precondition test: if the group type was already added
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
-							.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1);//
-		});
-		assertEquals(GroupError.DUPLICATE_GROUP_TYPE, contractException.getErrorType());
-
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addGroup", args = { GroupId.class, GroupTypeId.class })
 	public void testAddGroup() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6428717083105095287L);
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
-		int masterGroupId = 0;
-		Set<GroupId> expectedGroupIds = new LinkedHashSet<>();
+		Map<GroupTypeId, Set<GroupId>> expectedGroupIds = new LinkedHashMap<>();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			expectedGroupIds.put(testGroupTypeId, new LinkedHashSet<>());
 			builder.addGroupTypeId(testGroupTypeId);
-
-			GroupId groupId = new GroupId(masterGroupId++);
-			builder.addGroup(groupId, testGroupTypeId);
-			expectedGroupIds.add(groupId);
-
-			groupId = new GroupId(masterGroupId++);
-			builder.addGroup(groupId, testGroupTypeId);
-			expectedGroupIds.add(groupId);
 		}
-		GroupsPluginData groupInitialData = builder.build();
+
+		for (int i = 0; i < 100; i++) {
+			TestGroupTypeId randomGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+
+			GroupId groupId = new GroupId(i);
+			builder.addGroup(groupId, randomGroupTypeId);
+			// adding duplicate group data to show the last value persists
+			randomGroupTypeId = randomGroupTypeId.next();
+			builder.addGroup(groupId, randomGroupTypeId);
+			expectedGroupIds.get(randomGroupTypeId).add(groupId);
+		}
+
+		Map<GroupTypeId, Set<GroupId>> actualGroupIds = new LinkedHashMap<>();
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			actualGroupIds.put(testGroupTypeId, new LinkedHashSet<>());
+		}
+
+		GroupsPluginData groupsPluginData = builder.build();
+		for (GroupId groupId : groupsPluginData.getGroupIds()) {
+			GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
+			actualGroupIds.get(groupTypeId).add(groupId);
+		}
 
 		// show that the group ids that were added are present in the
 		// groupInitialData
-		assertEquals(expectedGroupIds, new LinkedHashSet<>(groupInitialData.getGroupIds()));
+		assertEquals(expectedGroupIds, actualGroupIds);
 
 		// precondition test: if the group id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(null, TestGroupTypeId.GROUP_TYPE_1));
@@ -216,14 +222,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the group type id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(new GroupId(0), null));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-
-		// precondition test: if the group was already added
-		contractException = assertThrows(ContractException.class, () -> {
-
-			GroupsPluginData.builder()//
-							.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1).addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
-		});
-		assertEquals(GroupError.DUPLICATE_GROUP_ID, contractException.getErrorType());
 
 	}
 
@@ -236,9 +234,12 @@ public class AT_GroupsPluginData {
 			builder.addGroupTypeId(testGroupTypeId);
 		}
 
+		// showing that duplicate values persist
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-
-			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+			PropertyDefinition propertyDefinition = testGroupPropertyId.next().getPropertyDefinition();
+			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, propertyDefinition);
+			propertyDefinition = testGroupPropertyId.getPropertyDefinition();
+			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, propertyDefinition);
 		}
 
 		GroupsPluginData groupInitialData = builder.build();
@@ -266,18 +267,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().defineGroupProperty(testGroupTypeId, groupPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		/*
-		 * precondition test: if a property definition for the given group type
-		 * id and property id was previously defined.
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition)//
-							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);//
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -315,6 +304,8 @@ public class AT_GroupsPluginData {
 				if (randomGenerator.nextBoolean()) {
 					Object value = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setGroupPropertyValue(groupId, testGroupPropertyId, value);
+					value = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
+					builder.setGroupPropertyValue(groupId, testGroupPropertyId, value);
 					expectedValues.add(new MultiKey(groupId, testGroupPropertyId, value));
 				}
 			}
@@ -349,16 +340,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the group property value is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(0), groupPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-
-		// precondition test: if the group property value was previously
-		// assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10)//
-							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10);//
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -396,6 +377,8 @@ public class AT_GroupsPluginData {
 			int count = random.nextInt(10);
 			for (int j = 0; j < count; j++) {
 				PersonId personId = people.get(j);
+				// show that duplicated values persist
+				builder.addPersonToGroup(groupId, personId);
 				builder.addPersonToGroup(groupId, personId);
 				MultiKey multiKey = new MultiKey(groupId, personId);
 				expectedGroupAssignments.add(multiKey);
@@ -426,15 +409,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the person id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(new GroupId(0), null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-
-		// precondition test: if the person is already a member of the group
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.addPersonToGroup(new GroupId(0), new PersonId(0))//
-							.addPersonToGroup(new GroupId(0), new PersonId(0));//
-		});
-		assertEquals(GroupError.DUPLICATE_GROUP_MEMBERSHIP, contractException.getErrorType());
-
 	}
 
 	@Test
