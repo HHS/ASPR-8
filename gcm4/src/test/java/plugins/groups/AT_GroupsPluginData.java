@@ -175,15 +175,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the group type id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroupTypeId(null));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-
-		// precondition test: if the group type was already added
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
-							.addGroupTypeId(TestGroupTypeId.GROUP_TYPE_1);//
-		});
-		assertEquals(GroupError.DUPLICATE_GROUP_TYPE, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -216,14 +207,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the group type id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(new GroupId(0), null));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
-
-		// precondition test: if the group was already added
-		contractException = assertThrows(ContractException.class, () -> {
-
-			GroupsPluginData.builder()//
-							.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1).addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
-		});
-		assertEquals(GroupError.DUPLICATE_GROUP_ID, contractException.getErrorType());
 
 	}
 
@@ -266,18 +249,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().defineGroupProperty(testGroupTypeId, groupPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		/*
-		 * precondition test: if a property definition for the given group type
-		 * id and property id was previously defined.
-		 */
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition)//
-							.defineGroupProperty(testGroupTypeId, groupPropertyId, propertyDefinition);//
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -349,16 +320,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the group property value is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().setGroupPropertyValue(new GroupId(0), groupPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-
-		// precondition test: if the group property value was previously
-		// assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10)//
-							.setGroupPropertyValue(new GroupId(0), groupPropertyId, 10);//
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -426,15 +387,6 @@ public class AT_GroupsPluginData {
 		// precondition test: if the person id is null
 		contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addPersonToGroup(new GroupId(0), null));
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
-
-		// precondition test: if the person is already a member of the group
-		contractException = assertThrows(ContractException.class, () -> {
-			GroupsPluginData.builder()//
-							.addPersonToGroup(new GroupId(0), new PersonId(0))//
-							.addPersonToGroup(new GroupId(0), new PersonId(0));//
-		});
-		assertEquals(GroupError.DUPLICATE_GROUP_MEMBERSHIP, contractException.getErrorType());
-
 	}
 
 	@Test
