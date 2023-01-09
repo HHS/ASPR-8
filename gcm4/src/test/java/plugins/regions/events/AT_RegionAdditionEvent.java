@@ -133,4 +133,5 @@ public class AT_RegionAdditionEvent {
 		ContractException contractException = assertThrows(ContractException.class, () -> RegionAdditionEvent.builder().setRegionId(null).build());
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());
 	}
+	
 }

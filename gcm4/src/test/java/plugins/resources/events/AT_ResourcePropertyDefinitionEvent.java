@@ -12,6 +12,7 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_ResourcePropertyDefinitionEvent {
@@ -30,4 +31,35 @@ public class AT_ResourcePropertyDefinitionEvent {
 		ContractException propertyIdContractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(testResourceId, null));
 		assertEquals(propertyIdContractException.getErrorType(), PropertyError.NULL_PROPERTY_ID);
 	}
+
+	@Test
+	@UnitTestMethod(target = ResourcePropertyDefinitionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcePropertyDefinitionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcePropertyDefinitionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcePropertyDefinitionEvent.class, name = "resourceId", args = {})
+	public void testResourceId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcePropertyDefinitionEvent.class, name = "resourcePropertyId", args = {})
+	public void testResourcePropertyId() {
+		// nothing to test
+	}
+
 }

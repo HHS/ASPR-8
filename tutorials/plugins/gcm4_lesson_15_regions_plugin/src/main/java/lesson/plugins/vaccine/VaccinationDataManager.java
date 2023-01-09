@@ -40,19 +40,19 @@ public final class VaccinationDataManager extends DataManager {
 	}
 
 	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
-		PersonId personId = personRemovalEvent.getPersonId();
+		PersonId personId = personRemovalEvent.personId();
 		vaccinationCounts.remove(personId);
 	}
 
 	private void handlePersonImminentAdditionEvent(DataManagerContext dataManagerContext, //
 			PersonImminentAdditionEvent personImminentAdditionEvent) {
-		PersonId personId = personImminentAdditionEvent.getPersonId();
+		PersonId personId = personImminentAdditionEvent.personId();
 		validateNewPersonId(personId);
 		MutableInteger mutableInteger = new MutableInteger();
 		vaccinationCounts.put(personId, mutableInteger);
 		Optional<VaccineInitialization> optional = //
 				personImminentAdditionEvent//
-											.getPersonConstructionData()//
+											.personConstructionData()//
 											.getValue(VaccineInitialization.class);
 		if (optional.isPresent()) {
 			VaccineInitialization vaccineInitialization = optional.get();

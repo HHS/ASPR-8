@@ -13,6 +13,7 @@ import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_GroupPropertyDefinitionEvent {
@@ -34,4 +35,35 @@ public class AT_GroupPropertyDefinitionEvent {
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyDefinitionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyDefinitionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyDefinitionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyDefinitionEvent.class, name = "groupTypeId", args = {})
+	public void testGroupTypeId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupPropertyDefinitionEvent.class, name = "groupPropertyId", args = {})
+	public void testGroupPropertyId() {
+		// nothing to test
+	}
+
 }

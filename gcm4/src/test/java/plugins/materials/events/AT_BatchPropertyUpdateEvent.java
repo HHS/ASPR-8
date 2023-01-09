@@ -12,6 +12,7 @@ import plugins.materials.support.MaterialsError;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.util.properties.PropertyError;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_BatchPropertyUpdateEvent {
@@ -44,5 +45,47 @@ public class AT_BatchPropertyUpdateEvent {
 		// test to assert that the builder's output is not null
 		assertNotNull(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, currentPropertyValue));
 
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyUpdateEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyUpdateEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyUpdateEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyUpdateEvent.class, name = "batchId", args = {})
+	public void testBatchId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyUpdateEvent.class, name = "batchPropertyId", args = {})
+	public void testBatchPropertyId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyUpdateEvent.class, name = "previousPropertyValue", args = {})
+	public void testPreviousPropertyValue() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchPropertyUpdateEvent.class, name = "currentPropertyValue", args = {})
+	public void testCurrentPropertyValue() {
+		// nothing to test
 	}
 }

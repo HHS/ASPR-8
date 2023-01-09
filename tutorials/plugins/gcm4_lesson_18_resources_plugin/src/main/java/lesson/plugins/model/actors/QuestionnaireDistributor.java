@@ -32,8 +32,8 @@ public class QuestionnaireDistributor {
 
 	private void handleAntiViralDistribution(ActorContext actorContext,
 			PersonResourceUpdateEvent personResourceUpdateEvent) {
-		PersonId personId = personResourceUpdateEvent.getPersonId();
-		boolean hasAntiviral = personResourceUpdateEvent.getCurrentResourceLevel() > 0;
+		PersonId personId = personResourceUpdateEvent.personId();
+		boolean hasAntiviral = personResourceUpdateEvent.currentResourceLevel() > 0;
 		if (!hasAntiviral) {
 			boolean hospitalized = personPropertiesDataManager
 					.getPersonPropertyValue(personId, PersonProperty.HOSPITALIZED);
@@ -45,8 +45,8 @@ public class QuestionnaireDistributor {
 
 	private void handleAntiHospitalBedDistribution(ActorContext actorContext
 			, PersonResourceUpdateEvent personResourceUpdateEvent) {
-		PersonId personId = personResourceUpdateEvent.getPersonId();
-		boolean hasBed = personResourceUpdateEvent.getCurrentResourceLevel() > 0;
+		PersonId personId = personResourceUpdateEvent.personId();
+		boolean hasBed = personResourceUpdateEvent.currentResourceLevel() > 0;
 		boolean dead = personIsDead(personId);
 		if (!hasBed && !dead) {
 			distributeQuestionaire(personId);

@@ -94,8 +94,8 @@ public final class VaccineProductionReport extends PeriodicReport {
 	private double periodAntigenProduction;
 	
 	private void handleStageOfferUpdateEvent(ActorContext actorContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
-		if (stageOfferUpdateEvent.isCurrentOfferState()) {
-			StageId stageId = stageOfferUpdateEvent.getStageId();
+		if (stageOfferUpdateEvent.currentOfferState()) {
+			StageId stageId = stageOfferUpdateEvent.stageId();
 			MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
 			if(materialsProducerId.equals(MaterialsProducer.ANTIGEN_PRODUCER)) {
 				for(BatchId batchId : materialsDataManager.getStageBatches(stageId)) {

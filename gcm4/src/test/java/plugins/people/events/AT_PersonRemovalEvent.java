@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import plugins.people.support.PersonError;
 import plugins.people.support.PersonId;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_PersonRemovalEvent {
@@ -18,4 +19,30 @@ public class AT_PersonRemovalEvent {
 		ContractException contractException = assertThrows(ContractException.class, () -> new PersonRemovalEvent(null));
 		assertEquals(contractException.getErrorType(), PersonError.NULL_PERSON_ID);
 	}
+
+	@Test
+	@UnitTestMethod(target = PersonRemovalEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonRemovalEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonRemovalEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+	
+	@Test
+	@UnitTestMethod(target = PersonRemovalEvent.class, name = "personId", args = {})
+	public void testPersonId() {
+		// nothing to test
+	}
+	
+	
 }

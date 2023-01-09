@@ -65,7 +65,7 @@ public class Vaccinator {
 	private void handleMaterialsProducerResourceUpdateEvent(final ActorContext actorContext, final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (isCapturableResource(materialsProducerResourceUpdateEvent)) {
 
-			final MaterialsProducerId materialsProducerId = materialsProducerResourceUpdateEvent.getMaterialsProducerId();
+			final MaterialsProducerId materialsProducerId = materialsProducerResourceUpdateEvent.materialsProducerId();
 
 			final long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, Resource.VACCINE);
 			final List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
@@ -121,13 +121,14 @@ public class Vaccinator {
 		infectedPersonCount = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS).size();
 		infectionPersonCountThreshold = (int) (peopleDataManager.getPopulationCount() * infectionThreshold);
 		determineVaccineManufacutureStart();
+		scheduleVaccinations();
 	}
 
 	private boolean isCapturableResource(final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
-		if (!materialsProducerResourceUpdateEvent.getResourceId().equals(Resource.VACCINE)) {
+		if (!materialsProducerResourceUpdateEvent.resourceId().equals(Resource.VACCINE)) {
 			return false;
 		}
-		final boolean isResourceAdditionToProducer = materialsProducerResourceUpdateEvent.getCurrentResourceLevel() > materialsProducerResourceUpdateEvent.getPreviousResourceLevel();
+		final boolean isResourceAdditionToProducer = materialsProducerResourceUpdateEvent.currentResourceLevel() > materialsProducerResourceUpdateEvent.previousResourceLevel();
 		if (!isResourceAdditionToProducer) {
 			return false;
 		}

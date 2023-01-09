@@ -58,12 +58,12 @@ public class MetaInfoGenerator {
 	private void probeClass(Class<?> c) {
 		final Method[] methods = c.getMethods();
 		boolean isEnum = c.isEnum();
-		boolean isRecord = c.isRecord();
+		
 
 		for (final Method method : methods) {
 
 			boolean addRec = method.getDeclaringClass().equals(c);
-			addRec &= !isRecord;
+			
 			addRec &= !method.isBridge();
 			addRec &= !method.isSynthetic();
 			addRec &= !(Modifier.isAbstract(method.getModifiers()) && !isEnum);

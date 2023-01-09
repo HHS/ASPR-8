@@ -11,6 +11,7 @@ import plugins.resources.testsupport.TestResourceId;
 import plugins.util.properties.PropertyError;
 import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestConstructor;
+import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 
 public class AT_ResourceIdAdditionEvent {
@@ -29,4 +30,35 @@ public class AT_ResourceIdAdditionEvent {
 		ContractException timeContractException = assertThrows(ContractException.class, () -> new ResourceIdAdditionEvent(testResourceId, null));
 		assertEquals(timeContractException.getErrorType(), PropertyError.NULL_TIME_TRACKING_POLICY);
 	}
+
+	@Test
+	@UnitTestMethod(target = ResourceIdAdditionEvent.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourceIdAdditionEvent.class, name = "toString", args = {})
+	public void testToString() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourceIdAdditionEvent.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourceIdAdditionEvent.class, name = "resourceId", args = {})
+	public void testResourceId() {
+		// nothing to test
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourceIdAdditionEvent.class, name = "timeTrackingPolicy", args = {})
+	public void testTimeTrackingPolicy() {
+		// nothing to test
+	}
+
 }

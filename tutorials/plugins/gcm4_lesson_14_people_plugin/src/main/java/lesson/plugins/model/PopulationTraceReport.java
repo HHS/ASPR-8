@@ -42,11 +42,11 @@ public final class PopulationTraceReport {
 	}
 
 	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
-		generateReportItem(Action.REMOVAL, personImminentRemovalEvent.getPersonId());
+		generateReportItem(Action.REMOVAL, personImminentRemovalEvent.personId());
 	}
 
 	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
-		generateReportItem(Action.ADDITION, personAdditionEvent.getPersonId());
+		generateReportItem(Action.ADDITION, personAdditionEvent.personId());
 	}
 
 	private void generateReportItem(Action action, PersonId personId) {
