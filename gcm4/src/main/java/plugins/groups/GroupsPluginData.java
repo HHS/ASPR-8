@@ -1,12 +1,6 @@
 package plugins.groups;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -224,6 +218,7 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Adds a person to a group
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -233,7 +228,7 @@ public final class GroupsPluginData implements PluginData {
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if the
 		 *             person id is null
 		 *
-		 * 
+		 *
 		 */
 		public Builder addPersonToGroup(final GroupId groupId, final PersonId personId) {
 
@@ -251,7 +246,7 @@ public final class GroupsPluginData implements PluginData {
 				groups = new ArrayList<>();
 				data.groupMemberships.set(personIndex, groups);
 			}
-			if (!data.groupTypeIds.contains(groupId)) {
+			if (!groups.contains(groupId)) {
 				groups.add(groupId);
 			}
 			return this;
@@ -259,6 +254,7 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Adds a group type id
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -275,6 +271,7 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Adds a group with the given group type
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if the
@@ -305,6 +302,7 @@ public final class GroupsPluginData implements PluginData {
 
 		/**
 		 * Defines a group property
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID}</li> if
@@ -335,6 +333,7 @@ public final class GroupsPluginData implements PluginData {
 		/**
 		 * Sets the group property value that overrides the default value of the
 		 * corresponding property definition
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 * 
@@ -371,11 +370,18 @@ public final class GroupsPluginData implements PluginData {
 				groupPropertyValues = new ArrayList<>();
 				groupSpecification.groupPropertyValues = groupPropertyValues;
 			}
-			GroupPropertyValue groupPropertyValue = new GroupPropertyValue(groupPropertyId, value);
 
-			if (!data.groupSpecifications.get(groupIndex).groupPropertyValues.contains(groupPropertyValue)) {
-				groupPropertyValues.add(groupPropertyValue);
+			Iterator<GroupPropertyValue> iterator = groupSpecification.groupPropertyValues.iterator();
+			while (iterator.hasNext()) {
+				GroupPropertyValue next = iterator.next();
+				if (next.groupPropertyId().equals(groupPropertyId)) {
+					iterator.remove();
+					break;
+				}
 			}
+
+			GroupPropertyValue groupPropertyValue = new GroupPropertyValue(groupPropertyId, value);
+			groupPropertyValues.add(groupPropertyValue);
 
 			return this;
 		}

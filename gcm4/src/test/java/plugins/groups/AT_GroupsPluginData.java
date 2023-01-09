@@ -166,6 +166,7 @@ public class AT_GroupsPluginData {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 			builder.addGroupTypeId(testGroupTypeId);
+			builder.addGroupTypeId(testGroupTypeId);
 		}
 		GroupsPluginData groupInitialData = builder.build();
 
@@ -180,25 +181,39 @@ public class AT_GroupsPluginData {
 	@Test
 	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addGroup", args = { GroupId.class, GroupTypeId.class })
 	public void testAddGroup() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6428717083105095287L);
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
-		int masterGroupId = 0;
-		Set<GroupId> expectedGroupIds = new LinkedHashSet<>();
+		Map<GroupTypeId, Set<GroupId>> expectedGroupIds = new LinkedHashMap<>();
 		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			expectedGroupIds.put(testGroupTypeId, new LinkedHashSet<>());
 			builder.addGroupTypeId(testGroupTypeId);
-
-			GroupId groupId = new GroupId(masterGroupId++);
-			builder.addGroup(groupId, testGroupTypeId);
-			expectedGroupIds.add(groupId);
-
-			groupId = new GroupId(masterGroupId++);
-			builder.addGroup(groupId, testGroupTypeId);
-			expectedGroupIds.add(groupId);
 		}
-		GroupsPluginData groupInitialData = builder.build();
+
+		for (int i = 0; i < 100; i++) {
+			TestGroupTypeId randomGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+
+			GroupId groupId = new GroupId(i);
+			builder.addGroup(groupId, randomGroupTypeId);
+			// adding duplicate group data to show the last value persists
+			randomGroupTypeId = randomGroupTypeId.next();
+			builder.addGroup(groupId, randomGroupTypeId);
+			expectedGroupIds.get(randomGroupTypeId).add(groupId);
+		}
+
+		Map<GroupTypeId, Set<GroupId>> actualGroupIds = new LinkedHashMap<>();
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			actualGroupIds.put(testGroupTypeId, new LinkedHashSet<>());
+		}
+
+		GroupsPluginData groupsPluginData = builder.build();
+		for (GroupId groupId : groupsPluginData.getGroupIds()) {
+			GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(groupId);
+			actualGroupIds.get(groupTypeId).add(groupId);
+		}
 
 		// show that the group ids that were added are present in the
 		// groupInitialData
-		assertEquals(expectedGroupIds, new LinkedHashSet<>(groupInitialData.getGroupIds()));
+		assertEquals(expectedGroupIds, actualGroupIds);
 
 		// precondition test: if the group id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> GroupsPluginData.builder().addGroup(null, TestGroupTypeId.GROUP_TYPE_1));
@@ -219,9 +234,12 @@ public class AT_GroupsPluginData {
 			builder.addGroupTypeId(testGroupTypeId);
 		}
 
+		// showing that duplicate values persist
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-
-			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+			PropertyDefinition propertyDefinition = testGroupPropertyId.next().getPropertyDefinition();
+			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, propertyDefinition);
+			propertyDefinition = testGroupPropertyId.getPropertyDefinition();
+			builder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, propertyDefinition);
 		}
 
 		GroupsPluginData groupInitialData = builder.build();
@@ -285,6 +303,8 @@ public class AT_GroupsPluginData {
 			for (TestGroupPropertyId testGroupPropertyId : testGroupPropertyIds) {
 				if (randomGenerator.nextBoolean()) {
 					Object value = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
+					builder.setGroupPropertyValue(groupId, testGroupPropertyId, value);
+					value = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setGroupPropertyValue(groupId, testGroupPropertyId, value);
 					expectedValues.add(new MultiKey(groupId, testGroupPropertyId, value));
 				}
@@ -357,6 +377,8 @@ public class AT_GroupsPluginData {
 			int count = random.nextInt(10);
 			for (int j = 0; j < count; j++) {
 				PersonId personId = people.get(j);
+				// show that duplicated values persist
+				builder.addPersonToGroup(groupId, personId);
 				builder.addPersonToGroup(groupId, personId);
 				MultiKey multiKey = new MultiKey(groupId, personId);
 				expectedGroupAssignments.add(multiKey);
