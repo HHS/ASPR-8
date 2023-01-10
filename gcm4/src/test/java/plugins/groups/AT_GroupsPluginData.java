@@ -35,6 +35,7 @@ import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MultiKey;
+import util.wrappers.MutableInteger;
 
 public class AT_GroupsPluginData {
 
@@ -348,7 +349,7 @@ public class AT_GroupsPluginData {
 
 		Random random = new Random(7282493148489771700L);
 
-		Set<MultiKey> expectedGroupAssignments = new LinkedHashSet<>();
+		Map<MultiKey, MutableInteger> expectedGroupAssignments = new LinkedHashMap<>();
 
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		// add in the group types
@@ -356,10 +357,10 @@ public class AT_GroupsPluginData {
 			builder.addGroupTypeId(testGroupTypeId);
 		}
 
-		// create some people
-		List<PersonId> people = new ArrayList<>();
+		// create some people		
+		List<Integer> personIds = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
-			people.add(new PersonId(i));
+			personIds.add(i);
 		}
 
 		/*
@@ -369,34 +370,34 @@ public class AT_GroupsPluginData {
 		TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
 		for (int i = 0; i < 20; i++) {
 			// add the group
-			GroupId groupId = new GroupId(i);
-			builder.addGroup(groupId, testGroupTypeId);
+			
+			builder.addGroup(new GroupId(i), testGroupTypeId);
 			testGroupTypeId = testGroupTypeId.next();
 			// select some people and add them to the group
-			Collections.shuffle(people, random);
+			Collections.shuffle(personIds, random);
 			int count = random.nextInt(10);
-			for (int j = 0; j < count; j++) {
-				PersonId personId = people.get(j);
+			for (int j = 0; j < count; j++) {				
 				// show that duplicated values persist
-				builder.addPersonToGroup(groupId, personId);
-				builder.addPersonToGroup(groupId, personId);
-				MultiKey multiKey = new MultiKey(groupId, personId);
-				expectedGroupAssignments.add(multiKey);
+				builder.addPersonToGroup(new GroupId(i), new PersonId(personIds.get(j)));
+				builder.addPersonToGroup(new GroupId(i), new PersonId(personIds.get(j)));
+				MultiKey multiKey = new MultiKey(new GroupId(i), new PersonId(personIds.get(j)));
+				expectedGroupAssignments.putIfAbsent(multiKey, new MutableInteger());
+				expectedGroupAssignments.get(multiKey).increment();
 			}
 		}
 
 		// build the group initial data
-		GroupsPluginData groupInitialData = builder.build();
+		GroupsPluginData groupsPluginData = builder.build();
 
 		// show that the group memberships are as expected
-		Set<MultiKey> actualGroupAssignments = new LinkedHashSet<>();
+		Map<MultiKey, MutableInteger> actualGroupAssignments = new LinkedHashMap<>();
 
-		for (int i = 0; i < groupInitialData.getPersonCount(); i++) {
+		for (int i = 0; i < groupsPluginData.getPersonCount(); i++) {
 			PersonId personId = new PersonId(i);
-
-			for (GroupId groupId : groupInitialData.getGroupsForPerson(personId)) {
+			for (GroupId groupId : groupsPluginData.getGroupsForPerson(personId)) {
 				MultiKey multiKey = new MultiKey(groupId, personId);
-				actualGroupAssignments.add(multiKey);
+				actualGroupAssignments.putIfAbsent(multiKey, new MutableInteger());
+				actualGroupAssignments.get(multiKey).increment();
 			}
 		}
 
