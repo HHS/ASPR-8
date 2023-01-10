@@ -66,8 +66,8 @@ public final class Example_19 {
 		Experiment	.builder()//
 					.addPlugin(getMaterialsPlugin())//
 					.addPlugin(getResourcesPlugin())//
-					.addPlugin(getGroupsPlugin())//					
 					.addPlugin(getGlobalPropertiesPlugin())//
+					.addPlugin(getGroupsPlugin())//
 					.addPlugin(getPersonPropertiesPlugin())//
 					.addPlugin(getReportsPlugin())//
 					.addPlugin(getRegionsPlugin())//
