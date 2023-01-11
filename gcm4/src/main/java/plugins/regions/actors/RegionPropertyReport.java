@@ -11,6 +11,7 @@ import plugins.regions.events.RegionPropertyDefinitionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
+import plugins.reports.support.Report;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -33,7 +34,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class RegionPropertyReport {
+public final class RegionPropertyReport implements Report {
 
 	private ReportHeader reportHeader;
 

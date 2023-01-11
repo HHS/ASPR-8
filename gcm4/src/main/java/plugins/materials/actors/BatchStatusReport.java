@@ -19,6 +19,7 @@ import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
+import plugins.reports.support.Report;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -48,7 +49,7 @@ import plugins.reports.support.ReportItem;
  * 
  *
  */
-public final class BatchStatusReport {
+public final class BatchStatusReport implements Report {
 
 	private static class BatchRecord {
 		private double time;

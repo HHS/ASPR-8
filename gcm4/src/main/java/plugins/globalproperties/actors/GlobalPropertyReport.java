@@ -9,6 +9,7 @@ import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertyId;
+import plugins.reports.support.Report;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -29,7 +30,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class GlobalPropertyReport {
+public final class GlobalPropertyReport implements Report {
 	
 	/**
 	 * Returns a new Builder instance
