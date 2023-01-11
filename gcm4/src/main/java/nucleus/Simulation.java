@@ -22,7 +22,6 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import net.jcip.annotations.NotThreadSafe;
-import nucleus.util.TriConsumer;
 import util.errors.ContractException;
 import util.graph.Graph;
 import util.graph.GraphDepthEvaluator;
@@ -202,7 +201,6 @@ public class Simulation {
 	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
 	private final Map<DataManagerId, Consumer<DataManagerContext>> simulationCloseDataManagerCallbacks = new LinkedHashMap<>();
-	private Map<Class<?>, Set<BiConsumer<SimulationContext, Object>>> outputConsumerMap = new LinkedHashMap<>();
 
 	private boolean started;
 
@@ -822,81 +820,6 @@ public class Simulation {
 		}
 
 		return actorIds.get(index) != null;
-	}
-
-	private static class MetaOutputConsumer<T> {
-		private MetaOutputConsumer(BiConsumer<SimulationContext, T> consumer) {
-			this.consumer = consumer;
-		}
-
-		private BiConsumer<SimulationContext, T> consumer;
-
-		@SuppressWarnings("unchecked")
-		public void accept(SimulationContext experimentContext, Object object) {
-			consumer.accept(experimentContext, (T) object);
-		}
-	}
-
-	protected <T> void subscribeToOutput(Class<T> outputClass, BiConsumer<SimulationContext, T> consumer) {
-		Set<BiConsumer<SimulationContext, Object>> outputConsumers = outputConsumerMap.get(outputClass);
-		if (outputConsumers == null) {
-			outputConsumers = new LinkedHashSet<>();
-			outputConsumerMap.put(outputClass, outputConsumers);
-		}
-		outputConsumers.add(new MetaOutputConsumer<>(consumer)::accept);
-	}
-
-	@NotThreadSafe
-	private static class OutputItemConsumerManager {
-
-		private final Map<Class<?>, Set<BiConsumer<SimulationContext, Object>>> baseMap;
-		private final Map<Class<?>, Set<BiConsumer<SimulationContext, Object>>> workingMap = new LinkedHashMap<>();
-		private SimulationContext experimentContext;
-
-		public OutputItemConsumerManager(SimulationContext experimentContext, Map<Class<?>, Set<BiConsumer<SimulationContext, Object>>> consumerMap) {
-			this.experimentContext = experimentContext;
-			this.baseMap = new LinkedHashMap<>(consumerMap);
-		}
-
-		public void handleOutput(Object output) {
-			if (output == null) {
-				throw new ContractException(NucleusError.NULL_OUTPUT_ITEM);
-			}
-
-			Set<BiConsumer<SimulationContext, Object>> consumers = workingMap.get(output.getClass());
-			if (consumers == null) {
-				consumers = new LinkedHashSet<>();
-				Class<? extends Object> outputClass = output.getClass();
-				for (Class<?> c : baseMap.keySet()) {
-					if (c.isAssignableFrom(outputClass)) {
-						consumers.addAll(baseMap.get(c));
-					}
-				}
-				workingMap.put(outputClass, consumers);
-			}
-
-			for (BiConsumer<SimulationContext, Object> biConsumer : consumers) {
-				biConsumer.accept(experimentContext, output);
-			}
-		}
-	}
-
-	/**
-	 * Returns a non-threadsafe consumer of output that will distribute output
-	 * objects to the appropriate class-mapped output consumers. Each simulation
-	 * instance running a scenario should have its own instance of this consumer
-	 * that is confined to the thread running the simulation. This limits the
-	 * thread collisions to the specific output consumer end points.
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if the
-	 *             scenario id is null</li>
-	 *             <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID} if the
-	 *             scenario id is not in the range [0,scenario count)</li>
-	 */
-
-	public Consumer<Object> getOutputConsumer() {
-		return new OutputItemConsumerManager(new ActorContext(this), outputConsumerMap)::handleOutput;
 	}
 
 	protected void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
