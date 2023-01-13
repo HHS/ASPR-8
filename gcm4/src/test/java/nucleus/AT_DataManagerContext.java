@@ -808,7 +808,6 @@ public class AT_DataManagerContext {
 	private static class TestEvent1 implements Event {
 
 	}
-	
 
 	private static class TestDataManager1 extends TestDataManager {
 	}
@@ -1019,92 +1018,6 @@ public class AT_DataManagerContext {
 
 	}
 
-	// private void combinedSubscriptionTest() {
-	//
-	// TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-	//
-	// /*
-	// * create a container that will record the phases of event resolution
-	// * that were executed by the resolver that reflects the order in which
-	// * they occured
-	// */
-	//
-	// List<String> observedPhases = new ArrayList<>();
-	//
-	// /*
-	// * Create a container with the phases we expect in the order we expect
-	// * them.
-	// */
-	// List<String> expectedPhases = new ArrayList<>();
-	// expectedPhases.add("execution");
-	// expectedPhases.add("post-action");
-	//
-	// // have the resolver test preconditions for all the phases
-	// pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-	// pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0,
-	// (c) -> {
-	//
-	// ContractException contractException =
-	// assertThrows(ContractException.class, () -> c.subscribe(null, (c2, e) ->
-	// {
-	// }));
-	// assertEquals(NucleusError.NULL_EVENT_CLASS,
-	// contractException.getErrorType());
-	//
-	// contractException = assertThrows(ContractException.class, () ->
-	// c.subscribe(TestEvent.class, null));
-	// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
-	// contractException.getErrorType());
-	//
-	// contractException = assertThrows(ContractException.class, () ->
-	// c.subscribePostOrder(null, (c2, e) -> {
-	// }));
-	// assertEquals(NucleusError.NULL_EVENT_CLASS,
-	// contractException.getErrorType());
-	//
-	// contractException = assertThrows(ContractException.class, () ->
-	// c.subscribe(TestEvent.class, null));
-	// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
-	// contractException.getErrorType());
-	//
-	// }));
-	//
-	// // have the resolver subscribe to the two phases for test events.
-	// pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0,
-	// (c) -> {
-	//
-	// c.subscribe(TestEvent.class, (c2, e) -> {
-	// observedPhases.add("execution");
-	// });
-	//
-	// c.subscribePostOrder(TestEvent.class, (c2, e) -> {
-	// observedPhases.add("post-action");
-	// });
-	// }));
-	//
-	// // create an agent that will generate a test event
-	//
-	// pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-	// c.releaseEvent(new TestEvent());
-	// }));
-	//
-	// // build the plugin
-	// TestPluginData testPluginData = pluginDataBuilder.build();
-	// Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-	//
-	// // build and execute the engine
-	// Simulation .builder()//
-	// .addPlugin(testPlugin)//
-	// .build()//
-	// .execute();//
-	//
-	// /*
-	// * show that the resolver engaged in the three event resolution phases
-	// * in the proper order
-	// */
-	// assertEquals(expectedPhases, observedPhases);
-	//
-	// }
 
 	private void combinedSubscriptionTest() {
 
@@ -1266,8 +1179,8 @@ public class AT_DataManagerContext {
 		 * create a simple event label as a place holder -- all test events will
 		 * be matched
 		 */
-		EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class)//
-														.build();//
+		EventFilter<TestEvent1> eventFilter = EventFilter	.builder(TestEvent1.class)//
+															.build();//
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -1417,38 +1330,37 @@ public class AT_DataManagerContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = DataManagerContext.class, name = "metaSubscribe", args = { Class.class,BiConsumer.class })
+	@UnitTestMethod(target = DataManagerContext.class, name = "metaSubscribe", args = { Class.class, BiConsumer.class })
 	public void testMetaSubscribe() {
-		
-		
+
 		Map<MultiKey, MutableInteger> expectedObservations = new LinkedHashMap<>();
 		Map<MultiKey, MutableInteger> actualObservations = new LinkedHashMap<>();
-		
+
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
 		double testTime = 1;
-	
 
 		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
-		
-		//current subscribers : none
+
+		// current subscribers : none
 		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
 			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
-			c.subscribe(eventFilter, (c2,e)->{});			
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
 		}));
-		
-		//current subscribers : actor1
+
+		// current subscribers : actor1
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(testTime++, (c) -> {
-			c.metaSubscribe(TestEvent1.class, (c2,eventClass)->{
+			c.metaSubscribe(TestEvent1.class, (c2, eventClass) -> {
 				boolean subscribersExist = c2.subscribersExist(eventClass);
 				MultiKey multiKey = new MultiKey(c2.getTime(), subscribersExist);
 				actualObservations.putIfAbsent(multiKey, new MutableInteger());
 				actualObservations.get(multiKey).increment();
 			});
 		}));
-		
-		//current subscribers : actor1
+
+		// current subscribers : actor1
 		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
 			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
 			c.unsubscribe(eventFilter);
@@ -1456,55 +1368,57 @@ public class AT_DataManagerContext {
 			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
 			expectedObservations.get(multiKey).increment();
 		}));
-		
-		//current subscribers : none
+
+		// current subscribers : none
 		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
 			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
-			c.subscribe(eventFilter, (c2,e)->{});			
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
 			MultiKey multiKey = new MultiKey(c.getTime(), true);
 			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
 			expectedObservations.get(multiKey).increment();
 
 		}));
-		
-		//current subscribers : actor1
+
+		// current subscribers : actor1
 		pluginDataBuilder.addTestActorPlan("actor2", new TestActorPlan(testTime++, (c) -> {
 			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
-			c.subscribe(eventFilter, (c2,e)->{});
-			
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+
 		}));
-		
-		//current subscribers : actor1, actor2
+
+		// current subscribers : actor1, actor2
 		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
 			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
-			c.unsubscribe(eventFilter);			
+			c.unsubscribe(eventFilter);
 		}));
-		
-		//current subscribers : actor2
+
+		// current subscribers : actor2
 		pluginDataBuilder.addTestActorPlan("actor2", new TestActorPlan(testTime++, (c) -> {
 			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
-			c.unsubscribe(eventFilter);	
+			c.unsubscribe(eventFilter);
 			MultiKey multiKey = new MultiKey(c.getTime(), false);
 			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
 			expectedObservations.get(multiKey).increment();
 		}));
-		
-		//current subscribers : none
-		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {			
-			c.subscribe(TestEvent1.class, (c2,e)->{});
+
+		// current subscribers : none
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
+			});
 			MultiKey multiKey = new MultiKey(c.getTime(), true);
 			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
 			expectedObservations.get(multiKey).increment();
 		}));
-		
-		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {			
+
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {
 			c.unsubscribe(TestEvent1.class);
 			MultiKey multiKey = new MultiKey(c.getTime(), false);
 			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
 			expectedObservations.get(multiKey).increment();
 		}));
-		
-		
+
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
@@ -1520,10 +1434,151 @@ public class AT_DataManagerContext {
 		// show that all action plans were executed
 		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
 
-		
-		//show that the expected observations match the actual observations
+		// show that the expected observations match the actual observations
 		assertEquals(expectedObservations, actualObservations);
-		
+
+	}
+
+	
+	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "metaUnsubscribe", args = { Class.class })
+	public void testMetaUnsubscribe() {
+
+		Map<MultiKey, MutableInteger> expectedObservations = new LinkedHashMap<>();
+		Map<MultiKey, MutableInteger> actualObservations = new LinkedHashMap<>();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		double testTime = 1;
+
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
+
+		// current subscribers : none
+		// meta subscribers : none
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+		}));
+
+		// current subscribers : actor1
+		// meta subscribers : none
+		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(testTime++, (c) -> {
+			c.metaSubscribe(TestEvent1.class, (c2, eventClass) -> {
+				boolean subscribersExist = c2.subscribersExist(eventClass);
+				MultiKey multiKey = new MultiKey(c2.getTime(), "dm1", subscribersExist);
+				actualObservations.putIfAbsent(multiKey, new MutableInteger());
+				actualObservations.get(multiKey).increment();
+			});
+		}));
+
+		// current subscribers : actor1
+		// meta subscribers : dm1
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.unsubscribe(eventFilter);
+			MultiKey multiKey = new MultiKey(c.getTime(), "dm1", false);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+
+		// current subscribers : none
+		// meta subscribers : dm1
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {
+			c.metaSubscribe(TestEvent1.class, (c2, eventClass) -> {
+				boolean subscribersExist = c2.subscribersExist(eventClass);
+				MultiKey multiKey = new MultiKey(c2.getTime(), "dm2", subscribersExist);
+				actualObservations.putIfAbsent(multiKey, new MutableInteger());
+				actualObservations.get(multiKey).increment();
+			});
+		}));
+
+		// current subscribers : none
+		// meta subscribers : dm1, dm2
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+			MultiKey multiKey = new MultiKey(c.getTime(), "dm1", true);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+
+			multiKey = new MultiKey(c.getTime(), "dm2", true);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+
+		}));
+
+		// current subscribers : actor1
+		// meta subscribers : dm1, dm2
+		pluginDataBuilder.addTestActorPlan("actor2", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+
+		}));
+
+		// current subscribers : actor1, actor2
+		// meta subscribers : dm1, dm2
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.unsubscribe(eventFilter);
+		}));
+
+		// current subscribers : actor2
+		// meta subscribers : dm1, dm2
+		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(testTime++, (c) -> {
+			c.metaUnsubscribe(TestEvent1.class);
+		}));
+
+		// current subscribers : actor2
+		// meta subscribers : dm2
+		pluginDataBuilder.addTestActorPlan("actor2", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.unsubscribe(eventFilter);
+			MultiKey multiKey = new MultiKey(c.getTime(), "dm2", false);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+
+		// current subscribers : none
+		// meta subscribers : dm2
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
+			});
+			MultiKey multiKey = new MultiKey(c.getTime(), "dm2", true);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+
+		// current subscribers : dm2
+		// meta subscribers : dm2
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {
+			c.unsubscribe(TestEvent1.class);
+			MultiKey multiKey = new MultiKey(c.getTime(),"dm2", false);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// run the simulation
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
+
+		// show that all action plans were executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+
+		// show that the expected observations match the actual observations
+		assertEquals(expectedObservations, actualObservations);
+
 	}
 
 }
