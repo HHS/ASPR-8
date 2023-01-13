@@ -283,7 +283,7 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 */
 	public <T extends Event> void metaSubscribe(Class<T> eventClass,
-			BiConsumer<DataManagerContext, Boolean> eventConsumer) {
+			BiConsumer<DataManagerContext, Class<? extends Event>> eventConsumer) {
 		simulation.metaSubscribe(dataManagerId, eventClass, eventConsumer);
 	}
 	

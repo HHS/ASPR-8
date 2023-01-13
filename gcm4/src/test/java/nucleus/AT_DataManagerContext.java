@@ -808,12 +808,7 @@ public class AT_DataManagerContext {
 	private static class TestEvent1 implements Event {
 
 	}
-	private static class TestEvent2 implements Event {
-
-	}
-	private static class TestEvent3 implements Event {
-
-	}
+	
 
 	private static class TestDataManager1 extends TestDataManager {
 	}
@@ -1445,8 +1440,9 @@ public class AT_DataManagerContext {
 		
 		//current subscribers : actor1
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(testTime++, (c) -> {
-			c.metaSubscribe(TestEvent1.class, (c2,b)->{
-				MultiKey multiKey = new MultiKey(c.getTime(), b);
+			c.metaSubscribe(TestEvent1.class, (c2,eventClass)->{
+				boolean subscribersExist = c2.subscribersExist(eventClass);
+				MultiKey multiKey = new MultiKey(c2.getTime(), subscribersExist);
 				actualObservations.putIfAbsent(multiKey, new MutableInteger());
 				actualObservations.get(multiKey).increment();
 			});

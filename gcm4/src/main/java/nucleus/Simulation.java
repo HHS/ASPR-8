@@ -833,7 +833,7 @@ public class Simulation {
 
 	}
 
-	protected <T extends Event> void metaSubscribe(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, Boolean> eventConsumer) {
+	protected <T extends Event> void metaSubscribe(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, Class<? extends Event>> eventConsumer) {
 
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
@@ -926,7 +926,7 @@ public class Simulation {
 			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventClass);
 			if (metaConsumers != null) {
 				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(true);
+					metaConsumer.accept(eventClass);
 				}
 			}
 		}
@@ -960,7 +960,7 @@ public class Simulation {
 			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventClass);
 			if (metaConsumers != null) {
 				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(false);
+					metaConsumer.accept(eventClass);
 				}
 			}
 		}
@@ -1153,12 +1153,12 @@ public class Simulation {
 		}
 	}
 
-	private static class DataManagerMetaSubscriptionConsumer implements Consumer<Boolean>, Comparable<DataManagerMetaSubscriptionConsumer> {
+	private static class DataManagerMetaSubscriptionConsumer implements Consumer<Class<? extends Event>>, Comparable<DataManagerMetaSubscriptionConsumer> {
 
-		private final BiConsumer<DataManagerContext, Boolean> consumer;
+		private final BiConsumer<DataManagerContext, Class<? extends Event>> consumer;
 		private final DataManagerContext dataManagerContext;
 
-		public <T extends Event> DataManagerMetaSubscriptionConsumer(DataManagerContext dataManagerContext, BiConsumer<DataManagerContext, Boolean> consumer) {
+		public <T extends Event> DataManagerMetaSubscriptionConsumer(DataManagerContext dataManagerContext, BiConsumer<DataManagerContext, Class<? extends Event>> consumer) {
 			this.consumer = consumer;
 			this.dataManagerContext = dataManagerContext;
 		}
@@ -1169,7 +1169,7 @@ public class Simulation {
 		}
 
 		@Override
-		public void accept(Boolean value) {
+		public void accept(Class<? extends Event> value) {
 			consumer.accept(dataManagerContext, value);
 		}
 
@@ -1387,7 +1387,7 @@ public class Simulation {
 			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventFilter.getEventClass());
 			if (metaConsumers != null) {
 				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(true);
+					metaConsumer.accept(eventFilter.getEventClass());
 				}
 			}
 		}
@@ -1458,7 +1458,7 @@ public class Simulation {
 			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventFilter.getEventClass());
 			if (metaConsumers != null) {
 				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(false);
+					metaConsumer.accept(eventFilter.getEventClass());
 				}
 			}
 		}
