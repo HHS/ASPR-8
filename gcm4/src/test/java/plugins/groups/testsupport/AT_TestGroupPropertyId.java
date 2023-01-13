@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -98,4 +99,17 @@ public class AT_TestGroupPropertyId {
 			}
 		}
 	}
+	
+	@Test
+	@UnitTestMethod(target = TestGroupPropertyId.class, name = "next", args = {})
+	public void testNext() {
+		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+			int index = (testGroupPropertyId.ordinal() + 1) % TestGroupPropertyId.values().length;
+			TestGroupPropertyId expectedNext = TestGroupPropertyId.values()[index];
+			assertEquals(expectedNext, testGroupPropertyId.next());
+		}
+		
+	}
+	
+	 
 }
