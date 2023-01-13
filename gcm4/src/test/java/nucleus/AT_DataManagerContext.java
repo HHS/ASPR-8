@@ -1127,6 +1127,10 @@ public class AT_DataManagerContext {
 			c.subscribe(TestEvent.class, (c2, e) -> {
 				observed.setValue(true);
 			});
+			
+			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, (c2, e) -> {
+			}));
+			assertEquals(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION, contractException.getErrorType());
 
 		}));
 

@@ -16,14 +16,15 @@ import util.errors.ContractException;
  */
 
 public final class DataManagerContext implements SimulationContext {
-	private final DataManagerId dataManagerId;
+	protected final DataManagerId dataManagerId;
 	private final Simulation simulation;
-	
-	
-	protected DataManagerContext(Simulation simulation, DataManagerId dataManagerId) {
+
+	protected DataManagerContext(Simulation simulation,
+			DataManagerId dataManagerId) {
 		this.simulation = simulation;
 		this.dataManagerId = dataManagerId;
 	}
+
 	/**
 	 * Schedules a plan that will be executed at the given time.
 	 * 
@@ -34,9 +35,11 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 * 
 	 */
-	
-	public void addPlan(final Consumer<DataManagerContext> plan, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, null);
+
+	public void addPlan(final Consumer<DataManagerContext> plan,
+			final double planTime) {
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true,
+				null);
 	}
 
 	/**
@@ -53,8 +56,9 @@ public final class DataManagerContext implements SimulationContext {
 	 *             already in use by an existing plan
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
-	 */	
-	public void addKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+	 */
+	public void addKeyedPlan(final Consumer<DataManagerContext> plan,
+			final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
 		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
 		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, key);
@@ -71,9 +75,11 @@ public final class DataManagerContext implements SimulationContext {
 	 *             scheduled for a time in the past
 	 * 
 	 * 
-	 */	
-	public void addPassivePlan(final Consumer<DataManagerContext> plan, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, null);
+	 */
+	public void addPassivePlan(final Consumer<DataManagerContext> plan,
+			final double planTime) {
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false,
+				null);
 	}
 
 	/**
@@ -92,12 +98,15 @@ public final class DataManagerContext implements SimulationContext {
 	 *             already in use by an existing plan
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
-	 */	
-	public void addPassiveKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
+	 */
+	public void addPassiveKeyedPlan(final Consumer<DataManagerContext> plan,
+			final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
 		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
-		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, key);
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false,
+				key);
 	}
+
 	/**
 	 * Retrieves a plan for the given key.
 	 * 
@@ -105,10 +114,11 @@ public final class DataManagerContext implements SimulationContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	
+
 	@SuppressWarnings("unchecked")
-	
-	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key) {
+
+	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(
+			final Object key) {
 		return (Optional<T>) simulation.getDataManagerPlan(dataManagerId, key);
 	}
 
@@ -119,7 +129,7 @@ public final class DataManagerContext implements SimulationContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
-	 */	
+	 */
 	public Optional<Double> getPlanTime(final Object key) {
 		return simulation.getDataManagerPlanTime(dataManagerId, key);
 	}
@@ -131,19 +141,18 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
-	 */	
+	 */
 	public void releaseEvent(final Event event) {
 		simulation.releaseEvent(event);
 	}
 
-	
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
-	 */	
+	 */
 	public <T> Optional<T> removePlan(final Object key) {
 		return simulation.removeDataManagerPlan(dataManagerId, key);
 	}
@@ -151,7 +160,7 @@ public final class DataManagerContext implements SimulationContext {
 	/**
 	 * Returns a list of the current plan keys associated with the current data
 	 * manager
-	 */	
+	 */
 	public List<Object> getPlanKeys() {
 		return simulation.getDataManagerPlanKeys(dataManagerId);
 	}
@@ -165,9 +174,14 @@ public final class DataManagerContext implements SimulationContext {
 	 *             is null
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
 	 *             consumer is null
-	 */	
-	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-		simulation.subscribeDataManagerToEvent(dataManagerId, eventClass, eventConsumer);
+	 *             <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION} if the
+	 *             data manager is already subscribed
+	 * 
+	 */
+	public <T extends Event> void subscribe(Class<T> eventClass,
+			BiConsumer<DataManagerContext, T> eventConsumer) {
+		simulation.subscribeDataManagerToEvent(dataManagerId, eventClass,
+				eventConsumer);
 	}
 
 	/**
@@ -177,7 +191,7 @@ public final class DataManagerContext implements SimulationContext {
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
-	 */	
+	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unSubscribeDataManagerFromEvent(dataManagerId, eventClass);
 	}
@@ -190,10 +204,9 @@ public final class DataManagerContext implements SimulationContext {
 		return simulation.subscribersExistForEvent(eventClass);
 	}
 
-
 	/**
 	 * Returns the DataManagerId associated with this DataManagerContext
-	 */	
+	 */
 	public DataManagerId getDataManagerId() {
 		return dataManagerId;
 	}
@@ -204,19 +217,22 @@ public final class DataManagerContext implements SimulationContext {
 	 * state and releasing output.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER} if the
-	 *             consumer is null</li> 
-	 */	
-	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
-		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
+	 *             <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER}
+	 *             if the consumer is null</li>
+	 */
+	public void subscribeToSimulationClose(
+			Consumer<DataManagerContext> consumer) {
+		simulation.subscribeDataManagerToSimulationClose(dataManagerId,
+				consumer);
 	}
+
 	/**
 	 * Returns the ActorId of the current actor
-	 */	
+	 */
 	public ActorId getActorId() {
 		return simulation.focalActorId;
 	}
-	
+
 	@Override
 	public ActorId addActor(Consumer<ActorContext> consumer) {
 		return simulation.addActor(consumer);
@@ -226,22 +242,23 @@ public final class DataManagerContext implements SimulationContext {
 	public boolean actorExists(final ActorId actorId) {
 		return simulation.actorExists(actorId);
 	}
-	
+
 	@Override
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
-		return simulation.getDataManagerForDataManager(dataManagerClass, dataManagerId);
+		return simulation.getDataManagerForDataManager(dataManagerClass,
+				dataManagerId);
 	}
-	
+
 	@Override
 	public double getTime() {
 		return simulation.time;
 	}
-	
+
 	@Override
 	public void halt() {
 		simulation.halt();
 	}
-	
+
 	@Override
 	public void removeActor(final ActorId actorId) {
 		simulation.removeActor(actorId);
@@ -251,5 +268,35 @@ public final class DataManagerContext implements SimulationContext {
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}
+
+	/**
+	 * Subscribes the data manager to the existence of event subscriptions
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
+	 *             is null
+	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the consumer
+	 *             is null
+	 *             <li>{@link NucleusError#DUPLICATE_META_SUBSCRIPTION} if the
+	 *             data manager is already subscribed
+	 * 
+	 * 
+	 */
+	public <T extends Event> void metaSubscribe(Class<T> eventClass,
+			BiConsumer<DataManagerContext, Boolean> eventConsumer) {
+		simulation.metaSubscribe(dataManagerId, eventClass, eventConsumer);
+	}
 	
+	/**
+	 * Unsubscribes the data manager from the existence of event subscriptions
+	 * 
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
+	 *             is null
+	 */
+	public void metaUnsubscribe(Class<? extends Event> eventClass) {
+		simulation.metaUnsubscribe(dataManagerId, eventClass);
+	}
+
 }
