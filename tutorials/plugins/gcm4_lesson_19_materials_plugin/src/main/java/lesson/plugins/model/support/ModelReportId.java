@@ -8,7 +8,7 @@ public enum ModelReportId implements ReportId {
 	PERSON_PROPERTY_REPORT,//
 	VACCINE_REPORT,//
 	VACCINE_PRODUCTION_REPORT,//
-	GLOBAL_PROPERTY_REPORT,//
+	
 
 	;
 }

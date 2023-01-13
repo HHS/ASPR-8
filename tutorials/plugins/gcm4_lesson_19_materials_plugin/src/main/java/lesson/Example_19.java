@@ -25,7 +25,6 @@ import nucleus.Plugin;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import plugins.globalproperties.GlobalPropertiesPluginData.Builder;
-import plugins.globalproperties.actors.GlobalPropertyReport;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
@@ -66,13 +65,13 @@ public final class Example_19 {
 		Experiment	.builder()//
 					.addPlugin(getMaterialsPlugin())//
 					.addPlugin(getResourcesPlugin())//
-					.addPlugin(getGroupsPlugin())//					
 					.addPlugin(getGlobalPropertiesPlugin())//
 					.addPlugin(getPersonPropertiesPlugin())//
 					.addPlugin(getReportsPlugin())//
-					.addPlugin(getRegionsPlugin())//
-					.addPlugin(getPeoplePlugin())//
 					.addPlugin(getStochasticsPlugin())//
+					.addPlugin(getRegionsPlugin())//
+					.addPlugin(getPeoplePlugin())//					
+					.addPlugin(getGroupsPlugin())//
 					.addPlugin(ModelPlugin.getModelPlugin())//
 
 					.addDimension(getInfectionThresholdDimension())//
@@ -212,12 +211,6 @@ public final class Example_19 {
 		builder.definePersonProperty(PersonProperty.AGE, propertyDefinition);//
 
 		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.setDefaultValue(0)//
-												.build();//
-		builder.definePersonProperty(PersonProperty.CONTACT_COUNT, propertyDefinition);//
-
-		propertyDefinition = PropertyDefinition	.builder()//
 												.setType(DiseaseState.class)//
 												.setDefaultValue(DiseaseState.SUSCEPTIBLE)//
 												.build();
@@ -263,9 +256,7 @@ public final class Example_19 {
 																			.build()::init)//
 									.addReport(() -> new VaccineReport(ModelReportId.VACCINE_REPORT, ReportPeriod.DAILY)::init)//
 									.addReport(() -> new VaccineProductionReport(ModelReportId.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init)//
-									.addReport(() -> GlobalPropertyReport	.builder().setReportId(ModelReportId.GLOBAL_PROPERTY_REPORT)//
-																			.includeAllExtantPropertyIds(true)//
-																			.build()::init)//
+									
 
 									.build();
 
@@ -277,8 +268,7 @@ public final class Example_19 {
 									.addReport(ModelReportId.DISEASE_STATE_REPORT, Paths.get("c:\\temp\\gcm\\disease_state_report.xls"))//
 									.addReport(ModelReportId.PERSON_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\person_property_report.xls"))//
 									.addReport(ModelReportId.VACCINE_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_report.xls"))//
-									.addReport(ModelReportId.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//
-									.addReport(ModelReportId.GLOBAL_PROPERTY_REPORT, Paths.get("c:\\temp\\gcm\\global_property_report.xls"))//
+									.addReport(ModelReportId.VACCINE_PRODUCTION_REPORT, Paths.get("c:\\temp\\gcm\\vaccine_production_report.xls"))//									
 									.build();
 	}
 

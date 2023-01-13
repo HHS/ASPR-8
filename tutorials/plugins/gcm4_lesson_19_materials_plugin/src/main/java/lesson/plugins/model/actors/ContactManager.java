@@ -34,7 +34,8 @@ public class ContactManager {
 	private double communityContactRate;
 
 	private void endInfectiousness(final PersonId personId) {
-		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE, DiseaseState.RECOVERED);
+		personPropertiesDataManager.setPersonPropertyValue(personId,
+				PersonProperty.DISEASE_STATE, DiseaseState.RECOVERED);
 	}
 
 	private void infectContact(final PersonId personId) {
@@ -43,22 +44,33 @@ public class ContactManager {
 			final List<PersonId> people = peopleDataManager.getPeople();
 			people.remove(personId);
 			if (people.size() > 0) {
-				final PersonId contactedPerson = people.get(randomGenerator.nextInt(people.size()));
-				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.DISEASE_STATE);
-				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
+				final PersonId contactedPerson = people.get(
+						randomGenerator.nextInt(people.size()));
+				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(
+						contactedPerson, PersonProperty.DISEASE_STATE);
+				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(
+						contactedPerson, PersonProperty.VACCINATED);
 				if ((diseaseState == DiseaseState.SUSCEPTIBLE) && !vaccinated) {
 					infectPerson(contactedPerson);
 				}
 			}
 		} else {
-			final List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(personId);
-			final GroupId groupId = groupsForPerson.get(randomGenerator.nextInt(groupsForPerson.size()));
-			final GroupSampler groupSampler = GroupSampler.builder().setExcludedPersonId(personId).build();
-			final Optional<PersonId> optional = groupsDataManager.sampleGroup(groupId, groupSampler);
+			final List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(
+					personId);
+			final GroupId groupId = groupsForPerson.get(
+					randomGenerator.nextInt(groupsForPerson.size()));
+			final GroupSampler groupSampler = GroupSampler	.builder()
+															.setExcludedPersonId(
+																	personId)
+															.build();
+			final Optional<PersonId> optional = groupsDataManager.sampleGroup(
+					groupId, groupSampler);
 			if (optional.isPresent()) {
 				final PersonId contactedPerson = optional.get();
-				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.DISEASE_STATE);
-				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(contactedPerson, PersonProperty.VACCINATED);
+				final DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(
+						contactedPerson, PersonProperty.DISEASE_STATE);
+				final boolean vaccinated = personPropertiesDataManager.getPersonPropertyValue(
+						contactedPerson, PersonProperty.VACCINATED);
 				if ((diseaseState == DiseaseState.SUSCEPTIBLE) && !vaccinated) {
 					infectPerson(contactedPerson);
 				}
@@ -67,11 +79,16 @@ public class ContactManager {
 	}
 
 	private void infectPerson(final PersonId personId) {
-		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS);
-		final int infectiousDays = randomGenerator.nextInt(maxInfectiousPeriod - minInfectiousPeriod) + minInfectiousPeriod;
-		final int infectionCount = (int) FastMath.round((infectiousDays / infectionInterval));
-		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.CONTACT_COUNT, infectionCount);
+		personPropertiesDataManager.setPersonPropertyValue(personId,
+				PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS);
+		final int infectiousDays = randomGenerator.nextInt(
+				maxInfectiousPeriod - minInfectiousPeriod)
+				+ minInfectiousPeriod;
+		final int infectionCount = (int) FastMath.round(
+				(infectiousDays / infectionInterval));
+
 		double planTime = actorContext.getTime();
+
 		for (int j = 0; j < infectionCount; j++) {
 			planTime += infectionInterval;
 			actorContext.addPlan((c) -> infectContact(personId), planTime);
@@ -82,21 +99,29 @@ public class ContactManager {
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 
-		final StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
+		final StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(
+				StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
 		final Random random = new Random(randomGenerator.nextLong());
 
-		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+		peopleDataManager = actorContext.getDataManager(
+				PeopleDataManager.class);
 
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
-		final GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
-		communityContactRate = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE);
+		groupsDataManager = actorContext.getDataManager(
+				GroupsDataManager.class);
+		final GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(
+				GlobalPropertiesDataManager.class);
+		communityContactRate = globalPropertiesDataManager.getGlobalPropertyValue(
+				GlobalProperty.COMMUNITY_CONTACT_RATE);
 
-		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
-		final List<PersonId> susceptiblePeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.SUSCEPTIBLE);
+		personPropertiesDataManager = actorContext.getDataManager(
+				PersonPropertiesDataManager.class);
+		final List<PersonId> susceptiblePeople = personPropertiesDataManager.getPeopleWithPropertyValue(
+				PersonProperty.DISEASE_STATE, DiseaseState.SUSCEPTIBLE);
 		final List<PersonId> susceptibleAdults = new ArrayList<>();
 		for (final PersonId personId : susceptiblePeople) {
-			final int age = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.AGE);
+			final int age = personPropertiesDataManager.getPersonPropertyValue(
+					personId, PersonProperty.AGE);
 			if (age > 18) {
 				susceptibleAdults.add(personId);
 			}
@@ -104,13 +129,19 @@ public class ContactManager {
 
 		Collections.shuffle(susceptibleAdults, random);
 
-		minInfectiousPeriod = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD);
-		maxInfectiousPeriod = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD);
-		final double r0 = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.R0);
-		infectionInterval = (minInfectiousPeriod + maxInfectiousPeriod) / (2 * r0);
+		minInfectiousPeriod = globalPropertiesDataManager.getGlobalPropertyValue(
+				GlobalProperty.MIN_INFECTIOUS_PERIOD);
+		maxInfectiousPeriod = globalPropertiesDataManager.getGlobalPropertyValue(
+				GlobalProperty.MAX_INFECTIOUS_PERIOD);
+		final double r0 = globalPropertiesDataManager.getGlobalPropertyValue(
+				GlobalProperty.R0);
+		infectionInterval = (minInfectiousPeriod + maxInfectiousPeriod)
+				/ (2 * r0);
 
-		int initialInfections = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS);
-		initialInfections = FastMath.min(initialInfections, susceptibleAdults.size());
+		int initialInfections = globalPropertiesDataManager.getGlobalPropertyValue(
+				GlobalProperty.INITIAL_INFECTIONS);
+		initialInfections = FastMath.min(initialInfections,
+				susceptibleAdults.size());
 
 		for (int i = 0; i < initialInfections; i++) {
 			final PersonId personId = susceptibleAdults.get(i);
@@ -118,4 +149,5 @@ public class ContactManager {
 			actorContext.addPlan((c) -> infectPerson(personId), planTime);
 		}
 	}
+
 }
