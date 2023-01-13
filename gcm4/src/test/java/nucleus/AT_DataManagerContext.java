@@ -7,8 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -26,6 +28,7 @@ import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestScenarioReport;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
+import util.wrappers.MultiKey;
 import util.wrappers.MutableBoolean;
 import util.wrappers.MutableInteger;
 
@@ -770,7 +773,7 @@ public class AT_DataManagerContext {
 		// eventResolved to true
 		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 				eventResolved.setValue(true);
 			});
 		}));
@@ -778,7 +781,7 @@ public class AT_DataManagerContext {
 		// have another data manager resolve a test event
 		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
-			context.releaseEvent(new TestEvent());
+			context.releaseEvent(new TestEvent1());
 		}));
 
 		// precondition tests
@@ -802,7 +805,13 @@ public class AT_DataManagerContext {
 
 	}
 
-	private static class TestEvent implements Event {
+	private static class TestEvent1 implements Event {
+
+	}
+	private static class TestEvent2 implements Event {
+
+	}
+	private static class TestEvent3 implements Event {
 
 	}
 
@@ -1116,7 +1125,7 @@ public class AT_DataManagerContext {
 			}));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, null));
+			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent1.class, null));
 			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
 
 		}));
@@ -1124,11 +1133,11 @@ public class AT_DataManagerContext {
 		// have the resolver subscribe for test events.
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 				observed.setValue(true);
 			});
-			
-			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, (c2, e) -> {
+
+			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent1.class, (c2, e) -> {
 			}));
 			assertEquals(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION, contractException.getErrorType());
 
@@ -1138,7 +1147,7 @@ public class AT_DataManagerContext {
 
 		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
-			c.releaseEvent(new TestEvent());
+			c.releaseEvent(new TestEvent1());
 		}));
 
 		// build the plugin
@@ -1199,7 +1208,7 @@ public class AT_DataManagerContext {
 
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 				phaseExecutionCount.increment();
 			});
 
@@ -1208,7 +1217,7 @@ public class AT_DataManagerContext {
 		// create a data manager that will produce a test event
 		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
-			c.releaseEvent(new TestEvent());
+			c.releaseEvent(new TestEvent1());
 		}));
 
 		/*
@@ -1221,12 +1230,12 @@ public class AT_DataManagerContext {
 
 		// have the resolver unsubscribe
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (c) -> {
-			c.unsubscribe(TestEvent.class);
+			c.unsubscribe(TestEvent1.class);
 		}));
 
 		// have the data manager generate another test event
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(4, (c) -> {
-			c.releaseEvent(new TestEvent());
+			c.releaseEvent(new TestEvent1());
 		}));
 
 		/*
@@ -1262,7 +1271,7 @@ public class AT_DataManagerContext {
 		 * create a simple event label as a place holder -- all test events will
 		 * be matched
 		 */
-		EventFilter<TestEvent> eventFilter = EventFilter.builder(TestEvent.class)//
+		EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class)//
 														.build();//
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1275,7 +1284,7 @@ public class AT_DataManagerContext {
 		 */
 		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
-			assertFalse(c.subscribersExist(TestEvent.class));
+			assertFalse(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// create an agent and have it subscribe to test events at time 1
@@ -1288,7 +1297,7 @@ public class AT_DataManagerContext {
 
 		// show that the resolver now sees that there are subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(2, (c) -> {
-			assertTrue(c.subscribersExist(TestEvent.class));
+			assertTrue(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// have the agent unsubscribe
@@ -1298,7 +1307,7 @@ public class AT_DataManagerContext {
 
 		// show that the resolver see no subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(4, (c) -> {
-			assertFalse(c.subscribersExist(TestEvent.class));
+			assertFalse(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// add a second data manager
@@ -1306,23 +1315,23 @@ public class AT_DataManagerContext {
 		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(5, (c) -> {
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 			});
 		}));
 
 		// show that the test resolver now sees that there are subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(6, (c) -> {
-			assertTrue(c.subscribersExist(TestEvent.class));
+			assertTrue(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// have the second data manager unsubscribe
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(7, (c) -> {
-			c.unsubscribe(TestEvent.class);
+			c.unsubscribe(TestEvent1.class);
 		}));
 
 		// show that dm1 now sees that there are no subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(8, (c) -> {
-			assertFalse(c.subscribersExist(TestEvent.class));
+			assertFalse(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// build the plugin
@@ -1410,6 +1419,115 @@ public class AT_DataManagerContext {
 
 		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(expectedPairs, observedPairs);
+	}
+
+	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "metaSubscribe", args = { Class.class,BiConsumer.class })
+	public void testMetaSubscribe() {
+		
+		
+		Map<MultiKey, MutableInteger> expectedObservations = new LinkedHashMap<>();
+		Map<MultiKey, MutableInteger> actualObservations = new LinkedHashMap<>();
+		
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		double testTime = 1;
+	
+
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
+		
+		//current subscribers : none
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.subscribe(eventFilter, (c2,e)->{});			
+		}));
+		
+		//current subscribers : actor1
+		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(testTime++, (c) -> {
+			c.metaSubscribe(TestEvent1.class, (c2,b)->{
+				MultiKey multiKey = new MultiKey(c.getTime(), b);
+				actualObservations.putIfAbsent(multiKey, new MutableInteger());
+				actualObservations.get(multiKey).increment();
+			});
+		}));
+		
+		//current subscribers : actor1
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.unsubscribe(eventFilter);
+			MultiKey multiKey = new MultiKey(c.getTime(), false);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+		
+		//current subscribers : none
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.subscribe(eventFilter, (c2,e)->{});			
+			MultiKey multiKey = new MultiKey(c.getTime(), true);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+
+		}));
+		
+		//current subscribers : actor1
+		pluginDataBuilder.addTestActorPlan("actor2", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.subscribe(eventFilter, (c2,e)->{});
+			
+		}));
+		
+		//current subscribers : actor1, actor2
+		pluginDataBuilder.addTestActorPlan("actor1", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.unsubscribe(eventFilter);			
+		}));
+		
+		//current subscribers : actor2
+		pluginDataBuilder.addTestActorPlan("actor2", new TestActorPlan(testTime++, (c) -> {
+			EventFilter<TestEvent1> eventFilter = EventFilter.builder(TestEvent1.class).build();
+			c.unsubscribe(eventFilter);	
+			MultiKey multiKey = new MultiKey(c.getTime(), false);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+		
+		//current subscribers : none
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {			
+			c.subscribe(TestEvent1.class, (c2,e)->{});
+			MultiKey multiKey = new MultiKey(c.getTime(), true);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+		
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(testTime++, (c) -> {			
+			c.unsubscribe(TestEvent1.class);
+			MultiKey multiKey = new MultiKey(c.getTime(), false);
+			expectedObservations.putIfAbsent(multiKey, new MutableInteger());
+			expectedObservations.get(multiKey).increment();
+		}));
+		
+		
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+
+		// run the simulation
+		Simulation	.builder()//
+					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput)//
+					.addPlugin(testPlugin)//
+					.build()//
+					.execute();//
+
+		// show that all action plans were executed
+		assertTrue(scenarioPlanCompletionObserver.allPlansExecuted());
+
+		
+		//show that the expected observations match the actual observations
+		assertEquals(expectedObservations, actualObservations);
+		
 	}
 
 }

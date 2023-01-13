@@ -901,6 +901,8 @@ public class Simulation {
 		if (eventConsumer == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
+		
+		boolean subscribersExistForEvent = subscribersExistForEvent(eventClass);
 
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
@@ -913,8 +915,6 @@ public class Simulation {
 				throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
 			}
 		}
-
-		boolean subscribersExistForEvent = subscribersExistForEvent(eventClass);
 
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));

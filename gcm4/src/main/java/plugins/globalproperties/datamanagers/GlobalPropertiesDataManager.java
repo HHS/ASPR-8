@@ -29,6 +29,8 @@ import util.errors.ContractException;
 
 public final class GlobalPropertiesDataManager extends DataManager {
 
+	private boolean releaseGlobalPropertyUpdateEvents;
+	
 	private DataManagerContext dataManagerContext;
 	private Map<GlobalPropertyId, PropertyValueRecord> globalPropertyMap = new LinkedHashMap<>();
 	private Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
@@ -149,7 +151,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		validateValueCompatibility(globalPropertyId, propertyDefinition, globalPropertyValue);
 		final Object oldPropertyValue = getGlobalPropertyValue(globalPropertyId);
 		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
-		dataManagerContext.releaseEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+		if (releaseGlobalPropertyUpdateEvents) {			
+			dataManagerContext.releaseEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+		}
 	}
 
 	/**
@@ -159,11 +163,20 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	public boolean globalPropertyIdExists(final GlobalPropertyId globalPropertyId) {
 		return globalPropertyMap.containsKey(globalPropertyId);
 	}
+	
+	private void handleMetaGlobalPropertyUpdateEvent(DataManagerContext dataManagerContext, Boolean subscribersExist) {
+		this.releaseGlobalPropertyUpdateEvents = subscribersExist;
+	}
 
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
+		
 		this.dataManagerContext = dataManagerContext;
+		
+		dataManagerContext.metaSubscribe(GlobalPropertyUpdateEvent.class, this::handleMetaGlobalPropertyUpdateEvent);
+		releaseGlobalPropertyUpdateEvents = dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class);
+		
 
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
