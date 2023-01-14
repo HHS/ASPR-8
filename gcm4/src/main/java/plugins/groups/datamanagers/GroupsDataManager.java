@@ -16,6 +16,7 @@ import org.apache.commons.math3.util.Pair;
 import net.jcip.annotations.GuardedBy;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
@@ -135,6 +136,14 @@ public final class GroupsDataManager extends DataManager {
 
 	private final GroupsPluginData groupsPluginData;
 
+	private boolean releaseGroupAdditionEvents;
+	private boolean releaseGroupImminentRemovalEvents;
+	private boolean releaseGroupMembershipAdditionEvents;
+	private boolean releaseGroupMembershipRemovalEvents;
+	private boolean releaseGroupPropertyDefinitionEvents;
+	private boolean releaseGroupPropertyUpdateEvents;
+	private boolean releaseGroupTypeAdditionEvents;
+
 	/**
 	 * Constructs this person group data manager
 	 * 
@@ -192,15 +201,31 @@ public final class GroupsDataManager extends DataManager {
 	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
-		
+
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
+
+		releaseGroupAdditionEvents = dataManagerContext.subscribersExist(GroupAdditionEvent.class);
+		releaseGroupImminentRemovalEvents = dataManagerContext.subscribersExist(GroupImminentRemovalEvent.class);
+		releaseGroupMembershipAdditionEvents = dataManagerContext.subscribersExist(GroupMembershipAdditionEvent.class);
+		releaseGroupMembershipRemovalEvents = dataManagerContext.subscribersExist(GroupMembershipRemovalEvent.class);
+		releaseGroupPropertyDefinitionEvents = dataManagerContext.subscribersExist(GroupPropertyDefinitionEvent.class);
+		releaseGroupPropertyUpdateEvents = dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class);
+		releaseGroupTypeAdditionEvents = dataManagerContext.subscribersExist(GroupTypeAdditionEvent.class);
+
+		dataManagerContext.metaSubscribe(GroupAdditionEvent.class, this::handleMetaGroupAdditionEvent);
+		dataManagerContext.metaSubscribe(GroupImminentRemovalEvent.class, this::handleMetaGroupImminentRemovalEvent);
+		dataManagerContext.metaSubscribe(GroupMembershipAdditionEvent.class, this::handleMetaGroupMembershipAdditionEvent);
+		dataManagerContext.metaSubscribe(GroupMembershipRemovalEvent.class, this::handleMetaGroupMembershipRemovalEvent);
+		dataManagerContext.metaSubscribe(GroupPropertyDefinitionEvent.class, this::handleMetaGroupPropertyDefinitionEvent);
+		dataManagerContext.metaSubscribe(GroupPropertyUpdateEvent.class, this::handleMetaGroupPropertyUpdateEvent);
+		dataManagerContext.metaSubscribe(GroupTypeAdditionEvent.class, this::handleMetaGroupTypeAdditionEvent);
+
 		this.dataManagerContext = dataManagerContext;
 		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
-
 
 		loadGroupTypes();
 		loadGroupPropertyDefinitions();
@@ -208,9 +233,36 @@ public final class GroupsDataManager extends DataManager {
 		loadGroupMembership();
 		loadGroupPropertyValues();
 
-		
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
-		
+
+	}
+
+	private void handleMetaGroupAdditionEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
+		releaseGroupAdditionEvents = dataManagerContext.subscribersExist(GroupAdditionEvent.class);
+	}
+
+	private void handleMetaGroupImminentRemovalEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
+		releaseGroupImminentRemovalEvents = dataManagerContext.subscribersExist(GroupImminentRemovalEvent.class);
+	}
+
+	private void handleMetaGroupMembershipAdditionEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
+		releaseGroupMembershipAdditionEvents = dataManagerContext.subscribersExist(GroupMembershipAdditionEvent.class);
+	}
+
+	private void handleMetaGroupMembershipRemovalEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
+		releaseGroupMembershipRemovalEvents = dataManagerContext.subscribersExist(GroupMembershipRemovalEvent.class);
+	}
+
+	private void handleMetaGroupPropertyDefinitionEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
+		releaseGroupPropertyDefinitionEvents = dataManagerContext.subscribersExist(GroupPropertyDefinitionEvent.class);
+	}
+
+	private void handleMetaGroupPropertyUpdateEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
+		releaseGroupPropertyUpdateEvents = dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class);
+	}
+
+	private void handleMetaGroupTypeAdditionEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
+		releaseGroupTypeAdditionEvents = dataManagerContext.subscribersExist(GroupTypeAdditionEvent.class);
 	}
 
 	private void loadGroupPropertyDefinitions() {
@@ -264,7 +316,9 @@ public final class GroupsDataManager extends DataManager {
 		nonDefaultBearingPropertyIds.put(groupTypeId, new LinkedHashMap<>());
 		nonDefaultChecks.put(groupTypeId, new boolean[0]);
 
-		dataManagerContext.releaseEvent(new GroupTypeAdditionEvent(groupTypeId));
+		if (releaseGroupTypeAdditionEvents) {
+			dataManagerContext.releaseEvent(new GroupTypeAdditionEvent(groupTypeId));
+		}
 	}
 
 	private void clearNonDefaultChecks(GroupTypeId groupTypeId) {
@@ -437,7 +491,9 @@ public final class GroupsDataManager extends DataManager {
 			}
 		}
 
-		dataManagerContext.releaseEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
+		if (releaseGroupPropertyDefinitionEvents) {
+			dataManagerContext.releaseEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
+		}
 	}
 
 	private void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
@@ -532,7 +588,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 		groups.add(groupId);
 
-		dataManagerContext.releaseEvent(new GroupMembershipAdditionEvent(personId, groupId));
+		if (releaseGroupMembershipAdditionEvents) {
+			dataManagerContext.releaseEvent(new GroupMembershipAdditionEvent(personId, groupId));
+		}
 	}
 
 	/*
@@ -598,7 +656,9 @@ public final class GroupsDataManager extends DataManager {
 		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
 		Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
 		indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-		dataManagerContext.releaseEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
+		if (releaseGroupPropertyUpdateEvents) {
+			dataManagerContext.releaseEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
+		}
 	}
 
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
@@ -698,7 +758,9 @@ public final class GroupsDataManager extends DataManager {
 			}
 		}
 
-		dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
+		if (releaseGroupAdditionEvents) {
+			dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
+		}
 		return groupId;
 	}
 
@@ -762,7 +824,9 @@ public final class GroupsDataManager extends DataManager {
 		groups.add(result);
 		groupsToTypesMap.setIntValue(result.getValue(), typeIndex);
 
-		dataManagerContext.releaseEvent(new GroupAdditionEvent(result));
+		if (releaseGroupAdditionEvents) {
+			dataManagerContext.releaseEvent(new GroupAdditionEvent(result));
+		}
 
 		return result;
 	}
@@ -1394,7 +1458,9 @@ public final class GroupsDataManager extends DataManager {
 
 		}, dataManagerContext.getTime());
 
-		dataManagerContext.releaseEvent(new GroupImminentRemovalEvent(groupId));
+		if (releaseGroupImminentRemovalEvents) {
+			dataManagerContext.releaseEvent(new GroupImminentRemovalEvent(groupId));
+		}
 	}
 
 	/**
@@ -1434,7 +1500,9 @@ public final class GroupsDataManager extends DataManager {
 			groups.remove(groupId);
 		}
 
-		dataManagerContext.releaseEvent(new GroupMembershipRemovalEvent(personId, groupId));
+		if (releaseGroupMembershipRemovalEvents) {
+			dataManagerContext.releaseEvent(new GroupMembershipRemovalEvent(personId, groupId));
+		}
 	}
 
 	/*
@@ -1851,7 +1919,7 @@ public final class GroupsDataManager extends DataManager {
 		return EventFilter	.builder(GroupMembershipAdditionEvent.class)//
 							.build();
 	}
-		
+
 	private static enum GroupMembershipRemovalEventId {
 		GROUP_TYPE, GROUP_ID, PERSON_ID;
 	}
@@ -1990,7 +2058,6 @@ public final class GroupsDataManager extends DataManager {
 							.build();
 	}
 
-
 	private static enum GroupPropertyUpdateEventId {
 		GROUP_PROPERTY, GROUP_TYPE, GROUP_ID;
 	}
@@ -2002,7 +2069,6 @@ public final class GroupsDataManager extends DataManager {
 									.put(GroupPropertyUpdateEventId.GROUP_ID, e -> e.groupId())//
 									.build();//
 
-
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link GroupPropertyUpdateEvent} events. Matches on group id.
@@ -2010,8 +2076,10 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id is not known</li> 
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
+	 *             null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
+	 *             is not known</li>
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupId groupId) {
 		validateGroupExists(groupId);
@@ -2022,21 +2090,26 @@ public final class GroupsDataManager extends DataManager {
 
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and group id.
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and
+	 * group id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the group property id is not known</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id is not known</li> 
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             group property id is not known</li>
+	 *             <li>{@linkplain GroupError#NULL_GROUP_ID} if the group id is
+	 *             null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_ID} if the group id
+	 *             is not known</li>
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupPropertyId groupPropertyId, GroupId groupId) {
 		validateGroupExists(groupId);
-		GroupTypeId groupTypeId =  indexesToTypesMap.get(groupsToTypesMap.getValueAsInt(groupId.getValue()));		
-		validateGroupPropertyId(groupTypeId,groupPropertyId);
-		
+		GroupTypeId groupTypeId = indexesToTypesMap.get(groupsToTypesMap.getValueAsInt(groupId.getValue()));
+		validateGroupPropertyId(groupTypeId, groupPropertyId);
+
 		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
 							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY), groupPropertyId)//
 							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_ID), groupId)//
@@ -2050,8 +2123,10 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the group type id is not known</li>
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is not known</li>
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
@@ -2060,23 +2135,26 @@ public final class GroupsDataManager extends DataManager {
 							.build();
 	}
 
-	
-
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and group type id. 
+	 * {@link GroupPropertyUpdateEvent} events. Matches on group property id and
+	 * group type id.
 	 *
 	 *
 	 * @throws ContractException
 	 *
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group property id is null</li>
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the group property id is not known</li>
-	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group type id is null</li>
-	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the group type id is not known</li>
+	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the group
+	 *             property id is null</li>
+	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if the
+	 *             group property id is not known</li>
+	 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if the group
+	 *             type id is null</li>
+	 *             <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID} if the
+	 *             group type id is not known</li>
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent(GroupPropertyId groupPropertyId, GroupTypeId groupTypeId) {
 		validateGroupTypeId(groupTypeId);
-		validateGroupPropertyId(groupTypeId,groupPropertyId);
+		validateGroupPropertyId(groupTypeId, groupPropertyId);
 
 		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
 							.addFunctionValuePair(groupPropertyUpdateMap.get(GroupPropertyUpdateEventId.GROUP_PROPERTY), groupPropertyId)//
@@ -2086,14 +2164,14 @@ public final class GroupsDataManager extends DataManager {
 
 	/**
 	 * Returns an event filter used to subscribe to
-	 * {@link GroupPropertyUpdateEvent} events. Matches on all such events. 
+	 * {@link GroupPropertyUpdateEvent} events. Matches on all such events.
 	 */
 	public EventFilter<GroupPropertyUpdateEvent> getEventFilterForGroupPropertyUpdateEvent() {
-		
+
 		return EventFilter	.builder(GroupPropertyUpdateEvent.class)//
 							.build();
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link GroupPropertyDefinitionEvent} events. Matches all such events.
@@ -2104,7 +2182,6 @@ public final class GroupsDataManager extends DataManager {
 							.build();
 	}
 
-	
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link GroupTypeAdditionEvent} events. Matches all such events.
