@@ -8,7 +8,6 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -30,8 +29,7 @@ import util.errors.ContractException;
 
 public final class GlobalPropertiesDataManager extends DataManager {
 
-	private boolean releaseGlobalPropertyUpdateEvents;
-	private boolean releaseGlobalPropertyDefinitionEvents;
+	
 
 	private DataManagerContext dataManagerContext;
 	private Map<GlobalPropertyId, PropertyValueRecord> globalPropertyMap = new LinkedHashMap<>();
@@ -153,7 +151,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		validateValueCompatibility(globalPropertyId, propertyDefinition, globalPropertyValue);
 		final Object oldPropertyValue = getGlobalPropertyValue(globalPropertyId);
 		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
-		if (releaseGlobalPropertyUpdateEvents) {
+		if (dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class)) {
 			dataManagerContext.releaseEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
 		}
 	}
@@ -166,25 +164,13 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		return globalPropertyMap.containsKey(globalPropertyId);
 	}
 
-	private void handleMetaGlobalPropertyUpdateEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
-		releaseGlobalPropertyUpdateEvents = dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class);
-	}
-
-	private void handleMetaGlobalPropertyDefinitionEvent(DataManagerContext dataManagerContext, Class<? extends Event> eventClass) {
-		releaseGlobalPropertyDefinitionEvents = dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class);
-	}
+	
 
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 
 		this.dataManagerContext = dataManagerContext;
-
-		releaseGlobalPropertyUpdateEvents = dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class);
-		releaseGlobalPropertyDefinitionEvents = dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class);
-		
-		dataManagerContext.metaSubscribe(GlobalPropertyUpdateEvent.class, this::handleMetaGlobalPropertyUpdateEvent);
-		dataManagerContext.metaSubscribe(GlobalPropertyDefinitionEvent.class, this::handleMetaGlobalPropertyDefinitionEvent);
 
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
@@ -231,7 +217,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		globalPropertyMap.put(globalPropertyId, propertyValueRecord);
 		globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
-		if (releaseGlobalPropertyDefinitionEvents) {			
+		if (dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class)) {			
 			dataManagerContext.releaseEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
 		}
 

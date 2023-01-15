@@ -269,34 +269,4 @@ public final class DataManagerContext implements SimulationContext {
 		simulation.releaseOutput(output);
 	}
 
-	/**
-	 * Subscribes the data manager to the existence of event subscriptions
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the consumer
-	 *             is null
-	 *             <li>{@link NucleusError#DUPLICATE_META_SUBSCRIPTION} if the
-	 *             data manager is already subscribed
-	 * 
-	 * 
-	 */
-	public <T extends Event> void metaSubscribe(Class<T> eventClass,
-			BiConsumer<DataManagerContext, Class<? extends Event>> eventConsumer) {
-		simulation.metaSubscribe(dataManagerId, eventClass, eventConsumer);
-	}
-	
-	/**
-	 * Unsubscribes the data manager from the existence of event subscriptions
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
-	 *             is null
-	 */
-	public void metaUnsubscribe(Class<? extends Event> eventClass) {
-		simulation.metaUnsubscribe(dataManagerId, eventClass);
-	}
-
 }

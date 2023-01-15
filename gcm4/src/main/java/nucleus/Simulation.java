@@ -807,61 +807,7 @@ public class Simulation {
 			outputConsumer.accept(output);
 		}
 	}
-
-	protected void metaUnsubscribe(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
-		}
-
-		List<DataManagerMetaSubscriptionConsumer> list = metaSubscriptionMap.get(eventClass);
-		if (list == null) {
-			return;
-		}
-
-		Iterator<DataManagerMetaSubscriptionConsumer> iterator = list.iterator();
-		while (iterator.hasNext()) {
-			DataManagerMetaSubscriptionConsumer dataManagerMetaSubscriptionConsumer = iterator.next();
-			if (dataManagerMetaSubscriptionConsumer.dataManagerContext.dataManagerId.equals(dataManagerId)) {
-				iterator.remove();
-				break;
-			}
-		}
-
-		if (list.isEmpty()) {
-			metaSubscriptionMap.remove(eventClass);
-		}
-
-	}
-
-	protected <T extends Event> void metaSubscribe(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, Class<? extends Event>> eventConsumer) {
-
-		if (eventClass == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
-		}
-		if (eventConsumer == null) {
-			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
-		}
-
-		List<DataManagerMetaSubscriptionConsumer> list = metaSubscriptionMap.get(eventClass);
-		if (list == null) {
-			list = new ArrayList<>();
-			metaSubscriptionMap.put(eventClass, list);
-		}
-
-		for (DataManagerMetaSubscriptionConsumer dataManagerMetaSubscriptionConsumer : list) {
-			if (dataManagerMetaSubscriptionConsumer.dataManagerContext.dataManagerId.equals(dataManagerId)) {
-				throw new ContractException(NucleusError.DUPLICATE_META_SUBSCRIPTION);
-			}
-		}
-
-		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
-		DataManagerMetaSubscriptionConsumer dataManagerMetaSubscriptionConsumer = new DataManagerMetaSubscriptionConsumer(dataManagerContext, eventConsumer);
-
-		list.add(dataManagerMetaSubscriptionConsumer);
-		Collections.sort(list);
-
-	}
-
+	
 	protected boolean actorExists(final ActorId actorId) {
 		if (actorId == null) {
 			return false;
@@ -902,8 +848,6 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 		
-		boolean subscribersExistForEvent = subscribersExistForEvent(eventClass);
-
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
 			list = new ArrayList<>();
@@ -921,15 +865,7 @@ public class Simulation {
 
 		list.add(dataManagerEventConsumer);
 		Collections.sort(list);
-
-		if (!subscribersExistForEvent) {
-			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventClass);
-			if (metaConsumers != null) {
-				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(eventClass);
-				}
-			}
-		}
+		
 	}
 
 	protected void unSubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
@@ -939,7 +875,7 @@ public class Simulation {
 
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 
-		boolean subscribersExisted = subscribersExistForEvent(eventClass);
+		
 
 		if (list != null) {
 			Iterator<DataManagerEventConsumer> iterator = list.iterator();
@@ -954,16 +890,7 @@ public class Simulation {
 				dataManagerEventMap.remove(eventClass);
 			}
 		}
-		boolean subscribersExist = subscribersExistForEvent(eventClass);
-
-		if (subscribersExisted && !subscribersExist) {
-			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventClass);
-			if (metaConsumers != null) {
-				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(eventClass);
-				}
-			}
-		}
+		
 	}
 
 	protected void releaseEvent(final Event event) {
@@ -1153,31 +1080,11 @@ public class Simulation {
 		}
 	}
 
-	private static class DataManagerMetaSubscriptionConsumer implements Consumer<Class<? extends Event>>, Comparable<DataManagerMetaSubscriptionConsumer> {
-
-		private final BiConsumer<DataManagerContext, Class<? extends Event>> consumer;
-		private final DataManagerContext dataManagerContext;
-
-		public <T extends Event> DataManagerMetaSubscriptionConsumer(DataManagerContext dataManagerContext, BiConsumer<DataManagerContext, Class<? extends Event>> consumer) {
-			this.consumer = consumer;
-			this.dataManagerContext = dataManagerContext;
-		}
-
-		@Override
-		public int compareTo(DataManagerMetaSubscriptionConsumer other) {
-			return this.dataManagerContext.dataManagerId.compareTo(other.dataManagerContext.dataManagerId);
-		}
-
-		@Override
-		public void accept(Class<? extends Event> value) {
-			consumer.accept(dataManagerContext, value);
-		}
-
-	}
+	
 
 	// used for subscriptions
 	private final Map<Class<? extends Event>, List<DataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
-	private final Map<Class<? extends Event>, List<DataManagerMetaSubscriptionConsumer>> metaSubscriptionMap = new LinkedHashMap<>();
+	
 
 	// used for retrieving and canceling plans owned by data managers
 	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
@@ -1343,8 +1250,6 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
 
-		boolean subscribersExistForEvent = subscribersExistForEvent(eventFilter.getEventClass());
-		
 		/*
 		 * We wrap the typed consumer with a consumer of event, knowing that the
 		 * cast to (T) is safe. This simplifies the FilterNode class.
@@ -1382,15 +1287,7 @@ public class Simulation {
 		if (previousConsumer != null) {
 			throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
 		}
-		
-		if (!subscribersExistForEvent) {
-			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventFilter.getEventClass());
-			if (metaConsumers != null) {
-				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(eventFilter.getEventClass());
-				}
-			}
-		}
+			
 	}
 
 	/*
@@ -1401,8 +1298,6 @@ public class Simulation {
 		if (eventFilter == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
 		}
-
-		boolean subscribersExisted = subscribersExistForEvent(eventFilter.getEventClass());
 		
 		// start at the root filter node
 		Object value = eventFilter.getEventClass();
@@ -1451,16 +1346,6 @@ public class Simulation {
 				break;
 			}
 			filterNode = filterNode.parent;
-		}
-		
-		boolean subscribersExist = subscribersExistForEvent(eventFilter.getEventClass());
-		if (subscribersExisted && !subscribersExist) {
-			List<DataManagerMetaSubscriptionConsumer> metaConsumers = metaSubscriptionMap.get(eventFilter.getEventClass());
-			if (metaConsumers != null) {
-				for (DataManagerMetaSubscriptionConsumer metaConsumer : metaConsumers) {
-					metaConsumer.accept(eventFilter.getEventClass());
-				}
-			}
 		}
 
 	}
