@@ -654,10 +654,13 @@ public final class GroupsDataManager extends DataManager {
 		validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-		Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
-		indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-		if (releaseGroupPropertyUpdateEvents) {
+		
+		if (releaseGroupPropertyUpdateEvents) {			
+			Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 			dataManagerContext.releaseEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
+		}else {			
+			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
 	}
 
