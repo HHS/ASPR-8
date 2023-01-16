@@ -205,7 +205,9 @@ public final class AttributesDataManager extends DataManager {
 		validateValueCompatibility(dataManagerContext, attributeId, attributeDefinition, value);
 		Object previousValue = getAttributeValue(personId, attributeId);
 		attributeValues.get(attributeId).put(personId, value);
-		dataManagerContext.releaseEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
+		if (dataManagerContext.subscribersExist(AttributeUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
+		}
 	}
 
 	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {
@@ -275,7 +277,7 @@ public final class AttributesDataManager extends DataManager {
 	 */
 	public EventFilter<AttributeUpdateEvent> getEventFilterForAttributeUpdateEvent() {
 
-		return EventFilter	.builder(AttributeUpdateEvent.class)//							
+		return EventFilter	.builder(AttributeUpdateEvent.class)//
 							.build();
 	}
 
