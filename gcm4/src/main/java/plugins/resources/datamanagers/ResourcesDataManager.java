@@ -491,7 +491,7 @@ public final class ResourcesDataManager extends DataManager {
 		map.put(resourcePropertyId, propertyValueRecord);
 
 		if (dataManagerContext.subscribersExist(ResourcePropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId));
+			dataManagerContext.releaseEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId, propertyValue));
 		}
 	}
 

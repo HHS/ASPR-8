@@ -1051,7 +1051,7 @@ public final class AT_ResourcesDataManager {
 		// have an actor observe the ResourcePropertyAdditionEvent events
 		pluginBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
 			c.subscribe(EventFilter.builder(ResourcePropertyDefinitionEvent.class).build(), (c2, e) -> {
-				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.resourcePropertyId());
+				MultiKey multiKey = new MultiKey(c2.getTime(), e.resourceId(), e.resourcePropertyId(), e.resourcePropertyValue());
 				actualObservations.add(multiKey);
 			});
 		}));
@@ -1071,7 +1071,7 @@ public final class AT_ResourcesDataManager {
 			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_1, newResourcePropertyId));
 			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_1, newResourcePropertyId);
 			assertEquals(propertyDefinition, actualDefinition);
-			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_1, newResourcePropertyId);
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_1, newResourcePropertyId, propertyDefinition.getDefaultValue().get());
 			expectedObservations.add(multiKey);
 		}));
 
@@ -1092,7 +1092,7 @@ public final class AT_ResourcesDataManager {
 			assertTrue(resourcesDataManager.resourcePropertyIdExists(TestResourceId.RESOURCE_2, newResourcePropertyId));
 			PropertyDefinition actualDefinition = resourcesDataManager.getResourcePropertyDefinition(TestResourceId.RESOURCE_2, newResourcePropertyId);
 			assertEquals(propertyDefinition, actualDefinition);
-			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_2, newResourcePropertyId);
+			MultiKey multiKey = new MultiKey(c.getTime(), TestResourceId.RESOURCE_2, newResourcePropertyId, propertyDefinition.getDefaultValue().get());
 			expectedObservations.add(multiKey);
 		}));
 
