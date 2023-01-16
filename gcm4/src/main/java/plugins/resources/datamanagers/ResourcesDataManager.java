@@ -186,7 +186,8 @@ public final class ResourcesDataManager extends DataManager {
 
 	/**
 	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for multiple population additions.
+	 * count. Used to more efficiently prepare for multiple population
+	 * additions.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
@@ -489,7 +490,9 @@ public final class ResourcesDataManager extends DataManager {
 		propertyValueRecord.setPropertyValue(propertyValue);
 		map.put(resourcePropertyId, propertyValueRecord);
 
-		dataManagerContext.releaseEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId));
+		if (dataManagerContext.subscribersExist(ResourcePropertyDefinitionEvent.class)) {
+			dataManagerContext.releaseEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId));
+		}
 	}
 
 	/**
@@ -532,7 +535,9 @@ public final class ResourcesDataManager extends DataManager {
 		}
 
 		// release notice that a new resource id has been added
-		dataManagerContext.releaseEvent(new ResourceIdAdditionEvent(resourceId, timeTrackingPolicy));
+		if (dataManagerContext.subscribersExist(ResourceIdAdditionEvent.class)) {
+			dataManagerContext.releaseEvent(new ResourceIdAdditionEvent(resourceId, timeTrackingPolicy));
+		}
 
 	}
 
@@ -973,17 +978,23 @@ public final class ResourcesDataManager extends DataManager {
 
 		validateResourceAdditionValue(regionResourceLevel, amount);
 
-		final long previousSourceRegionResourceLevel = sourceRecord.getAmount();
-		final long previousDestinationRegionResourceLevel = destinationRecord.getAmount();
+		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
+			final long previousSourceRegionResourceLevel = sourceRecord.getAmount();
+			final long previousDestinationRegionResourceLevel = destinationRecord.getAmount();
 
-		decrementRegionResourceLevel(sourceRegionId, resourceId, amount);
-		incrementRegionResourceLevel(destinationRegionId, resourceId, amount);
+			decrementRegionResourceLevel(sourceRegionId, resourceId, amount);
+			incrementRegionResourceLevel(destinationRegionId, resourceId, amount);
 
-		long currentSourceRegionResourceLevel = sourceRecord.getAmount();
-		long currentDestinationRegionResourceLevel = destinationRecord.getAmount();
+			long currentSourceRegionResourceLevel = sourceRecord.getAmount();
+			long currentDestinationRegionResourceLevel = destinationRecord.getAmount();
+			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
+			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
+		} else {
 
-		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
-		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
+			decrementRegionResourceLevel(sourceRegionId, resourceId, amount);
+			incrementRegionResourceLevel(destinationRegionId, resourceId, amount);
+
+		}
 
 	}
 
@@ -1046,10 +1057,14 @@ public final class ResourcesDataManager extends DataManager {
 		validateNonnegativeResourceAmount(amount);
 		validatePersonHasSufficientResources(resourceId, personId, amount);
 
-		final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-		decrementPersonResourceLevel(resourceId, personId, amount);
-		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-		dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
+			final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+			decrementPersonResourceLevel(resourceId, personId, amount);
+			final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
+			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+		} else {
+			decrementPersonResourceLevel(resourceId, personId, amount);
+		}
 	}
 
 	/*
@@ -1088,11 +1103,18 @@ public final class ResourcesDataManager extends DataManager {
 		validateRegionId(regionId);
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
-		final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		validateResourceAdditionValue(previousResourceLevel, amount);
-		incrementRegionResourceLevel(regionId, resourceId, amount);
-		long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+
+		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
+			final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
+			validateResourceAdditionValue(previousResourceLevel, amount);
+			incrementRegionResourceLevel(regionId, resourceId, amount);
+			long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
+			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+		} else {
+			final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
+			validateResourceAdditionValue(previousResourceLevel, amount);
+			incrementRegionResourceLevel(regionId, resourceId, amount);
+		}
 	}
 
 	/**
@@ -1122,10 +1144,14 @@ public final class ResourcesDataManager extends DataManager {
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
 		validateRegionHasSufficientResources(resourceId, regionId, amount);
-		final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		decrementRegionResourceLevel(regionId, resourceId, amount);
-		long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
+			final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
+			decrementRegionResourceLevel(regionId, resourceId, amount);
+			long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
+			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+		} else {
+			decrementRegionResourceLevel(regionId, resourceId, amount);
+		}
 	}
 
 	/**
@@ -1162,7 +1188,9 @@ public final class ResourcesDataManager extends DataManager {
 		validatePropertyMutability(propertyDefinition);
 		final Object oldPropertyValue = resourcePropertyMap.get(resourceId).get(resourcePropertyId).getValue();
 		resourcePropertyMap.get(resourceId).get(resourcePropertyId).setPropertyValue(resourcePropertyValue);
-		dataManagerContext.releaseEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
+		if (dataManagerContext.subscribersExist(ResourcePropertyUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
+		}
 	}
 
 	private void validateResourcePropertyValueNotNull(final Object propertyValue) {
@@ -1222,8 +1250,12 @@ public final class ResourcesDataManager extends DataManager {
 		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 		incrementRegionResourceLevel(regionId, resourceId, amount);
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-		dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
-		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+		}
+		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+		}
 	}
 
 	/**
@@ -1270,9 +1302,12 @@ public final class ResourcesDataManager extends DataManager {
 		final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 
-		dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
-
-		dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, personResourceLevel, newLevel));
+		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+		}
+		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, personResourceLevel, newLevel));
+		}
 
 	}
 
@@ -1512,7 +1547,7 @@ public final class ResourcesDataManager extends DataManager {
 		return EventFilter	.builder(ResourcePropertyUpdateEvent.class)//
 							.build();
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link ResourceIdAdditionEvent} events. Matches all such events.
@@ -1521,7 +1556,7 @@ public final class ResourcesDataManager extends DataManager {
 		return EventFilter	.builder(ResourceIdAdditionEvent.class)//
 							.build();
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link ResourcePropertyDefinitionEvent} events. Matches all such events.
@@ -1529,6 +1564,6 @@ public final class ResourcesDataManager extends DataManager {
 	public EventFilter<ResourcePropertyDefinitionEvent> getEventFilterForResourcePropertyDefinitionEvent() {
 		return EventFilter	.builder(ResourcePropertyDefinitionEvent.class)//
 							.build();
-	}	
+	}
 
 }
