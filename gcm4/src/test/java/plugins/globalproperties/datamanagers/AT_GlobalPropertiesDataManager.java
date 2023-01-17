@@ -142,9 +142,7 @@ public final class AT_GlobalPropertiesDataManager {
 
 	}
 
-	///////////////////
-	// from the old data view
-	//////////////////
+	
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesDataManager.class,name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })

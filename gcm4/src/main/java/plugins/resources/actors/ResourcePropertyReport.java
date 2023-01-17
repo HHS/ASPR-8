@@ -55,14 +55,13 @@ public final class ResourcePropertyReport implements Report {
 		writeProperty(actorContext,resourceId, resourcePropertyId,currentPropertyValue);
 	}
 
-	private ResourcesDataManager resourcesDataManager;
 
 	public void init(final ActorContext actorContext) {
 
 		actorContext.subscribe(EventFilter.builder(ResourcePropertyUpdateEvent.class).build(),this::handleResourcePropertyUpdateEvent);
 		actorContext.subscribe(EventFilter.builder(ResourcePropertyDefinitionEvent.class).build(), this::handleResourcePropertyAdditionEvent);
 		
-		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
+		ResourcesDataManager resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 			for (final ResourcePropertyId resourcePropertyId : resourcesDataManager.getResourcePropertyIds(resourceId)) {
 				Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
@@ -73,8 +72,8 @@ public final class ResourcePropertyReport implements Report {
 	
 	private void handleResourcePropertyAdditionEvent(ActorContext actorContext, ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent) {
 		ResourceId resourceId = resourcePropertyDefinitionEvent.resourceId();
-		ResourcePropertyId resourcePropertyId = resourcePropertyDefinitionEvent.resourcePropertyId();
-		Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
+		ResourcePropertyId resourcePropertyId = resourcePropertyDefinitionEvent.resourcePropertyId();		
+		Object resourcePropertyValue = resourcePropertyDefinitionEvent.resourcePropertyValue();
 		writeProperty(actorContext,resourceId, resourcePropertyId,resourcePropertyValue);
 	}
 

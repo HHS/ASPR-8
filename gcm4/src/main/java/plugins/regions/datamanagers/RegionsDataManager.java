@@ -235,13 +235,15 @@ public final class RegionsDataManager extends DataManager {
 				propertyValueRecord.setPropertyValue(regionPropertyValue);
 			}
 		}
-		RegionAdditionEvent.Builder regionAdditionEventBuilder = RegionAdditionEvent.builder().setRegionId(regionId);
-		for (Object value : regionConstructionData.getValues(Object.class)) {
-			regionAdditionEventBuilder.addValue(value);
-		}
-		RegionAdditionEvent regionAdditionEvent = regionAdditionEventBuilder.build();
-		dataManagerContext.releaseEvent(regionAdditionEvent);
 
+		if (dataManagerContext.subscribersExist(RegionAdditionEvent.class)) {
+			RegionAdditionEvent.Builder regionAdditionEventBuilder = RegionAdditionEvent.builder().setRegionId(regionId);
+			for (Object value : regionConstructionData.getValues(Object.class)) {
+				regionAdditionEventBuilder.addValue(value);
+			}
+			RegionAdditionEvent regionAdditionEvent = regionAdditionEventBuilder.build();
+			dataManagerContext.releaseEvent(regionAdditionEvent);
+		}
 	}
 
 	/**
@@ -315,12 +317,15 @@ public final class RegionsDataManager extends DataManager {
 
 		}
 
-		dataManagerContext.releaseEvent(new RegionPropertyDefinitionEvent(regionPropertyId));
+		if (dataManagerContext.subscribersExist(RegionPropertyDefinitionEvent.class)) {
+			dataManagerContext.releaseEvent(new RegionPropertyDefinitionEvent(regionPropertyId));
+		}
 	}
 
 	/**
 	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for multiple population additions.
+	 * count. Used to more efficiently prepare for multiple population
+	 * additions.
 	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
@@ -620,7 +625,7 @@ public final class RegionsDataManager extends DataManager {
 	 *             <li>{@linkplain RegionError#DUPLICATE_PERSON_ADDITION} if the
 	 *             person was previously added</li>
 	 *             </ul>
-	 *             
+	 * 
 	 *             </blockquote></li>
 	 *
 	 *             <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the
@@ -793,7 +798,9 @@ public final class RegionsDataManager extends DataManager {
 			regionArrivalTimes.setValue(personId.getValue(), dataManagerContext.getTime());
 		}
 
-		dataManagerContext.releaseEvent(new PersonRegionUpdateEvent(personId, oldRegionId, regionId));
+		if (dataManagerContext.subscribersExist(PersonRegionUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new PersonRegionUpdateEvent(personId, oldRegionId, regionId));
+		}
 
 	}
 
@@ -827,16 +834,28 @@ public final class RegionsDataManager extends DataManager {
 		validatePropertyMutability(propertyDefinition);
 		Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
 		PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-		Object previousPropertyValue;
-		if (propertyValueRecord == null) {
-			propertyValueRecord = new PropertyValueRecord(dataManagerContext);
-			map.put(regionPropertyId, propertyValueRecord);
-			previousPropertyValue = regionPropertyDefinitions.get(regionPropertyId).getDefaultValue().get();
-		} else {
-			previousPropertyValue = propertyValueRecord.getValue();
+		
+
+		if (dataManagerContext.subscribersExist(RegionPropertyUpdateEvent.class)) {
+			Object previousPropertyValue;
+			if (propertyValueRecord == null) {
+				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				map.put(regionPropertyId, propertyValueRecord);
+				previousPropertyValue = regionPropertyDefinitions.get(regionPropertyId).getDefaultValue().get();
+			} else {
+				previousPropertyValue = propertyValueRecord.getValue();
+			}
+			propertyValueRecord.setPropertyValue(regionPropertyValue);
+			dataManagerContext.releaseEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
+		}else {
+			
+			if (propertyValueRecord == null) {
+				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
+				map.put(regionPropertyId, propertyValueRecord);
+				
+			} 
+			propertyValueRecord.setPropertyValue(regionPropertyValue);
 		}
-		propertyValueRecord.setPropertyValue(regionPropertyValue);
-		dataManagerContext.releaseEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
 
 	}
 
@@ -1054,7 +1073,7 @@ public final class RegionsDataManager extends DataManager {
 	public EventFilter<RegionPropertyUpdateEvent> getEventFilterForRegionPropertyUpdateEvent(RegionPropertyId regionPropertyId) {
 		validateRegionPropertyId(regionPropertyId);
 		return EventFilter	.builder(RegionPropertyUpdateEvent.class)//
-				.addFunctionValuePair(regionPropertyUpdateFunctionMap.get(RegionPropertyUpdateEventFunctionId.PROPERTY), regionPropertyId)//
+							.addFunctionValuePair(regionPropertyUpdateFunctionMap.get(RegionPropertyUpdateEventFunctionId.PROPERTY), regionPropertyId)//
 							.build();
 	}
 
@@ -1094,17 +1113,17 @@ public final class RegionsDataManager extends DataManager {
 		return EventFilter	.builder(RegionPropertyUpdateEvent.class)//
 							.build();
 	}
-	
+
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link RegionAdditionEvent} events. Matches all such events.
+	 * Returns an event filter used to subscribe to {@link RegionAdditionEvent}
+	 * events. Matches all such events.
 	 * 
 	 */
 	public EventFilter<RegionAdditionEvent> getEventFilterForRegionAdditionEvent() {
 		return EventFilter	.builder(RegionAdditionEvent.class)//
 							.build();
 	}
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link RegionPropertyDefinitionEvent} events. Matches all such events.

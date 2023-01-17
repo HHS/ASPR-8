@@ -770,7 +770,7 @@ public class AT_DataManagerContext {
 		// eventResolved to true
 		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 				eventResolved.setValue(true);
 			});
 		}));
@@ -778,7 +778,7 @@ public class AT_DataManagerContext {
 		// have another data manager resolve a test event
 		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (context) -> {
-			context.releaseEvent(new TestEvent());
+			context.releaseEvent(new TestEvent1());
 		}));
 
 		// precondition tests
@@ -802,7 +802,7 @@ public class AT_DataManagerContext {
 
 	}
 
-	private static class TestEvent implements Event {
+	private static class TestEvent1 implements Event {
 
 	}
 
@@ -1015,92 +1015,6 @@ public class AT_DataManagerContext {
 
 	}
 
-	// private void combinedSubscriptionTest() {
-	//
-	// TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-	//
-	// /*
-	// * create a container that will record the phases of event resolution
-	// * that were executed by the resolver that reflects the order in which
-	// * they occured
-	// */
-	//
-	// List<String> observedPhases = new ArrayList<>();
-	//
-	// /*
-	// * Create a container with the phases we expect in the order we expect
-	// * them.
-	// */
-	// List<String> expectedPhases = new ArrayList<>();
-	// expectedPhases.add("execution");
-	// expectedPhases.add("post-action");
-	//
-	// // have the resolver test preconditions for all the phases
-	// pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-	// pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0,
-	// (c) -> {
-	//
-	// ContractException contractException =
-	// assertThrows(ContractException.class, () -> c.subscribe(null, (c2, e) ->
-	// {
-	// }));
-	// assertEquals(NucleusError.NULL_EVENT_CLASS,
-	// contractException.getErrorType());
-	//
-	// contractException = assertThrows(ContractException.class, () ->
-	// c.subscribe(TestEvent.class, null));
-	// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
-	// contractException.getErrorType());
-	//
-	// contractException = assertThrows(ContractException.class, () ->
-	// c.subscribePostOrder(null, (c2, e) -> {
-	// }));
-	// assertEquals(NucleusError.NULL_EVENT_CLASS,
-	// contractException.getErrorType());
-	//
-	// contractException = assertThrows(ContractException.class, () ->
-	// c.subscribe(TestEvent.class, null));
-	// assertEquals(NucleusError.NULL_EVENT_CONSUMER,
-	// contractException.getErrorType());
-	//
-	// }));
-	//
-	// // have the resolver subscribe to the two phases for test events.
-	// pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0,
-	// (c) -> {
-	//
-	// c.subscribe(TestEvent.class, (c2, e) -> {
-	// observedPhases.add("execution");
-	// });
-	//
-	// c.subscribePostOrder(TestEvent.class, (c2, e) -> {
-	// observedPhases.add("post-action");
-	// });
-	// }));
-	//
-	// // create an agent that will generate a test event
-	//
-	// pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
-	// c.releaseEvent(new TestEvent());
-	// }));
-	//
-	// // build the plugin
-	// TestPluginData testPluginData = pluginDataBuilder.build();
-	// Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-	//
-	// // build and execute the engine
-	// Simulation .builder()//
-	// .addPlugin(testPlugin)//
-	// .build()//
-	// .execute();//
-	//
-	// /*
-	// * show that the resolver engaged in the three event resolution phases
-	// * in the proper order
-	// */
-	// assertEquals(expectedPhases, observedPhases);
-	//
-	// }
 
 	private void combinedSubscriptionTest() {
 
@@ -1116,7 +1030,7 @@ public class AT_DataManagerContext {
 			}));
 			assertEquals(NucleusError.NULL_EVENT_CLASS, contractException.getErrorType());
 
-			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent.class, null));
+			contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent1.class, null));
 			assertEquals(NucleusError.NULL_EVENT_CONSUMER, contractException.getErrorType());
 
 		}));
@@ -1124,9 +1038,13 @@ public class AT_DataManagerContext {
 		// have the resolver subscribe for test events.
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 				observed.setValue(true);
 			});
+
+			ContractException contractException = assertThrows(ContractException.class, () -> c.subscribe(TestEvent1.class, (c2, e) -> {
+			}));
+			assertEquals(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION, contractException.getErrorType());
 
 		}));
 
@@ -1134,7 +1052,7 @@ public class AT_DataManagerContext {
 
 		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
-			c.releaseEvent(new TestEvent());
+			c.releaseEvent(new TestEvent1());
 		}));
 
 		// build the plugin
@@ -1195,7 +1113,7 @@ public class AT_DataManagerContext {
 
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 				phaseExecutionCount.increment();
 			});
 
@@ -1204,7 +1122,7 @@ public class AT_DataManagerContext {
 		// create a data manager that will produce a test event
 		pluginDataBuilder.addTestDataManager("generator", () -> new TestDataManager());
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(1, (c) -> {
-			c.releaseEvent(new TestEvent());
+			c.releaseEvent(new TestEvent1());
 		}));
 
 		/*
@@ -1217,12 +1135,12 @@ public class AT_DataManagerContext {
 
 		// have the resolver unsubscribe
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (c) -> {
-			c.unsubscribe(TestEvent.class);
+			c.unsubscribe(TestEvent1.class);
 		}));
 
 		// have the data manager generate another test event
 		pluginDataBuilder.addTestDataManagerPlan("generator", new TestDataManagerPlan(4, (c) -> {
-			c.releaseEvent(new TestEvent());
+			c.releaseEvent(new TestEvent1());
 		}));
 
 		/*
@@ -1258,8 +1176,8 @@ public class AT_DataManagerContext {
 		 * create a simple event label as a place holder -- all test events will
 		 * be matched
 		 */
-		EventFilter<TestEvent> eventFilter = EventFilter.builder(TestEvent.class)//
-														.build();//
+		EventFilter<TestEvent1> eventFilter = EventFilter	.builder(TestEvent1.class)//
+															.build();//
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -1271,7 +1189,7 @@ public class AT_DataManagerContext {
 		 */
 		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (c) -> {
-			assertFalse(c.subscribersExist(TestEvent.class));
+			assertFalse(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// create an agent and have it subscribe to test events at time 1
@@ -1284,7 +1202,7 @@ public class AT_DataManagerContext {
 
 		// show that the resolver now sees that there are subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(2, (c) -> {
-			assertTrue(c.subscribersExist(TestEvent.class));
+			assertTrue(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// have the agent unsubscribe
@@ -1294,7 +1212,7 @@ public class AT_DataManagerContext {
 
 		// show that the resolver see no subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(4, (c) -> {
-			assertFalse(c.subscribersExist(TestEvent.class));
+			assertFalse(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// add a second data manager
@@ -1302,23 +1220,23 @@ public class AT_DataManagerContext {
 		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(5, (c) -> {
-			c.subscribe(TestEvent.class, (c2, e) -> {
+			c.subscribe(TestEvent1.class, (c2, e) -> {
 			});
 		}));
 
 		// show that the test resolver now sees that there are subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(6, (c) -> {
-			assertTrue(c.subscribersExist(TestEvent.class));
+			assertTrue(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// have the second data manager unsubscribe
 		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(7, (c) -> {
-			c.unsubscribe(TestEvent.class);
+			c.unsubscribe(TestEvent1.class);
 		}));
 
 		// show that dm1 now sees that there are no subscribers
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(8, (c) -> {
-			assertFalse(c.subscribersExist(TestEvent.class));
+			assertFalse(c.subscribersExist(TestEvent1.class));
 		}));
 
 		// build the plugin

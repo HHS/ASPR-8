@@ -52,7 +52,6 @@ import util.path.Path;
  */
 @NotThreadSafe
 public class Simulation {
-	
 
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -228,8 +227,9 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 	}
+
 	@SuppressWarnings("unchecked")
-	
+
 	protected <T extends PluginData> T getPluginData(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
@@ -257,6 +257,7 @@ public class Simulation {
 
 		return (T) pluginData;
 	}
+
 	protected void addDataManager(DataManager dataManager) {
 
 		if (focalPluginId == null) {
@@ -279,7 +280,7 @@ public class Simulation {
 		dataManagerToDataManagerIdMap.put(dataManager, dataManagerId);
 		dataManagerIdToPluginIdMap.put(dataManagerId, focalPluginId);
 	}
-	
+
 	protected void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validatePlanTime(time);
@@ -529,7 +530,7 @@ public class Simulation {
 	public void execute() {
 		actorContext = new ActorContext(this);
 		pluginContext = new PluginContext(this);
-		
+
 		// start the simulation
 		if (started) {
 			throw new ContractException(NucleusError.REPEATED_EXECUTION);
@@ -806,7 +807,7 @@ public class Simulation {
 			outputConsumer.accept(output);
 		}
 	}
-
+	
 	protected boolean actorExists(final ActorId actorId) {
 		if (actorId == null) {
 			return false;
@@ -838,30 +839,33 @@ public class Simulation {
 
 	@SuppressWarnings("unchecked")
 	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
+
 		if (eventConsumer == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
-
+		
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
 			list = new ArrayList<>();
 			dataManagerEventMap.put(eventClass, list);
 		}
-		
+
 		for (DataManagerEventConsumer dataManagerEventConsumer : list) {
 			if (dataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
 				throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
 			}
 		}
-		
+
 		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
 
 		list.add(dataManagerEventConsumer);
 		Collections.sort(list);
+		
 	}
 
 	protected void unSubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
@@ -870,6 +874,8 @@ public class Simulation {
 		}
 
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
+
+		
 
 		if (list != null) {
 			Iterator<DataManagerEventConsumer> iterator = list.iterator();
@@ -884,6 +890,7 @@ public class Simulation {
 				dataManagerEventMap.remove(eventClass);
 			}
 		}
+		
 	}
 
 	protected void releaseEvent(final Event event) {
@@ -917,15 +924,14 @@ public class Simulation {
 		actorQueue.add(actorContentRec);
 		return result;
 	}
-	
-	
+
 	protected ActorId addActorForPlugin(Consumer<ActorContext> consumer) {
 
 		if (focalPluginId == null) {
 			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
 		}
 		return addActor(consumer);
-		
+
 	}
 
 	protected void removeActor(final ActorId actorId) {
@@ -1074,8 +1080,11 @@ public class Simulation {
 		}
 	}
 
+	
+
 	// used for subscriptions
 	private final Map<Class<? extends Event>, List<DataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
+	
 
 	// used for retrieving and canceling plans owned by data managers
 	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
@@ -1275,9 +1284,10 @@ public class Simulation {
 			filterNode.consumers.put(value, consumerMap);
 		}
 		Consumer<Event> previousConsumer = consumerMap.put(focalActorId, consumer);
-		if(previousConsumer != null) {
+		if (previousConsumer != null) {
 			throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
 		}
+			
 	}
 
 	/*
@@ -1288,7 +1298,7 @@ public class Simulation {
 		if (eventFilter == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
 		}
-
+		
 		// start at the root filter node
 		Object value = eventFilter.getEventClass();
 		FilterNode filterNode = rootNode;
@@ -1317,6 +1327,7 @@ public class Simulation {
 		if (consumerMap == null) {
 			return;
 		}
+		
 		consumerMap.remove(focalActorId);
 		if (consumerMap.isEmpty()) {
 			filterNode.consumers.remove(value);

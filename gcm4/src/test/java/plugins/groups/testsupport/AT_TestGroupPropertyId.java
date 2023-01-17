@@ -98,4 +98,17 @@ public class AT_TestGroupPropertyId {
 			}
 		}
 	}
+	
+	@Test
+	@UnitTestMethod(target = TestGroupPropertyId.class, name = "next", args = {})
+	public void testNext() {
+		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+			int index = (testGroupPropertyId.ordinal() + 1) % TestGroupPropertyId.values().length;
+			TestGroupPropertyId expectedNext = TestGroupPropertyId.values()[index];
+			assertEquals(expectedNext, testGroupPropertyId.next());
+		}
+		
+	}
+	
+	 
 }

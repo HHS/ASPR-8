@@ -52,12 +52,16 @@ public final class VaccineProducer {
 		this.materialsProducerId = materialsProducerId;
 	}
 
-	private void addMaterialRec(final MaterialId materialId, final MaterialManufactureSpecification.Builder builder) {
+	private void addMaterialRec(final MaterialId materialId,
+			final MaterialManufactureSpecification.Builder builder) {
 		final BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo	.builder()//
-																					.setMaterialId(materialId)//
-																					.setMaterialsProducerId(materialsProducerId)//
+																					.setMaterialId(
+																							materialId)//
+																					.setMaterialsProducerId(
+																							materialsProducerId)//
 																					.build();//
-		final BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+		final BatchId batchId = materialsDataManager.addBatch(
+				batchConstructionInfo);
 		builder.setBatchId(batchId);
 		builder.setMaterialId(materialId);
 		final MaterialManufactureSpecification materialManufactureSpecification = builder.build();
@@ -67,23 +71,29 @@ public final class VaccineProducer {
 	private void captureStage(final StageId stageId) {
 
 		materialsDataManager.transferOfferedStage(stageId, materialsProducerId);
-		final List<BatchId> batches = materialsDataManager.getStageBatches(stageId);
+		final List<BatchId> batches = materialsDataManager.getStageBatches(
+				stageId);
 		for (final BatchId batchId : batches) {
-			final MaterialId material = materialsDataManager.getBatchMaterial(batchId);
+			final MaterialId material = materialsDataManager.getBatchMaterial(
+					batchId);
 			if (material.equals(Material.ANTIGEN)) {
-				final double amount = materialsDataManager.getBatchAmount(batchId);
-				materialsDataManager.transferMaterialBetweenBatches(batchId, antigenBatchId, amount);
+				final double amount = materialsDataManager.getBatchAmount(
+						batchId);
+				materialsDataManager.transferMaterialBetweenBatches(batchId,
+						antigenBatchId, amount);
 			}
 		}
 		materialsDataManager.removeStage(stageId, true);
 	}
 
 	private void endVaccinePreparation(final StageId stageId) {
-		materialsDataManager.convertStageToResource(stageId, Resource.VACCINE, vaccineUnits);
+		materialsDataManager.convertStageToResource(stageId, Resource.VACCINE,
+				vaccineUnits);
 		planVaccinePrepartion();
 	}
 
-	private void handleStageOfferUpdateEvent(final ActorContext actorContext, final StageOfferUpdateEvent stageOfferUpdateEvent) {
+	private void handleStageOfferUpdateEvent(final ActorContext actorContext,
+			final StageOfferUpdateEvent stageOfferUpdateEvent) {
 		if (isCapturableStage(stageOfferUpdateEvent)) {
 			captureStage(stageOfferUpdateEvent.stageId());
 			planVaccinePrepartion();
@@ -92,50 +102,66 @@ public final class VaccineProducer {
 
 	private boolean hasSufficientMaterialsForNewStage() {
 		for (final MaterialId materialId : materialRecs.keySet()) {
-			final MaterialManufactureSpecification materialManufactureSpecification = materialRecs.get(materialId);
-			final double batchAmount = materialsDataManager.getBatchAmount(materialManufactureSpecification.getBatchId());
+			final MaterialManufactureSpecification materialManufactureSpecification = materialRecs.get(
+					materialId);
+			final double batchAmount = materialsDataManager.getBatchAmount(
+					materialManufactureSpecification.getBatchId());
 			if (batchAmount < materialManufactureSpecification.getStageAmount()) {
 				return false;
 			}
 		}
 
-		return materialsDataManager.getBatchAmount(antigenBatchId) >= antigenAmountPerBatch;
+		return materialsDataManager.getBatchAmount(
+				antigenBatchId) >= antigenAmountPerBatch;
 
 	}
 
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
-		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
-		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		materialsDataManager = actorContext.getDataManager(
+				MaterialsDataManager.class);
+		globalPropertiesDataManager = actorContext.getDataManager(
+				GlobalPropertiesDataManager.class);
 
-		final BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo	.builder()//
-																					.setMaterialId(Material.ANTIGEN)//
-																					.setMaterialsProducerId(materialsProducerId)//
-																					.build();//
+		final BatchConstructionInfo batchConstructionInfo = //
+				BatchConstructionInfo	.builder()//
+										.setMaterialId(Material.ANTIGEN)//
+										.setMaterialsProducerId(
+												materialsProducerId)//
+										.build();//
 		antigenBatchId = materialsDataManager.addBatch(batchConstructionInfo);
 
-		addMaterialRec(Material.ADJUVANT, MaterialManufactureSpecification	.builder()//
-																			.setDeliveryAmount(150.0)//
-																			.setDeliveryDelay(3.0)//
-																			.setStageAmount(2.7));//
+		addMaterialRec(Material.ADJUVANT,
+				MaterialManufactureSpecification.builder()//
+												.setDeliveryAmount(150.0)//
+												.setDeliveryDelay(3.0)//
+												.setStageAmount(2.7));//
 
-		addMaterialRec(Material.PRESERVATIVE, MaterialManufactureSpecification	.builder()//
-																				.setDeliveryAmount(1000.0)//
-																				.setDeliveryDelay(14.0)//
-																				.setStageAmount(3.0));//
+		addMaterialRec(Material.PRESERVATIVE,
+				MaterialManufactureSpecification.builder()//
+												.setDeliveryAmount(1000.0)//
+												.setDeliveryDelay(14.0)//
+												.setStageAmount(3.0));//
 
-		addMaterialRec(Material.STABILIZER, MaterialManufactureSpecification.builder()//
-																			.setDeliveryAmount(100.0)//
-																			.setDeliveryDelay(14.0)//
-																			.setStageAmount(1.0));//
+		addMaterialRec(Material.STABILIZER,
+				MaterialManufactureSpecification.builder()//
+												.setDeliveryAmount(100.0)//
+												.setDeliveryDelay(14.0)//
+												.setStageAmount(1.0));//
+
+		actorContext.subscribe(
+				materialsDataManager.getEventFilterForStageOfferUpdateEvent(),
+				this::handleStageOfferUpdateEvent);
+		actorContext.subscribe(
+				globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(
+						GlobalProperty.MANUFACTURE_VACCINE),
+				(c, e) -> planVaccinePrepartion());
 
 		planVaccinePrepartion();
-
-		actorContext.subscribe(materialsDataManager.getEventFilterForStageOfferUpdateEvent(), this::handleStageOfferUpdateEvent);
-		actorContext.subscribe(globalPropertiesDataManager.getEventFilterForGlobalPropertyUpdateEvent(GlobalProperty.MANUFACTURE_VACCINE), (c, e) -> planVaccinePrepartion());
 	}
 
-	private boolean isCapturableStage(final StageOfferUpdateEvent stageOfferUpdateEvent) {
+	private boolean isCapturableStage(
+			final StageOfferUpdateEvent stageOfferUpdateEvent) {
 		// the stage must be offered
 		if (!stageOfferUpdateEvent.currentOfferState()) {
 			return false;
@@ -143,16 +169,19 @@ public final class VaccineProducer {
 
 		// the stage must be from a materials producer not managed by this actor
 		final StageId stageId = stageOfferUpdateEvent.stageId();
-		final MaterialsProducerId producerId = materialsDataManager.getStageProducer(stageId);
+		final MaterialsProducerId producerId = materialsDataManager.getStageProducer(
+				stageId);
 		if (materialsProducerId.equals(producerId)) {
 			return false;
 		}
 
 		// the stage must contain antigen
-		final List<BatchId> batches = materialsDataManager.getStageBatches(stageId);
+		final List<BatchId> batches = materialsDataManager.getStageBatches(
+				stageId);
 		double antigenLevel = 0;
 		for (final BatchId batchId : batches) {
-			final MaterialId material = materialsDataManager.getBatchMaterial(batchId);
+			final MaterialId material = materialsDataManager.getBatchMaterial(
+					batchId);
 			if (material.equals(Material.ANTIGEN)) {
 				antigenLevel += materialsDataManager.getBatchAmount(batchId);
 			}
@@ -162,7 +191,8 @@ public final class VaccineProducer {
 		}
 
 		// there must be room for new stages
-		final List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
+		final List<StageId> stages = materialsDataManager.getStages(
+				materialsProducerId);
 		if (stages.size() >= stageCapacity) {
 			return false;
 		}
@@ -170,7 +200,8 @@ public final class VaccineProducer {
 		// there must be a need for more antigen to reach stage capacity
 		double requiredAmount = stageCapacity - stages.size();
 		requiredAmount *= antigenAmountPerBatch;
-		final double currentAmount = materialsDataManager.getBatchAmount(antigenBatchId);
+		final double currentAmount = materialsDataManager.getBatchAmount(
+				antigenBatchId);
 		requiredAmount -= currentAmount;
 		if (requiredAmount <= 0) {
 			return false;
@@ -181,16 +212,18 @@ public final class VaccineProducer {
 	}
 
 	private void orderMaterial(final MaterialId materialId) {
-		final MaterialManufactureSpecification materialRec = materialRecs.get(materialId);
+		final MaterialManufactureSpecification materialRec = materialRecs.get(
+				materialId);
 		if (materialRec.isOnOrder()) {
 			return;
 		}
 
-		double requiredAmount = materialRec.getStageAmount()*stageCapacity;
+		double requiredAmount = materialRec.getStageAmount() * stageCapacity;
 		requiredAmount /= batchAssemblyDuration;
 		requiredAmount *= materialRec.getDeliveryDelay();
 
-		final List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(materialsProducerId, materialId);
+		final List<BatchId> batches = materialsDataManager.getInventoryBatchesByMaterialId(
+				materialsProducerId, materialId);
 		double currentAmount = 0;
 		for (final BatchId batchId : batches) {
 			currentAmount += materialsDataManager.getBatchAmount(batchId);
@@ -200,12 +233,16 @@ public final class VaccineProducer {
 			return;
 		}
 
-		amountToOrder = FastMath.ceil(amountToOrder / materialRec.getDeliveryAmount()) * materialRec.getDeliveryAmount();
-		final double deliveryTime = materialRec.getDeliveryDelay() + actorContext.getTime();
+		amountToOrder = FastMath.ceil(
+				amountToOrder / materialRec.getDeliveryAmount())
+				* materialRec.getDeliveryAmount();
+		final double deliveryTime = materialRec.getDeliveryDelay()
+				+ actorContext.getTime();
 		final double amount = amountToOrder;
 		materialRec.toggleOnOrder();
 
-		actorContext.addPlan((c) -> receiveMaterial(materialId, amount), deliveryTime);
+		actorContext.addPlan((c) -> receiveMaterial(materialId, amount),
+				deliveryTime);
 	}
 
 	private void orderMaterials() {
@@ -215,53 +252,83 @@ public final class VaccineProducer {
 	}
 
 	private void planVaccinePrepartion() {
-		// System.out.println("VaccineProducer.planVaccinePrepartion()");
-		final Boolean continueManufature = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE);
+		final Boolean continueManufature = globalPropertiesDataManager.getGlobalPropertyValue(
+				GlobalProperty.MANUFACTURE_VACCINE);
 		if (!continueManufature) {
 			return;
 		}
 		orderMaterials();
 
-		while (!stagesAtCapacity() && hasSufficientMaterialsForNewStage() && vaccineLevelBelowCapacity()) {
-			final StageId stageId = materialsDataManager.addStage(materialsProducerId);
+		while (!stagesAtCapacity() && hasSufficientMaterialsForNewStage()
+				&& vaccineLevelBelowCapacity()) {
+			final StageId stageId = materialsDataManager.addStage(
+					materialsProducerId);
 			for (final MaterialId materialId : materialRecs.keySet()) {
-				final MaterialManufactureSpecification materialManufactureSpecification = materialRecs.get(materialId);
-				final BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(materialId).build());
-				materialsDataManager.transferMaterialBetweenBatches(materialManufactureSpecification.getBatchId(), newBatchId, materialManufactureSpecification.getStageAmount());
+				final MaterialManufactureSpecification materialManufactureSpecification = materialRecs.get(
+						materialId);
+				final BatchId newBatchId = materialsDataManager.addBatch(
+						BatchConstructionInfo	.builder()
+												.setMaterialsProducerId(
+														materialsProducerId)
+												.setMaterialId(materialId)
+												.build());
+				materialsDataManager.transferMaterialBetweenBatches(
+						materialManufactureSpecification.getBatchId(),
+						newBatchId,
+						materialManufactureSpecification.getStageAmount());
 				materialsDataManager.moveBatchToStage(newBatchId, stageId);
 			}
-			
-			BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(Material.ANTIGEN).build());
-			materialsDataManager.transferMaterialBetweenBatches(antigenBatchId, newBatchId, antigenAmountPerBatch);
+
+			BatchId newBatchId = materialsDataManager.addBatch(
+					BatchConstructionInfo	.builder()
+											.setMaterialsProducerId(
+													materialsProducerId)
+											.setMaterialId(Material.ANTIGEN)
+											.build());
+			materialsDataManager.transferMaterialBetweenBatches(antigenBatchId,
+					newBatchId, antigenAmountPerBatch);
 			materialsDataManager.moveBatchToStage(newBatchId, stageId);
-			
-			
-			final double batchAssemblyStartTime = FastMath.max(actorContext.getTime(), lastBatchAssemblyEndTime);
-			final double fermentationStartTime = batchAssemblyStartTime + batchAssemblyDuration;
+
+			final double batchAssemblyStartTime = FastMath.max(
+					actorContext.getTime(), lastBatchAssemblyEndTime);
+			final double fermentationStartTime = batchAssemblyStartTime
+					+ batchAssemblyDuration;
 			lastBatchAssemblyEndTime = fermentationStartTime;
-			final double planTime = fermentationStartTime + vaccinePreparationTime;
-			actorContext.addPlan((c) -> endVaccinePreparation(stageId), planTime);
+			final double planTime = fermentationStartTime
+					+ vaccinePreparationTime;
+			actorContext.addPlan((c) -> endVaccinePreparation(stageId),
+					planTime);
 		}
 	}
 
-	private void receiveMaterial(final MaterialId materialId, final double amount) {
-		final MaterialManufactureSpecification materialRec = materialRecs.get(materialId);
+	private void receiveMaterial(final MaterialId materialId,
+			final double amount) {
+		final MaterialManufactureSpecification materialRec = materialRecs.get(
+				materialId);
 		materialRec.toggleOnOrder();
 
-		final BatchId newBatchId = materialsDataManager.addBatch(BatchConstructionInfo.builder().setMaterialsProducerId(materialsProducerId).setMaterialId(materialId).setAmount(amount).build());
-		materialsDataManager.transferMaterialBetweenBatches(newBatchId, materialRec.getBatchId(), amount);
+		final BatchId newBatchId = materialsDataManager.addBatch(
+				BatchConstructionInfo	.builder()
+										.setMaterialsProducerId(
+												materialsProducerId)
+										.setMaterialId(materialId)
+										.setAmount(amount).build());
+		materialsDataManager.transferMaterialBetweenBatches(newBatchId,
+				materialRec.getBatchId(), amount);
 		materialsDataManager.removeBatch(newBatchId);
 
 		planVaccinePrepartion();
 	}
 
 	private boolean stagesAtCapacity() {
-		final List<StageId> stages = materialsDataManager.getStages(materialsProducerId);
+		final List<StageId> stages = materialsDataManager.getStages(
+				materialsProducerId);
 		return stages.size() >= stageCapacity;
 	}
 
 	private boolean vaccineLevelBelowCapacity() {
-		final long vaccineCount = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, Resource.VACCINE);
+		final long vaccineCount = materialsDataManager.getMaterialsProducerResourceLevel(
+				materialsProducerId, Resource.VACCINE);
 		return vaccineCount <= vaccineCapacity;
 	}
 
