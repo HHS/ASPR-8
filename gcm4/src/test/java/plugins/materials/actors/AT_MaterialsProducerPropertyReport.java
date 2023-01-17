@@ -2,10 +2,13 @@ package plugins.materials.actors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -16,6 +19,7 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
@@ -27,6 +31,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
+import plugins.reports.testsupport.TestReports;
 import plugins.reports.support.SimpleReportId;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
@@ -35,10 +40,12 @@ import tools.annotations.UnitTestMethod;
 
 public final class AT_MaterialsProducerPropertyReport {
 
-	private ReportItem getReportItemFromPropertyId(ActorContext agentContext, MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
+	private ReportItem getReportItemFromPropertyId(ActorContext agentContext, MaterialsProducerId materialsProducerId,
+			MaterialsProducerPropertyId materialsProducerPropertyId) {
 
 		MaterialsDataManager materialsDataManager = agentContext.getDataManager(MaterialsDataManager.class);
-		Object propertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+		Object propertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId,
+				materialsProducerPropertyId);
 
 		ReportItem reportItem = getReportItem(//
 				agentContext.getTime(), //
@@ -59,10 +66,11 @@ public final class AT_MaterialsProducerPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {
+			ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 
-		Set<ReportItem> expectedReportItems = new LinkedHashSet<>();
+		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -71,8 +79,11 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-					expectedReportItems.add(getReportItemFromPropertyId(c, testMaterialsProducerId, testMaterialsProducerPropertyId));
+				for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+						.values()) {
+					expectedReportItems.put(
+							getReportItemFromPropertyId(c, testMaterialsProducerId, testMaterialsProducerPropertyId),
+							1);
 				}
 			}
 		}));
@@ -85,15 +96,18 @@ public final class AT_MaterialsProducerPropertyReport {
 			MaterialsProducerConstructionData.Builder builder = MaterialsProducerConstructionData.builder();
 
 			builder.setMaterialsProducerId(newMaterialsProducerId);
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.getPropertiesWithoutDefaultValues()) {
 				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
 				builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
 			}
 
 			MaterialsProducerConstructionData materialsProducerConstructionData = builder.build();
 			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-				expectedReportItems.add(getReportItemFromPropertyId(c, newMaterialsProducerId, testMaterialsProducerPropertyId));
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.values()) {
+				expectedReportItems.put(
+						getReportItemFromPropertyId(c, newMaterialsProducerId, testMaterialsProducerPropertyId), 1);
 			}
 		}));
 
@@ -102,14 +116,19 @@ public final class AT_MaterialsProducerPropertyReport {
 			// set a property value
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
-				List<MaterialsProducerId> materialsProducerIds = new ArrayList<>(materialsDataManager.getMaterialsProducerIds());
+				List<MaterialsProducerId> materialsProducerIds = new ArrayList<>(
+						materialsDataManager.getMaterialsProducerIds());
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-				MaterialsProducerId materialsProducerId = materialsProducerIds.get(randomGenerator.nextInt(materialsProducerIds.size()));
-				TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.getRandomMutableMaterialsProducerPropertyId(randomGenerator);
+				MaterialsProducerId materialsProducerId = materialsProducerIds
+						.get(randomGenerator.nextInt(materialsProducerIds.size()));
+				TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId
+						.getRandomMutableMaterialsProducerPropertyId(randomGenerator);
 				Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId, testMaterialsProducerPropertyId, propertyValue);
-				expectedReportItems.add(getReportItemFromPropertyId(c, materialsProducerId, testMaterialsProducerPropertyId));
+				materialsDataManager.setMaterialsProducerPropertyValue(materialsProducerId,
+						testMaterialsProducerPropertyId, propertyValue);
+				expectedReportItems
+						.put(getReportItemFromPropertyId(c, materialsProducerId, testMaterialsProducerPropertyId), 1);
 
 			}));
 
@@ -117,9 +136,15 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(8759226038479000135L, testPlugin, new MaterialsProducerPropertyReport(REPORT_ID)::init);
 
-		assertEquals(expectedReportItems, actualReportItems);
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+
+		TestReports.testConsumers(testPlugin, new MaterialsProducerPropertyReport(REPORT_ID), 8759226038479000135L,
+				MaterialsActionSupport.setUpPluginsForTest(8759226038479000135L),
+				outputConsumer);
+
+		assertTrue(outputConsumer.isComplete());
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	private static ReportItem getReportItem(Object... values) {
@@ -135,11 +160,11 @@ public final class AT_MaterialsProducerPropertyReport {
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 
 	private static ReportHeader getReportHeader() {
-		ReportHeader.Builder builder = ReportHeader	.builder()//
-													.add("time")//
-													.add("materials_producer")//
-													.add("property")//
-													.add("value");//
+		ReportHeader.Builder builder = ReportHeader.builder()//
+				.add("time")//
+				.add("materials_producer")//
+				.add("property")//
+				.add("value");//
 		return builder.build();
 	}
 
