@@ -3,9 +3,7 @@ package plugins.resources.actors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -17,22 +15,15 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
-import plugins.people.support.PersonId;
-import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
-import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReports;
-import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
+import plugins.resources.testsupport.ResourcesActionSupport;
 import plugins.resources.testsupport.TestResourceId;
 import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
@@ -78,56 +69,6 @@ public class AT_ResourcePropertyReport {
 	public void testInit() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8914112012010329946L);
 		int initialPopulation = 20;
-
-		// create a list of people
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < initialPopulation; i++) {
-			people.add(new PersonId(i));
-		}
-
-		List<Plugin> pluginsToAdd = new ArrayList<>();
-
-		// add the resources plugin
-		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
-
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
-		}
-
-		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
-			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-			Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
-		}
-		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
-		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
-		pluginsToAdd.add(resourcesPlugin);
-
-		// add the people plugin
-
-		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-
-		for (PersonId personId : people) {
-			peopleBuilder.addPersonId(personId);
-		}
-		PeoplePluginData peoplePluginData = peopleBuilder.build();
-		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-		pluginsToAdd.add(peoplePlugin);
-
-		// add the regions plugin
-		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionsBuilder.addRegion(testRegionId);
-		}
-		for (PersonId personId : people) {
-			regionsBuilder.setPersonRegion(personId, TestRegionId.getRandomRegionId(randomGenerator));
-		}
-		RegionsPluginData regionsPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
-		pluginsToAdd.add(regionPlugin);
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -255,7 +196,7 @@ public class AT_ResourcePropertyReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		TestReports.testConsumers(testPlugin, new ResourcePropertyReport(REPORT_ID),
-				randomGenerator.nextLong(), pluginsToAdd,
+				randomGenerator.nextLong(), ResourcesActionSupport.setUpPluginsForTest(initialPopulation, 8914112012010329946L),
 				outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
