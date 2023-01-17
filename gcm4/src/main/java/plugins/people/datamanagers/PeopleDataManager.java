@@ -47,8 +47,6 @@ public final class PeopleDataManager extends DataManager {
 
 	private final PopulationRecord globalPopulationRecord = new PopulationRecord();
 
-	
-
 	/**
 	 * Returns a new person id that has been added to the simulation. The
 	 * returned PersonId is unique and will wrap the int value returned by
@@ -64,9 +62,17 @@ public final class PeopleDataManager extends DataManager {
 
 		final PersonId personId = addPersonId();
 
+		/*
+		 * It is very likely that the PersonImminentAdditionEvent will have
+		 * subscribers, so we don't waste time asking if there are any.
+		 * 
+		 */
 		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
 		dataManagerContext.releaseEvent(personImminentAdditionEvent);
-		dataManagerContext.releaseEvent(new PersonAdditionEvent(personId));
+
+		if (dataManagerContext.subscribersExist(PersonAdditionEvent.class)) {
+			dataManagerContext.releaseEvent(new PersonAdditionEvent(personId));
+		}
 		return personId;
 	}
 
@@ -84,7 +90,8 @@ public final class PeopleDataManager extends DataManager {
 
 	/**
 	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for multiple population additions.
+	 * count. Used to more efficiently prepare for multiple population
+	 * additions.
 	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
@@ -182,9 +189,9 @@ public final class PeopleDataManager extends DataManager {
 		this.dataManagerContext = dataManagerContext;
 
 		this.personIds.addAll(peoplePluginData.getPersonIds());
-		
+
 		for (PersonId personId : personIds) {
-			if(personId != null) {
+			if (personId != null) {
 				globalPopulationRecord.populationCount++;
 			}
 		}
@@ -211,7 +218,7 @@ public final class PeopleDataManager extends DataManager {
 	 */
 	public boolean personIndexExists(final int personId) {
 		boolean result = false;
-		if (personId>=0 && personId < personIds.size()) {
+		if (personId >= 0 && personId < personIds.size()) {
 			result = personIds.get(personId) != null;
 		}
 		return result;
@@ -238,10 +245,15 @@ public final class PeopleDataManager extends DataManager {
 			globalPopulationRecord.populationCount--;
 			globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 			personIds.set(personId.getValue(), null);
+
+			//it is very likely that there are observers, so we don't ask before creating the event
 			context.releaseEvent(new PersonRemovalEvent(personId));
+
 		}, dataManagerContext.getTime());
 
-		dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
+		if (dataManagerContext.subscribersExist(PersonImminentRemovalEvent.class)) {
+			dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
+		}
 
 	}
 
@@ -259,18 +271,16 @@ public final class PeopleDataManager extends DataManager {
 			throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 		}
 	}
-	
-	
+
 	/**
-	 * Returns an event filter used to subscribe to
-	 * {@link PersonAdditionEvent} events. Matches all such events.
+	 * Returns an event filter used to subscribe to {@link PersonAdditionEvent}
+	 * events. Matches all such events.
 	 */
 	public EventFilter<PersonAdditionEvent> getEventFilterForPersonAdditionEvent() {
 		return EventFilter	.builder(PersonAdditionEvent.class)//
 							.build();
 	}
-	
-	
+
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonImminentRemovalEvent} events. Matches all such events.
@@ -279,5 +289,5 @@ public final class PeopleDataManager extends DataManager {
 		return EventFilter	.builder(PersonImminentRemovalEvent.class)//
 							.build();
 	}
-	
+
 }

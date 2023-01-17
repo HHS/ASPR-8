@@ -29,6 +29,8 @@ import util.errors.ContractException;
 
 public final class GlobalPropertiesDataManager extends DataManager {
 
+	
+
 	private DataManagerContext dataManagerContext;
 	private Map<GlobalPropertyId, PropertyValueRecord> globalPropertyMap = new LinkedHashMap<>();
 	private Map<GlobalPropertyId, PropertyDefinition> globalPropertyDefinitions = new LinkedHashMap<>();
@@ -149,7 +151,9 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		validateValueCompatibility(globalPropertyId, propertyDefinition, globalPropertyValue);
 		final Object oldPropertyValue = getGlobalPropertyValue(globalPropertyId);
 		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
-		dataManagerContext.releaseEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+		if (dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
+		}
 	}
 
 	/**
@@ -160,9 +164,12 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		return globalPropertyMap.containsKey(globalPropertyId);
 	}
 
+	
+
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
+
 		this.dataManagerContext = dataManagerContext;
 
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
@@ -210,7 +217,10 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		globalPropertyMap.put(globalPropertyId, propertyValueRecord);
 		globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
-		dataManagerContext.releaseEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
+		if (dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class)) {			
+			dataManagerContext.releaseEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
+		}
+
 	}
 
 	private void validateGlobalPropertyValueNotNull(final Object propertyValue) {

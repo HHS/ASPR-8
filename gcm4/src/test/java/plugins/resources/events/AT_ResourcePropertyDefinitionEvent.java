@@ -22,14 +22,19 @@ public class AT_ResourcePropertyDefinitionEvent {
 	public void testConstructor() {
 		TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
 		TestResourceId testResourceId = TestResourceId.RESOURCE_1;
+		Integer propertyValue = 7;
 
 		// test case: null resource id
-		ContractException resourceIdContractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(null, testResourcePropertyId));
-		assertEquals(resourceIdContractException.getErrorType(), ResourceError.NULL_RESOURCE_ID);
+		ContractException contractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(null, testResourcePropertyId, propertyValue));
+		assertEquals(contractException.getErrorType(), ResourceError.NULL_RESOURCE_ID);
 
 		// test case: null property id
-		ContractException propertyIdContractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(testResourceId, null));
-		assertEquals(propertyIdContractException.getErrorType(), PropertyError.NULL_PROPERTY_ID);
+		contractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(testResourceId, null, propertyValue));
+		assertEquals(contractException.getErrorType(), PropertyError.NULL_PROPERTY_ID);
+
+		// test case: null property value
+		contractException = assertThrows(ContractException.class, () -> new ResourcePropertyDefinitionEvent(testResourceId, testResourcePropertyId, null));
+		assertEquals(contractException.getErrorType(), PropertyError.NULL_PROPERTY_VALUE);
 	}
 
 	@Test
@@ -61,5 +66,12 @@ public class AT_ResourcePropertyDefinitionEvent {
 	public void testResourcePropertyId() {
 		// nothing to test
 	}
+	
+	@Test
+	@UnitTestMethod(target = ResourcePropertyDefinitionEvent.class, name = "resourcePropertyValue", args = {})
+	public void testResourcePropertyValue() {
+		// nothing to test
+	}
+
 
 }

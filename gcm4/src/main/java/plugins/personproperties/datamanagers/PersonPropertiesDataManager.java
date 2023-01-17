@@ -136,7 +136,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 			}
 		}
 
-		dataManagerContext.releaseEvent(new PersonPropertyDefinitionEvent(personPropertyId));
+		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
+			dataManagerContext.releaseEvent(new PersonPropertyDefinitionEvent(personPropertyId));
+		}
 	}
 
 	@Override
@@ -165,13 +167,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		if (nonDefaultBearingPropertyIds.isEmpty()) {
 			for (int personIndex = 0; personIndex < personCount; personIndex++) {
-				
+
 				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
 
-				if(!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
+				if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
 					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 				}
-				
+
 				for (PersonPropertyInitialization personPropertyInitialization : propertyValues) {
 					Object personPropertyValue = personPropertyInitialization.getValue();
 					PersonPropertyId personPropertyId = personPropertyInitialization.getPersonPropertyId();
@@ -182,10 +184,10 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		} else {
 			for (int personIndex = 0; personIndex < personCount; personIndex++) {
-				
+
 				List<PersonPropertyInitialization> propertyValues = personPropertiesPluginData.getPropertyValues(personIndex);
-				
-				if(!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
+
+				if (!propertyValues.isEmpty() && !peopleDataManager.personIndexExists(personIndex)) {
 					throw new ContractException(PersonError.UNKNOWN_PERSON_ID);
 				}
 
@@ -471,7 +473,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	private final PersonPropertiesPluginData personPropertiesPluginData;
 
-
 	/**
 	 * Constructs the person property data manager from the given plugin data
 	 * 
@@ -488,7 +489,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	/**
 	 * Expands the capacity of data structures to hold people by the given
-	 * count. Used to more efficiently prepare for multiple population additions.
+	 * count. Used to more efficiently prepare for multiple population
+	 * additions.
 	 *
 	 * @throws ContractException
 	 *             <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION} if
@@ -547,7 +549,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		IndexedPropertyManager propertyManager = personPropertyManagerMap.get(personPropertyId);
 		Object oldValue = propertyManager.getPropertyValue(pId);
 		propertyManager.setPropertyValue(pId, personPropertyValue);
-		dataManagerContext.releaseEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
+		if (dataManagerContext.subscribersExist(PersonPropertyUpdateEvent.class)) {
+			dataManagerContext.releaseEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
+		}
 	}
 
 	private static void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
@@ -657,9 +661,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 			throw new ContractException(RegionError.UNKNOWN_REGION_ID);
 		}
 	}
-	
-	
-	
+
 	private static enum EventFunctionId {
 		PERSON_PROPERTY_ID, //
 		REGION_ID, //
@@ -672,7 +674,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 									.put(EventFunctionId.REGION_ID, e -> regionsDataManager.getPersonRegion(e.personId()))//
 									.put(EventFunctionId.PERSON_ID, e -> e.personId())//
 									.build();//
-
 
 	/**
 	 * Returns an event filter used to subscribe to
