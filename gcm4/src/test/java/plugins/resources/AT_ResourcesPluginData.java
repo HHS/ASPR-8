@@ -159,7 +159,9 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
+			builder.addResource(testResourceId)
+			// adding duplicate data to show that the value persists
+					.addResource(testResourceId);
 			expectedResourceIds.add(testResourceId);
 		}
 		ResourcesPluginData resourceInitialData = builder.build();
@@ -170,10 +172,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().addResource(null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-
-		// if the resource id was previously added
-		contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().addResource(TestResourceId.RESOURCE_1).addResource(TestResourceId.RESOURCE_1));
-		assertEquals(ResourceError.DUPLICATE_RESOURCE_ID, contractException.getErrorType());
 
 	}
 

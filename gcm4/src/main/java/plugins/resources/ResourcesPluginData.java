@@ -230,12 +230,6 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
-	private static void validateResourceDoesNotExist(final Data data, final ResourceId resourceId) {
-		if (data.resourceIds.contains(resourceId)) {
-			throw new ContractException(ResourceError.DUPLICATE_RESOURCE_ID, resourceId);
-		}
-	}
-
 	/**
 	 * Builder class for ResourceInitialData
 	 * 
@@ -318,17 +312,16 @@ public final class ResourcesPluginData implements PluginData {
 
 		/**
 		 * Adds the given resouce id.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_ID} if
-		 *             the resource id was previously added</li>
+		 *
 		 */
 		public Builder addResource(final ResourceId resourceId) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
-			validateResourceDoesNotExist(data, resourceId);
 			data.resourceIds.add(resourceId);
 			return this;
 		}
