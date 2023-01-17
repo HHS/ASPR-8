@@ -37,6 +37,90 @@ import util.wrappers.MultiKey;
  */
 public final class GroupsTestPluginFactory {
 
+	private static class Data {
+		private GroupsPluginData groupsPluginData;
+		private PeoplePluginData peoplePluginData;
+		private StochasticsPluginData stochasticsPluginData;
+		private Plugin testPlugin;
+
+		private Data(int initialPopulation, double expectedGroupsPerPerson,
+		double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+			int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
+			int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+
+			List<PersonId> people = new ArrayList<>();
+			for (int i = 0; i < initialPopulation; i++) {
+				people.add(new PersonId(i));
+			}
+
+			this.groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount, people, randomGenerator);
+			this.peoplePluginData = GroupsTestPluginFactory.getStandardPeoplePluginData(initialPopulation, people);
+			this.stochasticsPluginData = GroupsTestPluginFactory.getStandardStochasticsPluginData(randomGenerator);
+			this.testPlugin = testPlugin;
+		}
+	}
+
+	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
+		return new Factory(
+				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
+	}
+
+	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		return new Factory(
+				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
+	}
+
+	public static class Factory {
+		private Data data;
+
+		private Factory(Data data) {
+			this.data = data;
+		}
+
+		public List<Plugin> getPlugins() {
+			List<Plugin> pluginsToAdd = new ArrayList<>();
+			Plugin groupPlugin = GroupsPlugin.getGroupPlugin(this.data.groupsPluginData);
+
+			// add the people plugin
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(this.data.peoplePluginData);
+
+			// add the stochastics plugin
+			Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(this.data.stochasticsPluginData);
+
+			pluginsToAdd.add(groupPlugin);
+			pluginsToAdd.add(peoplePlugin);
+			pluginsToAdd.add(stochasticPlugin);
+			pluginsToAdd.add(this.data.testPlugin);
+
+			return pluginsToAdd;
+		}
+
+		public Factory setGroupsPluginData(GroupsPluginData groupsPluginData) {
+			this.data.groupsPluginData = groupsPluginData;
+			return this;
+		}
+
+		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
+			this.data.peoplePluginData = peoplePluginData;
+			return this;
+		}
+
+		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
+			this.data.stochasticsPluginData = stochasticsPluginData;
+			return this;
+		}
+
+	}
+
 	private GroupsTestPluginFactory() {
 	}
 
@@ -87,21 +171,8 @@ public final class GroupsTestPluginFactory {
 		TestSimulation.executeSimulation(pluginsToAdd);
 	}
 
-	private static List<Plugin> _getStandardPlugins(int initialPopulation, double expectedGroupsPerPerson,
-			double expectedPeoplePerGroup, long seed) {
-
-		List<Plugin> pluginsToAdd = new ArrayList<>();
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		// create a list of people
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < initialPopulation; i++) {
-			people.add(new PersonId(i));
-		}
-
-		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
-
+	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount,
+			List<PersonId> people, RandomGenerator randomGenerator) {
 		// add the group plugin
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 		// add group types
@@ -119,7 +190,12 @@ public final class GroupsTestPluginFactory {
 		for (int i = 0; i < groupCount; i++) {
 			GroupId groupId = new GroupId(i);
 			groups.add(groupId);
-			groupBuilder.addGroup(groupId, TestGroupTypeId.getRandomGroupTypeId(randomGenerator));
+			TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+			groupBuilder.addGroup(groupId, groupTypeId);
+			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(groupTypeId)) {
+				groupBuilder.setGroupPropertyValue(groupId, testGroupPropertyId,
+						testGroupPropertyId.getRandomPropertyValue(randomGenerator));
+			}
 		}
 
 		// add the group memberships
@@ -135,21 +211,46 @@ public final class GroupsTestPluginFactory {
 			PersonId personId = multiKey.getKey(1);
 			groupBuilder.addPersonToGroup(groupId, personId);
 		}
-		GroupsPluginData groupsPluginData = groupBuilder.build();
-		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
+		return groupBuilder.build();
+	}
 
-		// add the people plugin
+	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation, List<PersonId> people) {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 		for (PersonId personId : people) {
 			peopleBuilder.addPersonId(personId);
 		}
-		PeoplePluginData peoplePluginData = peopleBuilder.build();
-		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+		return peopleBuilder.build();
+	}
+
+	public static StochasticsPluginData getStandardStochasticsPluginData(RandomGenerator randomGenerator) {
+		return StochasticsPluginData.builder()
+				.setSeed(randomGenerator.nextLong()).build();
+	}
+
+	private static List<Plugin> _getStandardPlugins(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed) {
+
+		List<Plugin> pluginsToAdd = new ArrayList<>();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		// create a list of people
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < initialPopulation; i++) {
+			people.add(new PersonId(i));
+		}
+
+		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
+		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+
+		Plugin groupPlugin = GroupsPlugin
+				.getGroupPlugin(getStandardGroupsPluginData(groupCount, membershipCount, people, randomGenerator));
+
+		// add the people plugin
+		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(getStandardPeoplePluginData(initialPopulation, people));
 
 		// add the stochastics plugin
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
-		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
+		Plugin stochasticPlugin = StochasticsPlugin
+				.getStochasticsPlugin(getStandardStochasticsPluginData(randomGenerator));
 
 		pluginsToAdd.add(groupPlugin);
 		pluginsToAdd.add(peoplePlugin);
