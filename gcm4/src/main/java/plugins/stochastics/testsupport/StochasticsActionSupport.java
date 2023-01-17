@@ -5,11 +5,11 @@ import java.util.function.Consumer;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.errors.ContractException;
@@ -37,9 +37,9 @@ public class StochasticsActionSupport {
 	 */
 	public static void testConsumer(long seed, Consumer<ActorContext> consumer) {
 
-		TestPluginData testPluginData = TestPluginData	.builder()//
-														.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
-														.build();
+		TestPluginData testPluginData = TestPluginData.builder()//
+				.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
+				.build();
 
 		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		testConsumers(seed, plugin);
@@ -60,15 +60,16 @@ public class StochasticsActionSupport {
 		builder.setSeed(seed);
 
 		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(builder.build());
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		Simulation	.builder()//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPlugin(testPlugin)//
-					.addPlugin(stochasticPlugin)//
-					.build()//
-					.execute();//
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.setOutputConsumer(outputConsumer)
+				.addPlugin(stochasticPlugin)//
+				.build()//
+				.execute();//
 
 		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
+		if (!outputConsumer.isComplete()) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 	}

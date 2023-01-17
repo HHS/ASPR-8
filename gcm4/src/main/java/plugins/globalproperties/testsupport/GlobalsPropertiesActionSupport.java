@@ -1,15 +1,17 @@
 package plugins.globalproperties.testsupport;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.globalproperties.GlobalPropertiesPlugin;
 import plugins.globalproperties.GlobalPropertiesPluginData;
 import util.errors.ContractException;
@@ -37,9 +39,9 @@ public final class GlobalsPropertiesActionSupport {
 
 	public static void testConsumer(Consumer<ActorContext> consumer) {
 
-		TestPluginData testPluginData = TestPluginData	.builder()//
-														.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
-														.build();
+		TestPluginData testPluginData = TestPluginData.builder()//
+				.addTestActorPlan("actor", new TestActorPlan(0, consumer))//
+				.build();
 
 		Plugin plugin = TestPlugin.getTestPlugin(testPluginData);
 		testConsumers(plugin);
@@ -51,23 +53,42 @@ public final class GlobalsPropertiesActionSupport {
 	 */
 	public static void testConsumers(Plugin testPlugin) {
 
+		Simulation.Builder builder = Simulation.builder();
+		for (Plugin plugin : setUpPluginsForTest()) {
+			builder.addPlugin(plugin);
+		}
+
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+
+		builder.setOutputConsumer(outputConsumer)
+				.addPlugin(testPlugin)//
+				.build()//
+				.execute();//
+
+		// show that all actions were executed
+		if (!outputConsumer.isComplete()) {
+			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
+		}
+	}
+
+	public static List<Plugin> setUpPluginsForTest() {
+
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition());
+			globalsPluginBuilder.defineGlobalProperty(testGlobalPropertyId,
+					testGlobalPropertyId.getPropertyDefinition());
 		}
 		GlobalPropertiesPluginData globalPropertiesPluginData = globalsPluginBuilder.build();
 		Plugin globalsPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData);
 
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		Simulation	.builder()//
-					.addPlugin(globalsPlugin)//
-					.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).addPlugin(testPlugin)//
-					.build()//
-					.execute();//
+		return setUpPluginsForTest(globalsPlugin);
+	}
 
-		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}
+	private static List<Plugin> setUpPluginsForTest(Plugin globalsPlugin) {
+		List<Plugin> pluginsToAdd = new ArrayList<>();
+
+		pluginsToAdd.add(globalsPlugin);
+
+		return pluginsToAdd;
 	}
 }

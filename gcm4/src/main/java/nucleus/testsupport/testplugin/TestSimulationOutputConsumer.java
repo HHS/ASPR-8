@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 
 public class TestSimulationOutputConsumer implements Consumer<Object> {
@@ -16,14 +17,28 @@ public class TestSimulationOutputConsumer implements Consumer<Object> {
         this.outputItems = new ArrayList<>();
     }
 
+    /**
+	 * Handles all output from a simulation, but processes only
+	 * TestScenarioReport items.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain TestError#DUPLICATE_TEST_SCENARIO_REPORTS} if
+	 *             multiple TestScenarioReport items are received</li>
+	 */
     public void accept(Object obj) {
         this.outputItems.add(obj);
 
         if(obj instanceof TestScenarioReport) {
+            if(this.isComplete) {
+                throw new ContractException(TestError.DUPLICATE_TEST_SCENARIO_REPORTS);
+            }
             this.isComplete = ((TestScenarioReport) obj).isComplete();
         }
     }
 
+    /**
+	 * Returns all outputs from a Simulation based on the Class Parameter.
+	 */
     @SuppressWarnings("unchecked")
     public <T> Map<T, Integer> getOutputItems(Class<T> clazz) {
         Map<T, MutableInteger> sourceMap = new LinkedHashMap<>();

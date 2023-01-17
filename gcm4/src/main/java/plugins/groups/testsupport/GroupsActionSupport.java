@@ -13,11 +13,11 @@ import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
@@ -39,15 +39,17 @@ import util.wrappers.MultiKey;
  *
  */
 public class GroupsActionSupport {
-	
-	private GroupsActionSupport() {}
+
+	private GroupsActionSupport() {
+	}
 
 	/**
 	 * Creates an action plugin with an agent that will execute the given
 	 * consumer at time 0. The action plugin and the remaining arguments are
 	 * passed to an invocation of the testConsumers() method.
 	 */
-	public static void testConsumer(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
+	public static void testConsumer(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -72,40 +74,45 @@ public class GroupsActionSupport {
 	 * run completely does not lead to a false positive test evaluation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ActionError#ACTION_EXECUTION_FAILURE} if not
-	 *             all action plans execute or if there are no action plans
-	 *             contained in the action plugin</li>
+	 *                           <li>{@linkplain ActionError#ACTION_EXECUTION_FAILURE}
+	 *                           if not
+	 *                           all action plans execute or if there are no action
+	 *                           plans
+	 *                           contained in the action plugin</li>
 	 */
-	public static void testConsumers(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
+	public static void testConsumers(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		Builder builder = Simulation.builder();
 
-		for(Plugin plugin : setUpPluginsForTest(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed)) {
+		for (Plugin plugin : setUpPluginsForTest(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup,
+				seed)) {
 			builder.addPlugin(plugin);
 		}
 
 		// add the stochastics plugin
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
+				.setSeed(randomGenerator.nextLong()).build();
 		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		builder.addPlugin(stochasticPlugin);
 
-		// add the action plugin
-		builder.addPlugin(testPlugin);
-
 		// build and execute the engine
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		builder.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).build().execute();
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		builder.setOutputConsumer(outputConsumer)
+				.addPlugin(testPlugin)
+				.build()
+				.execute();
 
 		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
+		if (!outputConsumer.isComplete()) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 	}
 
-
-	public static List<Plugin> setUpPluginsForTest(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed) {
+	public static List<Plugin> setUpPluginsForTest(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		// create a list of people
@@ -125,7 +132,8 @@ public class GroupsActionSupport {
 		}
 		// define group properties
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
+					testGroupPropertyId.getPropertyDefinition());
 		}
 
 		// add the groups
@@ -155,7 +163,7 @@ public class GroupsActionSupport {
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 		for (PersonId personId : people) {
-			peopleBuilder.addPersonId(personId);			
+			peopleBuilder.addPersonId(personId);
 		}
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);

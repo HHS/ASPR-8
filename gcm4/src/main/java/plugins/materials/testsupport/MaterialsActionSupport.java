@@ -1,25 +1,20 @@
 package plugins.materials.testsupport;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.ActorContext;
-import nucleus.Experiment;
-import nucleus.NucleusError;
 import nucleus.Plugin;
-import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
+import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestScenarioReport;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
 import plugins.people.PeoplePlugin;
@@ -27,10 +22,6 @@ import plugins.people.PeoplePluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
-import plugins.reports.support.ReportItem;
-import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.testsupport.TestResourceId;
@@ -59,16 +50,12 @@ public class MaterialsActionSupport {
 	 * consumer at time 0. The action plugin and the remaining arguments are
 	 * passed to an invocation of the testConsumers() method.
 	 */
-	public static Set<ReportItem> testConsumer(long seed, Consumer<ActorContext> consumer) {
+	public static void testConsumer(long seed, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		return testConsumers(seed, testPlugin, null);
-	}
-
-	public static Set<ReportItem> testConsumers(long seed, Plugin testPlugin) {
-		return testConsumers(seed, testPlugin, null);
+		testConsumers(seed, testPlugin);
 	}
 
 	/**
@@ -97,26 +84,14 @@ public class MaterialsActionSupport {
 	 *                           plans
 	 *                           contained in the action plugin</li>
 	 */
-	public static Set<ReportItem> testConsumers(long seed, Plugin testPlugin,
-
-			Consumer<ActorContext> report) {
-
+	public static void testConsumers(long seed, Plugin testPlugin) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		Experiment.Builder builder = Experiment.builder();
+		Simulation.Builder builder = Simulation.builder();
 
 		for (Plugin plugin : setUpPluginsForTest(seed)) {
 			builder.addPlugin(plugin);
 		}
-		// add the report plugin
-
-		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
-		if (report != null) {
-			reportsBuilder.addReport(() -> report);
-		}
-		ReportsPluginData reportsPluginData = reportsBuilder.build();
-		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
 
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
 				.setSeed(randomGenerator.nextLong()).build();
@@ -124,35 +99,18 @@ public class MaterialsActionSupport {
 		// add the stochastics plugin
 		builder.addPlugin(stochasticsPlugin);
 
-		// add the action plugin
-		builder.addPlugin(testPlugin);
-
 		// set the output consumer
-		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
-		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
-		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
-		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		// build and execute the engine
+		builder.addPlugin(testPlugin)
+				.setOutputConsumer(outputConsumer)
+				.build()
+				.execute();
 
-		builder.build().execute();
-		Map<ReportItem, Integer> reportItems = testReportItemOutputConsumer.getReportItems().get(0);
-		Set<ReportItem> result = new LinkedHashSet<>();
-		if (reportItems != null) {
-			result.addAll(reportItems.keySet());
-		}
-
-		// show that all actions were executed
-		Optional<TestScenarioReport> optionalTestScenarioReport = experimentPlanCompletionObserver
-				.getActionCompletionReport(0);
-		if (optionalTestScenarioReport.isEmpty()) {
-			throw new ContractException(NucleusError.SCENARIO_FAILED);
-		}
-		boolean complete = optionalTestScenarioReport.get().isComplete();
-		if (!complete) {
+		if (!outputConsumer.isComplete()) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
-		return result;
 	}
 
 	public static List<Plugin> setUpPluginsForTest(long seed) {

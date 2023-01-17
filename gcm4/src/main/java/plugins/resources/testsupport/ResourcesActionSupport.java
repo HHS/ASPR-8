@@ -10,11 +10,11 @@ import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -93,15 +93,16 @@ public class ResourcesActionSupport {
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		builder.addPlugin(stochasticsPlugin);
 
-		// add the action plugin
-		builder.addPlugin(testPlugin);
-
 		// build and execute the engine
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		builder.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).build().execute();
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+
+		builder.addPlugin(testPlugin)
+				.setOutputConsumer(outputConsumer)
+				.build()
+				.execute();
 
 		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
+		if (!outputConsumer.isComplete()) {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 	}
@@ -160,6 +161,15 @@ public class ResourcesActionSupport {
 
 		pluginsToAdd.add(regionPlugin);
 
+		return setUpPluginsForTest(resourcesPlugin, peoplePlugin, regionPlugin);
+	}
+
+	public static List<Plugin> setUpPluginsForTest(Plugin resourcesPlugin, Plugin peoplePlugin, Plugin regionPlugin) {
+		List<Plugin> pluginsToAdd = new ArrayList<>();
+
+		pluginsToAdd.add(resourcesPlugin);
+		pluginsToAdd.add(regionPlugin);
+		pluginsToAdd.add(peoplePlugin);
 		return pluginsToAdd;
 	}
 }
