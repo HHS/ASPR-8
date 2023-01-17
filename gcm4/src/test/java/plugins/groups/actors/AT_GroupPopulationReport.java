@@ -13,13 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
-import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
-import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
@@ -167,7 +165,7 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> plugins = setUpPluginsForTest(testPlugin, 5524610980534223950L);
+		List<Plugin> plugins = getPlugins(testPlugin, 5524610980534223950L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
@@ -276,7 +274,7 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.DAILY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> plugins = setUpPluginsForTest(testPlugin, 4023600052052959521L);
+		List<Plugin> plugins = getPlugins(testPlugin, 4023600052052959521L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
@@ -348,7 +346,7 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.END_OF_SIMULATION);
-		List<Plugin> plugins = setUpPluginsForTest(testPlugin, 6092832510476200219L);
+		List<Plugin> plugins = getPlugins(testPlugin, 6092832510476200219L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
@@ -357,16 +355,9 @@ public class AT_GroupPopulationReport {
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
-	private List<Plugin> setUpPluginsForTest(Plugin testPlugin, long seed) {
+	private List<Plugin> getPlugins(Plugin testPlugin, long seed) {
 
-		List<Plugin> plugins = GroupsTestPluginFactory.getStandardPlugins(10, 0, 3, 0, testPlugin);
-
-		plugins.removeIf((plugin) -> {
-			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
-
-			return pluginData instanceof GroupsPluginData;
-		});
-
+		
 		// add the group plugin
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 		// add group types
@@ -376,15 +367,15 @@ public class AT_GroupPopulationReport {
 		// define group properties
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
 			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
-					testGroupPropertyId.getPropertyDefinition());
+			testGroupPropertyId.getPropertyDefinition());
 		}
-
+		
 		groupBuilder.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
 		groupBuilder.addGroup(new GroupId(1), TestGroupTypeId.GROUP_TYPE_2);
 		groupBuilder.addGroup(new GroupId(2), TestGroupTypeId.GROUP_TYPE_3);
 
 		// add a few of the people to the groups
-
+		
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(0));
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(1));
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(2));
@@ -393,9 +384,9 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(2));
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
 		GroupsPluginData groupsPluginData = groupBuilder.build();
-		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
-		plugins.add(groupPlugin);
 
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(10, 0, 3, seed, testPlugin).setGroupsPluginData(groupsPluginData).getPlugins();
+		
 		return plugins;
 	}
 

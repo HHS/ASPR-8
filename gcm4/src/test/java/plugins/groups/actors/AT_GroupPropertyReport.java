@@ -289,7 +289,7 @@ public class AT_GroupPropertyReport {
 		builder.addProperty(TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK);
 		GroupPropertyReport groupPropertyReport = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.getStandardPlugins(0, 0, 0, 6092832510476200219L, testPlugin);
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPlugin).getPlugins();
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
@@ -535,7 +535,7 @@ public class AT_GroupPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.getStandardPlugins(0, 0, 0, 6092832510476200219L, testPlugin);
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPlugin).getPlugins();
 
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
 
