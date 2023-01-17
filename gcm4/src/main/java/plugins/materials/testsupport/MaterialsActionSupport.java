@@ -1,6 +1,8 @@
 package plugins.materials.testsupport;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -49,7 +51,8 @@ import util.random.RandomGeneratorProvider;
  */
 public class MaterialsActionSupport {
 
-	private MaterialsActionSupport(){}
+	private MaterialsActionSupport() {
+	}
 
 	/**
 	 * Creates an action plugin with an agent that will execute the given
@@ -88,9 +91,11 @@ public class MaterialsActionSupport {
 	 * completely does not lead to a false positive test evaluation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if not all
-	 *             action plans execute or if there are no action plans
-	 *             contained in the action plugin</li>
+	 *                           <li>{@linkplain TestError#TEST_EXECUTION_FAILURE}
+	 *                           if not all
+	 *                           action plans execute or if there are no action
+	 *                           plans
+	 *                           contained in the action plugin</li>
 	 */
 	public static Set<ReportItem> testConsumers(long seed, Plugin testPlugin,
 
@@ -100,73 +105,9 @@ public class MaterialsActionSupport {
 
 		Experiment.Builder builder = Experiment.builder();
 
-		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
-
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			materialsBuilder.addMaterial(testMaterialId);
+		for (Plugin plugin : setUpPluginsForTest(seed)) {
+			builder.addPlugin(plugin);
 		}
-
-		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
-		}
-
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
-		}
-
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
-			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, randomPropertyValue);
-			}
-		}
-
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
-			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
-				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
-			}
-		}
-		MaterialsPluginData materialsPluginData = materialsBuilder.build();
-		Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
-		builder.addPlugin(materialsPlugin);
-
-		// add the resources plugin
-		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
-
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
-		}
-
-		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
-			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-			Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
-		}
-
-		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
-		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
-		builder.addPlugin(resourcesPlugin);
-
-		// add the people plugin
-
-		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		PeoplePluginData peoplePluginData = peopleBuilder.build();
-		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-		builder.addPlugin(peoplePlugin);
-
-		// add the regions plugin
-		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionsBuilder.addRegion(testRegionId);
-		}
-		RegionsPluginData regionsPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
-		builder.addPlugin(regionPlugin);
-
 		// add the report plugin
 
 		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
@@ -177,7 +118,8 @@ public class MaterialsActionSupport {
 		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
 		builder.addPlugin(reportPlugin);
 
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
+				.setSeed(randomGenerator.nextLong()).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 		// add the stochastics plugin
 		builder.addPlugin(stochasticsPlugin);
@@ -201,7 +143,8 @@ public class MaterialsActionSupport {
 		}
 
 		// show that all actions were executed
-		Optional<TestScenarioReport> optionalTestScenarioReport = experimentPlanCompletionObserver.getActionCompletionReport(0);
+		Optional<TestScenarioReport> optionalTestScenarioReport = experimentPlanCompletionObserver
+				.getActionCompletionReport(0);
 		if (optionalTestScenarioReport.isEmpty()) {
 			throw new ContractException(NucleusError.SCENARIO_FAILED);
 		}
@@ -210,6 +153,93 @@ public class MaterialsActionSupport {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 		return result;
+	}
+
+	public static List<Plugin> setUpPluginsForTest(long seed) {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2819236410498978100L);
+
+		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
+
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			materialsBuilder.addMaterial(testMaterialId);
+		}
+
+		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
+		}
+
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
+		}
+
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.getPropertiesWithoutDefaultValues()) {
+			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId,
+						testMaterialsProducerPropertyId, randomPropertyValue);
+			}
+		}
+
+		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
+			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
+			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
+				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId,
+						testBatchPropertyId.getPropertyDefinition());
+			}
+		}
+		MaterialsPluginData materialsPluginData = materialsBuilder.build();
+		Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
+
+		// add the resources plugin
+		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
+
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			resourcesBuilder.addResource(testResourceId);
+			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
+		}
+
+		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
+			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
+			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
+			Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
+			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
+		}
+
+		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
+		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
+
+		// add the people plugin
+
+		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
+		PeoplePluginData peoplePluginData = peopleBuilder.build();
+		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+		// add the regions plugin
+		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			regionsBuilder.addRegion(testRegionId);
+		}
+		RegionsPluginData regionsPluginData = regionsBuilder.build();
+		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
+
+		return setUpPluginsForTest(materialsPlugin, resourcesPlugin, peoplePlugin, regionPlugin);
+	}
+
+	public static List<Plugin> setUpPluginsForTest(Plugin materialsPlugin, Plugin resourcesPlugin, Plugin peoplePlugin,
+			Plugin regionsPlugin) {
+		List<Plugin> pluginsToAdd = new ArrayList<>();
+
+		pluginsToAdd.add(materialsPlugin);
+		pluginsToAdd.add(resourcesPlugin);
+		pluginsToAdd.add(peoplePlugin);
+		pluginsToAdd.add(regionsPlugin);
+
+		return pluginsToAdd;
 	}
 
 }

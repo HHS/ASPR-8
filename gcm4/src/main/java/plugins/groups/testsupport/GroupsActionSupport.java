@@ -80,6 +80,34 @@ public class GroupsActionSupport {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
+		Builder builder = Simulation.builder();
+
+		for(Plugin plugin : setUpPluginsForTest(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed)) {
+			builder.addPlugin(plugin);
+		}
+
+		// add the stochastics plugin
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
+		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
+		builder.addPlugin(stochasticPlugin);
+
+		// add the action plugin
+		builder.addPlugin(testPlugin);
+
+		// build and execute the engine
+		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
+		builder.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).build().execute();
+
+		// show that all actions were executed
+		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
+			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
+		}
+	}
+
+
+	public static List<Plugin> setUpPluginsForTest(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup, long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
 		// create a list of people
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
@@ -88,8 +116,6 @@ public class GroupsActionSupport {
 
 		int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
 		int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
-
-		Builder builder = Simulation.builder();
 
 		// add the group plugin
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
@@ -125,7 +151,6 @@ public class GroupsActionSupport {
 		}
 		GroupsPluginData groupsPluginData = groupBuilder.build();
 		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
-		builder.addPlugin(groupPlugin);
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -134,26 +159,17 @@ public class GroupsActionSupport {
 		}
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-		builder.addPlugin(peoplePlugin);
 
+		return setUpPluginsForTest(groupPlugin, peoplePlugin);
+	}
 
+	public static List<Plugin> setUpPluginsForTest(Plugin groupsPlugin, Plugin peoplePlugin) {
+		List<Plugin> pluginsToAdd = new ArrayList<>();
 
-		// add the stochastics plugin
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
-		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		builder.addPlugin(stochasticPlugin);
+		pluginsToAdd.add(groupsPlugin);
+		pluginsToAdd.add(peoplePlugin);
 
-		// add the action plugin
-		builder.addPlugin(testPlugin);
-
-		// build and execute the engine
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-		builder.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput).build().execute();
-
-		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}
+		return pluginsToAdd;
 	}
 
 }
