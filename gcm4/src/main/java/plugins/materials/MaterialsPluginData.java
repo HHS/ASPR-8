@@ -69,7 +69,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds the batch.
-		 * Only acts upon non-duplicate inputs
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -89,17 +89,16 @@ public final class MaterialsPluginData implements PluginData {
 			validateMaterialIdNotNull(materialId);
 			validateBatchAmount(amount);
 			validateMaterialsProducerIdNotNull(materialsProducerId);
-			if (!data.batchIds.contains(batchId)) {
-				data.batchIds.add(batchId);
-				data.batchMaterials.put(batchId, materialId);
-				data.batchMaterialsProducers.put(batchId, materialsProducerId);
-				data.batchAmounts.put(batchId, amount);
-			}
+			data.batchIds.add(batchId);
+			data.batchMaterials.put(batchId, materialId);
+			data.batchMaterialsProducers.put(batchId, materialsProducerId);
+			data.batchAmounts.put(batchId, amount);
 			return this;
 		}
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -125,7 +124,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
-		 * Only acts upon non-duplicate inputs
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
@@ -135,14 +134,13 @@ public final class MaterialsPluginData implements PluginData {
 		public Builder addMaterial(final MaterialId materialId) {
 			ensureDataMutability();
 			validateMaterialIdNotNull(materialId);
-			if (!data.materialIds.contains(materialId)) {
-				data.materialIds.add(materialId);
-			}
+			data.materialIds.add(materialId);
 			return this;
 		}
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -158,6 +156,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the
@@ -261,7 +260,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
@@ -288,7 +287,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
-		 * Duplicate inputs override previous inputs
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
@@ -307,7 +306,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Set the batch property value.
-		 * Duplicate inputs override previous inputs
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -334,7 +333,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Set the materials producer property value.
-		 * Duplicate inputs override previous inputs
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -362,7 +361,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Set the materials producer resource value.
-		 * Duplicate inputs override previous inputs
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}

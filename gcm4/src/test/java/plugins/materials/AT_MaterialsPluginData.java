@@ -409,12 +409,31 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addBatch(batchId, materialId, amount, materialsProducerId)//
+																		// adding duplicate data to show that the value persists
+																		.addBatch(batchId, materialId, amount, materialsProducerId)
 																		.addMaterial(materialId)//
 																		.addMaterialsProducerId(materialsProducerId).build();//
 
 		assertTrue(materialsInitialData.getBatchIds().contains(batchId));
 		assertEquals(materialId, materialsInitialData.getBatchMaterial(batchId));
 		assertEquals(amount, materialsInitialData.getBatchAmount(batchId));
+		assertEquals(materialsProducerId, materialsInitialData.getBatchMaterialsProducer(batchId));
+
+		// idempotency tests
+
+		MaterialId materialId2 = TestMaterialId.MATERIAL_2;
+		double amount2 = 76.1;
+
+		materialsInitialData = MaterialsPluginData	.builder()//
+													.addBatch(batchId, materialId, amount, materialsProducerId)//
+													// replacing data to show that the value persists
+													.addBatch(batchId, materialId2, amount2, materialsProducerId)
+													.addMaterial(materialId2)//
+													.addMaterialsProducerId(materialsProducerId).build();//
+
+		assertTrue(materialsInitialData.getBatchIds().contains(batchId));
+		assertEquals(materialId2, materialsInitialData.getBatchMaterial(batchId));
+		assertEquals(amount2, materialsInitialData.getBatchAmount(batchId));
 		assertEquals(materialsProducerId, materialsInitialData.getBatchMaterialsProducer(batchId));
 
 		// precondition tests
@@ -453,6 +472,8 @@ public class AT_MaterialsPluginData {
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addBatch(batchId, materialId, amount, materialsProducerId)//
 																		.addBatchToStage(stageId, batchId)//
+																		// adding duplicate data to show that the value persists
+																		.addBatchToStage(stageId, batchId)
 																		.addStage(stageId, false, materialsProducerId)//
 																		.addMaterial(materialId)//
 																		.addMaterialsProducerId(materialsProducerId)//
@@ -479,18 +500,16 @@ public class AT_MaterialsPluginData {
 		MaterialId materialId = TestMaterialId.MATERIAL_1;
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
+																		.addMaterial(materialId)
+																		// adding duplicate data to show that the value persists
 																		.addMaterial(materialId)//
 																		.build();//
 
 		assertTrue(materialsInitialData.getMaterialIds().contains(materialId));
 
-		// precondition tests
-
 		// if the material id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().addMaterial(null));
 		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
-
-		// idempotency tests
 
 		// show that duplicated values persist
 		Set<MaterialId> expectedIds = new LinkedHashSet<>();
@@ -513,6 +532,8 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addMaterialsProducerId(materialsProducerId1)//
+																		// adding duplicate data to show that the value persists
+																		.addMaterialsProducerId(materialsProducerId1)
 																		.addMaterialsProducerId(materialsProducerId2)//
 																		.build();//
 
@@ -538,6 +559,8 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addStage(stageId, offered, materialsProducerId)//
+																		// adding duplicate data to show that the value persists
+																		.addStage(stageId, offered, materialsProducerId)
 																		.addMaterialsProducerId(materialsProducerId)//
 																		.build();//
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
@@ -547,12 +570,42 @@ public class AT_MaterialsPluginData {
 		offered = false;
 		materialsInitialData = MaterialsPluginData	.builder()//
 													.addStage(stageId, offered, materialsProducerId)//
+													// adding duplicate data to show that the value persists
+													.addStage(stageId, offered, materialsProducerId)
 													.addMaterialsProducerId(materialsProducerId)//
 													.build();//
 
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered, materialsInitialData.isStageOffered(stageId));
 		assertEquals(materialsProducerId, materialsInitialData.getStageMaterialsProducer(stageId));
+
+		// idempotency tests
+
+		boolean offered2 = true;
+		MaterialsProducerId materialsProducerId2 = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+
+		materialsInitialData = MaterialsPluginData	.builder()//
+													.addStage(stageId, offered, materialsProducerId)//
+													// replacing data to show that the value persists
+													.addStage(stageId, offered2, materialsProducerId2)
+													.addMaterialsProducerId(materialsProducerId2)//
+													.build();//
+		assertTrue(materialsInitialData.getStageIds().contains(stageId));
+		assertEquals(offered2, materialsInitialData.isStageOffered(stageId));
+		assertEquals(materialsProducerId2, materialsInitialData.getStageMaterialsProducer(stageId));
+
+		offered = true;
+		offered2 = false;
+		materialsInitialData = MaterialsPluginData	.builder()//
+													.addStage(stageId, offered, materialsProducerId)//
+													// replacing data to show that the value persists
+													.addStage(stageId, offered2, materialsProducerId2)
+													.addMaterialsProducerId(materialsProducerId2)//
+													.build();//
+
+		assertTrue(materialsInitialData.getStageIds().contains(stageId));
+		assertEquals(offered2, materialsInitialData.isStageOffered(stageId));
+		assertEquals(materialsProducerId2, materialsInitialData.getStageMaterialsProducer(stageId));
 
 		// precondition tests
 
@@ -792,13 +845,6 @@ public class AT_MaterialsPluginData {
 		// if the batch property value is null
 		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().setBatchPropertyValue(batchId, testBatchPropertyId, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-
-		// idempotency tests
-
-		// show that replaced values persist
-
-
-
 	}
 
 	@Test
