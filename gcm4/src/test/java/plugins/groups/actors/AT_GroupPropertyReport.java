@@ -25,6 +25,7 @@ import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyDefinitionInitialization;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
+import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
 import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
@@ -294,7 +295,7 @@ public class AT_GroupPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestReports.testConsumers(testPlugin, groupPropertyReport,
-				6092832510476200219L, setUpPluginsForTest(), outputConsumer);
+				6092832510476200219L, GroupsActionSupport.setUpPluginsForTest(0,0,0,6092832510476200219L), outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
@@ -536,36 +537,12 @@ public class AT_GroupPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, groupPropertyReport, 6092832510476200219L, setUpPluginsForTest(),
+		TestReports.testConsumers(testPlugin, groupPropertyReport, 6092832510476200219L, GroupsActionSupport.setUpPluginsForTest(0,0,0,6092832510476200219L),
 				outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 
-	}
-
-	private List<Plugin> setUpPluginsForTest() {
-		List<Plugin> pluginsToAdd = new ArrayList<>();
-		// add the group plugin
-		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
-		// add group types
-		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
-			groupBuilder.addGroupTypeId(testGroupTypeId);
-		}
-		// define group properties
-		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
-					testGroupPropertyId.getPropertyDefinition());
-		}
-
-		GroupsPluginData groupsPluginData = groupBuilder.build();
-		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
-		pluginsToAdd.add(groupPlugin);
-
-		// add the people plugin
-		pluginsToAdd.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-
-		return pluginsToAdd;
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {

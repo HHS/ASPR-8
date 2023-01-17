@@ -22,6 +22,7 @@ import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
+import plugins.groups.testsupport.GroupsActionSupport;
 import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
@@ -353,7 +354,6 @@ public class AT_GroupPopulationReport {
 	}
 
 	private List<Plugin> setUpPluginsForTest() {
-		List<Plugin> pluginsToAdd = new ArrayList<>();
 
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
@@ -387,7 +387,6 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
 		GroupsPluginData groupsPluginData = groupBuilder.build();
 		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
-		pluginsToAdd.add(groupPlugin);
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
@@ -397,9 +396,7 @@ public class AT_GroupPopulationReport {
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 
-		pluginsToAdd.add(peoplePlugin);
-
-		return pluginsToAdd;
+		return GroupsActionSupport.setUpPluginsForTest(groupPlugin, peoplePlugin);
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
