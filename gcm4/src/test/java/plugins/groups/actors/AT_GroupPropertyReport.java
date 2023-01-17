@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -15,13 +16,14 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyDefinitionInitialization;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
-import plugins.groups.testsupport.GroupsActionSupport;
+import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestAuxiliaryGroupPropertyId;
 import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
@@ -31,7 +33,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReports;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTestMethod;
 
@@ -287,9 +289,11 @@ public class AT_GroupPropertyReport {
 		builder.addProperty(TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK);
 		GroupPropertyReport groupPropertyReport = builder.build();
 
+		List<Plugin> plugins = GroupsTestPluginFactory.getStandardPlugins(0, 0, 0, 6092832510476200219L, testPlugin);
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
+
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-		TestReports.testConsumers(testPlugin, groupPropertyReport,
-				6092832510476200219L, GroupsActionSupport.setUpPluginsForTest(0,0,0,6092832510476200219L), outputConsumer);
+		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
@@ -531,8 +535,11 @@ public class AT_GroupPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, groupPropertyReport, 6092832510476200219L, GroupsActionSupport.setUpPluginsForTest(0,0,0,6092832510476200219L),
-				outputConsumer);
+		List<Plugin> plugins = GroupsTestPluginFactory.getStandardPlugins(0, 0, 0, 6092832510476200219L, testPlugin);
+
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
+
+		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));

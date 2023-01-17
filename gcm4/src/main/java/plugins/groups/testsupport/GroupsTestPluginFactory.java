@@ -11,20 +11,16 @@ import org.apache.commons.math3.util.FastMath;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
-import nucleus.Simulation;
-import nucleus.Simulation.Builder;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.support.GroupId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.reports.support.Report;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.errors.ContractException;
@@ -39,9 +35,9 @@ import util.wrappers.MultiKey;
  * 
  *
  */
-public class GroupsActionSupport {
+public final class GroupsTestPluginFactory {
 
-	private GroupsActionSupport() {
+	private GroupsTestPluginFactory() {
 	}
 
 	/**
@@ -83,45 +79,18 @@ public class GroupsActionSupport {
 	 */
 	public static void testConsumers(int initialPopulation, double expectedGroupsPerPerson,
 			double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		List<Plugin> pluginsToAdd = setUpPluginsForTest(initialPopulation, expectedGroupsPerPerson,
+		List<Plugin> pluginsToAdd = getStandardPlugins(initialPopulation, expectedGroupsPerPerson,
 				expectedPeoplePerGroup,
-				seed);
-
-		// add the stochastics plugin
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
-		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		pluginsToAdd.add(stochasticPlugin);
+				seed, testPlugin);
 		pluginsToAdd.add(testPlugin);
 
-		testConsumers(pluginsToAdd, null);
+		TestSimulation.executeSimulation(pluginsToAdd);
 	}
 
-	public static void testConsumers(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
-		Builder builder = Simulation.builder();
-
-		for (Plugin plugin : pluginsToAdd) {
-			builder.addPlugin(plugin);
-		}
-
-		// build and execute the engine
-		if (outputConsumer == null)
-			outputConsumer = new TestSimulationOutputConsumer();
-		builder.setOutputConsumer(outputConsumer)
-				.build()
-				.execute();
-
-		// show that all actions were executed
-		if (!outputConsumer.isComplete()) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}
-	}
-
-	public static List<Plugin> setUpPluginsForTest(int initialPopulation, double expectedGroupsPerPerson,
+	private static List<Plugin> _getStandardPlugins(int initialPopulation, double expectedGroupsPerPerson,
 			double expectedPeoplePerGroup, long seed) {
+
+		List<Plugin> pluginsToAdd = new ArrayList<>();
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		// create a list of people
@@ -177,16 +146,39 @@ public class GroupsActionSupport {
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 
-		return setUpPluginsForTest(groupPlugin, peoplePlugin);
-	}
+		// add the stochastics plugin
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
+				.setSeed(randomGenerator.nextLong()).build();
+		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
-	public static List<Plugin> setUpPluginsForTest(Plugin groupsPlugin, Plugin peoplePlugin) {
-		List<Plugin> pluginsToAdd = new ArrayList<>();
-
-		pluginsToAdd.add(groupsPlugin);
+		pluginsToAdd.add(groupPlugin);
 		pluginsToAdd.add(peoplePlugin);
+		pluginsToAdd.add(stochasticPlugin);
 
 		return pluginsToAdd;
 	}
 
+	public static List<Plugin> getStandardPlugins(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
+		List<Plugin> plugins = _getStandardPlugins(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup,
+				seed);
+		plugins.add(testPlugin);
+
+		return plugins;
+	}
+
+	public static List<Plugin> getStandardPlugins(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
+		List<Plugin> plugins = _getStandardPlugins(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup,
+				seed);
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		plugins.add(testPlugin);
+
+		return plugins;
+	}
 }

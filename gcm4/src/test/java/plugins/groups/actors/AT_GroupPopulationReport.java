@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,20 +13,20 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.groups.GroupsPlugin;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
-import plugins.groups.testsupport.GroupsActionSupport;
+import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
@@ -35,7 +34,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReports;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -168,8 +167,10 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, report, 5524610980534223950L, setUpPluginsForTest(),
-				outputConsumer);
+		List<Plugin> plugins = setUpPluginsForTest(testPlugin, 5524610980534223950L);
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+
+		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
@@ -275,8 +276,10 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.DAILY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, report, 4023600052052959521L, setUpPluginsForTest(),
-				outputConsumer);
+		List<Plugin> plugins = setUpPluginsForTest(testPlugin, 4023600052052959521L);
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+
+		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
@@ -345,20 +348,24 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.END_OF_SIMULATION);
+		List<Plugin> plugins = setUpPluginsForTest(testPlugin, 6092832510476200219L);
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-		TestReports.testConsumers(testPlugin, report, 6092832510476200219L, setUpPluginsForTest(),
-				outputConsumer);
+		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
-	private List<Plugin> setUpPluginsForTest() {
+	private List<Plugin> setUpPluginsForTest(Plugin testPlugin, long seed) {
 
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			people.add(new PersonId(i));
-		}
+		List<Plugin> plugins = GroupsTestPluginFactory.getStandardPlugins(10, 0, 3, 0, testPlugin);
+
+		plugins.removeIf((plugin) -> {
+			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
+
+			return pluginData instanceof GroupsPluginData;
+		});
 
 		// add the group plugin
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
@@ -387,16 +394,9 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
 		GroupsPluginData groupsPluginData = groupBuilder.build();
 		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
+		plugins.add(groupPlugin);
 
-		// add the people plugin
-		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		for (PersonId personId : people) {
-			peopleBuilder.addPersonId(personId);
-		}
-		PeoplePluginData peoplePluginData = peopleBuilder.build();
-		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-
-		return GroupsActionSupport.setUpPluginsForTest(groupPlugin, peoplePlugin);
+		return plugins;
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
