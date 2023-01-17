@@ -327,7 +327,8 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Defines a resource property
+		 * Defines a resource property.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
@@ -339,9 +340,6 @@ public final class ResourcesPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
 		 *
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             </li> if a resource property definition for the given
-		 *             resource id and property id was previously defined.
 		 * 
 		 */
 		public Builder defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition) {
@@ -349,7 +347,6 @@ public final class ResourcesPluginData implements PluginData {
 			validateResourceIdNotNull(resourceId);
 			validateResourcePropertyIdNotNull(resourcePropertyId);
 			validateResourcePropertyDefintionNotNull(propertyDefinition);
-			validateResourcePropertyIsNotDefined(data, resourceId, resourcePropertyId);
 			Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
@@ -360,7 +357,8 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a person's initial resource level
+		 * Sets a person's initial resource level.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
@@ -369,9 +367,7 @@ public final class ResourcesPluginData implements PluginData {
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 		 *             if the resource amount is negative</li> *
-		 *             <li>{@linkplain ResourceError#DUPLICATE_PERSON_RESOURCE_LEVEL_ASSIGNMENT}
-		 *             if the person's resource level was previously
-		 *             assigned</li>
+		 *
 		 */
 
 		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {

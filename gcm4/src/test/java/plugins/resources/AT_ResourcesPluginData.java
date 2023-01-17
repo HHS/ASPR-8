@@ -185,7 +185,9 @@ public final class AT_ResourcesPluginData {
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
+				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition)
+				// adding duplicate data to show that values persist
+						.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
 			}
 		}
 
@@ -224,13 +226,19 @@ public final class AT_ResourcesPluginData {
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
 
-		// if a resource property definition for the given resource id and
-		// property id was previously defined.
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition).defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
+		// idempotency tests
 
+		TestResourcePropertyId resourcePropertyId2 = TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE;
+		PropertyDefinition propertyDefinition2 = TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE.getPropertyDefinition();
+		builder.addResource(resourceId);
+		builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)
+				// replacing data to show that the value persists
+				.defineResourceProperty(resourceId, resourcePropertyId2, propertyDefinition2);
+
+		resourceInitialData = builder.build();
+		PropertyDefinition expectedPropertyDefinition = resourcePropertyId2.getPropertyDefinition();
+		PropertyDefinition actualPropertyDefinition = resourceInitialData.getResourcePropertyDefinition(resourceId, resourcePropertyId2);
+		assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 	}
 
 	@Test
