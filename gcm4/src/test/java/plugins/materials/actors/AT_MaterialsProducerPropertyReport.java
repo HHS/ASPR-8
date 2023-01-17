@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -31,8 +29,8 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
-import plugins.reports.testsupport.TestReports;
 import plugins.reports.support.SimpleReportId;
+import plugins.reports.testsupport.TestReports;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
