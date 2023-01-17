@@ -24,6 +24,7 @@ import plugins.groups.support.GroupId;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
+import plugins.reports.support.Report;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
 import util.errors.ContractException;
@@ -85,23 +86,31 @@ public class GroupsActionSupport {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		Builder builder = Simulation.builder();
-
-		for (Plugin plugin : setUpPluginsForTest(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup,
-				seed)) {
-			builder.addPlugin(plugin);
-		}
+		List<Plugin> pluginsToAdd = setUpPluginsForTest(initialPopulation, expectedGroupsPerPerson,
+				expectedPeoplePerGroup,
+				seed);
 
 		// add the stochastics plugin
 		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
 				.setSeed(randomGenerator.nextLong()).build();
 		Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		builder.addPlugin(stochasticPlugin);
+		pluginsToAdd.add(stochasticPlugin);
+		pluginsToAdd.add(testPlugin);
+
+		testConsumers(pluginsToAdd, null);
+	}
+
+	public static void testConsumers(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
+		Builder builder = Simulation.builder();
+
+		for (Plugin plugin : pluginsToAdd) {
+			builder.addPlugin(plugin);
+		}
 
 		// build and execute the engine
-		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		if (outputConsumer == null)
+			outputConsumer = new TestSimulationOutputConsumer();
 		builder.setOutputConsumer(outputConsumer)
-				.addPlugin(testPlugin)
 				.build()
 				.execute();
 
