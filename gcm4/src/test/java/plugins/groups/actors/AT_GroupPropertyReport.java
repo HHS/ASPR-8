@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -130,7 +132,6 @@ public class AT_GroupPropertyReport {
 
 		// add the action plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		TestReports<GroupPropertyReport> testReports = new TestReports<>(REPORT_ID, REPORT_HOURLY_HEADER);
 
 		// have the agent add a new group of type 1 with three people
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(getTime(0, 0, 0), (c) -> {
@@ -209,65 +210,76 @@ public class AT_GroupPropertyReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
 		// build the expected output
 
-		testReports.addExpectedHourlyReportItem(0, 0, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 3);
-		testReports.addExpectedHourlyReportItem(0, 0, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 3);
-		testReports.addExpectedHourlyReportItem(0, 1, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 2);
-		testReports.addExpectedHourlyReportItem(0, 1, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 1);
-		testReports.addExpectedHourlyReportItem(0, 1, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2);
-		testReports.addExpectedHourlyReportItem(0, 1, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1);
-		testReports.addExpectedHourlyReportItem(0, 2, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedHourlyReportItem(0, 2, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedHourlyReportItem(0, 2, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2);
-		testReports.addExpectedHourlyReportItem(0, 2, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1);
-		testReports.addExpectedHourlyReportItem(0, 3, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedHourlyReportItem(0, 3, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedHourlyReportItem(0, 3, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2);
-		testReports.addExpectedHourlyReportItem(0, 3, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1);
-		testReports.addExpectedHourlyReportItem(0, 4, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedHourlyReportItem(0, 4, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedHourlyReportItem(0, 4, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2);
-		testReports.addExpectedHourlyReportItem(0, 4, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1);
-		testReports.addExpectedHourlyReportItem(0, 5, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 2);
-		testReports.addExpectedHourlyReportItem(0, 5, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 1);
-		testReports.addExpectedHourlyReportItem(0, 5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 123, 2);
-		testReports.addExpectedHourlyReportItem(0, 5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 77, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 3), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 3), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 1, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 1, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 1, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 1, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 2, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 2, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 2, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 2, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 3, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 3, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 3, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 3, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 4, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 4, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 4, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 4, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 45, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 5, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, false, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 5, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 123, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 0, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 77, 1), 1);
 
 		if (includeNewProperties) {
-			testReports.addExpectedHourlyReportItem(0, 1, 1, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
-					TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3);
-			testReports.addExpectedHourlyReportItem(0, 2, 1, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
-					TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3);
-			testReports.addExpectedHourlyReportItem(0, 3, 1, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
-					TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3);
-			testReports.addExpectedHourlyReportItem(0, 4, 1, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
-					TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3);
-			testReports.addExpectedHourlyReportItem(0, 5, 1, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
-					TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3);
+			expectedReportItems.put(
+					getReportItem(ReportPeriod.HOURLY, 0, 1, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
+							TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(
+					getReportItem(ReportPeriod.HOURLY, 0, 2, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
+							TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(
+					getReportItem(ReportPeriod.HOURLY, 0, 3, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
+							TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(
+					getReportItem(ReportPeriod.HOURLY, 0, 4, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
+							TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
+			expectedReportItems.put(
+					getReportItem(ReportPeriod.HOURLY, 0, 5, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1,
+							TestAuxiliaryGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 0, 3),
+					1);
 		}
 
 		// build the report
@@ -281,11 +293,11 @@ public class AT_GroupPropertyReport {
 		GroupPropertyReport groupPropertyReport = builder.build();
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-		testReports.testConsumers(testPlugin, groupPropertyReport,
+		TestReports.testConsumers(testPlugin, groupPropertyReport,
 				6092832510476200219L, setUpPluginsForTest(), outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
-		assertEquals(testReports.getExpectedReportItems(), outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	@Test
@@ -298,7 +310,6 @@ public class AT_GroupPropertyReport {
 		 * collected in an output consumer and compared to the expected output.
 		 */
 
-		TestReports<GroupPropertyReport> testReports = new TestReports<>(REPORT_ID, REPORT_DAILY_HEADER);
 		// add the action plugin
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -365,150 +376,153 @@ public class AT_GroupPropertyReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
+		// create a container to hold expected results
+		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
+
 		// build the expected output
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2);
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2), 1);
 
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 1);
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1);
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1), 1);
 
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1);
-		testReports.addExpectedReportItem(0, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1), 1);
 
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2);
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2), 1);
 
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2);
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2);
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 2);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 2), 1);
 
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1);
-		testReports.addExpectedReportItem(1, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1), 1);
 
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2), 1);
 
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1), 1);
 
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1);
-		testReports.addExpectedReportItem(2, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 2, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1), 1);
 
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2), 1);
 
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1), 1);
 
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1);
-		testReports.addExpectedReportItem(3, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 3, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1), 1);
 
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2), 1);
 
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1), 1);
 
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1);
-		testReports.addExpectedReportItem(4, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 4, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1), 1);
 
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_1,
-				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK, true, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK, 45, 2), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1,
+				TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK, 16.5, 2), 1);
 
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 1);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, true, 1);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 127, 1);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_2,
-				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK, true, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 17, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK, 127, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 0.0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2,
+				TestGroupPropertyId.GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK, 800.0, 1), 1);
 
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1);
-		testReports.addExpectedReportItem(5, 1, TestGroupTypeId.GROUP_TYPE_3,
-				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK, false, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK, 0, 1), 1);
+		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_3,
+				TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK, 0.0, 1), 1);
 
 		// build the report with all properties selected
 		GroupPropertyReport.Builder builder = GroupPropertyReport.builder();
@@ -522,13 +536,11 @@ public class AT_GroupPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		testReports.testConsumers(testPlugin, groupPropertyReport, 6092832510476200219L, setUpPluginsForTest(),
+		TestReports.testConsumers(testPlugin, groupPropertyReport, 6092832510476200219L, setUpPluginsForTest(),
 				outputConsumer);
-		// testConsumers(testPlugin, groupPropertyReport, 6092832510476200219L,
-		// outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
-		assertEquals(testReports.getExpectedReportItems(), outputConsumer.getOutputItems(ReportItem.class));
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 
 	}
 
@@ -554,6 +566,29 @@ public class AT_GroupPropertyReport {
 		pluginsToAdd.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 
 		return pluginsToAdd;
+	}
+
+	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
+		ReportItem.Builder builder = ReportItem.builder();
+		builder.setReportId(REPORT_ID);
+
+		switch (reportPeriod) {
+			case DAILY:
+				builder.setReportHeader(REPORT_DAILY_HEADER);
+				break;
+			case HOURLY:
+				builder.setReportHeader(REPORT_HOURLY_HEADER);
+				break;
+			case END_OF_SIMULATION:// fall through
+			default:
+				throw new RuntimeException("unhandled case " + reportPeriod);
+
+		}
+
+		for (Object value : values) {
+			builder.addValue(value);
+		}
+		return builder.build();
 	}
 
 	private static final ReportId REPORT_ID = new SimpleReportId("group property report");
