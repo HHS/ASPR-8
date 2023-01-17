@@ -233,10 +233,6 @@ public final class AT_BatchStatusReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		// Set<ReportItem> actualReportItems =
-		// MaterialsActionSupport.testConsumers(8914112012010329946L,
-		// testPlugin, new
-		// BatchStatusReport(REPORT_ID)::init);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
