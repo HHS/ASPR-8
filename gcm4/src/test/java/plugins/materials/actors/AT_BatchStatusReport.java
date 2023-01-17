@@ -22,8 +22,6 @@ import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
-import plugins.materials.MaterialsPlugin;
-import plugins.materials.MaterialsPluginData;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.BatchConstructionInfo;
 import plugins.materials.support.BatchId;
@@ -31,32 +29,21 @@ import plugins.materials.support.BatchPropertyId;
 import plugins.materials.support.MaterialId;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
+import plugins.materials.testsupport.MaterialsActionSupport;
 import plugins.materials.testsupport.TestBatchConstructionInfo;
 import plugins.materials.testsupport.TestBatchPropertyId;
 import plugins.materials.testsupport.TestMaterialId;
 import plugins.materials.testsupport.TestMaterialsProducerId;
-import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
-import plugins.regions.RegionsPlugin;
-import plugins.regions.RegionsPluginData;
-import plugins.regions.testsupport.TestRegionId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
 import plugins.reports.testsupport.TestReports;
-import plugins.resources.ResourcesPlugin;
-import plugins.resources.ResourcesPluginData;
-import plugins.resources.testsupport.TestResourceId;
-import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.stochastics.StochasticsDataManager;
-import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
-import util.random.RandomGeneratorProvider;
 
 public final class AT_BatchStatusReport {
 
@@ -254,91 +241,11 @@ public final class AT_BatchStatusReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		TestReports.testConsumers(testPlugin, new BatchStatusReport(REPORT_ID), 2819236410498978100L,
-				setUpPluginsForTest(2819236410498978100L),
+				MaterialsActionSupport.setUpPluginsForTest(2819236410498978100L),
 				outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
-	}
-
-	private List<Plugin> setUpPluginsForTest(long seed) {
-		List<Plugin> pluginsToAdd = new ArrayList<>();
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2819236410498978100L);
-
-		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
-
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			materialsBuilder.addMaterial(testMaterialId);
-		}
-
-		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
-		}
-
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
-				.values()) {
-			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
-					testMaterialsProducerPropertyId.getPropertyDefinition());
-		}
-
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
-				.getPropertiesWithoutDefaultValues()) {
-			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId,
-						testMaterialsProducerPropertyId, randomPropertyValue);
-			}
-		}
-
-		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
-			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
-			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
-				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId,
-						testBatchPropertyId.getPropertyDefinition());
-			}
-		}
-		MaterialsPluginData materialsPluginData = materialsBuilder.build();
-		Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
-		pluginsToAdd.add(materialsPlugin);
-
-		// add the resources plugin
-		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
-
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			resourcesBuilder.addResource(testResourceId);
-			resourcesBuilder.setResourceTimeTracking(testResourceId, testResourceId.getTimeTrackingPolicy());
-		}
-
-		for (TestResourcePropertyId testResourcePropertyId : TestResourcePropertyId.values()) {
-			TestResourceId testResourceId = testResourcePropertyId.getTestResourceId();
-			PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-			Object propertyValue = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-			resourcesBuilder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-			resourcesBuilder.setResourcePropertyValue(testResourceId, testResourcePropertyId, propertyValue);
-		}
-
-		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
-		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
-		pluginsToAdd.add(resourcesPlugin);
-
-		// add the people plugin
-
-		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		PeoplePluginData peoplePluginData = peopleBuilder.build();
-		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-		pluginsToAdd.add(peoplePlugin);
-
-		// add the regions plugin
-		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			regionsBuilder.addRegion(testRegionId);
-		}
-		RegionsPluginData regionsPluginData = regionsBuilder.build();
-		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
-		pluginsToAdd.add(regionPlugin);
-
-		return pluginsToAdd;
 	}
 
 	private static ReportItem getReportItem(List<Object> values) {
