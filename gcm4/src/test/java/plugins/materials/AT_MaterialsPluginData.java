@@ -407,11 +407,13 @@ public class AT_MaterialsPluginData {
 		double amount = 16.7;
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_3;
 
+		/*
+		 * adding duplicate data to show that the value persists
+		 */
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addBatch(batchId, materialId, amount, materialsProducerId)//
-																		// adding duplicate data to show that the value persists
-																		.addBatch(batchId, materialId, amount, materialsProducerId)
-																		.addMaterial(materialId)//
+
+																		.addBatch(batchId, materialId, amount, materialsProducerId).addMaterial(materialId)//
 																		.addMaterialsProducerId(materialsProducerId).build();//
 
 		assertTrue(materialsInitialData.getBatchIds().contains(batchId));
@@ -426,9 +428,9 @@ public class AT_MaterialsPluginData {
 
 		materialsInitialData = MaterialsPluginData	.builder()//
 													.addBatch(batchId, materialId, amount, materialsProducerId)//
-													// replacing data to show that the value persists
-													.addBatch(batchId, materialId2, amount2, materialsProducerId)
-													.addMaterial(materialId2)//
+													// replacing data to show
+													// that the value persists
+													.addBatch(batchId, materialId2, amount2, materialsProducerId).addMaterial(materialId2)//
 													.addMaterialsProducerId(materialsProducerId).build();//
 
 		assertTrue(materialsInitialData.getBatchIds().contains(batchId));
@@ -472,9 +474,16 @@ public class AT_MaterialsPluginData {
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addBatch(batchId, materialId, amount, materialsProducerId)//
 																		.addBatchToStage(stageId, batchId)//
-																		// adding duplicate data to show that the value persists
-																		.addBatchToStage(stageId, batchId)
-																		.addStage(stageId, false, materialsProducerId)//
+																		// adding
+																		// duplicate
+																		// data
+																		// to
+																		// show
+																		// that
+																		// the
+																		// value
+																		// persists
+																		.addBatchToStage(stageId, batchId).addStage(stageId, false, materialsProducerId)//
 																		.addMaterial(materialId)//
 																		.addMaterialsProducerId(materialsProducerId)//
 																		.build();//
@@ -501,7 +510,15 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addMaterial(materialId)
-																		// adding duplicate data to show that the value persists
+																		// adding
+																		// duplicate
+																		// data
+																		// to
+																		// show
+																		// that
+																		// the
+																		// value
+																		// persists
 																		.addMaterial(materialId)//
 																		.build();//
 
@@ -516,8 +533,7 @@ public class AT_MaterialsPluginData {
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 		for (MaterialId matId : TestMaterialId.values()) {
 			expectedIds.add(matId);
-			builder.addMaterial(matId)
-					.addMaterial(matId);
+			builder.addMaterial(matId).addMaterial(matId);
 		}
 		materialsInitialData = builder.build();
 		Set<MaterialId> actualIds = materialsInitialData.getMaterialIds();
@@ -532,9 +548,16 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addMaterialsProducerId(materialsProducerId1)//
-																		// adding duplicate data to show that the value persists
-																		.addMaterialsProducerId(materialsProducerId1)
-																		.addMaterialsProducerId(materialsProducerId2)//
+																		// adding
+																		// duplicate
+																		// data
+																		// to
+																		// show
+																		// that
+																		// the
+																		// value
+																		// persists
+																		.addMaterialsProducerId(materialsProducerId1).addMaterialsProducerId(materialsProducerId2)//
 																		.build();//
 
 		// show that the materials producer ids were added
@@ -559,9 +582,16 @@ public class AT_MaterialsPluginData {
 
 		MaterialsPluginData materialsInitialData = MaterialsPluginData	.builder()//
 																		.addStage(stageId, offered, materialsProducerId)//
-																		// adding duplicate data to show that the value persists
-																		.addStage(stageId, offered, materialsProducerId)
-																		.addMaterialsProducerId(materialsProducerId)//
+																		// adding
+																		// duplicate
+																		// data
+																		// to
+																		// show
+																		// that
+																		// the
+																		// value
+																		// persists
+																		.addStage(stageId, offered, materialsProducerId).addMaterialsProducerId(materialsProducerId)//
 																		.build();//
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered, materialsInitialData.isStageOffered(stageId));
@@ -570,9 +600,10 @@ public class AT_MaterialsPluginData {
 		offered = false;
 		materialsInitialData = MaterialsPluginData	.builder()//
 													.addStage(stageId, offered, materialsProducerId)//
-													// adding duplicate data to show that the value persists
-													.addStage(stageId, offered, materialsProducerId)
-													.addMaterialsProducerId(materialsProducerId)//
+													// adding duplicate data to
+													// show that the value
+													// persists
+													.addStage(stageId, offered, materialsProducerId).addMaterialsProducerId(materialsProducerId)//
 													.build();//
 
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
@@ -586,9 +617,9 @@ public class AT_MaterialsPluginData {
 
 		materialsInitialData = MaterialsPluginData	.builder()//
 													.addStage(stageId, offered, materialsProducerId)//
-													// replacing data to show that the value persists
-													.addStage(stageId, offered2, materialsProducerId2)
-													.addMaterialsProducerId(materialsProducerId2)//
+													// replacing data to show
+													// that the value persists
+													.addStage(stageId, offered2, materialsProducerId2).addMaterialsProducerId(materialsProducerId2)//
 													.build();//
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
 		assertEquals(offered2, materialsInitialData.isStageOffered(stageId));
@@ -598,9 +629,9 @@ public class AT_MaterialsPluginData {
 		offered2 = false;
 		materialsInitialData = MaterialsPluginData	.builder()//
 													.addStage(stageId, offered, materialsProducerId)//
-													// replacing data to show that the value persists
-													.addStage(stageId, offered2, materialsProducerId2)
-													.addMaterialsProducerId(materialsProducerId2)//
+													// replacing data to show
+													// that the value persists
+													.addStage(stageId, offered2, materialsProducerId2).addMaterialsProducerId(materialsProducerId2)//
 													.build();//
 
 		assertTrue(materialsInitialData.getStageIds().contains(stageId));
@@ -629,7 +660,7 @@ public class AT_MaterialsPluginData {
 		}
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			// adding duplicate data to show that the value persists
-			builder.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition())
+			builder	.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition())
 					.defineBatchProperty(testBatchPropertyId.getTestMaterialId(), testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
 		}
 		MaterialsPluginData materialsInitialData = builder.build();//
@@ -641,38 +672,34 @@ public class AT_MaterialsPluginData {
 			PropertyDefinition expectedPropertyDefinition = testBatchPropertyId.getPropertyDefinition();
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
-
-		// precondition tests
-
+		// idempotency tests
 		TestBatchPropertyId testBatchPropertyId = TestBatchPropertyId.BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK;
 		TestMaterialId testMaterialId = testBatchPropertyId.getTestMaterialId();
 		PropertyDefinition propertyDefinition = testBatchPropertyId.getPropertyDefinition();
-
-		// if the batch property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, null, propertyDefinition));
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// if the material id is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(null, testBatchPropertyId, propertyDefinition));
-		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
-
-		// if the property definition is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, testBatchPropertyId, null));
-		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// idempotency tests
 
 		// show that replaced values persist
 		TestBatchPropertyId testBatchPropertyId2 = TestBatchPropertyId.BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK;
 		PropertyDefinition propertyDefinition2 = testBatchPropertyId2.getPropertyDefinition();
 		builder.addMaterial(testMaterialId);
-		builder.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition)
-				.defineBatchProperty(testMaterialId, testBatchPropertyId2, propertyDefinition2);
+		builder.defineBatchProperty(testMaterialId, testBatchPropertyId, propertyDefinition).defineBatchProperty(testMaterialId, testBatchPropertyId2, propertyDefinition2);
 		materialsInitialData = builder.build();
 		assertTrue(materialsInitialData.getBatchPropertyIds(testMaterialId).contains(testBatchPropertyId2));
 		PropertyDefinition actualPropertyDefinition2 = materialsInitialData.getBatchPropertyDefinition(testMaterialId, testBatchPropertyId2);
 		PropertyDefinition expectedPropertyDefinition2 = testBatchPropertyId2.getPropertyDefinition();
 		assertEquals(expectedPropertyDefinition2, actualPropertyDefinition2);
+
+		// precondition test: if the batch property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, null, propertyDefinition));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+
+		// precondition test: if the material id is null
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(null, testBatchPropertyId, propertyDefinition));
+		assertEquals(MaterialsError.NULL_MATERIAL_ID, contractException.getErrorType());
+
+		// precondition test: if the property definition is null
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineBatchProperty(testMaterialId, testBatchPropertyId, null));
+		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -682,7 +709,7 @@ public class AT_MaterialsPluginData {
 
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
 			// adding duplicate data to show that the value persists
-			builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition())
+			builder	.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition())
 					.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 		MaterialsPluginData materialsInitialData = builder.build();//
@@ -694,30 +721,27 @@ public class AT_MaterialsPluginData {
 			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 		}
 
-		// precondition tests
-
 		TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK;
 
 		PropertyDefinition propertyDefinition = testMaterialsProducerPropertyId.getPropertyDefinition();
-
-		// if the materials producer property id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineMaterialsProducerProperty(null, propertyDefinition));
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// if the property definition is null
-		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineMaterialsProducerProperty(testMaterialsProducerPropertyId, null));
-		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
 		// idempotency tests
 
 		// show that replaced values persist
 		PropertyDefinition propertyDefinition2 = testMaterialsProducerPropertyId.getPropertyDefinition();
-		builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition)
-				.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition2);
+		builder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition).defineMaterialsProducerProperty(testMaterialsProducerPropertyId, propertyDefinition2);
 		materialsInitialData = builder.build();
 		assertTrue(materialsInitialData.getMaterialsProducerPropertyIds().contains(testMaterialsProducerPropertyId));
 		PropertyDefinition actualPropertyDefinition2 = materialsInitialData.getMaterialsProducerPropertyDefinition(testMaterialsProducerPropertyId);
 		assertEquals(propertyDefinition2, actualPropertyDefinition2);
+
+		// precondition test: if the materials producer property id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineMaterialsProducerProperty(null, propertyDefinition));
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+
+		// precondition test: if the property definition is null
+		contractException = assertThrows(ContractException.class, () -> MaterialsPluginData.builder().defineMaterialsProducerProperty(testMaterialsProducerPropertyId, null));
+		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -757,7 +781,7 @@ public class AT_MaterialsPluginData {
 				if (required || randomGenerator.nextBoolean()) {
 					Object propertyValue = testBatchPropertyId.getRandomPropertyValue(randomGenerator);
 					// adding duplicate data to show that the value persists
-					builder.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue)
+					builder	.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue)//
 							.setBatchPropertyValue(batchId, testBatchPropertyId, propertyValue);
 					expectedBatchPropertyValues.put(multiKey, propertyValue);
 				}
@@ -923,7 +947,6 @@ public class AT_MaterialsPluginData {
 			assertEquals(expectedValue, actualValue);
 		}
 
-
 		// precondition tests
 
 		TestMaterialsProducerId testMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
@@ -962,7 +985,8 @@ public class AT_MaterialsPluginData {
 				if (randomGenerator.nextBoolean()) {
 					level = randomGenerator.nextInt(100);
 					// adding duplicate data to show that the value persists
-					builder.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, level)
+					builder//
+							.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, level)//
 							.setMaterialsProducerResourceLevel(testMaterialsProducerId, testResourceId, level);
 				}
 				expectedResourceLevels.put(multiKey, level);
