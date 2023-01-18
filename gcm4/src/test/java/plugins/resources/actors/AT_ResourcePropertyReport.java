@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
@@ -14,12 +14,13 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReports;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourcePropertyId;
 import plugins.resources.support.ResourcePropertyInitialization;
@@ -29,7 +30,6 @@ import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
-import util.random.RandomGeneratorProvider;
 
 public class AT_ResourcePropertyReport {
 
@@ -67,7 +67,6 @@ public class AT_ResourcePropertyReport {
 	@Test
 	@UnitTestMethod(target = ResourcePropertyReport.class, name = "init", args = { ActorContext.class })
 	public void testInit() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8914112012010329946L);
 		int initialPopulation = 20;
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -195,9 +194,11 @@ public class AT_ResourcePropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, new ResourcePropertyReport(REPORT_ID),
-				randomGenerator.nextLong(), ResourcesActionSupport.setUpPluginsForTest(initialPopulation, 8914112012010329946L),
-				outputConsumer);
+		List<Plugin> pluginsToAdd = ResourcesActionSupport.setUpPluginsForTest(initialPopulation, 8914112012010329946L);
+		pluginsToAdd.add(testPlugin);
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new ResourcePropertyReport(REPORT_ID)));
+		
+		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
