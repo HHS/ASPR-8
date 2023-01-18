@@ -198,9 +198,19 @@ public class AT_GroupsTestPluginFactory {
 
 		assertEquals(groupsPluginData.getGroupIds().size(), groupCount);
 		assertEquals(groupsPluginData.getPersonCount(), initialPopulation);
+
+		double numGroups = 0;
 		for (PersonId person : people) {
-			assertTrue(groupsPluginData.getGroupsForPerson(person).size() < groupCount);
+			numGroups += groupsPluginData.getGroupsForPerson(person).size();
 		}
+
+		double actualGroupsPerPerson = numGroups / initialPopulation;
+
+		double lowerBound = expectedGroupsPerPerson * 0.9;
+		double upperBound = expectedGroupsPerPerson * 1.1;
+
+		assertTrue(actualGroupsPerPerson <= upperBound);
+		assertTrue(actualGroupsPerPerson > lowerBound);
 	}
 
 	@Test
