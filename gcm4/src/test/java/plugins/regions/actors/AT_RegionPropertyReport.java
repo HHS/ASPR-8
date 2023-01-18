@@ -16,6 +16,7 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
@@ -32,7 +33,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReports;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.util.properties.PropertyDefinition;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
@@ -218,8 +219,10 @@ public class AT_RegionPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, new RegionPropertyReport(REPORT_ID), 8833508541323194123L, pluginsToAdd,
-				outputConsumer);
+		pluginsToAdd.add(testPlugin);
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionPropertyReport(REPORT_ID)));
+
+		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
