@@ -25,6 +25,7 @@ import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.GlobalPropertyInitialization;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
+import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -60,7 +61,6 @@ public class AT_GlobalPropertyReport {
 		 * compared for equality.
 		 */
 
-		List<Plugin> pluginsToAdd = new ArrayList<>();
 
 		// add the global property definitions
 		GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();
@@ -79,7 +79,6 @@ public class AT_GlobalPropertyReport {
 		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition);
 
 		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
-		pluginsToAdd.add(GlobalPropertiesPlugin.getGlobalPropertiesPlugin(globalPropertiesPluginData));
 
 		/*
 		 * Define two more properties that are not included in the plugin data
@@ -178,9 +177,9 @@ public class AT_GlobalPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(globalPropertyReport));
-		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
+		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPlugin).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(globalPropertyReport));
+		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
