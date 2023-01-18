@@ -14,7 +14,6 @@ import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -61,9 +60,8 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 		assertTrue(executed.getValue());
 
 	}

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
@@ -206,7 +205,6 @@ public class AT_GroupPropertyReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
 		// build the expected output
@@ -289,7 +287,7 @@ public class AT_GroupPropertyReport {
 		builder.addProperty(TestGroupTypeId.GROUP_TYPE_2, TestGroupPropertyId.GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK);
 		GroupPropertyReport groupPropertyReport = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPlugin).getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
@@ -373,7 +371,6 @@ public class AT_GroupPropertyReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// create a container to hold expected results
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -535,7 +532,7 @@ public class AT_GroupPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPlugin).getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
 
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
 

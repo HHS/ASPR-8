@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
@@ -126,7 +125,6 @@ public class AT_GroupPopulationReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// place the initial data into the expected output consumer
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -165,7 +163,7 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> plugins = getPlugins(testPlugin, 5524610980534223950L);
+		List<Plugin> plugins = getPlugins(testPluginData, 5524610980534223950L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
@@ -244,7 +242,6 @@ public class AT_GroupPopulationReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// create a container to hold expected results
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -274,7 +271,7 @@ public class AT_GroupPopulationReport {
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.DAILY);
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> plugins = getPlugins(testPlugin, 4023600052052959521L);
+		List<Plugin> plugins = getPlugins(testPluginData, 4023600052052959521L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
@@ -338,15 +335,13 @@ public class AT_GroupPopulationReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
 		// place the initial data into the expected output consumer
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.END_OF_SIMULATION);
-		List<Plugin> plugins = getPlugins(testPlugin, 6092832510476200219L);
+		List<Plugin> plugins = getPlugins(testPluginData, 6092832510476200219L);
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
@@ -355,7 +350,7 @@ public class AT_GroupPopulationReport {
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
-	private List<Plugin> getPlugins(Plugin testPlugin, long seed) {
+	private List<Plugin> getPlugins(TestPluginData testPluginData, long seed) {
 
 		
 		// add the group plugin
@@ -385,7 +380,7 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
 		GroupsPluginData groupsPluginData = groupBuilder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(10, 0, 3, seed, testPlugin).setGroupsPluginData(groupsPluginData).getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(10, 0, 3, seed, testPluginData).setGroupsPluginData(groupsPluginData).getPlugins();
 		
 		return plugins;
 	}

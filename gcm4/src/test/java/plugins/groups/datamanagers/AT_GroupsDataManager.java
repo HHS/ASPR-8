@@ -26,7 +26,6 @@ import nucleus.DataManagerContext;
 import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.GroupsPluginData;
@@ -107,9 +106,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8204685090168544876L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8204685090168544876L, testPluginData).getPlugins());
 
 		// precondition test: if the group id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 1164752712088660908L, (c) -> {
@@ -177,9 +175,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2733223420384068616L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2733223420384068616L, testPluginData).getPlugins());
 
 		/* precondition test: if the person id is null */
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 667206327628089405L, (c) -> {
@@ -296,9 +293,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(40, 5.0, 20.0, 5865498314869329641L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(40, 5.0, 20.0, 5865498314869329641L, testPluginData).getPlugins());
 
 		// precondition test: if the group construction info is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(40, 5.0, 20.0, 5229546252018518751L, (c) -> {
@@ -398,8 +394,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 8137195527612056024L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 8137195527612056024L, testPluginData).getPlugins());
 
 		// precondition tests
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5229546252018518751L, (c) -> {
@@ -469,8 +464,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2733223420384068616L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2733223420384068616L, testPluginData).getPlugins());
 
 		// precondition tests: if the person id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2886293572900391101L, (c) -> {
@@ -549,8 +543,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 2946647177720026906L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 2946647177720026906L, testPluginData).getPlugins());
 	}
 
 	@Test
@@ -755,8 +748,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 4653012806568812031L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 4653012806568812031L, testPluginData).getPlugins());
 
 		/* precondition test if the group id is null */
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 3285943689624298882L, (c) -> {
@@ -1268,8 +1260,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 7313144886869436931L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 7313144886869436931L, testPluginData).getPlugins());
 
 		/*
 		 * precondition test: if the group id is null
@@ -1413,8 +1404,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 649112407534985381L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 649112407534985381L, testPluginData).getPlugins());
 
 		/*
 		 * precondition test: if the group id is null
@@ -2350,8 +2340,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2908277607868593618L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 2908277607868593618L, testPluginData).getPlugins());
 
 	}
 
@@ -2453,9 +2442,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin).getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData).getPlugins();
 		// build and execute the engine
 		TestSimulation.executeSimulation(plugins);
 	}
@@ -2485,9 +2473,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 5324000203933399469L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 5324000203933399469L, testPluginData).getPlugins());
 
 		// precondition test: if the group type id is already present
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 6531281946960607184L, (c) -> {
@@ -2551,9 +2538,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 7089101878335134553L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 7089101878335134553L, testPluginData).getPlugins());
 
 		// precondition test: if the group type id is unknown
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 8347881582083929312L, (c) -> {
@@ -2719,8 +2705,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5589772229734037226L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 5589772229734037226L, testPluginData).getPlugins());
 
 		// precondition test: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 7641347481169234356L, (c) -> {
@@ -2783,8 +2768,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 4873414306435646846L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 4873414306435646846L, testPluginData).getPlugins());
 
 		// precondition test: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 4.0, 10.0, 1195149554612948377L, (c) -> {
@@ -2857,9 +2841,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5220753097952239863L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5220753097952239863L, testPluginData).getPlugins());
 
 		// precondition test: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 9054394261904590543L, (c) -> {
@@ -2940,9 +2923,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8387884383247064182L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8387884383247064182L, testPluginData).getPlugins());
 
 		// precondition test: if the group id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 4632329546403944029L, (c) -> {
@@ -3014,9 +2996,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5769859947365341767L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5769859947365341767L, testPluginData).getPlugins());
 	}
 
 	@Test
@@ -3096,8 +3077,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPluginData).getPlugins());
 
 		// precondition tests: if the group id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
@@ -3196,8 +3176,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4356365020352320873L, testPluginData).getPlugins());
 
 		// precondition tests: if the group id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3554135401743252689L, (c) -> {
@@ -3295,8 +3274,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPluginData).getPlugins());
 
 		// precondition tests: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8821737193954784979L, (c) -> {
@@ -3400,8 +3378,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4289325374116700754L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4289325374116700754L, testPluginData).getPlugins());
 
 		// precondition tests: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8053944455114188764L, (c) -> {
@@ -3517,8 +3494,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 7894583767324913975L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 7894583767324913975L, testPluginData).getPlugins());
 
 		// precondition tests: if the person id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 8185554283901963798L, (c) -> {
@@ -3583,8 +3559,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 8388981611967284165L, testPluginData).getPlugins());
 	}
 
 	@Test
@@ -3665,8 +3640,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 1408892559376906541L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 1408892559376906541L, testPluginData).getPlugins());
 
 		// precondition tests: if the group id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 7647888786891229419L, (c) -> {
@@ -3765,8 +3739,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 850494789248046062L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 850494789248046062L, testPluginData).getPlugins());
 
 		// precondition tests: if the group id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3817909950120643137L, (c) -> {
@@ -3865,8 +3838,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 5729813629540803760L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 5729813629540803760L, testPluginData).getPlugins());
 
 		// precondition tests: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 1847985412434537556L, (c) -> {
@@ -3970,8 +3942,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4777272524165165597L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4777272524165165597L, testPluginData).getPlugins());
 
 		// precondition tests: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 5144779074591935394L, (c) -> {
@@ -4088,8 +4059,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4102753717872340366L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 4102753717872340366L, testPluginData).getPlugins());
 
 		// precondition tests: if the person id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 10, 3402841194395285411L, (c) -> {
@@ -4155,8 +4125,7 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 617923429956310846L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(0, 3, 10, 617923429956310846L, testPluginData).getPlugins());
 	}
 
 	@Test
@@ -4224,8 +4193,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 5968311683269278335L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 5968311683269278335L, testPluginData).getPlugins());
 
 		// precondition test: if the group id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 862611649140739209L, (c) -> {
@@ -4325,8 +4293,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 4475568313075757118L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 4475568313075757118L, testPluginData).getPlugins());
 
 		// precondition test: if the group property id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7069545924217450784L, (c) -> {
@@ -4419,8 +4386,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7860201282796014649L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 7860201282796014649L, testPluginData).getPlugins());
 
 		// precondition test: if the group type id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 3217133270896467859L, (c) -> {
@@ -4500,8 +4466,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 806128103582088681L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 806128103582088681L, testPluginData).getPlugins());
 
 		// precondition test: if the group property id is null
 		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 3969612657033464070L, (c) -> {
@@ -4586,8 +4551,7 @@ public class AT_GroupsDataManager {
 			assertEquals(expectedObservations, actualObservations);
 		}));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 2633645086420948220L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 5, 2633645086420948220L, testPluginData).getPlugins());
 
 	}
 
@@ -4638,9 +4602,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 2918652330043276295L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 2918652330043276295L, testPluginData).getPlugins());
 
 	}
 
@@ -4675,9 +4638,8 @@ public class AT_GroupsDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 7349170569580375646L, testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(100, 3, 10, 7349170569580375646L, testPluginData).getPlugins());
 	}
 
 }

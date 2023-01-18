@@ -42,20 +42,21 @@ public final class GroupsTestPluginFactory {
 		private GroupsPluginData groupsPluginData;
 		private PeoplePluginData peoplePluginData;
 		private StochasticsPluginData stochasticsPluginData;
-		private Plugin testPlugin;
+		private TestPluginData testPluginData;
 
 		private Data(int initialPopulation, double expectedGroupsPerPerson,
-				double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
+				double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 			int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-			int groupCount = expectedPeoplePerGroup == 0 ? 0 : (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+			int groupCount = expectedPeoplePerGroup == 0 ? 0
+					: (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
 			this.peoplePluginData = GroupsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
 			this.groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount,
 					this.peoplePluginData.getPersonIds(), randomGenerator);
 			this.stochasticsPluginData = GroupsTestPluginFactory.getStandardStochasticsPluginData(randomGenerator);
-			this.testPlugin = testPlugin;
+			this.testPluginData = testPluginData;
 		}
 	}
 
@@ -76,10 +77,12 @@ public final class GroupsTestPluginFactory {
 			// add the stochastics plugin
 			Plugin stochasticPlugin = StochasticsPlugin.getStochasticsPlugin(this.data.stochasticsPluginData);
 
+			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
+
 			pluginsToAdd.add(groupPlugin);
 			pluginsToAdd.add(peoplePlugin);
 			pluginsToAdd.add(stochasticPlugin);
-			pluginsToAdd.add(this.data.testPlugin);
+			pluginsToAdd.add(testPlugin);
 
 			return pluginsToAdd;
 		}
@@ -102,9 +105,9 @@ public final class GroupsTestPluginFactory {
 	}
 
 	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
-			double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
+			double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
 		return new Factory(
-				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
+				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData));
 	}
 
 	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
@@ -113,9 +116,8 @@ public final class GroupsTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 		return new Factory(
-				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
+				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData));
 	}
 
 	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount,

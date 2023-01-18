@@ -28,11 +28,11 @@ public final class GlobalPropertiesTestPluginFactory {
 
 	private static class Data {
 		private GlobalPropertiesPluginData globalPropertiesPluginData;
-		private Plugin testPlugin;
+		private TestPluginData testPluginData;
 
-		private Data(Plugin testPlugin) {
+		private Data(TestPluginData testPluginData) {
 			this.globalPropertiesPluginData = GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData();
-			this.testPlugin = testPlugin;
+			this.testPluginData = testPluginData;
 		}
 	}
 
@@ -45,10 +45,12 @@ public final class GlobalPropertiesTestPluginFactory {
 
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
-			Plugin groupPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(this.data.globalPropertiesPluginData);
+			Plugin globalPropertiesPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(this.data.globalPropertiesPluginData);
 
-			pluginsToAdd.add(groupPlugin);
-			pluginsToAdd.add(this.data.testPlugin);
+			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
+
+			pluginsToAdd.add(globalPropertiesPlugin);
+			pluginsToAdd.add(testPlugin);
 
 			return pluginsToAdd;
 		}
@@ -59,16 +61,15 @@ public final class GlobalPropertiesTestPluginFactory {
 		}
 	}
 
-	public static Factory factory(Plugin testPlugin) {
-		return new Factory(new Data(testPlugin));
+	public static Factory factory(TestPluginData testPluginData) {
+		return new Factory(new Data(testPluginData));
 	}
 
 	public static Factory factory(Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		return new Factory(new Data(testPlugin));
+		return new Factory(new Data(testPluginData));
 	}
 
 	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData() {

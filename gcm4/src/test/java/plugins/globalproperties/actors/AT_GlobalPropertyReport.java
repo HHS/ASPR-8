@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
@@ -150,7 +149,6 @@ public class AT_GlobalPropertyReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		/*
 		 * Collect the expected report items. Note that order does not matter. *
@@ -175,7 +173,7 @@ public class AT_GlobalPropertyReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPlugin).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
+		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 		plugins.add(ReportsTestPluginFactory.getPluginFromReport(globalPropertyReport));
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 

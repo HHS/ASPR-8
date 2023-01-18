@@ -195,8 +195,7 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 		// show that the observations were correct
 		assertTrue(expectedObservations.size() > 0);
@@ -300,8 +299,7 @@ public final class AT_GlobalPropertiesDataManager {
 			}));
 		});
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
 			GlobalPropertiesDataManager globalPropertiesDataManager = c.getDataManager(GlobalPropertiesDataManager.class);
@@ -425,8 +423,7 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 		// precondition test: if the global property initialization is null
 		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {
@@ -541,9 +538,7 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 	}
 
@@ -596,9 +591,7 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 	}
 
@@ -667,9 +660,7 @@ public final class AT_GlobalPropertiesDataManager {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPlugin).getPlugins());
+		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory(testPluginData).getPlugins());
 
 		// precondition test: if the global property id is null
 		TestSimulation.executeSimulation(GlobalPropertiesTestPluginFactory.factory((c) -> {

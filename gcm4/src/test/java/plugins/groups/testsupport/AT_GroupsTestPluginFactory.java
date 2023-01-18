@@ -11,12 +11,12 @@ import java.util.function.Consumer;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.annotation.Testable;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.PluginData;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.GroupsPluginData;
@@ -31,6 +31,7 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
+@Testable
 public class AT_GroupsTestPluginFactory {
 
 	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
@@ -80,10 +81,9 @@ public class AT_GroupsTestPluginFactory {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, factoryConsumer(executed)));
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulation.executeSimulation(
-				GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPlugin).getPlugins());
+				GroupsTestPluginFactory.factory(100, 3, 5, 1937810385546394605L, testPluginData).getPlugins());
 		assertTrue(executed.getValue());
 
 	}
