@@ -69,6 +69,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds the batch.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -85,7 +86,6 @@ public final class MaterialsPluginData implements PluginData {
 		public Builder addBatch(final BatchId batchId, final MaterialId materialId, final double amount, final MaterialsProducerId materialsProducerId) {
 			ensureDataMutability();
 			validateBatchIdNotNull(batchId);
-			validateBatchDoesNotExist(data, batchId);
 			validateMaterialIdNotNull(materialId);
 			validateBatchAmount(amount);
 			validateMaterialsProducerIdNotNull(materialsProducerId);
@@ -98,6 +98,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -123,23 +124,23 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 		 *             material id is null</li>
-		 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL} if the
-		 *             material was previously added</li>
+		 *
 		 */
 		public Builder addMaterial(final MaterialId materialId) {
 			ensureDataMutability();
 			validateMaterialIdNotNull(materialId);
-			validateMaterialDoesNotExist(data, materialId);
 			data.materialIds.add(materialId);
 			return this;
 		}
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -155,6 +156,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID} if the
@@ -180,7 +182,7 @@ public final class MaterialsPluginData implements PluginData {
 		 *             batch property is associated with a material id that was
 		 *             not properly added</li>
 		 * 
-		 *             <li>{@linkplain MaterialsError#PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if a batch is added without assigned property values for
 		 *             each property definition that lacks a default value</li>
 		 * 
@@ -198,7 +200,7 @@ public final class MaterialsPluginData implements PluginData {
 		 *             is not compatible with the corresponding property
 		 *             definition</li>
 		 *             
-		 *             <li>{@linkplain MaterialsError#PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *             if a materials property is defined without a default
 		 *             value and there is not an assigned property value for
 		 *             each added materials producer</li>
@@ -258,6 +260,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
@@ -266,8 +269,6 @@ public final class MaterialsPluginData implements PluginData {
 		 *             material id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if the property definition is null</li>
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             if the property definition was previously defined</li>
 		 *
 		 */
 		public Builder defineBatchProperty(final MaterialId materialId, final BatchPropertyId batchPropertyId, final PropertyDefinition propertyDefinition) {
@@ -275,7 +276,6 @@ public final class MaterialsPluginData implements PluginData {
 			validateBatchPropertyIdNotNull(batchPropertyId);
 			validateMaterialIdNotNull(materialId);
 			validatePropertyDefinitionNotNull(propertyDefinition);
-			validateBatchPropertyIsNotDefined(data, materialId, batchPropertyId);
 			Map<BatchPropertyId, PropertyDefinition> propertyDefinitionsMap = data.batchPropertyDefinitions.get(materialId);
 			if (propertyDefinitionsMap == null) {
 				propertyDefinitionsMap = new LinkedHashMap<>();
@@ -287,27 +287,26 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Adds a batch to stage.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             materials producer property id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if the property definition is null</li>
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             if the materials producer property was previously
-		 *             defined</li>
+		 *
 		 */
 		public Builder defineMaterialsProducerProperty(final MaterialsProducerPropertyId materialsProducerPropertyId, final PropertyDefinition propertyDefinition) {
 			ensureDataMutability();
 			validateMaterialsProducerPropertyIdNotNull(materialsProducerPropertyId);
 			validatePropertyDefinitionNotNull(propertyDefinition);
-			validateMaterialsProducerPropertyIsNotDefined(data, materialsProducerPropertyId);
 			data.materialsProducerPropertyDefinitions.put(materialsProducerPropertyId, propertyDefinition);
 			return this;
 		}
 
 		/**
 		 * Set the batch property value.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
@@ -316,15 +315,13 @@ public final class MaterialsPluginData implements PluginData {
 		 *             batch property id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             batch property value is null</li>
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if the batch property value was previously set</li>
+		 *
 		 */
 		public Builder setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue) {
 			ensureDataMutability();
 			validateBatchIdNotNull(batchId);
 			validateBatchPropertyIdNotNull(batchPropertyId);
 			validateBatchPropertyValueNotNull(batchPropertyValue);
-			validateBatchPropertyValueNotSet(data, batchId, batchPropertyId);
 			Map<BatchPropertyId, Object> propertyMap = data.batchPropertyValues.get(batchId);
 			if (propertyMap == null) {
 				propertyMap = new LinkedHashMap<>();
@@ -336,6 +333,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Set the materials producer property value.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -344,9 +342,7 @@ public final class MaterialsPluginData implements PluginData {
 		 *             materials producer property id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             materials producer property value is null</li>
-		 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if the materials producer property value was previously
-		 *             set</li>
+		 *
 		 */
 		public Builder setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
 				final Object materialsProducerPropertyValue) {
@@ -354,7 +350,6 @@ public final class MaterialsPluginData implements PluginData {
 			validateMaterialsProducerIdNotNull(materialsProducerId);
 			validateMaterialsProducerPropertyIdNotNull(materialsProducerPropertyId);
 			validateMaterialsProducerPropertyValueNotNull(materialsProducerPropertyValue);
-			validateMaterialsProducerPropertyNotSet(data, materialsProducerId, materialsProducerPropertyId);
 			Map<MaterialsProducerPropertyId, Object> propertyMap = data.materialsProducerPropertyValues.get(materialsProducerId);
 			if (propertyMap == null) {
 				propertyMap = new LinkedHashMap<>();
@@ -366,6 +361,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		/**
 		 * Set the materials producer resource value.
+		 * Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
@@ -374,17 +370,13 @@ public final class MaterialsPluginData implements PluginData {
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 		 *             if the resource amount is negative</li>
-		 *             <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_RESOURCE_ASSIGNMENT}
-		 *             if the materials producer resource level was previously
-		 *             set</li>
+		 *
 		 */
 		public Builder setMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
 			ensureDataMutability();
 			validateMaterialsProducerIdNotNull(materialsProducerId);
 			validateResourceIdNotNull(resourceId);
 			validateResourceAmount(amount);
-			validateMaterialsProducerResourceLevelNotSet(data, materialsProducerId, resourceId);
-
 			Map<ResourceId, Long> resourceLevelMap = data.materialsProducerResourceLevels.get(materialsProducerId);
 			if (resourceLevelMap == null) {
 				resourceLevelMap = new LinkedHashMap<>();
@@ -753,13 +745,6 @@ public final class MaterialsPluginData implements PluginData {
 
 	}
 
-	private static void validateBatchDoesNotExist(final Data data, final Object batchId) {
-
-		if (data.batchIds.contains(batchId)) {
-			throw new ContractException(MaterialsError.DUPLICATE_BATCH_ID, batchId);
-		}
-	}
-
 	private static void validateBatchExists(final Data data, final Object batchId) {
 
 		if (!data.batchIds.contains(batchId)) {
@@ -791,34 +776,9 @@ public final class MaterialsPluginData implements PluginData {
 		}
 	}
 
-	private static void validateBatchPropertyIsNotDefined(final Data data, final MaterialId materialId, final BatchPropertyId batchPropertyId) {
-		final Map<BatchPropertyId, PropertyDefinition> map = data.batchPropertyDefinitions.get(materialId);
-		if (map != null) {
-			final PropertyDefinition propertyDefinition = map.get(batchPropertyId);
-			if (propertyDefinition != null) {
-				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, batchPropertyId);
-			}
-		}
-	}
-
 	private static void validateBatchPropertyValueNotNull(final Object batchPropertyValue) {
 		if (batchPropertyValue == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
-		}
-	}
-
-	private static void validateBatchPropertyValueNotSet(final Data data, final BatchId batchId, final BatchPropertyId batchPropertyId) {
-		final Map<BatchPropertyId, Object> propertyMap = data.batchPropertyValues.get(batchId);
-		if (propertyMap != null) {
-			if (propertyMap.containsKey(batchPropertyId)) {
-				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, batchId + ": " + batchPropertyId);
-			}
-		}
-	}
-
-	private static void validateMaterialDoesNotExist(final Data data, final MaterialId materialId) {
-		if (data.materialIds.contains(materialId)) {
-			throw new ContractException(MaterialsError.DUPLICATE_MATERIAL, materialId);
 		}
 	}
 
@@ -858,33 +818,9 @@ public final class MaterialsPluginData implements PluginData {
 		}
 	}
 
-	private static void validateMaterialsProducerPropertyIsNotDefined(final Data data, final MaterialsProducerPropertyId materialsProducerPropertyId) {
-		if (data.materialsProducerPropertyDefinitions.containsKey(materialsProducerPropertyId)) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, materialsProducerPropertyId);
-		}
-	}
-
-	private static void validateMaterialsProducerPropertyNotSet(final Data data, final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
-		final Map<MaterialsProducerPropertyId, Object> propertyMap = data.materialsProducerPropertyValues.get(materialsProducerId);
-		if (propertyMap != null) {
-			if (propertyMap.containsKey(materialsProducerPropertyId)) {
-				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, materialsProducerId + ": " + materialsProducerPropertyId);
-			}
-		}
-	}
-
 	private static void validateMaterialsProducerPropertyValueNotNull(final Object materialsProducerPropertyValue) {
 		if (materialsProducerPropertyValue == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
-		}
-	}
-
-	private static void validateMaterialsProducerResourceLevelNotSet(final Data data, final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
-		final Map<ResourceId, Long> resourceLevelMap = data.materialsProducerResourceLevels.get(materialsProducerId);
-		if (resourceLevelMap != null) {
-			if (resourceLevelMap.containsKey(resourceId)) {
-				throw new ContractException(MaterialsError.DUPLICATE_MATERIALS_PRODUCER_RESOURCE_ASSIGNMENT, materialsProducerId + ": " + resourceId);
-			}
 		}
 	}
 
