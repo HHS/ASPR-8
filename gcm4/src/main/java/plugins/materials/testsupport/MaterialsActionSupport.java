@@ -115,7 +115,7 @@ public class MaterialsActionSupport {
 
 	public static List<Plugin> setUpPluginsForTest(long seed) {
 
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2819236410498978100L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
 
@@ -185,17 +185,17 @@ public class MaterialsActionSupport {
 		RegionsPluginData regionsPluginData = regionsBuilder.build();
 		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
 
-		return setUpPluginsForTest(materialsPlugin, resourcesPlugin, peoplePlugin, regionPlugin);
-	}
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
+				.setSeed(randomGenerator.nextLong()).build();
+		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
-	public static List<Plugin> setUpPluginsForTest(Plugin materialsPlugin, Plugin resourcesPlugin, Plugin peoplePlugin,
-			Plugin regionsPlugin) {
 		List<Plugin> pluginsToAdd = new ArrayList<>();
 
 		pluginsToAdd.add(materialsPlugin);
 		pluginsToAdd.add(resourcesPlugin);
 		pluginsToAdd.add(peoplePlugin);
-		pluginsToAdd.add(regionsPlugin);
+		pluginsToAdd.add(regionPlugin);
+		pluginsToAdd.add(stochasticsPlugin);
 
 		return pluginsToAdd;
 	}

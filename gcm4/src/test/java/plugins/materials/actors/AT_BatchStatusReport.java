@@ -21,6 +21,7 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.BatchConstructionInfo;
@@ -39,7 +40,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReports;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
@@ -235,10 +236,11 @@ public final class AT_BatchStatusReport {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
-
-		TestReports.testConsumers(testPlugin, new BatchStatusReport(REPORT_ID), 2819236410498978100L,
-				MaterialsActionSupport.setUpPluginsForTest(2819236410498978100L),
-				outputConsumer);
+		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(2819236410498978100L);
+		pluginsToAdd.add(testPlugin);
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(REPORT_ID)));
+		
+		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
