@@ -85,19 +85,11 @@ public class MaterialsActionSupport {
 	 *                           contained in the action plugin</li>
 	 */
 	public static void testConsumers(long seed, Plugin testPlugin) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
 		Simulation.Builder builder = Simulation.builder();
 
 		for (Plugin plugin : setUpPluginsForTest(seed)) {
 			builder.addPlugin(plugin);
 		}
-
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
-				.setSeed(randomGenerator.nextLong()).build();
-		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		// add the stochastics plugin
-		builder.addPlugin(stochasticsPlugin);
 
 		// set the output consumer
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
