@@ -35,6 +35,9 @@ import util.wrappers.MultiKey;
  */
 public final class GroupsTestPluginFactory {
 
+	private GroupsTestPluginFactory() {
+	}
+
 	private static class Data {
 		private GroupsPluginData groupsPluginData;
 		private PeoplePluginData peoplePluginData;
@@ -54,23 +57,6 @@ public final class GroupsTestPluginFactory {
 			this.stochasticsPluginData = GroupsTestPluginFactory.getStandardStochasticsPluginData(randomGenerator);
 			this.testPlugin = testPlugin;
 		}
-	}
-
-	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
-			double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
-		return new Factory(
-				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
-	}
-
-	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
-			double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
-
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
-		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		return new Factory(
-				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
 	}
 
 	public static class Factory {
@@ -115,7 +101,21 @@ public final class GroupsTestPluginFactory {
 
 	}
 
-	private GroupsTestPluginFactory() {
+	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Plugin testPlugin) {
+		return new Factory(
+				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
+	}
+
+	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
+			double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		return new Factory(
+				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPlugin));
 	}
 
 	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount,
