@@ -17,6 +17,7 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerId;
@@ -27,7 +28,7 @@ import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReports;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import tools.annotations.UnitTag;
 import tools.annotations.UnitTestConstructor;
@@ -197,9 +198,11 @@ public final class AT_StageReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, new StageReport(REPORT_ID), 542686524159732447L,
-				MaterialsActionSupport.setUpPluginsForTest(542686524159732447L),
-				outputConsumer);
+		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(542686524159732447L);
+		pluginsToAdd.add(testPlugin);
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(REPORT_ID)));
+
+		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));

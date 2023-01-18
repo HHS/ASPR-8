@@ -19,6 +19,7 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
@@ -33,7 +34,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReports;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
@@ -162,9 +163,11 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReports.testConsumers(testPlugin, new MaterialsProducerResourceReport(REPORT_ID), 6081341958178733565L,
-				MaterialsActionSupport.setUpPluginsForTest(6081341958178733565L),
-				outputConsumer);
+		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(6081341958178733565L);
+		pluginsToAdd.add(testPlugin);
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(REPORT_ID)));
+
+		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
 		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
