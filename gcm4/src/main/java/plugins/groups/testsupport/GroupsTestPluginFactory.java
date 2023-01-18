@@ -49,7 +49,7 @@ public final class GroupsTestPluginFactory {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 			int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
-			int groupCount = (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
+			int groupCount = expectedPeoplePerGroup == 0 ? 0 : (int) FastMath.round(membershipCount / expectedPeoplePerGroup);
 
 			this.peoplePluginData = GroupsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
 			this.groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount,
