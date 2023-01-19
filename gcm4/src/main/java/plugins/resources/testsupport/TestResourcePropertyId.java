@@ -93,4 +93,13 @@ public enum TestResourcePropertyId implements ResourcePropertyId {
 		}
 	}
 
+	private TestResourcePropertyId next;
+
+	public TestResourcePropertyId next() {
+		if (next == null) {
+			next = TestResourcePropertyId.values()[(ordinal() + 1) % TestResourcePropertyId.values().length];
+		}
+		return next;
+	}
+
 }

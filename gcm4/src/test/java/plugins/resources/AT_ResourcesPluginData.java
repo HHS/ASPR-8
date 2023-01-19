@@ -159,9 +159,11 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId)
+			builder.addResource(TestResourceId.getUnknownResourceId());
+			// replacing data to show that the value persists
+			builder.addResource(testResourceId);
 			// adding duplicate data to show that the value persists
-					.addResource(testResourceId);
+			builder.addResource(testResourceId);
 			expectedResourceIds.add(testResourceId);
 		}
 		ResourcesPluginData resourceInitialData = builder.build();
@@ -185,9 +187,12 @@ public final class AT_ResourcesPluginData {
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition)
+				PropertyDefinition propertyDefinition2 = testResourcePropertyId.next().getPropertyDefinition();
+				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition2);
+				// replacing data to show that the value persists
+				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
 				// adding duplicate data to show that values persist
-						.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
+				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
 			}
 		}
 
@@ -225,20 +230,6 @@ public final class AT_ResourcesPluginData {
 			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// idempotency tests
-
-		TestResourcePropertyId resourcePropertyId2 = TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE;
-		PropertyDefinition propertyDefinition2 = TestResourcePropertyId.ResourceProperty_5_1_INTEGER_IMMUTABLE.getPropertyDefinition();
-		builder.addResource(resourceId);
-		builder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition)
-				// replacing data to show that the value persists
-				.defineResourceProperty(resourceId, resourcePropertyId2, propertyDefinition2);
-
-		resourceInitialData = builder.build();
-		PropertyDefinition expectedPropertyDefinition = resourcePropertyId2.getPropertyDefinition();
-		PropertyDefinition actualPropertyDefinition = resourceInitialData.getResourcePropertyDefinition(resourceId, resourcePropertyId2);
-		assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
 	}
 
 	@Test
@@ -268,6 +259,8 @@ public final class AT_ResourcesPluginData {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				if (randomGenerator.nextBoolean()) {
 					long amount = randomGenerator.nextInt(10);
+					builder.setPersonResourceLevel(personId, testResourceId, amount + 1);
+					// replacing data to show that the value persists
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
 					// adding duplicate data to show that the value persists
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
@@ -280,54 +273,6 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		Set<MultiKey> actualValues = new LinkedHashSet<>();
-		for (PersonId personId : people) {
-			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
-			for (ResourceInitialization resourceInitialization : personResourceLevels) {
-				ResourceId resourceId = resourceInitialization.getResourceId();
-				Long amount = resourceInitialization.getAmount();
-				MultiKey multiKey = new MultiKey(personId, resourceId, amount);
-				actualValues.add(multiKey);
-			}
-		}
-
-		assertEquals(expectedValues, actualValues);
-
-		// idempotency tests
-
-		// add the resources
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
-		}
-
-		expectedValues = new LinkedHashSet<>();
-
-		// add up to 30 people
-		id = 0;
-		people = new LinkedHashSet<>();
-
-		for (int i = 0; i < 30; i++) {
-			id += randomGenerator.nextInt(3) + 1;
-			people.add(new PersonId(id));
-		}
-		assertTrue(people.size() > 20);
-		for (PersonId personId : people) {
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				if (randomGenerator.nextBoolean()) {
-					long amount = randomGenerator.nextInt(10);
-					builder.setPersonResourceLevel(personId, testResourceId, amount);
-					// replacing data to show that the value persists
-					amount = randomGenerator.nextInt(10);
-					builder.setPersonResourceLevel(personId, testResourceId, amount);
-					MultiKey multiKey = new MultiKey(personId, testResourceId, amount);
-					expectedValues.add(multiKey);
-				}
-			}
-		}
-
-		resourceInitialData = builder.build();
-
-
-		actualValues = new LinkedHashSet<>();
 		for (PersonId personId : people) {
 			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
 			for (ResourceInitialization resourceInitialization : personResourceLevels) {
@@ -379,6 +324,8 @@ public final class AT_ResourcesPluginData {
 				expectedValues.put(multiKey, mutableInteger);
 				if (randomGenerator.nextBoolean()) {
 					int amount = randomGenerator.nextInt(10);
+					builder.setRegionResourceLevel(testRegionId, testResourceId, amount + 1);
+					// replacing data to show that the value persists
 					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
 					// adding duplicate data to show that the value persists
 					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
@@ -388,51 +335,6 @@ public final class AT_ResourcesPluginData {
 		}
 
 		ResourcesPluginData resourceInitialData = builder.build();
-
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-
-			Map<ResourceId, Long> actualAmounts = new LinkedHashMap<>();
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				actualAmounts.put(testResourceId, 0L);
-			}
-			for (ResourceInitialization resourceInitialization : resourceInitialData.getRegionResourceLevels(testRegionId)) {
-				actualAmounts.put(resourceInitialization.getResourceId(), resourceInitialization.getAmount());
-			}
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				MultiKey multiKey = new MultiKey(testRegionId, testResourceId);
-				MutableInteger mutableInteger = expectedValues.get(multiKey);
-				long expectedAmount = mutableInteger.getValue();
-				long actualAmount = actualAmounts.get(testResourceId);
-				assertEquals(expectedAmount, actualAmount);
-			}
-		}
-
-		// idempotency tests
-
-		// add the resources
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
-		}
-
-		expectedValues = new LinkedHashMap<>();
-
-		for (TestRegionId testRegionId : TestRegionId.values()) {
-			for (TestResourceId testResourceId : TestResourceId.values()) {
-				MultiKey multiKey = new MultiKey(testRegionId, testResourceId);
-				MutableInteger mutableInteger = new MutableInteger();
-				expectedValues.put(multiKey, mutableInteger);
-				if (randomGenerator.nextBoolean()) {
-					int amount = randomGenerator.nextInt(10);
-					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
-					// replacing data to show that the value persists
-					amount = randomGenerator.nextInt(10);
-					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
-					mutableInteger.setValue(amount);
-				}
-			}
-		}
-
-		resourceInitialData = builder.build();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 
@@ -489,6 +391,13 @@ public final class AT_ResourcesPluginData {
 				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
 				if (randomGenerator.nextBoolean()) {
 					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+					Object value2 = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+
+					if (value instanceof Boolean) {
+						value2 = !(Boolean) value;
+					}
+					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value2);
+					// replacing data to show that the value persists
 					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
 					// adding duplicate data to show that the value persists
 					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
@@ -498,41 +407,6 @@ public final class AT_ResourcesPluginData {
 		}
 
 		ResourcesPluginData resourceInitialData = builder.build();
-
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
-			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
-				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
-				Object expectedValue = expectedValues.get(multiKey);
-				Object actualValue = resourceInitialData.getResourcePropertyValue(testResourceId, testResourcePropertyId);
-				assertEquals(expectedValue, actualValue);
-			}
-		}
-
-		// idempotency tests
-
-		expectedValues = new LinkedHashMap<>();
-
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(testResourceId);
-			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
-			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
-				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
-				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
-				expectedValues.put(multiKey, propertyDefinition.getDefaultValue().get());
-				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
-				if (randomGenerator.nextBoolean()) {
-					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
-					// replacing data to show that the value persists
-					value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
-					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
-					expectedValues.put(multiKey, value);
-				}
-			}
-		}
-
-		resourceInitialData = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
@@ -564,7 +438,8 @@ public final class AT_ResourcesPluginData {
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setResourceTimeTracking", args = { ResourceId.class, TimeTrackingPolicy.class })
 	public void testSetResourceTimeTracking() {
-		// 6539895160899665826L
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
 
 		int i = 0;
 		Map<ResourceId, TimeTrackingPolicy> expectedValues = new LinkedHashMap<>();
@@ -573,8 +448,10 @@ public final class AT_ResourcesPluginData {
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			if (testResourceId != TestResourceId.RESOURCE_5) {
 				builder.addResource(testResourceId);
-				int index = i % TimeTrackingPolicy.values().length;
-				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[index];
+				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.getRandomTimeTrackingPolicy(randomGenerator);
+				TimeTrackingPolicy timeTrackingPolicy2 = timeTrackingPolicy.next();
+				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy2);
+				// replacing data to show that the value persists
 				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
 				// adding duplicate data to show that the value persists
 				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
@@ -585,33 +462,6 @@ public final class AT_ResourcesPluginData {
 		expectedValues.put(TestResourceId.RESOURCE_5, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 
 		ResourcesPluginData resourceInitialData = builder.build();
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			TimeTrackingPolicy expectedPolicy = expectedValues.get(testResourceId);
-			TimeTrackingPolicy actualPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(testResourceId);
-			assertEquals(expectedPolicy, actualPolicy);
-		}
-
-		// idempotency tests
-
-		i = 0;
-		expectedValues = new LinkedHashMap<>();
-
-		for (TestResourceId testResourceId : TestResourceId.values()) {
-			if (testResourceId != TestResourceId.RESOURCE_5) {
-				builder.addResource(testResourceId);
-				int index = i % TimeTrackingPolicy.values().length;
-				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[index];
-				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
-				// replacing data to show that the value persists
-				timeTrackingPolicy = TimeTrackingPolicy.values()[1];
-				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
-				expectedValues.put(testResourceId, timeTrackingPolicy);
-			}
-		}
-		builder.addResource(TestResourceId.RESOURCE_5);
-		expectedValues.put(TestResourceId.RESOURCE_5, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
-
-		resourceInitialData = builder.build();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			TimeTrackingPolicy expectedPolicy = expectedValues.get(testResourceId);
 			TimeTrackingPolicy actualPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(testResourceId);
