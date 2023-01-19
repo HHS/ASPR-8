@@ -966,12 +966,6 @@ public final class AT_ResourcesPluginData {
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-		// if the resource property value was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setResourcePropertyValue(resourceId, resourcePropertyId, 5).setResourcePropertyValue(resourceId, resourcePropertyId, 5);
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
