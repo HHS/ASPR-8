@@ -137,23 +137,6 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
-	private static void validateResourceTimeTrackingNotSet(final Data data, final ResourceId resourceId) {
-		if (data.resourceTimeTrackingPolicies.get(resourceId) != null) {
-			throw new ContractException(ResourceError.DUPLICATE_TIME_TRACKING_POLICY_ASSIGNMENT);
-		}
-	}
-
-	private static void validateRegionResourceNotSet(final Data data, final RegionId regionId, final ResourceId resourceId) {
-		List<ResourceInitialization> resourceInitializations = data.regionResourceLevels.get(regionId);
-		if (resourceInitializations != null) {
-			for (ResourceInitialization resourceInitialization : resourceInitializations) {
-				if (resourceInitialization.getResourceId().equals(resourceId)) {
-					throw new ContractException(ResourceError.DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT, resourceId + ": " + regionId);
-				}
-			}
-		}
-	}
-
 	private static void validateRegionIdNotNull(RegionId regionId) {
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
@@ -178,21 +161,6 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
-	private static void validatePersonResourceLevelNotSet(final Data data, final PersonId personId, final ResourceId resourceId) {
-		int personIndex = personId.getValue();
-		if (personIndex >= data.personResourceLevels.size()) {
-			return;
-		}
-		List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
-		if (list != null) {
-			for (ResourceInitialization resourceInitialization : list) {
-				if (resourceInitialization.getResourceId().equals(resourceId)) {
-					throw new ContractException(ResourceError.DUPLICATE_PERSON_RESOURCE_LEVEL_ASSIGNMENT, resourceId + ": " + personId);
-				}
-			}
-		}
-	}
-
 	private static void validateResourcePropertyIdNotNull(ResourcePropertyId resourcePropertyId) {
 		if (resourcePropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
@@ -205,36 +173,12 @@ public final class ResourcesPluginData implements PluginData {
 		}
 	}
 
-	private static void validateResourcePropertyValueNotSet(final Data data, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
-		final Map<ResourcePropertyId, Object> propertyMap = data.resourcePropertyValues.get(resourceId);
-		if (propertyMap != null) {
-			if (propertyMap.containsKey(resourcePropertyId)) {
-				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, resourcePropertyId + ": " + resourceId);
-			}
-		}
-	}
-
 	private static void validateResourcePropertyDefintionNotNull(PropertyDefinition propertyDefinition) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
 	}
 
-	private static void validateResourcePropertyIsNotDefined(final Data data, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
-		final Map<ResourcePropertyId, PropertyDefinition> defMap = data.resourcePropertyDefinitions.get(resourceId);
-		if (defMap != null) {
-			final PropertyDefinition propertyDefinition = defMap.get(resourcePropertyId);
-			if (propertyDefinition != null) {
-				throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, resourcePropertyId);
-			}
-		}
-	}
-
-	private static void validateResourceDoesNotExist(final Data data, final ResourceId resourceId) {
-		if (data.resourceIds.contains(resourceId)) {
-			throw new ContractException(ResourceError.DUPLICATE_RESOURCE_ID, resourceId);
-		}
-	}
 
 	/**
 	 * Builder class for ResourceInitialData
@@ -318,23 +262,23 @@ public final class ResourcesPluginData implements PluginData {
 
 		/**
 		 * Adds the given resouce id.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_ID} if
-		 *             the resource id was previously added</li>
+		 *
 		 */
 		public Builder addResource(final ResourceId resourceId) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
-			validateResourceDoesNotExist(data, resourceId);
 			data.resourceIds.add(resourceId);
 			return this;
 		}
 
 		/**
 		 * Defines a resource property
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
@@ -346,9 +290,6 @@ public final class ResourcesPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
 		 *
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             </li> if a resource property definition for the given
-		 *             resource id and property id was previously defined.
 		 * 
 		 */
 		public Builder defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition) {
@@ -356,7 +297,6 @@ public final class ResourcesPluginData implements PluginData {
 			validateResourceIdNotNull(resourceId);
 			validateResourcePropertyIdNotNull(resourcePropertyId);
 			validateResourcePropertyDefintionNotNull(propertyDefinition);
-			validateResourcePropertyIsNotDefined(data, resourceId, resourcePropertyId);
 			Map<ResourcePropertyId, PropertyDefinition> map = data.resourcePropertyDefinitions.get(resourceId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
@@ -367,7 +307,8 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a person's initial resource level
+		 * Sets a person's initial resource level.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
@@ -376,9 +317,7 @@ public final class ResourcesPluginData implements PluginData {
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 		 *             if the resource amount is negative</li> *
-		 *             <li>{@linkplain ResourceError#DUPLICATE_PERSON_RESOURCE_LEVEL_ASSIGNMENT}
-		 *             if the person's resource level was previously
-		 *             assigned</li>
+		 *
 		 */
 
 		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
@@ -386,7 +325,6 @@ public final class ResourcesPluginData implements PluginData {
 			validatePersonId(personId);
 			validateResourceIdNotNull(resourceId);
 			validateResourceAmount(amount);
-			validatePersonResourceLevelNotSet(data, personId, resourceId);
 
 			int personIndex = personId.getValue();
 			data.personCount = FastMath.max(data.personCount, personIndex + 1);
@@ -396,18 +334,34 @@ public final class ResourcesPluginData implements PluginData {
 			}
 
 			List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
+			ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, amount);
 
 			if (list == null) {
 				list = new ArrayList<>();
 				data.personResourceLevels.set(personIndex, list);
 			}
-			ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, amount);
-			list.add(resourceInitialization);
+
+			int index = -1;
+
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getResourceId().equals(resourceId)) {
+					index = i;
+					break;
+				}
+			}
+
+			if (index == -1) {
+				list.add(resourceInitialization);
+			} else {
+				list.set(index, resourceInitialization);
+			}
+
 			return this;
 		}
 
 		/**
-		 * Sets a region's initial resource level
+		 * Sets a region's initial resource level.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
@@ -416,28 +370,43 @@ public final class ResourcesPluginData implements PluginData {
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 		 *             if the resource amount is negative</li> *
-		 *             <li>{@linkplain ResourceError#DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT}
-		 *             if the region's resource level was previously
-		 *             assigned</li>
+		 *
 		 */
 
 		public Builder setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
 			ensureDataMutability();
 			validateRegionIdNotNull(regionId);
 			validateResourceIdNotNull(resourceId);
-			validateRegionResourceNotSet(data, regionId, resourceId);
 			validateResourceAmount(amount);
 			List<ResourceInitialization> resourceInitializations = data.regionResourceLevels.get(regionId);
+
 			if (resourceInitializations == null) {
 				resourceInitializations = new ArrayList<>();
 				data.regionResourceLevels.put(regionId, resourceInitializations);
 			}
-			resourceInitializations.add(new ResourceInitialization(resourceId, amount));			
+
+			int index = -1;
+
+			for (int i = 0; i < resourceInitializations.size(); i++) {
+				if (resourceInitializations.get(i).getResourceId().equals(resourceId)) {
+					index = i;
+					break;
+				}
+			}
+
+			if (index == -1) {
+				resourceInitializations.add(new ResourceInitialization(resourceId, amount));
+			} else {
+				resourceInitializations.set(index, new ResourceInitialization(resourceId, amount));
+			}
+
+
 			return this;
 		}
 
 		/**
-		 * Sets a resource property value
+		 * Sets a resource property value.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
@@ -446,16 +415,13 @@ public final class ResourcesPluginData implements PluginData {
 		 *             if the resource property id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *             if the resource property value is null</li>
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if the resource property value was previously
-		 *             assigned</li>
+		 *
 		 */
 		public Builder setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
 			validateResourcePropertyIdNotNull(resourcePropertyId);
 			validateResourcePropertyValueNotNull(resourcePropertyValue);
-			validateResourcePropertyValueNotSet(data, resourceId, resourcePropertyId);
 
 			Map<ResourcePropertyId, Object> propertyMap = data.resourcePropertyValues.get(resourceId);
 			if (propertyMap == null) {
@@ -467,22 +433,20 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the time tracking policy for a resource
+		 * Sets the time tracking policy for a resource.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *             resource id is null</li>
-		 *             <li>{@linkplain ResourceError.NULL_TIME_TRACKING_POLICY}
+		 *             <li>{@linkplain ResourceError#NULL_TIME_TRACKING_POLICY}
 		 *             if the tracking policy is null</li>
-		 *             <li>{@linkplain ResourceError#DUPLICATE_TIME_TRACKING_POLICY_ASSIGNMENT}
-		 *             if the resource tracking policy was previously
-		 *             assigned</li>
+		 *
 		 */
 		public Builder setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
 			validateTimeTrackingPolicyNotNull(trackValueAssignmentTimes);
-			validateResourceTimeTrackingNotSet(data, resourceId);
 			data.resourceTimeTrackingPolicies.put(resourceId, trackValueAssignmentTimes);
 			return this;
 		}
