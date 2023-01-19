@@ -269,6 +269,8 @@ public final class AT_ResourcesPluginData {
 				if (randomGenerator.nextBoolean()) {
 					long amount = randomGenerator.nextInt(10);
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
+					// adding duplicate data to show that the value persists
+					builder.setPersonResourceLevel(personId, testResourceId, amount);
 					MultiKey multiKey = new MultiKey(personId, testResourceId, amount);
 					expectedValues.add(multiKey);
 				}
@@ -278,6 +280,54 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData resourceInitialData = builder.build();
 
 		Set<MultiKey> actualValues = new LinkedHashSet<>();
+		for (PersonId personId : people) {
+			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
+			for (ResourceInitialization resourceInitialization : personResourceLevels) {
+				ResourceId resourceId = resourceInitialization.getResourceId();
+				Long amount = resourceInitialization.getAmount();
+				MultiKey multiKey = new MultiKey(personId, resourceId, amount);
+				actualValues.add(multiKey);
+			}
+		}
+
+		assertEquals(expectedValues, actualValues);
+
+		// idempotency tests
+
+		// add the resources
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			builder.addResource(testResourceId);
+		}
+
+		expectedValues = new LinkedHashSet<>();
+
+		// add up to 30 people
+		id = 0;
+		people = new LinkedHashSet<>();
+
+		for (int i = 0; i < 30; i++) {
+			id += randomGenerator.nextInt(3) + 1;
+			people.add(new PersonId(id));
+		}
+		assertTrue(people.size() > 20);
+		for (PersonId personId : people) {
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				if (randomGenerator.nextBoolean()) {
+					long amount = randomGenerator.nextInt(10);
+					builder.setPersonResourceLevel(personId, testResourceId, amount);
+					// replacing data to show that the value persists
+					amount = 10;
+					builder.setPersonResourceLevel(personId, testResourceId, amount);
+					MultiKey multiKey = new MultiKey(personId, testResourceId, amount);
+					expectedValues.add(multiKey);
+				}
+			}
+		}
+
+		resourceInitialData = builder.build();
+
+
+		actualValues = new LinkedHashSet<>();
 		for (PersonId personId : people) {
 			List<ResourceInitialization> personResourceLevels = resourceInitialData.getPersonResourceLevels(personId);
 			for (ResourceInitialization resourceInitialization : personResourceLevels) {
@@ -306,13 +356,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource amount is negative
 		contractException = assertThrows(ContractException.class, () -> builder.setPersonResourceLevel(personId, resourceId, -5L));
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
-
-		// if the person's resource level was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setPersonResourceLevel(personId, resourceId, amount).setPersonResourceLevel(personId, resourceId, amount);
-		});
-		assertEquals(ResourceError.DUPLICATE_PERSON_RESOURCE_LEVEL_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test

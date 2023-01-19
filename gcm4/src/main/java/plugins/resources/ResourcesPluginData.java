@@ -327,7 +327,7 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Defines a resource property.
+		 * Defines a resource property
 		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
@@ -375,7 +375,6 @@ public final class ResourcesPluginData implements PluginData {
 			validatePersonId(personId);
 			validateResourceIdNotNull(resourceId);
 			validateResourceAmount(amount);
-			validatePersonResourceLevelNotSet(data, personId, resourceId);
 
 			int personIndex = personId.getValue();
 			data.personCount = FastMath.max(data.personCount, personIndex + 1);
@@ -385,13 +384,28 @@ public final class ResourcesPluginData implements PluginData {
 			}
 
 			List<ResourceInitialization> list = data.personResourceLevels.get(personIndex);
+			ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, amount);
 
 			if (list == null) {
 				list = new ArrayList<>();
 				data.personResourceLevels.set(personIndex, list);
 			}
-			ResourceInitialization resourceInitialization = new ResourceInitialization(resourceId, amount);
-			list.add(resourceInitialization);
+
+			int index = -1;
+
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getResourceId().equals(resourceId)) {
+					index = i;
+					break;
+				}
+			}
+
+			if (index == -1) {
+				list.add(resourceInitialization);
+			} else {
+				list.set(index, resourceInitialization);
+			}
+
 			return this;
 		}
 
