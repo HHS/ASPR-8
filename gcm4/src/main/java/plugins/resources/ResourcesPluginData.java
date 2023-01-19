@@ -411,6 +411,7 @@ public final class ResourcesPluginData implements PluginData {
 
 		/**
 		 * Sets a region's initial resource level
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
@@ -419,23 +420,37 @@ public final class ResourcesPluginData implements PluginData {
 		 *             resource id is null</li>
 		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 		 *             if the resource amount is negative</li> *
-		 *             <li>{@linkplain ResourceError#DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT}
-		 *             if the region's resource level was previously
-		 *             assigned</li>
+		 *
 		 */
 
 		public Builder setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
 			ensureDataMutability();
 			validateRegionIdNotNull(regionId);
 			validateResourceIdNotNull(resourceId);
-			validateRegionResourceNotSet(data, regionId, resourceId);
 			validateResourceAmount(amount);
 			List<ResourceInitialization> resourceInitializations = data.regionResourceLevels.get(regionId);
+
 			if (resourceInitializations == null) {
 				resourceInitializations = new ArrayList<>();
 				data.regionResourceLevels.put(regionId, resourceInitializations);
 			}
-			resourceInitializations.add(new ResourceInitialization(resourceId, amount));			
+
+			int index = -1;
+
+			for (int i = 0; i < resourceInitializations.size(); i++) {
+				if (resourceInitializations.get(i).getResourceId().equals(resourceId)) {
+					index = i;
+					break;
+				}
+			}
+
+			if (index == -1) {
+				resourceInitializations.add(new ResourceInitialization(resourceId, amount));
+			} else {
+				resourceInitializations.set(index, new ResourceInitialization(resourceId, amount));
+			}
+
+
 			return this;
 		}
 

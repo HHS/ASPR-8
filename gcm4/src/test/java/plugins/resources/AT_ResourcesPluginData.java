@@ -316,7 +316,7 @@ public final class AT_ResourcesPluginData {
 					long amount = randomGenerator.nextInt(10);
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
 					// replacing data to show that the value persists
-					amount = 10;
+					amount = randomGenerator.nextInt(10);
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
 					MultiKey multiKey = new MultiKey(personId, testResourceId, amount);
 					expectedValues.add(multiKey);
@@ -380,12 +380,59 @@ public final class AT_ResourcesPluginData {
 				if (randomGenerator.nextBoolean()) {
 					int amount = randomGenerator.nextInt(10);
 					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
+					// adding duplicate data to show that the value persists
+					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
 					mutableInteger.setValue(amount);
 				}
 			}
 		}
 
 		ResourcesPluginData resourceInitialData = builder.build();
+
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+
+			Map<ResourceId, Long> actualAmounts = new LinkedHashMap<>();
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				actualAmounts.put(testResourceId, 0L);
+			}
+			for (ResourceInitialization resourceInitialization : resourceInitialData.getRegionResourceLevels(testRegionId)) {
+				actualAmounts.put(resourceInitialization.getResourceId(), resourceInitialization.getAmount());
+			}
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				MultiKey multiKey = new MultiKey(testRegionId, testResourceId);
+				MutableInteger mutableInteger = expectedValues.get(multiKey);
+				long expectedAmount = mutableInteger.getValue();
+				long actualAmount = actualAmounts.get(testResourceId);
+				assertEquals(expectedAmount, actualAmount);
+			}
+		}
+
+		// idempotency tests
+
+		// add the resources
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			builder.addResource(testResourceId);
+		}
+
+		expectedValues = new LinkedHashMap<>();
+
+		for (TestRegionId testRegionId : TestRegionId.values()) {
+			for (TestResourceId testResourceId : TestResourceId.values()) {
+				MultiKey multiKey = new MultiKey(testRegionId, testResourceId);
+				MutableInteger mutableInteger = new MutableInteger();
+				expectedValues.put(multiKey, mutableInteger);
+				if (randomGenerator.nextBoolean()) {
+					int amount = randomGenerator.nextInt(10);
+					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
+					// replacing data to show that the value persists
+					amount = randomGenerator.nextInt(10);
+					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
+					mutableInteger.setValue(amount);
+				}
+			}
+		}
+
+		resourceInitialData = builder.build();
 
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 
@@ -421,13 +468,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource amount is negative
 		contractException = assertThrows(ContractException.class, () -> builder.setRegionResourceLevel(regionId, resourceId, -5L));
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
-
-		// if the person's resource level was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setRegionResourceLevel(regionId, resourceId, amount).setRegionResourceLevel(regionId, resourceId, amount);
-		});
-		assertEquals(ResourceError.DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
