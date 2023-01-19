@@ -40,12 +40,12 @@ public class TestSimulationOutputConsumer implements Consumer<Object> {
 	 * Returns all outputs from a Simulation based on the Class Parameter.
 	 */
     @SuppressWarnings("unchecked")
-    public <T> Map<T, Integer> getOutputItems(Class<T> clazz) {
+    public <T> Map<T, Integer> getOutputItems(Class<T> classRef) {
         Map<T, MutableInteger> sourceMap = new LinkedHashMap<>();
         Map<T, Integer> retMap = new LinkedHashMap<>();
 
         for (Object item : outputItems) {
-            if (item.getClass().isAssignableFrom(clazz)) {
+            if (classRef.isAssignableFrom(item.getClass())) {
                 T interestedItem = (T) item;
                 sourceMap.putIfAbsent(interestedItem, new MutableInteger());
                 sourceMap.get(interestedItem).increment();

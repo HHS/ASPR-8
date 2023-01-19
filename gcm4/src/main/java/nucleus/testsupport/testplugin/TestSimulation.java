@@ -8,15 +8,19 @@ import nucleus.Simulation.Builder;
 import util.errors.ContractException;
 
 public class TestSimulation {
-    public static void executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
-        _executeSimulation(pluginsToAdd, outputConsumer);
+	public static void executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
+		if (outputConsumer == null) {
+			throw new NullPointerException(
+					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
+		}
+		_executeSimulation(pluginsToAdd, outputConsumer);
 	}
 
-    public static void executeSimulation(List<Plugin> pluginsToAdd) {
+	public static void executeSimulation(List<Plugin> pluginsToAdd) {
 		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
 	}
 
-    private static void _executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
+	private static void _executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
 		Builder builder = Simulation.builder();
 
 		for (Plugin plugin : pluginsToAdd) {
