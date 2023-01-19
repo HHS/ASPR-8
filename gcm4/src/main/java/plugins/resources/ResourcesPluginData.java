@@ -410,7 +410,7 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a region's initial resource level
+		 * Sets a region's initial resource level.
 		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
@@ -455,7 +455,8 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets a resource property value
+		 * Sets a resource property value.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
@@ -464,16 +465,13 @@ public final class ResourcesPluginData implements PluginData {
 		 *             if the resource property id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *             if the resource property value is null</li>
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if the resource property value was previously
-		 *             assigned</li>
+		 *
 		 */
 		public Builder setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
 			ensureDataMutability();
 			validateResourceIdNotNull(resourceId);
 			validateResourcePropertyIdNotNull(resourcePropertyId);
 			validateResourcePropertyValueNotNull(resourcePropertyValue);
-			validateResourcePropertyValueNotSet(data, resourceId, resourcePropertyId);
 
 			Map<ResourcePropertyId, Object> propertyMap = data.resourcePropertyValues.get(resourceId);
 			if (propertyMap == null) {

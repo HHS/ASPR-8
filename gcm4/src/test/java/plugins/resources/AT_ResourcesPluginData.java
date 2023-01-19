@@ -490,12 +490,49 @@ public final class AT_ResourcesPluginData {
 				if (randomGenerator.nextBoolean()) {
 					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
 					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
+					// adding duplicate data to show that the value persists
+					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
 					expectedValues.put(multiKey, value);
 				}
 			}
 		}
 
 		ResourcesPluginData resourceInitialData = builder.build();
+
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
+				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
+				Object expectedValue = expectedValues.get(multiKey);
+				Object actualValue = resourceInitialData.getResourcePropertyValue(testResourceId, testResourcePropertyId);
+				assertEquals(expectedValue, actualValue);
+			}
+		}
+
+		// idempotency tests
+
+		expectedValues = new LinkedHashMap<>();
+
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			builder.addResource(testResourceId);
+			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
+			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
+				MultiKey multiKey = new MultiKey(testResourceId, testResourcePropertyId);
+				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
+				expectedValues.put(multiKey, propertyDefinition.getDefaultValue().get());
+				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
+				if (randomGenerator.nextBoolean()) {
+					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
+					// replacing data to show that the value persists
+					value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
+					expectedValues.put(multiKey, value);
+				}
+			}
+		}
+
+		resourceInitialData = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
@@ -522,13 +559,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// if the resource property value was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setResourcePropertyValue(resourceId, resourcePropertyId, 5).setResourcePropertyValue(resourceId, resourcePropertyId, 5);
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
