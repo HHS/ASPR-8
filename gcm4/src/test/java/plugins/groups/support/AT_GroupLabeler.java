@@ -16,10 +16,11 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.Event;
 import nucleus.SimulationContext;
+import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupMembershipAdditionEvent;
 import plugins.groups.events.GroupMembershipRemovalEvent;
-import plugins.groups.testsupport.GroupsActionSupport;
+import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestGroupTypeId;
 import plugins.partitions.support.LabelerSensitivity;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -33,13 +34,13 @@ import util.errors.ContractException;
 public final class AT_GroupLabeler {
 
 	@Test
-	@UnitTestConstructor(target = GroupLabeler.class,args = { Function.class })
+	@UnitTestConstructor(target = GroupLabeler.class, args = { Function.class })
 	public void testConstructor() {
 		assertNotNull(new GroupLabeler((g) -> null));
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupLabeler.class,name = "getLabelerSensitivities", args = {})
+	@UnitTestMethod(target = GroupLabeler.class, name = "getLabelerSensitivities", args = {})
 	public void testGetLabelerSensitivities() {
 
 		Set<LabelerSensitivity<?>> labelerSensitivities = new GroupLabeler((g) -> null).getLabelerSensitivities();
@@ -85,10 +86,10 @@ public final class AT_GroupLabeler {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupLabeler.class,name = "getLabel", args = { SimulationContext.class, PersonId.class })
+	@UnitTestMethod(target = GroupLabeler.class, name = "getLabel", args = { SimulationContext.class, PersonId.class })
 	public void testGetLabel() {
 
-		GroupsActionSupport.testConsumer(30, 3, 5, 5880749882920317232L, (c) -> {
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 5880749882920317232L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 
@@ -127,21 +128,21 @@ public final class AT_GroupLabeler {
 					() -> groupLabeler.getLabel(c, new PersonId(100000)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupLabeler.class,name = "getDimension", args = {})
+	@UnitTestMethod(target = GroupLabeler.class, name = "getDimension", args = {})
 	public void testGetDimension() {
 		Function<GroupTypeCountMap, Object> f = (g) -> null;
 		assertEquals(GroupTypeId.class, new GroupLabeler(f).getDimension());
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupLabeler.class,name = "getPastLabel", args = { SimulationContext.class, Event.class })
+	@UnitTestMethod(target = GroupLabeler.class, name = "getPastLabel", args = { SimulationContext.class, Event.class })
 	public void testGetPastLabel() {
 
-		GroupsActionSupport.testConsumer(30, 3, 5, 8478102896119863988L, (c) -> {
+		TestSimulation.executeSimulation(GroupsTestPluginFactory.factory(30, 3, 5, 8478102896119863988L, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -225,6 +226,6 @@ public final class AT_GroupLabeler {
 					new GroupMembershipAdditionEvent(new PersonId(100000), groupId)));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
-		});
+		}).getPlugins());
 	}
 }

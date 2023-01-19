@@ -1,23 +1,20 @@
 package plugins.materials.testsupport;
 
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import nucleus.ActorContext;
-import nucleus.Experiment;
-import nucleus.NucleusError;
 import nucleus.Plugin;
-import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
+import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestScenarioReport;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.MaterialsPlugin;
 import plugins.materials.MaterialsPluginData;
 import plugins.people.PeoplePlugin;
@@ -25,10 +22,6 @@ import plugins.people.PeoplePluginData;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.testsupport.TestRegionId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
-import plugins.reports.support.ReportItem;
-import plugins.reports.testsupport.TestReportItemOutputConsumer;
 import plugins.resources.ResourcesPlugin;
 import plugins.resources.ResourcesPluginData;
 import plugins.resources.testsupport.TestResourceId;
@@ -49,23 +42,20 @@ import util.random.RandomGeneratorProvider;
  */
 public class MaterialsActionSupport {
 
-	private MaterialsActionSupport(){}
+	private MaterialsActionSupport() {
+	}
 
 	/**
 	 * Creates an action plugin with an agent that will execute the given
 	 * consumer at time 0. The action plugin and the remaining arguments are
 	 * passed to an invocation of the testConsumers() method.
 	 */
-	public static Set<ReportItem> testConsumer(long seed, Consumer<ActorContext> consumer) {
+	public static void testConsumer(long seed, Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		return testConsumers(seed, testPlugin, null);
-	}
-
-	public static Set<ReportItem> testConsumers(long seed, Plugin testPlugin) {
-		return testConsumers(seed, testPlugin, null);
+		testConsumers(seed, testPlugin);
 	}
 
 	/**
@@ -88,17 +78,36 @@ public class MaterialsActionSupport {
 	 * completely does not lead to a false positive test evaluation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain TestError#TEST_EXECUTION_FAILURE} if not all
-	 *             action plans execute or if there are no action plans
-	 *             contained in the action plugin</li>
+	 *                           <li>{@linkplain TestError#TEST_EXECUTION_FAILURE}
+	 *                           if not all
+	 *                           action plans execute or if there are no action
+	 *                           plans
+	 *                           contained in the action plugin</li>
 	 */
-	public static Set<ReportItem> testConsumers(long seed, Plugin testPlugin,
+	public static void testConsumers(long seed, Plugin testPlugin) {
+		Simulation.Builder builder = Simulation.builder();
 
-			Consumer<ActorContext> report) {
+		for (Plugin plugin : setUpPluginsForTest(seed)) {
+			builder.addPlugin(plugin);
+		}
+
+		// set the output consumer
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+
+		// build and execute the engine
+		builder.addPlugin(testPlugin)
+				.setOutputConsumer(outputConsumer)
+				.build()
+				.execute();
+
+		if (!outputConsumer.isComplete()) {
+			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
+		}
+	}
+
+	public static List<Plugin> setUpPluginsForTest(long seed) {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		Experiment.Builder builder = Experiment.builder();
 
 		MaterialsPluginData.Builder materialsBuilder = MaterialsPluginData.builder();
 
@@ -110,26 +119,30 @@ public class MaterialsActionSupport {
 			materialsBuilder.addMaterialsProducerId(testMaterialsProducerId);
 		}
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.values()) {
-			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId, testMaterialsProducerPropertyId.getPropertyDefinition());
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			materialsBuilder.defineMaterialsProducerProperty(testMaterialsProducerPropertyId,
+					testMaterialsProducerPropertyId.getPropertyDefinition());
 		}
 
-		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.getPropertiesWithoutDefaultValues()) {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
-				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId, testMaterialsProducerPropertyId, randomPropertyValue);
+				materialsBuilder.setMaterialsProducerPropertyValue(testMaterialsProducerId,
+						testMaterialsProducerPropertyId, randomPropertyValue);
 			}
 		}
 
 		for (TestMaterialId testMaterialId : TestMaterialId.values()) {
 			Set<TestBatchPropertyId> testBatchPropertyIds = TestBatchPropertyId.getTestBatchPropertyIds(testMaterialId);
 			for (TestBatchPropertyId testBatchPropertyId : testBatchPropertyIds) {
-				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId, testBatchPropertyId.getPropertyDefinition());
+				materialsBuilder.defineBatchProperty(testMaterialId, testBatchPropertyId,
+						testBatchPropertyId.getPropertyDefinition());
 			}
 		}
 		MaterialsPluginData materialsPluginData = materialsBuilder.build();
 		Plugin materialsPlugin = MaterialsPlugin.getMaterialsPlugin(materialsPluginData);
-		builder.addPlugin(materialsPlugin);
 
 		// add the resources plugin
 		ResourcesPluginData.Builder resourcesBuilder = ResourcesPluginData.builder();
@@ -149,14 +162,12 @@ public class MaterialsActionSupport {
 
 		ResourcesPluginData resourcesPluginData = resourcesBuilder.build();
 		Plugin resourcesPlugin = ResourcesPlugin.getResourcesPlugin(resourcesPluginData);
-		builder.addPlugin(resourcesPlugin);
 
 		// add the people plugin
 
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 		PeoplePluginData peoplePluginData = peopleBuilder.build();
 		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-		builder.addPlugin(peoplePlugin);
 
 		// add the regions plugin
 		RegionsPluginData.Builder regionsBuilder = RegionsPluginData.builder();
@@ -165,51 +176,20 @@ public class MaterialsActionSupport {
 		}
 		RegionsPluginData regionsPluginData = regionsBuilder.build();
 		Plugin regionPlugin = RegionsPlugin.getRegionsPlugin(regionsPluginData);
-		builder.addPlugin(regionPlugin);
 
-		// add the report plugin
-
-		ReportsPluginData.Builder reportsBuilder = ReportsPluginData.builder();
-		if (report != null) {
-			reportsBuilder.addReport(() -> report);
-		}
-		ReportsPluginData reportsPluginData = reportsBuilder.build();
-		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
-
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build();
+		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()
+				.setSeed(randomGenerator.nextLong()).build();
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		// add the stochastics plugin
-		builder.addPlugin(stochasticsPlugin);
 
-		// add the action plugin
-		builder.addPlugin(testPlugin);
+		List<Plugin> pluginsToAdd = new ArrayList<>();
 
-		// set the output consumer
-		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
-		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
-		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
-		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
+		pluginsToAdd.add(materialsPlugin);
+		pluginsToAdd.add(resourcesPlugin);
+		pluginsToAdd.add(peoplePlugin);
+		pluginsToAdd.add(regionPlugin);
+		pluginsToAdd.add(stochasticsPlugin);
 
-		// build and execute the engine
-
-		builder.build().execute();
-		Map<ReportItem, Integer> reportItems = testReportItemOutputConsumer.getReportItems().get(0);
-		Set<ReportItem> result = new LinkedHashSet<>();
-		if (reportItems != null) {
-			result.addAll(reportItems.keySet());
-		}
-
-		// show that all actions were executed
-		Optional<TestScenarioReport> optionalTestScenarioReport = experimentPlanCompletionObserver.getActionCompletionReport(0);
-		if (optionalTestScenarioReport.isEmpty()) {
-			throw new ContractException(NucleusError.SCENARIO_FAILED);
-		}
-		boolean complete = optionalTestScenarioReport.get().isComplete();
-		if (!complete) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
-		}
-		return result;
+		return pluginsToAdd;
 	}
 
 }

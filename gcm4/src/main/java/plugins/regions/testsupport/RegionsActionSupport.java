@@ -10,11 +10,11 @@ import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.Simulation;
 import nucleus.Simulation.Builder;
-import nucleus.testsupport.testplugin.ScenarioPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestError;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
@@ -29,9 +29,11 @@ import util.random.RandomGeneratorProvider;
 
 public final class RegionsActionSupport {
 
-	private RegionsActionSupport() {}
+	private RegionsActionSupport() {
+	}
 
-	public static void testConsumer(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Consumer<ActorContext> consumer) {
+	public static void testConsumer(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy,
+			Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
@@ -40,64 +42,88 @@ public final class RegionsActionSupport {
 		testConsumers(initialPopulation, seed, timeTrackingPolicy, testPlugin);
 	}
 
-	public static void testConsumers(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy, Plugin testPlugin) {
-		
+	public static void testConsumers(int initialPopulation, long seed, TimeTrackingPolicy timeTrackingPolicy,
+			Plugin testPlugin) {
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		Builder builder = Simulation.builder();
+
+		for (Plugin plugin : setUpPluginsForTest(initialPopulation, seed, timeTrackingPolicy)) {
+			builder.addPlugin(plugin);
+		}
+
+		// add the stochastics plugin
+		builder.addPlugin(StochasticsPlugin
+				.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
+
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+
+		// build and execute the engine
+		builder.addPlugin(testPlugin)
+				.setOutputConsumer(outputConsumer)
+				.build()
+				.execute();
+
+		// show that all actions were executed
+		if (!outputConsumer.isComplete()) {
+			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
+		}
+
+	}
+
+	public static List<Plugin> setUpPluginsForTest(int initialPopulation, long seed,
+			TimeTrackingPolicy timeTrackingPolicy) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
 		List<PersonId> people = new ArrayList<>();
 		for (int i = 0; i < initialPopulation; i++) {
 			people.add(new PersonId(i));
 		}
-		Builder builder = Simulation.builder();
 
 		// add the region plugin
 		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
 		for (TestRegionId regionId : TestRegionId.values()) {
 			regionPluginBuilder.addRegion(regionId);
 		}
-		
-		for(TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
 			PropertyDefinition propertyDefinition = testRegionPropertyId.getPropertyDefinition();
 			regionPluginBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
-			if(propertyDefinition.getDefaultValue().isEmpty()) {
+			if (propertyDefinition.getDefaultValue().isEmpty()) {
 				for (TestRegionId regionId : TestRegionId.values()) {
-					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, testRegionPropertyId.getRandomPropertyValue(randomGenerator));
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
+							testRegionPropertyId.getRandomPropertyValue(randomGenerator));
 				}
 			}
-			
+
 		}
 		TestRegionId testRegionId = TestRegionId.REGION_1;
 		regionPluginBuilder.setPersonRegionArrivalTracking(timeTrackingPolicy);
-		for(PersonId personId : people) {
+		for (PersonId personId : people) {
 			regionPluginBuilder.setPersonRegion(personId, testRegionId);
 			testRegionId = testRegionId.next();
 		}
-		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionPluginBuilder.build()));
+
+		Plugin regionsPlugin = RegionsPlugin.getRegionsPlugin(regionPluginBuilder.build());
 
 		// add the people plugin
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		for(PersonId personId : people) {
+		for (PersonId personId : people) {
 			peopleBuilder.addPersonId(personId);
-		}		
-		PeoplePluginData peoplePluginData = peopleBuilder.build();		
-		builder.addPlugin(PeoplePlugin.getPeoplePlugin(peoplePluginData));
-
-		// add the stochastics plugin
-		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(randomGenerator.nextLong()).build()));
-
-		// add the test plugin
-		builder.addPlugin(testPlugin);
-
-		ScenarioPlanCompletionObserver scenarioPlanCompletionObserver = new ScenarioPlanCompletionObserver();
-
-		// build and execute the engine
-		builder.setOutputConsumer(scenarioPlanCompletionObserver::handleOutput);
-		builder.build().execute();
-
-		// show that all actions were executed
-		if (!scenarioPlanCompletionObserver.allPlansExecuted()) {
-			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
+		PeoplePluginData peoplePluginData = peopleBuilder.build();
+		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
 
+		return setUpPluginsForTest(regionsPlugin, peoplePlugin);
+	}
+
+	public static List<Plugin> setUpPluginsForTest(Plugin regionPlugin, Plugin peoplePlugin) {
+		List<Plugin> pluginsToAdd = new ArrayList<>();
+
+		pluginsToAdd.add(regionPlugin);
+		pluginsToAdd.add(peoplePlugin);
+		return pluginsToAdd;
 	}
 
 }

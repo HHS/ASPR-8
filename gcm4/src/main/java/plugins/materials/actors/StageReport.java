@@ -12,6 +12,7 @@ import plugins.materials.events.StageMaterialsProducerUpdateEvent;
 import plugins.materials.events.StageOfferUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
+import plugins.reports.support.Report;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -40,7 +41,7 @@ import plugins.reports.support.ReportItem;
  *
  *
  */
-public final class StageReport {
+public final class StageReport implements Report {
 	private final ReportId reportId;
 
 	public StageReport(ReportId reportId) {
