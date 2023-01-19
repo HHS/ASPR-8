@@ -2,12 +2,13 @@ package plugins.materials.actors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
@@ -18,6 +19,8 @@ import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
@@ -31,6 +34,7 @@ import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportItem.Builder;
 import plugins.reports.support.SimpleReportId;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.support.ResourceId;
 import plugins.resources.testsupport.TestResourceId;
@@ -42,7 +46,8 @@ import tools.annotations.UnitTestMethod;
 
 public final class AT_MaterialsProducerResourceReport {
 
-	private ReportItem getReportItemFromResourceId(ActorContext agentContext, MaterialsProducerId materialsProducerId, ResourceId resourceId, long amount) {
+	private ReportItem getReportItemFromResourceId(ActorContext agentContext, MaterialsProducerId materialsProducerId,
+			ResourceId resourceId, long amount) {
 
 		String actionName;
 		if (amount < 0) {
@@ -65,9 +70,10 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = MaterialsProducerResourceReport.class, name = "init", args = {
+			ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
-		Set<ReportItem> expectedReportItems = new LinkedHashSet<>();
+		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -77,7 +83,8 @@ public final class AT_MaterialsProducerResourceReport {
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 				for (TestResourceId testResourceId : TestResourceId.values()) {
-					expectedReportItems.add(getReportItemFromResourceId(c, testMaterialsProducerId, testResourceId, 0L));
+					expectedReportItems.put(getReportItemFromResourceId(c, testMaterialsProducerId, testResourceId, 0L),
+							1);
 				}
 			}
 
@@ -86,7 +93,7 @@ public final class AT_MaterialsProducerResourceReport {
 			resourcesDataManager.addResourceId(newResourceId, TimeTrackingPolicy.TRACK_TIME);
 
 			for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
-				expectedReportItems.add(getReportItemFromResourceId(c, testMaterialsProducerId, newResourceId, 0L));
+				expectedReportItems.put(getReportItemFromResourceId(c, testMaterialsProducerId, newResourceId, 0L), 1);
 			}
 
 		}));
@@ -97,9 +104,10 @@ public final class AT_MaterialsProducerResourceReport {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 			MaterialsProducerConstructionData.Builder builder = //
-					MaterialsProducerConstructionData	.builder()//
-														.setMaterialsProducerId(newMaterialsProducerId);//
-			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId.getPropertiesWithoutDefaultValues()) {
+					MaterialsProducerConstructionData.builder()//
+							.setMaterialsProducerId(newMaterialsProducerId);//
+			for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+					.getPropertiesWithoutDefaultValues()) {
 				Object randomPropertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
 				builder.setMaterialsProducerPropertyValue(testMaterialsProducerPropertyId, randomPropertyValue);
 			}
@@ -109,7 +117,7 @@ public final class AT_MaterialsProducerResourceReport {
 			materialsDataManager.addMaterialsProducer(materialsProducerConstructionData);
 			ResourcesDataManager resourcesDataManager = c.getDataManager(ResourcesDataManager.class);
 			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
-				expectedReportItems.add(getReportItemFromResourceId(c, newMaterialsProducerId, resourceId, 0L));
+				expectedReportItems.put(getReportItemFromResourceId(c, newMaterialsProducerId, resourceId, 0L), 1);
 			}
 
 		}));
@@ -134,14 +142,17 @@ public final class AT_MaterialsProducerResourceReport {
 					long amount = randomGenerator.nextInt(100) + 1;
 					StageId stageId = materialsDataManager.addStage(materialsProducerId);
 					materialsDataManager.convertStageToResource(stageId, resourceId, amount);
-					expectedReportItems.add(getReportItemFromResourceId(c, materialsProducerId, resourceId, amount));
+					expectedReportItems.put(getReportItemFromResourceId(c, materialsProducerId, resourceId, amount), 1);
 				} else {
-					long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+					long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId,
+							resourceId);
 					if (resourceLevel > 0) {
 						long amount = randomGenerator.nextInt((int) resourceLevel) + 1;
 						TestRegionId testRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-						materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, testRegionId, amount);
-						expectedReportItems.add(getReportItemFromResourceId(c, materialsProducerId, resourceId, -amount));
+						materialsDataManager.transferResourceToRegion(materialsProducerId, resourceId, testRegionId,
+								amount);
+						expectedReportItems
+								.put(getReportItemFromResourceId(c, materialsProducerId, resourceId, -amount), 1);
 					}
 				}
 			}));
@@ -149,9 +160,17 @@ public final class AT_MaterialsProducerResourceReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		Set<ReportItem> actualReportItems = MaterialsActionSupport.testConsumers(6081341958178733565L, testPlugin, new MaterialsProducerResourceReport(REPORT_ID)::init);
 
-		assertEquals(expectedReportItems, actualReportItems);
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+
+		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(6081341958178733565L);
+		pluginsToAdd.add(testPlugin);
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(REPORT_ID)));
+
+		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
+
+		assertTrue(outputConsumer.isComplete());
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	private static ReportItem getReportItem(Object... values) {
@@ -167,13 +186,13 @@ public final class AT_MaterialsProducerResourceReport {
 	private static final ReportHeader REPORT_HEADER = getReportHeader();
 
 	private static ReportHeader getReportHeader() {
-		return ReportHeader	.builder()//
-							.add("time")//
-							.add("resource")//
-							.add("materials_producer")//
-							.add("action")//
-							.add("amount")//
-							.build();
+		return ReportHeader.builder()//
+				.add("time")//
+				.add("resource")//
+				.add("materials_producer")//
+				.add("action")//
+				.add("amount")//
+				.build();
 
 	}
 

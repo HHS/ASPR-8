@@ -5,42 +5,33 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
-import nucleus.Experiment;
 import nucleus.Plugin;
-import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.groups.GroupsPlugin;
+import nucleus.testsupport.testplugin.TestSimulation;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.groups.GroupsPluginData;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
+import plugins.groups.testsupport.GroupsTestPluginFactory;
 import plugins.groups.testsupport.TestAuxiliaryGroupTypeId;
 import plugins.groups.testsupport.TestGroupPropertyId;
 import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReportItemOutputConsumer;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.StochasticsPluginData;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import tools.annotations.UnitTestConstructor;
 import tools.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -54,11 +45,13 @@ public class AT_GroupPopulationReport {
 		assertNotNull(new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY));
 
 		// precondition: report period is null
-		ContractException contractException = assertThrows(ContractException.class, () -> new GroupPopulationReport(REPORT_ID, null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> new GroupPopulationReport(REPORT_ID, null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 		// precondition: report id is null
-		contractException = assertThrows(ContractException.class, () -> new GroupPopulationReport(null, ReportPeriod.HOURLY));
+		contractException = assertThrows(ContractException.class,
+				() -> new GroupPopulationReport(null, ReportPeriod.HOURLY));
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 	}
 
@@ -132,7 +125,6 @@ public class AT_GroupPopulationReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// place the initial data into the expected output consumer
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -165,11 +157,20 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
-		expectedReportItems.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, 4, 1), 1);
+		expectedReportItems
+				.put(getReportItem(ReportPeriod.HOURLY, 1, 6, TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, 4, 1), 1);
 
-		Map<ReportItem, Integer> actualReportItems = testConsumers(testPlugin, ReportPeriod.HOURLY, 5524610980534223950L);
+		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.HOURLY);
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		assertEquals(expectedReportItems, actualReportItems);
+		List<Plugin> plugins = getPlugins(testPluginData, 5524610980534223950L);
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+
+		TestSimulation.executeSimulation(plugins, outputConsumer);
+
+		assertTrue(outputConsumer.isComplete());
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+
 	}
 
 	/*
@@ -241,7 +242,6 @@ public class AT_GroupPopulationReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// create a container to hold expected results
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -268,8 +268,16 @@ public class AT_GroupPopulationReport {
 		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.DAILY, 5, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
-		Map<ReportItem, Integer> actualReportItems = testConsumers(testPlugin, ReportPeriod.DAILY, 4023600052052959521L);
-		assertEquals(expectedReportItems, actualReportItems);
+		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.DAILY);
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+
+		List<Plugin> plugins = getPlugins(testPluginData, 4023600052052959521L);
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+
+		TestSimulation.executeSimulation(plugins, outputConsumer);
+
+		assertTrue(outputConsumer.isComplete());
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
 	@Test
@@ -327,27 +335,24 @@ public class AT_GroupPopulationReport {
 		}));
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
 		// place the initial data into the expected output consumer
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_1, 5, 2), 1);
 		expectedReportItems.put(getReportItem(ReportPeriod.END_OF_SIMULATION, TestGroupTypeId.GROUP_TYPE_2, 3, 1), 1);
 
-		Map<ReportItem, Integer> actualReportItems = testConsumers(testPlugin, ReportPeriod.END_OF_SIMULATION, 2753155357216960554L);
+		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.END_OF_SIMULATION);
+		List<Plugin> plugins = getPlugins(testPluginData, 6092832510476200219L);
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
+		TestSimulation.executeSimulation(plugins, outputConsumer);
 
-		assertEquals(expectedReportItems, actualReportItems);
+		assertTrue(outputConsumer.isComplete());
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 	}
 
-	private Map<ReportItem, Integer> testConsumers(Plugin testPlugin, ReportPeriod reportPeriod, long seed) {
-		List<PersonId> people = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			people.add(new PersonId(i));
-		}
-		Random random = new Random(seed);
+	private List<Plugin> getPlugins(TestPluginData testPluginData, long seed) {
 
-		Experiment.Builder builder = Experiment.builder();
-
+		
 		// add the group plugin
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 		// add group types
@@ -356,15 +361,16 @@ public class AT_GroupPopulationReport {
 		}
 		// define group properties
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId, testGroupPropertyId.getPropertyDefinition());
+			groupBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
+			testGroupPropertyId.getPropertyDefinition());
 		}
-
+		
 		groupBuilder.addGroup(new GroupId(0), TestGroupTypeId.GROUP_TYPE_1);
 		groupBuilder.addGroup(new GroupId(1), TestGroupTypeId.GROUP_TYPE_2);
 		groupBuilder.addGroup(new GroupId(2), TestGroupTypeId.GROUP_TYPE_3);
 
 		// add a few of the people to the groups
-
+		
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(0));
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(1));
 		groupBuilder.addPersonToGroup(new GroupId(0), new PersonId(2));
@@ -373,47 +379,10 @@ public class AT_GroupPopulationReport {
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(2));
 		groupBuilder.addPersonToGroup(new GroupId(1), new PersonId(3));
 		GroupsPluginData groupsPluginData = groupBuilder.build();
-		Plugin groupPlugin = GroupsPlugin.getGroupPlugin(groupsPluginData);
-		builder.addPlugin(groupPlugin);
 
-		// add the people plugin
-		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
-		for (PersonId personId : people) {
-			peopleBuilder.addPersonId(personId);
-		}
-		PeoplePluginData peoplePluginData = peopleBuilder.build();
-		Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
-
-		builder.addPlugin(peoplePlugin);
-
-		// add the report plugin
-		ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> new GroupPopulationReport(REPORT_ID, reportPeriod)::init).build();
-		Plugin reportPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
-		builder.addPlugin(reportPlugin);
-
-		// add the stochastics plugin
-		StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder().setSeed(random.nextLong()).build();
-		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
-		builder.addPlugin(stochasticsPlugin);
-
-		builder.addPlugin(testPlugin);
-
-		// add the output consumer for the actual report items
-		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
-		TestReportItemOutputConsumer testReportItemOutputConsumer = new TestReportItemOutputConsumer();
-
-		builder.addExperimentContextConsumer(testReportItemOutputConsumer::init);
-		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-
-		// build and execute the engine
-		builder.build().execute();
-
-		// show that all actions were executed
-
-		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).isPresent());
-		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete());
-
-		return testReportItemOutputConsumer.getReportItems().get(0);
+		List<Plugin> plugins = GroupsTestPluginFactory.factory(10, 0, 3, seed, testPluginData).setGroupsPluginData(groupsPluginData).getPlugins();
+		
+		return plugins;
 	}
 
 	private static ReportItem getReportItem(ReportPeriod reportPeriod, Object... values) {
@@ -421,17 +390,17 @@ public class AT_GroupPopulationReport {
 		builder.setReportId(REPORT_ID);
 
 		switch (reportPeriod) {
-		case DAILY:
-			builder.setReportHeader(REPORT_DAILY_HEADER);
-			break;
-		case END_OF_SIMULATION:
-			builder.setReportHeader(REPORT_EOS_HEADER);
-			break;
-		case HOURLY:
-			builder.setReportHeader(REPORT_HOURLY_HEADER);
-			break;
-		default:
-			throw new RuntimeException("unhandled case " + reportPeriod);
+			case DAILY:
+				builder.setReportHeader(REPORT_DAILY_HEADER);
+				break;
+			case END_OF_SIMULATION:
+				builder.setReportHeader(REPORT_EOS_HEADER);
+				break;
+			case HOURLY:
+				builder.setReportHeader(REPORT_HOURLY_HEADER);
+				break;
+			default:
+				throw new RuntimeException("unhandled case " + reportPeriod);
 
 		}
 
@@ -443,7 +412,10 @@ public class AT_GroupPopulationReport {
 
 	private static final ReportId REPORT_ID = new SimpleReportId("group population property report");
 
-	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type").add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("group_type").add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type")
+			.add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour")
+			.add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().add("group_type").add("person_count")
+			.add("group_count").build();
 }

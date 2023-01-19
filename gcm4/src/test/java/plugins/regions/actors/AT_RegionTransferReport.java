@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +15,12 @@ import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
-import nucleus.Experiment;
 import nucleus.Plugin;
-import nucleus.testsupport.testplugin.ExperimentPlanCompletionObserver;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
+import nucleus.testsupport.testplugin.TestSimulation;
+import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
 import plugins.people.PeoplePlugin;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -32,15 +33,13 @@ import plugins.regions.support.RegionId;
 import plugins.regions.support.RegionPropertyId;
 import plugins.regions.support.SimpleRegionId;
 import plugins.regions.support.SimpleRegionPropertyId;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.ReportsPluginData;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
 import plugins.reports.support.SimpleReportId;
-import plugins.reports.testsupport.TestReportItemOutputConsumer;
+import plugins.reports.testsupport.ReportsTestPluginFactory;
 import plugins.stochastics.StochasticsDataManager;
 import plugins.stochastics.StochasticsPlugin;
 import plugins.stochastics.StochasticsPluginData;
@@ -61,19 +60,22 @@ public class AT_RegionTransferReport {
 		assertNotNull(regionTransferReport);
 
 		// precondition: null report period
-		ContractException contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(REPORT_ID, null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> new RegionTransferReport(REPORT_ID, null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 		// precondition: null report id
-		contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(null, ReportPeriod.DAILY));
+		contractException = assertThrows(ContractException.class,
+				() -> new RegionTransferReport(null, ReportPeriod.DAILY));
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionTransferReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = RegionTransferReport.class, name = "init", args = { ActorContext.class }, tags = {
+			UnitTag.INCOMPLETE })
 	public void testInit() {
 
-		Experiment.Builder builder = Experiment.builder();
+		List<Plugin> pluginsToAdd = new ArrayList<>();
 
 		RegionsPluginData.Builder regionBuilder = RegionsPluginData.builder();
 
@@ -89,22 +91,15 @@ public class AT_RegionTransferReport {
 
 		// add the region properties
 		RegionPropertyId prop_age = new SimpleRegionPropertyId("prop_age");
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class).build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class)
+				.build();
 		regionBuilder.defineRegionProperty(prop_age, propertyDefinition);
 
 		RegionsPluginData regionsPluginData = regionBuilder.build();
-		builder.addPlugin(RegionsPlugin.getRegionsPlugin(regionsPluginData));
-
-		// add the report, setting it report daily
-		ReportsPluginData reportsPluginData = ReportsPluginData	.builder()//
-																.addReport(() -> new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)::init)//
-																.build();//
-
-		builder.addPlugin(ReportsPlugin.getReportsPlugin(reportsPluginData));
+		pluginsToAdd.add(RegionsPlugin.getRegionsPlugin(regionsPluginData));
 
 		// add remaining plugins
-		builder.addPlugin(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
-		builder.addPlugin(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(3054641152904904632L).build()));
+		pluginsToAdd.add(PeoplePlugin.getPeoplePlugin(PeoplePluginData.builder().build()));
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -121,7 +116,8 @@ public class AT_RegionTransferReport {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionId[] regionIds = { regionA, regionB, regionC, regionD };
 			for (int i = 0; i < numPeople; i++) {
-				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionIds[i % 4]).build();
+				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionIds[i % 4])
+						.build();
 				peopleDataManager.addPerson(personConstructionData);
 			}
 			expectedReportItems.put(getReportItem(0, regionA, regionA, 25), 1);
@@ -174,23 +170,17 @@ public class AT_RegionTransferReport {
 
 		TestPluginData testPluginData = pluginBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-		builder.addPlugin(testPlugin);
 
-		// build and execute the engine
-		ExperimentPlanCompletionObserver experimentPlanCompletionObserver = new ExperimentPlanCompletionObserver();
+		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		TestReportItemOutputConsumer reportItemOutputConsumer = new TestReportItemOutputConsumer();
-		builder.addExperimentContextConsumer(reportItemOutputConsumer::init);
-		builder.addExperimentContextConsumer(experimentPlanCompletionObserver::init);
-		builder.build().execute();
+		pluginsToAdd.add(testPlugin);
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)));
+		pluginsToAdd.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(3054641152904904632L).build()));
 
-		// show that all actions were executed
-		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).isPresent());
-		assertTrue(experimentPlanCompletionObserver.getActionCompletionReport(0).get().isComplete());
+		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
-		Map<ReportItem, Integer> actualReportItems = reportItemOutputConsumer.getReportItems().get(0);
-
-		assertEquals(expectedReportItems, actualReportItems);
+		assertTrue(outputConsumer.isComplete());
+		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
 
 		// precondition: Actor context is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -211,5 +201,6 @@ public class AT_RegionTransferReport {
 
 	private static final ReportId REPORT_ID = new SimpleReportId("region transfer report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region").add("destination_region").add("transfers").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region")
+			.add("destination_region").add("transfers").build();
 }
