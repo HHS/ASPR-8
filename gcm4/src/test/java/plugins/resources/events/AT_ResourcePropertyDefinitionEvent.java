@@ -18,7 +18,7 @@ import util.errors.ContractException;
 public class AT_ResourcePropertyDefinitionEvent {
 
 	@Test
-	@UnitTestConstructor(target = ResourcePropertyDefinitionEvent.class, args = { ResourceId.class, ResourcePropertyId.class })
+	@UnitTestConstructor(target = ResourcePropertyDefinitionEvent.class, args = { ResourceId.class, ResourcePropertyId.class, Object.class })
 	public void testConstructor() {
 		TestResourcePropertyId testResourcePropertyId = TestResourcePropertyId.ResourceProperty_1_2_INTEGER_MUTABLE;
 		TestResourceId testResourceId = TestResourceId.RESOURCE_1;
