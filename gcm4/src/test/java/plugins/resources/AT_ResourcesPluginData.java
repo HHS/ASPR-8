@@ -576,6 +576,8 @@ public final class AT_ResourcesPluginData {
 				int index = i % TimeTrackingPolicy.values().length;
 				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[index];
 				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
+				// adding duplicate data to show that the value persists
+				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
 				expectedValues.put(testResourceId, timeTrackingPolicy);
 			}
 		}
@@ -583,6 +585,33 @@ public final class AT_ResourcesPluginData {
 		expectedValues.put(TestResourceId.RESOURCE_5, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 
 		ResourcesPluginData resourceInitialData = builder.build();
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			TimeTrackingPolicy expectedPolicy = expectedValues.get(testResourceId);
+			TimeTrackingPolicy actualPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(testResourceId);
+			assertEquals(expectedPolicy, actualPolicy);
+		}
+
+		// idempotency tests
+
+		i = 0;
+		expectedValues = new LinkedHashMap<>();
+
+		for (TestResourceId testResourceId : TestResourceId.values()) {
+			if (testResourceId != TestResourceId.RESOURCE_5) {
+				builder.addResource(testResourceId);
+				int index = i % TimeTrackingPolicy.values().length;
+				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[index];
+				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
+				// replacing data to show that the value persists
+				timeTrackingPolicy = TimeTrackingPolicy.values()[1];
+				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
+				expectedValues.put(testResourceId, timeTrackingPolicy);
+			}
+		}
+		builder.addResource(TestResourceId.RESOURCE_5);
+		expectedValues.put(TestResourceId.RESOURCE_5, TimeTrackingPolicy.DO_NOT_TRACK_TIME);
+
+		resourceInitialData = builder.build();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			TimeTrackingPolicy expectedPolicy = expectedValues.get(testResourceId);
 			TimeTrackingPolicy actualPolicy = resourceInitialData.getPersonResourceTimeTrackingPolicy(testResourceId);
@@ -602,14 +631,6 @@ public final class AT_ResourcesPluginData {
 		// ResourceError.NULL_TIME_TRACKING_POLICY
 		contractException = assertThrows(ContractException.class, () -> builder.setResourceTimeTracking(resourceId, null));
 		assertEquals(ResourceError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
-
-		// if the resource tracking policy was previously assigned
-		// ResourceError#DUPLICATE_TIME_TRACKING_POLICY_ASSIGNMENT
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setResourceTimeTracking(resourceId, timeTrackingPolicy).setResourceTimeTracking(resourceId, timeTrackingPolicy);
-		});
-		assertEquals(ResourceError.DUPLICATE_TIME_TRACKING_POLICY_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
