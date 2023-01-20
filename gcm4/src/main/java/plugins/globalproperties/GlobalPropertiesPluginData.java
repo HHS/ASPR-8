@@ -25,16 +25,7 @@ import util.errors.ContractException;
  */
 @Immutable
 public final class GlobalPropertiesPluginData implements PluginData {
-
-	private static void validateGlobalPropertyIsNotDefined(final Data data, final GlobalPropertyId globalPropertyId) {
-		final PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
-		if (propertyDefinition != null) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, globalPropertyId);
-		}
-	}
-
-
-
+	
 	/**
 	 * Builder class for GloblaInitialData
 	 * 
@@ -78,6 +69,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 		/**
 		 * Defines a global property
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 * 
@@ -88,16 +80,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             </li> if the property definition is null
 		 *
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             </li> if a property definition for the given global
-		 *             property id was previously defined.
 		 * 
 		 */
 		public Builder defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition) {
 			ensureDataMutability();
 			validateGlobalPropertyIdNotNull(globalPropertyId);
 			validateGlobalPropertyDefinitionNotNull(propertyDefinition);
-			validateGlobalPropertyIsNotDefined(data, globalPropertyId);
 			data.globalPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 			return this;
 		}

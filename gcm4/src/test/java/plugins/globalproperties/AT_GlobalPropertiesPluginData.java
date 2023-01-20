@@ -78,19 +78,34 @@ public class AT_GlobalPropertiesPluginData {
 
 		// define a few global properties
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(34).build();
+		PropertyDefinition propertyDefinition2 = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(57).build();
 		GlobalPropertyId globalPropertyId = new SimpleGlobalPropertyId("id 1");
-		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		// replacing data to show that the value persists
 		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		// adding duplicate data to show that the value persists
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(234.34).build();
+		propertyDefinition2 = PropertyDefinition.builder().setType(Double.class).setDefaultValue(795.88).build();
 		globalPropertyId = new SimpleGlobalPropertyId("id 2");
-		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		// replacing data to show that the value persists
 		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		// adding duplicate data to show that the value persists
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
 		propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("default value").build();
+		propertyDefinition2 = PropertyDefinition.builder().setType(String.class).setDefaultValue("second default").build();
 		globalPropertyId = new SimpleGlobalPropertyId("id 3");
-		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition2);
+		// replacing data to show that the value persists
 		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		// adding duplicate data to show that the value persists
+		builder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		expectedPropertyDefinitions.put(globalPropertyId, propertyDefinition);
 
 		// build the initial data
 		GlobalPropertiesPluginData globalInitialData = builder.build();
@@ -112,13 +127,6 @@ public class AT_GlobalPropertiesPluginData {
 		// if the property definition is null
 		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), null));
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// if a property definition for the given global property id was
-		// previously defined.
-		builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef);
-		contractException = assertThrows(ContractException.class, () -> builder.defineGlobalProperty(new SimpleGlobalPropertyId("id"), propDef));
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-
 	}
 
 	@Test
