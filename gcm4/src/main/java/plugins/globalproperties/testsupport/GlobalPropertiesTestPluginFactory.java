@@ -14,13 +14,13 @@ import plugins.globalproperties.GlobalPropertiesPluginData;
 
 /**
  * A static test support class for the globals plugin. Provides convenience
- * methods for integrating a test plugin into a global-properties simulation
- * test harness.
+ * methods for obtaining standard GlobalProperties PluginData
  * 
- * 
+ * Also contains factory methods to obtain a list of plugins that can be
+ * utilized with
+ * {@code TestSimulation.execute()}
  *
  */
-
 public final class GlobalPropertiesTestPluginFactory {
 
 	private GlobalPropertiesTestPluginFactory() {
@@ -36,6 +36,10 @@ public final class GlobalPropertiesTestPluginFactory {
 		}
 	}
 
+	/**
+	 * Factory class that facilitates the building of {@linkplain PluginData}
+	 * with the various setter methods.
+	 */
 	public static class Factory {
 		private Data data;
 
@@ -43,9 +47,17 @@ public final class GlobalPropertiesTestPluginFactory {
 			this.data = data;
 		}
 
+		/**
+		 * Method that will get the PluginData for the GlobalProperties and TestPlugin
+		 * and use the respective PluginData to build Plugins
+		 * 
+		 * @return a List containing a GlobalPropertiesPlugin and a TestPlugin
+		 * 
+		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
-			Plugin globalPropertiesPlugin = GlobalPropertiesPlugin.getGlobalPropertiesPlugin(this.data.globalPropertiesPluginData);
+			Plugin globalPropertiesPlugin = GlobalPropertiesPlugin
+					.getGlobalPropertiesPlugin(this.data.globalPropertiesPluginData);
 
 			Plugin testPlugin = TestPlugin.getTestPlugin(this.data.testPluginData);
 
@@ -55,16 +67,42 @@ public final class GlobalPropertiesTestPluginFactory {
 			return pluginsToAdd;
 		}
 
+		/**
+		 * Method to set the GlobalPropertiesPluginData in this Factory.
+		 * 
+		 * @param globalPropertiesPluginData the GlobalPropertiesPluginData you want to
+		 *                                   use, if different from the standard
+		 *                                   PluginData
+		 * 
+		 * @return an instance of this Factory
+		 * 
+		 */
 		public Factory setGlobalPropertiesPluginData(GlobalPropertiesPluginData globalPropertiesPluginData) {
 			this.data.globalPropertiesPluginData = globalPropertiesPluginData;
 			return this;
 		}
 	}
 
+	/**
+	 * Method that will generate GlobalPropertiesPluginData
+	 * 
+	 * @param testPluginData PluginData that will be used to generate a TestPlugin
+	 * 
+	 * @return a new instance of Factory
+	 * 
+	 */
 	public static Factory factory(TestPluginData testPluginData) {
 		return new Factory(new Data(testPluginData));
 	}
 
+	/**
+	 * Method that will generate GlobalPropertiesPluginData and TestPluginData
+	 * 
+	 * @param consumer consumer used to generate TestPluginData
+	 * 
+	 * @return a new instance of Factory
+	 * 
+	 */
 	public static Factory factory(Consumer<ActorContext> consumer) {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
@@ -72,6 +110,12 @@ public final class GlobalPropertiesTestPluginFactory {
 		return new Factory(new Data(testPluginData));
 	}
 
+	/**
+	 * Method that will return a Standard GlobalPropertiesPluginData
+	 * 
+	 * @return the resulting GlobalPropertiesPluginData
+	 * 
+	 */
 	public static GlobalPropertiesPluginData getStandardGlobalPropertiesPluginData() {
 		GlobalPropertiesPluginData.Builder globalsPluginBuilder = GlobalPropertiesPluginData.builder();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
