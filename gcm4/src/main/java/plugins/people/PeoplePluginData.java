@@ -72,18 +72,17 @@ public final class PeoplePluginData implements PluginData {
 
 		/**
 		 * Adds a person.
+		 * Duplicate inputs override previous inputs
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
 		 *             id is null</li>
-		 *             <li>{@linkplain PersonError#DUPLICATE_PERSON_ID} if the
-		 *             person id is already contained</li>
 		 * 
 		 */
 		public Builder addPersonId(PersonId personId) {
 			ensureDataMutability();
 			validatePersonIdIsValid(personId);
-			validatePersonDoesNotExist(data, personId);
+
 			int personIndex = personId.getValue();
 			while (personIndex >= data.personIds.size()) {
 				data.personIds.add(null);
@@ -114,15 +113,6 @@ public final class PeoplePluginData implements PluginData {
 	/*
 	 * precondition: person id is not null 
 	 */
-	private static void validatePersonDoesNotExist(final Data data, final PersonId personId) {
-		int personIndex = personId.getValue();
-		if (personIndex >= data.personIds.size()) {
-			return;
-		}
-		if (data.personIds.get(personIndex) != null) {
-			throw new ContractException(PersonError.DUPLICATE_PERSON_ID, personId);
-		}
-	}
 
 	private static void validatePersonIdIsValid(PersonId personId) {
 		if (personId == null) {
