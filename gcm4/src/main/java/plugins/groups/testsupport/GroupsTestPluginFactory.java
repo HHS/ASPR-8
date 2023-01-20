@@ -47,7 +47,6 @@ public final class GroupsTestPluginFactory {
 
 		private Data(int initialPopulation, double expectedGroupsPerPerson,
 				double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
-			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 			int membershipCount = (int) FastMath.round(initialPopulation * expectedGroupsPerPerson);
 			int groupCount = expectedPeoplePerGroup == 0 ? 0
@@ -55,8 +54,8 @@ public final class GroupsTestPluginFactory {
 
 			this.peoplePluginData = GroupsTestPluginFactory.getStandardPeoplePluginData(initialPopulation);
 			this.groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount, membershipCount,
-					this.peoplePluginData.getPersonIds(), randomGenerator);
-			this.stochasticsPluginData = GroupsTestPluginFactory.getStandardStochasticsPluginData(randomGenerator);
+					this.peoplePluginData.getPersonIds(), seed);
+			this.stochasticsPluginData = GroupsTestPluginFactory.getStandardStochasticsPluginData(seed);
 			this.testPluginData = testPluginData;
 		}
 	}
@@ -74,7 +73,7 @@ public final class GroupsTestPluginFactory {
 
 		/**
 		 * Method that will get the PluginData for the Groups, People, Stochastic and
-		 * TestPlugin
+		 * Test Plugins
 		 * and use the respective PluginData to build Plugins
 		 * 
 		 * @return a List containing a GroupsPlugin, PeoplePlugin, StochasticsPlugin and
@@ -199,12 +198,14 @@ public final class GroupsTestPluginFactory {
 	 * @param membershipCount initial population * expected people per group
 	 * @param people          a List containing PersonIds. These should be the same
 	 *                        PersonIds used in the PeoplePluginData
-	 * @param randomGenerator an instance of a RandomGenerator
+	 * @param seed            a seed to seed a RandomGenerator
 	 * @return the resulting GroupsPluginData
 	 * 
 	 */
 	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount,
-			List<PersonId> people, RandomGenerator randomGenerator) {
+			List<PersonId> people, long seed) {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		// add the group plugin
 		GroupsPluginData.Builder groupBuilder = GroupsPluginData.builder();
 		// add group types
@@ -268,11 +269,12 @@ public final class GroupsTestPluginFactory {
 	 * Method that will return a Standard StochasticsPluginData based on some
 	 * configuration parameters.
 	 * 
-	 * @param randomGenerator the RandomGenerator that the Plugin should use
+	 * @param seed a seed to seed a RandomGenerator
 	 * @return the resulting StocasticsPluginData
 	 * 
 	 */
-	public static StochasticsPluginData getStandardStochasticsPluginData(RandomGenerator randomGenerator) {
+	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		return StochasticsPluginData.builder()
 				.setSeed(randomGenerator.nextLong()).build();
 	}
