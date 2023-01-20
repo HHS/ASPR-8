@@ -6,7 +6,6 @@ import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
-import plugins.reports.support.Report;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -32,7 +31,7 @@ import plugins.resources.support.ResourceId;
  *
  *
  */
-public final class MaterialsProducerResourceReport implements Report {
+public final class MaterialsProducerResourceReport {
 	private final ReportId reportId;
 
 	public MaterialsProducerResourceReport(ReportId reportId) {

@@ -288,7 +288,7 @@ public class AT_GroupPropertyReport {
 		GroupPropertyReport groupPropertyReport = builder.build();
 
 		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport::init));
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
@@ -534,7 +534,7 @@ public class AT_GroupPropertyReport {
 
 		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 6092832510476200219L, testPluginData).getPlugins();
 
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(groupPropertyReport::init));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 

@@ -158,7 +158,7 @@ public class Simulation {
 	 * IS CRITICAL TO THE FUNCTION OF THE SIMULATION!
 	 */
 	private static enum Planner {
-		DATA_MANAGER, ACTOR
+		DATA_MANAGER, ACTOR, REPORT 
 	}
 
 	private static class Data {

@@ -19,7 +19,7 @@ import util.errors.ContractException;
  *
  *
  */
-public abstract class PeriodicReport implements Report {
+public abstract class PeriodicReport  {
 
 	private ActorContext actorContext;
 

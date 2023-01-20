@@ -7,7 +7,6 @@ import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.MaterialsProducerPropertyId;
-import plugins.reports.support.Report;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -28,7 +27,7 @@ import plugins.reports.support.ReportItem;
  *
  *
  */
-public final class MaterialsProducerPropertyReport implements Report {
+public final class MaterialsProducerPropertyReport {
 
 	private final ReportId reportId;
 

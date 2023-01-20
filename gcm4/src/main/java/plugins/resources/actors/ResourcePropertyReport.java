@@ -2,7 +2,6 @@ package plugins.resources.actors;
 
 import nucleus.ActorContext;
 import nucleus.EventFilter;
-import plugins.reports.support.Report;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -28,7 +27,7 @@ import plugins.resources.support.ResourcePropertyId;
  *
  *
  */
-public final class ResourcePropertyReport implements Report {
+public final class ResourcePropertyReport {
 	private final ReportId reportId;
 	public ResourcePropertyReport(ReportId reportId) {
 		this.reportId = reportId;
