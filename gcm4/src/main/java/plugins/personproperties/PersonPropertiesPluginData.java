@@ -109,37 +109,34 @@ public class PersonPropertiesPluginData implements PluginData {
 		}
 
 		/**
-		 * Defines a person property definition
+		 * Defines a person property definition.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             person property id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *             if the person property definition value is null</li>
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-		 *             if the person property definition is already added</li>
-		 * 
-		 * 
 		 * 
 		 */
 		public Builder definePersonProperty(final PersonPropertyId personPropertyId, final PropertyDefinition propertyDefinition) {
 			ensureDataMutability();
 			validatePersonPropertyIdNotNull(personPropertyId);
 			validatePersonPropertyDefinitionNotNull(propertyDefinition);
-			validatePersonPropertyIsNotDefined(data, personPropertyId);
 			data.personPropertyDefinitions.put(personPropertyId, propertyDefinition);
 			return this;
 		}
 
 		/**
-		 * Sets the person's property value
+		 * Sets the person's property value.
+		 * Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
 		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
 		 *             id is null</li>
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *             person property id is null</li>
-		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
+		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *             if the person property value is null</li>
 		 */
 		public Builder setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
@@ -241,13 +238,6 @@ public class PersonPropertiesPluginData implements PluginData {
 				}
 
 			}
-		}
-	}
-
-	private static void validatePersonPropertyIsNotDefined(final Data data, final PersonPropertyId personPropertyId) {
-		final PropertyDefinition propertyDefinition = data.personPropertyDefinitions.get(personPropertyId);
-		if (propertyDefinition != null) {
-			throw new ContractException(PropertyError.DUPLICATE_PROPERTY_DEFINITION, personPropertyId);
 		}
 	}
 

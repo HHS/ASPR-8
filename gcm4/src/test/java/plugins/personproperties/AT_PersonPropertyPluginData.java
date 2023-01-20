@@ -98,6 +98,11 @@ public class AT_PersonPropertyPluginData {
 
 		// fill the builder with property definitions
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
+			TestPersonPropertyId testPersonPropertyId2 = testPersonPropertyId.next();
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId2.getPropertyDefinition());
+			// replacing data to show that the value persists
+			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
+			// adding duplicate data to show that the value persists
 			personPropertyBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
 		}
 
@@ -131,15 +136,6 @@ public class AT_PersonPropertyPluginData {
 			builder.definePersonProperty(testPersonPropertyId, null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// if the person property definition is already added
-		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
-			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-			builder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition());
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
 	}
 
 	@Test
