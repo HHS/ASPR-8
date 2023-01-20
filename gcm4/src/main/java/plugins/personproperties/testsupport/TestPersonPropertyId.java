@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.resources.testsupport.TestResourcePropertyId;
 import plugins.util.properties.PropertyDefinition;
 import plugins.util.properties.TimeTrackingPolicy;
 
