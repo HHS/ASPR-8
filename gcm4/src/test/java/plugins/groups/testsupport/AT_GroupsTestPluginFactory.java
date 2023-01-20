@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.annotation.Testable;
@@ -75,7 +74,7 @@ public class AT_GroupsTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = GroupsTestPluginFactory.class, name = "factory", args = { int.class, double.class,
-			double.class, long.class, Plugin.class })
+			double.class, long.class, TestPluginData.class })
 	public void testFactory2() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
@@ -95,6 +94,18 @@ public class AT_GroupsTestPluginFactory {
 		}).getPlugins().size());
 	}
 
+	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData) {
+		Class<?> classRef = expectedPluginData.getClass();
+		plugins.forEach((plugin) -> {
+			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
+			if (classRef.isAssignableFrom(pluginData.getClass())) {
+				assertEquals(expectedPluginData, classRef.cast(pluginData));
+			} else {
+				assertNotEquals(expectedPluginData, pluginData);
+			}
+		});
+	}
+
 	@Test
 	@UnitTestMethod(target = GroupsTestPluginFactory.Factory.class, name = "setGroupsPluginData", args = {
 			GroupsPluginData.class })
@@ -109,24 +120,18 @@ public class AT_GroupsTestPluginFactory {
 
 		GroupsPluginData groupsPluginData = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-		}).setGroupsPluginData(groupsPluginData).getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory
+				.factory(0, 0, 0, 0, t -> {
+				})
+				.setGroupsPluginData(groupsPluginData)
+				.getPlugins();
 
-		plugins.forEach((plugin) -> {
-			// can do this because it is known that each plugin only gets one data
-			// associated with it in this instance
-			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
-			if (pluginData instanceof GroupsPluginData) {
-				assertEquals(groupsPluginData, (GroupsPluginData) pluginData);
-			} else {
-				assertNotEquals(groupsPluginData, pluginData);
-			}
-		});
+		checkPlugins(plugins, groupsPluginData);
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsTestPluginFactory.Factory.class, name = "setPeoplePluginData", args = {
-			GroupsPluginData.class })
+			PeoplePluginData.class })
 	public void testSetPeoplePluginData() {
 		PeoplePluginData.Builder builder = PeoplePluginData.builder();
 
@@ -136,24 +141,18 @@ public class AT_GroupsTestPluginFactory {
 
 		PeoplePluginData peoplePluginData = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-		}).setPeoplePluginData(peoplePluginData).getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory
+				.factory(0, 0, 0, 0, t -> {
+				})
+				.setPeoplePluginData(peoplePluginData)
+				.getPlugins();
 
-		plugins.forEach((plugin) -> {
-			// can do this because it is known that each plugin only gets one data
-			// associated with it in this instance
-			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
-			if (pluginData instanceof PeoplePluginData) {
-				assertEquals(peoplePluginData, (PeoplePluginData) pluginData);
-			} else {
-				assertNotEquals(peoplePluginData, pluginData);
-			}
-		});
+		checkPlugins(plugins, peoplePluginData);
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsTestPluginFactory.Factory.class, name = "setStochasticsPluginData", args = {
-			GroupsPluginData.class })
+			StochasticsPluginData.class })
 	public void testSetStochasticsPluginData() {
 		StochasticsPluginData.Builder builder = StochasticsPluginData.builder();
 
@@ -161,24 +160,18 @@ public class AT_GroupsTestPluginFactory {
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
-		List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
-		}).setStochasticsPluginData(stochasticsPluginData).getPlugins();
+		List<Plugin> plugins = GroupsTestPluginFactory
+				.factory(0, 0, 0, 0, t -> {
+				})
+				.setStochasticsPluginData(stochasticsPluginData)
+				.getPlugins();
 
-		plugins.forEach((plugin) -> {
-			// can do this because it is known that each plugin only gets one data
-			// associated with it in this instance
-			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
-			if (pluginData instanceof StochasticsPluginData) {
-				assertEquals(stochasticsPluginData, (StochasticsPluginData) pluginData);
-			} else {
-				assertNotEquals(stochasticsPluginData, pluginData);
-			}
-		});
+		checkPlugins(plugins, stochasticsPluginData);
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupsTestPluginFactory.class, name = "getStandardGroupsPluginData", args = { int.class,
-			int.class, List.class, RandomGenerator.class })
+			int.class, List.class, long.class })
 	public void testGetStandardGroupsPluginData() {
 
 		int initialPopulation = 100;
@@ -194,7 +187,7 @@ public class AT_GroupsTestPluginFactory {
 		}
 
 		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(groupCount,
-				membershipCount, people, RandomGeneratorProvider.getRandomGenerator(6442469165497328184L));
+				membershipCount, people, 6442469165497328184L);
 
 		assertEquals(groupsPluginData.getGroupIds().size(), groupCount);
 		assertEquals(groupsPluginData.getPersonCount(), initialPopulation);
@@ -214,8 +207,7 @@ public class AT_GroupsTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsTestPluginFactory.class, name = "getStandardPeoplePluginData", args = { int.class,
-			int.class, List.class, RandomGenerator.class })
+	@UnitTestMethod(target = GroupsTestPluginFactory.class, name = "getStandardPeoplePluginData", args = { int.class })
 	public void testGetStandardPeoplePluginData() {
 
 		int initialPopulation = 100;
@@ -226,11 +218,11 @@ public class AT_GroupsTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = GroupsTestPluginFactory.class, name = "getStandardStochasticsPluginData", args = {
-			int.class, int.class, List.class, RandomGenerator.class })
+			long.class })
 	public void testGetStandardStochasticsPluginData() {
 		long seed = 6072871729256538807L;
 		StochasticsPluginData stochasticsPluginData = GroupsTestPluginFactory
-				.getStandardStochasticsPluginData(RandomGeneratorProvider.getRandomGenerator(seed));
+				.getStandardStochasticsPluginData(seed);
 
 		assertEquals(RandomGeneratorProvider.getRandomGenerator(seed).nextLong(), stochasticsPluginData.getSeed());
 		assertEquals(0, stochasticsPluginData.getRandomNumberGeneratorIds().size());
