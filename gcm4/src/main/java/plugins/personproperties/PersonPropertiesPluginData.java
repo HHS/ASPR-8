@@ -149,13 +149,29 @@ public class PersonPropertiesPluginData implements PluginData {
 			while (data.personPropertyValues.size() <= personIndex) {
 				data.personPropertyValues.add(null);
 			}
+
 			List<PersonPropertyInitialization> list = data.personPropertyValues.get(personIndex);
+			PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId, personPropertyValue);
+
 			if (list == null) {
 				list = new ArrayList<>();
 				data.personPropertyValues.set(personIndex, list);
 			}
-			PersonPropertyInitialization personPropertyInitialization = new PersonPropertyInitialization(personPropertyId, personPropertyValue);
-			list.add(personPropertyInitialization);
+
+			int index = -1;
+
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getPersonPropertyId().equals(personPropertyId)) {
+					index = i;
+					break;
+				}
+			}
+
+			if (index == -1) {
+				list.add(personPropertyInitialization);
+			} else {
+				list.set(index, personPropertyInitialization);
+			}
 
 			return this;
 		}
