@@ -159,7 +159,7 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			builder.addResource(TestResourceId.getUnknownResourceId());
+			
 			// replacing data to show that the value persists
 			builder.addResource(testResourceId);
 			// adding duplicate data to show that the value persists
@@ -441,7 +441,7 @@ public final class AT_ResourcesPluginData {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
 
-		int i = 0;
+		
 		Map<ResourceId, TimeTrackingPolicy> expectedValues = new LinkedHashMap<>();
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
