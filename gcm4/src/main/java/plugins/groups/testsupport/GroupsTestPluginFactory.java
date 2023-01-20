@@ -27,11 +27,12 @@ import util.wrappers.MultiKey;
 
 /**
  * A static test support class for the groups plugin. Provides convenience
- * methods for integrating an action plugin into a groups-based simulation test
- * harness.
+ * methods for obtaining standard Groups, People and Stochastics PluginData.
  * 
+ * Also contains factory methods to obtain a list of plugins that can be
+ * utilized with
+ * {@code TestSimulation.execute()}
  * 
- *
  */
 public final class GroupsTestPluginFactory {
 
@@ -60,6 +61,10 @@ public final class GroupsTestPluginFactory {
 		}
 	}
 
+	/**
+	 * Factory class that facilitates the building of {@linkplain PluginData}
+	 * with the various setter methods.
+	 */
 	public static class Factory {
 		private Data data;
 
@@ -67,6 +72,15 @@ public final class GroupsTestPluginFactory {
 			this.data = data;
 		}
 
+		/**
+		 * Method that will get the PluginData for the Groups, People, Stochastic and
+		 * TestPlugin
+		 * and use the respective PluginData to build Plugins
+		 * 
+		 * @return a List containing a GroupsPlugin, PeoplePlugin, StochasticsPlugin and
+		 *         a TestPlugin
+		 * 
+		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
 			Plugin groupPlugin = GroupsPlugin.getGroupPlugin(this.data.groupsPluginData);
@@ -87,16 +101,41 @@ public final class GroupsTestPluginFactory {
 			return pluginsToAdd;
 		}
 
+		/**
+		 * Method to set the GroupsPluginData in this Factory.
+		 * 
+		 * @param groupsPluginData the GroupsPluginData you want to use, if different
+		 *                         from the standard PluginData
+		 * @return an instance of this Factory
+		 * 
+		 */
 		public Factory setGroupsPluginData(GroupsPluginData groupsPluginData) {
 			this.data.groupsPluginData = groupsPluginData;
 			return this;
 		}
 
+		/**
+		 * Method to set the PeoplePluginData in this Factory.
+		 * 
+		 * @param peoplePluginData the PeoplePluginData you want to use, if different
+		 *                         from the standard PluginData
+		 * @return an instance of this Factory
+		 * 
+		 */
 		public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
 			this.data.peoplePluginData = peoplePluginData;
 			return this;
 		}
 
+		/**
+		 * Method to set the StochasticsPluginData in this Factory.
+		 * 
+		 * @param stochasticsPluginData the StochasticsPluginData you want to use, if
+		 *                              different
+		 *                              from the standard PluginData
+		 * @return an instance of this Factory
+		 * 
+		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
 			this.data.stochasticsPluginData = stochasticsPluginData;
 			return this;
@@ -104,12 +143,44 @@ public final class GroupsTestPluginFactory {
 
 	}
 
+	/**
+	 * Method that will generate GroupsPluginData, PeoplePluginData and
+	 * StocasticsPluginData based on some configuration parameters.
+	 * 
+	 * @param initialPopulation       how many people are in the simulation at the
+	 *                                start
+	 * @param expectedGroupsPerPerson the average number of groups each person
+	 *                                should be in
+	 * @param expectedPeoplePerGroup  the average number of people that should be in
+	 *                                each group
+	 * @param seed                    used to seed a RandomGenerator
+	 * @param testPluginData          PluginData that will be used to generate a
+	 *                                TestPlugin
+	 * @return a new instance of Factory
+	 * 
+	 */
 	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
 			double expectedPeoplePerGroup, long seed, TestPluginData testPluginData) {
 		return new Factory(
 				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData));
 	}
 
+	/**
+	 * Method that will generate GroupsPluginData, PeoplePluginData,
+	 * StocasticsPluginData and TestPluginData based on some configuration
+	 * parameters.
+	 * 
+	 * @param initialPopulation       how many people are in the simulation at the
+	 *                                start
+	 * @param expectedGroupsPerPerson the average number of groups each person
+	 *                                should be in
+	 * @param expectedPeoplePerGroup  the average number of people that should be in
+	 *                                each group
+	 * @param seed                    used to seed a RandomGenerator
+	 * @param consumer                consumer to use to generate TestPluginData
+	 * @return a new instance of Factory
+	 * 
+	 */
 	public static Factory factory(int initialPopulation, double expectedGroupsPerPerson,
 			double expectedPeoplePerGroup, long seed, Consumer<ActorContext> consumer) {
 
@@ -120,6 +191,18 @@ public final class GroupsTestPluginFactory {
 				new Data(initialPopulation, expectedGroupsPerPerson, expectedPeoplePerGroup, seed, testPluginData));
 	}
 
+	/**
+	 * Method that will return a Standard GroupsPluginData based on some
+	 * configuration parameters.
+	 * 
+	 * @param groupCount      how many groups there should be
+	 * @param membershipCount initial population * expected people per group
+	 * @param people          a List containing PersonIds. These should be the same
+	 *                        PersonIds used in the PeoplePluginData
+	 * @param randomGenerator an instance of a RandomGenerator
+	 * @return the resulting GroupsPluginData
+	 * 
+	 */
 	public static GroupsPluginData getStandardGroupsPluginData(int groupCount, int membershipCount,
 			List<PersonId> people, RandomGenerator randomGenerator) {
 		// add the group plugin
@@ -163,6 +246,15 @@ public final class GroupsTestPluginFactory {
 		return groupBuilder.build();
 	}
 
+	/**
+	 * Method that will return a Standard PeoplePluginData based on some
+	 * configuration parameters.
+	 * 
+	 * @param initialPopulation how many people should be in the simulation at the
+	 *                          start
+	 * @return the resulting PeoplePluginData
+	 * 
+	 */
 	public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
 		PeoplePluginData.Builder peopleBuilder = PeoplePluginData.builder();
 
@@ -172,6 +264,14 @@ public final class GroupsTestPluginFactory {
 		return peopleBuilder.build();
 	}
 
+	/**
+	 * Method that will return a Standard StochasticsPluginData based on some
+	 * configuration parameters.
+	 * 
+	 * @param randomGenerator the RandomGenerator that the Plugin should use
+	 * @return the resulting StocasticsPluginData
+	 * 
+	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(RandomGenerator randomGenerator) {
 		return StochasticsPluginData.builder()
 				.setSeed(randomGenerator.nextLong()).build();
