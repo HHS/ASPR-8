@@ -8,14 +8,45 @@ import nucleus.Simulation;
 import nucleus.Simulation.Builder;
 import util.errors.ContractException;
 
+/**
+ * A Testing utility class that will execute a simulation given a list of
+ * plugins and an outputConsumer
+ */
 public class TestSimulation {
+
+	/**
+	 * Executes a simulation instance
+	 * 
+	 * @param pluginsToAdd   - a list of plugins to add to the simulation
+	 * @param outputConsumer - a consumer that will handle all output from the
+	 *                       simulation
+	 * 
+	 * @throws ContractException
+	 *                           <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER}
+	 *                           if outputConsumer is null</li>
+	 * @throws ContractException
+	 *                           <li>{@linkplain TestError#TEST_EXECUTION_FAILURE}
+	 *                           if the simulation does not complete
+	 *                           successfully</li>
+	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd, TestSimulationOutputConsumer outputConsumer) {
 		if (outputConsumer == null) {
-			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER, "Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
+			throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER,
+					"Output consumer was not set. Either set it or call the other version of this method that doesn't take a outputConsumer as a parameter.");
 		}
 		_executeSimulation(pluginsToAdd, outputConsumer);
 	}
 
+	/**
+	 * Executes a simulation instance
+	 * 
+	 * @param pluginsToAdd - a list of plugins to add to the simulation
+	 * 
+	 * @throws ContractException
+	 *                           <li>{@linkplain TestError#TEST_EXECUTION_FAILURE}
+	 *                           if the simulation does not complete
+	 *                           successfully</li>
+	 */
 	public static void executeSimulation(List<Plugin> pluginsToAdd) {
 		_executeSimulation(pluginsToAdd, new TestSimulationOutputConsumer());
 	}
