@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
 import nucleus.testsupport.testplugin.TestSimulationOutputConsumer;
@@ -25,7 +24,7 @@ import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.support.MaterialsProducerConstructionData;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.materials.support.StageId;
-import plugins.materials.testsupport.MaterialsActionSupport;
+import plugins.materials.testsupport.MaterialsTestPluginFactory;
 import plugins.materials.testsupport.TestMaterialsProducerId;
 import plugins.materials.testsupport.TestMaterialsProducerPropertyId;
 import plugins.regions.testsupport.TestRegionId;
@@ -159,12 +158,11 @@ public final class AT_MaterialsProducerResourceReport {
 		}
 
 		TestPluginData testPluginData = pluginBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
-		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(6081341958178733565L);
-		pluginsToAdd.add(testPlugin);
+		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 6081341958178733565L, testPluginData)
+				.getPlugins();
 		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerResourceReport(REPORT_ID)));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
