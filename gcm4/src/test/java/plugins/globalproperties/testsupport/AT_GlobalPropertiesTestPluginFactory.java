@@ -54,7 +54,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { Plugin.class })
+	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.class, name = "factory", args = { TestPluginData.class })
 	public void testFactory2() {
 		MutableBoolean executed = new MutableBoolean();
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
