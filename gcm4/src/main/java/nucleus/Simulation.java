@@ -692,14 +692,7 @@ public class Simulation {
 			}
 		}
 
-		// initialize the data managers
-//		for (DataManagerId dataManagerId : dataManagerIdToDataManagerMap.keySet()) {
-//			DataManager dataManager = dataManagerIdToDataManagerMap.get(dataManagerId);
-//			dataManager.init(dataManagerContext);
-//			if (!dataManager.isInitialized()) {
-//				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
-//			}
-//		}
+		
 		executeDataManagerQueue();
 		
 		for(DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
