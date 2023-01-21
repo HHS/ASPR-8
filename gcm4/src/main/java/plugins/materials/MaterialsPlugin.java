@@ -2,6 +2,7 @@ package plugins.materials;
 
 import nucleus.Plugin;
 import plugins.materials.datamangers.MaterialsDataManager;
+import plugins.materials.dataviews.MaterialsDataView;
 import plugins.regions.RegionsPluginId;
 import plugins.resources.ResourcesPluginId;
 
@@ -23,7 +24,10 @@ public final class MaterialsPlugin {
 						.addPluginDependency(ResourcesPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							MaterialsPluginData pluginData = c.getPluginData(MaterialsPluginData.class);
-							c.addDataManager(new MaterialsDataManager(pluginData));
+							MaterialsDataManager materialsDataManager = new MaterialsDataManager(pluginData);
+							c.addDataManager(materialsDataManager);							
+							MaterialsDataView materialsDataView = new MaterialsDataView(materialsDataManager);
+							c.addDataView(materialsDataView);
 						}).build();
 
 	}

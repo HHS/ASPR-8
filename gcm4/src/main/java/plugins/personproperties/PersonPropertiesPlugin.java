@@ -3,6 +3,7 @@ package plugins.personproperties;
 import nucleus.Plugin;
 import plugins.people.PeoplePluginId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import plugins.personproperties.dataviews.PersonPropertiesDataView;
 import plugins.regions.RegionsPluginId;
 
 /**
@@ -26,7 +27,10 @@ public final class PersonPropertiesPlugin {
 						.addPluginDependency(RegionsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							PersonPropertiesPluginData pluginData = c.getPluginData(PersonPropertiesPluginData.class);
-							c.addDataManager(new PersonPropertiesDataManager(pluginData));
+							PersonPropertiesDataManager personPropertiesDataManager = new PersonPropertiesDataManager(pluginData);
+							c.addDataManager(personPropertiesDataManager);
+							PersonPropertiesDataView personPropertiesDataView = new PersonPropertiesDataView(personPropertiesDataManager);
+							c.addDataView(personPropertiesDataView);
 						}).build();
 
 	}

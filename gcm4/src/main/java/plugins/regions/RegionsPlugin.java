@@ -3,6 +3,7 @@ package plugins.regions;
 import nucleus.Plugin;
 import plugins.people.PeoplePluginId;
 import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.dataviews.RegionsDataView;
 
 public final class RegionsPlugin {
 
@@ -17,7 +18,10 @@ public final class RegionsPlugin {
 						.addPluginDependency(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {							
 							RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class);
-							c.addDataManager(new RegionsDataManager(pluginData));
+							RegionsDataManager regionsDataManager = new RegionsDataManager(pluginData);
+							c.addDataManager(regionsDataManager);							
+							RegionsDataView regionsDataView = new RegionsDataView(regionsDataManager);
+							c.addDataView(regionsDataView);							
 						})//
 						.build();
 
