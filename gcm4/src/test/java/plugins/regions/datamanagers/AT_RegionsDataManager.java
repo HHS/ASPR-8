@@ -1377,7 +1377,7 @@ public class AT_RegionsDataManager {
 		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(new PersonId(10000), personConstructionData);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personImminentAdditionEvent));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseObservationEvent(personImminentAdditionEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		}));
 
@@ -1400,7 +1400,7 @@ public class AT_RegionsDataManager {
 
 			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
 
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personImminentAdditionEvent));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseObservationEvent(personImminentAdditionEvent));
 			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
 		}));
 		pluginBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
@@ -2471,7 +2471,7 @@ public class AT_RegionsDataManager {
 		pluginBuilder.addTestDataManager("dm", () -> new TestDataManager());
 		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 			PersonRemovalEvent personRemovalEvent = new PersonRemovalEvent(new PersonId(1000));
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseEvent(personRemovalEvent));
+			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseObservationEvent(personRemovalEvent));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		}));
 		testPluginData = pluginBuilder.build();
@@ -2493,7 +2493,7 @@ public class AT_RegionsDataManager {
 			peopleDataManager.removePerson(personId);
 			PersonRemovalEvent personRemovalEvent = new PersonRemovalEvent(personId);
 
-			c.releaseEvent(personRemovalEvent);
+			c.releaseObservationEvent(personRemovalEvent);
 
 		}));
 		pluginBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);

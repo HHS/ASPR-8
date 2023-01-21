@@ -8,28 +8,26 @@ import java.util.function.Consumer;
 import util.errors.ContractException;
 
 /**
- * An actor context provides access to the nucleus engine and published data
- * managers to actors. It is supplied by the engine each time it interacts with
- * an actor. Actors are defined by this context. If this context is passed to a
- * method invocation, then that method is an actor method.
+ * An report context provides access to the nucleus simulation. It is supplied
+ * by the simulation each time it interacts with an report. Reports are defined
+ * by this context. If this context is passed to a method invocation, then that
+ * method is a report method.
  * 
  *
  */
 
 public final class ReportContext {
-	
+
 	private final Simulation simulation;
 
 	protected ReportContext(Simulation simulation) {
 		this.simulation = simulation;
 	}
 
-		
-
 	/**
-	 * Schedules a plan that will be executed at the given time. Passive plans
-	 * are not required to execute and the simulation will terminate if only
-	 * passive plans remain on the planning schedule.
+	 * Schedules a passive plan that will be executed at the given time. Passive
+	 * plans are not required to execute and the simulation will terminate if
+	 * only passive plans remain on the planning schedule.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_PLAN} if the plan is null
@@ -40,15 +38,16 @@ public final class ReportContext {
 	 * 
 	 * 
 	 */
-	public void addPassivePlan(final Consumer<ReportContext> plan, final double planTime) {
-		simulation.addActorPlan(plan, planTime, false, null);
+	public void addPlan(final Consumer<ReportContext> plan, final double planTime) {
+		simulation.addReportPlan(plan, planTime, null);
 	}
+
 	/**
-	 * Schedules a plan that will be executed at the given time. The plan is
-	 * associated with the given key and can be canceled or retrieved via this
-	 * key. Keys must be unique to the actor doing the planning, but can be
-	 * repeated across actors and other planning entities. Use of keys with
-	 * plans should be avoided unless retrieval or cancellation is needed.
+	 * Schedules a passive plan that will be executed at the given time. The
+	 * plan is associated with the given key and can be canceled or retrieved
+	 * via this key. Keys must be unique to the report doing the planning, but
+	 * can be repeated across reports and other planning entities. Use of keys
+	 * with plans should be avoided unless retrieval or cancellation is needed.
 	 * Passive plans are not required to execute and the simulation will
 	 * terminate if only passive plans remain on the planning schedule.
 	 * 
@@ -62,12 +61,14 @@ public final class ReportContext {
 	 *             <li>{@link NucleusError#PAST_PLANNING_TIME} if the plan is
 	 *             scheduled for a time in the past
 	 * 
-	 */	
-	public void addPassiveKeyedPlan(final Consumer<ReportContext> plan, final double planTime, final Object key) {
+	 */
+
+	public void addKeyedPlan(final Consumer<ReportContext> plan, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
-		simulation.validateActorPlanKeyNotDuplicate(key);
-		simulation.addActorPlan(plan, planTime, false, key);
+		simulation.validateReportPlanKeyNotDuplicate(key);
+		simulation.addReportPlan(plan, planTime, key);
 	}
+
 	/**
 	 * Retrieves a plan stored for the given key.
 	 * 
@@ -75,11 +76,12 @@ public final class ReportContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	
-	@SuppressWarnings("unchecked")	
+
+	@SuppressWarnings("unchecked")
 	public <T extends Consumer<ReportContext>> Optional<T> getPlan(final Object key) {
-		return (Optional<T>) simulation.getActorPlan(key);
+		return (Optional<T>) simulation.getReportPlan(key);
 	}
+
 	/**
 	 * Returns the scheduled execution time for the plan associated with the
 	 * given key
@@ -89,7 +91,7 @@ public final class ReportContext {
 	 *             null
 	 */
 	public Optional<Double> getPlanTime(final Object key) {
-		return simulation.getActorPlanTime(key);
+		return simulation.getReportPlanTime(key);
 	}
 
 	/**
@@ -99,22 +101,22 @@ public final class ReportContext {
 	 *             <li>{@link NucleusError#NULL_PLAN_KEY} if the plan key is
 	 *             null
 	 */
-	
+
 	public <T extends Consumer<ReportContext>> Optional<T> removePlan(final Object key) {
-		return simulation.removeActorPlan(key);
+		return simulation.removeReportPlan(key);
 	}
 
 	/**
-	 * Returns a list of the current plan keys associated with the current actor
+	 * Returns a list of the current plan keys associated with the current report
 	 * 
-	 */	
-	public List<Object> getPlanKeys() {
-		return simulation.getActorPlanKeys();
-	}
+	 */
+	 public List<Object> getPlanKeys() {
+	 return simulation.getReportPlanKeys();
+	 }
 
 	/**
-	 * Subscribes the report to events of the given type for the purpose
-	 * of execution of data changes.
+	 * Subscribes the report to events of the given type for the purpose of
+	 * execution of data changes.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
@@ -125,51 +127,54 @@ public final class ReportContext {
 	 *             data manager is already subscribed
 	 * 
 	 */
-	public <T extends Event> void subscribe(Class<T> eventClass,
-			BiConsumer<DataManagerContext, T> eventConsumer) {
-		simulation.subscribeDataManagerToEvent(dataManagerId, eventClass,
-				eventConsumer);
+	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
+		simulation.subscribeReportToEvent(eventClass, eventConsumer);
 	}
 
 	/**
-	 * Unsubscribes the report from events of the given type for all
-	 * phases of event handling.
+	 * Unsubscribes the report from events of the given type for all phases of
+	 * event handling.
 	 * 
 	 * @throws ContractException
 	 *             <li>{@link NucleusError#NULL_EVENT_CLASS} if the event class
 	 *             is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
-		simulation.unSubscribeDataManagerFromEvent(dataManagerId, eventClass);
+		simulation.unsubscribeReportFromEvent(eventClass);
 	}
+
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
-	 * Activity associated with the consumer should be limited to querying data
-	 * state and releasing output.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if the
+	 *             <li>{@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER} if the
 	 *             consumer is null</li>
 	 */
-	
 	public void subscribeToSimulationClose(Consumer<ReportContext> consumer) {
-		simulation.subscribeActorToSimulationClose(consumer);
+		simulation.subscribeReportToSimulationClose(consumer);
 	}
-	
-	
-	public <T extends DataView> T getDataView(Class<T> dataManagerClass) {
-		return simulation.getDataManagerForActor(dataManagerClass);
+
+	/**
+	 * Returns the DataView instance from the give class reference
+	 * 
+	 * @throws ContractException
+	 *             <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS} if the
+	 *             class reference is null</li>
+	 *             <li>{@linkplain NucleusError#UNKNOWN_DATA_VIEW} if the class
+	 *             reference does not correspond to a contained data view</li>
+	 * 
+	 */
+
+	public <T extends DataView> T getDataView(Class<T> dataViewClass) {
+		return simulation.getDataViewForReport(dataViewClass);
 	}
-	
-	
+
 	public double getTime() {
 		return simulation.time;
 	}
-	
-	
+
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}
-	
-	
+
 }

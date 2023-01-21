@@ -491,8 +491,10 @@ public final class ResourcesDataManager extends DataManager {
 		map.put(resourcePropertyId, propertyValueRecord);
 
 		if (dataManagerContext.subscribersExist(ResourcePropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId, propertyValue));
+			dataManagerContext.releaseObservationEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId, propertyValue));
 		}
+		
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -536,8 +538,10 @@ public final class ResourcesDataManager extends DataManager {
 
 		// release notice that a new resource id has been added
 		if (dataManagerContext.subscribersExist(ResourceIdAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new ResourceIdAdditionEvent(resourceId, timeTrackingPolicy));
+			dataManagerContext.releaseObservationEvent(new ResourceIdAdditionEvent(resourceId, timeTrackingPolicy));
 		}
+		
+		dataManagerContext.pushObservationEvents();
 
 	}
 
@@ -987,14 +991,16 @@ public final class ResourcesDataManager extends DataManager {
 
 			long currentSourceRegionResourceLevel = sourceRecord.getAmount();
 			long currentDestinationRegionResourceLevel = destinationRecord.getAmount();
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
 		} else {
 
 			decrementRegionResourceLevel(sourceRegionId, resourceId, amount);
 			incrementRegionResourceLevel(destinationRegionId, resourceId, amount);
 
 		}
+		
+		dataManagerContext.pushObservationEvents();
 
 	}
 
@@ -1061,10 +1067,11 @@ public final class ResourcesDataManager extends DataManager {
 			final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 			decrementPersonResourceLevel(resourceId, personId, amount);
 			final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+			dataManagerContext.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
 		} else {
 			decrementPersonResourceLevel(resourceId, personId, amount);
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/*
@@ -1109,12 +1116,13 @@ public final class ResourcesDataManager extends DataManager {
 			validateResourceAdditionValue(previousResourceLevel, amount);
 			incrementRegionResourceLevel(regionId, resourceId, amount);
 			long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 		} else {
 			final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 			validateResourceAdditionValue(previousResourceLevel, amount);
 			incrementRegionResourceLevel(regionId, resourceId, amount);
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -1148,10 +1156,11 @@ public final class ResourcesDataManager extends DataManager {
 			final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 			decrementRegionResourceLevel(regionId, resourceId, amount);
 			long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 		} else {
 			decrementRegionResourceLevel(regionId, resourceId, amount);
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -1189,8 +1198,10 @@ public final class ResourcesDataManager extends DataManager {
 		final Object oldPropertyValue = resourcePropertyMap.get(resourceId).get(resourcePropertyId).getValue();
 		resourcePropertyMap.get(resourceId).get(resourcePropertyId).setPropertyValue(resourcePropertyValue);
 		if (dataManagerContext.subscribersExist(ResourcePropertyUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
+			dataManagerContext.releaseObservationEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
 		}
+		
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateResourcePropertyValueNotNull(final Object propertyValue) {
@@ -1251,11 +1262,12 @@ public final class ResourcesDataManager extends DataManager {
 		incrementRegionResourceLevel(regionId, resourceId, amount);
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+			dataManagerContext.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
 		}
 		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -1303,11 +1315,13 @@ public final class ResourcesDataManager extends DataManager {
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 
 		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 		}
 		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, personResourceLevel, newLevel));
+			dataManagerContext.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, personResourceLevel, newLevel));
 		}
+		
+		dataManagerContext.pushObservationEvents();
 
 	}
 

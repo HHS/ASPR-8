@@ -137,8 +137,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonPropertyDefinitionEvent(personPropertyId));
+			dataManagerContext.releaseObservationEvent(new PersonPropertyDefinitionEvent(personPropertyId));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	@Override
@@ -550,8 +551,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		Object oldValue = propertyManager.getPropertyValue(pId);
 		propertyManager.setPropertyValue(pId, personPropertyValue);
 		if (dataManagerContext.subscribersExist(PersonPropertyUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
+			dataManagerContext.releaseObservationEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private static void validatePropertyMutability(final PropertyDefinition propertyDefinition) {

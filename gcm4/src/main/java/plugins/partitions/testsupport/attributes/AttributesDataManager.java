@@ -206,8 +206,9 @@ public final class AttributesDataManager extends DataManager {
 		Object previousValue = getAttributeValue(personId, attributeId);
 		attributeValues.get(attributeId).put(personId, value);
 		if (dataManagerContext.subscribersExist(AttributeUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
+			dataManagerContext.releaseObservationEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {

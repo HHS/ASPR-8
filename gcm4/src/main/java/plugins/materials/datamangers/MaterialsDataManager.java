@@ -583,8 +583,10 @@ public final class MaterialsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(MaterialsProducerPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new MaterialsProducerPropertyDefinitionEvent(materialsProducerPropertyId));
+			dataManagerContext.releaseObservationEvent(new MaterialsProducerPropertyDefinitionEvent(materialsProducerPropertyId));
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -676,8 +678,10 @@ public final class MaterialsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(BatchPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new BatchPropertyDefinitionEvent(materialId, batchPropertyId));
+			dataManagerContext.releaseObservationEvent(new BatchPropertyDefinitionEvent(materialId, batchPropertyId));
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateMaterialId(final MaterialId materialId) {
@@ -1085,8 +1089,10 @@ public final class MaterialsDataManager extends DataManager {
 			}
 
 			MaterialsProducerAdditionEvent materialsProducerAdditionEvent = materialsProducerAdditionEventBuilder.build();
-			dataManagerContext.releaseEvent(materialsProducerAdditionEvent);
+			dataManagerContext.releaseObservationEvent(materialsProducerAdditionEvent);
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -1482,8 +1488,9 @@ public final class MaterialsDataManager extends DataManager {
 
 		BatchId result = batchRecord.batchId;
 		if (dataManagerContext.subscribersExist(BatchAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new BatchAdditionEvent(batchRecord.batchId));
+			dataManagerContext.releaseObservationEvent(new BatchAdditionEvent(batchRecord.batchId));
 		}
+		dataManagerContext.pushObservationEvents();
 		return result;
 	}
 
@@ -1577,12 +1584,13 @@ public final class MaterialsDataManager extends DataManager {
 			double previousDestinationAmount = destinationBatchRecord.amount;
 			sourceBatchRecord.amount -= amount;
 			destinationBatchRecord.amount += amount;
-			dataManagerContext.releaseEvent(new BatchAmountUpdateEvent(sourceBatchId, previousSourceAmount, sourceBatchRecord.amount));
-			dataManagerContext.releaseEvent(new BatchAmountUpdateEvent(destinationBatchId, previousDestinationAmount, destinationBatchRecord.amount));
+			dataManagerContext.releaseObservationEvent(new BatchAmountUpdateEvent(sourceBatchId, previousSourceAmount, sourceBatchRecord.amount));
+			dataManagerContext.releaseObservationEvent(new BatchAmountUpdateEvent(destinationBatchId, previousDestinationAmount, destinationBatchRecord.amount));
 		} else {
 			sourceBatchRecord.amount -= amount;
 			destinationBatchRecord.amount += amount;
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateBatchHasSufficientUllage(BatchId batchId, double amount) {
@@ -1663,10 +1671,14 @@ public final class MaterialsDataManager extends DataManager {
 	public void removeBatch(BatchId batchId) {
 		validateBatchId(batchId);
 		validateBatchIsNotOnOfferedStage(batchId);
-		dataManagerContext.addPlan((context) -> destroyBatch(batchId), dataManagerContext.getTime());
+		dataManagerContext.addPlan((context) -> {
+			destroyBatch(batchId);
+			context.pushObservationEvents();
+		}, dataManagerContext.getTime());
 		if (dataManagerContext.subscribersExist(BatchImminentRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchId));
+			dataManagerContext.releaseObservationEvent(new BatchImminentRemovalEvent(batchId));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void destroyBatch(final BatchId batchId) {
@@ -1733,7 +1745,7 @@ public final class MaterialsDataManager extends DataManager {
 				previousPropertyValue = propertyValueRecord.getValue();
 			}
 			propertyValueRecord.setPropertyValue(batchPropertyValue);
-			dataManagerContext.releaseEvent(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
+			dataManagerContext.releaseObservationEvent(new BatchPropertyUpdateEvent(batchId, batchPropertyId, previousPropertyValue, batchPropertyValue));
 		} else {
 			PropertyValueRecord propertyValueRecord = map.get(batchPropertyId);
 			if (propertyValueRecord == null) {
@@ -1742,6 +1754,8 @@ public final class MaterialsDataManager extends DataManager {
 			}
 			propertyValueRecord.setPropertyValue(batchPropertyValue);
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
@@ -1796,7 +1810,7 @@ public final class MaterialsDataManager extends DataManager {
 			}
 			propertyValueRecord.setPropertyValue(materialsProducerPropertyValue);
 
-			dataManagerContext.releaseEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
+			dataManagerContext.releaseObservationEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
 		} else {
 			if (propertyValueRecord == null) {
 				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
@@ -1839,8 +1853,10 @@ public final class MaterialsDataManager extends DataManager {
 		batchRecord.stageRecord = null;
 		batchRecord.materialsProducerRecord.inventory.add(batchRecord);
 		if (dataManagerContext.subscribersExist(StageMembershipRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new StageMembershipRemovalEvent(batchId, stageId));
+			dataManagerContext.releaseObservationEvent(new StageMembershipRemovalEvent(batchId, stageId));
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateStageIsNotOffered(final StageId stageId) {
@@ -1898,8 +1914,10 @@ public final class MaterialsDataManager extends DataManager {
 		stageRecord.batchRecords.add(batchRecord);
 		batchRecord.materialsProducerRecord.inventory.remove(batchRecord);
 		if (dataManagerContext.subscribersExist(StageMembershipAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new StageMembershipAdditionEvent(batchId, stageId));
+			dataManagerContext.releaseObservationEvent(new StageMembershipAdditionEvent(batchId, stageId));
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateBatchAndStageOwnersMatch(final BatchId batchId, final StageId stageId) {
@@ -1960,11 +1978,13 @@ public final class MaterialsDataManager extends DataManager {
 		}
 		stageRecord.offered = false;
 		if (dataManagerContext.subscribersExist(StageMaterialsProducerUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new StageMaterialsProducerUpdateEvent(stageId, stageProducer, materialsProducerId));
+			dataManagerContext.releaseObservationEvent(new StageMaterialsProducerUpdateEvent(stageId, stageProducer, materialsProducerId));
 		}
 		if (dataManagerContext.subscribersExist(StageOfferUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new StageOfferUpdateEvent(stageId, true, false));
+			dataManagerContext.releaseObservationEvent(new StageOfferUpdateEvent(stageId, true, false));
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateStageNotOwnedByReceivingMaterialsProducer(final StageId stageId, final MaterialsProducerId materialsProducerId) {
@@ -2027,18 +2047,19 @@ public final class MaterialsDataManager extends DataManager {
 
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 		final ComponentResourceRecord componentResourceRecord = materialsProducerRecord.materialProducerResources.get(resourceId);
-		
-		
-		if (dataManagerContext.subscribersExist(MaterialsProducerResourceUpdateEvent.class)) {			
+
+		if (dataManagerContext.subscribersExist(MaterialsProducerResourceUpdateEvent.class)) {
 			long previousMaterialsProducerResourceLevel = componentResourceRecord.getAmount();
 			componentResourceRecord.decrementAmount(amount);
 			long currentMaterialsProducerResourceLevel = componentResourceRecord.getAmount();
 			resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
-			dataManagerContext.releaseEvent(new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
-		}else {
+			dataManagerContext.releaseObservationEvent(
+					new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousMaterialsProducerResourceLevel, currentMaterialsProducerResourceLevel));
+		} else {
 			componentResourceRecord.decrementAmount(amount);
 			resourcesDataManager.addResourceToRegion(resourceId, regionId, amount);
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateResourceAdditionValue(final long currentResourceLevel, final long amount) {
@@ -2095,8 +2116,10 @@ public final class MaterialsDataManager extends DataManager {
 		materialsProducerRecord.stageRecords.add(stageRecord);
 		stageRecords.put(stageRecord.stageId, stageRecord);
 		if (dataManagerContext.subscribersExist(StageAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new StageAdditionEvent(stageRecord.stageId));
+			dataManagerContext.releaseObservationEvent(new StageAdditionEvent(stageRecord.stageId));
 		}
+
+		dataManagerContext.pushObservationEvents();
 		return stageRecord.stageId;
 	}
 
@@ -2129,15 +2152,16 @@ public final class MaterialsDataManager extends DataManager {
 				}
 				stageRecord.materialsProducerRecord.stageRecords.remove(stageRecord);
 				stageRecords.remove(stageId);
+				context.pushObservationEvents();
 			}, dataManagerContext.getTime());
 
 			if (dataManagerContext.subscribersExist(BatchImminentRemovalEvent.class)) {
 				for (BatchRecord batchRecord : stageRecord.batchRecords) {
-					dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
+					dataManagerContext.releaseObservationEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
 				}
 			}
 			if (dataManagerContext.subscribersExist(StageImminentRemovalEvent.class)) {
-				dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
+				dataManagerContext.releaseObservationEvent(new StageImminentRemovalEvent(stageId));
 			}
 		} else {
 			// plan for the removal of the stage and return of the batches to
@@ -2149,12 +2173,15 @@ public final class MaterialsDataManager extends DataManager {
 				}
 				stageRecord.materialsProducerRecord.stageRecords.remove(stageRecord);
 				stageRecords.remove(stageId);
+				context.pushObservationEvents();
 			}, dataManagerContext.getTime());
 
 			if (dataManagerContext.subscribersExist(StageImminentRemovalEvent.class)) {
-				dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
+				dataManagerContext.releaseObservationEvent(new StageImminentRemovalEvent(stageId));
 			}
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -2176,10 +2203,12 @@ public final class MaterialsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(StageOfferUpdateEvent.class)) {
 			boolean previousState = stageRecord.offered;
 			stageRecord.offered = offer;
-			dataManagerContext.releaseEvent(new StageOfferUpdateEvent(stageId, previousState, offer));
+			dataManagerContext.releaseObservationEvent(new StageOfferUpdateEvent(stageId, previousState, offer));
 		} else {
 			stageRecord.offered = offer;
 		}
+
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -2253,17 +2282,18 @@ public final class MaterialsDataManager extends DataManager {
 		}, dataManagerContext.getTime());
 
 		if (dataManagerContext.subscribersExist(BatchAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new BatchAdditionEvent(batchId));
+			dataManagerContext.releaseObservationEvent(new BatchAdditionEvent(batchId));
 		}
 
 		if (dataManagerContext.subscribersExist(BatchImminentRemovalEvent.class)) {
 			for (BatchRecord batchRec : stageRecord.batchRecords) {
-				dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRec.batchId));
+				dataManagerContext.releaseObservationEvent(new BatchImminentRemovalEvent(batchRec.batchId));
 			}
 		}
 		if (dataManagerContext.subscribersExist(StageImminentRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
+			dataManagerContext.releaseObservationEvent(new StageImminentRemovalEvent(stageId));
 		}
+		dataManagerContext.pushObservationEvents();
 		return batchId;
 	}
 
@@ -2320,21 +2350,22 @@ public final class MaterialsDataManager extends DataManager {
 			stageRecords.remove(stageId);
 
 		}, dataManagerContext.getTime());
-		
+
 		componentResourceRecord.incrementAmount(amount);
-		
+
 		if (dataManagerContext.subscribersExist(MaterialsProducerResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousResourceLevel, componentResourceRecord.getAmount()));
+			dataManagerContext.releaseObservationEvent(new MaterialsProducerResourceUpdateEvent(materialsProducerId, resourceId, previousResourceLevel, componentResourceRecord.getAmount()));
 		}
 
 		if (dataManagerContext.subscribersExist(BatchImminentRemovalEvent.class)) {
 			for (BatchRecord batchRecord : stageRecord.batchRecords) {
-				dataManagerContext.releaseEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
+				dataManagerContext.releaseObservationEvent(new BatchImminentRemovalEvent(batchRecord.batchId));
 			}
 		}
 		if (dataManagerContext.subscribersExist(StageImminentRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new StageImminentRemovalEvent(stageId));
+			dataManagerContext.releaseObservationEvent(new StageImminentRemovalEvent(stageId));
 		}
+		dataManagerContext.pushObservationEvents();
 
 	}
 
@@ -2369,8 +2400,9 @@ public final class MaterialsDataManager extends DataManager {
 		nonDefaultChecksForBatches.put(materialId, new boolean[0]);
 
 		if (dataManagerContext.subscribersExist(MaterialIdAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new MaterialIdAdditionEvent(materialId));
+			dataManagerContext.releaseObservationEvent(new MaterialIdAdditionEvent(materialId));
 		}
+		dataManagerContext.pushObservationEvents();
 
 	}
 

@@ -62,6 +62,9 @@ public class Simulation {
 		private long arrivalId;
 		private boolean isActive;
 
+		private Consumer<ReportContext> reportPlan;
+		private ReportId reportId;
+
 		private Consumer<ActorContext> actorPlan;
 		private ActorId actorId;
 
@@ -158,7 +161,7 @@ public class Simulation {
 	 * IS CRITICAL TO THE FUNCTION OF THE SIMULATION!
 	 */
 	private static enum Planner {
-		DATA_MANAGER, ACTOR, REPORT 
+		DATA_MANAGER, ACTOR, REPORT
 	}
 
 	private static class Data {
@@ -196,6 +199,7 @@ public class Simulation {
 	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
 
 	// actors
+	private final Map<ReportId, Consumer<ReportContext>> simulationCloseReportCallbacks = new LinkedHashMap<>();
 
 	private final Map<ActorId, Consumer<ActorContext>> simulationCloseActorCallbacks = new LinkedHashMap<>();
 
@@ -217,6 +221,12 @@ public class Simulation {
 	}
 
 	private void validateActorPlan(final Consumer<ActorContext> plan) {
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
+		}
+	}
+
+	private void validateReportPlan(final Consumer<ReportContext> plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
@@ -258,7 +268,7 @@ public class Simulation {
 		return (T) pluginData;
 	}
 
-	protected void addDataManager(DataManager dataManager) {
+	protected void addDataManagerForPlugin(DataManager dataManager) {
 
 		if (focalPluginId == null) {
 			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
@@ -272,13 +282,49 @@ public class Simulation {
 			throw new ContractException(NucleusError.DUPLICATE_DATA_MANAGER_TYPE, dataManager.getClass());
 		}
 
-		DataManagerId dataManagerId = new DataManagerId(masterDataManagerIndex++);
-		DataManagerContext dataManagerContext = new DataManagerContext(Simulation.this, dataManagerId);
-		dataManagerIdToContextMap.put(dataManagerId, dataManagerContext);
+		DataManagerId dataManagerId = new DataManagerId(dataManagerIdToDataManagerMap.size());
+
+		/*
+		 * Used to ensure that there is at most one instance of each data
+		 * manager since classes are the identifiers for data managers outside
+		 * of the simulation class. Used to find data managers for actors and
+		 * data managers.
+		 */
 		baseClassToDataManagerMap.put(dataManager.getClass(), dataManager);
+
+		/*
+		 * 
+		 */
 		dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
 		dataManagerToDataManagerIdMap.put(dataManager, dataManagerId);
+
+		// used for establishing visibility of data managers to each other
 		dataManagerIdToPluginIdMap.put(dataManagerId, focalPluginId);
+		
+		
+		DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+		dataManagerContentRec.plan = dataManager::init;
+		dataManagerContentRec.dataManagerId = dataManagerId;
+		
+		dataManagerQueue.add(dataManagerContentRec);
+
+	}
+
+	protected void addDataViewForPlugin(DataView dataView) {
+
+		if (focalPluginId == null) {
+			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
+		}
+
+		if (dataView == null) {
+			throw new ContractException(NucleusError.NULL_DATA_VIEW);
+		}
+
+		if (baseClassToDataViewMap.containsKey(dataView.getClass())) {
+			throw new ContractException(NucleusError.DUPLICATE_DATA_VIEW_TYPE, dataView.getClass());
+		}
+
+		baseClassToDataViewMap.put(dataView.getClass(), dataView);
 	}
 
 	protected void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
@@ -314,7 +360,37 @@ public class Simulation {
 
 	}
 
-	protected void addDataManagerPlan(final DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	protected void addReportPlan(final Consumer<ReportContext> plan, final double time, final Object key) {
+
+		validatePlanTime(time);
+		validateReportPlan(plan);
+
+		final PlanRec planRec = new PlanRec();
+		planRec.isActive = false;
+		planRec.arrivalId = masterPlanningArrivalId++;
+		planRec.planner = Planner.REPORT;
+		planRec.time = FastMath.max(time, this.time);
+		planRec.reportPlan = plan;
+		planRec.key = key;
+
+		Map<Object, PlanRec> map;
+
+		planRec.reportId = focalReportId;
+
+		if (key != null) {
+			map = reportPlanMap.get(focalReportId);
+			if (map == null) {
+				map = new LinkedHashMap<>();
+				reportPlanMap.put(focalReportId, map);
+			}
+			map.put(key, planRec);
+		}
+
+		planningQueue.add(planRec);
+
+	}
+
+	protected void addDataManagerPlan(final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validateDataManagerPlan(plan);
 		validatePlanTime(time);
@@ -329,12 +405,12 @@ public class Simulation {
 
 		Map<Object, PlanRec> map;
 
-		planRec.dataManagerId = dataManagerId;
+		planRec.dataManagerId = focalDataManagerId;
 		if (key != null) {
-			map = dataManagerPlanMap.get(dataManagerId);
+			map = dataManagerPlanMap.get(focalDataManagerId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
-				dataManagerPlanMap.put(dataManagerId, map);
+				dataManagerPlanMap.put(focalDataManagerId, map);
 			}
 			map.put(key, planRec);
 		}
@@ -345,14 +421,20 @@ public class Simulation {
 		planningQueue.add(planRec);
 	}
 
-	protected void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
-		if (getDataManagerPlan(dataManagerId, key).isPresent()) {
+	protected void validateDataManagerPlanKeyNotDuplicate(final Object key) {
+		if (getDataManagerPlan(key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
 
 	protected void validateActorPlanKeyNotDuplicate(final Object key) {
 		if (getActorPlan(key).isPresent()) {
+			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
+		}
+	}
+
+	protected void validateReportPlanKeyNotDuplicate(final Object key) {
+		if (getReportPlan(key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
@@ -369,6 +451,24 @@ public class Simulation {
 			if (planRecord != null) {
 				result = (T) planRecord.actorPlan;
 				planRecord.actorPlan = null;
+			}
+		}
+		return Optional.ofNullable(result);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T extends Consumer<ReportContext>> Optional<T> removeReportPlan(final Object key) {
+		validatePlanKeyNotNull(key);
+
+		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
+
+		T result = null;
+		if (map != null) {
+			final PlanRec planRecord = map.remove(key);
+			if (planRecord != null) {
+				result = (T) planRecord.reportPlan;
+				planRecord.reportPlan = null;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -528,6 +628,8 @@ public class Simulation {
 	 * 
 	 */
 	public void execute() {
+		dataManagerContext = new DataManagerContext(this);
+		reportContext = new ReportContext(this);
 		actorContext = new ActorContext(this);
 		pluginContext = new PluginContext(this);
 
@@ -553,7 +655,7 @@ public class Simulation {
 			}
 		}
 
-		// Have each plugin contribute data managers and actors
+		// Have each plugin contribute data managers reports and actors
 		for (Plugin plugin : orderedPlugins) {
 			focalPluginId = plugin.getPluginId();
 			Optional<Consumer<PluginContext>> optionalInitializer = plugin.getInitializer();
@@ -591,14 +693,22 @@ public class Simulation {
 		}
 
 		// initialize the data managers
-		for (DataManagerId dataManagerId : dataManagerIdToDataManagerMap.keySet()) {
-			DataManager dataManager = dataManagerIdToDataManagerMap.get(dataManagerId);
-			DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
-			dataManager.init(dataManagerContext);
+//		for (DataManagerId dataManagerId : dataManagerIdToDataManagerMap.keySet()) {
+//			DataManager dataManager = dataManagerIdToDataManagerMap.get(dataManagerId);
+//			dataManager.init(dataManagerContext);
+//			if (!dataManager.isInitialized()) {
+//				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
+//			}
+//		}
+		executeDataManagerQueue();
+		
+		for(DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
 			if (!dataManager.isInitialized()) {
 				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
 			}
 		}
+
+		executeReportQueue();
 
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
@@ -612,7 +722,6 @@ public class Simulation {
 			}
 			switch (planRec.planner) {
 			case ACTOR:
-
 				if (planRec.actorPlan != null) {
 					if (planRec.key != null) {
 						actorPlanMap.get(planRec.actorId).remove(planRec.key);
@@ -629,11 +738,33 @@ public class Simulation {
 					if (planRec.key != null) {
 						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
-					DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(planRec.dataManagerId);
-					planRec.dataManagerPlan.accept(dataManagerContext);
+					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+					dataManagerContentRec.plan = planRec.dataManagerPlan;
+					dataManagerContentRec.dataManagerId = planRec.dataManagerId;
+					dataManagerQueue.add(dataManagerContentRec);
+					executeDataManagerQueue();
 					executeActorQueue();
 				}
 				break;
+
+			case REPORT:
+				if (planRec.reportPlan != null) {
+					if (planRec.key != null) {
+						reportPlanMap.get(planRec.reportId).remove(planRec.key);
+					}
+					
+					//we do not need to place it on the queue here
+					planRec.reportPlan.accept(reportContext);
+					ReportContentRec reportContentRec = new ReportContentRec();
+					reportContentRec.plan = planRec.reportPlan;
+					reportContentRec.reportId = planRec.reportId;
+					reportQueue.add(reportContentRec);
+					executeReportQueue();
+				}
+				
+				
+				break;
+
 			default:
 				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
@@ -641,9 +772,10 @@ public class Simulation {
 
 		// signal to the data managers that the simulation is closing
 		for (DataManagerId dataManagerId : simulationCloseDataManagerCallbacks.keySet()) {
+			focalDataManagerId = dataManagerId;
 			Consumer<DataManagerContext> dataManagerCloseCallback = simulationCloseDataManagerCallbacks.get(dataManagerId);
-			DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
 			dataManagerCloseCallback.accept(dataManagerContext);
+			focalDataManagerId = null;
 		}
 
 		// signal to the actors that the simulation is closing
@@ -656,6 +788,23 @@ public class Simulation {
 			}
 		}
 
+		// signal to the actors that the simulation is closing
+		for (ReportId reportId : simulationCloseReportCallbacks.keySet()) {
+			focalReportId = reportId;
+			Consumer<ReportContext> simulationCloseCallback = simulationCloseReportCallbacks.get(reportId);
+			simulationCloseCallback.accept(reportContext);
+			focalReportId = null;
+		}
+
+	}
+
+	private void executeReportQueue() {
+		while (!reportQueue.isEmpty()) {
+			final ReportContentRec reportContentRec = reportQueue.pollFirst();
+			focalReportId = reportContentRec.reportId;
+			reportContentRec.plan.accept(reportContext);
+			focalReportId = null;
+		}
 	}
 
 	private void executeActorQueue() {
@@ -684,6 +833,51 @@ public class Simulation {
 
 	}
 
+	private boolean dataManagerQueueActive;
+
+	private DataManagerId focalDataManagerId;
+
+	private void executeDataManagerQueue() {
+		if (dataManagerQueueActive) {
+			return;
+		}
+		dataManagerQueueActive = true;
+		try {
+			try {
+				while (!dataManagerQueue.isEmpty()) {
+					final DataManagerContentRec contentRec = dataManagerQueue.pollFirst();
+					focalDataManagerId = contentRec.dataManagerId;
+					if (contentRec.plan != null) {
+						contentRec.plan.accept(dataManagerContext);
+					} else {
+						// agentIsEventSource = contentRec.agentIsEventSource;
+						contentRec.consumer.accept(contentRec.event);
+					}
+					focalDataManagerId = null;
+				}
+			} catch (Exception e) {
+				dataManagerQueue.clear();
+				throw (e);
+			}
+		} finally {
+			dataManagerQueueActive = false;
+		}
+
+	}
+
+	protected Optional<Consumer<ReportContext>> getReportPlan(final Object key) {
+		validatePlanKeyNotNull(key);
+		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
+		Consumer<ReportContext> result = null;
+		if (map != null) {
+			final PlanRec planRecord = map.get(key);
+			if (planRecord != null) {
+				result = planRecord.reportPlan;
+			}
+		}
+		return Optional.ofNullable(result);
+	}
+
 	protected Optional<Consumer<ActorContext>> getActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
@@ -697,9 +891,9 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	protected Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	protected Optional<Consumer<DataManagerContext>> getDataManagerPlan(final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(focalDataManagerId);
 		Consumer<DataManagerContext> result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
@@ -718,8 +912,16 @@ public class Simulation {
 		return new ArrayList<>();
 	}
 
-	protected List<Object> getDataManagerPlanKeys(DataManagerId dataManagerId) {
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
+	protected List<Object> getReportPlanKeys() {
+		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
+		if (map != null) {
+			return new ArrayList<>(map.keySet());
+		}
+		return new ArrayList<>();
+	}
+
+	protected List<Object> getDataManagerPlanKeys() {
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(focalDataManagerId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
 		}
@@ -739,9 +941,22 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	protected Optional<Double> getDataManagerPlanTime(final DataManagerId dataManagerId, final Object key) {
+	protected Optional<Double> getReportPlanTime(final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
+		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
+		Double result = null;
+		if (map != null) {
+			final PlanRec planRecord = map.get(key);
+			if (planRecord != null) {
+				result = planRecord.time;
+			}
+		}
+		return Optional.ofNullable(result);
+	}
+
+	protected Optional<Double> getDataManagerPlanTime(final Object key) {
+		validatePlanKeyNotNull(key);
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(focalDataManagerId);
 		Double result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
@@ -775,10 +990,10 @@ public class Simulation {
 	 */
 
 	@SuppressWarnings("unchecked")
-	protected <T> Optional<T> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	protected <T> Optional<T> removeDataManagerPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
+		Map<Object, PlanRec> map = dataManagerPlanMap.get(focalDataManagerId);
 		T result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.remove(key);
@@ -807,7 +1022,7 @@ public class Simulation {
 			outputConsumer.accept(output);
 		}
 	}
-	
+
 	protected boolean actorExists(final ActorId actorId) {
 		if (actorId == null) {
 			return false;
@@ -823,6 +1038,13 @@ public class Simulation {
 		return actorIds.get(index) != null;
 	}
 
+	protected void subscribeReportToSimulationClose(Consumer<ReportContext> consumer) {
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
+		}
+		simulationCloseReportCallbacks.put(focalReportId, consumer);
+	}
+
 	protected void subscribeActorToSimulationClose(Consumer<ActorContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_CONTEXT_CONSUMER);
@@ -830,15 +1052,15 @@ public class Simulation {
 		simulationCloseActorCallbacks.put(focalActorId, consumer);
 	}
 
-	protected void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
+	protected void subscribeDataManagerToSimulationClose(Consumer<DataManagerContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CONTEXT_CONSUMER);
 		}
-		simulationCloseDataManagerCallbacks.put(dataManagerId, consumer);
+		simulationCloseDataManagerCallbacks.put(focalDataManagerId, consumer);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+	protected <T extends Event> void subscribeDataManagerToEvent(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
@@ -847,7 +1069,7 @@ public class Simulation {
 		if (eventConsumer == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
 		}
-		
+
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 		if (list == null) {
 			list = new ArrayList<>();
@@ -855,33 +1077,30 @@ public class Simulation {
 		}
 
 		for (DataManagerEventConsumer dataManagerEventConsumer : list) {
-			if (dataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
+			if (dataManagerEventConsumer.dataManagerId.equals(focalDataManagerId)) {
 				throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
 			}
 		}
 
-		DataManagerContext dataManagerContext = dataManagerIdToContextMap.get(dataManagerId);
-		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
+		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(focalDataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
 
 		list.add(dataManagerEventConsumer);
 		Collections.sort(list);
-		
+
 	}
 
-	protected void unSubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
+	protected void unsubscribeDataManagerFromEvent(Class<? extends Event> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
 
 		List<DataManagerEventConsumer> list = dataManagerEventMap.get(eventClass);
 
-		
-
 		if (list != null) {
 			Iterator<DataManagerEventConsumer> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				DataManagerEventConsumer dataManagerEventConsumer = iterator.next();
-				if (dataManagerEventConsumer.dataManagerId.equals(dataManagerId)) {
+				if (dataManagerEventConsumer.dataManagerId.equals(focalDataManagerId)) {
 					iterator.remove();
 				}
 			}
@@ -890,23 +1109,137 @@ public class Simulation {
 				dataManagerEventMap.remove(eventClass);
 			}
 		}
-		
+
 	}
 
-	protected void releaseEvent(final Event event) {
+	@SuppressWarnings("unchecked")
+	protected <T extends Event> void subscribeReportToEvent(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
+
+		if (eventClass == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
+		}
+
+		if (eventConsumer == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_CONSUMER);
+		}
+
+		List<ReportEventConsumer> list = reportEventMap.get(eventClass);
+		if (list == null) {
+			list = new ArrayList<>();
+			reportEventMap.put(eventClass, list);
+		}
+
+		for (ReportEventConsumer reportEventConsumer : list) {
+			if (reportEventConsumer.reportId.equals(focalReportId)) {
+				throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
+			}
+		}
+
+		ReportEventConsumer reportEventConsumer = new ReportEventConsumer(focalReportId, event -> eventConsumer.accept(reportContext, (T) event));
+
+		list.add(reportEventConsumer);
+
+	}
+
+	protected void unsubscribeReportFromEvent(Class<? extends Event> eventClass) {
+		if (eventClass == null) {
+			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
+		}
+
+		List<ReportEventConsumer> list = reportEventMap.get(eventClass);
+
+		if (list != null) {
+			Iterator<ReportEventConsumer> iterator = list.iterator();
+			while (iterator.hasNext()) {
+				ReportEventConsumer reportEventConsumer = iterator.next();
+				if (reportEventConsumer.reportId.equals(focalReportId)) {
+					iterator.remove();
+				}
+			}
+
+			if (list.isEmpty()) {
+				reportEventMap.remove(eventClass);
+			}
+		}
+
+	}
+
+	protected void releaseObservationEvent(final Event event) {
 
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
 
-		broadcastEventToFilterNode(event, rootNode);
-
-		List<DataManagerEventConsumer> list = dataManagerEventMap.get(event.getClass());
-		if (list != null) {
-			for (DataManagerEventConsumer dataManagerEventConsumer : list) {
-				dataManagerEventConsumer.accept(event);
+		// immediate handling for reports
+		List<ReportEventConsumer> reportConsumers = reportEventMap.get(event.getClass());
+		if (reportConsumers != null) {
+			for (ReportEventConsumer reportEventConsumer : reportConsumers) {
+				focalReportId = reportEventConsumer.reportId;
+				reportEventConsumer.accept(event);
+				focalReportId = null;
 			}
 		}
+
+		// queue the event for actors
+		broadcastEventToFilterNode(event, rootNode);
+
+		List<DataManagerEventConsumer> dataManagerEventConsumers = dataManagerEventMap.get(event.getClass());
+		if (dataManagerEventConsumers != null) {
+			for (DataManagerEventConsumer dataManagerEventConsumer : dataManagerEventConsumers) {
+
+				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+				dataManagerContentRec.event = event;
+				dataManagerContentRec.consumer = dataManagerEventConsumer;
+				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
+				dataManagerQueue.add(dataManagerContentRec);
+
+			}
+		}
+	}
+
+	protected void releaseMutationEvent(final Event event) {
+
+		if (event == null) {
+			throw new ContractException(NucleusError.NULL_EVENT);
+		}
+
+		List<DataManagerEventConsumer> dataManagerEventConsumers = dataManagerEventMap.get(event.getClass());
+		if (dataManagerEventConsumers != null) {
+			for (DataManagerEventConsumer dataManagerEventConsumer : dataManagerEventConsumers) {
+				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+				dataManagerContentRec.event = event;
+				dataManagerContentRec.consumer = dataManagerEventConsumer;
+				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
+				dataManagerQueue.add(dataManagerContentRec);
+			}
+		}
+
+		if (focalActorId != null) {
+			executeDataManagerQueue();
+		}
+
+	}
+	
+	protected void pushObservationEvents() {
+		if (focalActorId != null) {
+			executeDataManagerQueue();
+		}
+	}
+
+	private void addReport(Consumer<ReportContext> consumer) {
+
+		if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_REPORT_CONTEXT_CONSUMER);
+		}
+
+		ReportId reportId = new ReportId(reportIds.size());
+		reportIds.add(reportId);
+
+		final ReportContentRec reportContentRec = new ReportContentRec();
+		reportContentRec.reportId = reportId;
+		reportContentRec.plan = consumer;
+		reportQueue.add(reportContentRec);
+
 	}
 
 	protected ActorId addActor(Consumer<ActorContext> consumer) {
@@ -934,6 +1267,13 @@ public class Simulation {
 
 	}
 
+	protected void addReportForPlugin(Consumer<ReportContext> consumer) {
+		if (focalPluginId == null) {
+			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
+		}
+		addReport(consumer);
+	}
+
 	protected void removeActor(final ActorId actorId) {
 		if (actorId == null) {
 			throw new ContractException(NucleusError.NULL_ACTOR_ID);
@@ -958,6 +1298,47 @@ public class Simulation {
 		actorIds.set(actorIndex, null);
 
 		containsDeletedActors = true;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T extends DataView> T getDataViewForReport(Class<T> dataViewClass) {
+
+		if (dataViewClass == null) {
+			throw new ContractException(NucleusError.NULL_DATA_VIEW_CLASS);
+		}
+
+		DataView dataView = workingClassToDataViewMap.get(dataViewClass);
+		/*
+		 * If the working map does not contain the data view, try to find a
+		 * single match from the base map that was collected from the plugins.
+		 * 
+		 * If two or more matches are found, then throw an exception.
+		 * 
+		 * If exactly one match is found, update the working map.
+		 * 
+		 * If no matches are found, nothing is done, but we are vulnerable to
+		 * somewhat slower performance if the data manager is sought repeatedly.
+		 */
+		if (dataView == null) {
+			List<Class<?>> candidates = new ArrayList<>();
+			for (Class<?> c : baseClassToDataViewMap.keySet()) {
+				if (dataViewClass.isAssignableFrom(c)) {
+					candidates.add(c);
+				}
+			}
+			if (candidates.size() > 1) {
+				throw new ContractException(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS);
+			}
+			if (candidates.size() == 1) {
+				dataView = baseClassToDataViewMap.get(candidates.get(0));
+				workingClassToDataViewMap.put(dataViewClass, dataView);
+			}
+		}
+
+		if (dataView == null) {
+			throw new ContractException(NucleusError.UNKNOWN_DATA_VIEW, " : " + dataViewClass.getSimpleName());
+		}
+		return (T) dataView;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1002,7 +1383,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends DataManager> T getDataManagerForDataManager(Class<T> dataManagerClass, DataManagerId dataManagerId) {
+	protected <T extends DataManager> T getDataManagerForDataManager(Class<T> dataManagerClass) {
 
 		if (dataManagerClass == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CLASS);
@@ -1040,14 +1421,14 @@ public class Simulation {
 			throw new ContractException(NucleusError.UNKNOWN_DATA_MANAGER, " : " + dataManagerClass.getSimpleName());
 		}
 
-		int requestorId = dataManagerId.getValue();
+		int requestorId = focalDataManagerId.getValue();
 		DataManagerId dataManagerId2 = dataManagerToDataManagerIdMap.get(dataManager);
 		int requesteeId = dataManagerId2.getValue();
 
 		boolean accessGranted = dataManagerAccessPermissions[requestorId][requesteeId];
 
 		if (!accessGranted) {
-			String dmName1 = dataManagerIdToDataManagerMap.get(dataManagerId).getClass().getSimpleName();
+			String dmName1 = dataManagerIdToDataManagerMap.get(focalDataManagerId).getClass().getSimpleName();
 			String dmName2 = dataManagerClass.getSimpleName();
 			throw new ContractException(NucleusError.DATA_MANAGER_ACCESS_VIOLATION, dmName1 + "-->" + dmName2);
 		}
@@ -1057,7 +1438,6 @@ public class Simulation {
 	// data manager support
 	/////////////////////////////////
 
-	private int masterDataManagerIndex;
 
 	private static class DataManagerEventConsumer implements Consumer<Event>, Comparable<DataManagerEventConsumer> {
 
@@ -1080,11 +1460,25 @@ public class Simulation {
 		}
 	}
 
-	
+	private static class ReportEventConsumer implements Consumer<Event> {
+
+		private final Consumer<Event> consumer;
+		private final ReportId reportId;
+
+		public <T extends Event> ReportEventConsumer(ReportId reportId, Consumer<Event> consumer) {
+			this.consumer = consumer;
+			this.reportId = reportId;
+		}
+
+		@Override
+		public void accept(Event event) {
+			consumer.accept(event);
+		}
+	}
 
 	// used for subscriptions
 	private final Map<Class<? extends Event>, List<DataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
-	
+	private final Map<Class<? extends Event>, List<ReportEventConsumer>> reportEventMap = new LinkedHashMap<>();
 
 	// used for retrieving and canceling plans owned by data managers
 	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
@@ -1093,10 +1487,14 @@ public class Simulation {
 	private Map<Class<?>, DataManager> baseClassToDataManagerMap = new LinkedHashMap<>();
 	private Map<Class<?>, DataManager> workingClassToDataManagerMap = new LinkedHashMap<>();
 
-	// map of contexts for each data manager
-	private Map<DataManagerId, DataManagerContext> dataManagerIdToContextMap = new LinkedHashMap<>();
+	// used to locate data views by class type
+	private Map<Class<?>, DataView> baseClassToDataViewMap = new LinkedHashMap<>();
+	private Map<Class<?>, DataView> workingClassToDataViewMap = new LinkedHashMap<>();
 
-	// maps of data manager id <--> data manager instances
+	/*
+	 * Maps of data manager id <--> data manager instances used primarily for
+	 * access permissions between data managers
+	 */
 	private Map<DataManagerId, DataManager> dataManagerIdToDataManagerMap = new LinkedHashMap<>();
 	private Map<DataManager, DataManagerId> dataManagerToDataManagerIdMap = new LinkedHashMap<>();
 
@@ -1108,16 +1506,24 @@ public class Simulation {
 	//////////////////////////////
 
 	private ActorContext actorContext;
+	private ReportContext reportContext;
+
+	private DataManagerContext dataManagerContext;
 
 	private final List<ActorId> actorIds = new ArrayList<>();
+	private final List<ReportId> reportIds = new ArrayList<>();
 
 	private boolean containsDeletedActors;
 
 	private final Map<ActorId, Map<Object, PlanRec>> actorPlanMap = new LinkedHashMap<>();
+	private final Map<ReportId, Map<Object, PlanRec>> reportPlanMap = new LinkedHashMap<>();
 
+	private final Deque<ReportContentRec> reportQueue = new ArrayDeque<>();
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
+	private final Deque<DataManagerContentRec> dataManagerQueue = new ArrayDeque<>();
 
 	protected ActorId focalActorId;
+	protected ReportId focalReportId;
 
 	private static class ActorContentRec {
 
@@ -1131,8 +1537,28 @@ public class Simulation {
 
 	}
 
+	private static class ReportContentRec {
+
+		private Consumer<ReportContext> plan;
+
+		private ReportId reportId;
+
+	}
+
+	private static class DataManagerContentRec {
+
+		private Event event;
+
+		private Consumer<Event> consumer;
+
+		private Consumer<DataManagerContext> plan;
+
+		private DataManagerId dataManagerId;
+
+	}
+
 	protected boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
-		return (dataManagerEventMap.containsKey(eventClass) || rootNode.children.containsKey(eventClass) || rootNode.consumers.containsKey(eventClass));
+		return (reportEventMap.containsKey(eventClass) || dataManagerEventMap.containsKey(eventClass) || rootNode.children.containsKey(eventClass) || rootNode.consumers.containsKey(eventClass));
 	}
 
 	/*
@@ -1287,7 +1713,7 @@ public class Simulation {
 		if (previousConsumer != null) {
 			throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
 		}
-			
+
 	}
 
 	/*
@@ -1298,7 +1724,7 @@ public class Simulation {
 		if (eventFilter == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_FILTER);
 		}
-		
+
 		// start at the root filter node
 		Object value = eventFilter.getEventClass();
 		FilterNode filterNode = rootNode;
@@ -1327,7 +1753,7 @@ public class Simulation {
 		if (consumerMap == null) {
 			return;
 		}
-		
+
 		consumerMap.remove(focalActorId);
 		if (consumerMap.isEmpty()) {
 			filterNode.consumers.remove(value);

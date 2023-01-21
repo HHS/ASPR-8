@@ -265,8 +265,10 @@ public final class GroupsDataManager extends DataManager {
 		nonDefaultChecks.put(groupTypeId, new boolean[0]);
 
 		if (dataManagerContext.subscribersExist(GroupTypeAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new GroupTypeAdditionEvent(groupTypeId));
+			dataManagerContext.releaseObservationEvent(new GroupTypeAdditionEvent(groupTypeId));
 		}
+		
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void clearNonDefaultChecks(GroupTypeId groupTypeId) {
@@ -440,8 +442,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(GroupPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
+			dataManagerContext.releaseObservationEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
@@ -537,8 +540,9 @@ public final class GroupsDataManager extends DataManager {
 		groups.add(groupId);
 
 		if (dataManagerContext.subscribersExist(GroupMembershipAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new GroupMembershipAdditionEvent(personId, groupId));
+			dataManagerContext.releaseObservationEvent(new GroupMembershipAdditionEvent(personId, groupId));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/*
@@ -606,10 +610,12 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class)) {			
 			Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
-			dataManagerContext.releaseEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
+			dataManagerContext.releaseObservationEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
 		}else {			
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
+		
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
@@ -710,8 +716,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(GroupAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new GroupAdditionEvent(groupId));
+			dataManagerContext.releaseObservationEvent(new GroupAdditionEvent(groupId));
 		}
+		dataManagerContext.pushObservationEvents();
 		return groupId;
 	}
 
@@ -776,9 +783,10 @@ public final class GroupsDataManager extends DataManager {
 		groupsToTypesMap.setIntValue(result.getValue(), typeIndex);
 
 		if (dataManagerContext.subscribersExist(GroupAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new GroupAdditionEvent(result));
+			dataManagerContext.releaseObservationEvent(new GroupAdditionEvent(result));
 		}
 
+		dataManagerContext.pushObservationEvents();
 		return result;
 	}
 
@@ -1406,12 +1414,15 @@ public final class GroupsDataManager extends DataManager {
 					groups.remove(groupId);
 				}
 			}
+			context.pushObservationEvents();
 
 		}, dataManagerContext.getTime());
 
 		if (dataManagerContext.subscribersExist(GroupImminentRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new GroupImminentRemovalEvent(groupId));
+			dataManagerContext.releaseObservationEvent(new GroupImminentRemovalEvent(groupId));
 		}
+		
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -1452,8 +1463,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(GroupMembershipRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new GroupMembershipRemovalEvent(personId, groupId));
+			dataManagerContext.releaseObservationEvent(new GroupMembershipRemovalEvent(personId, groupId));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/*

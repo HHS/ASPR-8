@@ -242,8 +242,9 @@ public final class RegionsDataManager extends DataManager {
 				regionAdditionEventBuilder.addValue(value);
 			}
 			RegionAdditionEvent regionAdditionEvent = regionAdditionEventBuilder.build();
-			dataManagerContext.releaseEvent(regionAdditionEvent);
+			dataManagerContext.releaseObservationEvent(regionAdditionEvent);
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -318,8 +319,9 @@ public final class RegionsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(RegionPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new RegionPropertyDefinitionEvent(regionPropertyId));
+			dataManagerContext.releaseObservationEvent(new RegionPropertyDefinitionEvent(regionPropertyId));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	/**
@@ -799,8 +801,10 @@ public final class RegionsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(PersonRegionUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonRegionUpdateEvent(personId, oldRegionId, regionId));
+			dataManagerContext.releaseObservationEvent(new PersonRegionUpdateEvent(personId, oldRegionId, regionId));
 		}
+		
+		dataManagerContext.pushObservationEvents();
 
 	}
 
@@ -846,7 +850,7 @@ public final class RegionsDataManager extends DataManager {
 				previousPropertyValue = propertyValueRecord.getValue();
 			}
 			propertyValueRecord.setPropertyValue(regionPropertyValue);
-			dataManagerContext.releaseEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
+			dataManagerContext.releaseObservationEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
 		}else {
 			
 			if (propertyValueRecord == null) {
@@ -856,6 +860,7 @@ public final class RegionsDataManager extends DataManager {
 			} 
 			propertyValueRecord.setPropertyValue(regionPropertyValue);
 		}
+		dataManagerContext.pushObservationEvents();
 
 	}
 

@@ -68,11 +68,12 @@ public final class PeopleDataManager extends DataManager {
 		 * 
 		 */
 		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
-		dataManagerContext.releaseEvent(personImminentAdditionEvent);
+		dataManagerContext.releaseObservationEvent(personImminentAdditionEvent);
 
 		if (dataManagerContext.subscribersExist(PersonAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonAdditionEvent(personId));
+			dataManagerContext.releaseObservationEvent(new PersonAdditionEvent(personId));
 		}
+		dataManagerContext.pushObservationEvents();
 		return personId;
 	}
 
@@ -247,13 +248,15 @@ public final class PeopleDataManager extends DataManager {
 			personIds.set(personId.getValue(), null);
 
 			//it is very likely that there are observers, so we don't ask before creating the event
-			context.releaseEvent(new PersonRemovalEvent(personId));
+			context.releaseObservationEvent(new PersonRemovalEvent(personId));
+			context.pushObservationEvents();
 
 		}, dataManagerContext.getTime());
 
 		if (dataManagerContext.subscribersExist(PersonImminentRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
+			dataManagerContext.releaseObservationEvent(new PersonImminentRemovalEvent(personId));
 		}
+		dataManagerContext.pushObservationEvents();
 
 	}
 
