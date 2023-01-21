@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.Plugin;
 import nucleus.Simulation;
@@ -1373,11 +1374,14 @@ public class AT_RegionsDataManager {
 		 * such an event, so we release it from a test data manager
 		 */
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestDataManager("dm", () -> new TestDataManager());
-		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+		
+		pluginBuilder.addTestDataManager("dm", ()->new PassThroughDataManager());
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(new PersonId(10000), personConstructionData);
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseObservationEvent(personImminentAdditionEvent));
+
+			PassThroughDataManager passThroughDataManager = c.getDataManager(PassThroughDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,()->passThroughDataManager.passThrough(personImminentAdditionEvent));			
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		}));
 
@@ -1392,17 +1396,20 @@ public class AT_RegionsDataManager {
 		 * such an event, so we release it from a test data manager
 		 */
 		pluginBuilder = TestPluginData.builder();
-		pluginBuilder.addTestDataManager("dm", () -> new TestDataManager());
-		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+		pluginBuilder.addTestDataManager("dm", ()->new PassThroughDataManager());
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			PersonConstructionData personConstructionData = PersonConstructionData.builder().add(TestRegionId.REGION_1).build();
 			PersonId personId = peopleDataManager.addPerson(personConstructionData);
 
 			PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
-
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseObservationEvent(personImminentAdditionEvent));
+			PassThroughDataManager passThroughDataManager = c.getDataManager(PassThroughDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,()->passThroughDataManager.passThrough(personImminentAdditionEvent));
 			assertEquals(RegionError.DUPLICATE_PERSON_ADDITION, contractException.getErrorType());
 		}));
+
+		
+		
 		pluginBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
 		testPluginData = pluginBuilder.build();
 		testPlugin = TestPlugin.getTestPlugin(testPluginData);
@@ -2416,6 +2423,19 @@ public class AT_RegionsDataManager {
 		RegionsActionSupport.testConsumers(0, 1033803161227361793L, TimeTrackingPolicy.TRACK_TIME, testPlugin);
 
 	}
+	
+	private static class PassThroughDataManager extends TestDataManager{
+		private DataManagerContext dataManagerContext;
+		public void init(DataManagerContext dataManagerContext) {
+			super.init(dataManagerContext);
+			this.dataManagerContext = dataManagerContext;
+		}
+		
+		public void passThrough(Event event) {
+			dataManagerContext.releaseObservationEvent(event);
+			dataManagerContext.pushObservationEvents();
+		}
+	}
 
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "init", args = { DataManagerContext.class })
@@ -2466,12 +2486,13 @@ public class AT_RegionsDataManager {
 		// precondition test: if the person id is unknown
 		/*
 		 * Note : it is not possible to force the PersonDataManager to release
-		 * such an event, so we release it from an actor
+		 * such an event, so we release it from a data manager
 		 */
-		pluginBuilder.addTestDataManager("dm", () -> new TestDataManager());
-		pluginBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+		pluginBuilder.addTestDataManager("dm", ()->new PassThroughDataManager());
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PersonRemovalEvent personRemovalEvent = new PersonRemovalEvent(new PersonId(1000));
-			ContractException contractException = assertThrows(ContractException.class, () -> c.releaseObservationEvent(personRemovalEvent));
+			PassThroughDataManager passThroughDataManager = c.getDataManager(PassThroughDataManager.class);
+			ContractException contractException = assertThrows(ContractException.class,()->passThroughDataManager.passThrough(personRemovalEvent));			
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 		}));
 		testPluginData = pluginBuilder.build();

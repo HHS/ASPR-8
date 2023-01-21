@@ -8,7 +8,6 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -30,8 +29,6 @@ import util.errors.ContractException;
 
 public final class GlobalPropertiesDataManager extends DataManager {
 
-	private static record GlobalPropertyDefinitionMutationEvent(GlobalPropertyInitialization globalPropertyInitialization) implements Event {}
-	private static record GlobalPropertyUpdateMutationEvent(GlobalPropertyId globalPropertyId, Object globalPropertyValue) implements Event{}
 
 	private DataManagerContext dataManagerContext;
 	private Map<GlobalPropertyId, PropertyValueRecord> globalPropertyMap = new LinkedHashMap<>();
@@ -146,12 +143,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *        is incompatible with the property definition </blockquote></li>
 	 */
 	public void setGlobalPropertyValue(GlobalPropertyId globalPropertyId, Object globalPropertyValue) {
-		dataManagerContext.releaseMutationEvent(new GlobalPropertyUpdateMutationEvent(globalPropertyId, globalPropertyValue));
-	}
-	
-	public void handleGlobalPropertyUpdateMutationEvent(DataManagerContext dataManagerContext,GlobalPropertyUpdateMutationEvent globalPropertyUpdateMutationEvent) {
-		GlobalPropertyId globalPropertyId = globalPropertyUpdateMutationEvent.globalPropertyId;
-		Object globalPropertyValue = globalPropertyUpdateMutationEvent.globalPropertyValue;
 		validateGlobalPropertyId(globalPropertyId);
 		validateGlobalPropertyValueNotNull(globalPropertyValue);
 		final PropertyDefinition propertyDefinition = getGlobalPropertyDefinition(globalPropertyId);
@@ -162,6 +153,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 	
 	
@@ -179,8 +171,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		super.init(dataManagerContext);
 
 		this.dataManagerContext = dataManagerContext;
-		dataManagerContext.subscribe(GlobalPropertyDefinitionMutationEvent.class, this::handleGlobalPropertyDefinitionMutationEvent);
-		dataManagerContext.subscribe(GlobalPropertyUpdateMutationEvent.class, this::handleGlobalPropertyUpdateMutationEvent);
 
 		for (GlobalPropertyId globalPropertyId : globalPropertiesPluginData.getGlobalPropertyIds()) {
 			PropertyDefinition globalPropertyDefinition = globalPropertiesPluginData.getGlobalPropertyDefinition(globalPropertyId);
@@ -209,10 +199,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * 
 	 */
 	public void defineGlobalProperty(GlobalPropertyInitialization globalPropertyInitialization) {
-		dataManagerContext.releaseMutationEvent(new GlobalPropertyDefinitionMutationEvent(globalPropertyInitialization));
-	}
-	private void handleGlobalPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext,  GlobalPropertyDefinitionMutationEvent globalPropertyDefinitionMutationEvent) {
-		GlobalPropertyInitialization globalPropertyInitialization = globalPropertyDefinitionMutationEvent.globalPropertyInitialization;
 		validateGlobalPropertyInitializationNotNull(globalPropertyInitialization);
 		GlobalPropertyId globalPropertyId = globalPropertyInitialization.getGlobalPropertyId();
 		PropertyDefinition propertyDefinition = globalPropertyInitialization.getPropertyDefinition();
@@ -234,6 +220,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GlobalPropertyDefinitionEvent.class)) {			
 			dataManagerContext.releaseObservationEvent(new GlobalPropertyDefinitionEvent(globalPropertyId, globalPropertyValue));
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 	
 
