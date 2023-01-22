@@ -5,6 +5,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
+import nucleus.SimplePluginId;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -40,16 +41,23 @@ public class AT_Junk {
 	public void test() {
 
 		// reports
-		PersonPropertyActorReport personPropertyReport = PersonPropertyActorReport//
+		PersonPropertyActorReport oldPersonPropertyReport = PersonPropertyActorReport//
 																		.builder()//
 																		.setReportId(new SimpleReportId("report"))//
 																		.setReportPeriod(ReportPeriod.DAILY)//
 																		.setDefaultInclusion(true)//
 																		.build();//
+		
+		PersonPropertyReport newPersonPropertyReport = PersonPropertyReport//
+				.builder()//
+				.setReportId(new SimpleReportId("report"))//
+				.setReportPeriod(ReportPeriod.DAILY)//
+				.setDefaultInclusion(true)//
+				.build();//
 
 		ReportsPluginData reportsPluginData = ReportsPluginData//
 																.builder()//
-																.addReport(() -> personPropertyReport::init)//
+																//.addReport(() -> oldPersonPropertyReport::init)//
 																.build();//
 
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
@@ -97,6 +105,14 @@ public class AT_Junk {
 
 		// output collection
 		TestSimulationOutputConsumer testSimulationOutputConsumer = new TestSimulationOutputConsumer();
+		
+		
+		Plugin junkPlugin = Plugin.builder()//
+				.setPluginId(new SimplePluginId("junk plugin"))//
+				.setInitializer((c)->{
+					c.addReport(newPersonPropertyReport::init);
+				})
+				.build();
 
 		// simulation
 		Simulation	.builder()//
@@ -105,6 +121,7 @@ public class AT_Junk {
 					.addPlugin(peoplePlugin)//
 					.addPlugin(personPropertyPlugin)//
 					.addPlugin(testPlugin)//
+					.addPlugin(junkPlugin)//
 					.setOutputConsumer(testSimulationOutputConsumer)//
 					.build()//
 					.execute();
