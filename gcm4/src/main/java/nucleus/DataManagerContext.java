@@ -280,5 +280,9 @@ public final class DataManagerContext implements SimulationContext {
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
 	}
+	
+	public void sendMutationEvent(Event event) {
+		
+	}
 
 }
