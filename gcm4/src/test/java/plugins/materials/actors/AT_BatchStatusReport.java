@@ -238,7 +238,7 @@ public final class AT_BatchStatusReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		List<Plugin> pluginsToAdd = MaterialsActionSupport.setUpPluginsForTest(2819236410498978100L);
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport2(new BatchStatusReport(REPORT_ID)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new BatchStatusReport(REPORT_ID)::init));
 		
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 

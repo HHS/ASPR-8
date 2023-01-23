@@ -5,9 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
-import plugins.groups.datamanagers.GroupsDataManager;
+import nucleus.ReportContext;
+import plugins.groups.dataViews.GroupsDataView;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupPropertyDefinitionEvent;
@@ -17,7 +16,7 @@ import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
-import plugins.reports.support.PeriodicReport;
+import plugins.reports.support.PeriodicReport2;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -48,7 +47,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class GroupPropertyReport extends PeriodicReport {
+public final class GroupPropertyReport extends PeriodicReport2 {
 
 	private static class Scaffold {
 		private ReportPeriod reportPeriod = ReportPeriod.DAILY;
@@ -184,9 +183,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	 * GroupPropertyReportSettings supplied during initialization
 	 */
 	private final Map<GroupTypeId, Set<GroupPropertyId>> clientPropertyMap = new LinkedHashMap<>();
-	private boolean isSubscribedToAllGroupPropertyUpdateEvents;
-	private boolean isSubscribedToAllGroupAdditionEvents;
-	private boolean isSubscribedToAllGroupRemovalEvents;
+
 	/*
 	 * For each (GroupTypeId,GroupPropertyId,property value) triplet, count the
 	 * number of groups having that triplet
@@ -217,7 +214,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -238,7 +235,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 						reportItemBuilder.addValue(groupPropertyValue);
 						reportItemBuilder.addValue(personCount);
 
-						actorContext.releaseOutput(reportItemBuilder.build());
+						reportContext.releaseOutput(reportItemBuilder.build());
 					}
 				}
 			}
@@ -263,24 +260,24 @@ public final class GroupPropertyReport extends PeriodicReport {
 		getCounter(groupTypeId, groupPropertyId, groupPropertyValue).count++;
 	}
 
-	private GroupsDataManager groupsDataManager;
+	private GroupsDataView groupsDataView;
 
 	@Override
-	public void init(final ActorContext actorContext) {
-		super.init(actorContext);
+	public void init(final ReportContext reportContext) {
+		super.init(reportContext);
 
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+		groupsDataView = reportContext.getDataView(GroupsDataView.class);
 
 		// transfer all VALID property id selections from the scaffold
-		Set<GroupTypeId> groupTypeIds = groupsDataManager.getGroupTypeIds();
+		Set<GroupTypeId> groupTypeIds = groupsDataView.getGroupTypeIds();
 		for (GroupTypeId groupTypeId : groupTypeIds) {
 			Set<GroupPropertyId> groupPropertyIds = new LinkedHashSet<>();
 			if (scaffold.allProperties.contains(groupTypeId)) {
-				groupPropertyIds.addAll(groupsDataManager.getGroupPropertyIds(groupTypeId));
+				groupPropertyIds.addAll(groupsDataView.getGroupPropertyIds(groupTypeId));
 			} else {
 				Set<GroupPropertyId> selectedPropertyIds = scaffold.clientPropertyMap.get(groupTypeId);
 				if (selectedPropertyIds != null) {
-					Set<GroupPropertyId> allPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
+					Set<GroupPropertyId> allPropertyIds = groupsDataView.getGroupPropertyIds(groupTypeId);
 					for (GroupPropertyId groupPropertyId : allPropertyIds) {
 						if (selectedPropertyIds.contains(groupPropertyId)) {
 							groupPropertyIds.add(groupPropertyId);
@@ -292,59 +289,12 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		// determine the subscriptions for group addition
-		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent();
-			subscribe(eventFilter, this::handleGroupAdditionEvent);
-			isSubscribedToAllGroupAdditionEvents = true;
-
-		} else {
-			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
-				subscribe(eventFilter, this::handleGroupAdditionEvent);
-			}
-		}
+		subscribe(GroupAdditionEvent.class, this::handleGroupAdditionEvent);
 
 		// determine the subscriptions for group removal observations
-		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent();
-			subscribe(eventFilter, this::handleGroupImminentRemovalEvent);
-			isSubscribedToAllGroupRemovalEvents = true;
-		} else {
-			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId);
-				subscribe(eventFilter, this::handleGroupImminentRemovalEvent);
-			}
-		}
+		subscribe(GroupImminentRemovalEvent.class, this::handleGroupImminentRemovalEvent);
 
-		// determine the subscriptions for group property changes
-		boolean allPropertiesRequired = false;
-		if (clientPropertyMap.keySet().equals(groupsDataManager.getGroupTypeIds())) {
-			allPropertiesRequired = true;
-			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				if (!clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
-					allPropertiesRequired = false;
-					break;
-				}
-			}
-		}
-
-		if (allPropertiesRequired) {
-			isSubscribedToAllGroupPropertyUpdateEvents = true;
-			EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent();
-			subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
-		} else {
-			for (GroupTypeId groupTypeId : clientPropertyMap.keySet()) {
-				if (clientPropertyMap.get(groupTypeId).equals(groupsDataManager.getGroupPropertyIds(groupTypeId))) {
-					EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
-					subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
-				} else {
-					for (GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-						EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupPropertyId, groupTypeId);
-						subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
-					}
-				}
-			}
-		}
+		subscribe(GroupPropertyUpdateEvent.class, this::handleGroupPropertyUpdateEvent);
 
 		/*
 		 * Fill the top layers of the groupTypeMap. We do not yet know the set
@@ -363,52 +313,25 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		// group addition
-		for (GroupId groupId : groupsDataManager.getGroupIds()) {
-			final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		for (GroupId groupId : groupsDataView.getGroupIds()) {
+			final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
 			if (clientPropertyMap.containsKey(groupTypeId)) {
 				for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-					final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+					final Object groupPropertyValue = groupsDataView.getGroupPropertyValue(groupId, groupPropertyId);
 					increment(groupTypeId, groupPropertyId, groupPropertyValue);
 				}
 			}
 		}
 
 		if (scaffold.includeNewProperties) {
-				
-			subscribe(groupsDataManager.getEventFilterForGroupTypeAdditionEvent(), this::handleGroupTypeAdditionEvent);
-			subscribe(groupsDataManager.getEventFilterForGroupPropertyDefinitionEvent(), this::handleGroupPropertyDefinitionEvent);
+			subscribe(GroupTypeAdditionEvent.class, this::handleGroupTypeAdditionEvent);
+			subscribe(GroupPropertyDefinitionEvent.class, this::handleGroupPropertyDefinitionEvent);
 		}
 
 	}
 
-	private void handleGroupTypeAdditionEvent(ActorContext actorContext, GroupTypeAdditionEvent groupTypeAdditionEvent) {
+	private void handleGroupTypeAdditionEvent(ReportContext reportContext, GroupTypeAdditionEvent groupTypeAdditionEvent) {
 		GroupTypeId groupTypeId = groupTypeAdditionEvent.groupTypeId();
-		/*
-		 * Are we subscribed to all group property assignments? if not then
-		 * subscribe to all where the group type id is new one
-		 */
-		if (!isSubscribedToAllGroupPropertyUpdateEvents) {
-			EventFilter<GroupPropertyUpdateEvent> eventFilter = groupsDataManager.getEventFilterForGroupPropertyUpdateEvent(groupTypeId);
-			subscribe(eventFilter, this::handleGroupPropertyUpdateEvent);
-		}
-
-		/*
-		 * If we are not subscribed to all group addition events then we will
-		 * need to subscribe by type
-		 */
-		if (isSubscribedToAllGroupAdditionEvents) {
-			EventFilter<GroupAdditionEvent> eventFilter = groupsDataManager.getEventFilterForGroupAdditionEvent(groupTypeId);
-			subscribe(eventFilter, this::handleGroupAdditionEvent);
-		}
-
-		/*
-		 * If we are not subscribed to all group removal events then we will
-		 * need to subscribe by type
-		 */
-		if (isSubscribedToAllGroupRemovalEvents) {
-			EventFilter<GroupImminentRemovalEvent> eventFilter = groupsDataManager.getEventFilterForGroupImminentRemovalEvent(groupTypeId);
-			subscribe(eventFilter, this::handleGroupImminentRemovalEvent);
-		}
 
 		/*
 		 * update the client property map for the future addition of property
@@ -420,7 +343,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 	}
 
-	private void handleGroupPropertyDefinitionEvent(ActorContext actorContext, GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {
+	private void handleGroupPropertyDefinitionEvent(ReportContext reportContext, GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {
 		// should we get the default value and integrate that in for all
 		// existing groups of that type?
 
@@ -450,7 +373,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		map.put(groupPropertyId, counterMap);
 
 		// determine how many groups of the given group type there are
-		int groupCountForGroupType = groupsDataManager.getGroupCountForGroupType(groupTypeId);
+		int groupCountForGroupType = groupsDataView.getGroupCountForGroupType(groupTypeId);
 
 		/*
 		 * Rather than asking for the current value of the property for each
@@ -459,7 +382,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * the expected conditions immediately after the property was added.
 		 * 
 		 */
-		PropertyDefinition groupPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+		PropertyDefinition groupPropertyDefinition = groupsDataView.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 		Object defaultValue = groupPropertyDefinition.getDefaultValue().get();
 		// create the counter with the number of groups
 		Counter counter = new Counter();
@@ -470,10 +393,10 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 	}
 
-	private void handleGroupPropertyUpdateEvent(ActorContext actorContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
+	private void handleGroupPropertyUpdateEvent(ReportContext reportContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
 		GroupId groupId = groupPropertyUpdateEvent.groupId();
 
-		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 
 			GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.groupPropertyId();
@@ -489,25 +412,25 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 	}
 
-	private void handleGroupAdditionEvent(ActorContext actorContext, GroupAdditionEvent groupAdditionEvent) {
+	private void handleGroupAdditionEvent(ReportContext reportContext, GroupAdditionEvent groupAdditionEvent) {
 		GroupId groupId = groupAdditionEvent.groupId();
-		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 			for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-				final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+				final Object groupPropertyValue = groupsDataView.getGroupPropertyValue(groupId, groupPropertyId);
 				increment(groupTypeId, groupPropertyId, groupPropertyValue);
 			}
 		}
 	}
 
-	private void handleGroupImminentRemovalEvent(ActorContext actorContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
+	private void handleGroupImminentRemovalEvent(ReportContext reportContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
 		GroupId groupId = groupImminentRemovalEvent.groupId();
-		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
+		final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
-			Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
+			Set<GroupPropertyId> groupPropertyIds = groupsDataView.getGroupPropertyIds(groupTypeId);
 			for (final GroupPropertyId groupPropertyId : groupPropertyIds) {
 				if (clientPropertyMap.get(groupTypeId).contains(groupPropertyId)) {
-					final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+					final Object groupPropertyValue = groupsDataView.getGroupPropertyValue(groupId, groupPropertyId);
 					decrement(groupTypeId, groupPropertyId, groupPropertyValue);
 				}
 			}

@@ -3,9 +3,8 @@ package plugins.globalproperties.actors;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import nucleus.ReportContext;
+import plugins.globalproperties.dataViews.GlobalPropertiesDataView;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -30,7 +29,7 @@ import util.errors.ContractException;
  *
  */
 public final class GlobalPropertyReport {
-	
+
 	/**
 	 * Returns a new Builder instance
 	 */
@@ -162,7 +161,7 @@ public final class GlobalPropertyReport {
 		this.data = data;
 	}
 
-	private void handleGlobalPropertyDefinitionEvent(final ActorContext actorContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
+	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.globalPropertyId();
 		/*
 		 * If the property id is explicitly excluded, then ignore it
@@ -178,30 +177,30 @@ public final class GlobalPropertyReport {
 		}
 
 		if (included) {
-			writeProperty(actorContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
+			writeProperty(reportContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
 		}
 	}
 
-	private void handleGlobalPropertyUpdateEvent(final ActorContext actorContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
+	private void handleGlobalPropertyUpdateEvent(final ReportContext reportContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.globalPropertyId();
 		if (data.includedPropertyIds.contains(globalPropertyId)) {
-			writeProperty(actorContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
+			writeProperty(reportContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
 		}
 	}
 
 	/**
 	 * Initialization of the report.
 	 */
-	public void init(final ActorContext actorContext) {
+	public void init(final ReportContext reportContext) {
 
-		final GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		final GlobalPropertiesDataView globalPropertiesDataView = reportContext.getDataView(GlobalPropertiesDataView.class);
 
 		/*
 		 * if the client has selected all extant properties, then correct the
 		 * data's included property ids
 		 */
 		if (data.includeAllExtantPropertyIds) {
-			data.includedPropertyIds.addAll(globalPropertiesDataManager.getGlobalPropertyIds());
+			data.includedPropertyIds.addAll(globalPropertiesDataView.getGlobalPropertyIds());
 		}
 
 		/*
@@ -216,28 +215,28 @@ public final class GlobalPropertyReport {
 		 * We now subscribe to all update and definition events without any
 		 * filtering
 		 */
-		actorContext.subscribe(EventFilter.builder(GlobalPropertyUpdateEvent.class).build(), this::handleGlobalPropertyUpdateEvent);
-		actorContext.subscribe(EventFilter.builder(GlobalPropertyDefinitionEvent.class).build(), this::handleGlobalPropertyDefinitionEvent);
+		reportContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
+		reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 
 		/*
 		 * We initialize the reporting with the current state of each global
 		 * property
 		 */
 		for (final GlobalPropertyId globalPropertyId : data.includedPropertyIds) {
-			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
-			writeProperty(actorContext, globalPropertyId, globalPropertyValue);
+			final Object globalPropertyValue = globalPropertiesDataView.getGlobalPropertyValue(globalPropertyId);
+			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
 
 	}
 
-	private void writeProperty(final ActorContext actorContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
+	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(data.reportHeader);
 		reportItemBuilder.setReportId(data.reportId);
-		reportItemBuilder.addValue(actorContext.getTime());
+		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(globalPropertyId.toString());
 		reportItemBuilder.addValue(globalPropertyValue);
-		actorContext.releaseOutput(reportItemBuilder.build());
+		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
 }

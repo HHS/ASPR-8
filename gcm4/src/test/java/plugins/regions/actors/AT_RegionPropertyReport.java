@@ -220,7 +220,7 @@ public class AT_RegionPropertyReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport2(new RegionPropertyReport(REPORT_ID)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionPropertyReport(REPORT_ID)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 

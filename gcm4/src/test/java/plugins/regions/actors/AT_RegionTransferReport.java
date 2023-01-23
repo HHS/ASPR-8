@@ -177,7 +177,7 @@ public class AT_RegionTransferReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport2(new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)::init));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)::init));
 		pluginsToAdd.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(3054641152904904632L).build()));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);

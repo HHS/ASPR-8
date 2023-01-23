@@ -539,7 +539,21 @@ public class AT_GroupPropertyReport {
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		
+		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		
+		for(ReportItem reportItem : expectedReportItems.keySet()) {
+			Integer count = expectedReportItems.get(reportItem);
+			System.out.println(count+"\t"+reportItem.toValueString());
+		}
+		System.out.println();
+		
+		for(ReportItem reportItem : actualReportItems.keySet()) {
+			Integer count = actualReportItems.get(reportItem);
+			System.out.println(count+"\t"+reportItem.toValueString());
+		}
+		
+		assertEquals(expectedReportItems, actualReportItems);
 
 	}
 

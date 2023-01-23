@@ -3,11 +3,11 @@ package plugins.groups.actors;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ActorContext;
-import plugins.groups.datamanagers.GroupsDataManager;
+import nucleus.ReportContext;
+import plugins.groups.dataViews.GroupsDataView;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
-import plugins.reports.support.PeriodicReport;
+import plugins.reports.support.PeriodicReport2;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -27,7 +27,7 @@ import plugins.reports.support.ReportPeriod;
  *
  *
  */
-public final class GroupPopulationReport extends PeriodicReport {
+public final class GroupPopulationReport extends PeriodicReport2 {
 
 	public GroupPopulationReport(ReportId reportId,ReportPeriod reportPeriod) {
 		super(reportId,reportPeriod);
@@ -58,7 +58,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -67,11 +67,11 @@ public final class GroupPopulationReport extends PeriodicReport {
 		 * type
 		 */
 		Map<GroupTypeId, Map<Integer, Counter>> groupTypePopulationMap = new LinkedHashMap<>();
-		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+		for (GroupTypeId groupTypeId : groupsDataView.getGroupTypeIds()) {
 			Map<Integer, Counter> groupSizeMap = new LinkedHashMap<>();
 			groupTypePopulationMap.put(groupTypeId, groupSizeMap);
-			for (GroupId groupId : groupsDataManager.getGroupsForGroupType(groupTypeId)) {
-				Integer personCountForGroup = groupsDataManager.getPersonCountForGroup(groupId);
+			for (GroupId groupId : groupsDataView.getGroupsForGroupType(groupTypeId)) {
+				Integer personCountForGroup = groupsDataView.getPersonCountForGroup(groupId);
 				Counter counter = groupSizeMap.get(personCountForGroup);
 				if (counter == null) {
 					counter = new Counter();
@@ -97,19 +97,19 @@ public final class GroupPopulationReport extends PeriodicReport {
 				reportItemBuilder.addValue(personCount);
 				reportItemBuilder.addValue(groupCount);
 				ReportItem reportItem = reportItemBuilder.build();
-				actorContext.releaseOutput(reportItem);
+				reportContext.releaseOutput(reportItem);
 
 			}
 		}
 
 	}
 
-	private GroupsDataManager groupsDataManager;
+	private GroupsDataView groupsDataView;
 
 	@Override
-	public void init(ActorContext actorContext) {
-		super.init(actorContext);
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+	public void init(ReportContext reportContext) {
+		super.init(reportContext);
+		groupsDataView = reportContext.getDataView(GroupsDataView.class);
 	}
 
 }
