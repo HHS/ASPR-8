@@ -48,17 +48,12 @@ public class AT_Junk {
 																		.setDefaultInclusion(true)//
 																		.build();//
 		
-		PersonPropertyReport2 personPropertyReport2 = PersonPropertyReport2//
-				.builder()//
-				.setReportId(new SimpleReportId("report"))//
-				.setReportPeriod(ReportPeriod.DAILY)//
-				.setDefaultInclusion(true)//
-				.build();//
+		
 
 		ReportsPluginData reportsPluginData = ReportsPluginData//
 																.builder()//
 																//.addReport(() -> personPropertyReport::init)//
-																.addReport2(() -> personPropertyReport2::init)//
+																.addReport2(() -> personPropertyReport::init)//
 																.build();//
 
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
@@ -98,10 +93,13 @@ public class AT_Junk {
 			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
 			
 			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();			
-			PersonId personId = peopleDataManager.addPerson(personBuilder.add(regionA).build());
-			regionsDataManager.setPersonRegion(personId, regionB);
-			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.PROP, true);
+			PersonId personId1 = peopleDataManager.addPerson(personBuilder.add(regionA).build());
+			regionsDataManager.setPersonRegion(personId1, regionB);
+			personPropertiesDataManager.setPersonPropertyValue(personId1, PersonProperty.PROP, true);
 			
+			PersonId personId2 = peopleDataManager.addPerson(personBuilder.add(regionB).build());
+			personPropertiesDataManager.setPersonPropertyValue(personId2, PersonProperty.PROP, true);
+			regionsDataManager.setPersonRegion(personId2, regionA);
 		}));
 		
 		

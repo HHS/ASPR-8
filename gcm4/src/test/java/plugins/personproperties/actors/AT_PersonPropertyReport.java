@@ -21,127 +21,127 @@ import util.errors.ContractException;
 public class AT_PersonPropertyReport {
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.class, name = "builder", args = {})
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "builder", args = {})
 	public void testBuilder() {
-		PersonPropertyReport2.Builder builder = PersonPropertyReport2.builder();
+		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 
 		assertNotNull(builder);
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 		// TBD
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.Builder.class, name = "build", args = {})
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		PersonPropertyReport2.Builder builder = PersonPropertyReport2.builder();
+		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 
 		builder.setReportId(new SimpleReportId(1000));
 		builder.setReportPeriod(ReportPeriod.DAILY);
 
-		PersonPropertyReport2 report = builder.build();
+		PersonPropertyReport report = builder.build();
 
 		assertNotNull(report);
 
 		// precondition: null report id
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport2.builder().setReportPeriod(ReportPeriod.DAILY).build();
+			PersonPropertyReport.builder().setReportPeriod(ReportPeriod.DAILY).build();
 		});
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 
 		// precondition: null report period
 		contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport2.builder().setReportId(new SimpleReportId(1000)).build();
+			PersonPropertyReport.builder().setReportId(new SimpleReportId(1000)).build();
 		});
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.Builder.class, name = "setReportId", args = { ReportId.class })
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportId", args = { ReportId.class })
 	public void testSetReportId() {
-		PersonPropertyReport2.Builder builder = PersonPropertyReport2.builder();
+		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 		ReportId reportId = new SimpleReportId(1000);
 		builder.setReportId(reportId);
 		builder.setReportPeriod(ReportPeriod.DAILY);
 
-		PersonPropertyReport2 report = builder.build();
+		PersonPropertyReport report = builder.build();
 
 		assertNotNull(report);
 
 		// precondition: report id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport2.builder().setReportId(null);
+			PersonPropertyReport.builder().setReportId(null);
 		});
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setReportPeriod", args = { ReportPeriod.class })
 	public void testSetReportPeriod() {
-		PersonPropertyReport2.Builder builder = PersonPropertyReport2.builder();
+		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 		ReportId reportId = new SimpleReportId(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 		builder.setReportId(reportId);
 		builder.setReportPeriod(reportPeriod);
 
-		PersonPropertyReport2 report = builder.build();
+		PersonPropertyReport report = builder.build();
 
 		assertNotNull(report);
 
 		// precondition: report period is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport2.builder().setReportPeriod(null);
+			PersonPropertyReport.builder().setReportPeriod(null);
 		});
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "setDefaultInclusion", args = { boolean.class })
 	public void testSetDefaultInclusion() {
 		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "includePersonProperty", args = { PersonPropertyId.class })
 	public void testIncludePersonProperty() {
-		PersonPropertyReport2.Builder builder = PersonPropertyReport2.builder();
+		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 		ReportId reportId = new SimpleReportId(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 		builder.setReportId(reportId);
 		builder.setReportPeriod(reportPeriod);
 		builder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 
-		PersonPropertyReport2 report = builder.build();
+		PersonPropertyReport report = builder.build();
 
 		assertNotNull(report);
 
 		// precondition: person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport2.builder().includePersonProperty(null);
+			PersonPropertyReport.builder().includePersonProperty(null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport2.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
+	@UnitTestMethod(target = PersonPropertyReport.Builder.class, name = "excludePersonProperty", args = { PersonPropertyId.class })
 	public void testExcludePersonProperty() {
-		PersonPropertyReport2.Builder builder = PersonPropertyReport2.builder();
+		PersonPropertyReport.Builder builder = PersonPropertyReport.builder();
 		ReportId reportId = new SimpleReportId(1000);
 		ReportPeriod reportPeriod = ReportPeriod.DAILY;
 		builder.setReportId(reportId);
 		builder.setReportPeriod(reportPeriod);
 		builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 
-		PersonPropertyReport2 report = builder.build();
+		PersonPropertyReport report = builder.build();
 
 		assertNotNull(report);
 
 		// precondition: person property id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			PersonPropertyReport2.builder().excludePersonProperty(null);
+			PersonPropertyReport.builder().excludePersonProperty(null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 	}
