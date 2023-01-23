@@ -214,7 +214,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 *             the global property id is known
 	 */
 	public PropertyDefinition getGlobalPropertyDefinition(final GlobalPropertyId globalPropertyId) {
-		validategGlobalPropertyIdExists(data, globalPropertyId);
+		validateGlobalPropertyIdExists(data, globalPropertyId);
 		return data.globalPropertyDefinitions.get(globalPropertyId);
 	}
 
@@ -244,7 +244,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getGlobalPropertyValue(final GlobalPropertyId globalPropertyId) {
-		validategGlobalPropertyIdExists(data, globalPropertyId);
+		validateGlobalPropertyIdExists(data, globalPropertyId);
 		T result = (T) data.globalPropertyValues.get(globalPropertyId);
 		if (result == null) {
 			result = (T) data.globalPropertyDefinitions.get(globalPropertyId).getDefaultValue().get();
@@ -252,7 +252,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		return result;
 	}
 
-	private static void validategGlobalPropertyIdExists(final Data data, final GlobalPropertyId globalPropertyId) {
+	private static void validateGlobalPropertyIdExists(final Data data, final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyId == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 		}
