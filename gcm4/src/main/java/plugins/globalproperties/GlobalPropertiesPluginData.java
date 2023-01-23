@@ -25,7 +25,7 @@ import util.errors.ContractException;
  */
 @Immutable
 public final class GlobalPropertiesPluginData implements PluginData {
-	
+
 	/**
 	 * Builder class for GloblaInitialData
 	 * 
@@ -40,11 +40,11 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 
 		/**
-		 * Returns the {@link GlobalInitialData} from the collected information
+		 * Returns the {@link GlobalPropertiesPluginData} from the collected information
 		 * supplied to this builder. Clears the builder's state.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID}</li>
+		 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 		 *             if a global property value was associated with a global
 		 *             property id that was not defined
 		 * 
