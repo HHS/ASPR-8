@@ -693,9 +693,6 @@ public class Simulation {
 			}
 		}
 
-		for(DataManagerContentRec dataManagerContentRec : reportInitializations) {
-			dataManagerQueue.add(dataManagerContentRec);
-		}
 		executeDataManagerQueue();
 
 		for (DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
@@ -746,11 +743,10 @@ public class Simulation {
 					if (planRec.key != null) {
 						reportPlanMap.get(planRec.reportId).remove(planRec.key);
 					}
-					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-					dataManagerContentRec.reportPlan = planRec.reportPlan;
-					dataManagerContentRec.reportId = planRec.reportId;
-					dataManagerQueue.add(dataManagerContentRec);
-					executeDataManagerQueue();
+					ReportContentRec reportContentRec = new ReportContentRec();
+					reportContentRec.reportPlan = planRec.reportPlan;
+					reportContentRec.reportId = planRec.reportId;
+					reportQueue.add(reportContentRec);					
 					executeActorQueue();
 				}
 
@@ -816,6 +812,21 @@ public class Simulation {
 
 	private boolean dataManagerQueueActive;
 
+	private void executeReportQueue() {
+		while (!reportQueue.isEmpty()) {
+			final ReportContentRec contentRec = reportQueue.pollFirst();
+			if (contentRec.reportPlan != null) {
+				focalReportId = contentRec.reportId;
+				contentRec.reportPlan.accept(reportContext);
+				focalReportId = null;
+			} else {
+				focalReportId = contentRec.reportId;
+				contentRec.consumer.accept(contentRec.event);
+				focalReportId = null;
+			}
+		}
+	}
+
 	private void executeDataManagerQueue() {
 		if (dataManagerQueueActive) {
 			return;
@@ -825,25 +836,14 @@ public class Simulation {
 			try {
 				while (!dataManagerQueue.isEmpty()) {
 					final DataManagerContentRec contentRec = dataManagerQueue.pollFirst();
-					if (contentRec.dataManagerId != null) {
-						if (contentRec.dmPlan != null) {
-							DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(contentRec.dataManagerId);
-							contentRec.dmPlan.accept(dataManagerContext);
-						} else {							
-							contentRec.consumer.accept(contentRec.event);
-						}
+					if (contentRec.dmPlan != null) {
+						DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(contentRec.dataManagerId);
+						contentRec.dmPlan.accept(dataManagerContext);
 					} else {
-						if (contentRec.reportPlan != null) {
-							focalReportId = contentRec.reportId;
-							contentRec.reportPlan.accept(reportContext);
-							focalReportId = null;
-						} else {
-							focalReportId = contentRec.reportId;
-							contentRec.consumer.accept(contentRec.event);
-							focalReportId = null;
-						}
+						contentRec.consumer.accept(contentRec.event);
 					}
 				}
+				executeReportQueue();
 			} catch (Exception e) {
 				dataManagerQueue.clear();
 				throw (e);
@@ -1163,18 +1163,18 @@ public class Simulation {
 		List<ReportEventConsumer> reportConsumers = reportEventMap.get(event.getClass());
 		if (reportConsumers != null) {
 			for (ReportEventConsumer reportEventConsumer : reportConsumers) {
-				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-				dataManagerContentRec.event = event;
-				dataManagerContentRec.consumer = reportEventConsumer;
-				dataManagerContentRec.reportId = reportEventConsumer.reportId;
-				dataManagerQueue.add(dataManagerContentRec);
+				ReportContentRec reportContentRec = new ReportContentRec();
+				reportContentRec.event = event;
+				reportContentRec.consumer = reportEventConsumer;
+				reportContentRec.reportId = reportEventConsumer.reportId;
+				reportQueue.add(reportContentRec);
 			}
 		}
 
 		// queue the event handling for actors
 		broadcastEventToFilterNode(event, rootNode);
 
-		//queue the event handling by data managers
+		// queue the event handling by data managers
 		List<DataManagerEventConsumer> dataManagerEventConsumers = dataManagerEventMap.get(event.getClass());
 		if (dataManagerEventConsumers != null) {
 			for (DataManagerEventConsumer dataManagerEventConsumer : dataManagerEventConsumers) {
@@ -1189,8 +1189,8 @@ public class Simulation {
 		}
 	}
 
-	protected void pushObservationEvents() {		
-		executeDataManagerQueue();		
+	protected void pushObservationEvents() {
+		executeDataManagerQueue();
 	}
 
 	private void addReport(Consumer<ReportContext> consumer) {
@@ -1202,10 +1202,10 @@ public class Simulation {
 		ReportId reportId = new ReportId(reportIds.size());
 		reportIds.add(reportId);
 
-		final DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-		dataManagerContentRec.reportId = reportId;
-		dataManagerContentRec.reportPlan = consumer;
-		reportInitializations.add(dataManagerContentRec);
+		final ReportContentRec reportContentRec = new ReportContentRec();
+		reportContentRec.reportId = reportId;
+		reportContentRec.reportPlan = consumer;
+		reportQueue.add(reportContentRec);
 
 	}
 
@@ -1486,8 +1486,8 @@ public class Simulation {
 
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 	private final Deque<DataManagerContentRec> dataManagerQueue = new ArrayDeque<>();
-	private final List<DataManagerContentRec> reportInitializations = new ArrayList<>();
-	
+	private final Deque<ReportContentRec> reportQueue = new ArrayDeque<>();
+
 	protected ActorId focalActorId;
 	protected ReportId focalReportId;
 
@@ -1503,6 +1503,18 @@ public class Simulation {
 
 	}
 
+	private static class ReportContentRec {
+
+		private Event event;
+
+		private Consumer<Event> consumer;
+
+		private Consumer<ReportContext> reportPlan;
+
+		private ReportId reportId;
+
+	}
+
 	private static class DataManagerContentRec {
 
 		private Event event;
@@ -1512,10 +1524,6 @@ public class Simulation {
 		private Consumer<DataManagerContext> dmPlan;
 
 		private DataManagerId dataManagerId;
-
-		private Consumer<ReportContext> reportPlan;
-
-		private ReportId reportId;
 
 	}
 
