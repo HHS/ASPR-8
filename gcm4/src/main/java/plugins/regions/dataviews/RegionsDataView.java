@@ -132,6 +132,13 @@ public final class RegionsDataView implements DataView {
 	public PropertyDefinition getRegionPropertyDefinition(final RegionPropertyId regionPropertyId) {
 		return regionsDataManager.getRegionPropertyDefinition(regionPropertyId);
 	}
+	
+	/**
+	 * Returns the {@link RegionPropertyId} values
+	 */
+	public <T extends RegionPropertyId> Set<T>  getRegionPropertyIds() {
+		return regionsDataManager.getRegionPropertyIds();
+	}
 
 	/**
 	 * Returns the time when the of the region property was last assigned.

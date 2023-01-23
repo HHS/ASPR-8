@@ -3,9 +3,8 @@ package plugins.regions.actors;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
-import plugins.regions.datamanagers.RegionsDataManager;
+import nucleus.ReportContext;
+import plugins.regions.dataviews.RegionsDataView;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.events.RegionPropertyDefinitionEvent;
 import plugins.regions.events.RegionPropertyUpdateEvent;
@@ -42,7 +41,6 @@ public final class RegionPropertyReport {
 	 * report. They are set during init()
 	 */
 	private final Set<RegionPropertyId> regionPropertyIds = new LinkedHashSet<>();
-	
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
@@ -56,18 +54,18 @@ public final class RegionPropertyReport {
 		return reportHeader;
 	}
 
-	private void handleRegionPropertyUpdateEvent(ActorContext actorContext, RegionPropertyUpdateEvent regionPropertyUpdateEvent) {
+	private void handleRegionPropertyUpdateEvent(ReportContext reportContext, RegionPropertyUpdateEvent regionPropertyUpdateEvent) {
 		RegionId regionId = regionPropertyUpdateEvent.regionId();
 		RegionPropertyId regionPropertyId = regionPropertyUpdateEvent.regionPropertyId();
 		Object propertyValue = regionPropertyUpdateEvent.currentPropertyValue();
 		if (regionPropertyIds.contains(regionPropertyId)) {
-			writeProperty(actorContext, regionId, regionPropertyId, propertyValue);
+			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
 		}
 	}
 
 	private final ReportId reportId;
-	
-	private RegionsDataManager regionsDataManager; 
+
+	private RegionsDataView regionsDataView;
 
 	public RegionPropertyReport(ReportId reportId, RegionPropertyId... regionPropertyIds) {
 		this.reportId = reportId;
@@ -86,81 +84,73 @@ public final class RegionPropertyReport {
 	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
 	 *             region property id used in the constructor is unknown</li>
 	 */
-	public void init(final ActorContext actorContext) {
-		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+	public void init(final ReportContext reportContext) {
+		regionsDataView = reportContext.getDataView(RegionsDataView.class);
 
 		/*
 		 * If no region properties were specified, then assume all are wanted
 		 */
 		if (regionPropertyIds.size() == 0) {
-			regionPropertyIds.addAll(regionsDataManager.getRegionPropertyIds());
+			regionPropertyIds.addAll(regionsDataView.getRegionPropertyIds());
 		}
 
 		/*
 		 * Ensure that every client supplied property identifier is valid
 		 */
-		final Set<RegionPropertyId> validPropertyIds = regionsDataManager.getRegionPropertyIds();
+		final Set<RegionPropertyId> validPropertyIds = regionsDataView.getRegionPropertyIds();
 		for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
 			if (!validPropertyIds.contains(regionPropertyId)) {
-
 				throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, regionPropertyId);
 			}
 		}
 
-		if (regionPropertyIds.equals(regionsDataManager.getRegionPropertyIds())) {
-			actorContext.subscribe(EventFilter.builder(RegionPropertyUpdateEvent.class).build(), this::handleRegionPropertyUpdateEvent);
-			actorContext.subscribe(EventFilter.builder(RegionPropertyDefinitionEvent.class).build(), this::handleRegionPropertyDefinitionEvent);
-		} else {
-			for (RegionPropertyId regionPropertyId : regionPropertyIds) {
-				EventFilter<RegionPropertyUpdateEvent> eventFilter = regionsDataManager.getEventFilterForRegionPropertyUpdateEvent(regionPropertyId);
-				actorContext.subscribe(eventFilter, this::handleRegionPropertyUpdateEvent);
+		reportContext.subscribe(RegionPropertyUpdateEvent.class, this::handleRegionPropertyUpdateEvent);
+		reportContext.subscribe(RegionPropertyDefinitionEvent.class, this::handleRegionPropertyDefinitionEvent);
+
+		for (final RegionId regionId : regionsDataView.getRegionIds()) {
+			for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
+				Object propertyValue = regionsDataView.getRegionPropertyValue(regionId, regionPropertyId);
+				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
 			}
 		}
 
-		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
-			for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
-				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-				writeProperty(actorContext, regionId, regionPropertyId, propertyValue);
-			}
-		}
-		
-		actorContext.subscribe(EventFilter.builder(RegionAdditionEvent.class).build(), this::handleRegionAdditionEvent);
+		reportContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 	}
 
-	private void handleRegionAdditionEvent(ActorContext actorContext, RegionAdditionEvent regionAdditionEvent) {
+	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {
 		RegionId regionId = regionAdditionEvent.getRegionId();
 
 		for (final RegionPropertyId regionPropertyId : regionPropertyIds) {
-			Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-			writeProperty(actorContext, regionId, regionPropertyId, propertyValue);
+			Object propertyValue = regionsDataView.getRegionPropertyValue(regionId, regionPropertyId);
+			writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
 		}
 
 	}
 
-	private void handleRegionPropertyDefinitionEvent(ActorContext actorContext, RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
+	private void handleRegionPropertyDefinitionEvent(ReportContext reportContext, RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
 
-		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+		RegionsDataView regionsDataView = reportContext.getDataView(RegionsDataView.class);
 		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.regionPropertyId();
 		if (!regionPropertyIds.contains(regionPropertyId)) {
 			regionPropertyIds.add(regionPropertyId);
-			for (final RegionId regionId : regionsDataManager.getRegionIds()) {
-				Object propertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
-				writeProperty(actorContext, regionId, regionPropertyId, propertyValue);
+			for (final RegionId regionId : regionsDataView.getRegionIds()) {
+				Object propertyValue = regionsDataView.getRegionPropertyValue(regionId, regionPropertyId);
+				writeProperty(reportContext, regionId, regionPropertyId, propertyValue);
 			}
 		}
 	}
 
-	private void writeProperty(ActorContext actorContext, final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+	private void writeProperty(ReportContext reportContext, final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportId(reportId);
 
-		reportItemBuilder.addValue(actorContext.getTime());
+		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(regionId.toString());
 		reportItemBuilder.addValue(regionPropertyId.toString());
 		reportItemBuilder.addValue(regionPropertyValue);
-		actorContext.releaseOutput(reportItemBuilder.build());
+		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
 }
