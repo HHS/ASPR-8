@@ -5,22 +5,21 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
-import plugins.people.datamanagers.PeopleDataManager;
+import nucleus.ReportContext;
+import plugins.people.dataviews.PeopleDataView;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsDataManager;
+import plugins.regions.dataviews.RegionsDataView;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport;
+import plugins.reports.support.PeriodicReport2;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
-import plugins.resources.datamanagers.ResourcesDataManager;
+import plugins.resources.dataviews.ResourcesDataView;
 import plugins.resources.events.PersonResourceUpdateEvent;
 import plugins.resources.events.ResourceIdAdditionEvent;
 import plugins.resources.support.ResourceError;
@@ -46,7 +45,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class PersonResourceReport extends PeriodicReport {
+public final class PersonResourceReport extends PeriodicReport2 {
 	public PersonResourceReport(ReportId reportId, ReportPeriod reportPeriod, boolean reportPeopleWithoutResources, boolean reportZeroPopulations, ResourceId... resourceIds) {
 		super(reportId, reportPeriod);
 		this.reportPeopleWithoutResources = reportPeopleWithoutResources;
@@ -117,7 +116,7 @@ public final class PersonResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		for (final RegionId regionId : regionMap.keySet()) {
 			final Map<ResourceId, Map<InventoryType, Set<PersonId>>> resourceMap = regionMap.get(regionId);
@@ -143,19 +142,19 @@ public final class PersonResourceReport extends PeriodicReport {
 					if (reportPeopleWithoutResources) {
 						reportItemBuilder.addValue(zeroCount);
 					}
-					actorContext.releaseOutput(reportItemBuilder.build());
+					reportContext.releaseOutput(reportItemBuilder.build());
 				}
 			}
 
 		}
 	}
 
-	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
+	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.personId();
-		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+		final RegionId regionId = regionsDataView.getPersonRegion(personId);
 
 		for (final ResourceId resourceId : resourceIds) {
-			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+			final long personResourceLevel = resourcesDataView.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				add(regionId, resourceId, InventoryType.POSITIVE, personId);
 			} else {
@@ -166,14 +165,14 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 
 		PersonId personId = personImminentRemovalEvent.personId();
 
-		RegionId regionId = regionsDataManager.getPersonRegion(personId);
+		RegionId regionId = regionsDataView.getPersonRegion(personId);
 
 		for (ResourceId resourceId : resourceIds) {
-			Long amount = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+			Long amount = resourcesDataView.getPersonResourceLevel(resourceId, personId);
 			if (amount > 0) {
 				remove(regionId, resourceId, InventoryType.POSITIVE, personId);
 			} else {
@@ -184,7 +183,7 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonResourceUpdateEvent(ActorContext actorContext, PersonResourceUpdateEvent personResourceUpdateEvent) {
+	private void handlePersonResourceUpdateEvent(ReportContext reportContext, PersonResourceUpdateEvent personResourceUpdateEvent) {
 		ResourceId resourceId = personResourceUpdateEvent.resourceId();
 		if (!resourceIds.contains(resourceId)) {
 			return;
@@ -198,9 +197,9 @@ public final class PersonResourceReport extends PeriodicReport {
 			return;
 		}
 		if (amount > 0) {
-			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+			final long personResourceLevel = resourcesDataView.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel == amount) {
-				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				final RegionId regionId = regionsDataView.getPersonRegion(personId);
 
 				if (reportPeopleWithoutResources) {
 					remove(regionId, resourceId, InventoryType.ZERO, personId);
@@ -209,9 +208,9 @@ public final class PersonResourceReport extends PeriodicReport {
 			}
 		} else {
 			amount = -amount;
-			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+			final long personResourceLevel = resourcesDataView.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel == 0) {
-				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				final RegionId regionId = regionsDataView.getPersonRegion(personId);
 				remove(regionId, resourceId, InventoryType.POSITIVE, personId);
 				if (reportPeopleWithoutResources) {
 					add(regionId, resourceId, InventoryType.ZERO, personId);
@@ -221,13 +220,13 @@ public final class PersonResourceReport extends PeriodicReport {
 
 	}
 
-	private void handlePersonRegionUpdateEvent(ActorContext actorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ReportContext reportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
 		PersonId personId = personRegionUpdateEvent.personId();
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
 
 		for (final ResourceId resourceId : resourceIds) {
-			final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+			final long personResourceLevel = resourcesDataView.getPersonResourceLevel(resourceId, personId);
 			if (personResourceLevel > 0) {
 				remove(previousRegionId, resourceId, InventoryType.POSITIVE, personId);
 				add(currentRegionId, resourceId, InventoryType.POSITIVE, personId);
@@ -240,8 +239,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private RegionsDataManager regionsDataManager;
-	private ResourcesDataManager resourcesDataManager;
+	private RegionsDataView regionsDataView;
+	private ResourcesDataView resourcesDataView;
 
 	/**
 	 * 
@@ -252,55 +251,43 @@ public final class PersonResourceReport extends PeriodicReport {
 	 * 
 	 */
 	@Override
-	public void init(final ActorContext actorContext) {
-		super.init(actorContext);
-		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+	public void init(final ReportContext reportContext) {
+		super.init(reportContext);
+		resourcesDataView = reportContext.getDataView(ResourcesDataView.class);
+		PeopleDataView peopleDataView = reportContext.getDataView(PeopleDataView.class);
+		regionsDataView = reportContext.getDataView(RegionsDataView.class);
 
-		
-		subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
-		subscribe(peopleDataManager.getEventFilterForPersonImminentRemovalEvent(), this::handlePersonImminentRemovalEvent);
-		subscribe(regionsDataManager.getEventFilterForPersonRegionUpdateEvent(), this::handlePersonRegionUpdateEvent);
-		subscribe(regionsDataManager.getEventFilterForRegionAdditionEvent(), this::handleRegionAdditionEvent);
-
+		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
+		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 
 		/*
 		 * If no resources were selected, then assume that all are desired.
 		 */
 		if (resourceIds.size() == 0) {
-			resourceIds.addAll(resourcesDataManager.getResourceIds());
+			resourceIds.addAll(resourcesDataView.getResourceIds());
 		}
 
 		/*
 		 * Ensure that the resources are valid
 		 */
-		final Set<ResourceId> validResourceIds = resourcesDataManager.getResourceIds();
+		final Set<ResourceId> validResourceIds = resourcesDataView.getResourceIds();
 		for (final ResourceId resourceId : resourceIds) {
 			if (!validResourceIds.contains(resourceId)) {
 				throw new ContractException(ResourceError.UNKNOWN_RESOURCE_ID, resourceId);
 			}
 		}
 
-		// If all resources are covered by this report, then subscribe to the
-		// event, otherwise subscribe to each resource id
-		if (resourceIds.equals(resourcesDataManager.getResourceIds())) {
-			EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent();
-			subscribe(eventFilter, this::handlePersonResourceUpdateEvent);			
-			subscribe(resourcesDataManager.getEventFilterForResourceIdAdditionEvent(), this::handleResourceIdAdditionEvent);
-		} else {
-			for (ResourceId resourceId : resourceIds) {
-				EventFilter<PersonResourceUpdateEvent> eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(resourceId);
-				subscribe(eventFilter, this::handlePersonResourceUpdateEvent);
-			}
-		}
+		subscribe(PersonResourceUpdateEvent.class, this::handlePersonResourceUpdateEvent);
+		subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 
 		/*
 		 * Build the tuple map to empty sets of people in preparation for people
 		 * being added to the simulation
 		 */
 
-		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
+		for (final RegionId regionId : regionsDataView.getRegionIds()) {
 
 			final Map<ResourceId, Map<InventoryType, Set<PersonId>>> resourceMap = new LinkedHashMap<>();
 			regionMap.put(regionId, resourceMap);
@@ -319,11 +306,11 @@ public final class PersonResourceReport extends PeriodicReport {
 		/*
 		 * Place the initial population in the mapping
 		 */
-		for (final PersonId personId : peopleDataManager.getPeople()) {
+		for (final PersonId personId : peopleDataView.getPeople()) {
 			for (final ResourceId resourceId : resourceIds) {
-				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				final RegionId regionId = regionsDataView.getPersonRegion(personId);
 
-				final long personResourceLevel = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
+				final long personResourceLevel = resourcesDataView.getPersonResourceLevel(resourceId, personId);
 				if (personResourceLevel > 0) {
 					add(regionId, resourceId, InventoryType.POSITIVE, personId);
 				} else {
@@ -336,7 +323,7 @@ public final class PersonResourceReport extends PeriodicReport {
 
 	}
 
-	private void handleRegionAdditionEvent(ActorContext actorContext, RegionAdditionEvent regionAdditionEvent) {
+	private void handleRegionAdditionEvent(ReportContext reportContext, RegionAdditionEvent regionAdditionEvent) {
 		RegionId regionId = regionAdditionEvent.getRegionId();
 
 		if (!regionMap.containsKey(regionId)) {
@@ -366,7 +353,7 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handleResourceIdAdditionEvent(ActorContext actorContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
+	private void handleResourceIdAdditionEvent(ReportContext reportContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
 		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 		if (!resourceIds.contains(resourceId)) {
 			resourceIds.add(resourceId);
