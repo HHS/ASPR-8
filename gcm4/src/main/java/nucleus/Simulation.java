@@ -747,7 +747,7 @@ public class Simulation {
 					reportContentRec.reportPlan = planRec.reportPlan;
 					reportContentRec.reportId = planRec.reportId;
 					reportQueue.add(reportContentRec);					
-					executeActorQueue();
+					executeReportQueue();
 				}
 
 				break;

@@ -188,6 +188,7 @@ public abstract class PeriodicReport2  {
 	}
 
 	private void executePlan(final ReportContext reportContext) {
+		
 		if (lastFlushTime == null || reportContext.getTime() > lastFlushTime) {
 			lastFlushTime = reportContext.getTime();
 			flush(reportContext);
