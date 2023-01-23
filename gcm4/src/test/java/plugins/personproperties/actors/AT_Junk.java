@@ -5,7 +5,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import nucleus.Plugin;
-import nucleus.SimplePluginId;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -18,6 +17,7 @@ import plugins.people.support.PersonConstructionData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPlugin;
 import plugins.personproperties.PersonPropertiesPluginData;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.RegionsPlugin;
 import plugins.regions.RegionsPluginData;
@@ -41,14 +41,14 @@ public class AT_Junk {
 	public void test() {
 
 		// reports
-		PersonPropertyActorReport oldPersonPropertyReport = PersonPropertyActorReport//
+		PersonPropertyReport personPropertyReport = PersonPropertyReport//
 																		.builder()//
 																		.setReportId(new SimpleReportId("report"))//
 																		.setReportPeriod(ReportPeriod.DAILY)//
 																		.setDefaultInclusion(true)//
 																		.build();//
 		
-		PersonPropertyReport newPersonPropertyReport = PersonPropertyReport//
+		PersonPropertyReport2 personPropertyReport2 = PersonPropertyReport2//
 				.builder()//
 				.setReportId(new SimpleReportId("report"))//
 				.setReportPeriod(ReportPeriod.DAILY)//
@@ -57,7 +57,8 @@ public class AT_Junk {
 
 		ReportsPluginData reportsPluginData = ReportsPluginData//
 																.builder()//
-																//.addReport(() -> oldPersonPropertyReport::init)//
+																//.addReport(() -> personPropertyReport::init)//
+																.addReport2(() -> personPropertyReport2::init)//
 																.build();//
 
 		Plugin reportsPlugin = ReportsPlugin.getReportsPlugin(reportsPluginData);
@@ -93,10 +94,13 @@ public class AT_Junk {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 		pluginBuilder.addTestActorPlan("actor",new TestActorPlan(0,(c)->{
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
+			PersonPropertiesDataManager personPropertiesDataManager = c.getDataManager(PersonPropertiesDataManager.class);
+			
 			PersonConstructionData.Builder personBuilder = PersonConstructionData.builder();			
 			PersonId personId = peopleDataManager.addPerson(personBuilder.add(regionA).build());
-			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
-			regionsDataManager.setPersonRegion(personId, regionB);			
+			regionsDataManager.setPersonRegion(personId, regionB);
+			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.PROP, true);
 			
 		}));
 		
@@ -107,12 +111,6 @@ public class AT_Junk {
 		TestSimulationOutputConsumer testSimulationOutputConsumer = new TestSimulationOutputConsumer();
 		
 		
-		Plugin junkPlugin = Plugin.builder()//
-				.setPluginId(new SimplePluginId("junk plugin"))//
-				.setInitializer((c)->{
-					c.addReport(newPersonPropertyReport::init);
-				})
-				.build();
 
 		// simulation
 		Simulation	.builder()//
@@ -121,7 +119,6 @@ public class AT_Junk {
 					.addPlugin(peoplePlugin)//
 					.addPlugin(personPropertyPlugin)//
 					.addPlugin(testPlugin)//
-					.addPlugin(junkPlugin)//
 					.setOutputConsumer(testSimulationOutputConsumer)//
 					.build()//
 					.execute();

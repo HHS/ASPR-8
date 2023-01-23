@@ -9,6 +9,7 @@ import net.jcip.annotations.Immutable;
 import nucleus.ActorContext;
 import nucleus.PluginData;
 import nucleus.PluginDataBuilder;
+import nucleus.ReportContext;
 import plugins.reports.support.ReportError;
 import util.errors.ContractException;
 
@@ -27,12 +28,14 @@ public final class ReportsPluginData implements PluginData {
 
 	private static class Data {
 		private Set<Supplier<Consumer<ActorContext>>> reports = new LinkedHashSet<>();
+		private Set<Supplier<Consumer<ReportContext>>> reports2 = new LinkedHashSet<>();
 
 		public Data() {
 		}
 
 		public Data(Data data) {
 			this.reports.addAll(data.reports);
+			this.reports2.addAll(data.reports2);
 		}
 	}
 
@@ -84,6 +87,14 @@ public final class ReportsPluginData implements PluginData {
 			data.reports.add(supplier);
 			return this;
 		}
+		public Builder addReport2(Supplier<Consumer<ReportContext>> supplier) {
+			ensureDataMutability();
+			if (supplier == null) {
+				throw new ContractException(ReportError.NULL_SUPPLIER);
+			}
+			data.reports2.add(supplier);
+			return this;
+		}
 
 	}
 
@@ -108,6 +119,13 @@ public final class ReportsPluginData implements PluginData {
 		Set<Consumer<ActorContext>> result=  new LinkedHashSet<>();
 		for(Supplier<Consumer<ActorContext>> supplier : data.reports) {
 			result.add(	supplier.get());
+		}
+		return result;
+	}
+	public Set<Consumer<ReportContext>> getReports2() {
+		Set<Consumer<ReportContext>> result=  new LinkedHashSet<>();
+		for(Supplier<Consumer<ReportContext>> supplier : data.reports2) {
+			result.add(supplier.get());
 		}
 		return result;
 	}

@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 
 /**
  * A plugin providing a report actors to the simulation.
@@ -45,6 +46,9 @@ public class ReportsPlugin {
 							ReportsPluginData pluginData = c.getPluginData(ReportsPluginData.class);
 							for (Consumer<ActorContext> consumer : pluginData.getReports()) {
 								c.addActor(consumer);
+							}
+							for (Consumer<ReportContext> consumer : pluginData.getReports2()) {
+								c.addReport(consumer);
 							}
 						}).build();//
 	}

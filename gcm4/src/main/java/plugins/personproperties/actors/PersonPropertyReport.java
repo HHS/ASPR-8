@@ -45,7 +45,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class PersonPropertyActorReport extends PeriodicReport {
+public final class PersonPropertyReport extends PeriodicReport {
 
 	/*
 	 * Data class for collecting the inputs to the report
@@ -76,9 +76,9 @@ public final class PersonPropertyActorReport extends PeriodicReport {
 
 		private Data data = new Data();
 
-		public PersonPropertyActorReport build() {
+		public PersonPropertyReport build() {
 			try {
-				return new PersonPropertyActorReport(data);
+				return new PersonPropertyReport(data);
 			} finally {
 				data = new Data();
 			}
@@ -160,7 +160,7 @@ public final class PersonPropertyActorReport extends PeriodicReport {
 
 	private final Data data;
 
-	private PersonPropertyActorReport(Data data) {
+	private PersonPropertyReport(Data data) {
 		super(data.reportId, data.reportPeriod);
 		this.data = data;
 	}

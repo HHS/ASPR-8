@@ -294,7 +294,7 @@ public class Simulation {
 
 		DataManagerContext dataManagerContext = new DataManagerContext(dataManagerId, this);
 		dataManagerIdToDataManagerContextMap.put(dataManagerId, dataManagerContext);
-		
+
 		/*
 		 * 
 		 */
@@ -303,12 +303,11 @@ public class Simulation {
 
 		// used for establishing visibility of data managers to each other
 		dataManagerIdToPluginIdMap.put(dataManagerId, focalPluginId);
-		
-		
+
 		DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-		dataManagerContentRec.plan = dataManager::init;
+		dataManagerContentRec.dmPlan = dataManager::init;
 		dataManagerContentRec.dataManagerId = dataManagerId;
-		
+
 		dataManagerQueue.add(dataManagerContentRec);
 
 	}
@@ -393,7 +392,7 @@ public class Simulation {
 
 	}
 
-	protected void addDataManagerPlan(DataManagerId dataManagerId,final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
+	protected void addDataManagerPlan(DataManagerId dataManagerId, final Consumer<DataManagerContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validateDataManagerPlan(plan);
 		validatePlanTime(time);
@@ -424,8 +423,8 @@ public class Simulation {
 		planningQueue.add(planRec);
 	}
 
-	protected void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId,final Object key) {
-		if (getDataManagerPlan(dataManagerId,key).isPresent()) {
+	protected void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
+		if (getDataManagerPlan(dataManagerId, key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
@@ -694,16 +693,16 @@ public class Simulation {
 			}
 		}
 
-		
+		for(DataManagerContentRec dataManagerContentRec : reportInitializations) {
+			dataManagerQueue.add(dataManagerContentRec);
+		}
 		executeDataManagerQueue();
-		
-		for(DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
+
+		for (DataManager dataManager : dataManagerToDataManagerIdMap.keySet()) {
 			if (!dataManager.isInitialized()) {
 				throw new ContractException(NucleusError.DATA_MANAGER_INITIALIZATION_FAILURE, dataManager.getClass().getSimpleName());
 			}
 		}
-
-		executeReportQueue();
 
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
@@ -734,7 +733,7 @@ public class Simulation {
 						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
 					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-					dataManagerContentRec.plan = planRec.dataManagerPlan;
+					dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
 					dataManagerContentRec.dataManagerId = planRec.dataManagerId;
 					dataManagerQueue.add(dataManagerContentRec);
 					executeDataManagerQueue();
@@ -747,17 +746,14 @@ public class Simulation {
 					if (planRec.key != null) {
 						reportPlanMap.get(planRec.reportId).remove(planRec.key);
 					}
-					
-					//we do not need to place it on the queue here
-					planRec.reportPlan.accept(reportContext);
-					ReportContentRec reportContentRec = new ReportContentRec();
-					reportContentRec.plan = planRec.reportPlan;
-					reportContentRec.reportId = planRec.reportId;
-					reportQueue.add(reportContentRec);
-					executeReportQueue();
+					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+					dataManagerContentRec.reportPlan = planRec.reportPlan;
+					dataManagerContentRec.reportId = planRec.reportId;
+					dataManagerQueue.add(dataManagerContentRec);
+					executeDataManagerQueue();
+					executeActorQueue();
 				}
-				
-				
+
 				break;
 
 			default:
@@ -792,15 +788,6 @@ public class Simulation {
 
 	}
 
-	private void executeReportQueue() {
-		while (!reportQueue.isEmpty()) {
-			final ReportContentRec reportContentRec = reportQueue.pollFirst();
-			focalReportId = reportContentRec.reportId;
-			reportContentRec.plan.accept(reportContext);
-			focalReportId = null;
-		}
-	}
-
 	private void executeActorQueue() {
 		while (!actorQueue.isEmpty()) {
 			final ActorContentRec actorContentRec = actorQueue.pollFirst();
@@ -829,8 +816,6 @@ public class Simulation {
 
 	private boolean dataManagerQueueActive;
 
-	
-
 	private void executeDataManagerQueue() {
 		if (dataManagerQueueActive) {
 			return;
@@ -840,12 +825,23 @@ public class Simulation {
 			try {
 				while (!dataManagerQueue.isEmpty()) {
 					final DataManagerContentRec contentRec = dataManagerQueue.pollFirst();
-					if (contentRec.plan != null) {
-						DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(contentRec.dataManagerId);
-						contentRec.plan.accept(dataManagerContext);
+					if (contentRec.dataManagerId != null) {
+						if (contentRec.dmPlan != null) {
+							DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(contentRec.dataManagerId);
+							contentRec.dmPlan.accept(dataManagerContext);
+						} else {							
+							contentRec.consumer.accept(contentRec.event);
+						}
 					} else {
-						// agentIsEventSource = contentRec.agentIsEventSource;
-						contentRec.consumer.accept(contentRec.event);
+						if (contentRec.reportPlan != null) {
+							focalReportId = contentRec.reportId;
+							contentRec.reportPlan.accept(reportContext);
+							focalReportId = null;
+						} else {
+							focalReportId = contentRec.reportId;
+							contentRec.consumer.accept(contentRec.event);
+							focalReportId = null;
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -883,7 +879,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	protected Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId,final Object key) {
+	protected Optional<Consumer<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		Consumer<DataManagerContext> result = null;
@@ -946,7 +942,7 @@ public class Simulation {
 		return Optional.ofNullable(result);
 	}
 
-	protected Optional<Double> getDataManagerPlanTime(DataManagerId dataManagerId,final Object key) {
+	protected Optional<Double> getDataManagerPlanTime(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
 		Double result = null;
@@ -982,7 +978,7 @@ public class Simulation {
 	 */
 
 	@SuppressWarnings("unchecked")
-	protected <T> Optional<T> removeDataManagerPlan(DataManagerId dataManagerId,final Object key) {
+	protected <T> Optional<T> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
@@ -1044,7 +1040,7 @@ public class Simulation {
 		simulationCloseActorCallbacks.put(focalActorId, consumer);
 	}
 
-	protected void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId,Consumer<DataManagerContext> consumer) {
+	protected void subscribeDataManagerToSimulationClose(DataManagerId dataManagerId, Consumer<DataManagerContext> consumer) {
 		if (consumer == null) {
 			throw new ContractException(NucleusError.NULL_DATA_MANAGER_CONTEXT_CONSUMER);
 		}
@@ -1052,7 +1048,7 @@ public class Simulation {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId,Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
+	protected <T extends Event> void subscribeDataManagerToEvent(DataManagerId dataManagerId, Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
@@ -1073,7 +1069,7 @@ public class Simulation {
 				throw new ContractException(NucleusError.DUPLICATE_EVENT_SUBSCRIPTION);
 			}
 		}
-		
+
 		DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap.get(dataManagerId);
 		DataManagerEventConsumer dataManagerEventConsumer = new DataManagerEventConsumer(dataManagerId, event -> eventConsumer.accept(dataManagerContext, (T) event));
 
@@ -1082,7 +1078,7 @@ public class Simulation {
 
 	}
 
-	protected void unsubscribeDataManagerFromEvent(DataManagerId dataManagerId,Class<? extends Event> eventClass) {
+	protected void unsubscribeDataManagerFromEvent(DataManagerId dataManagerId, Class<? extends Event> eventClass) {
 		if (eventClass == null) {
 			throw new ContractException(NucleusError.NULL_EVENT_CLASS);
 		}
@@ -1163,19 +1159,22 @@ public class Simulation {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
 
-		// immediate handling for reports
+		// queue the event handling by reports
 		List<ReportEventConsumer> reportConsumers = reportEventMap.get(event.getClass());
 		if (reportConsumers != null) {
 			for (ReportEventConsumer reportEventConsumer : reportConsumers) {
-				focalReportId = reportEventConsumer.reportId;
-				reportEventConsumer.accept(event);
-				focalReportId = null;
+				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+				dataManagerContentRec.event = event;
+				dataManagerContentRec.consumer = reportEventConsumer;
+				dataManagerContentRec.reportId = reportEventConsumer.reportId;
+				dataManagerQueue.add(dataManagerContentRec);
 			}
 		}
 
-		// queue the event for actors
+		// queue the event handling for actors
 		broadcastEventToFilterNode(event, rootNode);
 
+		//queue the event handling by data managers
 		List<DataManagerEventConsumer> dataManagerEventConsumers = dataManagerEventMap.get(event.getClass());
 		if (dataManagerEventConsumers != null) {
 			for (DataManagerEventConsumer dataManagerEventConsumer : dataManagerEventConsumers) {
@@ -1190,33 +1189,8 @@ public class Simulation {
 		}
 	}
 
-//	protected void releaseMutationEvent(final Event event) {
-//
-//		if (event == null) {
-//			throw new ContractException(NucleusError.NULL_EVENT);
-//		}
-//
-//		List<DataManagerEventConsumer> dataManagerEventConsumers = dataManagerEventMap.get(event.getClass());
-//		if (dataManagerEventConsumers != null) {
-//			for (DataManagerEventConsumer dataManagerEventConsumer : dataManagerEventConsumers) {
-//				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-//				dataManagerContentRec.event = event;
-//				dataManagerContentRec.consumer = dataManagerEventConsumer;
-//				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
-//				dataManagerQueue.add(dataManagerContentRec);
-//			}
-//		}
-//
-//		if (focalActorId != null) {
-//			executeDataManagerQueue();
-//		}
-//
-//	}
-	
-	protected void pushObservationEvents() {
-//		if (focalActorId != null) {
-			executeDataManagerQueue();
-//		}
+	protected void pushObservationEvents() {		
+		executeDataManagerQueue();		
 	}
 
 	private void addReport(Consumer<ReportContext> consumer) {
@@ -1228,10 +1202,10 @@ public class Simulation {
 		ReportId reportId = new ReportId(reportIds.size());
 		reportIds.add(reportId);
 
-		final ReportContentRec reportContentRec = new ReportContentRec();
-		reportContentRec.reportId = reportId;
-		reportContentRec.plan = consumer;
-		reportQueue.add(reportContentRec);
+		final DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+		dataManagerContentRec.reportId = reportId;
+		dataManagerContentRec.reportPlan = consumer;
+		reportInitializations.add(dataManagerContentRec);
 
 	}
 
@@ -1431,7 +1405,6 @@ public class Simulation {
 	// data manager support
 	/////////////////////////////////
 
-
 	private static class DataManagerEventConsumer implements Consumer<Event>, Comparable<DataManagerEventConsumer> {
 
 		private final Consumer<Event> consumer;
@@ -1490,8 +1463,8 @@ public class Simulation {
 	 */
 	private Map<DataManagerId, DataManager> dataManagerIdToDataManagerMap = new LinkedHashMap<>();
 	private Map<DataManager, DataManagerId> dataManagerToDataManagerIdMap = new LinkedHashMap<>();
-	
-	private Map<DataManagerId,DataManagerContext> dataManagerIdToDataManagerContextMap = new LinkedHashMap<>();
+
+	private Map<DataManagerId, DataManagerContext> dataManagerIdToDataManagerContextMap = new LinkedHashMap<>();
 
 	private Map<DataManagerId, PluginId> dataManagerIdToPluginIdMap = new LinkedHashMap<>();
 	private boolean[][] dataManagerAccessPermissions;
@@ -1503,8 +1476,6 @@ public class Simulation {
 	private ActorContext actorContext;
 	private ReportContext reportContext;
 
-	
-
 	private final List<ActorId> actorIds = new ArrayList<>();
 	private final List<ReportId> reportIds = new ArrayList<>();
 
@@ -1513,10 +1484,10 @@ public class Simulation {
 	private final Map<ActorId, Map<Object, PlanRec>> actorPlanMap = new LinkedHashMap<>();
 	private final Map<ReportId, Map<Object, PlanRec>> reportPlanMap = new LinkedHashMap<>();
 
-	private final Deque<ReportContentRec> reportQueue = new ArrayDeque<>();
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 	private final Deque<DataManagerContentRec> dataManagerQueue = new ArrayDeque<>();
-
+	private final List<DataManagerContentRec> reportInitializations = new ArrayList<>();
+	
 	protected ActorId focalActorId;
 	protected ReportId focalReportId;
 
@@ -1532,23 +1503,19 @@ public class Simulation {
 
 	}
 
-	private static class ReportContentRec {
-
-		private Consumer<ReportContext> plan;
-
-		private ReportId reportId;
-
-	}
-
 	private static class DataManagerContentRec {
 
 		private Event event;
 
 		private Consumer<Event> consumer;
 
-		private Consumer<DataManagerContext> plan;
+		private Consumer<DataManagerContext> dmPlan;
 
 		private DataManagerId dataManagerId;
+
+		private Consumer<ReportContext> reportPlan;
+
+		private ReportId reportId;
 
 	}
 
