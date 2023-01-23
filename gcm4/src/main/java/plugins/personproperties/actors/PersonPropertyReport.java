@@ -5,19 +5,19 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.ReportContext;
-import plugins.people.dataviews.PeopleDataView;
+import nucleus.ActorContext;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
 import plugins.people.support.PersonId;
-import plugins.personproperties.dataviews.PersonPropertiesDataView;
+import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.personproperties.events.PersonPropertyDefinitionEvent;
 import plugins.personproperties.events.PersonPropertyUpdateEvent;
 import plugins.personproperties.support.PersonPropertyId;
-import plugins.regions.dataviews.RegionsDataView;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport2;
+import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -45,7 +45,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class PersonPropertyReport extends PeriodicReport2 {
+public final class PersonPropertyActorReport extends PeriodicReport {
 
 	/*
 	 * Data class for collecting the inputs to the report
@@ -76,9 +76,9 @@ public final class PersonPropertyReport extends PeriodicReport2 {
 
 		private Data data = new Data();
 
-		public PersonPropertyReport build() {
+		public PersonPropertyActorReport build() {
 			try {
-				return new PersonPropertyReport(data);
+				return new PersonPropertyActorReport(data);
 			} finally {
 				data = new Data();
 			}
@@ -160,7 +160,7 @@ public final class PersonPropertyReport extends PeriodicReport2 {
 
 	private final Data data;
 
-	private PersonPropertyReport(Data data) {
+	private PersonPropertyActorReport(Data data) {
 		super(data.reportId, data.reportPeriod);
 		this.data = data;
 	}
@@ -209,7 +209,7 @@ public final class PersonPropertyReport extends PeriodicReport2 {
 	}
 
 	@Override
-	protected void flush(ReportContext reportContext) {
+	protected void flush(ActorContext actorContext) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -233,7 +233,7 @@ public final class PersonPropertyReport extends PeriodicReport2 {
 						reportItemBuilder.addValue(personPropertyValue);
 						reportItemBuilder.addValue(personCount);
 
-						reportContext.releaseOutput(reportItemBuilder.build());
+						actorContext.releaseOutput(reportItemBuilder.build());
 					//}
 				}
 			}
@@ -265,42 +265,42 @@ public final class PersonPropertyReport extends PeriodicReport2 {
 
 	}
 
-	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {
+	private void handlePersonAdditionEvent(ActorContext context, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.personId();
-		final RegionId regionId = regionsDataView.getPersonRegion(personId);
+		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
-			final Object personPropertyValue = personPropertiesDataView.getPersonPropertyValue(personId, personPropertyId);
+			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
 		}
 	}
 
-	private void handlePersonPropertyUpdateEvent(ReportContext reportContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+	private void handlePersonPropertyUpdateEvent(ActorContext context, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonPropertyId personPropertyId = personPropertyUpdateEvent.personPropertyId();
 		if (includedPersonPropertyIds.contains(personPropertyId)) {
 			PersonId personId = personPropertyUpdateEvent.personId();
 			Object previousPropertyValue = personPropertyUpdateEvent.previousPropertyValue();
-			final RegionId regionId = regionsDataView.getPersonRegion(personId);
-			final Object currentValue = personPropertiesDataView.getPersonPropertyValue(personId, personPropertyId);
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+			final Object currentValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, currentValue);
 			decrement(regionId, personPropertyId, previousPropertyValue);
 		}
 	}
 
-	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ActorContext context, PersonImminentRemovalEvent personImminentRemovalEvent) {
 		PersonId personId = personImminentRemovalEvent.personId();
-		RegionId regionId = regionsDataView.getPersonRegion(personId);
+		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (PersonPropertyId personPropertyId : includedPersonPropertyIds) {
-			final Object personPropertyValue = personPropertiesDataView.getPersonPropertyValue(personId, personPropertyId);
+			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			decrement(regionId, personPropertyId, personPropertyValue);
 		}
 	}
 
-	private void handlePersonRegionUpdateEvent(ReportContext reportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ActorContext context, PersonRegionUpdateEvent personRegionUpdateEvent) {
 		PersonId personId = personRegionUpdateEvent.personId();
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId regionId = personRegionUpdateEvent.currentRegionId();
 		for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
-			final Object personPropertyValue = personPropertiesDataView.getPersonPropertyValue(personId, personPropertyId);
+			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
 			decrement(previousRegionId, personPropertyId, personPropertyValue);
 		}
@@ -313,52 +313,52 @@ public final class PersonPropertyReport extends PeriodicReport2 {
 		getCounter(regionId, personPropertyId, personPropertyValue).count++;
 	}
 
-	private PersonPropertiesDataView personPropertiesDataView;
+	private PersonPropertiesDataManager personPropertiesDataManager;
 
-	private RegionsDataView regionsDataView;
+	private RegionsDataManager regionsDataManager;
 
-	private PeopleDataView peopleDataView;
+	private PeopleDataManager peopleDataManager;
 
 	@Override
-	public void init(final ReportContext reportContext) {
-		super.init(reportContext);
+	public void init(final ActorContext actorContext) {
+		super.init(actorContext);
 
-		regionsDataView = reportContext.getDataView(RegionsDataView.class);
-		personPropertiesDataView = reportContext.getDataView(PersonPropertiesDataView.class);
-		peopleDataView = reportContext.getDataView(PeopleDataView.class);
+		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 
-		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
-		subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
-		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
+		subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
+		subscribe(peopleDataManager.getEventFilterForPersonImminentRemovalEvent(), this::handlePersonImminentRemovalEvent);
+		subscribe(regionsDataManager.getEventFilterForPersonRegionUpdateEvent(), this::handlePersonRegionUpdateEvent);
 
 		includedPersonPropertyIds.addAll(data.includedProperties);
 		excludedPersonPropertyIds.addAll(data.excludedProperties);
 		if (data.defaultInclusionPolicy) {
-			includedPersonPropertyIds.addAll(personPropertiesDataView.getPersonPropertyIds());
+			includedPersonPropertyIds.addAll(personPropertiesDataManager.getPersonPropertyIds());
 			includedPersonPropertyIds.removeAll(excludedPersonPropertyIds);
-			subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
+			subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyDefinitionEvent(), this::handlePersonPropertyDefinitionEvent);
 		}
 
-		subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
+		subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(), this::handlePersonPropertyUpdateEvent);
 
-		for (PersonId personId : peopleDataView.getPeople()) {
-			final RegionId regionId = regionsDataView.getPersonRegion(personId);
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			for (final PersonPropertyId personPropertyId : includedPersonPropertyIds) {
-				if (personPropertiesDataView.personPropertyIdExists(personPropertyId)) {
-					final Object personPropertyValue = personPropertiesDataView.getPersonPropertyValue(personId, personPropertyId);
+				if (personPropertiesDataManager.personPropertyIdExists(personPropertyId)) {
+					final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 					increment(regionId, personPropertyId, personPropertyValue);
 				}
 			}
 		}
 	}
 
-	private void handlePersonPropertyDefinitionEvent(ReportContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
+	private void handlePersonPropertyDefinitionEvent(ActorContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
 		PersonPropertyId personPropertyId = personPropertyDefinitionEvent.personPropertyId();
 		if (!excludedPersonPropertyIds.contains(personPropertyId)) {
 			includedPersonPropertyIds.add(personPropertyId);
-			for (PersonId personId : peopleDataView.getPeople()) {
-				final RegionId regionId = regionsDataView.getPersonRegion(personId);
-				final Object personPropertyValue = personPropertiesDataView.getPersonPropertyValue(personId, personPropertyId);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
+				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
 				increment(regionId, personPropertyId, personPropertyValue);
 			}
 		}
