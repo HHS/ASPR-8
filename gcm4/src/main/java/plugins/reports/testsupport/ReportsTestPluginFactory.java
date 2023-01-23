@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import plugins.reports.ReportsPlugin;
 import plugins.reports.ReportsPluginData;
 
@@ -14,6 +15,13 @@ public final class ReportsTestPluginFactory {
 
     public static Plugin getPluginFromReport(Consumer<ActorContext> consumer) {
         ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> consumer)
+                .build();
+
+        return ReportsPlugin.getReportsPlugin(reportsPluginData);
+    }
+    
+    public static Plugin getPluginFromReport2(Consumer<ReportContext> consumer) {
+        ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport2(() -> consumer)
                 .build();
 
         return ReportsPlugin.getReportsPlugin(reportsPluginData);
