@@ -34,7 +34,13 @@ public final class MaterialsDataView implements DataView {
 	public MaterialsDataView(MaterialsDataManager materialsDataManager) {
 		this.materialsDataManager = materialsDataManager;
 	}
-
+	
+	/**
+	 * Returns the material id values for the simulation
+	 */	
+	public <T extends MaterialId> Set<T> getMaterialIds() {
+		return materialsDataManager.getMaterialIds();
+	}
 	/**
 	 * Returns true if and only if the batch exists. Null tolerant.
 	 */
