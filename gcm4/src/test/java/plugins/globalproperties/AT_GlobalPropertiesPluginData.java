@@ -150,6 +150,11 @@ public class AT_GlobalPropertiesPluginData {
 		// set the values
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			int value = randomGenerator.nextInt();
+			int value2 = randomGenerator.nextInt();
+			builder.setGlobalPropertyValue(testGlobalPropertyId, value2);
+			// replacing data to show that the value persists
+			builder.setGlobalPropertyValue(testGlobalPropertyId, value);
+			// duplicating data to show that the value persists
 			builder.setGlobalPropertyValue(testGlobalPropertyId, value);
 			expectedValues.put(testGlobalPropertyId, value);
 		}
@@ -175,17 +180,6 @@ public class AT_GlobalPropertiesPluginData {
 		// if the global property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE, null));
 		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-
-		// // if the global property value was previously defined for the given
-		// // global property id
-		// builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE,
-		// 4);
-		// contractException = assertThrows(ContractException.class, () ->
-		// builder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE,
-		// 5));
-		// assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT,
-		// contractException.getErrorType());
-
 	}
 
 	@Test
