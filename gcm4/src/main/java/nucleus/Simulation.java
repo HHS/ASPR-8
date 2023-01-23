@@ -774,7 +774,7 @@ public class Simulation {
 			}
 		}
 
-		// signal to the actors that the simulation is closing
+		// signal to the reports that the simulation is closing
 		for (ReportId reportId : simulationCloseReportCallbacks.keySet()) {
 			focalReportId = reportId;
 			Consumer<ReportContext> simulationCloseCallback = simulationCloseReportCallbacks.get(reportId);
