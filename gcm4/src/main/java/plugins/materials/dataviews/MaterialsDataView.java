@@ -24,23 +24,31 @@ import util.errors.ContractException;
  *
  */
 public final class MaterialsDataView implements DataView {
-	
+
 	private final MaterialsDataManager materialsDataManager;
 
 	/**
-	 * Constructs this view from the corresponding data manager 
+	 * Constructs this view from the corresponding data manager
 	 * 
 	 */
 	public MaterialsDataView(MaterialsDataManager materialsDataManager) {
 		this.materialsDataManager = materialsDataManager;
 	}
-	
+
+	/**
+	 * Returns the set materials producer property ids
+	 */
+	public <T extends MaterialsProducerPropertyId> Set<T> getMaterialsProducerPropertyIds() {
+		return materialsDataManager.getMaterialsProducerPropertyIds();
+	}
+
 	/**
 	 * Returns the material id values for the simulation
-	 */	
+	 */
 	public <T extends MaterialId> Set<T> getMaterialIds() {
 		return materialsDataManager.getMaterialIds();
 	}
+
 	/**
 	 * Returns true if and only if the batch exists. Null tolerant.
 	 */

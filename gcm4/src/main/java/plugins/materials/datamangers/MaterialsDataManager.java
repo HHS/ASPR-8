@@ -1811,6 +1811,7 @@ public final class MaterialsDataManager extends DataManager {
 			propertyValueRecord.setPropertyValue(materialsProducerPropertyValue);
 
 			dataManagerContext.releaseObservationEvent(new MaterialsProducerPropertyUpdateEvent(materialsProducerId, materialsProducerPropertyId, oldPropertyValue, materialsProducerPropertyValue));
+			
 		} else {
 			if (propertyValueRecord == null) {
 				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
@@ -1818,6 +1819,7 @@ public final class MaterialsDataManager extends DataManager {
 			}
 			propertyValueRecord.setPropertyValue(materialsProducerPropertyValue);
 		}
+		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validateMaterialProducerPropertyValueNotNull(final Object propertyValue) {

@@ -1,8 +1,7 @@
 package plugins.materials.actors;
 
-import nucleus.ActorContext;
-import nucleus.EventFilter;
-import plugins.materials.datamangers.MaterialsDataManager;
+import nucleus.ReportContext;
+import plugins.materials.dataviews.MaterialsDataView;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
@@ -49,47 +48,47 @@ public final class MaterialsProducerPropertyReport {
 		return reportHeader;
 	}
 
-	private void handleMaterialsProducerPropertyUpdateEvent(ActorContext actorContext, MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent) {
+	private void handleMaterialsProducerPropertyUpdateEvent(ReportContext reportContext, MaterialsProducerPropertyUpdateEvent materialsProducerPropertyUpdateEvent) {
 		MaterialsProducerId materialsProducerId = materialsProducerPropertyUpdateEvent.materialsProducerId();
 		MaterialsProducerPropertyId materialsProducerPropertyId = materialsProducerPropertyUpdateEvent.materialsProducerPropertyId();
 		Object currentPropertyValue = materialsProducerPropertyUpdateEvent.currentPropertyValue();
-		writeProperty(actorContext, materialsProducerId, materialsProducerPropertyId, currentPropertyValue);
+		writeProperty(reportContext, materialsProducerId, materialsProducerPropertyId, currentPropertyValue);
 	}
 
-	public void init(final ActorContext actorContext) {
+	public void init(final ReportContext reportContext) {
 
-		actorContext.subscribe(EventFilter.builder(MaterialsProducerPropertyUpdateEvent.class).build(), this::handleMaterialsProducerPropertyUpdateEvent);
-		actorContext.subscribe(EventFilter.builder(MaterialsProducerAdditionEvent.class).build(), this::handleMaterialsProducerAdditionEvent);
+		reportContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
+		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
 
-		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
+		MaterialsDataView materialsDataView = reportContext.getDataView(MaterialsDataView.class);
 
-		for (final MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataManager.getMaterialsProducerPropertyIds()) {
-				final Object materialsProducerPropertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
-				writeProperty(actorContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
+		for (final MaterialsProducerId materialsProducerId : materialsDataView.getMaterialsProducerIds()) {
+			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataView.getMaterialsProducerPropertyIds()) {
+				final Object materialsProducerPropertyValue = materialsDataView.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+				writeProperty(reportContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
 			}
 		}
 	}
 
-	private void handleMaterialsProducerAdditionEvent(ActorContext actorContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
-		MaterialsDataManager materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
+	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
+		MaterialsDataView materialsDataView = reportContext.getDataView(MaterialsDataView.class);
 		MaterialsProducerId materialsProducerId = materialsProducerAdditionEvent.getMaterialsProducerId();
-		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataManager.getMaterialsProducerPropertyIds()) {
-			final Object materialsProducerPropertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
-			writeProperty(actorContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
+		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataView.getMaterialsProducerPropertyIds()) {
+			final Object materialsProducerPropertyValue = materialsDataView.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+			writeProperty(reportContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
 		}
 	}
 
-	private void writeProperty(ActorContext actorContext, final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
+	private void writeProperty(ReportContext reportContext, final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
 			Object materialsProducerPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportId(reportId);
-		reportItemBuilder.addValue(actorContext.getTime());
+		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(materialsProducerId.toString());
 		reportItemBuilder.addValue(materialsProducerPropertyId.toString());
 		reportItemBuilder.addValue(materialsProducerPropertyValue);
-		actorContext.releaseOutput(reportItemBuilder.build());
+		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
 }
