@@ -8,7 +8,6 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
-import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import plugins.globalproperties.GlobalPropertiesPluginData;
@@ -157,29 +156,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		dataManagerContext.pushObservationEvents();
 	}
 	
-	private static record GlobalPropertyUpdateMutationEvent(GlobalPropertyId globalPropertyId, Object globalPropertyValue) implements Event {}
-	
-	public void setGlobalPropertyValue2(GlobalPropertyId globalPropertyId, Object globalPropertyValue) {
-		dataManagerContext.sendMutationEvent(new GlobalPropertyUpdateMutationEvent(globalPropertyId,globalPropertyValue));
-	}
-	
-	public void handleGlobalPropertyUpdateMutationEvent(DataManagerContext dataManagerContext,GlobalPropertyUpdateMutationEvent globalPropertyUpdateMutationEvent) {
-		GlobalPropertyId globalPropertyId = globalPropertyUpdateMutationEvent.globalPropertyId;
-		Object globalPropertyValue = globalPropertyUpdateMutationEvent.globalPropertyValue;
-		
-		validateGlobalPropertyId(globalPropertyId);
-		validateGlobalPropertyValueNotNull(globalPropertyValue);
-		final PropertyDefinition propertyDefinition = getGlobalPropertyDefinition(globalPropertyId);
-		validatePropertyMutability(propertyDefinition);
-		validateValueCompatibility(globalPropertyId, propertyDefinition, globalPropertyValue);
-		final Object oldPropertyValue = getGlobalPropertyValue(globalPropertyId);
-		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
-		if (dataManagerContext.subscribersExist(GlobalPropertyUpdateEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new GlobalPropertyUpdateEvent(globalPropertyId, oldPropertyValue, globalPropertyValue));
-		}
-		dataManagerContext.pushObservationEvents();
-	}
-
 	/**
 	 * Returns true if and only if the global property id exists. Returns false
 	 * for null input.
