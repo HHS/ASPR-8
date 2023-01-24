@@ -57,7 +57,7 @@ public final class ReportsPluginData implements PluginData {
 		}
 
 		/**
-		 * Returns the {@link ReportsInitialData} from the input collected by
+		 * Returns the {@link ReportsPluginData} from the input collected by
 		 * this builder. Clears the state of the builder.
 		 */
 		public ReportsPluginData build() {
