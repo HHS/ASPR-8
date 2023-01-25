@@ -31,7 +31,7 @@ import util.wrappers.MultiKey;
  * 
  * Also contains factory methods to obtain a list of plugins that can be
  * utilized with
- * {@code TestSimulation.execute()}
+ * {@code TestSimulation.executeSimulation()}
  * 
  */
 public final class GroupsTestPluginFactory {

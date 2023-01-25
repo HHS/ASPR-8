@@ -18,7 +18,7 @@ import plugins.globalproperties.GlobalPropertiesPluginData;
  * 
  * Also contains factory methods to obtain a list of plugins that can be
  * utilized with
- * {@code TestSimulation.execute()}
+ * {@code TestSimulation.executeSimulation()}
  *
  */
 public final class GlobalPropertiesTestPluginFactory {
