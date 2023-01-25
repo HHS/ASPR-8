@@ -122,7 +122,7 @@ public class PartitionsTestPluginFactory {
 		 * @return an instance of this Factory
 		 * 
 		 */
-		public Factory setPartitionsPluginData(Plugin partitionsPlugin) {
+		public Factory setPartitionsPlugin(Plugin partitionsPlugin) {
 			this.data.partitionsPlugin = partitionsPlugin;
 			return this;
 		}
