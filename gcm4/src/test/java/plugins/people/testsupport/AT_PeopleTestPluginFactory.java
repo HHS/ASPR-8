@@ -23,7 +23,7 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
-public class AT_PeopleActionSupport {
+public class AT_PeopleTestPluginFactory {
 
 	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
 		return (c) -> {
