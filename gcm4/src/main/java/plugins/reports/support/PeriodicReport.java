@@ -2,10 +2,9 @@ package plugins.reports.support;
 
 import java.util.function.BiConsumer;
 
-import nucleus.ActorContext;
 import nucleus.Event;
-import nucleus.EventFilter;
 import nucleus.NucleusError;
+import nucleus.ReportContext;
 import util.errors.ContractException;
 
 /**
@@ -19,9 +18,9 @@ import util.errors.ContractException;
  *
  *
  */
-public abstract class PeriodicReport  {
+public abstract class PeriodicReport2  {
 
-	private ActorContext actorContext;
+	private ReportContext reportContext;
 
 	/**
 	 * Creates the periodic report from the given report period
@@ -29,7 +28,7 @@ public abstract class PeriodicReport  {
 	 * @throws ContractException
 	 *             <li>if the report period is null</li>
 	 */
-	public PeriodicReport(ReportId reportId, ReportPeriod reportPeriod) {
+	public PeriodicReport2(ReportId reportId, ReportPeriod reportPeriod) {
 		if (reportPeriod == null) {
 			throw new ContractException(ReportError.NULL_REPORT_PERIOD);
 		}
@@ -123,25 +122,25 @@ public abstract class PeriodicReport  {
 	 *             <li>if the report context is null</li>
 	 * 
 	 */
-	public void init(ActorContext actorContext) {
+	public void init(ReportContext reportContext) {
 
-		if (actorContext == null) {
+		if (reportContext == null) {
 			throw new ContractException(ReportError.NULL_CONTEXT);
 		}
-		this.actorContext = actorContext;
+		this.reportContext = reportContext;
 
-		actorContext.subscribeToSimulationClose(this::close);
+		reportContext.subscribeToSimulationClose(this::close);
 
 		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
 			setNextPlanTime();
-			actorContext.addPassivePlan(this::executePlan, nextPlanTime);
+			reportContext.addPlan(this::executePlan, nextPlanTime);
 		}
 	}
 
-	private void close(final ActorContext actorContext) {
-		if (lastFlushTime == null || actorContext.getTime() > lastFlushTime) {
-			lastFlushTime = actorContext.getTime();
-			flush(actorContext);
+	private void close(final ReportContext reportContext) {
+		if (lastFlushTime == null || reportContext.getTime() > lastFlushTime) {
+			lastFlushTime = reportContext.getTime();
+			flush(reportContext);
 		}
 	}
 
@@ -150,7 +149,7 @@ public abstract class PeriodicReport  {
 	 * from the data stored during the time since the last invocation of
 	 * flush().
 	 */
-	protected abstract void flush(final ActorContext actorContext);
+	protected abstract void flush(final ReportContext reportContext);
 
 	private double nextPlanTime;
 	private Double lastFlushTime;
@@ -174,7 +173,7 @@ public abstract class PeriodicReport  {
 	 * but happen to execute before the plan. Descendant implementors of
 	 * PeriodicReport should use this wrapper when subscribing to events.
 	 */
-	private <T extends Event> BiConsumer<ActorContext, T> getFlushingConsumer(BiConsumer<ActorContext, T> eventConsumer) {
+	private <T extends Event> BiConsumer<ReportContext, T> getFlushingConsumer(BiConsumer<ReportContext, T> eventConsumer) {
 		return (c, t) -> {
 			if (c.getTime() >= nextPlanTime) {
 				if (this.reportPeriod != ReportPeriod.END_OF_SIMULATION) {
@@ -188,10 +187,11 @@ public abstract class PeriodicReport  {
 		};
 	}
 
-	private void executePlan(final ActorContext actorContext) {
-		if (lastFlushTime == null || actorContext.getTime() > lastFlushTime) {
-			lastFlushTime = actorContext.getTime();
-			flush(actorContext);
+	private void executePlan(final ReportContext reportContext) {
+		
+		if (lastFlushTime == null || reportContext.getTime() > lastFlushTime) {
+			lastFlushTime = reportContext.getTime();
+			flush(reportContext);
 		}
 
 		switch (reportPeriod) {
@@ -210,7 +210,7 @@ public abstract class PeriodicReport  {
 		}
 
 		setNextPlanTime();
-		actorContext.addPassivePlan(this::executePlan, nextPlanTime);
+		reportContext.addPlan(this::executePlan, nextPlanTime);
 
 	}
 
@@ -227,8 +227,8 @@ public abstract class PeriodicReport  {
 	 *             <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the event
 	 *             consumer is null
 	 */
-	protected final <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
-		actorContext.subscribe(eventFilter, getFlushingConsumer(eventConsumer));
+	protected final <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
+		reportContext.subscribe(eventClass, getFlushingConsumer(eventConsumer));
 	}
 
 }
