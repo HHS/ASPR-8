@@ -16,6 +16,7 @@ import org.apache.commons.math3.util.Pair;
 import net.jcip.annotations.GuardedBy;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
@@ -202,16 +203,27 @@ public final class GroupsDataManager extends DataManager {
 		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
+		dataManagerContext.subscribe(GroupAdditionMutationEvent.class, this::handleGroupAdditionMutationEvent);
+		dataManagerContext.subscribe(GroupTypeAdditionMutationEvent.class, this::handleGroupTypeAdditionMutationEvent);
+		dataManagerContext.subscribe(GroupMembershipAdditionMutationEvent.class, this::handleGroupMembershipAdditionMutationEvent);
+		dataManagerContext.subscribe(GroupPropertyDefinitionMutationEvent.class, this::handleGroupPropertyDefinitionMutationEvent);
+		dataManagerContext.subscribe(GroupRemovalMutationEvent.class, this::handleGroupRemovalMutationEvent);
+		dataManagerContext.subscribe(GroupMembershipRemovalMutationEvent.class, this::handleGroupMembershipRemovalMutationEvent);
+		dataManagerContext.subscribe(GroupPropertyUpdateMutationEvent.class, this::handleGroupPropertyUpdateMutationEvent);
+
 		loadGroupTypes();
+
 		loadGroupPropertyDefinitions();
+
 		loadGroups();
+
 		loadGroupMembership();
+
 		loadGroupPropertyValues();
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 
 	}
-
 
 	private void loadGroupPropertyDefinitions() {
 		for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
@@ -245,6 +257,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
+	private static record GroupTypeAdditionMutationEvent(GroupTypeId groupTypeId) implements Event {
+	}
+
 	/**
 	 * Adds a group type id.
 	 * 
@@ -255,6 +270,11 @@ public final class GroupsDataManager extends DataManager {
 	 *             type id is already present</li>
 	 */
 	public void addGroupType(GroupTypeId groupTypeId) {
+		dataManagerContext.releaseMutationEvent(new GroupTypeAdditionMutationEvent(groupTypeId));
+	}
+
+	private void handleGroupTypeAdditionMutationEvent(DataManagerContext dataManagerContext, GroupTypeAdditionMutationEvent groupTypeAdditionMutationEvent) {
+		GroupTypeId groupTypeId = groupTypeAdditionMutationEvent.groupTypeId();
 		validateGroupTypeIdIsUnknown(groupTypeId);
 		final int index = typesToIndexesMap.size();
 		typesToIndexesMap.put(groupTypeId, index);
@@ -267,8 +287,6 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GroupTypeAdditionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GroupTypeAdditionEvent(groupTypeId));
 		}
-		
-		dataManagerContext.pushObservationEvents();
 	}
 
 	private void clearNonDefaultChecks(GroupTypeId groupTypeId) {
@@ -316,6 +334,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
+	private static record GroupPropertyDefinitionMutationEvent(GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization) implements Event {
+	}
+
 	/**
 	 * Defines a new group property
 	 * 
@@ -343,7 +364,11 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public void defineGroupProperty(GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization) {
+		dataManagerContext.releaseMutationEvent(new GroupPropertyDefinitionMutationEvent(groupPropertyDefinitionInitialization));
+	}
 
+	private void handleGroupPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, GroupPropertyDefinitionMutationEvent groupPropertyDefinitionMutationEvent) {
+		GroupPropertyDefinitionInitialization groupPropertyDefinitionInitialization = groupPropertyDefinitionMutationEvent.groupPropertyDefinitionInitialization;
 		GroupTypeId groupTypeId = groupPropertyDefinitionInitialization.getGroupTypeId();
 		GroupPropertyId groupPropertyId = groupPropertyDefinitionInitialization.getPropertyId();
 		PropertyDefinition propertyDefinition = groupPropertyDefinitionInitialization.getPropertyDefinition();
@@ -444,7 +469,7 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GroupPropertyDefinitionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GroupPropertyDefinitionEvent(groupTypeId, groupPropertyId));
 		}
-		dataManagerContext.pushObservationEvents();
+
 	}
 
 	private void validatePropertyDefinitionNotNull(PropertyDefinition propertyDefinition) {
@@ -500,6 +525,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
+	private static record GroupMembershipAdditionMutationEvent(PersonId personId, GroupId groupId) implements Event {
+	}
+
 	/**
 	 * Adds a person to a group. Generates the corresponding
 	 * {@linkplain GroupMembershipAdditionEvent}
@@ -520,7 +548,12 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public void addPersonToGroup(final PersonId personId, final GroupId groupId) {
+		dataManagerContext.releaseMutationEvent(new GroupMembershipAdditionMutationEvent(personId, groupId));
+	}
 
+	private void handleGroupMembershipAdditionMutationEvent(DataManagerContext dataManagerContext, GroupMembershipAdditionMutationEvent groupMembershipAdditionMutationEvent) {
+		PersonId personId = groupMembershipAdditionMutationEvent.personId();
+		GroupId groupId = groupMembershipAdditionMutationEvent.groupId();
 		validatePersonExists(personId);
 		validateGroupExists(groupId);
 		validatePersonNotInGroup(personId, groupId);
@@ -542,7 +575,7 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GroupMembershipAdditionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GroupMembershipAdditionEvent(personId, groupId));
 		}
-		dataManagerContext.pushObservationEvents();
+
 	}
 
 	/*
@@ -573,6 +606,9 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
+	private record GroupPropertyUpdateMutationEvent(GroupId groupId, GroupPropertyId groupPropertyId, Object groupPropertyValue) implements Event {
+	}
+
 	/**
 	 * Sets a property value for a group. Generates the corresponding
 	 * {@linkplain GroupPropertyUpdateEvent} event.
@@ -597,6 +633,13 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public void setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+		dataManagerContext.releaseMutationEvent(new GroupPropertyUpdateMutationEvent(groupId, groupPropertyId, groupPropertyValue));
+	}
+
+	private void handleGroupPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, GroupPropertyUpdateMutationEvent groupPropertyUpdateMutationEvent) {
+		GroupId groupId = groupPropertyUpdateMutationEvent.groupId();
+		GroupPropertyId groupPropertyId = groupPropertyUpdateMutationEvent.groupPropertyId();
+		Object groupPropertyValue = groupPropertyUpdateMutationEvent.groupPropertyValue();
 		validateGroupExists(groupId);
 		final GroupTypeId groupTypeId = indexesToTypesMap.get(groupsToTypesMap.getValueAsInt(groupId.getValue()));
 		validateGroupPropertyId(groupTypeId, groupPropertyId);
@@ -606,16 +649,16 @@ public final class GroupsDataManager extends DataManager {
 		validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 		final Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		final IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
-		
-		if (dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class)) {			
+
+		if (dataManagerContext.subscribersExist(GroupPropertyUpdateEvent.class)) {
 			Object oldValue = indexedPropertyManager.getPropertyValue(groupId.getValue());
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 			dataManagerContext.releaseObservationEvent(new GroupPropertyUpdateEvent(groupId, groupPropertyId, oldValue, groupPropertyValue));
-		}else {			
+		} else {
 			indexedPropertyManager.setPropertyValue(groupId.getValue(), groupPropertyValue);
 		}
+
 		
-		dataManagerContext.pushObservationEvents();
 	}
 
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
@@ -639,6 +682,9 @@ public final class GroupsDataManager extends DataManager {
 			groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
 		}
 		masterGroupId++;
+	}
+
+	private static record GroupAdditionMutationEvent(GroupId groupId, GroupConstructionInfo groupConstructionInfo) implements Event {
 	}
 
 	/**
@@ -671,6 +717,15 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public GroupId addGroup(GroupConstructionInfo groupConstructionInfo) {
+		final GroupId groupId = new GroupId(masterGroupId++);
+		dataManagerContext.releaseMutationEvent(new GroupAdditionMutationEvent(groupId, groupConstructionInfo));
+		return groupId;
+	}
+
+	private void handleGroupAdditionMutationEvent(DataManagerContext dataManagerContext, GroupAdditionMutationEvent groupAdditionMutationEvent) {
+		GroupConstructionInfo groupConstructionInfo = groupAdditionMutationEvent.groupConstructionInfo();
+		GroupId groupId = groupAdditionMutationEvent.groupId();
+
 		validateGroupConstructionInfoNotNull(groupConstructionInfo);
 		final GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
 		validateGroupTypeId(groupConstructionInfo.getGroupTypeId());
@@ -682,7 +737,6 @@ public final class GroupsDataManager extends DataManager {
 			groups = new ArrayList<>();
 			typesToGroupsMap.setValue(typeIndex, groups);
 		}
-		final GroupId groupId = new GroupId(masterGroupId++);
 
 		groups.add(groupId);
 		groupsToTypesMap.setIntValue(groupId.getValue(), typeIndex);
@@ -718,8 +772,7 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GroupAdditionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GroupAdditionEvent(groupId));
 		}
-		dataManagerContext.pushObservationEvents();
-		return groupId;
+
 	}
 
 	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
@@ -765,29 +818,9 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 */
 	public GroupId addGroup(final GroupTypeId groupTypeId) {
-		validateGroupTypeId(groupTypeId);
-
-		final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
-		List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
-		if (groups == null) {
-			groups = new ArrayList<>();
-			typesToGroupsMap.setValue(typeIndex, groups);
-		}
-
-		if (!nonDefaultBearingPropertyIds.get(groupTypeId).isEmpty()) {
-			throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT);
-		}
-
-		final GroupId result = new GroupId(masterGroupId++);
-		groups.add(result);
-		groupsToTypesMap.setIntValue(result.getValue(), typeIndex);
-
-		if (dataManagerContext.subscribersExist(GroupAdditionEvent.class)) {
-			dataManagerContext.releaseObservationEvent(new GroupAdditionEvent(result));
-		}
-
-		dataManagerContext.pushObservationEvents();
-		return result;
+		final GroupId groupId = new GroupId(masterGroupId++);
+		dataManagerContext.releaseMutationEvent(new GroupAdditionMutationEvent(groupId, GroupConstructionInfo.builder().setGroupTypeId(groupTypeId).build()));
+		return groupId;
 	}
 
 	/*
@@ -1374,6 +1407,9 @@ public final class GroupsDataManager extends DataManager {
 		samplingIsLocked = false;
 	}
 
+	private static record GroupRemovalMutationEvent(GroupId groupId) implements Event {
+	}
+
 	/**
 	 * Removes the group. Generates the corresponding
 	 * {@linkplain GroupImminentRemovalEvent} event.
@@ -1386,7 +1422,11 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public void removeGroup(final GroupId groupId) {
+		dataManagerContext.releaseMutationEvent(new GroupRemovalMutationEvent(groupId));
+	}
 
+	public void handleGroupRemovalMutationEvent(DataManagerContext dataManagerContext, GroupRemovalMutationEvent groupRemovalMutationEvent) {
+		GroupId groupId = groupRemovalMutationEvent.groupId();
 		validateGroupExists(groupId);
 
 		dataManagerContext.addPlan((context) -> {
@@ -1414,15 +1454,15 @@ public final class GroupsDataManager extends DataManager {
 					groups.remove(groupId);
 				}
 			}
-			context.pushObservationEvents();
 
 		}, dataManagerContext.getTime());
 
 		if (dataManagerContext.subscribersExist(GroupImminentRemovalEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GroupImminentRemovalEvent(groupId));
 		}
-		
-		dataManagerContext.pushObservationEvents();
+	}
+
+	private static record GroupMembershipRemovalMutationEvent(PersonId personId, GroupId groupId) implements Event {
 	}
 
 	/**
@@ -1445,7 +1485,12 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	public void removePersonFromGroup(final PersonId personId, final GroupId groupId) {
+		dataManagerContext.releaseMutationEvent(new GroupMembershipRemovalMutationEvent(personId, groupId));
+	}
 
+	private void handleGroupMembershipRemovalMutationEvent(DataManagerContext dataManagerContext, GroupMembershipRemovalMutationEvent groupMembershipRemovalMutationEvent) {
+		PersonId personId = groupMembershipRemovalMutationEvent.personId();
+		GroupId groupId = groupMembershipRemovalMutationEvent.groupId();
 		validatePersonExists(personId);
 		validateGroupExists(groupId);
 		validatePersonInGroup(personId, groupId);
@@ -1465,7 +1510,7 @@ public final class GroupsDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(GroupMembershipRemovalEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new GroupMembershipRemovalEvent(personId, groupId));
 		}
-		dataManagerContext.pushObservationEvents();
+
 	}
 
 	/*

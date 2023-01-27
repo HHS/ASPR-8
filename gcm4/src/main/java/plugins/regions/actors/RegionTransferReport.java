@@ -4,10 +4,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
-import plugins.people.dataviews.PeopleDataView;
+import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
-import plugins.regions.dataviews.RegionsDataView;
+import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
 import plugins.reports.support.PeriodicReport2;
@@ -92,7 +92,7 @@ public final class RegionTransferReport extends PeriodicReport2 {
 
 	private void handlePersonAdditionEvent(ReportContext ReportContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.personId();
-		final RegionId regionId = regionsDataView.getPersonRegion(personId);
+		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		increment(regionId, regionId);
 	}
 
@@ -115,21 +115,21 @@ public final class RegionTransferReport extends PeriodicReport2 {
 		mutableInteger.increment();
 	}
 
-	private RegionsDataView regionsDataView;
+	private RegionsDataManager regionsDataManager;
 
 	@Override
 	public void init(final ReportContext reportContext) {
 		super.init(reportContext);
-		PeopleDataView peopleDataView = reportContext.getDataView(PeopleDataView.class);
-		regionsDataView = reportContext.getDataView(RegionsDataView.class);
+		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
+		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
 		
 		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 
-		for (PersonId personId : peopleDataView.getPeople()) {
-			final RegionId regionId = regionsDataView.getPersonRegion(personId);
+		for (PersonId personId : peopleDataManager.getPeople()) {
+			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, regionId);
 		}
 	}

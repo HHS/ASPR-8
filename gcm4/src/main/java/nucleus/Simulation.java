@@ -312,22 +312,7 @@ public class Simulation {
 
 	}
 
-	protected void addDataViewForPlugin(DataView dataView) {
-
-		if (focalPluginId == null) {
-			throw new ContractException(NucleusError.PLUGIN_INITIALIZATION_CLOSED);
-		}
-
-		if (dataView == null) {
-			throw new ContractException(NucleusError.NULL_DATA_VIEW);
-		}
-
-		if (baseClassToDataViewMap.containsKey(dataView.getClass())) {
-			throw new ContractException(NucleusError.DUPLICATE_DATA_VIEW_TYPE, dataView.getClass());
-		}
-
-		baseClassToDataViewMap.put(dataView.getClass(), dataView);
-	}
+	
 
 	protected void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
@@ -827,7 +812,7 @@ public class Simulation {
 		}
 	}
 
-	private void executeDataManagerQueue() {
+	protected void executeDataManagerQueue() {
 		if (dataManagerQueueActive) {
 			return;
 		}
@@ -1153,7 +1138,7 @@ public class Simulation {
 
 	}
 
-	protected void releaseObservationEvent(final Event event) {
+	protected void releaseObservationEventForDataManager(final Event event) {
 
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
@@ -1188,10 +1173,33 @@ public class Simulation {
 			}
 		}
 	}
+	
+	protected void releaseMutationEventForDataManager(final Event event) {
 
-	protected void pushObservationEvents() {
+		if (event == null) {
+			throw new ContractException(NucleusError.NULL_EVENT);
+		}
+
+		
+		
+		// queue the event handling by data managers
+		List<DataManagerEventConsumer> dataManagerEventConsumers = dataManagerEventMap.get(event.getClass());
+		if (dataManagerEventConsumers != null) {
+			for (DataManagerEventConsumer dataManagerEventConsumer : dataManagerEventConsumers) {
+
+				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+				dataManagerContentRec.event = event;
+				dataManagerContentRec.consumer = dataManagerEventConsumer;
+				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
+				dataManagerQueue.add(dataManagerContentRec);
+
+			}
+		}
+		
 		executeDataManagerQueue();
 	}
+
+	
 
 	private void addReport(Consumer<ReportContext> consumer) {
 
@@ -1267,46 +1275,7 @@ public class Simulation {
 		containsDeletedActors = true;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <T extends DataView> T getDataViewForReport(Class<T> dataViewClass) {
-
-		if (dataViewClass == null) {
-			throw new ContractException(NucleusError.NULL_DATA_VIEW_CLASS);
-		}
-
-		DataView dataView = workingClassToDataViewMap.get(dataViewClass);
-		/*
-		 * If the working map does not contain the data view, try to find a
-		 * single match from the base map that was collected from the plugins.
-		 * 
-		 * If two or more matches are found, then throw an exception.
-		 * 
-		 * If exactly one match is found, update the working map.
-		 * 
-		 * If no matches are found, nothing is done, but we are vulnerable to
-		 * somewhat slower performance if the data manager is sought repeatedly.
-		 */
-		if (dataView == null) {
-			List<Class<?>> candidates = new ArrayList<>();
-			for (Class<?> c : baseClassToDataViewMap.keySet()) {
-				if (dataViewClass.isAssignableFrom(c)) {
-					candidates.add(c);
-				}
-			}
-			if (candidates.size() > 1) {
-				throw new ContractException(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS);
-			}
-			if (candidates.size() == 1) {
-				dataView = baseClassToDataViewMap.get(candidates.get(0));
-				workingClassToDataViewMap.put(dataViewClass, dataView);
-			}
-		}
-
-		if (dataView == null) {
-			throw new ContractException(NucleusError.UNKNOWN_DATA_VIEW, " : " + dataViewClass.getSimpleName());
-		}
-		return (T) dataView;
-	}
+	
 
 	@SuppressWarnings("unchecked")
 	protected <T extends DataManager> T getDataManagerForActor(Class<T> dataManagerClass) {
@@ -1453,9 +1422,6 @@ public class Simulation {
 	private Map<Class<?>, DataManager> baseClassToDataManagerMap = new LinkedHashMap<>();
 	private Map<Class<?>, DataManager> workingClassToDataManagerMap = new LinkedHashMap<>();
 
-	// used to locate data views by class type
-	private Map<Class<?>, DataView> baseClassToDataViewMap = new LinkedHashMap<>();
-	private Map<Class<?>, DataView> workingClassToDataViewMap = new LinkedHashMap<>();
 
 	/*
 	 * Maps of data manager id <--> data manager instances used primarily for

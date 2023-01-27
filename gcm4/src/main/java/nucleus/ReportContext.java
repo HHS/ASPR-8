@@ -155,7 +155,7 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Returns the DataView instance from the give class reference
+	 * Returns the DataManger instance from the given class reference
 	 * 
 	 * @throws ContractException
 	 *             <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS} if the
@@ -165,8 +165,8 @@ public final class ReportContext {
 	 * 
 	 */
 
-	public <T extends DataView> T getDataView(Class<T> dataViewClass) {
-		return simulation.getDataViewForReport(dataViewClass);
+	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
+		return simulation.getDataManagerForActor(dataManagerClass);
 	}
 
 	public double getTime() {

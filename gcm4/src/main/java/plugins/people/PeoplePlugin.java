@@ -2,7 +2,6 @@ package plugins.people;
 
 import nucleus.Plugin;
 import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.dataviews.PeopleDataView;
 
 /**
  * A nucleus plugin for representing people, dealing only with their existence.
@@ -43,10 +42,7 @@ public final class PeoplePlugin {
 						.setPluginId(PeoplePluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class);
-							PeopleDataManager peopleDataManager = new PeopleDataManager(pluginData);
-							c.addDataManager(peopleDataManager);
-							PeopleDataView peopleDataView = new PeopleDataView(peopleDataManager);
-							c.addDataView(peopleDataView);
+							c.addDataManager(new PeopleDataManager(pluginData));							
 						})//
 						.build();
 	}

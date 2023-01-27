@@ -1,14 +1,14 @@
 package plugins.materials.actors;
 
 import nucleus.ReportContext;
-import plugins.materials.dataviews.MaterialsDataView;
+import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
-import plugins.resources.dataviews.ResourcesDataView;
+import plugins.resources.datamanagers.ResourcesDataManager;
 import plugins.resources.events.ResourceIdAdditionEvent;
 import plugins.resources.support.ResourceId;
 
@@ -101,9 +101,9 @@ public final class MaterialsProducerResourceReport {
 
 	private void handleResourceIdAdditionEvent(ReportContext reportContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
 		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
-		MaterialsDataView materialsDataView = reportContext.getDataView(MaterialsDataView.class);
-		for (MaterialsProducerId materialsProducerId : materialsDataView.getMaterialsProducerIds()) {
-			long materialsProducerResourceLevel = materialsDataView.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
+		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
+			long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 			writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
 		}
 	}
@@ -114,11 +114,11 @@ public final class MaterialsProducerResourceReport {
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
 
-		ResourcesDataView resourcesDataView = reportContext.getDataView(ResourcesDataView.class);
-		MaterialsDataView materialsDataView = reportContext.getDataView(MaterialsDataView.class);
-		for (MaterialsProducerId materialsProducerId : materialsDataView.getMaterialsProducerIds()) {
-			for (ResourceId resourceId : resourcesDataView.getResourceIds()) {
-				long materialsProducerResourceLevel = materialsDataView.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
+		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
+		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
+			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+				long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 				writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
 			}
 		}
@@ -126,10 +126,10 @@ public final class MaterialsProducerResourceReport {
 
 	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
 		MaterialsProducerId materialsProducerId = materialsProducerAdditionEvent.getMaterialsProducerId();
-		ResourcesDataView resourcesDataView = reportContext.getDataView(ResourcesDataView.class);
-		MaterialsDataView materialsDataView = reportContext.getDataView(MaterialsDataView.class);
-		for (ResourceId resourceId : resourcesDataView.getResourceIds()) {
-			long materialsProducerResourceLevel = materialsDataView.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
+		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
+		for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
+			long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 			writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
 		}
 	}

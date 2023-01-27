@@ -34,27 +34,6 @@ public final class PluginContext {
 	
 	/**
 	 * 
-	 * Adds a data view to the simulation.
-	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED} if
-	 *             plugin initialization is over</li>
-	 *             
-	 *             <li>{@link NucleusError#NULL_DATA_VIEW} if
-	 *             the data view is null</li>
-	 *             
-	 *             <li>{@link NucleusError#DUPLICATE_DATA_VIEW_TYPE} if
-	 *             a data view was previously added</li>
-	 *             
-	 * 
-	 */	
-	public void addDataView(DataView dataView) {
-		simulation.addDataViewForPlugin(dataView);
-	}
-
-	/**
-	 * 
 	 * Adds an actor to the simulation.
 	 * 
 	 * 

@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
-import plugins.materials.dataviews.MaterialsDataView;
+import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.StageAdditionEvent;
 import plugins.materials.events.StageImminentRemovalEvent;
 import plugins.materials.events.StageMaterialsProducerUpdateEvent;
@@ -96,8 +96,8 @@ public final class StageReport {
 
 		StageRecord stageRecord = new StageRecord();
 		stageRecord.stageId = stageAdditionEvent.stageId();
-		stageRecord.isOffered = materialsDataView.isStageOffered(stageRecord.stageId);
-		stageRecord.materialsProducerId = materialsDataView.getStageProducer(stageRecord.stageId);
+		stageRecord.isOffered = materialsDataManager.isStageOffered(stageRecord.stageId);
+		stageRecord.materialsProducerId = materialsDataManager.getStageProducer(stageRecord.stageId);
 		stageRecord.lastAction = Action.CREATED;
 		stageRecords.put(stageRecord.stageId, stageRecord);
 		writeReportItem(reportContext, stageRecord);
@@ -138,7 +138,7 @@ public final class StageReport {
 		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
-	private MaterialsDataView materialsDataView;
+	private MaterialsDataManager materialsDataManager;
 
 	public void init(final ReportContext reportContext) {
 
@@ -147,14 +147,14 @@ public final class StageReport {
 		reportContext.subscribe(StageImminentRemovalEvent.class, this::handleStageImminentRemovalEvent);
 		reportContext.subscribe(StageMaterialsProducerUpdateEvent.class, this::handleStageMaterialsProducerUpdateEvent);
 
-		materialsDataView = reportContext.getDataView(MaterialsDataView.class);
+		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
-		for (MaterialsProducerId materialsProducerId : materialsDataView.getMaterialsProducerIds()) {
-			for (StageId stageId : materialsDataView.getStages(materialsProducerId)) {
+		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
+			for (StageId stageId : materialsDataManager.getStages(materialsProducerId)) {
 
 				StageRecord stageRecord = new StageRecord();
 				stageRecord.stageId = stageId;
-				stageRecord.isOffered = materialsDataView.isStageOffered(stageId);
+				stageRecord.isOffered = materialsDataManager.isStageOffered(stageId);
 				stageRecord.materialsProducerId = materialsProducerId;
 				stageRecord.lastAction = Action.CREATED;
 				stageRecords.put(stageRecord.stageId, stageRecord);

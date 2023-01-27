@@ -1,7 +1,7 @@
 package plugins.materials.actors;
 
 import nucleus.ReportContext;
-import plugins.materials.dataviews.MaterialsDataView;
+import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.MaterialsProducerAdditionEvent;
 import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
 import plugins.materials.support.MaterialsProducerId;
@@ -60,21 +60,21 @@ public final class MaterialsProducerPropertyReport {
 		reportContext.subscribe(MaterialsProducerPropertyUpdateEvent.class, this::handleMaterialsProducerPropertyUpdateEvent);
 		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
 
-		MaterialsDataView materialsDataView = reportContext.getDataView(MaterialsDataView.class);
+		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
-		for (final MaterialsProducerId materialsProducerId : materialsDataView.getMaterialsProducerIds()) {
-			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataView.getMaterialsProducerPropertyIds()) {
-				final Object materialsProducerPropertyValue = materialsDataView.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+		for (final MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
+			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataManager.getMaterialsProducerPropertyIds()) {
+				final Object materialsProducerPropertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 				writeProperty(reportContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
 			}
 		}
 	}
 
 	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
-		MaterialsDataView materialsDataView = reportContext.getDataView(MaterialsDataView.class);
+		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 		MaterialsProducerId materialsProducerId = materialsProducerAdditionEvent.getMaterialsProducerId();
-		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataView.getMaterialsProducerPropertyIds()) {
-			final Object materialsProducerPropertyValue = materialsDataView.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+		for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataManager.getMaterialsProducerPropertyIds()) {
+			final Object materialsProducerPropertyValue = materialsDataManager.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 			writeProperty(reportContext, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
 		}
 	}

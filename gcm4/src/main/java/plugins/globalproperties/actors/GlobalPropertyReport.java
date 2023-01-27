@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import plugins.globalproperties.dataViews.GlobalPropertiesDataView;
+import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
 import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
 import plugins.globalproperties.support.GlobalPropertyId;
@@ -193,14 +193,14 @@ public final class GlobalPropertyReport {
 	 */
 	public void init(final ReportContext reportContext) {
 
-		final GlobalPropertiesDataView globalPropertiesDataView = reportContext.getDataView(GlobalPropertiesDataView.class);
+		final GlobalPropertiesDataManager globalPropertiesDataManager = reportContext.getDataManager(GlobalPropertiesDataManager.class);
 
 		/*
 		 * if the client has selected all extant properties, then correct the
 		 * data's included property ids
 		 */
 		if (data.includeAllExtantPropertyIds) {
-			data.includedPropertyIds.addAll(globalPropertiesDataView.getGlobalPropertyIds());
+			data.includedPropertyIds.addAll(globalPropertiesDataManager.getGlobalPropertyIds());
 		}
 
 		/*
@@ -223,7 +223,7 @@ public final class GlobalPropertyReport {
 		 * property
 		 */
 		for (final GlobalPropertyId globalPropertyId : data.includedPropertyIds) {
-			final Object globalPropertyValue = globalPropertiesDataView.getGlobalPropertyValue(globalPropertyId);
+			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
 			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
 

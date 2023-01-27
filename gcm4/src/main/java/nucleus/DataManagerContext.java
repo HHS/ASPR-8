@@ -16,13 +16,13 @@ import util.errors.ContractException;
  */
 
 public final class DataManagerContext implements SimulationContext {
-	
+
 	private final Simulation simulation;
 	protected final DataManagerId dataManagerId;
 
-	protected DataManagerContext(DataManagerId dataManagerId,Simulation simulation) {
+	protected DataManagerContext(DataManagerId dataManagerId, Simulation simulation) {
 		this.dataManagerId = dataManagerId;
-		this.simulation = simulation;		
+		this.simulation = simulation;
 	}
 
 	/**
@@ -57,8 +57,8 @@ public final class DataManagerContext implements SimulationContext {
 	 */
 	public void addKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
-		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId,key);
-		simulation.addDataManagerPlan(dataManagerId,plan, planTime, true, key);
+		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, true, key);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 */
 	public void addPassivePlan(final Consumer<DataManagerContext> plan, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId,plan, planTime, false, null);
+		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, null);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public final class DataManagerContext implements SimulationContext {
 	 */
 	public void addPassiveKeyedPlan(final Consumer<DataManagerContext> plan, final double planTime, final Object key) {
 		simulation.validatePlanKeyNotNull(key);
-		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId,key);
+		simulation.validateDataManagerPlanKeyNotDuplicate(dataManagerId, key);
 		simulation.addDataManagerPlan(dataManagerId, plan, planTime, false, key);
 	}
 
@@ -111,7 +111,7 @@ public final class DataManagerContext implements SimulationContext {
 	@SuppressWarnings("unchecked")
 
 	public <T extends Consumer<DataManagerContext>> Optional<T> getPlan(final Object key) {
-		return (Optional<T>) simulation.getDataManagerPlan(dataManagerId,key);
+		return (Optional<T>) simulation.getDataManagerPlan(dataManagerId, key);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public final class DataManagerContext implements SimulationContext {
 	 *             null
 	 */
 	public Optional<Double> getPlanTime(final Object key) {
-		return simulation.getDataManagerPlanTime(dataManagerId,key);
+		return simulation.getDataManagerPlanTime(dataManagerId, key);
 	}
 
 	/**
@@ -140,13 +140,19 @@ public final class DataManagerContext implements SimulationContext {
 	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
 	 */
 	public void releaseObservationEvent(final Event event) {
-		simulation.releaseObservationEvent(event);
+		simulation.releaseObservationEventForDataManager(event);
 	}
 
-
-	
-	public void pushObservationEvents() {
-		simulation.pushObservationEvents();
+	/**
+	 * Starts the event handling process for the given event
+	 * 
+	 * This is used for MUTATION events.
+	 * 
+	 * @throws ContractException
+	 *             <li>{@link NucleusError#NULL_EVENT} if the event is null
+	 */
+	public void releaseMutationEvent(final Event event) {
+		simulation.releaseMutationEventForDataManager(event);
 	}
 
 	/**
@@ -157,7 +163,7 @@ public final class DataManagerContext implements SimulationContext {
 	 *             null
 	 */
 	public <T> Optional<T> removePlan(final Object key) {
-		return simulation.removeDataManagerPlan(dataManagerId,key);
+		return simulation.removeDataManagerPlan(dataManagerId, key);
 	}
 
 	/**
@@ -182,7 +188,7 @@ public final class DataManagerContext implements SimulationContext {
 	 * 
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
-		simulation.subscribeDataManagerToEvent(dataManagerId,eventClass, eventConsumer);
+		simulation.subscribeDataManagerToEvent(dataManagerId, eventClass, eventConsumer);
 	}
 
 	/**
@@ -194,7 +200,7 @@ public final class DataManagerContext implements SimulationContext {
 	 *             is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
-		simulation.unsubscribeDataManagerFromEvent(dataManagerId,eventClass);
+		simulation.unsubscribeDataManagerFromEvent(dataManagerId, eventClass);
 	}
 
 	/**
@@ -204,8 +210,6 @@ public final class DataManagerContext implements SimulationContext {
 	public boolean subscribersExist(Class<? extends Event> eventClass) {
 		return simulation.subscribersExistForEvent(eventClass);
 	}
-
-	
 
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
@@ -217,7 +221,7 @@ public final class DataManagerContext implements SimulationContext {
 	 *             if the consumer is null</li>
 	 */
 	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
-		simulation.subscribeDataManagerToSimulationClose(dataManagerId,consumer);
+		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
 	}
 
 	/**
@@ -249,7 +253,7 @@ public final class DataManagerContext implements SimulationContext {
 
 	@Override
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
-		return simulation.getDataManagerForDataManager(dataManagerId,dataManagerClass);
+		return simulation.getDataManagerForDataManager(dataManagerId, dataManagerClass);
 	}
 
 	@Override
@@ -279,10 +283,6 @@ public final class DataManagerContext implements SimulationContext {
 	@Override
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
-	}
-	
-	public void sendMutationEvent(Event event) {
-		
 	}
 
 }

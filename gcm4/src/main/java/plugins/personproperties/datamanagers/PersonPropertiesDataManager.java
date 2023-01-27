@@ -12,6 +12,7 @@ import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.SimulationContext;
@@ -71,6 +72,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 	}
 
+	private static record PersonPropertyDefinitionMutationEvent(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) implements Event {
+	}
+
 	/**
 	 * 
 	 * Defines a new person property
@@ -88,6 +92,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *             no included value assignment for some extant person</li>
 	 */
 	public void definePersonProperty(PersonPropertyDefinitionInitialization propertyDefinitionInitialization) {
+		dataManagerContext.releaseMutationEvent(new PersonPropertyDefinitionMutationEvent(propertyDefinitionInitialization));
+	}
+
+	public void handlePersonPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, PersonPropertyDefinitionMutationEvent personPropertyDefinitionMutationEvent) {
+		PersonPropertyDefinitionInitialization propertyDefinitionInitialization = personPropertyDefinitionMutationEvent.propertyDefinitionInitialization();
 		validatePropertyDefinitionInitializationNotNull(propertyDefinitionInitialization);
 		PersonPropertyId personPropertyId = propertyDefinitionInitialization.getPersonPropertyId();
 		PropertyDefinition propertyDefinition = propertyDefinitionInitialization.getPropertyDefinition();
@@ -139,7 +148,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new PersonPropertyDefinitionEvent(personPropertyId));
 		}
-		dataManagerContext.pushObservationEvents();
+
 	}
 
 	@Override
@@ -149,6 +158,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 		regionsDataManager = dataManagerContext.getDataManager(RegionsDataManager.class);
+
+		dataManagerContext.subscribe(PersonPropertyDefinitionMutationEvent.class, this::handlePersonPropertyDefinitionMutationEvent);
+		dataManagerContext.subscribe(PersonPropertyUpdateMutationEvent.class, this::handlePersonPropertyUpdateMutationEvent);
 
 		Set<PersonPropertyId> personPropertyIds = personPropertiesPluginData.getPersonPropertyIds();
 
@@ -516,6 +528,9 @@ public final class PersonPropertiesDataManager extends DataManager {
 		return personPropertyDefinitions.containsKey(personPropertyId);
 	}
 
+	private static record PersonPropertyUpdateMutationEvent(PersonId personId, PersonPropertyId personPropertyId, Object personPropertyValue) implements Event {
+	}
+
 	/**
 	 * Updates the value of a person's property. Generates a corresponding
 	 * {@linkplain PersonPropertyUpdateEvent}
@@ -539,6 +554,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *
 	 */
 	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+		dataManagerContext.releaseMutationEvent(new PersonPropertyUpdateMutationEvent(personId, personPropertyId, personPropertyValue));
+	}
+
+	private void handlePersonPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, PersonPropertyUpdateMutationEvent personPropertyUpdateMutationEvent) {
+		PersonId personId = personPropertyUpdateMutationEvent.personId();
+		PersonPropertyId personPropertyId = personPropertyUpdateMutationEvent.personPropertyId();
+		Object personPropertyValue = personPropertyUpdateMutationEvent.personPropertyValue();
 		validatePersonExists(personId);
 		validatePersonPropertyId(personPropertyId);
 		validatePersonPropertyValueNotNull(personPropertyValue);
@@ -553,7 +575,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(PersonPropertyUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new PersonPropertyUpdateEvent(personId, personPropertyId, oldValue, personPropertyValue));
 		}
-		dataManagerContext.pushObservationEvents();
+
 	}
 
 	private static void validatePropertyMutability(final PropertyDefinition propertyDefinition) {

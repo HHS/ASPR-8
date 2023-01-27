@@ -1,7 +1,6 @@
 package plugins.groups;
 
 import nucleus.Plugin;
-import plugins.groups.dataViews.GroupsDataView;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.people.PeoplePluginId;
 import plugins.stochastics.StochasticsPluginId;
@@ -24,10 +23,7 @@ public final class GroupsPlugin {
 						.addPluginDependency(StochasticsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							GroupsPluginData pluginData = c.getPluginData(GroupsPluginData.class);
-							GroupsDataManager groupsDataManager = new GroupsDataManager(pluginData);
-							c.addDataManager(groupsDataManager);							
-							GroupsDataView groupsDataView = new GroupsDataView(groupsDataManager);
-							c.addDataView(groupsDataView);
+							c.addDataManager(new GroupsDataManager(pluginData));
 						})//
 						.build();
 	}

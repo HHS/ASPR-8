@@ -2432,8 +2432,7 @@ public class AT_RegionsDataManager {
 		}
 		
 		public void passThrough(Event event) {
-			dataManagerContext.releaseObservationEvent(event);
-			dataManagerContext.pushObservationEvents();
+			dataManagerContext.releaseMutationEvent(event);			
 		}
 	}
 

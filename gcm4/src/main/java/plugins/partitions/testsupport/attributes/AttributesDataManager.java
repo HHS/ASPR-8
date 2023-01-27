@@ -7,6 +7,7 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
@@ -132,6 +133,8 @@ public final class AttributesDataManager extends DataManager {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
+		
+		
 
 		for (AttributeId attributeId : attributesPluginData.getAttributeIds()) {
 			AttributeDefinition attributeDefinition = attributesPluginData.getAttributeDefinition(attributeId);
@@ -139,6 +142,8 @@ public final class AttributesDataManager extends DataManager {
 		}
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
+		dataManagerContext.subscribe(AttributeUpdateMutationEvent.class, this::handleAttributeUpdateMutationEvent);
+		
 
 	}
 
@@ -175,6 +180,8 @@ public final class AttributesDataManager extends DataManager {
 		attributeDefinitions.put(attributeId, attributeDefinition);
 		attributeValues.put(attributeId, new LinkedHashMap<>());
 	}
+	
+	private static record AttributeUpdateMutationEvent(PersonId personId, AttributeId attributeId, Object value) implements Event{}
 
 	/**
 	 * Updates the person's current attribute value. Generates a corresponding
@@ -198,6 +205,15 @@ public final class AttributesDataManager extends DataManager {
 	 * </ul>
 	 */
 	public void setAttributeValue(final PersonId personId, final AttributeId attributeId, final Object value) {
+		
+		dataManagerContext.releaseMutationEvent(
+		new AttributeUpdateMutationEvent(personId, attributeId, value));
+	}
+	private void handleAttributeUpdateMutationEvent(DataManagerContext dataManagerContext, AttributeUpdateMutationEvent attributeUpdateMutationEvent) {
+		AttributeId attributeId = attributeUpdateMutationEvent.attributeId();
+		PersonId personId = attributeUpdateMutationEvent.personId();
+		Object value = attributeUpdateMutationEvent.value();
+		
 		validatePersonExists(dataManagerContext, personId);
 		validateAttributeId(dataManagerContext, attributeId);
 		validateValueNotNull(dataManagerContext, value);
@@ -208,7 +224,7 @@ public final class AttributesDataManager extends DataManager {
 		if (dataManagerContext.subscribersExist(AttributeUpdateEvent.class)) {
 			dataManagerContext.releaseObservationEvent(new AttributeUpdateEvent(personId, attributeId, previousValue, value));
 		}
-		dataManagerContext.pushObservationEvents();
+		
 	}
 
 	private void validatePersonExists(final DataManagerContext dataManagerContext, final PersonId personId) {

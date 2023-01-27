@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import plugins.materials.dataviews.MaterialsDataView;
+import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.BatchAdditionEvent;
 import plugins.materials.events.BatchAmountUpdateEvent;
 import plugins.materials.events.BatchImminentRemovalEvent;
@@ -124,9 +124,9 @@ public final class BatchStatusReport {
 														.add("stage")//
 														.add("material")//
 														.add("amount");//
-			Set<MaterialId> materialIds = materialsDataView.getMaterialIds();
+			Set<MaterialId> materialIds = materialsDataManager.getMaterialIds();
 			for (MaterialId materialId : materialIds) {
-				Set<BatchPropertyId> batchPropertyIds = materialsDataView.getBatchPropertyIds(materialId);
+				Set<BatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
 				for (BatchPropertyId batchPropertyId : batchPropertyIds) {
 					builder.add(materialId + "." + batchPropertyId);
 				}
@@ -143,19 +143,19 @@ public final class BatchStatusReport {
 
 		batchRecord.time = reportContext.getTime();
 		batchRecord.batchId = batchId;
-		batchRecord.materialsProducerId = materialsDataView.getBatchProducer(batchId);
-		Optional<StageId> optionalStageId = materialsDataView.getBatchStageId(batchId);
+		batchRecord.materialsProducerId = materialsDataManager.getBatchProducer(batchId);
+		Optional<StageId> optionalStageId = materialsDataManager.getBatchStageId(batchId);
 		if (optionalStageId.isPresent()) {
 			batchRecord.stageId = optionalStageId.get();
 		} else {
 			batchRecord.stageId = null;
 		}
-		batchRecord.materialId = materialsDataView.getBatchMaterial(batchId);
-		batchRecord.amount = materialsDataView.getBatchAmount(batchId);
+		batchRecord.materialId = materialsDataManager.getBatchMaterial(batchId);
+		batchRecord.amount = materialsDataManager.getBatchAmount(batchId);
 
-		Set<BatchPropertyId> batchPropertyIds = materialsDataView.getBatchPropertyIds(batchRecord.materialId);
+		Set<BatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(batchRecord.materialId);
 		for (BatchPropertyId batchPropertyId : batchPropertyIds) {
-			Object batchPropertyValue = materialsDataView.getBatchPropertyValue(batchId, batchPropertyId);
+			Object batchPropertyValue = materialsDataManager.getBatchPropertyValue(batchId, batchPropertyId);
 			batchRecord.propertyValues.put(batchPropertyId, batchPropertyValue);
 		}
 		batchRecords.put(batchId, batchRecord);
@@ -207,7 +207,7 @@ public final class BatchStatusReport {
 		reportBatch(reportContext, batchRecord);
 	}
 
-	private MaterialsDataView materialsDataView;
+	private MaterialsDataManager materialsDataManager;
 
 	public void init(final ReportContext reportContext) {
 
@@ -218,19 +218,19 @@ public final class BatchStatusReport {
 		reportContext.subscribe(StageMembershipAdditionEvent.class, this::handleStageMembershipAdditionEvent);
 		reportContext.subscribe(StageMembershipRemovalEvent.class, this::handleStageMembershipRemovalEvent);
 
-		materialsDataView = reportContext.getDataView(MaterialsDataView.class);
+		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
-		for (MaterialId materialId : materialsDataView.getMaterialIds()) {
-			this.batchPropertyMap.put(materialId, materialsDataView.getBatchPropertyIds(materialId));
+		for (MaterialId materialId : materialsDataManager.getMaterialIds()) {
+			this.batchPropertyMap.put(materialId, materialsDataManager.getBatchPropertyIds(materialId));
 		}
 
-		for (MaterialsProducerId materialsProducerId : materialsDataView.getMaterialsProducerIds()) {
-			for (BatchId inventoryBatchId : materialsDataView.getInventoryBatches(materialsProducerId)) {
+		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
+			for (BatchId inventoryBatchId : materialsDataManager.getInventoryBatches(materialsProducerId)) {
 				BatchRecord batchRecord = createBatchRecord(reportContext, inventoryBatchId);
 				reportBatch(reportContext, batchRecord);
 			}
-			for (StageId stageId : materialsDataView.getStages(materialsProducerId)) {
-				for (BatchId stageBatchId : materialsDataView.getStageBatches(stageId)) {
+			for (StageId stageId : materialsDataManager.getStages(materialsProducerId)) {
+				for (BatchId stageBatchId : materialsDataManager.getStageBatches(stageId)) {
 					BatchRecord batchRecord = createBatchRecord(reportContext, stageBatchId);
 					reportBatch(reportContext, batchRecord);
 				}

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import nucleus.ReportContext;
-import plugins.groups.dataViews.GroupsDataView;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.events.GroupAdditionEvent;
 import plugins.groups.events.GroupImminentRemovalEvent;
 import plugins.groups.events.GroupPropertyDefinitionEvent;
@@ -260,24 +260,24 @@ public final class GroupPropertyReport extends PeriodicReport2 {
 		getCounter(groupTypeId, groupPropertyId, groupPropertyValue).count++;
 	}
 
-	private GroupsDataView groupsDataView;
+	private GroupsDataManager groupsDataManager;
 
 	@Override
 	public void init(final ReportContext reportContext) {
 		super.init(reportContext);
 
-		groupsDataView = reportContext.getDataView(GroupsDataView.class);
+		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
 
 		// transfer all VALID property id selections from the scaffold
-		Set<GroupTypeId> groupTypeIds = groupsDataView.getGroupTypeIds();
+		Set<GroupTypeId> groupTypeIds = groupsDataManager.getGroupTypeIds();
 		for (GroupTypeId groupTypeId : groupTypeIds) {
 			Set<GroupPropertyId> groupPropertyIds = new LinkedHashSet<>();
 			if (scaffold.allProperties.contains(groupTypeId)) {
-				groupPropertyIds.addAll(groupsDataView.getGroupPropertyIds(groupTypeId));
+				groupPropertyIds.addAll(groupsDataManager.getGroupPropertyIds(groupTypeId));
 			} else {
 				Set<GroupPropertyId> selectedPropertyIds = scaffold.clientPropertyMap.get(groupTypeId);
 				if (selectedPropertyIds != null) {
-					Set<GroupPropertyId> allPropertyIds = groupsDataView.getGroupPropertyIds(groupTypeId);
+					Set<GroupPropertyId> allPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
 					for (GroupPropertyId groupPropertyId : allPropertyIds) {
 						if (selectedPropertyIds.contains(groupPropertyId)) {
 							groupPropertyIds.add(groupPropertyId);
@@ -313,11 +313,11 @@ public final class GroupPropertyReport extends PeriodicReport2 {
 		}
 
 		// group addition
-		for (GroupId groupId : groupsDataView.getGroupIds()) {
-			final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
+		for (GroupId groupId : groupsDataManager.getGroupIds()) {
+			final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 			if (clientPropertyMap.containsKey(groupTypeId)) {
 				for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-					final Object groupPropertyValue = groupsDataView.getGroupPropertyValue(groupId, groupPropertyId);
+					final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
 					increment(groupTypeId, groupPropertyId, groupPropertyValue);
 				}
 			}
@@ -373,7 +373,7 @@ public final class GroupPropertyReport extends PeriodicReport2 {
 		map.put(groupPropertyId, counterMap);
 
 		// determine how many groups of the given group type there are
-		int groupCountForGroupType = groupsDataView.getGroupCountForGroupType(groupTypeId);
+		int groupCountForGroupType = groupsDataManager.getGroupCountForGroupType(groupTypeId);
 
 		/*
 		 * Rather than asking for the current value of the property for each
@@ -382,7 +382,7 @@ public final class GroupPropertyReport extends PeriodicReport2 {
 		 * the expected conditions immediately after the property was added.
 		 * 
 		 */
-		PropertyDefinition groupPropertyDefinition = groupsDataView.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+		PropertyDefinition groupPropertyDefinition = groupsDataManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 		Object defaultValue = groupPropertyDefinition.getDefaultValue().get();
 		// create the counter with the number of groups
 		Counter counter = new Counter();
@@ -396,7 +396,7 @@ public final class GroupPropertyReport extends PeriodicReport2 {
 	private void handleGroupPropertyUpdateEvent(ReportContext reportContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
 		GroupId groupId = groupPropertyUpdateEvent.groupId();
 
-		final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
+		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 
 			GroupPropertyId groupPropertyId = groupPropertyUpdateEvent.groupPropertyId();
@@ -414,10 +414,10 @@ public final class GroupPropertyReport extends PeriodicReport2 {
 
 	private void handleGroupAdditionEvent(ReportContext reportContext, GroupAdditionEvent groupAdditionEvent) {
 		GroupId groupId = groupAdditionEvent.groupId();
-		final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
+		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
 			for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-				final Object groupPropertyValue = groupsDataView.getGroupPropertyValue(groupId, groupPropertyId);
+				final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
 				increment(groupTypeId, groupPropertyId, groupPropertyValue);
 			}
 		}
@@ -425,12 +425,12 @@ public final class GroupPropertyReport extends PeriodicReport2 {
 
 	private void handleGroupImminentRemovalEvent(ReportContext reportContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
 		GroupId groupId = groupImminentRemovalEvent.groupId();
-		final GroupTypeId groupTypeId = groupsDataView.getGroupType(groupId);
+		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {
-			Set<GroupPropertyId> groupPropertyIds = groupsDataView.getGroupPropertyIds(groupTypeId);
+			Set<GroupPropertyId> groupPropertyIds = groupsDataManager.getGroupPropertyIds(groupTypeId);
 			for (final GroupPropertyId groupPropertyId : groupPropertyIds) {
 				if (clientPropertyMap.get(groupTypeId).contains(groupPropertyId)) {
-					final Object groupPropertyValue = groupsDataView.getGroupPropertyValue(groupId, groupPropertyId);
+					final Object groupPropertyValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
 					decrement(groupTypeId, groupPropertyId, groupPropertyValue);
 				}
 			}

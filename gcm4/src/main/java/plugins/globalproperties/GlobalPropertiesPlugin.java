@@ -2,7 +2,6 @@ package plugins.globalproperties;
 
 import nucleus.Plugin;
 import plugins.globalproperties.actors.GlobalPropertyReport;
-import plugins.globalproperties.dataViews.GlobalPropertiesDataView;
 import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 
 /**
@@ -49,11 +48,7 @@ public final class GlobalPropertiesPlugin {
 						.addPluginData(globalPropertiesPluginData)//
 						.setInitializer((c) -> {
 							GlobalPropertiesPluginData data = c.getPluginData(GlobalPropertiesPluginData.class);
-							GlobalPropertiesDataManager globalPropertiesDataManager = new GlobalPropertiesDataManager(data);
-							c.addDataManager(globalPropertiesDataManager);
-							GlobalPropertiesDataView globalPropertiesDataView = new GlobalPropertiesDataView(globalPropertiesDataManager);
-							c.addDataView(globalPropertiesDataView);
-							
+							c.addDataManager(new GlobalPropertiesDataManager(data));							
 						})//
 						.setPluginId(GlobalPropertiesPluginId.PLUGIN_ID)//
 						.build();

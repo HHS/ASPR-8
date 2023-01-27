@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nucleus.ReportContext;
-import plugins.groups.dataViews.GroupsDataView;
+import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
 import plugins.reports.support.PeriodicReport2;
@@ -67,11 +67,11 @@ public final class GroupPopulationReport extends PeriodicReport2 {
 		 * type
 		 */
 		Map<GroupTypeId, Map<Integer, Counter>> groupTypePopulationMap = new LinkedHashMap<>();
-		for (GroupTypeId groupTypeId : groupsDataView.getGroupTypeIds()) {
+		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
 			Map<Integer, Counter> groupSizeMap = new LinkedHashMap<>();
 			groupTypePopulationMap.put(groupTypeId, groupSizeMap);
-			for (GroupId groupId : groupsDataView.getGroupsForGroupType(groupTypeId)) {
-				Integer personCountForGroup = groupsDataView.getPersonCountForGroup(groupId);
+			for (GroupId groupId : groupsDataManager.getGroupsForGroupType(groupTypeId)) {
+				Integer personCountForGroup = groupsDataManager.getPersonCountForGroup(groupId);
 				Counter counter = groupSizeMap.get(personCountForGroup);
 				if (counter == null) {
 					counter = new Counter();
@@ -104,12 +104,12 @@ public final class GroupPopulationReport extends PeriodicReport2 {
 
 	}
 
-	private GroupsDataView groupsDataView;
+	private GroupsDataManager groupsDataManager;
 
 	@Override
 	public void init(ReportContext reportContext) {
 		super.init(reportContext);
-		groupsDataView = reportContext.getDataView(GroupsDataView.class);
+		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
 	}
 
 }
