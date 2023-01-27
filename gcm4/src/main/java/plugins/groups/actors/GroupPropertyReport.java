@@ -16,7 +16,7 @@ import plugins.groups.support.GroupError;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;
-import plugins.reports.support.PeriodicReport2;
+import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -47,7 +47,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class GroupPropertyReport extends PeriodicReport2 {
+public final class GroupPropertyReport extends PeriodicReport {
 
 	private static class Scaffold {
 		private ReportPeriod reportPeriod = ReportPeriod.DAILY;

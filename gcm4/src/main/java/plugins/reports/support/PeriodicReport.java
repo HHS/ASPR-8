@@ -18,7 +18,7 @@ import util.errors.ContractException;
  *
  *
  */
-public abstract class PeriodicReport2  {
+public abstract class PeriodicReport  {
 
 	private ReportContext reportContext;
 
@@ -28,7 +28,7 @@ public abstract class PeriodicReport2  {
 	 * @throws ContractException
 	 *             <li>if the report period is null</li>
 	 */
-	public PeriodicReport2(ReportId reportId, ReportPeriod reportPeriod) {
+	public PeriodicReport(ReportId reportId, ReportPeriod reportPeriod) {
 		if (reportPeriod == null) {
 			throw new ContractException(ReportError.NULL_REPORT_PERIOD);
 		}

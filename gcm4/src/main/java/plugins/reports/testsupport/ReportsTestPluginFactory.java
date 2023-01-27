@@ -13,9 +13,8 @@ public final class ReportsTestPluginFactory {
     }
     
     public static Plugin getPluginFromReport(Consumer<ReportContext> consumer) {
-        ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport2(() -> consumer)
+        ReportsPluginData reportsPluginData = ReportsPluginData.builder().addReport(() -> consumer)
                 .build();
-
         return ReportsPlugin.getReportsPlugin(reportsPluginData);
     }
 }

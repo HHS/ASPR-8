@@ -72,6 +72,7 @@ public enum NucleusError implements ContractError {
 	PAST_PLANNING_TIME("Plan execution time is in the past"),
 	PLUGIN_INITIALIZATION_CLOSED("Plugin context is no longer valid"),
 	REPEATED_EXECUTION("Attempted repeat execution of simulation engine"),
+	REPORT_ATTEMPTING_MUTATION("A report is attempting to mutate data state"),
 	SCENARIO_CANNOT_BE_EXECUTED("Scenario cannot be executed"),
 	SCENARIO_FAILED("Scenario failed to complete execution"),
 	UNCLOSABLE_EXPERIMENT("Cannot close an experiment not in the open state"),

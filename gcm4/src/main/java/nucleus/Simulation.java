@@ -312,8 +312,6 @@ public class Simulation {
 
 	}
 
-	
-
 	protected void addActorPlan(final Consumer<ActorContext> plan, final double time, final boolean isActivePlan, final Object key) {
 
 		validatePlanTime(time);
@@ -731,7 +729,7 @@ public class Simulation {
 					ReportContentRec reportContentRec = new ReportContentRec();
 					reportContentRec.reportPlan = planRec.reportPlan;
 					reportContentRec.reportId = planRec.reportId;
-					reportQueue.add(reportContentRec);					
+					reportQueue.add(reportContentRec);
 					executeReportQueue();
 				}
 
@@ -1173,15 +1171,17 @@ public class Simulation {
 			}
 		}
 	}
-	
+
 	protected void releaseMutationEventForDataManager(final Event event) {
 
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
+		
+		if (focalReportId != null) {
+			throw new ContractException(NucleusError.REPORT_ATTEMPTING_MUTATION, focalReportId);
+		}
 
-		
-		
 		// queue the event handling by data managers
 		List<DataManagerEventConsumer> dataManagerEventConsumers = dataManagerEventMap.get(event.getClass());
 		if (dataManagerEventConsumers != null) {
@@ -1195,11 +1195,9 @@ public class Simulation {
 
 			}
 		}
-		
+
 		executeDataManagerQueue();
 	}
-
-	
 
 	private void addReport(Consumer<ReportContext> consumer) {
 
@@ -1274,8 +1272,6 @@ public class Simulation {
 
 		containsDeletedActors = true;
 	}
-
-	
 
 	@SuppressWarnings("unchecked")
 	protected <T extends DataManager> T getDataManagerForActor(Class<T> dataManagerClass) {
@@ -1421,7 +1417,6 @@ public class Simulation {
 	// used to locate data managers by class type
 	private Map<Class<?>, DataManager> baseClassToDataManagerMap = new LinkedHashMap<>();
 	private Map<Class<?>, DataManager> workingClassToDataManagerMap = new LinkedHashMap<>();
-
 
 	/*
 	 * Maps of data manager id <--> data manager instances used primarily for

@@ -7,7 +7,7 @@ import nucleus.ReportContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
-import plugins.reports.support.PeriodicReport2;
+import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -27,7 +27,7 @@ import plugins.reports.support.ReportPeriod;
  *
  *
  */
-public final class GroupPopulationReport extends PeriodicReport2 {
+public final class GroupPopulationReport extends PeriodicReport {
 
 	public GroupPopulationReport(ReportId reportId,ReportPeriod reportPeriod) {
 		super(reportId,reportPeriod);

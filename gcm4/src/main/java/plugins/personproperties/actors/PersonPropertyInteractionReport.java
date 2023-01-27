@@ -19,7 +19,7 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport2;
+import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -42,7 +42,7 @@ import plugins.reports.support.ReportPeriod;
  *
  *
  */
-public final class PersonPropertyInteractionReport extends PeriodicReport2 {
+public final class PersonPropertyInteractionReport extends PeriodicReport {
 
 	public PersonPropertyInteractionReport(ReportId reportId, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
 		super(reportId, reportPeriod);

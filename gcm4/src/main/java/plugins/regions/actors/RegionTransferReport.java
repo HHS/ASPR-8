@@ -10,7 +10,7 @@ import plugins.people.support.PersonId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport2;
+import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -37,7 +37,7 @@ import util.wrappers.MutableInteger;
  *
  *
  */
-public final class RegionTransferReport extends PeriodicReport2 {
+public final class RegionTransferReport extends PeriodicReport {
 
 	public RegionTransferReport(ReportId reportId, ReportPeriod reportPeriod) {
 		super(reportId, reportPeriod);

@@ -15,7 +15,7 @@ import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.events.RegionAdditionEvent;
 import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport2;
+import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
@@ -89,7 +89,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class ResourceReport extends PeriodicReport2 {
+public final class ResourceReport extends PeriodicReport {
 
 	public ResourceReport(ReportId reportId, ReportPeriod reportPeriod, ResourceId... resourceIds) {
 		super(reportId, reportPeriod);

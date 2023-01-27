@@ -2,7 +2,6 @@ package plugins.reports;
 
 import java.util.function.Consumer;
 
-import nucleus.ActorContext;
 import nucleus.Plugin;
 import nucleus.ReportContext;
 
@@ -44,10 +43,7 @@ public class ReportsPlugin {
 						.setPluginId(ReportsPluginId.PLUGIN_ID)//
 						.setInitializer((c) -> {
 							ReportsPluginData pluginData = c.getPluginData(ReportsPluginData.class);
-							for (Consumer<ActorContext> consumer : pluginData.getReports()) {
-								c.addActor(consumer);
-							}
-							for (Consumer<ReportContext> consumer : pluginData.getReports2()) {
+							for (Consumer<ReportContext> consumer : pluginData.getReports()) {
 								c.addReport(consumer);
 							}
 						}).build();//

@@ -17,7 +17,7 @@ import plugins.personproperties.support.PersonPropertyId;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.events.PersonRegionUpdateEvent;
 import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport2;
+import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportError;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -45,7 +45,7 @@ import util.errors.ContractException;
  *
  *
  */
-public final class PersonPropertyReport extends PeriodicReport2 {
+public final class PersonPropertyReport extends PeriodicReport {
 
 	/*
 	 * Data class for collecting the inputs to the report
