@@ -1228,7 +1228,7 @@ public class AT_DataManagerContext {
 			this.observedPairs = observedPairs;
 		}
 
-		public void init(DataManagerContext dataManagerContext) {
+		protected void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			this.dataManagerContext = dataManagerContext;
 		}
