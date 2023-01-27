@@ -34,7 +34,7 @@ public class TestDataManager extends DataManager {
 	 * in the ActionDataView that were associated with its alias.
 	 */
 	@Override
-	public void init(DataManagerContext dataManagerContext) {
+	protected void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		TestPlanDataManager testPlanDataManager = dataManagerContext.getDataManager(TestPlanDataManager.class);
 

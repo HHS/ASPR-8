@@ -218,7 +218,7 @@ public final class MaterialsDataManager extends DataManager {
 	private RegionsDataManager regionsDataManager;
 
 	@Override
-	public void init(DataManagerContext dataManagerContext) {
+	protected void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);

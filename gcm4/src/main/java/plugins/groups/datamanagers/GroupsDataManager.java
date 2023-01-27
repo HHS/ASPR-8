@@ -192,7 +192,7 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 */
 	@Override
-	public void init(DataManagerContext dataManagerContext) {
+	protected void init(DataManagerContext dataManagerContext) {
 
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {

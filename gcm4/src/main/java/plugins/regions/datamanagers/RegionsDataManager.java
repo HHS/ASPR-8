@@ -668,7 +668,7 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 */
 	@Override
-	public void init(final DataManagerContext dataManagerContext) {
+	protected void init(final DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 
 		this.dataManagerContext = dataManagerContext;
