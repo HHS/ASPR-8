@@ -1141,6 +1141,10 @@ public class Simulation {
 		if (event == null) {
 			throw new ContractException(NucleusError.NULL_EVENT);
 		}
+		
+		if(!dataManagerQueueActive) {
+			throw new ContractException(NucleusError.OBSERVATION_EVENT_IMPROPER_RELEASE);
+		}
 
 		// queue the event handling by reports
 		List<ReportEventConsumer> reportConsumers = reportEventMap.get(event.getClass());

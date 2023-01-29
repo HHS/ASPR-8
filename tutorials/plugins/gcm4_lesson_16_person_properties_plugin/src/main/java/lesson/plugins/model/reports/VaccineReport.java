@@ -1,9 +1,9 @@
-package lesson.plugins.model.actors;
+package lesson.plugins.model.reports;
 
 import java.util.List;
 
 import lesson.plugins.model.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -19,8 +19,8 @@ public final class VaccineReport {
 		this.reportId = reportId;
 	}
 
-	public void init(ActorContext actorContext) {
-		actorContext.subscribeToSimulationClose(this::report);
+	public void init(ReportContext reportContext) {
+		reportContext.subscribeToSimulationClose(this::report);
 	}
 
 	private ReportHeader reportHeader = ReportHeader.builder()//
@@ -30,9 +30,9 @@ public final class VaccineReport {
 													.add("unvaccinated_susceptible")//
 													.build();
 
-	private void report(ActorContext actorContext) {
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+	private void report(ReportContext reportContext) {
+		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 
 		int vaccinated_immune = 0;
 		int vaccinated_susceptible = 0;
@@ -68,7 +68,7 @@ public final class VaccineReport {
 		builder.addValue(unvaccinated_susceptible);
 
 		ReportItem reportItem = builder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 	}
 
 }

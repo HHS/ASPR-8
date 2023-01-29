@@ -1,11 +1,11 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import java.util.List;
 
 import lesson.plugins.model.support.Material;
 import lesson.plugins.model.support.MaterialsProducer;
 import lesson.plugins.model.support.Resource;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.materials.datamangers.MaterialsDataManager;
 import plugins.materials.events.StageOfferUpdateEvent;
 import plugins.materials.support.BatchId;
@@ -44,12 +44,12 @@ public final class VaccineProductionReport extends PeriodicReport {
 	}
 
 	@Override
-	public void init(ActorContext actorContext) {
-		super.init(actorContext);
+	public void init(ReportContext reportContext) {
+		super.init(reportContext);
 
-		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
-		resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
-		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
+		resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
+		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
 		final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		addTimeFieldHeaders(reportHeaderBuilder);//
@@ -87,13 +87,13 @@ public final class VaccineProductionReport extends PeriodicReport {
 
 		reportHeader = reportHeaderBuilder.build();
 
-		actorContext.subscribe(materialsDataManager.getEventFilterForStageOfferUpdateEvent(), this::handleStageOfferUpdateEvent);
+		reportContext.subscribe(StageOfferUpdateEvent.class, this::handleStageOfferUpdateEvent);
 
 	}
 
 	private double periodAntigenProduction;
 	
-	private void handleStageOfferUpdateEvent(ActorContext actorContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
+	private void handleStageOfferUpdateEvent(ReportContext reportContext, StageOfferUpdateEvent stageOfferUpdateEvent) {
 		if (stageOfferUpdateEvent.currentOfferState()) {
 			StageId stageId = stageOfferUpdateEvent.stageId();
 			MaterialsProducerId materialsProducerId = materialsDataManager.getStageProducer(stageId);
@@ -140,7 +140,7 @@ public final class VaccineProductionReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(final ActorContext actorContext) {
+	protected void flush(final ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportId(getReportId());
 		reportItemBuilder.setReportHeader(reportHeader);
@@ -173,7 +173,7 @@ public final class VaccineProductionReport extends PeriodicReport {
 		reportItemBuilder.addValue(getVaccineCountDistributedToPeople());
 
 		final ReportItem reportItem = reportItemBuilder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 	}
 
 }

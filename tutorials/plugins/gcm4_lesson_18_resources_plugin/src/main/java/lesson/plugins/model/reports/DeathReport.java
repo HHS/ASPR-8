@@ -1,9 +1,9 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import java.util.List;
 
 import lesson.plugins.model.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.regions.datamanagers.RegionsDataManager;
@@ -25,13 +25,13 @@ public final class DeathReport {
 		this.reportId = reportId;
 	}
 
-	public void init(ActorContext actorContext) {
-		actorContext.subscribeToSimulationClose(this::report);
+	public void init(ReportContext reportContext) {
+		reportContext.subscribeToSimulationClose(this::report);
 	}
 
-	private void report(ActorContext actorContext) {
-		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
-		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+	private void report(ReportContext reportContext) {
+		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		
 		ReportHeader reportHeader = ReportHeader.builder()//
 												.add("region")//
@@ -87,7 +87,7 @@ public final class DeathReport {
 			/*
 			 * Release the report item from the simulation
 			 */
-			actorContext.releaseOutput(reportItem);
+			reportContext.releaseOutput(reportItem);
 
 		}
 

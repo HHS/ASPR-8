@@ -1,8 +1,8 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
@@ -25,15 +25,15 @@ public final class DiseaseStateReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(final ActorContext actorContext) {
+	protected void flush(final ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportId(getReportId());
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
-		reportItemBuilder.addValue(actorContext.getTime());
+		reportItemBuilder.addValue(reportContext.getTime());
 		
 		
-		final PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+		final PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
 		reportItemBuilder.addValue(vaccinatedCount);
 		for (final DiseaseState diseaseState : DiseaseState.values()) {
@@ -42,7 +42,7 @@ public final class DiseaseStateReport extends PeriodicReport {
 		}
 
 		final ReportItem reportItem = reportItemBuilder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 
 	}
 
@@ -61,8 +61,8 @@ public final class DiseaseStateReport extends PeriodicReport {
 	}
 
 	@Override
-	public void init(final ActorContext actorContext) {
-		super.init(actorContext);
+	public void init(final ReportContext reportContext) {
+		super.init(reportContext);
 	}
 
 }

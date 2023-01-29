@@ -1,19 +1,20 @@
-package lesson.plugins.vaccine;
+package lesson.plugins.vaccine.reports;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import lesson.plugins.family.FamilyAdditionEvent;
-import lesson.plugins.family.FamilyDataManager;
-import lesson.plugins.family.FamilyId;
-import lesson.plugins.family.FamilyMemberShipAdditionEvent;
-import lesson.plugins.person.PersonAdditionEvent;
-import lesson.plugins.person.PersonDataManager;
-import lesson.plugins.person.PersonId;
-import nucleus.ActorContext;
-import nucleus.EventFilter;
+import lesson.plugins.family.datamanagers.FamilyDataManager;
+import lesson.plugins.family.events.FamilyAdditionEvent;
+import lesson.plugins.family.events.FamilyMemberShipAdditionEvent;
+import lesson.plugins.family.support.FamilyId;
+import lesson.plugins.person.datamanagers.PersonDataManager;
+import lesson.plugins.person.events.PersonAdditionEvent;
+import lesson.plugins.person.support.PersonId;
+import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
+import lesson.plugins.vaccine.events.VaccinationEvent;
+import nucleus.ReportContext;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -122,26 +123,26 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 	}
 
-	public void init(ActorContext actorContext) {
-		super.init(actorContext);
+	public void init(ReportContext reportContext) {
+		super.init(reportContext);
 
 		/*
 		 * Subscribe to all the relevant events
 		 */
 
-		subscribe(EventFilter.builder(VaccinationEvent.class).build(), this::handleVaccinationEvent);
-		subscribe(EventFilter.builder(FamilyAdditionEvent.class).build(), this::handleFamilyAdditionEvent);
-		subscribe(EventFilter.builder(FamilyMemberShipAdditionEvent.class).build(), this::handleFamilyMemberShipAdditionEvent);
-		subscribe(EventFilter.builder(PersonAdditionEvent.class).build(), this::handlePersonAdditionEvent);
+		subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
+		subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
+		subscribe(FamilyMemberShipAdditionEvent.class, this::handleFamilyMemberShipAdditionEvent);
+		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
 		/*
 		 * Some of the events may have already occurred before we initialize
 		 * this report, so we will need to build up out status maps
 		 */
 
-		familyDataManager = actorContext.getDataManager(FamilyDataManager.class);
-		vaccinationDataManager = actorContext.getDataManager(VaccinationDataManager.class);
-		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
+		familyDataManager = reportContext.getDataManager(FamilyDataManager.class);
+		vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
+		PersonDataManager personDataManager = reportContext.getDataManager(PersonDataManager.class);
 
 		for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			statusToFamiliesMap.put(familyVaccineStatus, new MutableInteger());
@@ -164,7 +165,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
+	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.getPersonId();
 		Optional<FamilyId> optional = familyDataManager.getFamilyId(personId);
 		if (optional.isEmpty()) {
@@ -176,7 +177,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 	}
 
-	private void handleVaccinationEvent(ActorContext actorContext, VaccinationEvent vaccinationEvent) {
+	private void handleVaccinationEvent(ReportContext reportContext, VaccinationEvent vaccinationEvent) {
 		PersonId personId = vaccinationEvent.getPersonId();
 
 		Optional<FamilyId> optional = familyDataManager.getFamilyId(personId);
@@ -189,11 +190,11 @@ public class HourlyVaccineReport extends PeriodicReport {
 		}
 	}
 
-	private void handleFamilyAdditionEvent(ActorContext actorContext, FamilyAdditionEvent familyAdditionEvent) {
+	private void handleFamilyAdditionEvent(ReportContext reportContext, FamilyAdditionEvent familyAdditionEvent) {
 		refreshFamilyStatus(familyAdditionEvent.getFamilyId());
 	}
 
-	private void handleFamilyMemberShipAdditionEvent(ActorContext actorContext, FamilyMemberShipAdditionEvent familyMemberShipAdditionEvent) {
+	private void handleFamilyMemberShipAdditionEvent(ReportContext reportContext, FamilyMemberShipAdditionEvent familyMemberShipAdditionEvent) {
 		individualToStatusMap.remove(familyMemberShipAdditionEvent.getPersonId());
 		refreshFamilyStatus(familyMemberShipAdditionEvent.getFamilyId());
 	}
@@ -201,7 +202,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 	private ReportHeader reportHeader;
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder builder = ReportItem	.builder()//
 												.setReportId(getReportId())//
 												.setReportHeader(reportHeader);
@@ -215,7 +216,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 			builder.addValue(mutableInteger.getValue());
 		}
 		ReportItem reportItem = builder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 	}
 
 }

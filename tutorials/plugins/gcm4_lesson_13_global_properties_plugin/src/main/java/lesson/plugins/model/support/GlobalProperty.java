@@ -1,4 +1,4 @@
-package lesson.plugins.model;
+package lesson.plugins.model.support;
 
 import plugins.globalproperties.support.GlobalPropertyId;
 

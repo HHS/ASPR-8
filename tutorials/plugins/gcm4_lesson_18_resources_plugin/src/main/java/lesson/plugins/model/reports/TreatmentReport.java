@@ -1,10 +1,10 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lesson.plugins.model.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
@@ -27,13 +27,13 @@ public final class TreatmentReport {
 		this.reportId = reportId;
 	}
 
-	public void init(ActorContext actorContext) {
-		actorContext.subscribeToSimulationClose(this::report);
+	public void init(ReportContext reportContext) {
+		reportContext.subscribeToSimulationClose(this::report);
 	}
 
-	private void report(ActorContext actorContext) {
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+	private void report(ReportContext reportContext) {
+		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		/*
 		 * Build a map from a multikey to a counter. Each person's ordered
 		 * person property values will form the multikey. The counter is
@@ -101,7 +101,7 @@ public final class TreatmentReport {
 			/*
 			 * Release the report item from the simulation
 			 */
-			actorContext.releaseOutput(reportItem);
+			reportContext.releaseOutput(reportItem);
 		}
 
 	}

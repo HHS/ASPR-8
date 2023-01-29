@@ -1,4 +1,4 @@
-package lesson.plugins.person;
+package lesson.plugins.person.support;
 
 import net.jcip.annotations.Immutable;
 

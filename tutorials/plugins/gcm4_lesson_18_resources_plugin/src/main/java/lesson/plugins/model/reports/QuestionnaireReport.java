@@ -1,9 +1,9 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import java.util.List;
 
 import lesson.plugins.model.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
@@ -24,12 +24,12 @@ public final class QuestionnaireReport {
 		this.reportId = reportId;
 	}
 
-	public void init(ActorContext actorContext) {
-		actorContext.subscribeToSimulationClose(this::report);
+	public void init(ReportContext reportContext) {
+		reportContext.subscribeToSimulationClose(this::report);
 	}
 
-	private void report(ActorContext actorContext) {
-		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+	private void report(ReportContext reportContext) {
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 
 		ReportHeader reportHeader = ReportHeader.builder()//
 												.add("delivery rate")//
@@ -69,7 +69,7 @@ public final class QuestionnaireReport {
 
 		ReportItem reportItem = reportItemBuilder.build();
 
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 
 	}
 }

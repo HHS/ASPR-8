@@ -42,7 +42,7 @@ public enum NucleusError implements ContractError {
 	NULL_DATA_VIEW_CLASS("Null data view class"),
 	NULL_DATA_MANAGER_CONTEXT_CONSUMER("Null data manager context consumer"),
 	NULL_CLASS_REFERENCE("Null class reference"),
-	NULL_EVENT("Event is null"),
+	NULL_EVENT("Event is null"),	
 	NULL_EVENT_CLASS("Null event class"),
 	NULL_EVENT_CONSUMER("Null event consumer"),
 	NULL_EVENT_LABEL("Null event label"),
@@ -84,7 +84,7 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_PLUGIN_DATA_CLASS("Unknown plugin data class"),
 	UNKNOWN_SCENARIO_ID("Unknown scenario id"),
 	UNREADABLE_SCEANARIO_PROGRESS("The scenario progress file is unreadable"),
-	
+	OBSERVATION_EVENT_IMPROPER_RELEASE("An observation event is being released during a mutation by a data manager without the use of a corresponding mutation event"),
 	UNKNOWN_FUNCTION_ID("Unknown event function id"),
 	NULL_FUNCTION_ID("Null function id"),
 	NULL_FUNCTION_VALUE("Null event function value"),

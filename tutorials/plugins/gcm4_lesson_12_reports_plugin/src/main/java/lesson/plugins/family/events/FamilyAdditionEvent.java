@@ -1,5 +1,6 @@
-package lesson.plugins.family;
+package lesson.plugins.family.events;
 
+import lesson.plugins.family.support.FamilyId;
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
 

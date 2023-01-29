@@ -1,46 +1,69 @@
-package lesson.plugins.person;
+package lesson.plugins.person.datamanagers;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import lesson.plugins.person.events.PersonAdditionEvent;
+import lesson.plugins.person.events.PersonRemovalEvent;
+import lesson.plugins.person.support.PersonId;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 
-public final class PersonDataManager extends DataManager{
-	
+public final class PersonDataManager extends DataManager {
+
 	private int masterPersonId;
-	
+
 	private Set<PersonId> people = new LinkedHashSet<>();
-	
+
 	private DataManagerContext dataManagerContext;
-	
+
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
+		dataManagerContext.subscribe(PersonAdditionMutationEvent.class, this::handlePersonAdditionMutationEvent);
+		dataManagerContext.subscribe(PersonRemovalMutationEvent.class, this::handlePersonRemovalMutationEvent);
 	}
-	
+
+	private static record PersonAdditionMutationEvent(PersonId personId) implements Event {
+	}
+
 	public PersonId addPerson() {
 		PersonId personId = new PersonId(masterPersonId++);
-		people.add(personId);
-		dataManagerContext.releaseEvent(new PersonAdditionEvent(personId));
+		dataManagerContext.releaseMutationEvent(new PersonAdditionMutationEvent(personId));
 		return personId;
 	}
-	
+
+	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext, PersonAdditionMutationEvent personAdditionMutationEvent) {
+		PersonId personId = personAdditionMutationEvent.personId();
+		people.add(personId);
+		dataManagerContext.releaseObservationEvent(new PersonAdditionEvent(personId));
+	}
+
 	public boolean personExists(PersonId personId) {
 		return people.contains(personId);
 	}
-	
-	public Set<PersonId> getPeople(){
+
+	public Set<PersonId> getPeople() {
 		return new LinkedHashSet<>(people);
 	}
-	
+
+	private static record PersonRemovalMutationEvent(PersonId personId) implements Event {
+	}
+
 	public void removePerson(PersonId personId) {
-		if(!personExists(personId)) {
-			throw new RuntimeException("person "+personId+" does not exist");
+		dataManagerContext.releaseMutationEvent(new PersonRemovalMutationEvent(personId));
+	}
+
+	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext, PersonRemovalMutationEvent personRemovalMutationEvent) {
+		PersonId personId = personRemovalMutationEvent.personId();
+		if (!personExists(personId)) {
+			throw new RuntimeException("person " + personId + " does not exist");
 		}
 		people.remove(personId);
-		dataManagerContext.releaseEvent(new PersonRemovalEvent(personId));
+		dataManagerContext.releaseObservationEvent(new PersonRemovalEvent(personId));
+
 	}
-	
+
 }

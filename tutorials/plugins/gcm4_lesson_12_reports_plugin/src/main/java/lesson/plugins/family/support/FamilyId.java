@@ -1,4 +1,4 @@
-package lesson.plugins.family;
+package lesson.plugins.family.support;
 
 import net.jcip.annotations.Immutable;
 

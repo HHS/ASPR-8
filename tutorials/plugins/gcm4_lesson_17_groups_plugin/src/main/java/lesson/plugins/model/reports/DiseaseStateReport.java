@@ -1,8 +1,8 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
@@ -37,25 +37,25 @@ public final class DiseaseStateReport extends PeriodicReport {
 	}
 
 	@Override
-	public void init(ActorContext actorContext) {
-		super.init(actorContext);
+	public void init(ReportContext reportContext) {
+		super.init(reportContext);
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportId(getReportId());
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 
-		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		for (DiseaseState diseaseState : DiseaseState.values()) {
 			int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE, diseaseState);
 			reportItemBuilder.addValue(count);
 		}
 
 		ReportItem reportItem = reportItemBuilder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 
 	}
 

@@ -1,14 +1,15 @@
-package lesson.plugins.vaccine;
+package lesson.plugins.vaccine.reports;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import lesson.plugins.family.FamilyDataManager;
-import lesson.plugins.family.FamilyId;
-import lesson.plugins.person.PersonDataManager;
-import lesson.plugins.person.PersonId;
-import nucleus.ActorContext;
+import lesson.plugins.family.datamanagers.FamilyDataManager;
+import lesson.plugins.family.support.FamilyId;
+import lesson.plugins.person.datamanagers.PersonDataManager;
+import lesson.plugins.person.support.PersonId;
+import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
+import nucleus.ReportContext;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
@@ -37,11 +38,11 @@ public class StatelessVaccineReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 
-		FamilyDataManager familyDataManager = actorContext.getDataManager(FamilyDataManager.class);
-		VaccinationDataManager vaccinationDataManager = actorContext.getDataManager(VaccinationDataManager.class);
-		PersonDataManager personDataManager = actorContext.getDataManager(PersonDataManager.class);
+		FamilyDataManager familyDataManager = reportContext.getDataManager(FamilyDataManager.class);
+		VaccinationDataManager vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
+		PersonDataManager personDataManager = reportContext.getDataManager(PersonDataManager.class);
 
 		Map<VaccineStatus, MutableInteger> statusMap = new LinkedHashMap<>();
 		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
@@ -78,7 +79,7 @@ public class StatelessVaccineReport extends PeriodicReport {
 		}
 
 		ReportItem reportItem = builder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 
 	}
 

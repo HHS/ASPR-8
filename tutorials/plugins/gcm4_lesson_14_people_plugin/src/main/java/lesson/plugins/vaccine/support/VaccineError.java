@@ -1,4 +1,4 @@
-package lesson.plugins.vaccine;
+package lesson.plugins.vaccine.support;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

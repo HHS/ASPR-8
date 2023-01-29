@@ -1,6 +1,6 @@
-package lesson.plugins.model;
+package lesson.plugins.model.reports;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.events.PersonImminentRemovalEvent;
@@ -16,7 +16,7 @@ public final class PopulationTraceReport {
 		ADDITION, REMOVAL
 	}
 
-	private ActorContext actorContext;
+	private ReportContext reportContext;
 
 	private ReportHeader reportHeader = ReportHeader.builder()//
 													.add("time")//
@@ -28,24 +28,24 @@ public final class PopulationTraceReport {
 		this.reportId = reportId;
 	}
 
-	public void init(ActorContext actorContext) {
-		this.actorContext = actorContext;
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+	public void init(ReportContext reportContext) {
+		this.reportContext = reportContext;
+		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 
-		actorContext.subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
-		actorContext.subscribe(peopleDataManager.getEventFilterForPersonImminentRemovalEvent(), this::handlePersonImminentRemovalEvent);
+		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
-		for(PersonId personId : peopleDataManager.getPeople()) {
+		for (PersonId personId : peopleDataManager.getPeople()) {
 			generateReportItem(Action.ADDITION, personId);
 		}
-		
+
 	}
 
-	private void handlePersonImminentRemovalEvent(ActorContext actorContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
 		generateReportItem(Action.REMOVAL, personImminentRemovalEvent.personId());
 	}
 
-	private void handlePersonAdditionEvent(ActorContext actorContext, PersonAdditionEvent personAdditionEvent) {
+	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {
 		generateReportItem(Action.ADDITION, personAdditionEvent.personId());
 	}
 
@@ -53,11 +53,11 @@ public final class PopulationTraceReport {
 		ReportItem reportItem = ReportItem	.builder()//
 											.setReportId(reportId)//
 											.setReportHeader(reportHeader)//
-											.addValue(actorContext.getTime())//
+											.addValue(reportContext.getTime())//
 											.addValue(personId)//
 											.addValue(action)//
 											.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 	}
 
 }

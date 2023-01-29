@@ -1,4 +1,4 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.ReportHeader;
@@ -24,12 +24,12 @@ public final class ContagionReport {
 		this.reportId = reportId;
 	}
 
-	public void init(ActorContext actorContext) {
-		actorContext.subscribeToSimulationClose(this::report);
+	public void init(ReportContext reportContext) {
+		reportContext.subscribeToSimulationClose(this::report);
 	}
 
-	private void report(ActorContext actorContext) {
-		PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+	private void report(ReportContext reportContext) {
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		List<PersonId> people = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.RECOVERED);
 
 		Map<Integer, MutableInteger> countMap = new TreeMap<>();
@@ -59,7 +59,7 @@ public final class ContagionReport {
 			reportItemBuilder.addValue(i);
 			reportItemBuilder.addValue(mutableInteger.getValue());
 			ReportItem reportItem = reportItemBuilder.build();
-			actorContext.releaseOutput(reportItem);
+			reportContext.releaseOutput(reportItem);
 		}
 
 	}

@@ -1,10 +1,10 @@
-package lesson.plugins.model;
+package lesson.plugins.model.actors;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import lesson.plugins.vaccine.VaccineInitialization;
+import lesson.plugins.vaccine.support.VaccineInitialization;
 import nucleus.ActorContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonConstructionData;

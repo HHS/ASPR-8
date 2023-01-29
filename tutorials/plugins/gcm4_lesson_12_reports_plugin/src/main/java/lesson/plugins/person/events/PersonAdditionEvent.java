@@ -1,5 +1,6 @@
-package lesson.plugins.person;
+package lesson.plugins.person.events;
 
+import lesson.plugins.person.support.PersonId;
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
 

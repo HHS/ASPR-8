@@ -1,11 +1,12 @@
-package lesson.plugins.vaccine;
+package lesson.plugins.vaccine.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.ActorContext;
+import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
+import nucleus.ReportContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
 import plugins.reports.support.PeriodicReport;
@@ -38,16 +39,16 @@ public final class VaccineReport extends PeriodicReport {
 
 	private PeopleDataManager peopleDataManager;
 
-	public void init(ActorContext actorContext) {
-		super.init(actorContext);
-		vaccinationDataManager = actorContext.getDataManager(VaccinationDataManager.class);
-		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
+	public void init(ReportContext reportContext) {
+		super.init(reportContext);
+		vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
+		peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
 	}
 
 	private ReportHeader reportHeader;
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 		Map<Integer, MutableInteger> peopleByVaccineCount = new LinkedHashMap<>();
 		for (int i = 0; i <= maxVaccinedCount; i++) {
 			peopleByVaccineCount.put(i, new MutableInteger());
@@ -56,7 +57,7 @@ public final class VaccineReport extends PeriodicReport {
 			int vaccinationCount = vaccinationDataManager.getPersonVaccinationCount(personId);
 			MutableInteger mutableInteger = peopleByVaccineCount.get(vaccinationCount);
 			if (mutableInteger == null) {
-				mutableInteger = peopleByVaccineCount.get(maxVaccinedCount);				
+				mutableInteger = peopleByVaccineCount.get(maxVaccinedCount);
 			}
 			mutableInteger.increment();
 		}
@@ -64,13 +65,13 @@ public final class VaccineReport extends PeriodicReport {
 												.setReportId(getReportId())//
 												.setReportHeader(reportHeader);
 		fillTimeFields(builder);
-		
+
 		for (int i = 0; i <= maxVaccinedCount; i++) {
 			builder.addValue(peopleByVaccineCount.get(i).getValue());
 		}
 
 		ReportItem reportItem = builder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 	}
 
 }

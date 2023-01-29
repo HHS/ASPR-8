@@ -1,4 +1,4 @@
-package lesson.plugins.vaccine;
+package lesson.plugins.vaccine.support;
 
 /**
  * Represents the initial vaccine count for a person 

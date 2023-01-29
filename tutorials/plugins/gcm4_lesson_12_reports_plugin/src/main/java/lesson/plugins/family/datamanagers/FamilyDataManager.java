@@ -1,4 +1,4 @@
-package lesson.plugins.family;
+package lesson.plugins.family.datamanagers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,11 +8,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import lesson.plugins.person.PersonDataManager;
-import lesson.plugins.person.PersonId;
-import lesson.plugins.person.PersonRemovalEvent;
+import lesson.plugins.family.FamilyPluginData;
+import lesson.plugins.family.events.FamilyAdditionEvent;
+import lesson.plugins.family.events.FamilyMemberShipAdditionEvent;
+import lesson.plugins.family.support.FamilyId;
+import lesson.plugins.person.datamanagers.PersonDataManager;
+import lesson.plugins.person.events.PersonRemovalEvent;
+import lesson.plugins.person.support.PersonId;
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 
 public final class FamilyDataManager extends DataManager {
 
@@ -38,6 +43,9 @@ public final class FamilyDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
 		this.initialFamilyCount = familyPluginData.getFamilyCount();
 		this.maxFamilySize = familyPluginData.getMaxFamilySize();
+		
+		dataManagerContext.subscribe(FamilyAdditionMutationEvent.class, this::handleFamilyAdditionMutationEvent);
+		dataManagerContext.subscribe(FamilyMemberShipAdditionMutationEvent.class, this::handleFamilyMemberShipAdditionMutationEvent);
 	}
 
 	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext, PersonRemovalEvent personRemovalEvent) {
@@ -48,12 +56,19 @@ public final class FamilyDataManager extends DataManager {
 		}
 		System.out.println("Family Data Manager is removing person " + personId + " at time = " + dataManagerContext.getTime());
 	}
+	
+	private static record FamilyAdditionMutationEvent(FamilyId familyId) implements Event {}
 
 	public FamilyId addFamily() {		
 		FamilyId familyId = new FamilyId(masterFamilyId++);
-		familyMap.put(familyId, new LinkedHashSet<>());		
-		dataManagerContext.releaseEvent(new FamilyAdditionEvent(familyId));
+		dataManagerContext.releaseMutationEvent(new FamilyAdditionMutationEvent(familyId));
 		return familyId;
+	}
+	
+	private void handleFamilyAdditionMutationEvent(DataManagerContext dataManagerContext, FamilyAdditionMutationEvent familyAdditionMutationEvent) {
+		FamilyId familyId = familyAdditionMutationEvent.familyId();
+		familyMap.put(familyId, new LinkedHashSet<>());		
+		dataManagerContext.releaseObservationEvent(new FamilyAdditionEvent(familyId));
 	}
 
 	public boolean familyExists(FamilyId familyId) {
@@ -93,8 +108,16 @@ public final class FamilyDataManager extends DataManager {
 	public int getMaxFamilySize() {
 		return this.maxFamilySize;
 	}
+	
+	private static record FamilyMemberShipAdditionMutationEvent(PersonId personId, FamilyId familyId) implements Event{}
 
 	public void addFamilyMember(PersonId personId, FamilyId familyId) {
+		dataManagerContext.releaseMutationEvent(new FamilyMemberShipAdditionMutationEvent(personId, familyId));
+	}
+	
+	private void handleFamilyMemberShipAdditionMutationEvent(DataManagerContext dataManagerContext,FamilyMemberShipAdditionMutationEvent familyMemberShipAdditionMutationEvent) {
+		PersonId personId = familyMemberShipAdditionMutationEvent.personId();
+		FamilyId familyId = familyMemberShipAdditionMutationEvent.familyId();
 		if (!personDataManager.personExists(personId)) {
 			throw new RuntimeException("unknown person " + personId);
 		}
@@ -112,8 +135,7 @@ public final class FamilyDataManager extends DataManager {
 		familyMap.get(familyId).add(personId);
 		personMap.put(personId, familyId);
 		
-		dataManagerContext.releaseEvent(new FamilyMemberShipAdditionEvent(familyId, personId));
-
+		dataManagerContext.releaseObservationEvent(new FamilyMemberShipAdditionEvent(familyId, personId));
 	}
 
 }

@@ -1,14 +1,13 @@
-package lesson.plugins.model.actors.reports;
+package lesson.plugins.model.reports;
 
 import lesson.plugins.model.support.PersonProperty;
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import plugins.reports.support.PeriodicReport;
 import plugins.reports.support.ReportHeader;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.ReportItem;
 import plugins.reports.support.ReportPeriod;
-
 
 public final class VaccineReport extends PeriodicReport {
 
@@ -19,36 +18,36 @@ public final class VaccineReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(final ActorContext actorContext) {
+	protected void flush(final ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportId(getReportId());
 		reportItemBuilder.setReportHeader(getReportHeader());
-		fillTimeFields(reportItemBuilder);				
-		
-		final PersonPropertiesDataManager personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
+		fillTimeFields(reportItemBuilder);
+
+		final PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
 		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
 		reportItemBuilder.addValue(vaccinatedCount);
 		int vaccineScheduledCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINE_SCHEDULED, true);
 		reportItemBuilder.addValue(vaccineScheduledCount);
 
 		final ReportItem reportItem = reportItemBuilder.build();
-		actorContext.releaseOutput(reportItem);
+		reportContext.releaseOutput(reportItem);
 	}
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			addTimeFieldHeaders(reportHeaderBuilder);//			
+			addTimeFieldHeaders(reportHeaderBuilder);//
 			reportHeaderBuilder.add("vaccine_scheduled");
-			reportHeaderBuilder.add("vaccinated");			
+			reportHeaderBuilder.add("vaccinated");
 			reportHeader = reportHeaderBuilder.build();
 		}
 		return reportHeader;
 	}
 
 	@Override
-	public void init(final ActorContext actorContext) {
-		super.init(actorContext);
+	public void init(final ReportContext reportContext) {
+		super.init(reportContext);
 	}
 
 }

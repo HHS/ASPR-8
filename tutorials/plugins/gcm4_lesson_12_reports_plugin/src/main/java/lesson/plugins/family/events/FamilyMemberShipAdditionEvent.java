@@ -1,6 +1,7 @@
-package lesson.plugins.family;
+package lesson.plugins.family.events;
 
-import lesson.plugins.person.PersonId;
+import lesson.plugins.family.support.FamilyId;
+import lesson.plugins.person.support.PersonId;
 import nucleus.Event;
 
 public final class FamilyMemberShipAdditionEvent implements Event {

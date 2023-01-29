@@ -1,6 +1,6 @@
-package lesson.plugins.vaccine;
+package lesson.plugins.vaccine.events;
 
-import lesson.plugins.person.PersonId;
+import lesson.plugins.person.support.PersonId;
 import net.jcip.annotations.Immutable;
 import nucleus.Event;
 
