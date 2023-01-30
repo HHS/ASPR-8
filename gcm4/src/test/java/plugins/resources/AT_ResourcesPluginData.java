@@ -159,6 +159,10 @@ public final class AT_ResourcesPluginData {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
+			
+			// replacing data to show that the value persists
+			builder.addResource(testResourceId);
+			// adding duplicate data to show that the value persists
 			builder.addResource(testResourceId);
 			expectedResourceIds.add(testResourceId);
 		}
@@ -170,10 +174,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource id is null
 		ContractException contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().addResource(null));
 		assertEquals(ResourceError.NULL_RESOURCE_ID, contractException.getErrorType());
-
-		// if the resource id was previously added
-		contractException = assertThrows(ContractException.class, () -> ResourcesPluginData.builder().addResource(TestResourceId.RESOURCE_1).addResource(TestResourceId.RESOURCE_1));
-		assertEquals(ResourceError.DUPLICATE_RESOURCE_ID, contractException.getErrorType());
 
 	}
 
@@ -187,6 +187,11 @@ public final class AT_ResourcesPluginData {
 			Set<TestResourcePropertyId> testResourcePropertyIds = TestResourcePropertyId.getTestResourcePropertyIds(testResourceId);
 			for (TestResourcePropertyId testResourcePropertyId : testResourcePropertyIds) {
 				PropertyDefinition propertyDefinition = testResourcePropertyId.getPropertyDefinition();
+				PropertyDefinition propertyDefinition2 = testResourcePropertyId.next().getPropertyDefinition();
+				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition2);
+				// replacing data to show that the value persists
+				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
+				// adding duplicate data to show that values persist
 				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
 			}
 		}
@@ -225,14 +230,6 @@ public final class AT_ResourcesPluginData {
 			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, null);
 		});
 		assertEquals(PropertyError.NULL_PROPERTY_DEFINITION, contractException.getErrorType());
-
-		// if a resource property definition for the given resource id and
-		// property id was previously defined.
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition).defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_DEFINITION, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -262,6 +259,10 @@ public final class AT_ResourcesPluginData {
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				if (randomGenerator.nextBoolean()) {
 					long amount = randomGenerator.nextInt(10);
+					builder.setPersonResourceLevel(personId, testResourceId, amount + 1);
+					// replacing data to show that the value persists
+					builder.setPersonResourceLevel(personId, testResourceId, amount);
+					// adding duplicate data to show that the value persists
 					builder.setPersonResourceLevel(personId, testResourceId, amount);
 					MultiKey multiKey = new MultiKey(personId, testResourceId, amount);
 					expectedValues.add(multiKey);
@@ -300,13 +301,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource amount is negative
 		contractException = assertThrows(ContractException.class, () -> builder.setPersonResourceLevel(personId, resourceId, -5L));
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
-
-		// if the person's resource level was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setPersonResourceLevel(personId, resourceId, amount).setPersonResourceLevel(personId, resourceId, amount);
-		});
-		assertEquals(ResourceError.DUPLICATE_PERSON_RESOURCE_LEVEL_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -330,6 +324,10 @@ public final class AT_ResourcesPluginData {
 				expectedValues.put(multiKey, mutableInteger);
 				if (randomGenerator.nextBoolean()) {
 					int amount = randomGenerator.nextInt(10);
+					builder.setRegionResourceLevel(testRegionId, testResourceId, amount + 1);
+					// replacing data to show that the value persists
+					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
+					// adding duplicate data to show that the value persists
 					builder.setRegionResourceLevel(testRegionId, testResourceId, amount);
 					mutableInteger.setValue(amount);
 				}
@@ -372,13 +370,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource amount is negative
 		contractException = assertThrows(ContractException.class, () -> builder.setRegionResourceLevel(regionId, resourceId, -5L));
 		assertEquals(ResourceError.NEGATIVE_RESOURCE_AMOUNT, contractException.getErrorType());
-
-		// if the person's resource level was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setRegionResourceLevel(regionId, resourceId, amount).setRegionResourceLevel(regionId, resourceId, amount);
-		});
-		assertEquals(ResourceError.DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -400,6 +391,15 @@ public final class AT_ResourcesPluginData {
 				builder.defineResourceProperty(testResourceId, testResourcePropertyId, propertyDefinition);
 				if (randomGenerator.nextBoolean()) {
 					Object value = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+					Object value2 = testResourcePropertyId.getRandomPropertyValue(randomGenerator);
+
+					if (value instanceof Boolean) {
+						value2 = !(Boolean) value;
+					}
+					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value2);
+					// replacing data to show that the value persists
+					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
+					// adding duplicate data to show that the value persists
 					builder.setResourcePropertyValue(testResourceId, testResourcePropertyId, value);
 					expectedValues.put(multiKey, value);
 				}
@@ -433,29 +433,27 @@ public final class AT_ResourcesPluginData {
 		// if the resource property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// if the resource property value was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setResourcePropertyValue(resourceId, resourcePropertyId, 5).setResourcePropertyValue(resourceId, resourcePropertyId, 5);
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.Builder.class, name = "setResourceTimeTracking", args = { ResourceId.class, TimeTrackingPolicy.class })
 	public void testSetResourceTimeTracking() {
-		// 6539895160899665826L
 
-		int i = 0;
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
+
+		
 		Map<ResourceId, TimeTrackingPolicy> expectedValues = new LinkedHashMap<>();
 
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			if (testResourceId != TestResourceId.RESOURCE_5) {
 				builder.addResource(testResourceId);
-				int index = i % TimeTrackingPolicy.values().length;
-				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[index];
+				TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.getRandomTimeTrackingPolicy(randomGenerator);
+				TimeTrackingPolicy timeTrackingPolicy2 = timeTrackingPolicy.next();
+				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy2);
+				// replacing data to show that the value persists
+				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
+				// adding duplicate data to show that the value persists
 				builder.setResourceTimeTracking(testResourceId, timeTrackingPolicy);
 				expectedValues.put(testResourceId, timeTrackingPolicy);
 			}
@@ -483,14 +481,6 @@ public final class AT_ResourcesPluginData {
 		// ResourceError.NULL_TIME_TRACKING_POLICY
 		contractException = assertThrows(ContractException.class, () -> builder.setResourceTimeTracking(resourceId, null));
 		assertEquals(ResourceError.NULL_TIME_TRACKING_POLICY, contractException.getErrorType());
-
-		// if the resource tracking policy was previously assigned
-		// ResourceError#DUPLICATE_TIME_TRACKING_POLICY_ASSIGNMENT
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setResourceTimeTracking(resourceId, timeTrackingPolicy).setResourceTimeTracking(resourceId, timeTrackingPolicy);
-		});
-		assertEquals(ResourceError.DUPLICATE_TIME_TRACKING_POLICY_ASSIGNMENT, contractException.getErrorType());
-
 	}
 
 	@Test
@@ -825,12 +815,6 @@ public final class AT_ResourcesPluginData {
 		// if the resource property value is null
 		contractException = assertThrows(ContractException.class, () -> builder.setResourcePropertyValue(resourceId, null, 5));
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-
-		// if the resource property value was previously assigned
-		contractException = assertThrows(ContractException.class, () -> {
-			ResourcesPluginData.builder().setResourcePropertyValue(resourceId, resourcePropertyId, 5).setResourcePropertyValue(resourceId, resourcePropertyId, 5);
-		});
-		assertEquals(PropertyError.DUPLICATE_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
 
 	}
 

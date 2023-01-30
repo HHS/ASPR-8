@@ -13,8 +13,6 @@ public enum ResourceError implements ContractError {
 
 	INSUFFICIENT_RESOURCES_AVAILABLE("Resource level is insufficient for transaction amount"),	
 	DUPLICATE_RESOURCE_ID("Duplicate resource"),
-	DUPLICATE_PERSON_RESOURCE_LEVEL_ASSIGNMENT("Duplicate person resource level assignment"),
-	DUPLICATE_TIME_TRACKING_POLICY_ASSIGNMENT("Duplicate time tracking policy assignment"),
 	DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT("Duplicate region resource level assignment"),
 	NEGATIVE_RESOURCE_AMOUNT("Resource amount is negative"),
 	NULL_RESOURCE_ID("Null resource id"),
