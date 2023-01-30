@@ -9,9 +9,9 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
-import lesson.plugins.model.PopulationTraceReport;
-import lesson.plugins.vaccine.VaccineReport;
+import lesson.plugins.model.reports.PopulationTraceReport;
 import lesson.plugins.vaccine.VaccinePlugin;
+import lesson.plugins.vaccine.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;

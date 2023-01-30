@@ -85,10 +85,10 @@ public class AT_BooleanPropertyManager {
 	 * for use in time sensitive tests
 	 */
 	private static class LocalDM extends TestDataManager {
-		public BooleanPropertyManager booleanPropertyManager;
+		protected BooleanPropertyManager booleanPropertyManager;
 
 		@Override
-		public void init(DataManagerContext dataManagerContext) {
+		protected void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(false).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			booleanPropertyManager = new BooleanPropertyManager(dataManagerContext, propertyDefinition, 0);

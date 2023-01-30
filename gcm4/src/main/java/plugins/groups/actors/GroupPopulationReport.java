@@ -3,7 +3,7 @@ package plugins.groups.actors;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.groups.datamanagers.GroupsDataManager;
 import plugins.groups.support.GroupId;
 import plugins.groups.support.GroupTypeId;
@@ -58,7 +58,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {
+	protected void flush(ReportContext reportContext) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -97,7 +97,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 				reportItemBuilder.addValue(personCount);
 				reportItemBuilder.addValue(groupCount);
 				ReportItem reportItem = reportItemBuilder.build();
-				actorContext.releaseOutput(reportItem);
+				reportContext.releaseOutput(reportItem);
 
 			}
 		}
@@ -107,9 +107,9 @@ public final class GroupPopulationReport extends PeriodicReport {
 	private GroupsDataManager groupsDataManager;
 
 	@Override
-	public void init(ActorContext actorContext) {
-		super.init(actorContext);
-		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);
+	public void init(ReportContext reportContext) {
+		super.init(reportContext);
+		groupsDataManager = reportContext.getDataManager(GroupsDataManager.class);
 	}
 
 }

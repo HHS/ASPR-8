@@ -11,7 +11,7 @@ import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportId;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
-import lesson.plugins.model.actors.VaccineReport;
+import lesson.plugins.model.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;

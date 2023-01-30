@@ -84,6 +84,7 @@ public final class Example_11_A {
 					.addDimension(policyDimension)//
 					.addExperimentContextConsumer(new SimpleOutputConsumer())//
 					.setThreadCount(4)//
+					.setHaltOnException(true)//
 					.build()//
 					.execute();
 	}

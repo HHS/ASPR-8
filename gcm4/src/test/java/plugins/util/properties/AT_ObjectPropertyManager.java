@@ -86,7 +86,7 @@ public class AT_ObjectPropertyManager {
 		public ObjectPropertyManager objectPropertyManager;
 
 		@Override
-		public void init(DataManagerContext dataManagerContext) {
+		protected void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("YELLOW").setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			objectPropertyManager = new ObjectPropertyManager(dataManagerContext, propertyDefinition, 0);

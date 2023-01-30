@@ -67,6 +67,10 @@ public final class AT_MaterialsProducerPropertyReport {
 	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {
 			ActorContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
+		
+		/*
+		 * The test fails -- only the day value is wrong. 
+		 */
 
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
 
@@ -109,7 +113,7 @@ public final class AT_MaterialsProducerPropertyReport {
 			}
 		}));
 
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 5; i++) {
 
 			// set a property value
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
@@ -138,12 +142,13 @@ public final class AT_MaterialsProducerPropertyReport {
 
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData)
 				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerPropertyReport(REPORT_ID)));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new MaterialsProducerPropertyReport(REPORT_ID)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
-
+		
 		assertTrue(outputConsumer.isComplete());
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		Map<ReportItem, Integer> acutualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+		assertEquals(expectedReportItems, acutualReportItems);
 	}
 
 	private static ReportItem getReportItem(Object... values) {

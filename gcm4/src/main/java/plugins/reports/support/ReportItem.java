@@ -178,6 +178,13 @@ public final class ReportItem {
 		builder2.append("]");
 		return builder2.toString();
 	}
+	
+	/**
+	 * Returns the values in the form [value[0], value[1], ... ,value[N-1]]
+	 */
+	public String toValueString() {
+		return values.toString();	
+	}
 
 	/**
 	 * Standard hash code implementation

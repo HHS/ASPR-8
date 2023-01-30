@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.reports.support.ReportId;
 import plugins.reports.support.SimpleReportId;
 import tools.annotations.UnitTestMethod;
@@ -51,11 +51,11 @@ public class AT_ReportsPluginData {
 
 		ReportsPluginData reportsPluginData = builder.build();
 
-		Set<Consumer<ActorContext>> reports = reportsPluginData.getReports();
+		Set<Consumer<ReportContext>> reports = reportsPluginData.getReports();
 
 		assertNotNull(reports);
 
-		for (Consumer<ActorContext> report : reports) {
+		for (Consumer<ReportContext> report : reports) {
 			assertNotNull(report);
 			report.accept(null);
 		}
@@ -87,11 +87,11 @@ public class AT_ReportsPluginData {
 
 		ReportsPluginData reportsPluginData = builder.build();
 
-		Set<Consumer<ActorContext>> reports = reportsPluginData.getReports();
+		Set<Consumer<ReportContext>> reports = reportsPluginData.getReports();
 
 		assertNotNull(reports);
 
-		for (Consumer<ActorContext> report : reports) {
+		for (Consumer<ReportContext> report : reports) {
 			assertNotNull(report);
 			report.accept(null);
 		}
@@ -123,11 +123,11 @@ public class AT_ReportsPluginData {
 		ReportsPluginData reportsPluginData = builder.build();
 		ReportsPluginData cloneReportsPluginData = (ReportsPluginData) reportsPluginData.getCloneBuilder().build();
 
-		Set<Consumer<ActorContext>> reports = cloneReportsPluginData.getReports();
+		Set<Consumer<ReportContext>> reports = cloneReportsPluginData.getReports();
 
 		assertNotNull(reports);
 
-		for (Consumer<ActorContext> report : reports) {
+		for (Consumer<ReportContext> report : reports) {
 			assertNotNull(report);
 			report.accept(null);
 		}

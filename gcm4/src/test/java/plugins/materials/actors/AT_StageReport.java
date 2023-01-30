@@ -198,7 +198,7 @@ public final class AT_StageReport {
 
 		List<Plugin> pluginsToAdd = MaterialsTestPluginFactory.factory(0, 0, 0, 542686524159732447L, testPluginData)
 				.getPlugins();
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(REPORT_ID)));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new StageReport(REPORT_ID)::init));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
