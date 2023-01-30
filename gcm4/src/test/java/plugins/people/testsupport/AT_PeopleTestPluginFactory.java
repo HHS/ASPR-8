@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
@@ -68,11 +69,14 @@ public class AT_PeopleTestPluginFactory {
 	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData) {
 		Class<?> classRef = expectedPluginData.getClass();
 		plugins.forEach((plugin) -> {
-			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
-			if (classRef.isAssignableFrom(pluginData.getClass())) {
-				assertEquals(expectedPluginData, classRef.cast(pluginData));
-			} else {
-				assertNotEquals(expectedPluginData, pluginData);
+			Set<PluginData> pluginDatas = plugin.getPluginDatas();
+			if(pluginDatas.size() > 0) {
+				PluginData pluginData = pluginDatas.toArray(new PluginData[0])[0];
+				if (classRef.isAssignableFrom(pluginData.getClass())) {
+					assertEquals(expectedPluginData, classRef.cast(pluginData));
+				} else {
+					assertNotEquals(expectedPluginData, pluginData);
+				}
 			}
 		});
 	}

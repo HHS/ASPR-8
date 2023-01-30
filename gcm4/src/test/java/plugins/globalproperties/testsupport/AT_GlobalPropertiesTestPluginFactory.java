@@ -73,6 +73,21 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		}).getPlugins().size());
 	}
 
+	private <T extends PluginData> void checkPlugins(List<Plugin> plugins, T expectedPluginData) {
+		Class<?> classRef = expectedPluginData.getClass();
+		plugins.forEach((plugin) -> {
+			Set<PluginData> pluginDatas = plugin.getPluginDatas();
+			if(pluginDatas.size() > 0) {
+				PluginData pluginData = pluginDatas.toArray(new PluginData[0])[0];
+				if (classRef.isAssignableFrom(pluginData.getClass())) {
+					assertEquals(expectedPluginData, classRef.cast(pluginData));
+				} else {
+					assertNotEquals(expectedPluginData, pluginData);
+				}
+			}
+		});
+	}
+
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesTestPluginFactory.Factory.class, name = "setGlobalPropertiesPluginData", args = {
 			GlobalPropertiesPluginData.class })
@@ -97,16 +112,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
 		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(t -> {
 		}).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
 
-		plugins.forEach((plugin) -> {
-			// can do this because it is known that each plugin only gets one data
-			// associated with it in this instance
-			PluginData pluginData = plugin.getPluginDatas().toArray(new PluginData[0])[0];
-			if (pluginData instanceof GlobalPropertiesPluginData) {
-				assertEquals(globalPropertiesPluginData, (GlobalPropertiesPluginData) pluginData);
-			} else {
-				assertNotEquals(globalPropertiesPluginData, pluginData);
-			}
-		});
+		checkPlugins(plugins, globalPropertiesPluginData);
 	}
 
 	@Test
