@@ -1,5 +1,6 @@
 package lesson.plugins.family;
 
+import lesson.plugins.family.datamanagers.FamilyDataManager;
 import lesson.plugins.person.PersonPluginId;
 import nucleus.Plugin;
 

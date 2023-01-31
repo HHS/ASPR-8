@@ -14,8 +14,8 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
@@ -60,20 +60,24 @@ public class AT_RegionTransferReport {
 		assertNotNull(regionTransferReport);
 
 		// precondition: null report period
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> new RegionTransferReport(REPORT_ID, null));
+		ContractException contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(REPORT_ID, null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 		// precondition: null report id
-		contractException = assertThrows(ContractException.class,
-				() -> new RegionTransferReport(null, ReportPeriod.DAILY));
+		contractException = assertThrows(ContractException.class, () -> new RegionTransferReport(null, ReportPeriod.DAILY));
 		assertEquals(ReportError.NULL_REPORT_ID, contractException.getErrorType());
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionTransferReport.class, name = "init", args = { ActorContext.class }, tags = {
-			UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = RegionTransferReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
+
+		/*
+		 * TEST IS INCOMPLETE
+		 * 
+		 * This test has to force times to be non integer values and include a
+		 * last task to for proper flushing in the report
+		 */
 
 		List<Plugin> pluginsToAdd = new ArrayList<>();
 
@@ -91,8 +95,7 @@ public class AT_RegionTransferReport {
 
 		// add the region properties
 		RegionPropertyId prop_age = new SimpleRegionPropertyId("prop_age");
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class)
-				.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(3).setType(Integer.class).build();
 		regionBuilder.defineRegionProperty(prop_age, propertyDefinition);
 
 		RegionsPluginData regionsPluginData = regionBuilder.build();
@@ -116,8 +119,7 @@ public class AT_RegionTransferReport {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RegionId[] regionIds = { regionA, regionB, regionC, regionD };
 			for (int i = 0; i < numPeople; i++) {
-				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionIds[i % 4])
-						.build();
+				PersonConstructionData personConstructionData = PersonConstructionData.builder().add(regionIds[i % 4]).build();
 				peopleDataManager.addPerson(personConstructionData);
 			}
 			expectedReportItems.put(getReportItem(0, regionA, regionA, 25), 1);
@@ -127,7 +129,7 @@ public class AT_RegionTransferReport {
 		}));
 
 		// create an actor to move people from one region to another
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.0, (c) -> {
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1.1, (c) -> {
 			RegionsDataManager regionsDataManager = c.getDataManager(RegionsDataManager.class);
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
@@ -162,9 +164,10 @@ public class AT_RegionTransferReport {
 			}
 		}));
 
-		// To get the report for day 1, must do 'something' on day 2 otherwise
-		// the
-		// report for the previous day won't print
+		/*
+		 * To get the report for day 1, must do 'something' on day 2 otherwise
+		 * the report for the previous day won't print
+		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2.0, (c) -> {
 		}));
 
@@ -174,13 +177,29 @@ public class AT_RegionTransferReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		pluginsToAdd.add(testPlugin);
-		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)));
+		pluginsToAdd.add(ReportsTestPluginFactory.getPluginFromReport(new RegionTransferReport(REPORT_ID, ReportPeriod.DAILY)::init));
 		pluginsToAdd.add(StochasticsPlugin.getStochasticsPlugin(StochasticsPluginData.builder().setSeed(3054641152904904632L).build()));
 
 		TestSimulation.executeSimulation(pluginsToAdd, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());
-		assertEquals(expectedReportItems, outputConsumer.getOutputItems(ReportItem.class));
+		Map<ReportItem, Integer> actualReportItems = outputConsumer.getOutputItems(ReportItem.class);
+
+		// for (ReportItem reportItem : expectedReportItems.keySet()) {
+		// System.out.println(reportItem.getValue(0) + "\t" +
+		// reportItem.getValue(1) + "\t" + reportItem.getValue(2) + "\t" +
+		// reportItem.getValue(3));
+		//
+		// }
+		// System.out.println();
+		// for (ReportItem reportItem : actualReportItems.keySet()) {
+		//
+		// System.out.println(reportItem.getValue(0) + "\t" +
+		// reportItem.getValue(1) + "\t" + reportItem.getValue(2) + "\t" +
+		// reportItem.getValue(3));
+		// }
+
+		assertEquals(expectedReportItems, actualReportItems);
 
 		// precondition: Actor context is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -201,6 +220,5 @@ public class AT_RegionTransferReport {
 
 	private static final ReportId REPORT_ID = new SimpleReportId("region transfer report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region")
-			.add("destination_region").add("transfers").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region").add("destination_region").add("transfers").build();
 }

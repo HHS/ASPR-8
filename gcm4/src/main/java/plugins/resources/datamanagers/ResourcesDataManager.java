@@ -10,6 +10,7 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import nucleus.NucleusError;
@@ -445,6 +446,9 @@ public final class ResourcesDataManager extends DataManager {
 		}
 	}
 
+	private static record ResourcePropertyDefinitionMutationEvent(ResourcePropertyInitialization resourcePropertyInitialization) implements Event {
+	}
+
 	/**
 	 * Defines a new resource property. Generates the corresponding
 	 * ResourcePropertyAdditionEvent.
@@ -459,6 +463,12 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 */
 	public void defineResourceProperty(ResourcePropertyInitialization resourcePropertyInitialization) {
+		dataManagerContext.releaseMutationEvent(new ResourcePropertyDefinitionMutationEvent(resourcePropertyInitialization));
+	}
+
+	private void handleResourcePropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, ResourcePropertyDefinitionMutationEvent resourcePropertyDefinitionMutationEvent) {
+		ResourcePropertyInitialization resourcePropertyInitialization = resourcePropertyDefinitionMutationEvent.resourcePropertyInitialization();
+
 		ResourceId resourceId = resourcePropertyInitialization.getResourceId();
 		ResourcePropertyId resourcePropertyId = resourcePropertyInitialization.getResourcePropertyId();
 		PropertyDefinition propertyDefinition = resourcePropertyInitialization.getPropertyDefinition();
@@ -491,8 +501,12 @@ public final class ResourcesDataManager extends DataManager {
 		map.put(resourcePropertyId, propertyValueRecord);
 
 		if (dataManagerContext.subscribersExist(ResourcePropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId, propertyValue));
+			dataManagerContext.releaseObservationEvent(new ResourcePropertyDefinitionEvent(resourceId, resourcePropertyId, propertyValue));
 		}
+
+	}
+
+	private record ResourceIdAdditionMutationEvent(ResourceId resourceId, TimeTrackingPolicy timeTrackingPolicy) implements Event {
 	}
 
 	/**
@@ -507,6 +521,13 @@ public final class ResourcesDataManager extends DataManager {
 	 *             the time tracking policy is null</li>
 	 */
 	public void addResourceId(ResourceId resourceId, TimeTrackingPolicy timeTrackingPolicy) {
+
+		dataManagerContext.releaseMutationEvent(new ResourceIdAdditionMutationEvent(resourceId, timeTrackingPolicy));
+	}
+
+	private void handleResourceIdAdditionMutationEvent(DataManagerContext dataManagerContext, ResourceIdAdditionMutationEvent resourceIdAdditionMutationEvent) {
+		ResourceId resourceId = resourceIdAdditionMutationEvent.resourceId();
+		TimeTrackingPolicy timeTrackingPolicy = resourceIdAdditionMutationEvent.timeTrackingPolicy();
 
 		validateResourceTypeIsUnknown(resourceId);
 
@@ -536,7 +557,7 @@ public final class ResourcesDataManager extends DataManager {
 
 		// release notice that a new resource id has been added
 		if (dataManagerContext.subscribersExist(ResourceIdAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new ResourceIdAdditionEvent(resourceId, timeTrackingPolicy));
+			dataManagerContext.releaseObservationEvent(new ResourceIdAdditionEvent(resourceId, timeTrackingPolicy));
 		}
 
 	}
@@ -722,7 +743,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 */
 	@Override
-	public void init(final DataManagerContext dataManagerContext) {
+	protected void init(final DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		if (dataManagerContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
@@ -827,6 +848,18 @@ public final class ResourcesDataManager extends DataManager {
 		dataManagerContext.subscribe(RegionAdditionEvent.class, this::handleRegionAdditionEvent);
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
+		dataManagerContext.subscribe(ResourceIdAdditionMutationEvent.class, this::handleResourceIdAdditionMutationEvent);
+		dataManagerContext.subscribe(RegionResourceUpdateMutationEvent.class, this::handleRegionResourceUpdateMutationEvent);
+		dataManagerContext.subscribe(ResourcePropertyDefinitionMutationEvent.class, this::handleResourcePropertyDefinitionMutationEvent);
+		dataManagerContext.subscribe(PersonResourceUpdateMutationEvent.class, this::handlePersonResourceUpdateMutationEvent);
+		dataManagerContext.subscribe(RegionResourceRemovalMutationEvent.class, this::handleRegionResourceRemovalMutationEvent);
+		dataManagerContext.subscribe(ResourcePropertyUpdateMutationEvent.class, this::handleResourcePropertyUpdateMutationEvent);
+		dataManagerContext.subscribe(InterRegionalResourceTransferMutationEvent.class, this::handleInterRegionalResourceTransferMutationEvent);
+		dataManagerContext.subscribe(PersonToRegionResourceTransferMutationEvent.class, this::handlePersonToRegionResourceTransferMutationEvent);
+		dataManagerContext.subscribe(RegionToPersonResourceTransferMutationEvent.class, this::handleRegionToPersonResourceTransferMutationEvent);
+
+		
+		
 	}
 
 	private void handleRegionAdditionEvent(DataManagerContext dataManagerContext, RegionAdditionEvent regionAdditionEvent) {
@@ -933,6 +966,9 @@ public final class ResourcesDataManager extends DataManager {
 
 	}
 
+	private static record InterRegionalResourceTransferMutationEvent(ResourceId resourceId, RegionId sourceRegionId, RegionId destinationRegionId, long amount) implements Event {
+	}
+
 	/**
 	 * Transfers resources from one region to another. Generates the
 	 * corresponding {@linkplain RegionResourceUpdateEvent} events for each
@@ -963,7 +999,14 @@ public final class ResourcesDataManager extends DataManager {
 	 *             destination region</li>
 	 */
 	public void transferResourceBetweenRegions(ResourceId resourceId, RegionId sourceRegionId, RegionId destinationRegionId, long amount) {
+		dataManagerContext.releaseMutationEvent(new InterRegionalResourceTransferMutationEvent(resourceId, sourceRegionId, destinationRegionId, amount));
+	}
 
+	private void handleInterRegionalResourceTransferMutationEvent(DataManagerContext dataManagerContext, InterRegionalResourceTransferMutationEvent interRegionalResourceTransferMutationEvent) {
+		ResourceId resourceId = interRegionalResourceTransferMutationEvent.resourceId();
+		RegionId sourceRegionId = interRegionalResourceTransferMutationEvent.sourceRegionId();
+		RegionId destinationRegionId = interRegionalResourceTransferMutationEvent.destinationRegionId();
+		long amount = interRegionalResourceTransferMutationEvent.amount();
 		validateRegionId(sourceRegionId);
 		validateRegionId(destinationRegionId);
 		validateResourceId(resourceId);
@@ -987,8 +1030,8 @@ public final class ResourcesDataManager extends DataManager {
 
 			long currentSourceRegionResourceLevel = sourceRecord.getAmount();
 			long currentDestinationRegionResourceLevel = destinationRecord.getAmount();
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(sourceRegionId, resourceId, previousSourceRegionResourceLevel, currentSourceRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(destinationRegionId, resourceId, previousDestinationRegionResourceLevel, currentDestinationRegionResourceLevel));
 		} else {
 
 			decrementRegionResourceLevel(sourceRegionId, resourceId, amount);
@@ -1029,6 +1072,9 @@ public final class ResourcesDataManager extends DataManager {
 		}
 	}
 
+	private static record PersonResourceUpdateMutationEvent(ResourceId resourceId, PersonId personId, long amount) implements Event {
+	}
+
 	/**
 	 * Expends an amount of resource from a person. Generates the corresponding
 	 * {@linkplain PersonResourceUpdateEvent} event
@@ -1051,7 +1097,13 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 */
 	public void removeResourceFromPerson(ResourceId resourceId, PersonId personId, long amount) {
+		dataManagerContext.releaseMutationEvent(new PersonResourceUpdateMutationEvent(resourceId, personId, amount));
+	}
 
+	private void handlePersonResourceUpdateMutationEvent(DataManagerContext dataManagerContext, PersonResourceUpdateMutationEvent personResourceUpdateMutationEvent) {
+		ResourceId resourceId = personResourceUpdateMutationEvent.resourceId();
+		PersonId personId = personResourceUpdateMutationEvent.personId();
+		long amount = personResourceUpdateMutationEvent.amount();
 		validatePersonExists(personId);
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
@@ -1061,10 +1113,11 @@ public final class ResourcesDataManager extends DataManager {
 			final long oldLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
 			decrementPersonResourceLevel(resourceId, personId, amount);
 			final long newLevel = personResourceValues.get(resourceId).getValueAsLong(personId.getValue());
-			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+			dataManagerContext.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
 		} else {
 			decrementPersonResourceLevel(resourceId, personId, amount);
 		}
+
 	}
 
 	/*
@@ -1075,6 +1128,9 @@ public final class ResourcesDataManager extends DataManager {
 		if (oldValue < amount) {
 			throw new ContractException(ResourceError.INSUFFICIENT_RESOURCES_AVAILABLE);
 		}
+	}
+
+	private static record RegionResourceUpdateMutationEvent(ResourceId resourceId, RegionId regionId, long amount) implements Event {
 	}
 
 	/**
@@ -1100,6 +1156,14 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 */
 	public void addResourceToRegion(ResourceId resourceId, RegionId regionId, long amount) {
+		dataManagerContext.releaseMutationEvent(new RegionResourceUpdateMutationEvent(resourceId, regionId, amount));
+	}
+
+	private void handleRegionResourceUpdateMutationEvent(DataManagerContext dataManagerContext, RegionResourceUpdateMutationEvent regionResourceUpdateMutationEvent) {
+		RegionId regionId = regionResourceUpdateMutationEvent.regionId();
+		ResourceId resourceId = regionResourceUpdateMutationEvent.resourceId();
+		long amount = regionResourceUpdateMutationEvent.amount();
+
 		validateRegionId(regionId);
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
@@ -1109,12 +1173,16 @@ public final class ResourcesDataManager extends DataManager {
 			validateResourceAdditionValue(previousResourceLevel, amount);
 			incrementRegionResourceLevel(regionId, resourceId, amount);
 			long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 		} else {
 			final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 			validateResourceAdditionValue(previousResourceLevel, amount);
 			incrementRegionResourceLevel(regionId, resourceId, amount);
 		}
+
+	}
+
+	private static record RegionResourceRemovalMutationEvent(ResourceId resourceId, RegionId regionId, long amount) implements Event {
 	}
 
 	/**
@@ -1140,6 +1208,13 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 */
 	public void removeResourceFromRegion(ResourceId resourceId, RegionId regionId, long amount) {
+		dataManagerContext.releaseMutationEvent(new RegionResourceRemovalMutationEvent(resourceId, regionId, amount));
+	}
+
+	private void handleRegionResourceRemovalMutationEvent(DataManagerContext dataManagerContext, RegionResourceRemovalMutationEvent regionResourceRemovalMutationEvent) {
+		ResourceId resourceId = regionResourceRemovalMutationEvent.resourceId();
+		RegionId regionId = regionResourceRemovalMutationEvent.regionId();
+		long amount = regionResourceRemovalMutationEvent.amount();
 		validateRegionId(regionId);
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
@@ -1148,10 +1223,14 @@ public final class ResourcesDataManager extends DataManager {
 			final long previousResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 			decrementRegionResourceLevel(regionId, resourceId, amount);
 			long currentResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousResourceLevel, currentResourceLevel));
 		} else {
 			decrementRegionResourceLevel(regionId, resourceId, amount);
 		}
+
+	}
+
+	private static record ResourcePropertyUpdateMutationEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) implements Event {
 	}
 
 	/**
@@ -1180,6 +1259,13 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 */
 	public void setResourcePropertyValue(ResourceId resourceId, ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) {
+		dataManagerContext.releaseMutationEvent(new ResourcePropertyUpdateMutationEvent(resourceId, resourcePropertyId, resourcePropertyValue));
+	}
+
+	private void handleResourcePropertyUpdateMutationEvent(DataManagerContext dataManagerContext, ResourcePropertyUpdateMutationEvent resourcePropertyUpdateMutationEvent) {
+		ResourceId resourceId = resourcePropertyUpdateMutationEvent.resourceId();
+		ResourcePropertyId resourcePropertyId = resourcePropertyUpdateMutationEvent.resourcePropertyId();
+		Object resourcePropertyValue = resourcePropertyUpdateMutationEvent.resourcePropertyValue();
 		validateResourceId(resourceId);
 		validateResourcePropertyId(resourceId, resourcePropertyId);
 		validateResourcePropertyValueNotNull(resourcePropertyValue);
@@ -1189,7 +1275,7 @@ public final class ResourcesDataManager extends DataManager {
 		final Object oldPropertyValue = resourcePropertyMap.get(resourceId).get(resourcePropertyId).getValue();
 		resourcePropertyMap.get(resourceId).get(resourcePropertyId).setPropertyValue(resourcePropertyValue);
 		if (dataManagerContext.subscribersExist(ResourcePropertyUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
+			dataManagerContext.releaseObservationEvent(new ResourcePropertyUpdateEvent(resourceId, resourcePropertyId, oldPropertyValue, resourcePropertyValue));
 		}
 	}
 
@@ -1210,6 +1296,9 @@ public final class ResourcesDataManager extends DataManager {
 		if (!propertyDefinition.propertyValuesAreMutable()) {
 			throw new ContractException(PropertyError.IMMUTABLE_VALUE);
 		}
+	}
+
+	private static record PersonToRegionResourceTransferMutationEvent(ResourceId resourceId, PersonId personId, long amount) implements Event {
 	}
 
 	/**
@@ -1238,6 +1327,13 @@ public final class ResourcesDataManager extends DataManager {
 	 *             resource level</li>
 	 */
 	public void transferResourceFromPersonToRegion(ResourceId resourceId, PersonId personId, long amount) {
+		dataManagerContext.releaseMutationEvent(new PersonToRegionResourceTransferMutationEvent(resourceId, personId, amount));
+	}
+
+	private void handlePersonToRegionResourceTransferMutationEvent(DataManagerContext dataManagerContext, PersonToRegionResourceTransferMutationEvent personToRegionResourceTransferMutationEvent) {
+		ResourceId resourceId = personToRegionResourceTransferMutationEvent.resourceId();
+		PersonId personId = personToRegionResourceTransferMutationEvent.personId();
+		long amount = personToRegionResourceTransferMutationEvent.amount();
 		validatePersonExists(personId);
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
@@ -1251,12 +1347,15 @@ public final class ResourcesDataManager extends DataManager {
 		incrementRegionResourceLevel(regionId, resourceId, amount);
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
+			dataManagerContext.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, oldLevel, newLevel));
 		}
 		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 		}
+
 	}
+	
+	private static record RegionToPersonResourceTransferMutationEvent(ResourceId resourceId, PersonId personId, long amount) implements Event{}
 
 	/**
 	 * Transfers an amount of resource to a person from the person's current
@@ -1287,7 +1386,13 @@ public final class ResourcesDataManager extends DataManager {
 	 *
 	 */
 	public void transferResourceToPersonFromRegion(ResourceId resourceId, PersonId personId, long amount) {
-
+		dataManagerContext.releaseMutationEvent(
+		new RegionToPersonResourceTransferMutationEvent(resourceId, personId, amount));
+	}
+	private void handleRegionToPersonResourceTransferMutationEvent(DataManagerContext dataManagerContext, RegionToPersonResourceTransferMutationEvent regionToPersonResourceTransferMutationEvent) {
+		ResourceId resourceId = regionToPersonResourceTransferMutationEvent.resourceId();
+		PersonId personId = regionToPersonResourceTransferMutationEvent.personId();
+		long amount = regionToPersonResourceTransferMutationEvent.amount();
 		validatePersonExists(personId);
 		validateResourceId(resourceId);
 		validateNonnegativeResourceAmount(amount);
@@ -1303,12 +1408,11 @@ public final class ResourcesDataManager extends DataManager {
 		long currentRegionResourceLevel = regionResources.get(regionId).get(resourceId).getAmount();
 
 		if (dataManagerContext.subscribersExist(RegionResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
+			dataManagerContext.releaseObservationEvent(new RegionResourceUpdateEvent(regionId, resourceId, previousRegionResourceLevel, currentRegionResourceLevel));
 		}
 		if (dataManagerContext.subscribersExist(PersonResourceUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonResourceUpdateEvent(personId, resourceId, personResourceLevel, newLevel));
+			dataManagerContext.releaseObservationEvent(new PersonResourceUpdateEvent(personId, resourceId, personResourceLevel, newLevel));
 		}
-
 	}
 
 	private void handlePersonAdditionEvent(final DataManagerContext dataManagerContext, final PersonImminentAdditionEvent personImminentAdditionEvent) {

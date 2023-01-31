@@ -12,7 +12,7 @@ import lesson.plugins.model.ModelReportId;
 import lesson.plugins.model.Region;
 import lesson.plugins.model.RegionProperty;
 import lesson.plugins.vaccine.VaccinePlugin;
-import lesson.plugins.vaccine.VaccineReport;
+import lesson.plugins.vaccine.reports.VaccineReport;
 import nucleus.Dimension;
 import nucleus.Experiment;
 import nucleus.Plugin;

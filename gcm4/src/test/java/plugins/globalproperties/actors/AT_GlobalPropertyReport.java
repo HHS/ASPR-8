@@ -174,7 +174,7 @@ public class AT_GlobalPropertyReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(testPluginData).setGlobalPropertiesPluginData(globalPropertiesPluginData).getPlugins();
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(globalPropertyReport));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(globalPropertyReport::init));
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
 		assertTrue(outputConsumer.isComplete());

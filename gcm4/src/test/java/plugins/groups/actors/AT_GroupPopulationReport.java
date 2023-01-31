@@ -164,7 +164,7 @@ public class AT_GroupPopulationReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		List<Plugin> plugins = getPlugins(testPluginData, 5524610980534223950L);
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
@@ -272,7 +272,7 @@ public class AT_GroupPopulationReport {
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 
 		List<Plugin> plugins = getPlugins(testPluginData, 4023600052052959521L);
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
@@ -342,7 +342,7 @@ public class AT_GroupPopulationReport {
 
 		GroupPopulationReport report = new GroupPopulationReport(REPORT_ID, ReportPeriod.END_OF_SIMULATION);
 		List<Plugin> plugins = getPlugins(testPluginData, 6092832510476200219L);
-		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report));
+		plugins.add(ReportsTestPluginFactory.getPluginFromReport(report::init));
 		TestSimulationOutputConsumer outputConsumer = new TestSimulationOutputConsumer();
 		TestSimulation.executeSimulation(plugins, outputConsumer);
 
