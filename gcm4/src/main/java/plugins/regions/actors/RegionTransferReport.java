@@ -3,7 +3,7 @@ package plugins.regions.actors;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonAdditionEvent;
 import plugins.people.support.PersonId;
@@ -68,7 +68,7 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 	@Override
-	protected void flush(ActorContext actorContext) {		
+	protected void flush(ReportContext reportContext) {		
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
@@ -82,7 +82,7 @@ public final class RegionTransferReport extends PeriodicReport {
 			reportItemBuilder.addValue(sourceRegionId.toString());
 			reportItemBuilder.addValue(destinationRegionId.toString());
 			reportItemBuilder.addValue(mutableInteger.getValue());
-			actorContext.releaseOutput(reportItemBuilder.build());
+			reportContext.releaseOutput(reportItemBuilder.build());
 		}
 
 		baseMap.clear();
@@ -90,13 +90,13 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 
-	private void handlePersonAdditionEvent(ActorContext ActorContext, PersonAdditionEvent personAdditionEvent) {
+	private void handlePersonAdditionEvent(ReportContext ReportContext, PersonAdditionEvent personAdditionEvent) {
 		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		increment(regionId, regionId);
 	}
 
-	private void handlePersonRegionUpdateEvent(ActorContext ActorContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ReportContext ReportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
 		increment(previousRegionId, currentRegionId);
@@ -118,14 +118,14 @@ public final class RegionTransferReport extends PeriodicReport {
 	private RegionsDataManager regionsDataManager;
 
 	@Override
-	public void init(final ActorContext actorContext) {
-		super.init(actorContext);
-		PeopleDataManager peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
-		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
+	public void init(final ReportContext reportContext) {
+		super.init(reportContext);
+		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
+		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
 		
-		subscribe(peopleDataManager.getEventFilterForPersonAdditionEvent(), this::handlePersonAdditionEvent);
-		subscribe(regionsDataManager.getEventFilterForPersonRegionUpdateEvent(), this::handlePersonRegionUpdateEvent);
+		subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
+		subscribe(PersonRegionUpdateEvent.class, this::handlePersonRegionUpdateEvent);
 
 
 		for (PersonId personId : peopleDataManager.getPeople()) {

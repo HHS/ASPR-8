@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.NucleusError;
 import plugins.people.PeoplePluginData;
@@ -47,6 +48,9 @@ public final class PeopleDataManager extends DataManager {
 
 	private final PopulationRecord globalPopulationRecord = new PopulationRecord();
 
+	private static record PersonAdditionMutationEvent(PersonId personId, PersonConstructionData personConstructionData) implements Event {
+	}
+
 	/**
 	 * Returns a new person id that has been added to the simulation. The
 	 * returned PersonId is unique and will wrap the int value returned by
@@ -58,26 +62,19 @@ public final class PeopleDataManager extends DataManager {
 	 *
 	 */
 	public PersonId addPerson(final PersonConstructionData personConstructionData) {
-		validatePersonConstructionDataNotNull(personConstructionData);
-
-		final PersonId personId = addPersonId();
-
-		/*
-		 * It is very likely that the PersonImminentAdditionEvent will have
-		 * subscribers, so we don't waste time asking if there are any.
-		 * 
-		 */
-		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
-		dataManagerContext.releaseEvent(personImminentAdditionEvent);
-
-		if (dataManagerContext.subscribersExist(PersonAdditionEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonAdditionEvent(personId));
-		}
+		PersonId personId = new PersonId(personIds.size());
+		dataManagerContext.releaseMutationEvent(new PersonAdditionMutationEvent(personId, personConstructionData));
 		return personId;
 	}
 
-	private PersonId addPersonId() {
-		final PersonId personId = new PersonId(personIds.size());
+	private void handlePersonAdditionMutationEvent(DataManagerContext dataManagerContext, PersonAdditionMutationEvent personAdditionMutationEvent) {
+		PersonConstructionData personConstructionData = personAdditionMutationEvent.personConstructionData();
+		PersonId personId = personAdditionMutationEvent.personId();
+		validatePersonConstructionDataNotNull(personConstructionData);
+
+		if (personId.getValue() != personIds.size()) {
+			throw new RuntimeException("unexpected person id during person addition " + personId);
+		}
 
 		personIds.add(personId);
 		if (globalPopulationRecord.projectedPopulationCount < personIds.size()) {
@@ -85,7 +82,19 @@ public final class PeopleDataManager extends DataManager {
 		}
 		globalPopulationRecord.populationCount++;
 		globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
-		return personId;
+
+		/*
+		 * It is very likely that the PersonImminentAdditionEvent will have
+		 * subscribers, so we don't waste time asking if there are any.
+		 * 
+		 */
+		final PersonImminentAdditionEvent personImminentAdditionEvent = new PersonImminentAdditionEvent(personId, personConstructionData);
+		dataManagerContext.releaseObservationEvent(personImminentAdditionEvent);
+
+		if (dataManagerContext.subscribersExist(PersonAdditionEvent.class)) {
+			dataManagerContext.releaseObservationEvent(new PersonAdditionEvent(personId));
+		}
+
 	}
 
 	/**
@@ -184,9 +193,12 @@ public final class PeopleDataManager extends DataManager {
 	 *
 	 */
 	@Override
-	public void init(final DataManagerContext dataManagerContext) {
+	protected void init(final DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
+
+		dataManagerContext.subscribe(PersonAdditionMutationEvent.class, this::handlePersonAdditionMutationEvent);
+		dataManagerContext.subscribe(PersonRemovalMutationEvent.class, this::handlePersonRemovalMutationEvent);
 
 		this.personIds.addAll(peoplePluginData.getPersonIds());
 
@@ -225,6 +237,9 @@ public final class PeopleDataManager extends DataManager {
 
 	}
 
+	private static record PersonRemovalMutationEvent(PersonId personId) implements Event {
+	}
+
 	/**
 	 * Removes the person from the simulation.
 	 *
@@ -239,6 +254,12 @@ public final class PeopleDataManager extends DataManager {
 	 *
 	 */
 	public void removePerson(final PersonId personId) {
+		dataManagerContext.releaseMutationEvent(new PersonRemovalMutationEvent(personId));
+	}
+
+	private void handlePersonRemovalMutationEvent(DataManagerContext dataManagerContext, PersonRemovalMutationEvent personRemovalMutationEvent) {
+		PersonId personId = personRemovalMutationEvent.personId();
+
 		validatePersonExists(personId);
 
 		dataManagerContext.addPlan((context) -> {
@@ -246,15 +267,15 @@ public final class PeopleDataManager extends DataManager {
 			globalPopulationRecord.assignmentTime = dataManagerContext.getTime();
 			personIds.set(personId.getValue(), null);
 
-			//it is very likely that there are observers, so we don't ask before creating the event
-			context.releaseEvent(new PersonRemovalEvent(personId));
+			// it is very likely that there are observers, so we don't ask
+			// before creating the event
+			context.releaseObservationEvent(new PersonRemovalEvent(personId));
 
 		}, dataManagerContext.getTime());
 
 		if (dataManagerContext.subscribersExist(PersonImminentRemovalEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonImminentRemovalEvent(personId));
+			dataManagerContext.releaseObservationEvent(new PersonImminentRemovalEvent(personId));
 		}
-
 	}
 
 	private void validatePersonConstructionDataNotNull(final PersonConstructionData personConstructionData) {

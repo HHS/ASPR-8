@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.Simulation;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
@@ -33,7 +34,7 @@ public class AT_PeriodicReport {
 		}
 
 		@Override
-		protected void flush(ActorContext reportContext) {
+		protected void flush(ReportContext reportContext) {
 		}
 
 	}
@@ -54,7 +55,7 @@ public class AT_PeriodicReport {
 		}
 
 		@Override
-		protected void flush(ActorContext reportContext) {
+		protected void flush(ReportContext reportContext) {
 			testCounter.increment();
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			this.addTimeFieldHeaders(reportHeaderBuilder);
@@ -79,7 +80,7 @@ public class AT_PeriodicReport {
 	 * Used to test the fillTimeFields() method when the period is
 	 * ReportPeriod.HOURLY
 	 */
-	private static class HourlyTestReport extends PeriodicReport {
+	private static class HourlyTestReport extends PeriodicReport{
 
 		private MutableInteger testCounter = new MutableInteger();
 
@@ -92,7 +93,7 @@ public class AT_PeriodicReport {
 		}
 
 		@Override
-		protected void flush(ActorContext reportContext) {
+		protected void flush(ReportContext reportContext) {
 			testCounter.increment();
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			this.addTimeFieldHeaders(reportHeaderBuilder);
@@ -138,7 +139,7 @@ public class AT_PeriodicReport {
 		}
 
 		@Override
-		protected void flush(ActorContext reportContext) {
+		protected void flush(ReportContext reportContext) {
 			flushTime.setValue(reportContext.getTime());
 			flushCount.increment();
 
@@ -163,7 +164,7 @@ public class AT_PeriodicReport {
 		}
 
 		@Override
-		protected void flush(ActorContext reportContext) {
+		protected void flush(ReportContext reportContext) {
 			flushTimes.add(reportContext.getTime());
 		}
 

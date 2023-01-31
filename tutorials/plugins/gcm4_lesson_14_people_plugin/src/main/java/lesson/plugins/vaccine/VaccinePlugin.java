@@ -1,5 +1,6 @@
 package lesson.plugins.vaccine;
 
+import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import nucleus.Plugin;
 import plugins.people.PeoplePluginId;
 

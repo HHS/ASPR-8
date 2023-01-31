@@ -360,7 +360,7 @@ public final class PartitionsDataManager extends DataManager {
 	}
 
 	@Override
-	public void init(DataManagerContext dataManagerContext) {
+	protected void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		this.dataManagerContext = dataManagerContext;
 		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
