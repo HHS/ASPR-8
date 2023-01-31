@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import lesson.plugins.person.PersonDataManager;
-import lesson.plugins.person.PersonId;
-import lesson.plugins.vaccine.VaccinationDataManager;
+import lesson.plugins.person.datamanagers.PersonDataManager;
+import lesson.plugins.person.support.PersonId;
+import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import nucleus.ActorContext;
 import plugins.stochastics.StochasticsDataManager;
 

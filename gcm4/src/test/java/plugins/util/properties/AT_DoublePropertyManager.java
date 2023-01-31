@@ -83,10 +83,10 @@ public class AT_DoublePropertyManager {
 	 * for use in time sensitive tests
 	 */
 	private static class LocalDM extends TestDataManager {
-		public DoublePropertyManager doublePropertyManager;
+		protected DoublePropertyManager doublePropertyManager;
 
 		@Override
-		public void init(DataManagerContext dataManagerContext) {
+		protected void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(342.4234).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			doublePropertyManager = new DoublePropertyManager(dataManagerContext, propertyDefinition, 0);

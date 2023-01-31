@@ -9,6 +9,7 @@ import java.util.Set;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.events.PersonImminentAdditionEvent;
 import plugins.people.events.PersonRemovalEvent;
@@ -36,6 +37,8 @@ public final class VaccinationDataManager extends DataManager {
 		for (PersonId personId : people) {
 			vaccinationCounts.put(personId, new MutableInteger());
 		}
+		
+		dataManagerContext.subscribe(VaccinationMutationEvent.class, this::handleVaccinationEvent);
 
 	}
 
@@ -118,7 +121,7 @@ public final class VaccinationDataManager extends DataManager {
 		validatePersonId(personId);
 		return vaccinationCounts.get(personId).getValue() > 0;
 	}
-
+	private static record VaccinationMutationEvent(PersonId personId) implements Event{}
 	/**
 	 * Increases the vaccine count for a person
 	 * 
@@ -129,11 +132,18 @@ public final class VaccinationDataManager extends DataManager {
 	 *             id is unknown</li>
 	 * 
 	 */
-	public void vaccinatePerson(PersonId personId) {
+	
+	
+	public void vaccinatePerson(PersonId personId) {		
+		dataManagerContext.releaseMutationEvent(new VaccinationMutationEvent(personId));	
+	}
+	
+	private void handleVaccinationEvent(DataManagerContext dataManagerContext, VaccinationMutationEvent vaccinationMutationEvent) {
+		PersonId personId = vaccinationMutationEvent.personId();
 		validatePersonId(personId);
 		vaccinationCounts.get(personId).increment();
-		dataManagerContext.releaseEvent(new VaccinationEvent(personId));
 	}
+	
 
 	/**
 	 * Returns the number of vaccines a person has recieved

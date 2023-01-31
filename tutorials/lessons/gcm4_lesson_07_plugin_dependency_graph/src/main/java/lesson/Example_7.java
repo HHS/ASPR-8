@@ -63,7 +63,7 @@ public final class Example_7 {
 					.addPlugin(vaccinePlugin)//
 					.addPlugin(familyPlugin)//
 					.addPlugin(peoplePlugin)//
-					.addPlugin(modelPlugin)//
+					.addPlugin(modelPlugin)//					
 					.build()//
 					.execute();
 	}

@@ -12,6 +12,7 @@ import org.apache.commons.math3.util.Pair;
 
 import nucleus.DataManager;
 import nucleus.DataManagerContext;
+import nucleus.Event;
 import nucleus.EventFilter;
 import nucleus.IdentifiableFunctionMap;
 import plugins.people.datamanagers.PeopleDataManager;
@@ -171,6 +172,9 @@ public final class RegionsDataManager extends DataManager {
 		}
 	}
 
+	private static record RegionAdditionMutationEvent(RegionConstructionData regionConstructionData) implements Event {
+	}
+
 	/**
 	 * Adds a new region id
 	 *
@@ -188,6 +192,11 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 */
 	public void addRegion(final RegionConstructionData regionConstructionData) {
+		dataManagerContext.releaseMutationEvent(new RegionAdditionMutationEvent(regionConstructionData));
+	}
+
+	private void handleRegionAdditionMutationEvent(DataManagerContext dataManagerContext, RegionAdditionMutationEvent regionAdditionMutationEvent) {
+		RegionConstructionData regionConstructionData = regionAdditionMutationEvent.regionConstructionData();
 		validateRegionConstructionDataNotNull(regionConstructionData);
 		RegionId regionId = regionConstructionData.getRegionId();
 		validateNewRegionId(regionId);
@@ -242,8 +251,12 @@ public final class RegionsDataManager extends DataManager {
 				regionAdditionEventBuilder.addValue(value);
 			}
 			RegionAdditionEvent regionAdditionEvent = regionAdditionEventBuilder.build();
-			dataManagerContext.releaseEvent(regionAdditionEvent);
+			dataManagerContext.releaseObservationEvent(regionAdditionEvent);
 		}
+
+	}
+
+	private static record RegionPropertyDefinitionMutationEvent(RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization) implements Event {
 	}
 
 	/**
@@ -262,6 +275,12 @@ public final class RegionsDataManager extends DataManager {
 	 *             RegionPropertyDefinitionInitialization</li>
 	 */
 	public void defineRegionProperty(final RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization) {
+		dataManagerContext.releaseMutationEvent(new RegionPropertyDefinitionMutationEvent(regionPropertyDefinitionInitialization));
+	}
+
+	private void handleRegionPropertyDefinitionMutationEvent(DataManagerContext dataManagerContext, RegionPropertyDefinitionMutationEvent regionPropertyDefinitionMutationEvent) {
+
+		RegionPropertyDefinitionInitialization regionPropertyDefinitionInitialization = regionPropertyDefinitionMutationEvent.regionPropertyDefinitionInitialization();
 		validateregionPropertyDefinitionInitializationNotNull(regionPropertyDefinitionInitialization);
 		final RegionPropertyId regionPropertyId = regionPropertyDefinitionInitialization.getRegionPropertyId();
 		final PropertyDefinition propertyDefinition = regionPropertyDefinitionInitialization.getPropertyDefinition();
@@ -318,8 +337,9 @@ public final class RegionsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(RegionPropertyDefinitionEvent.class)) {
-			dataManagerContext.releaseEvent(new RegionPropertyDefinitionEvent(regionPropertyId));
+			dataManagerContext.releaseObservationEvent(new RegionPropertyDefinitionEvent(regionPropertyId));
 		}
+
 	}
 
 	/**
@@ -648,7 +668,7 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 */
 	@Override
-	public void init(final DataManagerContext dataManagerContext) {
+	protected void init(final DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 
 		this.dataManagerContext = dataManagerContext;
@@ -722,7 +742,10 @@ public final class RegionsDataManager extends DataManager {
 
 		dataManagerContext.subscribe(PersonImminentAdditionEvent.class, this::handlePersonImminentAdditionEvent);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
-
+		dataManagerContext.subscribe(RegionAdditionMutationEvent.class, this::handleRegionAdditionMutationEvent);
+		dataManagerContext.subscribe(RegionPropertyDefinitionMutationEvent.class, this::handleRegionPropertyDefinitionMutationEvent);	
+		dataManagerContext.subscribe(PersonRegionUpdateMutationEvent.class, this::handlePersonRegionUpdateMutationEvent);
+		dataManagerContext.subscribe(RegionPropertyUpdateMutationEvent.class, this::handleRegionPropertyUpdateMutationEvent);
 	}
 
 	/**
@@ -739,6 +762,9 @@ public final class RegionsDataManager extends DataManager {
 	 */
 	public boolean regionPropertyIdExists(final RegionPropertyId regionPropertyId) {
 		return regionPropertyDefinitions.containsKey(regionPropertyId);
+	}
+
+	private static record PersonRegionUpdateMutationEvent(PersonId personId, RegionId regionId) implements Event {
 	}
 
 	/**
@@ -759,7 +785,12 @@ public final class RegionsDataManager extends DataManager {
 	 */
 
 	public void setPersonRegion(final PersonId personId, final RegionId regionId) {
+		dataManagerContext.releaseMutationEvent(new PersonRegionUpdateMutationEvent(personId, regionId));
+	}
 
+	private void handlePersonRegionUpdateMutationEvent(DataManagerContext dataManagerContext, PersonRegionUpdateMutationEvent personRegionUpdateMutationEvent) {
+		PersonId personId = personRegionUpdateMutationEvent.personId();
+		RegionId regionId = personRegionUpdateMutationEvent.regionId();
 		validatePersonExists(personId);
 		validateRegionId(regionId);
 
@@ -799,9 +830,12 @@ public final class RegionsDataManager extends DataManager {
 		}
 
 		if (dataManagerContext.subscribersExist(PersonRegionUpdateEvent.class)) {
-			dataManagerContext.releaseEvent(new PersonRegionUpdateEvent(personId, oldRegionId, regionId));
+			dataManagerContext.releaseObservationEvent(new PersonRegionUpdateEvent(personId, oldRegionId, regionId));
 		}
 
+	}
+
+	private static record RegionPropertyUpdateMutationEvent(RegionId regionId, RegionPropertyId regionPropertyId, Object regionPropertyValue) implements Event {
 	}
 
 	/**
@@ -825,6 +859,13 @@ public final class RegionsDataManager extends DataManager {
 	 */
 
 	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+		dataManagerContext.releaseMutationEvent(new RegionPropertyUpdateMutationEvent(regionId, regionPropertyId, regionPropertyValue));
+	}
+
+	private void handleRegionPropertyUpdateMutationEvent(DataManagerContext dataManagerContext, RegionPropertyUpdateMutationEvent regionPropertyUpdateMutationEvent) {
+		RegionId regionId = regionPropertyUpdateMutationEvent.regionId();
+		RegionPropertyId regionPropertyId = regionPropertyUpdateMutationEvent.regionPropertyId();
+		Object regionPropertyValue = regionPropertyUpdateMutationEvent.regionPropertyValue();
 
 		validateRegionId(regionId);
 		validateRegionPropertyId(regionPropertyId);
@@ -834,7 +875,6 @@ public final class RegionsDataManager extends DataManager {
 		validatePropertyMutability(propertyDefinition);
 		Map<RegionPropertyId, PropertyValueRecord> map = regionPropertyMap.get(regionId);
 		PropertyValueRecord propertyValueRecord = map.get(regionPropertyId);
-		
 
 		if (dataManagerContext.subscribersExist(RegionPropertyUpdateEvent.class)) {
 			Object previousPropertyValue;
@@ -846,14 +886,14 @@ public final class RegionsDataManager extends DataManager {
 				previousPropertyValue = propertyValueRecord.getValue();
 			}
 			propertyValueRecord.setPropertyValue(regionPropertyValue);
-			dataManagerContext.releaseEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
-		}else {
-			
+			dataManagerContext.releaseObservationEvent(new RegionPropertyUpdateEvent(regionId, regionPropertyId, previousPropertyValue, regionPropertyValue));
+		} else {
+
 			if (propertyValueRecord == null) {
 				propertyValueRecord = new PropertyValueRecord(dataManagerContext);
 				map.put(regionPropertyId, propertyValueRecord);
-				
-			} 
+
+			}
 			propertyValueRecord.setPropertyValue(regionPropertyValue);
 		}
 

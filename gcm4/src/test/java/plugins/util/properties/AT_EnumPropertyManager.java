@@ -86,7 +86,7 @@ public class AT_EnumPropertyManager {
 		public EnumPropertyManager enumPropertyManager;
 
 		@Override
-		public void init(DataManagerContext dataManagerContext) {
+		protected void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(Color.YELLOW).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			enumPropertyManager = new EnumPropertyManager(dataManagerContext, propertyDefinition, 0);

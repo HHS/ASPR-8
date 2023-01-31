@@ -82,7 +82,7 @@ public class AT_IntPropertyManager {
 		public IntPropertyManager intPropertyManager;
 
 		@Override
-		public void init(DataManagerContext dataManagerContext) {
+		protected void init(DataManagerContext dataManagerContext) {
 			super.init(dataManagerContext);
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(342).setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME).build();
 			intPropertyManager = new IntPropertyManager(dataManagerContext, propertyDefinition, 0);
