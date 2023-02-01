@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPlugin;
 import nucleus.testsupport.testplugin.TestPluginData;
@@ -64,7 +64,7 @@ public class AT_RegionPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ActorContext.class }, tags = {
+	@UnitTestMethod(target = RegionPropertyReport.class, name = "init", args = { ReportContext.class }, tags = {
 			UnitTag.INCOMPLETE })
 	public void testInit() {
 

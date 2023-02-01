@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -65,7 +66,7 @@ public final class AT_MaterialsProducerPropertyReport {
 
 	@Test
 	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {
-			ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+			ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 		
 		/*

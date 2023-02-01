@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import nucleus.Plugin;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
@@ -112,7 +112,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testHourlySelectProperties() {
 		testHourlySelectProperties(false);
 		testHourlySelectProperties(true);
@@ -298,7 +298,7 @@ public class AT_GroupPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = GroupPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testDailyAllProperties() {
 
 		/*

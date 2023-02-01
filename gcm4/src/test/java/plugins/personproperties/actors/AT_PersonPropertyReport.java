@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
+import nucleus.ReportContext;
 import plugins.personproperties.support.PersonPropertyId;
 import plugins.personproperties.testsupport.TestPersonPropertyId;
 import plugins.reports.support.ReportError;
@@ -29,7 +29,7 @@ public class AT_PersonPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ActorContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = PersonPropertyReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
 		// TBD
 	}

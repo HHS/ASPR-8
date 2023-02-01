@@ -72,7 +72,7 @@ public class AT_PeopleTestPluginFactory {
 		Class<?> classRef = expectedPluginData.getClass();
 		plugins.forEach((plugin) -> {
 			Set<PluginData> pluginDatas = plugin.getPluginDatas();
-			if(pluginDatas.size() > 0) {
+			if (pluginDatas.size() > 0) {
 				PluginData pluginData = pluginDatas.toArray(new PluginData[0])[0];
 				if (classRef.isAssignableFrom(pluginData.getClass())) {
 					assertEquals(expectedPluginData, classRef.cast(pluginData));
@@ -124,7 +124,7 @@ public class AT_PeopleTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeopleTestPluginFactory.class, name = "getStandardPeoplePluginData", args = { int.class })
+	@UnitTestMethod(target = PeopleTestPluginFactory.class, name = "getStandardPeoplePluginData", args = {})
 	public void testGetStandardPeoplePluginData() {
 
 		PeoplePluginData peoplePluginData = PeopleTestPluginFactory.getStandardPeoplePluginData();

@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -64,7 +64,7 @@ public class AT_ResourcePropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcePropertyReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = ResourcePropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit() {
 		int initialPopulation = 20;
 

@@ -11,8 +11,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
 import nucleus.Plugin;
+import nucleus.ReportContext;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestSimulation;
@@ -56,7 +56,7 @@ public class AT_GroupPopulationReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ReportContext.class })
 	public void testHourlyReport() {
 
 		/*
@@ -183,7 +183,7 @@ public class AT_GroupPopulationReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ReportContext.class })
 	public void testDailyReport() {
 
 		/*
@@ -281,7 +281,7 @@ public class AT_GroupPopulationReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ActorContext.class })
+	@UnitTestMethod(target = GroupPopulationReport.class, name = "init", args = { ReportContext.class })
 	public void testEndOfSimReport() {
 
 		/*
