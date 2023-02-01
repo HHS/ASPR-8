@@ -14,6 +14,8 @@ import util.errors.ContractException;
  */
 public class TestSimulation {
 
+	private TestSimulation(){}
+
 	/**
 	 * Executes a simulation instance
 	 * 
