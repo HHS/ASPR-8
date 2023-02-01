@@ -23,8 +23,11 @@ import plugins.people.PeoplePluginData;
 import plugins.people.support.PersonId;
 import plugins.personproperties.PersonPropertiesPluginData;
 import plugins.regions.RegionsPluginData;
+import plugins.regions.testsupport.TestRegionId;
+import plugins.regions.testsupport.TestRegionPropertyId;
 import plugins.stochastics.StochasticsPluginData;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import plugins.util.properties.TimeTrackingPolicy;
 import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
@@ -151,11 +154,43 @@ public class AT_PersonPropertiesTestPluginFactory {
 	@UnitTestMethod(target = PersonPropertiesTestPluginFactory.Factory.class, name = "setRegionsPluginData", args = {
 			RegionsPluginData.class })
 	public void testSetRegionsPluginData() {
-		RegionsPluginData.Builder builder = RegionsPluginData.builder();
 
-		// TODO: add stuff to builder
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7542086961742735322L);
+		int initialPopulation = 30;
+		List<PersonId> people = new ArrayList<>();
+		for (int i = 0; i < initialPopulation; i++) {
+			people.add(new PersonId(i));
+		}
 
-		RegionsPluginData regionsPluginData = builder.build();
+		// add the region plugin
+		RegionsPluginData.Builder regionPluginBuilder = RegionsPluginData.builder();
+		for (TestRegionId regionId : TestRegionId.values()) {
+			regionPluginBuilder.addRegion(regionId);
+		}
+
+		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+			regionPluginBuilder.defineRegionProperty(testRegionPropertyId,
+					testRegionPropertyId.getPropertyDefinition());
+		}
+
+		for (TestRegionId regionId : TestRegionId.values()) {
+			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
+				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
+						|| randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+					regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId, randomPropertyValue);
+				}
+			}
+		}
+		TestRegionId testRegionId = TestRegionId.REGION_1;
+		for (PersonId personId : people) {
+			regionPluginBuilder.setPersonRegion(personId, testRegionId);
+			testRegionId = testRegionId.next();
+		}
+
+		regionPluginBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+
+		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
 		List<Plugin> plugins = PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
 		}).setRegionsPluginData(regionsPluginData).getPlugins();
