@@ -34,7 +34,7 @@ import tools.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableBoolean;
 
-public class AT_RegionsActionSupport {
+public class AT_RegionsTestPluginFactory {
 
 	private Consumer<ActorContext> factoryConsumer(MutableBoolean executed) {
 		return (c) -> {
