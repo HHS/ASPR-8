@@ -22,7 +22,6 @@ import nucleus.testsupport.testplugin.TestSimulation;
 import plugins.people.PeoplePluginData;
 import plugins.people.datamanagers.PeopleDataManager;
 import plugins.people.support.PersonId;
-import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import plugins.regions.RegionsPluginData;
 import plugins.regions.datamanagers.RegionsDataManager;
 import plugins.regions.support.RegionId;
@@ -118,8 +117,8 @@ public class AT_RegionsTestPluginFactory {
 
 		PeoplePluginData peoplePluginData = builder.build();
 
-		List<Plugin> plugins = PersonPropertiesTestPluginFactory
-				.factory(0, 0, t -> {
+		List<Plugin> plugins = RegionsTestPluginFactory
+				.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
 				})
 				.setPeoplePluginData(peoplePluginData)
 				.getPlugins();
@@ -168,7 +167,7 @@ public class AT_RegionsTestPluginFactory {
 
 		RegionsPluginData regionsPluginData = regionPluginBuilder.build();
 
-		List<Plugin> plugins = PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
+		List<Plugin> plugins = RegionsTestPluginFactory.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
 		}).setRegionsPluginData(regionsPluginData).getPlugins();
 
 		checkPlugins(plugins, regionsPluginData);
@@ -185,8 +184,8 @@ public class AT_RegionsTestPluginFactory {
 
 		StochasticsPluginData stochasticsPluginData = builder.build();
 
-		List<Plugin> plugins = PersonPropertiesTestPluginFactory
-				.factory(0, 0, t -> {
+		List<Plugin> plugins = RegionsTestPluginFactory
+				.factory(0, 0, TimeTrackingPolicy.TRACK_TIME, t -> {
 				})
 				.setStochasticsPluginData(stochasticsPluginData)
 				.getPlugins();
@@ -237,11 +236,11 @@ public class AT_RegionsTestPluginFactory {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesTestPluginFactory.class, name = "getStandardStochasticsPluginData", args = {
+	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "getStandardStochasticsPluginData", args = {
 			long.class })
 	public void testGetStandardStochasticsPluginData() {
 		long seed = 8184805053177550601L;
-		StochasticsPluginData stochasticsPluginData = PersonPropertiesTestPluginFactory
+		StochasticsPluginData stochasticsPluginData = RegionsTestPluginFactory
 				.getStandardStochasticsPluginData(seed);
 
 		assertEquals(RandomGeneratorProvider.getRandomGenerator(seed).nextLong(), stochasticsPluginData.getSeed());
