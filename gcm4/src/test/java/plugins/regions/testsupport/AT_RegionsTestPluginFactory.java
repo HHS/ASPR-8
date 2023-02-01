@@ -214,7 +214,7 @@ public class AT_RegionsTestPluginFactory {
 
 	@Test
 	@UnitTestMethod(target = RegionsTestPluginFactory.class, name = "getStandardRegionsPluginData", args = {
-			List.class, TimeTrackingPolicy.class })
+			List.class, TimeTrackingPolicy.class, long.class })
 	public void testGetStandardRegionsPluginData() {
 
 		List<PersonId> people = new ArrayList<>();
