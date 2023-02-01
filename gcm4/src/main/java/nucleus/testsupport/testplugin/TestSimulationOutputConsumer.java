@@ -31,7 +31,6 @@ public class TestSimulationOutputConsumer implements Consumer<Object> {
      *                           multiple TestScenarioReport items are received</li>
      */
     public void accept(Object obj) {
-        this.outputItems.add(obj);
 
         if (obj instanceof TestScenarioReport) {
             if (this.isComplete) {
@@ -39,6 +38,7 @@ public class TestSimulationOutputConsumer implements Consumer<Object> {
             }
             this.isComplete = ((TestScenarioReport) obj).isComplete();
         }
+        this.outputItems.add(obj);
     }
 
     /**
